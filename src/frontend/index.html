@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Living Documentation</title>
+
+  <!-- Tailwind CSS + Typography plugin via CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+
+  <!-- Highlight.js — syntax highlighting -->
+  <link id="hljs-light" rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" />
+  <link id="hljs-dark" rel="stylesheet" disabled
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: {} }
+    };
+  </script>
+
+  <style>
+    /* Smooth sidebar transitions */
+    .category-docs { transition: max-height 0.2s ease, opacity 0.2s ease; }
+    .category-docs.collapsed { max-height: 0; opacity: 0; overflow: hidden; }
+    .category-docs.expanded  { max-height: 9999px; opacity: 1; }
+
+    /* Active doc highlight */
+    .doc-item.active {
+      background-color: rgba(59,130,246,0.12);
+      color: rgb(59,130,246);
+      font-weight: 600;
+    }
+    .dark .doc-item.active {
+      background-color: rgba(96,165,250,0.15);
+      color: rgb(96,165,250);
+    }
+
+    /* Prose overrides for correct dark mode */
+    .dark .prose { color: #d1d5db; }
+    .dark .prose h1, .dark .prose h2, .dark .prose h3,
+    .dark .prose h4, .dark .prose h5, .dark .prose h6 { color: #f9fafb; }
+    .dark .prose a { color: #60a5fa; }
+    .dark .prose strong { color: #f3f4f6; }
+    .dark .prose code:not(pre code) {
+      background: #374151; color: #f87171; padding: 0.1em 0.35em;
+      border-radius: 0.25em; font-size: 0.875em;
+    }
+    .dark .prose pre { background: #1f2937; border: 1px solid #374151; }
+    .dark .prose blockquote { border-color: #4b5563; color: #9ca3af; }
+    .dark .prose hr { border-color: #374151; }
+    .dark .prose table th { background: #1f2937; color: #f9fafb; }
+    .dark .prose table td { border-color: #374151; }
+    .dark .prose table tr:nth-child(even) { background: #111827; }
+
+    /* Print / Export PDF */
+    @media print {
+      #sidebar, #header { display: none !important; }
+      #content-area { margin: 0 !important; }
+      .no-print { display: none !important; }
+      .prose { max-width: 100% !important; }
+    }
+
+    /* Scrollbar thin */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+    .dark ::-webkit-scrollbar-thumb { background: #4b5563; }
+
+    /* Search highlight */
+    mark { background: #fef08a; color: inherit; border-radius: 2px; padding: 0 2px; }
+    .dark mark { background: #713f12; color: #fef9c3; }
+  </style>
+</head>
+
+<body class="h-full bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-200">
+<div class="h-full flex flex-col">
+
+  <!-- ── Header ── -->
+  <header id="header"
+          class="no-print flex items-center justify-between px-4 h-14 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0 z-10 shadow-sm">
+
+    <div class="flex items-center gap-3">
+      <span class="text-blue-600 dark:text-blue-400 text-xl select-none" aria-hidden="true">&#128218;</span>
+      <span id="app-title" class="font-semibold text-base tracking-tight">Living Documentation</span>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <!-- Search (desktop — mirrors sidebar search) -->
+      <div class="relative hidden sm:block">
+        <input id="header-search" type="search" placeholder="Search docs…"
+               class="w-56 pl-8 pr-3 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-700
+                      bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100
+                      placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <span class="absolute left-2.5 top-2 text-gray-400 text-sm pointer-events-none">&#128269;</span>
+      </div>
+
+      <!-- Dark mode toggle -->
+      <button id="dark-toggle" title="Toggle dark mode"
+              class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+        <span id="dark-icon" class="text-lg leading-none">&#9790;</span>
+      </button>
+
+      <!-- Admin link -->
+      <a href="/admin"
+         class="text-sm px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium">
+        &#9881; Admin
+      </a>
+    </div>
+  </header>
+
+  <!-- ── Body ── -->
+  <div class="flex flex-1 overflow-hidden">
+
+    <!-- ── Sidebar ── -->
+    <aside id="sidebar"
+           class="no-print w-72 shrink-0 flex flex-col border-r border-gray-200 dark:border-gray-800
+                  bg-white dark:bg-gray-900 overflow-y-auto">
+
+      <!-- Mobile / sidebar search -->
+      <div class="p-3 border-b border-gray-100 dark:border-gray-800">
+        <div class="relative sm:hidden">
+          <input id="sidebar-search" type="search" placeholder="Search…"
+                 class="w-full pl-8 pr-3 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-700
+                        bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100
+                        placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <span class="absolute left-2.5 top-2 text-gray-400 text-sm pointer-events-none">&#128269;</span>
+        </div>
+
+        <!-- Stats -->
+        <p id="doc-count" class="text-xs text-gray-400 dark:text-gray-500 mt-2 sm:mt-0"></p>
+      </div>
+
+      <!-- Category tree -->
+      <nav id="category-tree" class="flex-1 py-2 space-y-0.5">
+        <p class="px-4 py-8 text-sm text-gray-400 text-center">Loading…</p>
+      </nav>
+    </aside>
+
+    <!-- ── Main content ── -->
+    <main id="content-area" class="flex-1 overflow-y-auto">
+
+      <!-- Welcome / empty state -->
+      <div id="welcome" class="h-full flex items-center justify-center p-8">
+        <div class="max-w-md text-center">
+          <div class="text-5xl mb-4 select-none" aria-hidden="true">&#128218;</div>
+          <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            Select a document
+          </h2>
+          <p class="text-sm text-gray-500 dark:text-gray-500">
+            Choose a document from the sidebar to start reading.
+          </p>
+          <p class="mt-4 text-xs text-gray-400 dark:text-gray-600 font-mono bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 inline-block">
+            YYYY_MM_DD_[Category]_title.md
+          </p>
+          <p class="mt-2 text-xs text-gray-400">Expected filename pattern</p>
+        </div>
+      </div>
+
+      <!-- Document viewer -->
+      <article id="doc-view" class="hidden max-w-4xl mx-auto px-6 py-8">
+        <!-- Doc header -->
+        <header class="mb-8 pb-6 border-b border-gray-100 dark:border-gray-800">
+          <div class="flex items-start justify-between gap-4 flex-wrap">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-2 flex-wrap">
+                <span id="doc-category"
+                      class="inline-block text-xs font-semibold px-2.5 py-0.5 rounded-full
+                             bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
+                </span>
+                <span id="doc-date" class="text-xs text-gray-400 dark:text-gray-500"></span>
+              </div>
+              <h1 id="doc-title" class="text-2xl font-bold text-gray-900 dark:text-gray-50 leading-tight"></h1>
+            </div>
+            <!-- Actions -->
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="exportPDF()" title="Export as PDF"
+                      class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700
+                             text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                &#128196; Export PDF
+              </button>
+              <button onclick="copyLink()" id="copy-link-btn" title="Copy link"
+                      class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700
+                             text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                &#128279; Copy link
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <!-- Search match notice -->
+        <div id="search-notice" class="hidden mb-4 px-3 py-2 rounded-lg bg-yellow-50 dark:bg-yellow-900/20
+             border border-yellow-200 dark:border-yellow-800 text-sm text-yellow-800 dark:text-yellow-300">
+        </div>
+
+        <!-- Rendered markdown -->
+        <div id="doc-content"
+             class="prose prose-gray dark:prose-invert max-w-none
+                    prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400
+                    prose-code:before:content-none prose-code:after:content-none
+                    prose-pre:bg-gray-50 prose-pre:border prose-pre:border-gray-200
+                    dark:prose-pre:bg-gray-900 dark:prose-pre:border-gray-700">
+        </div>
+      </article>
+
+    </main>
+  </div><!-- end body row -->
+</div><!-- end root -->
+
+<script>
+// ── State ──────────────────────────────────────────────────
+let allDocs = [];
+let currentDocId = null;
+let searchQuery = '';
+let expandedCategories = new Set();
+
+// ── Boot ───────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  applyDarkMode(loadDarkPref());
+  setupDarkToggle();
+  setupSearch();
+  await loadConfig();
+  await loadDocuments();
+
+  // Deep-link via ?doc=id
+  const params = new URLSearchParams(location.search);
+  const docId = params.get('doc');
+  if (docId) openDocument(docId, true);
+});
+
+// ── Dark mode ──────────────────────────────────────────────
+function loadDarkPref() {
+  const saved = localStorage.getItem('ld-dark');
+  if (saved !== null) return saved === 'true';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+function applyDarkMode(dark) {
+  document.documentElement.classList.toggle('dark', dark);
+  document.getElementById('dark-icon').textContent = dark ? '☀' : '☾';
+  document.getElementById('hljs-light').disabled = dark;
+  document.getElementById('hljs-dark').disabled = !dark;
+}
+
+function setupDarkToggle() {
+  document.getElementById('dark-toggle').addEventListener('click', () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('ld-dark', isDark);
+    document.getElementById('dark-icon').textContent = isDark ? '☀' : '☾';
+    document.getElementById('hljs-light').disabled = isDark;
+    document.getElementById('hljs-dark').disabled = !isDark;
+  });
+}
+
+// ── Config ─────────────────────────────────────────────────
+async function loadConfig() {
+  try {
+    const cfg = await fetch('/api/config').then(r => r.json());
+    if (cfg.title) document.title = cfg.title;
+    document.getElementById('app-title').textContent = cfg.title || 'Living Documentation';
+  } catch { /* non-fatal */ }
+}
+
+// ── Documents ──────────────────────────────────────────────
+async function loadDocuments() {
+  try {
+    allDocs = await fetch('/api/documents').then(r => r.json());
+    renderSidebar(allDocs);
+  } catch {
+    document.getElementById('category-tree').innerHTML =
+      '<p class="px-4 py-4 text-sm text-red-500">Failed to load documents.</p>';
+  }
+}
+
+function renderSidebar(docs) {
+  const tree = document.getElementById('category-tree');
+  const countEl = document.getElementById('doc-count');
+
+  if (!docs.length) {
+    tree.innerHTML = '<p class="px-4 py-8 text-sm text-gray-400 text-center">No documents found.</p>';
+    countEl.textContent = '';
+    return;
+  }
+
+  countEl.textContent = `${docs.length} document${docs.length !== 1 ? 's' : ''}`;
+
+  // Group by category
+  const groups = {};
+  for (const doc of docs) {
+    if (!groups[doc.category]) groups[doc.category] = [];
+    groups[doc.category].push(doc);
+  }
+
+  // Sort categories: Uncategorized last
+  const cats = Object.keys(groups).sort((a, b) => {
+    if (a === 'Uncategorized') return 1;
+    if (b === 'Uncategorized') return -1;
+    return a.localeCompare(b);
+  });
+
+  // Auto-expand all initially
+  if (expandedCategories.size === 0) cats.forEach(c => expandedCategories.add(c));
+
+  tree.innerHTML = cats.map(cat => {
+    const catDocs = groups[cat];
+    const isExpanded = expandedCategories.has(cat);
+    const catId = 'cat-' + cat.replace(/\W/g, '-');
+    return `
+      <div class="mb-1">
+        <button onclick="toggleCategory('${esc(cat)}')"
+                class="w-full flex items-center justify-between px-3 py-1.5 text-xs font-semibold
+                       text-gray-500 dark:text-gray-400 uppercase tracking-wider
+                       hover:bg-gray-50 dark:hover:bg-gray-800/60 rounded-md transition-colors group">
+          <span>${esc(cat)}</span>
+          <span class="flex items-center gap-1.5">
+            <span class="font-normal normal-case text-gray-400">${catDocs.length}</span>
+            <span class="transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}" id="arrow-${catId}">&#9656;</span>
+          </span>
+        </button>
+        <div id="${catId}" class="category-docs pl-2 ${isExpanded ? 'expanded' : 'collapsed'}">
+          ${catDocs.map(doc => renderDocItem(doc)).join('')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderDocItem(doc) {
+  const isActive = doc.id === currentDocId;
+  return `
+    <button onclick="openDocument('${esc(doc.id)}')"
+            id="item-${esc(doc.id)}"
+            class="doc-item w-full text-left px-3 py-1.5 rounded-md text-sm transition-colors
+                   text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/60
+                   ${isActive ? 'active' : ''}">
+      <div class="leading-snug truncate">${esc(doc.title)}</div>
+      ${doc.formattedDate ? `<div class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">${esc(doc.formattedDate)}</div>` : ''}
+    </button>`;
+}
+
+function toggleCategory(cat) {
+  const catId = 'cat-' + cat.replace(/\W/g, '-');
+  const el = document.getElementById(catId);
+  const arrow = document.getElementById('arrow-' + catId);
+  if (!el) return;
+  const expanding = el.classList.contains('collapsed');
+  el.classList.toggle('collapsed', !expanding);
+  el.classList.toggle('expanded', expanding);
+  if (arrow) arrow.style.transform = expanding ? 'rotate(90deg)' : '';
+  if (expanding) expandedCategories.add(cat); else expandedCategories.delete(cat);
+}
+
+// ── Open document ──────────────────────────────────────────
+async function openDocument(id, skipHistory = false) {
+  currentDocId = id;
+
+  // Update active state in sidebar
+  document.querySelectorAll('.doc-item').forEach(el => el.classList.remove('active'));
+  const activeItem = document.getElementById('item-' + id);
+  if (activeItem) {
+    activeItem.classList.add('active');
+    activeItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  // Update URL
+  if (!skipHistory) {
+    const url = new URL(location.href);
+    url.searchParams.set('doc', id);
+    history.pushState({ docId: id }, '', url);
+  }
+
+  document.getElementById('welcome').classList.add('hidden');
+  const docView = document.getElementById('doc-view');
+  docView.classList.remove('hidden');
+  document.getElementById('doc-content').innerHTML =
+    '<p class="animate-pulse text-gray-400">Loading…</p>';
+
+  try {
+    const doc = await fetch('/api/documents/' + id).then(r => {
+      if (!r.ok) throw new Error(r.statusText);
+      return r.json();
+    });
+
+    document.getElementById('doc-title').textContent = doc.title;
+    document.getElementById('doc-category').textContent = doc.category;
+    document.getElementById('doc-date').textContent = doc.formattedDate || '';
+
+    const contentEl = document.getElementById('doc-content');
+    contentEl.innerHTML = doc.html;
+
+    // Syntax highlighting
+    contentEl.querySelectorAll('pre code').forEach(block => {
+      hljs.highlightElement(block);
+    });
+
+    // Make tables responsive
+    contentEl.querySelectorAll('table').forEach(t => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'overflow-x-auto';
+      t.parentNode.insertBefore(wrapper, t);
+      wrapper.appendChild(t);
+    });
+
+    // Highlight search matches in content
+    const notice = document.getElementById('search-notice');
+    if (searchQuery) {
+      highlightMatches(contentEl, searchQuery);
+      notice.textContent = `Showing matches for "${searchQuery}"`;
+      notice.classList.remove('hidden');
+    } else {
+      notice.classList.add('hidden');
+    }
+
+    document.title = doc.title;
+    docView.scrollTop = 0;
+  } catch (err) {
+    document.getElementById('doc-content').innerHTML =
+      `<p class="text-red-500">Failed to load document: ${err.message}</p>`;
+  }
+}
+
+// ── Search ─────────────────────────────────────────────────
+let searchTimer = null;
+
+function setupSearch() {
+  ['header-search', 'sidebar-search'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', e => {
+      const q = e.target.value.trim();
+      // Sync the other input
+      ['header-search', 'sidebar-search'].forEach(oid => {
+        if (oid !== id) {
+          const other = document.getElementById(oid);
+          if (other) other.value = q;
+        }
+      });
+      clearTimeout(searchTimer);
+      if (!q) {
+        searchQuery = '';
+        renderSidebar(allDocs);
+        return;
+      }
+      searchQuery = q;
+      // Immediate client-side filter for snappy UX
+      const local = allDocs.filter(d =>
+        d.title.toLowerCase().includes(q.toLowerCase()) ||
+        d.category.toLowerCase().includes(q.toLowerCase())
+      );
+      renderSidebar(local);
+      // Then full-text search from server
+      searchTimer = setTimeout(() => doSearch(q), 350);
+    });
+  });
+}
+
+async function doSearch(q) {
+  try {
+    const results = await fetch('/api/documents/search?q=' + encodeURIComponent(q))
+      .then(r => r.json());
+    renderSidebar(results);
+  } catch { /* ignore */ }
+}
+
+// ── Helpers ────────────────────────────────────────────────
+function exportPDF() { window.print(); }
+
+function copyLink() {
+  navigator.clipboard.writeText(location.href).then(() => {
+    const btn = document.getElementById('copy-link-btn');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '&#10003; Copied!';
+    setTimeout(() => { btn.innerHTML = orig; }, 1800);
+  });
+}
+
+function highlightMatches(el, q) {
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  nodes.forEach(node => {
+    if (!node.textContent.toLowerCase().includes(q.toLowerCase())) return;
+    const span = document.createElement('span');
+    span.innerHTML = node.textContent.replace(re, '<mark>$1</mark>');
+    node.parentNode.replaceChild(span, node);
+  });
+}
+
+function esc(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// Browser back/forward
+window.addEventListener('popstate', e => {
+  const id = e.state?.docId || new URLSearchParams(location.search).get('doc');
+  if (id) openDocument(id, true);
+});
+</script>
+</body>
+</html>
