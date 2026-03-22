@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "build": "tsc && node scripts/copy-assets.js && chmod +x dist/bin/cli.js",
-    "dev": "ts-node bin/cli.ts",
+    "dev": "nodemon --watch src --watch bin --ext ts,html --exec 'ts-node bin/cli.ts'",
     "start": "node dist/bin/cli.js",
     "prepublishOnly": "npm run build"
   },
@@ -32,6 +32,7 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.14.0",
+    "nodemon": "^3.1.14",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
