@@ -222,10 +222,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadConfig();
   await loadDocuments();
 
-  // Deep-link via ?doc=id
+  // Deep-link via ?doc=id, otherwise open first General doc
   const params = new URLSearchParams(location.search);
   const docId = params.get('doc');
-  if (docId) openDocument(docId, true);
+  if (docId) {
+    openDocument(docId, true);
+  } else {
+    const first = allDocs.find(d => d.category === 'General') ?? allDocs[0];
+    if (first) openDocument(first.id, true);
+  }
 });
 
 // ── Dark mode ──────────────────────────────────────────────

@@ -12,18 +12,26 @@ function buildPatternsFromFormat(patternStr: string): {
   dateOnly: RegExp | null;
   hasDate: boolean;
   hasCategory: boolean;
+  catBeforeDate: boolean;
 } {
   const hasDate = /YYYY.*MM.*DD/.test(patternStr);
   const hasCategory = /\[Category\]/i.test(patternStr);
   const dateGroup = '(\\d{4}_\\d{2}_\\d{2})';
   const catGroup = '\\[([^\\]]+)\\]';
+  const catBeforeDate =
+    hasDate && hasCategory &&
+    patternStr.search(/\[Category\]/i) < patternStr.search(/YYYY/i);
 
   if (hasDate && hasCategory) {
+    const ordered = catBeforeDate
+      ? `${catGroup}_${dateGroup}`
+      : `${dateGroup}_${catGroup}`;
     return {
-      full: new RegExp(`^${dateGroup}_${catGroup}_(.+)\\.md$`, 'i'),
+      full: new RegExp(`^${ordered}_(.+)\\.md$`, 'i'),
       dateOnly: new RegExp(`^${dateGroup}_(.+)\\.md$`, 'i'),
       hasDate,
       hasCategory,
+      catBeforeDate,
     };
   } else if (hasDate) {
     return {
@@ -31,6 +39,7 @@ function buildPatternsFromFormat(patternStr: string): {
       dateOnly: new RegExp(`^${dateGroup}_(.+)\\.md$`, 'i'),
       hasDate,
       hasCategory,
+      catBeforeDate: false,
     };
   } else if (hasCategory) {
     return {
@@ -38,9 +47,10 @@ function buildPatternsFromFormat(patternStr: string): {
       dateOnly: null,
       hasDate,
       hasCategory,
+      catBeforeDate: false,
     };
   }
-  return { full: null, dateOnly: null, hasDate, hasCategory };
+  return { full: null, dateOnly: null, hasDate, hasCategory, catBeforeDate: false };
 }
 
 function formatDate(iso: string): string {
@@ -63,14 +73,16 @@ function titleCase(raw: string): string {
 
 export function parseFilename(filename: string, filenamePattern?: string): DocMetadata {
   const id = encodeURIComponent(filename.slice(0, -3));
-  const { full: FULL_PAT, dateOnly: DATE_ONLY_PAT, hasDate, hasCategory } =
+  const { full: FULL_PAT, dateOnly: DATE_ONLY_PAT, hasDate, hasCategory, catBeforeDate } =
     buildPatternsFromFormat(filenamePattern ?? 'YYYY_MM_DD_[Category]_title');
 
   if (FULL_PAT) {
     const full = filename.match(FULL_PAT);
     if (full) {
       if (hasDate && hasCategory) {
-        const [, dateStr, category, titlePart] = full;
+        const dateStr = catBeforeDate ? full[2] : full[1];
+        const category = catBeforeDate ? full[1] : full[2];
+        const titlePart = full[3];
         const date = dateStr.replace(/_/g, '-');
         return { id, filename, title: titleCase(titlePart), category, date, formattedDate: formatDate(date) };
       } else if (hasCategory) {

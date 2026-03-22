@@ -221,9 +221,16 @@
       async function saveConfig(e) {
         e.preventDefault();
         const filenamePattern = document.getElementById("field-pattern").value.trim();
-        if (filenamePattern && !/\[Category\]/i.test(filenamePattern)) {
-          showMsg("Filename pattern must contain [Category]", "error");
-          return;
+        if (filenamePattern) {
+          const catCount = (filenamePattern.match(/\[Category\]/gi) || []).length;
+          if (catCount === 0) {
+            showMsg("Filename pattern must contain [Category]", "error");
+            return;
+          }
+          if (catCount > 1) {
+            showMsg("Filename pattern must contain [Category] exactly once", "error");
+            return;
+          }
         }
         const payload = {
           title: document.getElementById("field-title").value.trim(),
@@ -272,16 +279,22 @@
         const hasCategory = /\[Category\]/i.test(patternStr);
         const dateGroup = "(\\d{4}_\\d{2}_\\d{2})";
         const catGroup = "\\[([^\\]]+)\\]";
+        const catBeforeDate =
+          hasDate && hasCategory &&
+          patternStr.search(/\[Category\]/i) < patternStr.search(/YYYY/i);
         let full = null, dateOnly = null;
         if (hasDate && hasCategory) {
-          full = new RegExp("^" + dateGroup + "_" + catGroup + "_(.+)\\.md$", "i");
+          const ordered = catBeforeDate
+            ? catGroup + "_" + dateGroup
+            : dateGroup + "_" + catGroup;
+          full = new RegExp("^" + ordered + "_(.+)\\.md$", "i");
           dateOnly = new RegExp("^" + dateGroup + "_(.+)\\.md$", "i");
         } else if (hasDate) {
           dateOnly = new RegExp("^" + dateGroup + "_(.+)\\.md$", "i");
         } else if (hasCategory) {
           full = new RegExp("^" + catGroup + "_(.+)\\.md$", "i");
         }
-        return { full, dateOnly, hasDate, hasCategory };
+        return { full, dateOnly, hasDate, hasCategory, catBeforeDate };
       }
 
       function parsePreview(filename, patterns) {
@@ -289,7 +302,9 @@
           const m = filename.match(patterns.full);
           if (m) {
             if (patterns.hasDate && patterns.hasCategory) {
-              return { date: m[1].replace(/_/g, "-"), category: m[2], title: titleCase(m[3]), match: true };
+              const dateStr = patterns.catBeforeDate ? m[2] : m[1];
+              const category = patterns.catBeforeDate ? m[1] : m[2];
+              return { date: dateStr.replace(/_/g, "-"), category, title: titleCase(m[3]), match: true };
             } else if (patterns.hasCategory) {
               return { date: null, category: m[1], title: titleCase(m[2]), match: true };
             }

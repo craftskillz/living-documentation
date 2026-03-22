@@ -30,10 +30,14 @@ export function configRouter(docsPath: string): Router {
           (safe as Record<string, unknown>)[key] = patch[key];
         }
       }
-      // filenamePattern: must contain [Category]
+      // filenamePattern: must contain exactly one [Category]
       if ('filenamePattern' in safe && typeof safe.filenamePattern === 'string') {
-        if (!/\[Category\]/i.test(safe.filenamePattern)) {
+        const matches = safe.filenamePattern.match(/\[Category\]/gi);
+        if (!matches || matches.length === 0) {
           return res.status(400).json({ error: 'filenamePattern must contain [Category]' });
+        }
+        if (matches.length > 1) {
+          return res.status(400).json({ error: 'filenamePattern must contain [Category] exactly once' });
         }
       }
       // extraFiles: only absolute .md paths
