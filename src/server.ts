@@ -4,6 +4,7 @@ import { exec } from 'child_process';
 import { documentsRouter } from './routes/documents';
 import { configRouter } from './routes/config';
 import { browseRouter } from './routes/browse';
+import { imagesRouter } from './routes/images';
 import { writeConfig } from './lib/config';
 
 export interface ServerOptions {
@@ -19,7 +20,7 @@ export async function startServer({
 }: ServerOptions): Promise<void> {
   const app = express();
 
-  app.use(express.json());
+  app.use(express.json({ limit: '20mb' }));
 
   // Persist initial state to .living-doc.json
   writeConfig(docsPath, { docsFolder: docsPath, port });
@@ -28,10 +29,14 @@ export async function startServer({
   app.use('/api/documents', documentsRouter(docsPath));
   app.use('/api/config', configRouter(docsPath));
   app.use('/api/browse', browseRouter());
+  app.use('/api/images', imagesRouter(docsPath));
 
   // Static frontend assets
   const frontendPath = path.join(__dirname, 'frontend');
   app.use(express.static(frontendPath));
+
+  // Static assets from docs folder (images, etc.)
+  app.use('/images', express.static(path.join(docsPath, 'images')));
 
   app.get('/', (_req, res) =>
     res.sendFile(path.join(frontendPath, 'index.html')),

@@ -507,14 +507,71 @@ function enterEditMode() {
   document.getElementById('view-actions').classList.add('hidden');
   document.getElementById('edit-actions').classList.remove('hidden');
   editor.focus();
+  editor.addEventListener('paste', handleEditorPaste);
 }
 
 function exitEditMode() {
-  document.getElementById('doc-editor').classList.add('hidden');
+  const editor = document.getElementById('doc-editor');
+  editor.removeEventListener('paste', handleEditorPaste);
+  editor.classList.add('hidden');
   document.getElementById('doc-content').classList.remove('hidden');
   document.getElementById('edit-actions').classList.add('hidden');
   document.getElementById('view-actions').classList.remove('hidden');
   document.getElementById('edit-save-msg').textContent = '';
+}
+
+async function handleEditorPaste(e) {
+  const items = Array.from(e.clipboardData?.items ?? []);
+  const imageItem = items.find(item => item.type.startsWith('image/'));
+  if (!imageItem) return;
+
+  e.preventDefault();
+
+  const ext = imageItem.type.split('/')[1].replace('jpeg', 'jpg') || 'png';
+  const blob = imageItem.getAsFile();
+  if (!blob) return;
+
+  const editor = document.getElementById('doc-editor');
+  const msgEl = document.getElementById('edit-save-msg');
+
+  // Insert placeholder at cursor while uploading
+  const placeholder = `![image](uploading...)`;
+  const start = editor.selectionStart;
+  const before = editor.value.slice(0, start);
+  const after = editor.value.slice(editor.selectionEnd);
+  editor.value = before + placeholder + after;
+  editor.selectionStart = editor.selectionEnd = start + placeholder.length;
+
+  msgEl.textContent = 'Uploading image…';
+  msgEl.className = 'text-xs text-gray-400';
+
+  try {
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+
+    const res = await fetch('/api/images/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data: base64, ext }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+
+    const { filename } = await res.json();
+    const mdImage = `![image](./images/${filename})`;
+
+    // Replace placeholder with final markdown
+    editor.value = editor.value.replace(placeholder, mdImage);
+    msgEl.textContent = '';
+  } catch (err) {
+    // Remove placeholder on failure
+    editor.value = editor.value.replace(placeholder, '');
+    msgEl.textContent = 'Image upload failed: ' + err.message;
+    msgEl.className = 'text-xs text-red-500 dark:text-red-400';
+  }
 }
 
 async function saveDocument() {
