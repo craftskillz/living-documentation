@@ -25,20 +25,23 @@
 <body class="h-full bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
 
   <!-- ── Header ── -->
-  <header class="flex items-center justify-between px-6 h-14 border-b border-gray-200 dark:border-gray-800
+  <header class="flex items-center justify-between px-4 h-14 border-b border-gray-200 dark:border-gray-800
                  bg-white dark:bg-gray-900 shadow-sm">
     <div class="flex items-center gap-3">
-      <a href="/" class="text-blue-600 dark:text-blue-400 hover:underline text-sm">
-        &#8592; Back to docs
-      </a>
-      <span class="text-gray-300 dark:text-gray-700">|</span>
-      <h1 class="text-sm font-semibold">Admin Panel</h1>
+      <span class="text-blue-600 dark:text-blue-400 text-xl select-none" aria-hidden="true">&#128218;</span>
+      <h1 class="text-base font-semibold tracking-tight">Admin Panel</h1>
     </div>
 
-    <button id="dark-toggle" title="Toggle dark mode"
-            class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-      <span id="dark-icon" class="text-lg leading-none">☾</span>
-    </button>
+    <div class="flex items-center gap-3">
+      <button id="dark-toggle" title="Toggle dark mode"
+              class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+        <span id="dark-icon" class="text-lg leading-none">☾</span>
+      </button>
+      <span class="text-gray-300 dark:text-gray-700">|</span>
+      <a href="/" class="text-blue-600 dark:text-blue-400 hover:underline text-sm">
+        Back to docs &#8594;
+      </a>
+    </div>
   </header>
 
   <!-- ── Page ── -->

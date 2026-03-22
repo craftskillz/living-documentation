@@ -8,10 +8,8 @@
   <!-- Tailwind CSS + Typography plugin via CDN -->
   <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
 
-  <!-- Highlight.js — syntax highlighting -->
-  <link id="hljs-light" rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" />
-  <link id="hljs-dark" rel="stylesheet" disabled
+  <!-- Highlight.js — syntax highlighting (always dark) -->
+  <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
@@ -49,7 +47,7 @@
       background: #374151; color: #f87171; padding: 0.1em 0.35em;
       border-radius: 0.25em; font-size: 0.875em;
     }
-    .dark .prose pre { background: #1f2937; border: 1px solid #374151; }
+
     .dark .prose blockquote { border-color: #4b5563; color: #9ca3af; }
     .dark .prose hr { border-color: #374151; }
     .dark .prose table th { background: #1f2937; color: #f9fafb; }
@@ -201,8 +199,7 @@
              class="prose prose-gray dark:prose-invert max-w-none
                     prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400
                     prose-code:before:content-none prose-code:after:content-none
-                    prose-pre:bg-gray-50 prose-pre:border prose-pre:border-gray-200
-                    dark:prose-pre:bg-gray-900 dark:prose-pre:border-gray-700">
+                    prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-gray-700">
         </div>
       </article>
 
@@ -241,8 +238,6 @@ function loadDarkPref() {
 function applyDarkMode(dark) {
   document.documentElement.classList.toggle('dark', dark);
   document.getElementById('dark-icon').textContent = dark ? '☀' : '☾';
-  document.getElementById('hljs-light').disabled = dark;
-  document.getElementById('hljs-dark').disabled = !dark;
 }
 
 function setupDarkToggle() {
@@ -250,8 +245,6 @@ function setupDarkToggle() {
     const isDark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('ld-dark', isDark);
     document.getElementById('dark-icon').textContent = isDark ? '☀' : '☾';
-    document.getElementById('hljs-light').disabled = isDark;
-    document.getElementById('hljs-dark').disabled = !isDark;
   });
 }
 

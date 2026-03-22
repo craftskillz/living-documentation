@@ -1,5 +1,8 @@
 # CLAUDE.md — Living Documentation
 
+> **Usage**: This file is the entry point for any task on this project. It contains the critical rules and context needed before making changes.
+> To understand the *why* behind a decision, refer to the relevant ADR in `documentation/adrs/` — load those files only when working on the related domain.
+
 ## Project overview
 
 CLI tool (`living-documentation`) that serves a local Markdown documentation viewer via Express.
@@ -65,3 +68,20 @@ npm run build            # compile + copy assets
 node dist/bin/cli.js ./docs --port 4321 --open
 npx living-documentation ./docs
 ```
+
+---
+
+## npm package
+
+Published on npm as `living-documentation`.
+- Users install/run it with `npx living-documentation ./path/to/docs`
+- The published artifact is `dist/` only (`files` field in `package.json`)
+- `prepublishOnly` runs `npm run build` automatically before each publish
+- Default port: **4321**
+
+## ADR Index
+
+> Load an ADR only when working on the related domain.
+
+| Domain                                                | ADR                                                                   |
+| ----------------------------------------------------- | --------------------------------------------------------------------- |

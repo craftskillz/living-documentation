@@ -8,8 +8,6 @@ No cloud, no database, no build step — just point it at a folder of `.md` file
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
----
-
 ## Features
 
 - **Sidebar** grouped by category, sorted by date (newest first)
@@ -91,13 +89,14 @@ Documents are parsed using this default pattern:
 YYYY_MM_DD_[Category]_title_words.md
 ```
 
-| Part | Example | Parsed as |
-|------|---------|-----------|
-| `2024_01_15` | `2024_01_15` | Date → Jan 15, 2024 |
-| `[DevOps]` | `[DevOps]` | Category → DevOps |
+| Part              | Example           | Parsed as               |
+| ----------------- | ----------------- | ----------------------- |
+| `2024_01_15`      | `2024_01_15`      | Date → Jan 15, 2024     |
+| `[DevOps]`        | `[DevOps]`        | Category → DevOps       |
 | `deploy_pipeline` | `deploy_pipeline` | Title → Deploy Pipeline |
 
 **Full example:**
+
 ```
 2024_01_15_[DevOps]_deploy_pipeline.md
 2024_03_20_[Frontend]_react_hooks_guide.md
@@ -153,13 +152,13 @@ living-documentation/
 
 ## API reference
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/documents` | List all documents with metadata |
-| `GET` | `/api/documents/:id` | Get document content + rendered HTML |
-| `GET` | `/api/documents/search?q=` | Full-text search |
-| `GET` | `/api/config` | Read config |
-| `PUT` | `/api/config` | Update config (`title`, `theme`, `filenamePattern`) |
+| Method | Endpoint                   | Description                                         |
+| ------ | -------------------------- | --------------------------------------------------- |
+| `GET`  | `/api/documents`           | List all documents with metadata                    |
+| `GET`  | `/api/documents/:id`       | Get document content + rendered HTML                |
+| `GET`  | `/api/documents/search?q=` | Full-text search                                    |
+| `GET`  | `/api/config`              | Read config                                         |
+| `PUT`  | `/api/config`              | Update config (`title`, `theme`, `filenamePattern`) |
 
 ---
 
