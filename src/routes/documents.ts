@@ -154,5 +154,46 @@ export function documentsRouter(docsPath: string): Router {
     }
   });
 
+  // PUT /api/documents/:id — update document content
+  router.put('/:id', (req: Request, res: Response) => {
+    const id = decodeURIComponent(req.params.id);
+    const { content } = req.body as { content?: string };
+
+    if (typeof content !== 'string') {
+      return res.status(400).json({ error: 'content is required' });
+    }
+
+    const { extraFiles = [] } = readConfig(docsPath);
+
+    // Extra file: id is an absolute path without .md
+    if (path.isAbsolute(id)) {
+      const filePath = id + '.md';
+      if (!extraFiles.includes(filePath)) {
+        return res.status(403).json({ error: 'Access denied' });
+      }
+      try {
+        fs.writeFileSync(filePath, content, 'utf-8');
+        return res.json({ ok: true });
+      } catch {
+        return res.status(500).json({ error: 'Failed to write document' });
+      }
+    }
+
+    // Normal file inside docsPath
+    const filename = id + '.md';
+    const filePath = safeFilePath(docsPath, filename);
+
+    if (!filePath) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    try {
+      fs.writeFileSync(filePath, content, 'utf-8');
+      return res.json({ ok: true });
+    } catch {
+      return res.status(500).json({ error: 'Failed to write document' });
+    }
+  });
+
   return router;
 }

@@ -175,16 +175,37 @@
             </div>
             <!-- Actions -->
             <div class="flex items-center gap-2 shrink-0">
-              <button onclick="exportPDF()" title="Export as PDF"
-                      class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700
-                             text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                &#128196; Export PDF
-              </button>
-              <button onclick="copyLink()" id="copy-link-btn" title="Copy link"
-                      class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700
-                             text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                &#128279; Copy link
-              </button>
+              <!-- View mode actions -->
+              <div id="view-actions" class="flex items-center gap-2">
+                <button onclick="exportPDF()" title="Export as PDF"
+                        class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700
+                               text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                  &#128196; Export PDF
+                </button>
+                <button onclick="copyLink()" id="copy-link-btn" title="Copy link"
+                        class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700
+                               text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                  &#128279; Copy link
+                </button>
+                <button onclick="enterEditMode()" title="Edit document"
+                        class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700
+                               text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                  &#9998; Edit
+                </button>
+              </div>
+              <!-- Edit mode actions -->
+              <div id="edit-actions" class="hidden flex items-center gap-2">
+                <span id="edit-save-msg" class="text-xs"></span>
+                <button onclick="exitEditMode()" title="Cancel editing"
+                        class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700
+                               text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                  Cancel
+                </button>
+                <button onclick="saveDocument()" title="Save document"
+                        class="text-sm px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">
+                  Save
+                </button>
+              </div>
             </div>
           </div>
         </header>
@@ -201,6 +222,14 @@
                     prose-code:before:content-none prose-code:after:content-none
                     prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-gray-700">
         </div>
+
+        <!-- Markdown editor -->
+        <textarea id="doc-editor"
+                  class="hidden w-full min-h-[70vh] px-4 py-3 text-sm font-mono leading-relaxed
+                         rounded-lg border border-gray-300 dark:border-gray-600
+                         bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
+                  spellcheck="false"></textarea>
       </article>
 
     </main>
@@ -211,6 +240,7 @@
 // ── State ──────────────────────────────────────────────────
 let allDocs = [];
 let currentDocId = null;
+let currentDocContent = '';
 let searchQuery = '';
 let expandedCategories = new Set();
 
@@ -384,6 +414,9 @@ async function openDocument(id, skipHistory = false) {
       return r.json();
     });
 
+    currentDocContent = doc.content;
+    exitEditMode();
+
     document.getElementById('doc-title').textContent = doc.title;
     document.getElementById('doc-category').textContent = doc.category;
     document.getElementById('doc-date').textContent = doc.formattedDate || '';
@@ -463,6 +496,55 @@ async function doSearch(q) {
       .then(r => r.json());
     renderSidebar(results);
   } catch { /* ignore */ }
+}
+
+// ── Edit mode ──────────────────────────────────────────────
+function enterEditMode() {
+  const editor = document.getElementById('doc-editor');
+  editor.value = currentDocContent;
+  document.getElementById('doc-content').classList.add('hidden');
+  editor.classList.remove('hidden');
+  document.getElementById('view-actions').classList.add('hidden');
+  document.getElementById('edit-actions').classList.remove('hidden');
+  editor.focus();
+}
+
+function exitEditMode() {
+  document.getElementById('doc-editor').classList.add('hidden');
+  document.getElementById('doc-content').classList.remove('hidden');
+  document.getElementById('edit-actions').classList.add('hidden');
+  document.getElementById('view-actions').classList.remove('hidden');
+  document.getElementById('edit-save-msg').textContent = '';
+}
+
+async function saveDocument() {
+  if (!currentDocId) return;
+  const content = document.getElementById('doc-editor').value;
+  const msgEl = document.getElementById('edit-save-msg');
+  msgEl.textContent = 'Saving…';
+  msgEl.className = 'text-xs text-gray-400';
+
+  try {
+    const res = await fetch('/api/documents/' + currentDocId, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+
+    currentDocContent = content;
+
+    // Re-fetch rendered HTML and update view
+    const doc = await fetch('/api/documents/' + currentDocId).then(r => r.json());
+    const contentEl = document.getElementById('doc-content');
+    contentEl.innerHTML = doc.html;
+    contentEl.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
+
+    exitEditMode();
+  } catch (err) {
+    msgEl.textContent = 'Save failed: ' + err.message;
+    msgEl.className = 'text-xs text-red-500 dark:text-red-400';
+  }
 }
 
 // ── Helpers ────────────────────────────────────────────────
