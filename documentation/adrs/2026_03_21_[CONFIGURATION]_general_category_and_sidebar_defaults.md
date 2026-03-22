@@ -1,4 +1,4 @@
-# ADR 002 — General Category and Sidebar Collapse Defaults
+`🗄️ ADR : 2026_03_21_[CONFIGURATION]_general_category_and_sidebar_defaults.md`
 
 **Date:** 2026-03-22
 **Status:** Accepted

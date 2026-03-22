@@ -25,12 +25,7 @@ function listDocs(docsPath: string, extraFiles: string[] = [], filenamePattern?:
     .filter((f) => f.toLowerCase().endsWith('.md'))
     .map((filename) => parseFilename(filename, filenamePattern));
 
-  regularDocs.sort((a, b) => {
-    if (a.date && b.date) return b.date.localeCompare(a.date);
-    if (a.date) return -1;
-    if (b.date) return 1;
-    return a.title.localeCompare(b.title);
-  });
+  regularDocs.sort((a, b) => a.filename.localeCompare(b.filename));
 
   return [...extraDocs, ...regularDocs];
 }

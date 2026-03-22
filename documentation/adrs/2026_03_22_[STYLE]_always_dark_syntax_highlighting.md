@@ -1,4 +1,4 @@
-# ADR 003 — Always-Dark Syntax Highlighting
+`🗄️ ADR : 2026_03_22_[STYLE]_always_dark_syntax_highlighting.md`
 
 **Date:** 2026-03-22
 **Status:** Accepted

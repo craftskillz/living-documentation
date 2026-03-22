@@ -10,7 +10,7 @@ No cloud, no database, no build step — just point it at a folder of `.md` file
 
 ## Features
 
-- **Sidebar** grouped by category, sorted by date (newest first)
+- **Sidebar** grouped by category, sorted alphabetically by full filename
 - **General section** — always first, always expanded; holds uncategorized docs and extra files
 - **Extra files** — include Markdown files from outside the docs folder (e.g. `README.md`, `CLAUDE.md`)
 - **Full-text search** — instant filter + server-side content search
@@ -19,6 +19,8 @@ No cloud, no database, no build step — just point it at a folder of `.md` file
 - **Export to PDF** — print-friendly layout via `window.print()`
 - **Deep links** — share a direct URL to any document (`?doc=…`)
 - **Admin panel** — configure title, theme, filename pattern, and extra files in the browser
+- **Inline editing** — edit any document directly in the browser, saves to disk instantly
+- **Image paste** — paste an image from clipboard in the editor; auto-uploaded and inserted as Markdown
 - **Zero frontend build** — Tailwind and highlight.js loaded from CDN
 
 ---
@@ -108,6 +110,8 @@ YYYY_MM_DD_[Category]_title_words.md
 
 Files that don't match the pattern are still shown — they appear under **General** with the filename as the title.
 
+The pattern is **configurable** in the Admin panel. Token order is respected — `[Category]_YYYY_MM_DD_title` is valid. `[Category]` must appear exactly once.
+
 ---
 
 ## Config file
@@ -153,9 +157,10 @@ living-documentation/
 ├── src/
 │   ├── server.ts            Express app
 │   ├── routes/
-│   │   ├── documents.ts     Documents API
+│   │   ├── documents.ts     Documents API (list, search, read, write)
 │   │   ├── config.ts        Config API
-│   │   └── browse.ts        Filesystem browser API
+│   │   ├── browse.ts        Filesystem browser API
+│   │   └── images.ts        Image upload API
 │   ├── lib/
 │   │   ├── parser.ts        Filename parser
 │   │   └── config.ts        Config management
@@ -176,10 +181,12 @@ living-documentation/
 | ------ | -------------------------- | ------------------------------------------------------------------ |
 | `GET`  | `/api/documents`           | List all documents with metadata (includes extra files)            |
 | `GET`  | `/api/documents/:id`       | Get document content + rendered HTML                               |
+| `PUT`  | `/api/documents/:id`       | Save document content to disk                                      |
 | `GET`  | `/api/documents/search?q=` | Full-text search                                                   |
 | `GET`  | `/api/config`              | Read config                                                        |
 | `PUT`  | `/api/config`              | Update config (`title`, `theme`, `filenamePattern`, `extraFiles`)  |
 | `GET`  | `/api/browse?path=`        | List directories and `.md` files at a given filesystem path        |
+| `POST` | `/api/images/upload`       | Upload a base64 image; saved to `DOCS_FOLDER/images/`             |
 
 ---
 

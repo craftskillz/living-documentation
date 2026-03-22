@@ -1,4 +1,4 @@
-# ADR 001 — Extra Files Outside the Docs Folder
+`🗄️ ADR : 2026_03_20_[CONFIGURATION]_link_extra_files_as_documentation.md`
 
 **Date:** 2026-03-22
 **Status:** Accepted
