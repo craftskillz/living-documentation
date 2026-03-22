@@ -151,7 +151,7 @@
           <p class="text-sm text-gray-500 dark:text-gray-500">
             Choose a document from the sidebar to start reading.
           </p>
-          <p class="mt-4 text-xs text-gray-400 dark:text-gray-600 font-mono bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 inline-block">
+          <p id="welcome-pattern" class="mt-4 text-xs text-gray-400 dark:text-gray-600 font-mono bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 inline-block">
             YYYY_MM_DD_[Category]_title.md
           </p>
           <p class="mt-2 text-xs text-gray-400">Expected filename pattern</p>
@@ -254,6 +254,9 @@ async function loadConfig() {
     const cfg = await fetch('/api/config').then(r => r.json());
     if (cfg.title) document.title = cfg.title;
     document.getElementById('app-title').textContent = cfg.title || 'Living Documentation';
+    if (cfg.filenamePattern) {
+      document.getElementById('welcome-pattern').textContent = cfg.filenamePattern + '.md';
+    }
   } catch { /* non-fatal */ }
 }
 

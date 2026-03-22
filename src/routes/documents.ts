@@ -5,13 +5,13 @@ import { marked } from 'marked';
 import { parseFilename, DocMetadata } from '../lib/parser';
 import { readConfig } from '../lib/config';
 
-function listDocs(docsPath: string, extraFiles: string[] = []): DocMetadata[] {
+function listDocs(docsPath: string, extraFiles: string[] = [], filenamePattern?: string): DocMetadata[] {
   // Extra files first, in config order, always General
   const extraDocs: DocMetadata[] = [];
   for (const filePath of extraFiles) {
     if (!filePath.endsWith('.md') || !fs.existsSync(filePath)) continue;
     const filename = path.basename(filePath);
-    const meta = parseFilename(filename);
+    const meta = parseFilename(filename, filenamePattern);
     extraDocs.push({
       ...meta,
       id: encodeURIComponent(filePath.slice(0, -3)),
@@ -23,7 +23,7 @@ function listDocs(docsPath: string, extraFiles: string[] = []): DocMetadata[] {
   const regularDocs = fs
     .readdirSync(docsPath)
     .filter((f) => f.toLowerCase().endsWith('.md'))
-    .map((filename) => parseFilename(filename));
+    .map((filename) => parseFilename(filename, filenamePattern));
 
   regularDocs.sort((a, b) => {
     if (a.date && b.date) return b.date.localeCompare(a.date);
@@ -60,8 +60,8 @@ export function documentsRouter(docsPath: string): Router {
   // GET /api/documents — list all docs with metadata
   router.get('/', (_req: Request, res: Response) => {
     try {
-      const { extraFiles = [] } = readConfig(docsPath);
-      res.json(listDocs(docsPath, extraFiles));
+      const { extraFiles = [], filenamePattern } = readConfig(docsPath);
+      res.json(listDocs(docsPath, extraFiles, filenamePattern));
     } catch {
       res.status(500).json({ error: 'Failed to list documents' });
     }
@@ -73,8 +73,8 @@ export function documentsRouter(docsPath: string): Router {
     if (!query) return res.json([]);
 
     try {
-      const { extraFiles = [] } = readConfig(docsPath);
-      const docs = listDocs(docsPath, extraFiles);
+      const { extraFiles = [], filenamePattern } = readConfig(docsPath);
+      const docs = listDocs(docsPath, extraFiles, filenamePattern);
       const results: (DocMetadata & { excerpt: string })[] = [];
 
       for (const doc of docs) {
@@ -110,7 +110,7 @@ export function documentsRouter(docsPath: string): Router {
   // GET /api/documents/:id — get a single document (content + rendered HTML)
   router.get('/:id', async (req: Request, res: Response) => {
     const id = decodeURIComponent(req.params.id);
-    const { extraFiles = [] } = readConfig(docsPath);
+    const { extraFiles = [], filenamePattern } = readConfig(docsPath);
 
     // Extra file: id is an absolute path without .md
     if (path.isAbsolute(id)) {
@@ -123,7 +123,7 @@ export function documentsRouter(docsPath: string): Router {
       }
       try {
         const content = fs.readFileSync(filePath, 'utf-8');
-        const meta = parseFilename(path.basename(filePath));
+        const meta = parseFilename(path.basename(filePath), filenamePattern);
         const html = marked.parse(content) as string;
         res.json({ ...meta, id: req.params.id, category: 'General', content, html });
       } catch {
@@ -146,7 +146,7 @@ export function documentsRouter(docsPath: string): Router {
 
     try {
       const content = fs.readFileSync(filePath, 'utf-8');
-      const metadata = parseFilename(filename);
+      const metadata = parseFilename(filename, filenamePattern);
       const html = marked.parse(content) as string;
       res.json({ ...metadata, content, html });
     } catch {

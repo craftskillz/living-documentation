@@ -153,7 +153,7 @@
                   placeholder="YYYY_MM_DD_[Category]_title" />
                 <p class="text-xs text-gray-400 dark:text-gray-500">
                   Parsed for date, category, and title.
-                  <span class="font-mono bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-1 rounded">YYYY_MM_DD_[Category]_title.md</span>
+                  <span id="pattern-desc-example" class="font-mono bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-1 rounded">YYYY_MM_DD_[Category]_title.md</span>
                 </p>
               </div>
             </div>
@@ -220,12 +220,15 @@
 
       async function saveConfig(e) {
         e.preventDefault();
+        const filenamePattern = document.getElementById("field-pattern").value.trim();
+        if (filenamePattern && !/\[Category\]/i.test(filenamePattern)) {
+          showMsg("Filename pattern must contain [Category]", "error");
+          return;
+        }
         const payload = {
           title: document.getElementById("field-title").value.trim(),
           theme: document.getElementById("field-theme").value,
-          filenamePattern: document
-            .getElementById("field-pattern")
-            .value.trim(),
+          filenamePattern,
         };
 
         try {
@@ -263,29 +266,40 @@
         "readme.md",
       ];
 
-      // Parse like server does
-      const FULL_PAT = /^(\d{4}_\d{2}_\d{2})_\[([^\]]+)\]_(.+)\.md$/i;
-      const DATE_ONLY = /^(\d{4}_\d{2}_\d{2})_(.+)\.md$/i;
-
-      function parsePreview(filename) {
-        const full = filename.match(FULL_PAT);
-        if (full) {
-          const [, d, cat, t] = full;
-          return {
-            date: d.replace(/_/g, "-"),
-            category: cat,
-            title: titleCase(t),
-            match: true,
-          };
+      function buildPatternsFromFormat(patternStr) {
+        if (!patternStr) patternStr = "YYYY_MM_DD_[Category]_title";
+        const hasDate = /YYYY.*MM.*DD/.test(patternStr);
+        const hasCategory = /\[Category\]/i.test(patternStr);
+        const dateGroup = "(\\d{4}_\\d{2}_\\d{2})";
+        const catGroup = "\\[([^\\]]+)\\]";
+        let full = null, dateOnly = null;
+        if (hasDate && hasCategory) {
+          full = new RegExp("^" + dateGroup + "_" + catGroup + "_(.+)\\.md$", "i");
+          dateOnly = new RegExp("^" + dateGroup + "_(.+)\\.md$", "i");
+        } else if (hasDate) {
+          dateOnly = new RegExp("^" + dateGroup + "_(.+)\\.md$", "i");
+        } else if (hasCategory) {
+          full = new RegExp("^" + catGroup + "_(.+)\\.md$", "i");
         }
-        const d = filename.match(DATE_ONLY);
-        if (d) {
-          return {
-            date: d[1].replace(/_/g, "-"),
-            category: "General",
-            title: titleCase(d[2]),
-            match: true,
-          };
+        return { full, dateOnly, hasDate, hasCategory };
+      }
+
+      function parsePreview(filename, patterns) {
+        if (patterns.full) {
+          const m = filename.match(patterns.full);
+          if (m) {
+            if (patterns.hasDate && patterns.hasCategory) {
+              return { date: m[1].replace(/_/g, "-"), category: m[2], title: titleCase(m[3]), match: true };
+            } else if (patterns.hasCategory) {
+              return { date: null, category: m[1], title: titleCase(m[2]), match: true };
+            }
+          }
+        }
+        if (patterns.dateOnly) {
+          const m = filename.match(patterns.dateOnly);
+          if (m) {
+            return { date: m[1].replace(/_/g, "-"), category: "General", title: titleCase(m[2]), match: true };
+          }
         }
         return {
           date: null,
@@ -303,9 +317,13 @@
       }
 
       function updatePreview() {
+        const patternVal = document.getElementById("field-pattern").value.trim();
+        const descSpan = document.getElementById("pattern-desc-example");
+        descSpan.textContent = (patternVal || "YYYY_MM_DD_[Category]_title") + ".md";
+        const patterns = buildPatternsFromFormat(patternVal);
         const rows = document.getElementById("preview-rows");
         rows.innerHTML = EXAMPLES.map((f) => {
-          const p = parsePreview(f);
+          const p = parsePreview(f, patterns);
           return `
       <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3">
         <p class="font-mono text-xs text-gray-500 dark:text-gray-400 mb-2 break-all">${esc(f)}</p>
