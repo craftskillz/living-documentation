@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import path from 'path';
 import { readConfig, writeConfig, LivingDocConfig } from '../lib/config';
 
 export function configRouter(docsPath: string): Router {
@@ -28,6 +29,15 @@ export function configRouter(docsPath: string): Router {
         if (key in patch) {
           (safe as Record<string, unknown>)[key] = patch[key];
         }
+      }
+      // extraFiles: only absolute .md paths
+      if ('extraFiles' in patch && Array.isArray(patch.extraFiles)) {
+        safe.extraFiles = (patch.extraFiles as unknown[]).filter(
+          (f): f is string =>
+            typeof f === 'string' &&
+            path.isAbsolute(f) &&
+            f.toLowerCase().endsWith('.md'),
+        );
       }
       const updated = writeConfig(docsPath, safe);
       res.json(updated);

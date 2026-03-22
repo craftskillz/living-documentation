@@ -3,6 +3,7 @@ import path from 'path';
 import { exec } from 'child_process';
 import { documentsRouter } from './routes/documents';
 import { configRouter } from './routes/config';
+import { browseRouter } from './routes/browse';
 import { writeConfig } from './lib/config';
 
 export interface ServerOptions {
@@ -26,6 +27,7 @@ export async function startServer({
   // API
   app.use('/api/documents', documentsRouter(docsPath));
   app.use('/api/config', configRouter(docsPath));
+  app.use('/api/browse', browseRouter());
 
   // Static frontend assets
   const frontendPath = path.join(__dirname, 'frontend');

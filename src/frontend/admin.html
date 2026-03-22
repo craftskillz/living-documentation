@@ -1,248 +1,402 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="h-full">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin — Living Documentation</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin — Living Documentation</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 
-  <script>
-    tailwind.config = { darkMode: 'class', theme: { extend: {} } };
-  </script>
+    <script>
+      tailwind.config = { darkMode: "class", theme: { extend: {} } };
+    </script>
 
-  <style>
-    .field-label { @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1; }
-    .field-input {
-      @apply w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700
+    <style>
+      .field-label {
+        @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
+      }
+      .field-input {
+        @apply w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700
              bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
              placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm;
-    }
-    .field-hint { @apply mt-1 text-xs text-gray-400 dark:text-gray-500; }
-  </style>
-</head>
+      }
+      .field-hint {
+        @apply mt-1 text-xs text-gray-400 dark:text-gray-500;
+      }
+    </style>
+  </head>
 
-<body class="h-full bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
-
-  <!-- ── Header ── -->
-  <header class="flex items-center justify-between px-4 h-14 border-b border-gray-200 dark:border-gray-800
-                 bg-white dark:bg-gray-900 shadow-sm">
-    <div class="flex items-center gap-3">
-      <span class="text-blue-600 dark:text-blue-400 text-xl select-none" aria-hidden="true">&#128218;</span>
-      <h1 class="text-base font-semibold tracking-tight">Admin Panel</h1>
-    </div>
-
-    <div class="flex items-center gap-3">
-      <button id="dark-toggle" title="Toggle dark mode"
-              class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-        <span id="dark-icon" class="text-lg leading-none">☾</span>
-      </button>
-      <span class="text-gray-300 dark:text-gray-700">|</span>
-      <a href="/" class="text-blue-600 dark:text-blue-400 hover:underline text-sm">
-        Back to docs &#8594;
-      </a>
-    </div>
-  </header>
-
-  <!-- ── Page ── -->
-  <main class="max-w-2xl mx-auto px-6 py-10">
-
-    <!-- Title -->
-    <div class="mb-8">
-      <h2 class="text-xl font-bold text-gray-900 dark:text-gray-50">Configuration</h2>
-      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-        Settings are saved to <code class="text-xs bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded">.living-doc.json</code>
-        in your docs folder.
-      </p>
-    </div>
-
-    <!-- ── Form ── -->
-    <form id="config-form" class="space-y-6" novalidate>
-
-      <!-- Read-only info card -->
-      <div class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5">
-        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Server Info</h3>
-        <dl class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
-          <div>
-            <dt class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Docs Folder</dt>
-            <dd id="info-folder" class="font-mono text-xs text-gray-700 dark:text-gray-300 break-all">—</dd>
-          </div>
-          <div>
-            <dt class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Port</dt>
-            <dd id="info-port" class="font-mono text-xs text-gray-700 dark:text-gray-300">—</dd>
-          </div>
-        </dl>
+  <body
+    class="h-full bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100"
+  >
+    <!-- ── Header ── -->
+    <header
+      class="flex items-center justify-between px-4 h-14 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm"
+    >
+      <div class="flex items-center gap-3">
+        <span
+          class="text-blue-600 dark:text-blue-400 text-xl select-none"
+          aria-hidden="true"
+          >&#128218;</span
+        >
+        <h1 class="text-base font-semibold tracking-tight">Admin Panel</h1>
       </div>
 
-      <!-- Editable settings -->
-      <div class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 space-y-5">
-        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Appearance & Metadata</h3>
-
-        <!-- Site Title -->
-        <div>
-          <label class="field-label" for="field-title">Site Title</label>
-          <input id="field-title" name="title" type="text" class="field-input"
-                 placeholder="Living Documentation" />
-          <p class="field-hint">Displayed in the browser tab and sidebar header.</p>
-        </div>
-
-        <!-- Theme -->
-        <div>
-          <label class="field-label" for="field-theme">Default Theme</label>
-          <select id="field-theme" name="theme" class="field-input">
-            <option value="system">System (follow OS preference)</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-          <p class="field-hint">Users can always override this with the toggle button.</p>
-        </div>
-
-        <!-- Filename Pattern -->
-        <div>
-          <label class="field-label" for="field-pattern">Filename Pattern</label>
-          <input id="field-pattern" name="filenamePattern" type="text" class="field-input"
-                 placeholder="YYYY_MM_DD_[Category]_title" />
-          <p class="field-hint">
-            Documents matching this pattern are parsed for date, category, and title.
-            <span class="font-mono bg-gray-100 dark:bg-gray-800 px-1 rounded">YYYY_MM_DD_[Category]_title.md</span>
-          </p>
-        </div>
-      </div>
-
-      <!-- Pattern preview -->
-      <div id="pattern-preview"
-           class="rounded-xl border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 p-5">
-        <h3 class="text-sm font-semibold text-blue-700 dark:text-blue-400 mb-3">Pattern Preview</h3>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">How your pattern parses example filenames:</p>
-        <div id="preview-rows" class="space-y-2 text-sm"></div>
-      </div>
-
-      <!-- Submit -->
-      <div class="flex items-center justify-between">
-        <div id="save-msg" class="text-sm"></div>
-        <button type="submit"
-                class="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm
-                       transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
-          Save changes
+      <div class="flex items-center gap-3">
+        <button
+          id="dark-toggle"
+          title="Toggle dark mode"
+          class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        >
+          <span id="dark-icon" class="text-lg leading-none">☾</span>
         </button>
+        <span class="text-gray-300 dark:text-gray-700">|</span>
+        <a
+          href="/"
+          class="text-blue-600 dark:text-blue-400 hover:underline text-sm"
+        >
+          Back to docs &#8594;
+        </a>
       </div>
-    </form>
+    </header>
 
-  </main>
+    <!-- ── Page ── -->
+    <main class="max-w-2xl mx-auto px-6 py-10">
+      <!-- Title -->
+      <div class="mb-8">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-gray-50">
+          Configuration
+        </h2>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          Settings are saved to
+          <code
+            class="text-xs bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded"
+            >.living-doc.json</code
+          >
+          in your docs folder.
+        </p>
+      </div>
 
-<script>
-// ── Boot ───────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', async () => {
-  applyDarkMode(loadDarkPref());
-  setupDarkToggle();
-  await loadConfig();
-  setupPatternPreview();
-  document.getElementById('config-form').addEventListener('submit', saveConfig);
-});
+      <!-- ── Form ── -->
+      <form id="config-form" class="space-y-6" novalidate>
+        <!-- Read-only info card -->
+        <div
+          class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5"
+        >
+          <h3
+            class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4"
+          >
+            Server Info
+          </h3>
+          <dl class="grid grid-cols-[1fr_auto] gap-x-6 gap-y-3 text-sm">
+            <div>
+              <dt class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">
+                Docs Folder
+              </dt>
+              <dd
+                id="info-folder"
+                class="font-mono text-xs text-gray-700 dark:text-gray-300 break-all"
+              >
+                —
+              </dd>
+            </div>
+            <div>
+              <dt class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">
+                Port
+              </dt>
+              <dd
+                id="info-port"
+                class="font-mono text-xs text-gray-700 dark:text-gray-300"
+              >
+                —
+              </dd>
+            </div>
+          </dl>
+        </div>
 
-// ── Dark mode ──────────────────────────────────────────────
-function loadDarkPref() {
-  const saved = localStorage.getItem('ld-dark');
-  if (saved !== null) return saved === 'true';
-  return window.matchMedia('(prefers-color-scheme: dark)').matches;
-}
-function applyDarkMode(dark) {
-  document.documentElement.classList.toggle('dark', dark);
-  document.getElementById('dark-icon').textContent = dark ? '☀' : '☾';
-}
-function setupDarkToggle() {
-  document.getElementById('dark-toggle').addEventListener('click', () => {
-    const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('ld-dark', isDark);
-    document.getElementById('dark-icon').textContent = isDark ? '☀' : '☾';
-  });
-}
+        <!-- Extra Files -->
+        <div
+          class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 space-y-4"
+        >
+          <div>
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+              General — Extra Files
+            </h3>
+            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              Add Markdown files from outside the docs folder to the General
+              section.
+            </p>
+          </div>
 
-// ── Config ─────────────────────────────────────────────────
-async function loadConfig() {
-  try {
-    const cfg = await fetch('/api/config').then(r => r.json());
-    document.getElementById('info-folder').textContent = cfg.docsFolder || '—';
-    document.getElementById('info-port').textContent   = cfg.port || '—';
-    document.getElementById('field-title').value       = cfg.title || '';
-    document.getElementById('field-theme').value       = cfg.theme || 'system';
-    document.getElementById('field-pattern').value     = cfg.filenamePattern || '';
-    updatePreview(cfg.filenamePattern);
-  } catch {
-    showMsg('Failed to load config.', 'error');
-  }
-}
+          <!-- File browser -->
+          <div
+            class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
+          >
+            <div
+              class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"
+            >
+              <button
+                id="browse-up"
+                onclick="browseUp()"
+                class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0"
+              >
+                &#8593; Up
+              </button>
+              <span
+                id="browse-path"
+                class="font-mono text-xs text-gray-400 dark:text-gray-500 truncate flex-1 text-right"
+              ></span>
+            </div>
+            <div
+              id="browse-list"
+              class="divide-y divide-gray-100 dark:divide-gray-800 max-h-52 overflow-y-auto"
+            ></div>
+          </div>
 
-async function saveConfig(e) {
-  e.preventDefault();
-  const payload = {
-    title:           document.getElementById('field-title').value.trim(),
-    theme:           document.getElementById('field-theme').value,
-    filenamePattern: document.getElementById('field-pattern').value.trim(),
-  };
+          <!-- Added files -->
+          <div>
+            <p
+              class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2"
+            >
+              Added files
+            </p>
+            <div id="extra-files-list" class="space-y-1"></div>
+            <p id="extra-files-empty" class="text-xs text-gray-400 italic">
+              No extra files added yet.
+            </p>
+          </div>
+        </div>
 
-  try {
-    const res = await fetch('/api/config', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) throw new Error(await res.text());
-    showMsg('Saved!', 'ok');
-  } catch (err) {
-    showMsg('Save failed: ' + err.message, 'error');
-  }
-}
+        <!-- Editable settings -->
+        <div
+          class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 space-y-5"
+        >
+          <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+            Appearance & Metadata
+          </h3>
 
-function showMsg(text, type) {
-  const el = document.getElementById('save-msg');
-  el.textContent = text;
-  el.className = 'text-sm ' + (type === 'ok'
-    ? 'text-green-600 dark:text-green-400'
-    : 'text-red-600 dark:text-red-400');
-  if (type === 'ok') setTimeout(() => { el.textContent = ''; }, 3000);
-}
+          <!-- Site Title -->
+          <div>
+            <label class="field-label" for="field-title">Site Title</label>
+            <input
+              id="field-title"
+              name="title"
+              type="text"
+              class="field-input"
+              placeholder="Living Documentation"
+            />
+            <p class="field-hint">
+              Displayed in the browser tab and sidebar header.
+            </p>
+          </div>
 
-// ── Pattern preview ────────────────────────────────────────
-const EXAMPLES = [
-  '2024_01_15_[DevOps]_deploy_pipeline.md',
-  '2023_11_03_[Frontend]_react_hooks_guide.md',
-  '2025_06_20_meeting_notes.md',
-  'readme.md',
-];
+          <!-- Theme -->
+          <div>
+            <label class="field-label" for="field-theme">Default Theme</label>
+            <select id="field-theme" name="theme" class="field-input">
+              <option value="system">System (follow OS preference)</option>
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+            <p class="field-hint">
+              Users can always override this with the toggle button.
+            </p>
+          </div>
 
-// Parse like server does
-const FULL_PAT    = /^(\d{4}_\d{2}_\d{2})_\[([^\]]+)\]_(.+)\.md$/i;
-const DATE_ONLY   = /^(\d{4}_\d{2}_\d{2})_(.+)\.md$/i;
+          <!-- Filename Pattern -->
+          <div>
+            <label class="field-label" for="field-pattern"
+              >Filename Pattern</label
+            >
+            <input
+              id="field-pattern"
+              name="filenamePattern"
+              type="text"
+              class="field-input"
+              placeholder="YYYY_MM_DD_[Category]_title"
+            />
+            <p class="field-hint">
+              Documents matching this pattern are parsed for date, category, and
+              title.
+              <span class="font-mono bg-gray-100 dark:bg-gray-800 px-1 rounded"
+                >YYYY_MM_DD_[Category]_title.md</span
+              >
+            </p>
+          </div>
+        </div>
 
-function parsePreview(filename) {
-  const full = filename.match(FULL_PAT);
-  if (full) {
-    const [, d, cat, t] = full;
-    return { date: d.replace(/_/g,'-'), category: cat, title: titleCase(t), match: true };
-  }
-  const d = filename.match(DATE_ONLY);
-  if (d) {
-    return { date: d[1].replace(/_/g,'-'), category: 'Uncategorized', title: titleCase(d[2]), match: true };
-  }
-  return { date: null, category: 'Uncategorized', title: filename.replace('.md',''), match: false };
-}
+        <!-- Pattern preview -->
+        <div
+          id="pattern-preview"
+          class="rounded-xl border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 p-5"
+        >
+          <h3
+            class="text-sm font-semibold text-blue-700 dark:text-blue-400 mb-3"
+          >
+            Pattern Preview
+          </h3>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
+            How your pattern parses example filenames:
+          </p>
+          <div id="preview-rows" class="space-y-2 text-sm"></div>
+        </div>
 
-function titleCase(s) {
-  return s.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-}
+        <!-- Submit -->
+        <div class="flex items-center justify-between">
+          <div id="save-msg" class="text-sm"></div>
+          <button
+            type="submit"
+            class="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+          >
+            Save changes
+          </button>
+        </div>
+      </form>
+    </main>
 
-function updatePreview() {
-  const rows = document.getElementById('preview-rows');
-  rows.innerHTML = EXAMPLES.map(f => {
-    const p = parsePreview(f);
-    return `
+    <script>
+      // ── Boot ───────────────────────────────────────────────────
+      document.addEventListener("DOMContentLoaded", async () => {
+        applyDarkMode(loadDarkPref());
+        setupDarkToggle();
+        await loadConfig();
+        setupPatternPreview();
+        document
+          .getElementById("config-form")
+          .addEventListener("submit", saveConfig);
+      });
+
+      // ── Dark mode ──────────────────────────────────────────────
+      function loadDarkPref() {
+        const saved = localStorage.getItem("ld-dark");
+        if (saved !== null) return saved === "true";
+        return window.matchMedia("(prefers-color-scheme: dark)").matches;
+      }
+      function applyDarkMode(dark) {
+        document.documentElement.classList.toggle("dark", dark);
+        document.getElementById("dark-icon").textContent = dark ? "☀" : "☾";
+      }
+      function setupDarkToggle() {
+        document.getElementById("dark-toggle").addEventListener("click", () => {
+          const isDark = document.documentElement.classList.toggle("dark");
+          localStorage.setItem("ld-dark", isDark);
+          document.getElementById("dark-icon").textContent = isDark ? "☀" : "☾";
+        });
+      }
+
+      // ── Config ─────────────────────────────────────────────────
+      async function loadConfig() {
+        try {
+          const cfg = await fetch("/api/config").then((r) => r.json());
+          document.getElementById("info-folder").textContent =
+            cfg.docsFolder || "—";
+          document.getElementById("info-port").textContent = cfg.port || "—";
+          document.getElementById("field-title").value = cfg.title || "";
+          document.getElementById("field-theme").value = cfg.theme || "system";
+          document.getElementById("field-pattern").value =
+            cfg.filenamePattern || "";
+          updatePreview(cfg.filenamePattern);
+          initExtraFiles(cfg);
+        } catch {
+          showMsg("Failed to load config.", "error");
+        }
+      }
+
+      async function saveConfig(e) {
+        e.preventDefault();
+        const payload = {
+          title: document.getElementById("field-title").value.trim(),
+          theme: document.getElementById("field-theme").value,
+          filenamePattern: document
+            .getElementById("field-pattern")
+            .value.trim(),
+        };
+
+        try {
+          const res = await fetch("/api/config", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) throw new Error(await res.text());
+          showMsg("Saved!", "ok");
+        } catch (err) {
+          showMsg("Save failed: " + err.message, "error");
+        }
+      }
+
+      function showMsg(text, type) {
+        const el = document.getElementById("save-msg");
+        el.textContent = text;
+        el.className =
+          "text-sm " +
+          (type === "ok"
+            ? "text-green-600 dark:text-green-400"
+            : "text-red-600 dark:text-red-400");
+        if (type === "ok")
+          setTimeout(() => {
+            el.textContent = "";
+          }, 3000);
+      }
+
+      // ── Pattern preview ────────────────────────────────────────
+      const EXAMPLES = [
+        "2024_01_15_[DevOps]_deploy_pipeline.md",
+        "2023_11_03_[Frontend]_react_hooks_guide.md",
+        "2025_06_20_meeting_notes.md",
+        "readme.md",
+      ];
+
+      // Parse like server does
+      const FULL_PAT = /^(\d{4}_\d{2}_\d{2})_\[([^\]]+)\]_(.+)\.md$/i;
+      const DATE_ONLY = /^(\d{4}_\d{2}_\d{2})_(.+)\.md$/i;
+
+      function parsePreview(filename) {
+        const full = filename.match(FULL_PAT);
+        if (full) {
+          const [, d, cat, t] = full;
+          return {
+            date: d.replace(/_/g, "-"),
+            category: cat,
+            title: titleCase(t),
+            match: true,
+          };
+        }
+        const d = filename.match(DATE_ONLY);
+        if (d) {
+          return {
+            date: d[1].replace(/_/g, "-"),
+            category: "General",
+            title: titleCase(d[2]),
+            match: true,
+          };
+        }
+        return {
+          date: null,
+          category: "General",
+          title: filename.replace(".md", ""),
+          match: false,
+        };
+      }
+
+      function titleCase(s) {
+        return s
+          .split("_")
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+          .join(" ");
+      }
+
+      function updatePreview() {
+        const rows = document.getElementById("preview-rows");
+        rows.innerHTML = EXAMPLES.map((f) => {
+          const p = parsePreview(f);
+          return `
       <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3">
         <p class="font-mono text-xs text-gray-500 dark:text-gray-400 mb-2 break-all">${esc(f)}</p>
         <div class="grid grid-cols-3 gap-2 text-xs">
           <div>
             <span class="text-gray-400 block mb-0.5">Date</span>
-            <span class="${p.date ? 'text-green-600 dark:text-green-400' : 'text-gray-400'}">${p.date || 'none'}</span>
+            <span class="${p.date ? "text-green-600 dark:text-green-400" : "text-gray-400"}">${p.date || "none"}</span>
           </div>
           <div>
             <span class="text-gray-400 block mb-0.5">Category</span>
@@ -254,18 +408,181 @@ function updatePreview() {
           </div>
         </div>
       </div>`;
-  }).join('');
-}
+        }).join("");
+      }
 
-function setupPatternPreview() {
-  document.getElementById('field-pattern').addEventListener('input', updatePreview);
-}
+      function setupPatternPreview() {
+        document
+          .getElementById("field-pattern")
+          .addEventListener("input", updatePreview);
+      }
 
-function esc(s) {
-  return String(s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-</script>
-</body>
+      function esc(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      // ── Extra Files / Browser ──────────────────────────────────
+      let extraFiles = [];
+      let browseParent = null;
+      let browseCurrent = "";
+      let docsFolder = "";
+
+      function initExtraFiles(cfg) {
+        extraFiles = cfg.extraFiles || [];
+        docsFolder = cfg.docsFolder || "";
+        renderExtraFiles();
+        loadBrowse(cfg.docsFolder || "/");
+      }
+
+      function relativeDisplay(filePath) {
+        if (!docsFolder) return filePath;
+        const fromParts = docsFolder.split("/").filter(Boolean);
+        const toParts = filePath.split("/").filter(Boolean);
+        let common = 0;
+        while (
+          common < fromParts.length &&
+          common < toParts.length &&
+          fromParts[common] === toParts[common]
+        )
+          common++;
+        const ups = fromParts.length - common;
+        const downs = toParts.slice(common).join("/");
+        const rel = "../".repeat(ups) + downs;
+        return "$DOCS_FOLDER/" + rel;
+      }
+
+      async function loadBrowse(dirPath) {
+        const list = document.getElementById("browse-list");
+        list.innerHTML =
+          '<p class="px-3 py-4 text-xs text-gray-400 text-center">Loading…</p>';
+        try {
+          const data = await fetch(
+            "/api/browse?path=" + encodeURIComponent(dirPath),
+          ).then((r) => r.json());
+          browseCurrent = data.current;
+          browseParent = data.parent;
+          document.getElementById("browse-path").textContent = relativeDisplay(data.current);
+          document.getElementById("browse-up").disabled = !data.parent;
+
+          const rows = [];
+
+          for (const dir of data.dirs) {
+            rows.push(`
+        <button data-path="${esc(dir.path)}" onclick="loadBrowse(this.dataset.path)"
+                class="w-full flex items-center gap-2 px-3 py-2 text-sm text-left
+                       hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+          <span class="text-gray-400 shrink-0">📁</span>
+          <span class="text-gray-700 dark:text-gray-300 truncate">${esc(dir.name)}</span>
+        </button>`);
+          }
+
+          for (const file of data.files) {
+            const added = extraFiles.includes(file.path);
+            rows.push(`
+        <div class="flex items-center justify-between gap-2 px-3 py-2 text-sm
+                    hover:bg-gray-50 dark:hover:bg-gray-800">
+          <span class="flex items-center gap-2 text-gray-700 dark:text-gray-300 min-w-0">
+            <span class="text-gray-400 shrink-0">📄</span>
+            <span class="truncate">${esc(file.name)}</span>
+          </span>
+          ${
+            added
+              ? '<span class="text-xs text-green-600 dark:text-green-400 shrink-0">Added</span>'
+              : `<button data-path="${esc(file.path)}" onclick="addExtraFile(this.dataset.path)"
+                       class="text-xs text-blue-600 dark:text-blue-400 hover:underline shrink-0">+ Add</button>`
+          }
+        </div>`);
+          }
+
+          if (rows.length === 0) {
+            list.innerHTML =
+              '<p class="px-3 py-4 text-xs text-gray-400 text-center">Empty directory</p>';
+          } else {
+            list.innerHTML = rows.join("");
+          }
+        } catch {
+          list.innerHTML =
+            '<p class="px-3 py-4 text-xs text-red-400 text-center">Cannot read directory</p>';
+        }
+      }
+
+      function browseUp() {
+        if (browseParent) loadBrowse(browseParent);
+      }
+
+      async function addExtraFile(filePath) {
+        if (extraFiles.includes(filePath)) return;
+        extraFiles = [...extraFiles, filePath];
+        await saveExtraFiles();
+        renderExtraFiles();
+        loadBrowse(browseCurrent);
+      }
+
+      async function removeExtraFile(filePath) {
+        extraFiles = extraFiles.filter((f) => f !== filePath);
+        await saveExtraFiles();
+        renderExtraFiles();
+        loadBrowse(browseCurrent);
+      }
+
+      async function saveExtraFiles() {
+        try {
+          const res = await fetch("/api/config", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ extraFiles }),
+          });
+          if (!res.ok) throw new Error(await res.text());
+        } catch (err) {
+          showMsg("Failed to save: " + err.message, "error");
+        }
+      }
+
+      function moveExtraFile(index, direction) {
+        const target = index + direction;
+        if (target < 0 || target >= extraFiles.length) return;
+        const next = [...extraFiles];
+        [next[index], next[target]] = [next[target], next[index]];
+        extraFiles = next;
+        saveExtraFiles();
+        renderExtraFiles();
+      }
+
+      function renderExtraFiles() {
+        const list = document.getElementById("extra-files-list");
+        const empty = document.getElementById("extra-files-empty");
+        if (extraFiles.length === 0) {
+          list.innerHTML = "";
+          empty.style.display = "";
+          return;
+        }
+        empty.style.display = "none";
+        list.innerHTML = extraFiles
+          .map(
+            (f, i) => `
+    <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800">
+      <div class="flex flex-col shrink-0">
+        <button data-i="${i}" data-d="-1" onclick="moveExtraFile(+this.dataset.i, +this.dataset.d)"
+                class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 leading-none disabled:opacity-20"
+                ${i === 0 ? "disabled" : ""}>&#8593;</button>
+        <button data-i="${i}" data-d="1" onclick="moveExtraFile(+this.dataset.i, +this.dataset.d)"
+                class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 leading-none disabled:opacity-20"
+                ${i === extraFiles.length - 1 ? "disabled" : ""}>&#8595;</button>
+      </div>
+      <div class="overflow-x-auto flex-1 min-w-0">
+        <span class="font-mono text-xs text-gray-600 dark:text-gray-400 whitespace-nowrap" title="${esc(f)}">${esc(relativeDisplay(f))}</span>
+      </div>
+      <button data-path="${esc(f)}" onclick="removeExtraFile(this.dataset.path)"
+              class="text-xs text-red-500 hover:text-red-700 dark:hover:text-red-400 shrink-0">Remove</button>
+    </div>`,
+          )
+          .join("");
+      }
+    </script>
+  </body>
 </html>

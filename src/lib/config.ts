@@ -7,6 +7,7 @@ export interface LivingDocConfig {
   title: string;
   theme: 'light' | 'dark' | 'system';
   port: number;
+  extraFiles: string[];
 }
 
 const CONFIG_FILENAME = '.living-doc.json';
@@ -17,6 +18,7 @@ const DEFAULTS: LivingDocConfig = {
   title: 'Living Documentation',
   theme: 'system',
   port: 4321,
+  extraFiles: [],
 };
 
 export function getConfigPath(docsPath: string): string {

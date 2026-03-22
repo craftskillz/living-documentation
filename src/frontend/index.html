@@ -287,15 +287,15 @@ function renderSidebar(docs) {
     groups[doc.category].push(doc);
   }
 
-  // Sort categories: Uncategorized last
+  // Sort categories: General first, then alphabetical
   const cats = Object.keys(groups).sort((a, b) => {
-    if (a === 'Uncategorized') return 1;
-    if (b === 'Uncategorized') return -1;
+    if (a === 'General') return -1;
+    if (b === 'General') return 1;
     return a.localeCompare(b);
   });
 
-  // Auto-expand all initially
-  if (expandedCategories.size === 0) cats.forEach(c => expandedCategories.add(c));
+  // Auto-expand only General initially
+  if (expandedCategories.size === 0) expandedCategories.add('General');
 
   tree.innerHTML = cats.map(cat => {
     const catDocs = groups[cat];

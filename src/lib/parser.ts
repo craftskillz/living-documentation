@@ -56,7 +56,7 @@ export function parseFilename(filename: string): DocMetadata {
       id,
       filename,
       title: titleCase(titlePart),
-      category: 'Uncategorized',
+      category: 'General',
       date,
       formattedDate: formatDate(date),
     };
@@ -68,7 +68,7 @@ export function parseFilename(filename: string): DocMetadata {
     id,
     filename,
     title: rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1),
-    category: 'Uncategorized',
+    category: 'General',
     date: null,
     formattedDate: null,
   };
