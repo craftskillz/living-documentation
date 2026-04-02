@@ -11,7 +11,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc && node scripts/copy-assets.js && chmod +x dist/bin/cli.js",
+    "build": "tsc && ts-node scripts/copy-assets.ts && chmod +x dist/bin/cli.js",
     "dev": "nodemon --watch src --watch bin --ext ts,html --exec 'ts-node bin/cli.ts'",
     "start": "node dist/bin/cli.js",
     "prepublishOnly": "npm run build"

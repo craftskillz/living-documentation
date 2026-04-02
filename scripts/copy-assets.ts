@@ -1,10 +1,10 @@
-#!/usr/bin/env node
-// Copies frontend assets (HTML) into the dist/ directory after tsc compile
+#!/usr/bin/env ts-node
+// Copies frontend assets (HTML, vendor) into the dist/ directory after tsc compile
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-function copyDir(src, dest) {
+function copyDir(src: string, dest: string): void {
   fs.mkdirSync(dest, { recursive: true });
   for (const entry of fs.readdirSync(src)) {
     const srcPath = path.join(src, entry);
