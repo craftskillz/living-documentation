@@ -1,5 +1,5 @@
 {
-  "docsFolder": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/adrs",
+  "docsFolder": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation",
   "filenamePattern": "YYYY_MM_DD_[Category]_title",
   "title": "Living Documentation",
   "theme": "system",

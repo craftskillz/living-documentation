@@ -2,6 +2,7 @@
 
 > **Usage**: This file is the entry point for any task on this project. It contains the critical rules and context needed before making changes.
 > To understand the _why_ behind a decision, refer to the relevant ADR in `documentation/adrs/` — load those files only when working on the related domain.
+> **Memory**: At the start of each session, read `memory/MEMORY.md` and load the relevant memory files listed there.
 
 ## Project overview
 

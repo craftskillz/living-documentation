@@ -5,6 +5,20 @@ import { marked } from 'marked';
 import { parseFilename, DocMetadata } from '../lib/parser';
 import { readConfig } from '../lib/config';
 
+function collectMdFiles(dir: string, baseDir: string): string[] {
+  const results: string[] = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.name.startsWith('.')) continue;
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results.push(...collectMdFiles(fullPath, baseDir));
+    } else if (entry.isFile() && entry.name.toLowerCase().endsWith('.md')) {
+      results.push(path.relative(baseDir, fullPath));
+    }
+  }
+  return results;
+}
+
 function listDocs(docsPath: string, extraFiles: string[] = [], filenamePattern?: string): DocMetadata[] {
   // Extra files first, in config order, always General
   const extraDocs: DocMetadata[] = [];
@@ -19,11 +33,18 @@ function listDocs(docsPath: string, extraFiles: string[] = [], filenamePattern?:
     });
   }
 
-  // Regular docs sorted: dated newest first, then undated alphabetically
-  const regularDocs = fs
-    .readdirSync(docsPath)
-    .filter((f) => f.toLowerCase().endsWith('.md'))
-    .map((filename) => parseFilename(filename, filenamePattern));
+  // Regular docs: recursive scan, sorted by relative path
+  const regularDocs = collectMdFiles(docsPath, docsPath).map((relPath) => {
+    const filename = path.basename(relPath);
+    const subdir = path.dirname(relPath);
+    const meta = parseFilename(filename, filenamePattern);
+    const id = encodeURIComponent(relPath.slice(0, -3));
+    const category =
+      meta.category === 'General' && subdir !== '.'
+        ? subdir.replace(/[_-]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+        : meta.category;
+    return { ...meta, id, filename: relPath, category };
+  });
 
   regularDocs.sort((a, b) => a.filename.localeCompare(b.filename));
 
