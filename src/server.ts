@@ -5,6 +5,7 @@ import { documentsRouter } from './routes/documents';
 import { configRouter } from './routes/config';
 import { browseRouter } from './routes/browse';
 import { imagesRouter } from './routes/images';
+import { diagramsRouter } from './routes/diagrams';
 import { writeConfig } from './lib/config';
 
 export interface ServerOptions {
@@ -30,6 +31,7 @@ export async function startServer({
   app.use('/api/config', configRouter(docsPath));
   app.use('/api/browse', browseRouter());
   app.use('/api/images', imagesRouter(docsPath));
+  app.use('/api/diagrams', diagramsRouter(docsPath));
 
   // Static frontend assets
   const frontendPath = path.join(__dirname, 'frontend');
@@ -43,6 +45,9 @@ export async function startServer({
   );
   app.get('/admin', (_req, res) =>
     res.sendFile(path.join(frontendPath, 'admin.html')),
+  );
+  app.get('/diagram', (_req, res) =>
+    res.sendFile(path.join(frontendPath, 'diagram.html')),
   );
 
   return new Promise((resolve) => {
