@@ -1,6 +1,6 @@
 {
   "name": "living-documentation",
-  "version": "2.12.0",
+  "version": "2.2.0",
   "description": "A CLI tool that serves a local Markdown documentation viewer",
   "main": "dist/src/server.js",
   "bin": {
@@ -24,6 +24,10 @@
   ],
   "author": "Youssef MEDAGHRI-ALAOUI",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/craftskillz/living-documentation.git"
+  },
   "dependencies": {
     "commander": "^12.1.0",
     "express": "^4.19.2",
