@@ -190,6 +190,59 @@
           <div class="panel-sep"></div>
           <button onclick="changeNodeFontSize(-1)" class="tool-btn !w-8 !h-6" style="font-size:10px;" title="Réduire la police">Aa−</button>
           <button onclick="changeNodeFontSize( 1)" class="tool-btn !w-8 !h-6" style="font-size:10px;" title="Agrandir la police">Aa+</button>
+          <div class="panel-sep"></div>
+          <!-- Horizontal align -->
+          <button onclick="setTextAlign('left')"   class="tool-btn !w-6 !h-6" title="Aligner à gauche">
+            <svg width="12" height="10" viewBox="0 0 12 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+              <line x1="1" y1="2" x2="11" y2="2"/><line x1="1" y1="5" x2="7" y2="5"/><line x1="1" y1="8" x2="9" y2="8"/>
+            </svg>
+          </button>
+          <button onclick="setTextAlign('center')" class="tool-btn !w-6 !h-6" title="Centrer horizontalement">
+            <svg width="12" height="10" viewBox="0 0 12 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+              <line x1="1" y1="2" x2="11" y2="2"/><line x1="2.5" y1="5" x2="9.5" y2="5"/><line x1="1.5" y1="8" x2="10.5" y2="8"/>
+            </svg>
+          </button>
+          <button onclick="setTextAlign('right')"  class="tool-btn !w-6 !h-6" title="Aligner à droite">
+            <svg width="12" height="10" viewBox="0 0 12 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+              <line x1="1" y1="2" x2="11" y2="2"/><line x1="5" y1="5" x2="11" y2="5"/><line x1="3" y1="8" x2="11" y2="8"/>
+            </svg>
+          </button>
+          <div class="panel-sep"></div>
+          <!-- Vertical align -->
+          <button onclick="setTextValign('top')"    class="tool-btn !w-6 !h-6" title="Aligner en haut">
+            <svg width="10" height="12" viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-linecap="round">
+              <line x1="1" y1="1.5" x2="9" y2="1.5" stroke-width="2"/>
+              <line x1="1" y1="5"   x2="8" y2="5"   stroke-width="1.3"/>
+              <line x1="1" y1="8.5" x2="6" y2="8.5" stroke-width="1.3"/>
+            </svg>
+          </button>
+          <button onclick="setTextValign('middle')" class="tool-btn !w-6 !h-6" title="Centrer verticalement">
+            <svg width="10" height="12" viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-linecap="round">
+              <line x1="1" y1="2.5" x2="8" y2="2.5" stroke-width="1.3"/>
+              <line x1="1" y1="6"   x2="9" y2="6"   stroke-width="2"/>
+              <line x1="1" y1="9.5" x2="6" y2="9.5" stroke-width="1.3"/>
+            </svg>
+          </button>
+          <button onclick="setTextValign('bottom')" class="tool-btn !w-6 !h-6" title="Aligner en bas">
+            <svg width="10" height="12" viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-linecap="round">
+              <line x1="1" y1="3.5" x2="8" y2="3.5" stroke-width="1.3"/>
+              <line x1="1" y1="7"   x2="6" y2="7"   stroke-width="1.3"/>
+              <line x1="1" y1="10.5" x2="9" y2="10.5" stroke-width="2"/>
+            </svg>
+          </button>
+          <div class="panel-sep"></div>
+          <button onclick="changeZOrder(-1)" class="tool-btn !w-7 !h-6" title="Envoyer en arrière">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="5" width="8" height="8" rx="1"/>
+              <rect x="5" y="1" width="8" height="8" rx="1" stroke-opacity="0.35"/>
+            </svg>
+          </button>
+          <button onclick="changeZOrder( 1)" class="tool-btn !w-7 !h-6" title="Amener au premier plan">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="5" width="8" height="8" rx="1" stroke-opacity="0.35"/>
+              <rect x="5" y="1" width="8" height="8" rx="1"/>
+            </svg>
+          </button>
         </div>
 
         <!-- Edge panel -->
@@ -246,6 +299,7 @@
     let editingNodeId    = null;
     let editingEdgeId    = null;
     let resizeDrag       = null;
+    let clipboard        = null; // { nodes: [], edges: [] }
 
     // ── Colors ────────────────────────────────────────────────────────────────
     const NODE_COLORS = {
@@ -281,16 +335,28 @@
     }
 
     // ── Build vis.js node props ───────────────────────────────────────────────
-    function visNodeProps(shapeType, colorKey, nodeWidth, nodeHeight, fontSize) {
-      const c    = NODE_COLORS[colorKey] || NODE_COLORS['c-gray'];
-      const size = fontSize || 13;
+    function computeVadjust(textValign, nodeHeight, fontSize) {
+      if (!textValign || textValign === 'middle') return 0;
+      const h   = nodeHeight || 50;
+      const fs  = fontSize   || 13;
+      const pad = 8;
+      if (textValign === 'top')    return -(h / 2 - fs / 2 - pad);
+      if (textValign === 'bottom') return  (h / 2 - fs / 2 - pad);
+      return 0;
+    }
+
+    function visNodeProps(shapeType, colorKey, nodeWidth, nodeHeight, fontSize, textAlign, textValign) {
+      const c       = NODE_COLORS[colorKey] || NODE_COLORS['c-gray'];
+      const size    = fontSize   || 13;
+      const align   = textAlign  || 'center';
+      const vadjust = computeVadjust(textValign, nodeHeight, size);
       const colorP = {
         color: {
           background: c.bg, border: c.border,
           highlight: { background: c.hbg, border: c.hborder },
           hover:      { background: c.hbg, border: c.hborder },
         },
-        font: { color: c.font, size, face: 'system-ui,-apple-system,sans-serif' },
+        font: { color: c.font, size, face: 'system-ui,-apple-system,sans-serif', align, vadjust },
       };
       const sizeP = {};
       if (nodeWidth)  sizeP.widthConstraint  = { minimum: nodeWidth,  maximum: nodeWidth };
@@ -319,7 +385,7 @@
 
       nodes = new vis.DataSet(savedNodes.map(n => ({
         ...n,
-        ...visNodeProps(n.shapeType || 'box', n.colorKey || 'c-gray', n.nodeWidth, n.nodeHeight, n.fontSize),
+        ...visNodeProps(n.shapeType || 'box', n.colorKey || 'c-gray', n.nodeWidth, n.nodeHeight, n.fontSize, n.textAlign, n.textValign),
       })));
       edges = new vis.DataSet(savedEdges.map(e => ({
         ...e,
@@ -399,7 +465,7 @@
           shapeType: pendingShape, colorKey: 'c-gray',
           nodeWidth: null, nodeHeight: null, fontSize: null,
           x: params.pointer.canvas.x, y: params.pointer.canvas.y,
-          ...visNodeProps(pendingShape, 'c-gray', null, null, null),
+          ...visNodeProps(pendingShape, 'c-gray', null, null, null, null, null),
         });
         markDirty();
         setTimeout(() => {
@@ -445,7 +511,7 @@
       selectedNodeIds.forEach(id => {
         const n = nodes.get(id);
         if (!n) return;
-        nodes.update({ id, colorKey, ...visNodeProps(n.shapeType||'box', colorKey, n.nodeWidth, n.nodeHeight, n.fontSize) });
+        nodes.update({ id, colorKey, ...visNodeProps(n.shapeType||'box', colorKey, n.nodeWidth, n.nodeHeight, n.fontSize, n.textAlign, n.textValign) });
       });
       markDirty();
     }
@@ -456,8 +522,53 @@
         const n = nodes.get(id);
         if (!n) return;
         const newSize = Math.max(8, Math.min(48, (n.fontSize || 13) + delta));
-        nodes.update({ id, fontSize: newSize, ...visNodeProps(n.shapeType||'box', n.colorKey||'c-gray', n.nodeWidth, n.nodeHeight, newSize) });
+        nodes.update({ id, fontSize: newSize, ...visNodeProps(n.shapeType||'box', n.colorKey||'c-gray', n.nodeWidth, n.nodeHeight, newSize, n.textAlign, n.textValign) });
       });
+      markDirty();
+    }
+
+    function setTextAlign(align) {
+      if (!selectedNodeIds.length) return;
+      selectedNodeIds.forEach(id => {
+        const n = nodes.get(id); if (!n) return;
+        nodes.update({ id, textAlign: align, ...visNodeProps(n.shapeType||'box', n.colorKey||'c-gray', n.nodeWidth, n.nodeHeight, n.fontSize, align, n.textValign) });
+      });
+      markDirty();
+    }
+
+    function setTextValign(valign) {
+      if (!selectedNodeIds.length) return;
+      selectedNodeIds.forEach(id => {
+        const n = nodes.get(id); if (!n) return;
+        nodes.update({ id, textValign: valign, ...visNodeProps(n.shapeType||'box', n.colorKey||'c-gray', n.nodeWidth, n.nodeHeight, n.fontSize, n.textAlign, valign) });
+      });
+      markDirty();
+    }
+
+    function changeZOrder(direction) {
+      // direction: +1 = bring to front (re-add last), -1 = send to back (re-add first)
+      if (!selectedNodeIds.length) return;
+      const positions = network.getPositions(selectedNodeIds);
+      selectedNodeIds.forEach(id => {
+        const n = nodes.get(id);
+        if (!n) return;
+        const { ctxRenderer, ...data } = n;
+        data.x = positions[id]?.x ?? n.x;
+        data.y = positions[id]?.y ?? n.y;
+        nodes.remove(id);
+        if (direction > 0) {
+          nodes.add(data); // appended last → rendered on top
+        } else {
+          // Insert at position 0 in the internal order
+          const all = nodes.get();
+          nodes.clear();
+          nodes.add([data, ...all]);
+        }
+        // Re-apply vis props (ctxRenderer stripped on purpose)
+        nodes.update({ id, ...visNodeProps(data.shapeType||'box', data.colorKey||'c-gray', data.nodeWidth, data.nodeHeight, data.fontSize, data.textAlign, data.textValign) });
+      });
+      // Restore selection
+      network.selectNodes(selectedNodeIds);
       markDirty();
     }
 
@@ -650,7 +761,7 @@
         nW = Math.max(MIN, Math.round(nW));
         nH = Math.max(MIN, Math.round(nH));
         nodes.update({ id, nodeWidth: nW, nodeHeight: nH,
-          ...visNodeProps(node.shapeType||'box', node.colorKey||'c-gray', nW, nH, node.fontSize) });
+          ...visNodeProps(node.shapeType||'box', node.colorKey||'c-gray', nW, nH, node.fontSize, node.textAlign, node.textValign) });
       } else {
         // Multi: proportional scale
         const { initBoxW, initBoxH } = resizeDrag;
@@ -664,7 +775,7 @@
           const nW = Math.max(MIN, Math.round(initW * sx));
           const nH = Math.max(MIN, Math.round(initH * sy));
           nodes.update({ id, nodeWidth: nW, nodeHeight: nH,
-            ...visNodeProps(node.shapeType||'box', node.colorKey||'c-gray', nW, nH, node.fontSize) });
+            ...visNodeProps(node.shapeType||'box', node.colorKey||'c-gray', nW, nH, node.fontSize, node.textAlign, node.textValign) });
         }
       }
       updateSelectionOverlay();
@@ -841,6 +952,8 @@
         nodeWidth:  n.nodeWidth  || null,
         nodeHeight: n.nodeHeight || null,
         fontSize:   n.fontSize   || null,
+        textAlign:  n.textAlign  || null,
+        textValign: n.textValign || null,
         x: positions[n.id]?.x ?? n.x,
         y: positions[n.id]?.y ?? n.y,
       }));
@@ -877,10 +990,75 @@
       return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
+    // ── Copy / Paste ──────────────────────────────────────────────────────────
+    function copySelected() {
+      if (!network || !selectedNodeIds.length) return;
+
+      const positions = network.getPositions(selectedNodeIds);
+      const copiedNodes = selectedNodeIds.map(id => {
+        const n = nodes.get(id);
+        const { ctxRenderer, ...rest } = n;
+        return { ...rest, x: positions[id]?.x ?? n.x, y: positions[id]?.y ?? n.y };
+      });
+
+      // Copy edges where BOTH endpoints are in the selection
+      const selectedSet = new Set(selectedNodeIds);
+      const copiedEdges = edges.get().filter(e =>
+        selectedSet.has(e.from) && selectedSet.has(e.to)
+      );
+
+      clipboard = { nodes: copiedNodes, edges: copiedEdges };
+    }
+
+    function pasteClipboard() {
+      if (!clipboard || !clipboard.nodes.length || !network) return;
+
+      const OFFSET = 40;
+      // Map old id → new id
+      const idMap = {};
+      clipboard.nodes.forEach(n => { idMap[n.id] = 'n' + Date.now() + Math.random().toString(36).slice(2); });
+
+      const newNodes = clipboard.nodes.map(n => ({
+        ...n,
+        id: idMap[n.id],
+        x: (n.x || 0) + OFFSET,
+        y: (n.y || 0) + OFFSET,
+        ...visNodeProps(n.shapeType || 'box', n.colorKey || 'c-gray', n.nodeWidth, n.nodeHeight, n.fontSize, n.textAlign, n.textValign),
+      }));
+
+      const newEdges = clipboard.edges.map(e => ({
+        ...e,
+        id: 'e' + Date.now() + Math.random().toString(36).slice(2),
+        from: idMap[e.from],
+        to:   idMap[e.to],
+        ...visEdgeProps(e.arrowDir ?? 'to', e.dashes ?? false),
+        ...(e.fontSize ? { font: { size: e.fontSize, align: 'middle', color: '#6b7280' } } : {}),
+      }));
+
+      nodes.add(newNodes);
+      edges.add(newEdges);
+
+      // Select the pasted nodes
+      const newIds = newNodes.map(n => n.id);
+      network.selectNodes(newIds);
+      selectedNodeIds = newIds;
+      selectedEdgeIds = [];
+      showNodePanel();
+      markDirty();
+
+      // Offset clipboard for next paste
+      clipboard = {
+        nodes: clipboard.nodes.map(n => ({ ...n, x: (n.x || 0) + OFFSET, y: (n.y || 0) + OFFSET })),
+        edges: clipboard.edges,
+      };
+    }
+
     // ── Keyboard shortcuts ────────────────────────────────────────────────────
     document.addEventListener('keydown', e => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
       if (e.key === 'Delete' || e.key === 'Backspace')         { deleteSelected(); return; }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'c')           { e.preventDefault(); copySelected(); return; }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'v')           { e.preventDefault(); pasteClipboard(); return; }
       if ((e.metaKey || e.ctrlKey) && e.key === 's')           { e.preventDefault(); saveDiagram(); return; }
       if (e.key === 'Escape') { setTool('select'); return; }
       if (e.key === 's' || e.key === 'S') { setTool('select');           return; }

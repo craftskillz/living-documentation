@@ -2,7 +2,120 @@
   {
     "id": "d1775155334524",
     "title": "Nouveau diaabbgramme",
-    "nodes": [],
-    "edges": []
+    "nodes": [
+      {
+        "id": "n1775164760318",
+        "label": "Node",
+        "shapeType": "circle",
+        "colorKey": "c-gray",
+        "nodeWidth": null,
+        "nodeHeight": null,
+        "fontSize": null,
+        "x": -134,
+        "y": -55
+      },
+      {
+        "id": "n1775164761093",
+        "label": "Node",
+        "shapeType": "circle",
+        "colorKey": "c-gray",
+        "nodeWidth": null,
+        "nodeHeight": null,
+        "fontSize": null,
+        "x": -33,
+        "y": 144
+      },
+      {
+        "id": "n1775164761902",
+        "label": "Node",
+        "shapeType": "circle",
+        "colorKey": "c-gray",
+        "nodeWidth": null,
+        "nodeHeight": null,
+        "fontSize": null,
+        "x": 186,
+        "y": 104
+      },
+      {
+        "id": "n1775164762659",
+        "label": "Node",
+        "shapeType": "circle",
+        "colorKey": "c-gray",
+        "nodeWidth": null,
+        "nodeHeight": null,
+        "fontSize": null,
+        "x": 82,
+        "y": -92
+      },
+      {
+        "id": "n1775164813601",
+        "label": "\n\nPOSTGRES",
+        "shapeType": "database",
+        "colorKey": "c-gray",
+        "nodeWidth": 141,
+        "nodeHeight": 150,
+        "fontSize": null,
+        "x": -304,
+        "y": -193
+      },
+      {
+        "id": "n1775164930626",
+        "label": "Node",
+        "shapeType": "box",
+        "colorKey": "c-gray",
+        "nodeWidth": 255,
+        "nodeHeight": 220,
+        "fontSize": null,
+        "x": -458,
+        "y": -88
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1775164779484",
+        "from": "n1775164760318",
+        "to": "n1775164761093",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null
+      },
+      {
+        "id": "e1775164780568",
+        "from": "n1775164761093",
+        "to": "n1775164761902",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null
+      },
+      {
+        "id": "e1775164783117",
+        "from": "n1775164761902",
+        "to": "n1775164762659",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null
+      },
+      {
+        "id": "e1775164785651",
+        "from": "n1775164762659",
+        "to": "n1775164760318",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null
+      },
+      {
+        "id": "e1775164848358",
+        "from": "n1775164813601",
+        "to": "n1775164760318",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null
+      }
+    ]
   }
 ]
