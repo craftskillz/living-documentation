@@ -20,4 +20,4 @@ jobs:
           node-version: "22"
           registry-url: "https://registry.npmjs.org"
       - run: npm ci
-      - run: npm publish --provenance
+      - run: npx -y npm@latest publish --provenance
