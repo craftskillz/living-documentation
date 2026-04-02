@@ -13,6 +13,9 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
+  <!-- WordCloud2.js — vendored from npm, no CDN dependency -->
+  <script src="/vendor/wordcloud2.js"></script>
+
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -100,6 +103,12 @@
       <button id="dark-toggle" title="Toggle dark mode"
               class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
         <span id="dark-icon" class="text-lg leading-none">&#9790;</span>
+      </button>
+
+      <!-- Word Cloud -->
+      <button onclick="openWordCloud()"
+              class="text-sm px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium">
+        &#9729; Word Cloud
       </button>
 
       <!-- Admin link -->
@@ -235,6 +244,21 @@
     </main>
   </div><!-- end body row -->
 </div><!-- end root -->
+
+<!-- ── Word Cloud overlay ── -->
+<div id="wc-overlay" class="hidden fixed inset-0 z-50 flex flex-col bg-white dark:bg-gray-950">
+  <div class="flex items-center justify-between px-6 h-14 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
+    <h2 class="font-semibold text-base">&#9729; Word Cloud</h2>
+    <button onclick="closeWordCloud()"
+            class="text-sm px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+      &#10005; Close
+    </button>
+  </div>
+  <div id="wc-body" class="flex-1 relative overflow-hidden flex items-center justify-center">
+    <p id="wc-status" class="text-gray-400 dark:text-gray-500 text-sm animate-pulse"></p>
+    <canvas id="wc-canvas" class="hidden absolute inset-0 w-full h-full"></canvas>
+  </div>
+</div>
 
 <script>
 // ── State ──────────────────────────────────────────────────
@@ -636,6 +660,105 @@ function esc(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+// ── Word Cloud ─────────────────────────────────────────────
+const WC_STOP_WORDS = new Set([
+  // English
+  'the','and','for','are','but','not','you','all','this','that','with','have','from',
+  'they','will','one','been','can','has','was','more','also','when','there','their',
+  'what','about','which','would','into','than','then','each','just','over','after',
+  'such','here','its','your','our','some','were','very','only','out','had','she',
+  'his','her','him','who','how','any','other','these','those','being','may','use',
+  'used','using','should','could','would','shall','must','need','via','per','like',
+  // French
+  'les','des','une','pour','pas','sur','par','est','qui','que','dans','avec','sont',
+  'plus','tout','aux','mais','comme','vous','nous','leur','lui','elle','ils','elles',
+  'ces','ses','mon','ton','son','mes','tes','ainsi','donc','alors','car','peut','fait',
+  'encore','bien','aussi','très','même','entre','vers','dont','sans','sous',
+]);
+
+async function openWordCloud() {
+  const overlay = document.getElementById('wc-overlay');
+  const status = document.getElementById('wc-status');
+  const canvas = document.getElementById('wc-canvas');
+  overlay.classList.remove('hidden');
+  status.textContent = 'Loading documents…';
+  status.classList.remove('hidden');
+  canvas.classList.add('hidden');
+
+  try {
+    const docs = allDocs.length ? allDocs : await fetch('/api/documents').then(r => r.json());
+    status.textContent = `Analyzing ${docs.length} documents…`;
+
+    const results = await Promise.all(
+      docs.map(doc => fetch('/api/documents/' + doc.id).then(r => r.ok ? r.json() : null).catch(() => null))
+    );
+
+    const freq = {};
+    for (const doc of results) {
+      if (!doc?.content) continue;
+      for (const w of extractWordsFromMarkdown(doc.content)) {
+        freq[w] = (freq[w] || 0) + 1;
+      }
+    }
+
+    const list = Object.entries(freq)
+      .filter(([, n]) => n >= 2)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 150);
+
+    if (!list.length) { status.textContent = 'Not enough words found.'; return; }
+
+    renderWordCloud(list);
+  } catch (err) {
+    status.textContent = 'Error: ' + err.message;
+  }
+}
+
+function extractWordsFromMarkdown(text) {
+  return text
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/`[^`\n]+`/g, '')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/https?:\/\/\S+/g, '')
+    .replace(/[#*_~>`|!\[\](){}=\-+]/g, ' ')
+    .toLowerCase()
+    .split(/[^a-zàâäéèêëïîôùûü']+/)
+    .map(w => w.replace(/^'+|'+$/g, ''))
+    .filter(w => w.length > 3 && !WC_STOP_WORDS.has(w));
+}
+
+function renderWordCloud(list) {
+  const canvas = document.getElementById('wc-canvas');
+  const body = document.getElementById('wc-body');
+  canvas.width = body.clientWidth;
+  canvas.height = body.clientHeight;
+
+  const isDark = document.documentElement.classList.contains('dark');
+  const colors = isDark
+    ? ['#60a5fa','#34d399','#f9a8d4','#a78bfa','#fbbf24','#6ee7b7','#93c5fd','#fb923c']
+    : ['#1d4ed8','#047857','#7c3aed','#b45309','#be123c','#0369a1','#4338ca','#c2410c'];
+
+  const maxFreq = list[0][1];
+  const wordList = list.map(([w, n]) => [w, Math.max(10, Math.round(72 * n / maxFreq))]);
+
+  document.getElementById('wc-status').classList.add('hidden');
+  canvas.classList.remove('hidden');
+
+  WordCloud(canvas, {
+    list: wordList,
+    gridSize: Math.round(8 * canvas.width / 1024),
+    fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+    color: () => colors[Math.floor(Math.random() * colors.length)],
+    backgroundColor: isDark ? '#030712' : '#ffffff',
+    rotateRatio: 0.3,
+    minSize: 10,
+  });
+}
+
+function closeWordCloud() {
+  document.getElementById('wc-overlay').classList.add('hidden');
 }
 
 // Browser back/forward

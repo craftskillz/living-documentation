@@ -11,6 +11,7 @@ No cloud, no database, no build step — just point it at a folder of `.md` file
 ## Features
 
 - **Sidebar** grouped by category, sorted alphabetically by full filename
+- **Recursive folder scanning** — subdirectories are scanned automatically; subdirectory name becomes the category
 - **General section** — always first, always expanded; holds uncategorized docs and extra files
 - **Extra files** — include Markdown files from outside the docs folder (e.g. `README.md`, `CLAUDE.md`)
 - **Full-text search** — instant filter + server-side content search
@@ -109,6 +110,23 @@ YYYY_MM_DD_[Category]_title_words.md
 ```
 
 Files that don't match the pattern are still shown — they appear under **General** with the filename as the title.
+
+### Subdirectories
+
+The docs folder is scanned **recursively**. Files in subdirectories are automatically discovered:
+
+- If the filename matches the pattern (contains `[Category]`), the category from the filename is used.
+- Otherwise, the **subdirectory name** becomes the category.
+
+```
+docs/
+├── 2024_01_15_[DevOps]_deploy.md      → category: DevOps
+├── adrs/
+│   ├── my-decision.md                 → category: Adrs
+│   └── 2024_03_01_[Architecture]_event_sourcing.md  → category: Architecture
+└── guides/
+    └── onboarding.md                  → category: Guides
+```
 
 The pattern is **configurable** in the Admin panel. Token order is respected — `[Category]_YYYY_MM_DD_title` is valid. `[Category]` must appear exactly once.
 
