@@ -11,8 +11,10 @@
         "nodeWidth": null,
         "nodeHeight": null,
         "fontSize": null,
-        "x": -134,
-        "y": -55
+        "textAlign": null,
+        "textValign": null,
+        "x": -210,
+        "y": -88
       },
       {
         "id": "n1775164761093",
@@ -22,8 +24,10 @@
         "nodeWidth": null,
         "nodeHeight": null,
         "fontSize": null,
-        "x": -33,
-        "y": 144
+        "textAlign": null,
+        "textValign": null,
+        "x": -77,
+        "y": 89
       },
       {
         "id": "n1775164761902",
@@ -33,8 +37,10 @@
         "nodeWidth": null,
         "nodeHeight": null,
         "fontSize": null,
-        "x": 186,
-        "y": 104
+        "textAlign": null,
+        "textValign": null,
+        "x": 129,
+        "y": -2
       },
       {
         "id": "n1775164762659",
@@ -44,8 +50,10 @@
         "nodeWidth": null,
         "nodeHeight": null,
         "fontSize": null,
-        "x": 82,
-        "y": -92
+        "textAlign": null,
+        "textValign": null,
+        "x": -6,
+        "y": -178
       },
       {
         "id": "n1775164813601",
@@ -55,19 +63,10 @@
         "nodeWidth": 141,
         "nodeHeight": 150,
         "fontSize": null,
-        "x": -304,
-        "y": -193
-      },
-      {
-        "id": "n1775164930626",
-        "label": "Node",
-        "shapeType": "box",
-        "colorKey": "c-gray",
-        "nodeWidth": 255,
-        "nodeHeight": 220,
-        "fontSize": null,
-        "x": -458,
-        "y": -88
+        "textAlign": null,
+        "textValign": null,
+        "x": -403,
+        "y": -200
       }
     ],
     "edges": [

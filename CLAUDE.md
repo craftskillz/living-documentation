@@ -3,6 +3,7 @@
 > **Usage**: This file is the entry point for any task on this project. It contains the critical rules and context needed before making changes.
 > To understand the _why_ behind a decision, refer to the relevant ADR in `documentation/adrs/` — load those files only when working on the related domain.
 > **Memory**: At the start of each session, read `memory/MEMORY.md` and load the relevant memory files listed there.
+> **Library docs**: Use the **context7 MCP** (installed globally) to fetch up-to-date library documentation instead of scraping/downloading raw bundles. Example: query context7 for `vis-network` to get accurate API docs without token-heavy file fetches.
 
 ## Project overview
 

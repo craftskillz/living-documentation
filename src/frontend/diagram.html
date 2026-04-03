@@ -302,13 +302,14 @@
     let selectedEdgeIds  = [];
     let physicsEnabled   = true;
     let gridEnabled      = false;
-    const GRID_SIZE      = 20;
+    const GRID_SIZE      = 40;
     let isDirty          = false;
     let sidebarOpen      = true;
     let editingNodeId    = null;
     let editingEdgeId    = null;
     let resizeDrag       = null;
     let clipboard        = null; // { nodes: [], edges: [] }
+    let _canonicalOrder  = []; // canonical z-order (DataSet-independent, immune to vis.js hover reordering)
 
     // ── Colors ────────────────────────────────────────────────────────────────
     const NODE_COLORS = {
@@ -440,6 +441,54 @@
       if (network) network.destroy();
       network = new vis.Network(container, { nodes, edges }, options);
 
+      // Preserve canonical z-order by patching the renderer instead of nodeIndices.
+      // vis.js _drawNodes does 3 passes (normal → selected → hovered), always drawing
+      // hover/selected nodes on top regardless of z-order. We replace it with a single
+      // pass in _canonicalOrder so the user-defined stacking is always respected.
+      _canonicalOrder = [...network.body.nodeIndices];
+      network.renderer._drawNodes = function(ctx, alwaysShow = false) {
+        const bodyNodes = this.body.nodes;
+        const margin = 20;
+        const topLeft     = this.canvas.DOMtoCanvas({ x: -margin, y: -margin });
+        const bottomRight = this.canvas.DOMtoCanvas({
+          x: this.canvas.frame.canvas.clientWidth  + margin,
+          y: this.canvas.frame.canvas.clientHeight + margin,
+        });
+        const viewableArea = {
+          top: topLeft.y, left: topLeft.x,
+          bottom: bottomRight.y, right: bottomRight.x,
+        };
+        const drawExternalLabelCallbacks = [];
+        for (const id of _canonicalOrder) {
+          const node = bodyNodes[id];
+          if (!node) continue;
+          if (alwaysShow === true) {
+            const r = node.draw(ctx);
+            if (r.drawExternalLabel != null) drawExternalLabelCallbacks.push(r.drawExternalLabel);
+          } else if (node.isBoundingBoxOverlappingWith(viewableArea) === true) {
+            const r = node.draw(ctx);
+            if (r.drawExternalLabel != null) drawExternalLabelCallbacks.push(r.drawExternalLabel);
+          } else {
+            node.updateBoundingBox(ctx, node.selected);
+          }
+        }
+        return {
+          drawExternalLabels() {
+            for (const draw of drawExternalLabelCallbacks) draw();
+          },
+        };
+      };
+
+      // Keep _canonicalOrder in sync when nodes are added or removed via the DataSet
+      nodes.on('add',    (_, { items }) => {
+        const existing = new Set(_canonicalOrder);
+        items.forEach(id => { if (!existing.has(id)) _canonicalOrder.push(id); });
+      });
+      nodes.on('remove', (_, { items }) => {
+        const removed = new Set(items);
+        _canonicalOrder = _canonicalOrder.filter(id => !removed.has(id));
+      });
+
       network.on('doubleClick',  onDoubleClick);
       network.on('selectNode',   onSelectNode);
       network.on('deselectNode', onDeselectAll);
@@ -556,28 +605,20 @@
     }
 
     function changeZOrder(direction) {
-      // direction: +1 = bring to front (re-add last), -1 = send to back (re-add first)
+      // direction: +1 = bring to front (last in _canonicalOrder = drawn on top)
+      //            -1 = send to back   (first in _canonicalOrder = drawn below)
       if (!selectedNodeIds.length) return;
-      const positions = network.getPositions(selectedNodeIds);
       selectedNodeIds.forEach(id => {
-        const n = nodes.get(id);
-        if (!n) return;
-        const { ctxRenderer, ...data } = n;
-        data.x = positions[id]?.x ?? n.x;
-        data.y = positions[id]?.y ?? n.y;
-        nodes.remove(id);
+        const idx = _canonicalOrder.indexOf(id);
+        if (idx === -1) return;
+        _canonicalOrder.splice(idx, 1);
         if (direction > 0) {
-          nodes.add(data); // appended last → rendered on top
+          _canonicalOrder.push(id);    // bring to front
         } else {
-          // Insert at position 0 in the internal order
-          const all = nodes.get();
-          nodes.clear();
-          nodes.add([data, ...all]);
+          _canonicalOrder.unshift(id); // send to back
         }
-        // Re-apply vis props (ctxRenderer stripped on purpose)
-        nodes.update({ id, ...visNodeProps(data.shapeType||'box', data.colorKey||'c-gray', data.nodeWidth, data.nodeHeight, data.fontSize, data.textAlign, data.textValign) });
       });
-      // Restore selection
+      network.redraw();
       network.selectNodes(selectedNodeIds);
       markDirty();
     }
@@ -857,7 +898,7 @@
     function drawGrid(ctx) {
       if (!gridEnabled || !network) return;
       const isDark  = document.documentElement.classList.contains('dark');
-      const color   = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)';
+      const color   = isDark ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.15)';
       const scale   = network.getScale();
       const center  = network.getViewPosition();
       const canvas  = ctx.canvas;
@@ -866,9 +907,10 @@
       // Canvas-space grid step
       const step = GRID_SIZE * scale;
 
-      // Offset so grid follows the view
-      const offsetX = (W / 2 - center.x * scale) % step;
-      const offsetY = (H / 2 - center.y * scale) % step;
+      // Offset so grid aligns to canvas-space multiples of GRID_SIZE
+      // Use positive modulo to avoid negative offsets when panning left/up
+      const offsetX = ((W / 2 - center.x * scale) % step + step) % step;
+      const offsetY = ((H / 2 - center.y * scale) % step + step) % step;
 
       ctx.save();
       // Reset transform — we work in screen (canvas pixel) space
@@ -1006,8 +1048,9 @@
     async function saveDiagram() {
       if (!currentDiagramId || !network) return;
       const positions = network.getPositions();
-      // Keep only our custom fields, strip vis.js computed ones
-      const nodeData = nodes.get().map(n => ({
+      // Keep only our custom fields, strip vis.js computed ones.
+      // Use _canonicalOrder so the saved array preserves z-order on reload.
+      const nodeData = _canonicalOrder.map(id => nodes.get(id)).filter(Boolean).map(n => ({
         id: n.id, label: n.label,
         shapeType:  n.shapeType  || 'box',
         colorKey:   n.colorKey   || 'c-gray',
