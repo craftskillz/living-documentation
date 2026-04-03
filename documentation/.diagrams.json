@@ -1,48 +1,8 @@
 [
   {
-    "id": "d1775221670024",
+    "id": "d1775242615386",
     "title": "Nouveau diagramme",
-    "nodes": [
-      {
-        "id": "n1775221676161",
-        "label": "Postgres",
-        "shapeType": "database",
-        "colorKey": "c-gray",
-        "nodeWidth": 307,
-        "nodeHeight": 47,
-        "fontSize": null,
-        "textAlign": null,
-        "textValign": "bottom",
-        "x": -704,
-        "y": -259
-      },
-      {
-        "id": "n1775221673161",
-        "label": "Node",
-        "shapeType": "circle",
-        "colorKey": "c-gray",
-        "nodeWidth": null,
-        "nodeHeight": null,
-        "fontSize": null,
-        "textAlign": null,
-        "textValign": null,
-        "x": -557,
-        "y": -396
-      },
-      {
-        "id": "n1775222569652crlmggebtz",
-        "label": "Node",
-        "shapeType": "circle",
-        "colorKey": "c-gray",
-        "nodeWidth": null,
-        "nodeHeight": null,
-        "fontSize": null,
-        "textAlign": null,
-        "textValign": null,
-        "x": -520,
-        "y": -419
-      }
-    ],
+    "nodes": [],
     "edges": []
   }
 ]

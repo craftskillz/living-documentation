@@ -1,0 +1,158 @@
+// ── Application entry point ───────────────────────────────────────────────────
+// Wires all toolbar buttons, keyboard shortcuts, and bootstraps the app.
+
+import { st, markDirty }      from './state.js';
+import { TOOL_BTN_MAP }       from './constants.js';
+import { showNodePanel, hideNodePanel, setNodeColor, changeNodeFontSize, setTextAlign, setTextValign, changeZOrder } from './node-panel.js';
+import { hideEdgePanel, setEdgeArrow, setEdgeDashes, changeEdgeFontSize } from './edge-panel.js';
+import { startLabelEdit, startEdgeLabelEdit, hideLabelInput } from './label-editor.js';
+import { hideSelectionOverlay } from './selection-overlay.js';
+import { togglePhysics, toggleGrid } from './grid.js';
+import { toggleDebug }   from './debug.js';
+import { adjustZoom, resetZoom } from './zoom.js';
+import { loadDiagramList, newDiagram, saveDiagram } from './persistence.js';
+import { copySelected, pasteClipboard } from './clipboard.js';
+
+// ── Tool management ───────────────────────────────────────────────────────────
+
+function setTool(tool, shape) {
+  st.currentTool = tool;
+  if (shape) st.pendingShape = shape;
+
+  document.querySelectorAll('.tool-btn').forEach((b) => b.classList.remove('tool-active'));
+  if (st.physicsEnabled) document.getElementById('btnPhysics').classList.add('tool-active');
+
+  const key = tool === 'addNode' ? `addNode:${shape || st.pendingShape}` : tool;
+  const btn = document.getElementById(TOOL_BTN_MAP[key]);
+  if (btn) btn.classList.add('tool-active');
+
+  document.getElementById('vis-canvas').classList.toggle('cursor-crosshair', tool === 'addNode' || tool === 'addEdge');
+
+  if (tool === 'addEdge' && st.network) st.network.addEdgeMode();
+  else if (st.network) st.network.disableEditMode();
+}
+
+function deleteSelected() {
+  if (!st.network) return;
+  st.network.deleteSelected();
+  hideNodePanel();
+  hideEdgePanel();
+  hideLabelInput();
+  hideSelectionOverlay();
+  st.editingNodeId = null;
+  st.editingEdgeId = null;
+  markDirty();
+}
+
+// ── Sidebar & dark mode ───────────────────────────────────────────────────────
+
+function toggleSidebar() {
+  st.sidebarOpen = !st.sidebarOpen;
+  const sb = document.getElementById('sidebar');
+  sb.style.width    = st.sidebarOpen ? '14rem' : '0';
+  sb.style.overflow = st.sidebarOpen ? '' : 'hidden';
+}
+
+function toggleDark() {
+  const dark = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('ld-dark', dark);
+  document.getElementById('darkIcon').textContent = dark ? '☀' : '☽';
+}
+
+// ── Toolbar button wiring ─────────────────────────────────────────────────────
+
+document.getElementById('btnSidebar').addEventListener('click', toggleSidebar);
+
+document.getElementById('toolSelect').addEventListener('click', () => setTool('select'));
+document.getElementById('toolBox').addEventListener('click',      () => setTool('addNode', 'box'));
+document.getElementById('toolEllipse').addEventListener('click',  () => setTool('addNode', 'ellipse'));
+document.getElementById('toolDatabase').addEventListener('click', () => setTool('addNode', 'database'));
+document.getElementById('toolCircle').addEventListener('click',   () => setTool('addNode', 'circle'));
+document.getElementById('toolActor').addEventListener('click',    () => setTool('addNode', 'actor'));
+document.getElementById('toolArrow').addEventListener('click',    () => setTool('addEdge'));
+
+document.getElementById('btnDelete').addEventListener('click', deleteSelected);
+document.getElementById('btnPhysics').addEventListener('click', togglePhysics);
+document.getElementById('btnGrid').addEventListener('click', toggleGrid);
+
+document.getElementById('btnZoomOut').addEventListener('click',   () => adjustZoom(-0.2));
+document.getElementById('btnZoomIn').addEventListener('click',    () => adjustZoom(0.2));
+document.getElementById('btnZoomReset').addEventListener('click', resetZoom);
+
+document.getElementById('btnDark').addEventListener('click', toggleDark);
+document.getElementById('btnDebug').addEventListener('click', toggleDebug);
+document.getElementById('btnSave').addEventListener('click',  saveDiagram);
+document.getElementById('btnNewDiagram').addEventListener('click', newDiagram);
+
+// Dirty state on title edits
+document.getElementById('diagramTitle').addEventListener('input', markDirty);
+
+// ── Node panel wiring ─────────────────────────────────────────────────────────
+
+document.getElementById('nodePanel').addEventListener('click', (e) => {
+  const colorBtn = e.target.closest('[data-color]');
+  if (colorBtn) setNodeColor(colorBtn.dataset.color);
+});
+document.getElementById('btnNodeLabelEdit').addEventListener('click', startLabelEdit);
+document.getElementById('btnNodeFontDecrease').addEventListener('click', () => changeNodeFontSize(-1));
+document.getElementById('btnNodeFontIncrease').addEventListener('click', () => changeNodeFontSize(1));
+document.getElementById('btnAlignLeft').addEventListener('click',   () => setTextAlign('left'));
+document.getElementById('btnAlignCenter').addEventListener('click', () => setTextAlign('center'));
+document.getElementById('btnAlignRight').addEventListener('click',  () => setTextAlign('right'));
+document.getElementById('btnValignTop').addEventListener('click',    () => setTextValign('top'));
+document.getElementById('btnValignMiddle').addEventListener('click', () => setTextValign('middle'));
+document.getElementById('btnValignBottom').addEventListener('click', () => setTextValign('bottom'));
+document.getElementById('btnZOrderBack').addEventListener('click',  () => changeZOrder(-1));
+document.getElementById('btnZOrderFront').addEventListener('click', () => changeZOrder(1));
+
+// ── Edge panel wiring ─────────────────────────────────────────────────────────
+
+document.getElementById('edgeBtnNone').addEventListener('click',   () => setEdgeArrow('none'));
+document.getElementById('edgeBtnTo').addEventListener('click',     () => setEdgeArrow('to'));
+document.getElementById('edgeBtnBoth').addEventListener('click',   () => setEdgeArrow('both'));
+document.getElementById('edgeBtnSolid').addEventListener('click',  () => setEdgeDashes(false));
+document.getElementById('edgeBtnDashed').addEventListener('click', () => setEdgeDashes(true));
+document.getElementById('btnEdgeFontDecrease').addEventListener('click', () => changeEdgeFontSize(-1));
+document.getElementById('btnEdgeFontIncrease').addEventListener('click', () => changeEdgeFontSize(1));
+document.getElementById('btnEdgeLabelEdit').addEventListener('click', startEdgeLabelEdit);
+
+// ── Keyboard shortcuts ────────────────────────────────────────────────────────
+
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'Delete' || e.key === 'Backspace')            { deleteSelected();           return; }
+  if ((e.metaKey || e.ctrlKey) && e.key === 'c')             { e.preventDefault(); copySelected();    return; }
+  if ((e.metaKey || e.ctrlKey) && e.key === 'v')             { e.preventDefault(); pasteClipboard();  return; }
+  if ((e.metaKey || e.ctrlKey) && e.key === 's')             { e.preventDefault(); saveDiagram();     return; }
+  if (e.key === 'Escape' || e.key === 's' || e.key === 'S')  { setTool('select');          return; }
+  if (e.key === 'r' || e.key === 'R')  { setTool('addNode', 'box');      return; }
+  if (e.key === 'e' || e.key === 'E')  { setTool('addNode', 'ellipse');  return; }
+  if (e.key === 'd' || e.key === 'D')  { setTool('addNode', 'database'); return; }
+  if (e.key === 'c' || e.key === 'C')  { setTool('addNode', 'circle');   return; }
+  if (e.key === 'a' || e.key === 'A')  { setTool('addNode', 'actor');    return; }
+  if (e.key === 'f' || e.key === 'F')  { setTool('addEdge');             return; }
+  if (e.key === 'g' || e.key === 'G')  { toggleGrid();                   return; }
+});
+
+// ── Dark mode initialisation ──────────────────────────────────────────────────
+
+document.getElementById('darkIcon').textContent =
+  document.documentElement.classList.contains('dark') ? '☀' : '☽';
+
+// ── Config fetch & debug button visibility ────────────────────────────────────
+
+(async () => {
+  try {
+    const cfg = await fetch('/api/config').then((r) => r.json());
+    if (cfg.showDiagramDebug) {
+      document.getElementById('btnDebug').classList.remove('hidden');
+      document.getElementById('sepDebug').classList.remove('hidden');
+    }
+  } catch {
+    /* config unavailable — debug button stays hidden */
+  }
+})();
+
+// ── Bootstrap ─────────────────────────────────────────────────────────────────
+
+loadDiagramList();

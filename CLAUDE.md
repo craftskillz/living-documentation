@@ -100,6 +100,28 @@ Validated on write: must be absolute paths ending in `.md`.
 
 `src/frontend/diagram.html` — standalone vis-network 9.1.9 canvas editor, served at `/diagram`.
 
+JavaScript extracted into ES modules under `src/frontend/diagram/` (copied to `dist/` by `copy-assets.ts`):
+
+```
+diagram/constants.js        → NODE_COLORS, TOOL_BTN_MAP, GRID_SIZE
+diagram/state.js            → shared mutable state object `st` + markDirty()
+diagram/node-rendering.js   → actor renderer, visNodeProps, computeVadjust, getActualNodeHeight
+diagram/edge-rendering.js   → visEdgeProps
+diagram/label-editor.js     → floating textarea for node/edge label editing
+diagram/selection-overlay.js → selection box + corner resize handles
+diagram/node-panel.js       → node formatting panel (color, font, alignment, z-order)
+diagram/edge-panel.js       → edge formatting panel (arrow, dashes, font)
+diagram/grid.js             → grid drawing (DPR), snap-to-grid, physics toggle
+diagram/debug.js            → debug overlay (node coords/dimensions)
+diagram/zoom.js             → zoom controls
+diagram/network.js          → initNetwork, _drawNodes patch, all vis.js event handlers
+diagram/persistence.js      → CRUD /api/diagrams, diagram list rendering
+diagram/clipboard.js        → copy/paste with ID remapping
+diagram/main.js             → entry point: toolbar wiring, keyboard shortcuts, app init
+```
+
+All `onclick` attributes removed from HTML; buttons have explicit `id` or `data-color`; listeners wired in `main.js` via `addEventListener`. No globals added — `vis` remains the only CDN global.
+
 ### Z-order (`_canonicalOrder`)
 
 vis.js renders nodes in three passes (normal → selected → hovered), always drawing hover/selected nodes on top. To preserve user-defined stacking, `network.renderer._drawNodes` is **monkey-patched** at network creation time to perform a single pass in `_canonicalOrder` — an app-managed array that holds node IDs in the desired draw order (first = bottom, last = top).
@@ -175,3 +197,4 @@ Published on npm as `living-documentation`.
 | Diagram z-order (vis-network patch) | [2026*04_03*[DIAGRAM]\_vis_network_z_order_patch.md](documentation/adrs/2026_04_03_[DIAGRAM]_vis_network_z_order_patch.md)                                     |
 | Diagram snap-to-grid & DPR grid     | [2026*04_03*[DIAGRAM]\_snap_to_grid.md](documentation/adrs/2026_04_03_[DIAGRAM]_snap_to_grid.md)                                                               |
 | Diagram debug overlay               | [2026*04_03*[DIAGRAM]\_debug_overlay.md](documentation/adrs/2026_04_03_[DIAGRAM]_debug_overlay.md)                                                             |
+| Diagram JS modularisation           | [2026*04_03*[DIAGRAM]\_modularisation_javascript.md](documentation/adrs/2026_04_03_[DIAGRAM]_modularisation_javascript.md)                                     |
