@@ -207,12 +207,20 @@
         <!-- Node panel -->
         <div id="nodePanel" class="float-panel hidden">
           <button onclick="setNodeColor('c-gray')"   class="w-5 h-5 rounded-full border-2 border-stone-400  bg-stone-200  hover:scale-125 transition-transform" title="Gris"></button>
+          <button onclick="setNodeColor('c-slate')"  class="w-5 h-5 rounded-full border-2 border-slate-500   bg-slate-100  hover:scale-125 transition-transform" title="Ardoise"></button>
           <button onclick="setNodeColor('c-blue')"   class="w-5 h-5 rounded-full border-2 border-blue-500   bg-blue-200   hover:scale-125 transition-transform" title="Bleu"></button>
-          <button onclick="setNodeColor('c-green')"  class="w-5 h-5 rounded-full border-2 border-green-500  bg-green-200  hover:scale-125 transition-transform" title="Vert"></button>
-          <button onclick="setNodeColor('c-amber')"  class="w-5 h-5 rounded-full border-2 border-amber-500  bg-amber-200  hover:scale-125 transition-transform" title="Ambre"></button>
-          <button onclick="setNodeColor('c-rose')"   class="w-5 h-5 rounded-full border-2 border-rose-500   bg-rose-200   hover:scale-125 transition-transform" title="Rose"></button>
-          <button onclick="setNodeColor('c-purple')" class="w-5 h-5 rounded-full border-2 border-purple-500 bg-purple-200 hover:scale-125 transition-transform" title="Violet"></button>
+          <button onclick="setNodeColor('c-sky')"    class="w-5 h-5 rounded-full border-2 border-sky-500    bg-sky-200    hover:scale-125 transition-transform" title="Ciel"></button>
+          <button onclick="setNodeColor('c-cyan')"   class="w-5 h-5 rounded-full border-2 border-cyan-500   bg-cyan-200   hover:scale-125 transition-transform" title="Cyan"></button>
           <button onclick="setNodeColor('c-teal')"   class="w-5 h-5 rounded-full border-2 border-teal-500   bg-teal-200   hover:scale-125 transition-transform" title="Teal"></button>
+          <button onclick="setNodeColor('c-green')"  class="w-5 h-5 rounded-full border-2 border-green-500  bg-green-200  hover:scale-125 transition-transform" title="Vert"></button>
+          <button onclick="setNodeColor('c-lime')"   class="w-5 h-5 rounded-full border-2 border-lime-500   bg-lime-200   hover:scale-125 transition-transform" title="Citron"></button>
+          <button onclick="setNodeColor('c-amber')"  class="w-5 h-5 rounded-full border-2 border-amber-500  bg-amber-200  hover:scale-125 transition-transform" title="Ambre"></button>
+          <button onclick="setNodeColor('c-orange')" class="w-5 h-5 rounded-full border-2 border-orange-500 bg-orange-200 hover:scale-125 transition-transform" title="Orange"></button>
+          <button onclick="setNodeColor('c-red')"    class="w-5 h-5 rounded-full border-2 border-red-500    bg-red-200    hover:scale-125 transition-transform" title="Rouge"></button>
+          <button onclick="setNodeColor('c-rose')"   class="w-5 h-5 rounded-full border-2 border-rose-500   bg-rose-200   hover:scale-125 transition-transform" title="Rose"></button>
+          <button onclick="setNodeColor('c-pink')"   class="w-5 h-5 rounded-full border-2 border-pink-500   bg-pink-200   hover:scale-125 transition-transform" title="Fuschia"></button>
+          <button onclick="setNodeColor('c-purple')" class="w-5 h-5 rounded-full border-2 border-purple-500 bg-purple-200 hover:scale-125 transition-transform" title="Violet"></button>
+          <button onclick="setNodeColor('c-indigo')" class="w-5 h-5 rounded-full border-2 border-indigo-500 bg-indigo-200 hover:scale-125 transition-transform" title="Indigo"></button>
           <div class="panel-sep"></div>
           <button onclick="startLabelEdit()" class="tool-btn !w-6 !h-6" title="Modifier le texte (double-clic)">✎</button>
           <div class="panel-sep"></div>
@@ -342,6 +350,14 @@
       'c-rose':   { bg:'#ffe4e6', border:'#f43f5e', font:'#881337', hbg:'#fecdd3', hborder:'#e11d48' },
       'c-purple': { bg:'#ede9fe', border:'#8b5cf6', font:'#4c1d95', hbg:'#ddd6fe', hborder:'#7c3aed' },
       'c-teal':   { bg:'#ccfbf1', border:'#14b8a6', font:'#134e4a', hbg:'#99f6e4', hborder:'#0d9488' },
+      'c-orange': { bg:'#ffedd5', border:'#f97316', font:'#7c2d12', hbg:'#fed7aa', hborder:'#ea580c' },
+      'c-cyan':   { bg:'#cffafe', border:'#06b6d4', font:'#164e63', hbg:'#a5f3fc', hborder:'#0891b2' },
+      'c-indigo': { bg:'#e0e7ff', border:'#6366f1', font:'#312e81', hbg:'#c7d2fe', hborder:'#4f46e5' },
+      'c-pink':   { bg:'#fce7f3', border:'#ec4899', font:'#831843', hbg:'#fbcfe8', hborder:'#db2777' },
+      'c-lime':   { bg:'#ecfccb', border:'#84cc16', font:'#365314', hbg:'#d9f99d', hborder:'#65a30d' },
+      'c-red':    { bg:'#fee2e2', border:'#ef4444', font:'#7f1d1d', hbg:'#fecaca', hborder:'#dc2626' },
+      'c-sky':    { bg:'#e0f2fe', border:'#0ea5e9', font:'#0c4a6e', hbg:'#bae6fd', hborder:'#0284c7' },
+      'c-slate':  { bg:'#f1f5f9', border:'#64748b', font:'#0f172a', hbg:'#e2e8f0', hborder:'#475569' },
     };
 
     // ── Actor ctxRenderer ─────────────────────────────────────────────────────
@@ -377,11 +393,19 @@
       return 0;
     }
 
-    function visNodeProps(shapeType, colorKey, nodeWidth, nodeHeight, fontSize, textAlign, textValign) {
+    // Returns the actual rendered height of a node (from vis.js internals), or null.
+    function getActualNodeHeight(id) {
+      if (!network) return null;
+      const bn = network.body.nodes[id];
+      return (bn && bn.shape && bn.shape.height) ? bn.shape.height : null;
+    }
+
+    function visNodeProps(shapeType, colorKey, nodeWidth, nodeHeight, fontSize, textAlign, textValign, vadjustHeight) {
       const c       = NODE_COLORS[colorKey] || NODE_COLORS['c-gray'];
       const size    = fontSize   || 13;
       const align   = textAlign  || 'center';
-      const vadjust = computeVadjust(textValign, nodeHeight, size);
+      // vadjustHeight overrides nodeHeight for the vadjust calculation (actual rendered size)
+      const vadjust = computeVadjust(textValign, vadjustHeight || nodeHeight, size);
       const colorP = {
         color: {
           background: c.bg, border: c.border,
@@ -604,7 +628,8 @@
         const n = nodes.get(id);
         if (!n) return;
         const newSize = Math.max(8, Math.min(48, (n.fontSize || 13) + delta));
-        nodes.update({ id, fontSize: newSize, ...visNodeProps(n.shapeType||'box', n.colorKey||'c-gray', n.nodeWidth, n.nodeHeight, newSize, n.textAlign, n.textValign) });
+        const ah = getActualNodeHeight(id);
+        nodes.update({ id, fontSize: newSize, ...visNodeProps(n.shapeType||'box', n.colorKey||'c-gray', n.nodeWidth, n.nodeHeight, newSize, n.textAlign, n.textValign, ah) });
       });
       markDirty();
     }
@@ -613,7 +638,8 @@
       if (!selectedNodeIds.length) return;
       selectedNodeIds.forEach(id => {
         const n = nodes.get(id); if (!n) return;
-        nodes.update({ id, textAlign: align, ...visNodeProps(n.shapeType||'box', n.colorKey||'c-gray', n.nodeWidth, n.nodeHeight, n.fontSize, align, n.textValign) });
+        const ah = getActualNodeHeight(id);
+        nodes.update({ id, textAlign: align, ...visNodeProps(n.shapeType||'box', n.colorKey||'c-gray', n.nodeWidth, n.nodeHeight, n.fontSize, align, n.textValign, ah) });
       });
       markDirty();
     }
@@ -622,7 +648,8 @@
       if (!selectedNodeIds.length) return;
       selectedNodeIds.forEach(id => {
         const n = nodes.get(id); if (!n) return;
-        nodes.update({ id, textValign: valign, ...visNodeProps(n.shapeType||'box', n.colorKey||'c-gray', n.nodeWidth, n.nodeHeight, n.fontSize, n.textAlign, valign) });
+        const ah = getActualNodeHeight(id);
+        nodes.update({ id, textValign: valign, ...visNodeProps(n.shapeType||'box', n.colorKey||'c-gray', n.nodeWidth, n.nodeHeight, n.fontSize, n.textAlign, valign, ah) });
       });
       markDirty();
     }
@@ -835,7 +862,7 @@
         nW = Math.max(MIN, Math.round(nW));
         nH = Math.max(MIN, Math.round(nH));
         nodes.update({ id, nodeWidth: nW, nodeHeight: nH,
-          ...visNodeProps(node.shapeType||'box', node.colorKey||'c-gray', nW, nH, node.fontSize, node.textAlign, node.textValign) });
+          ...visNodeProps(node.shapeType||'box', node.colorKey||'c-gray', nW, nH, node.fontSize, node.textAlign, node.textValign, nH) });
       } else {
         // Multi: proportional scale
         const { initBoxW, initBoxH } = resizeDrag;
@@ -849,7 +876,7 @@
           const nW = Math.max(MIN, Math.round(initW * sx));
           const nH = Math.max(MIN, Math.round(initH * sy));
           nodes.update({ id, nodeWidth: nW, nodeHeight: nH,
-            ...visNodeProps(node.shapeType||'box', node.colorKey||'c-gray', nW, nH, node.fontSize, node.textAlign, node.textValign) });
+            ...visNodeProps(node.shapeType||'box', node.colorKey||'c-gray', nW, nH, node.fontSize, node.textAlign, node.textValign, nH) });
         }
       }
       updateSelectionOverlay();

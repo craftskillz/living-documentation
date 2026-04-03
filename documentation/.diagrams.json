@@ -1,120 +1,48 @@
 [
   {
-    "id": "d1775155334524",
-    "title": "Nouveau diaabbgramme",
+    "id": "d1775221670024",
+    "title": "Nouveau diagramme",
     "nodes": [
       {
-        "id": "n1775164760318",
-        "label": "Node",
-        "shapeType": "circle",
-        "colorKey": "c-gray",
-        "nodeWidth": null,
-        "nodeHeight": null,
-        "fontSize": null,
-        "textAlign": null,
-        "textValign": null,
-        "x": -205,
-        "y": -125
-      },
-      {
-        "id": "n1775164761093",
-        "label": "Node",
-        "shapeType": "circle",
-        "colorKey": "c-gray",
-        "nodeWidth": null,
-        "nodeHeight": null,
-        "fontSize": null,
-        "textAlign": null,
-        "textValign": null,
-        "x": -125,
-        "y": 115
-      },
-      {
-        "id": "n1775164761902",
-        "label": "Node",
-        "shapeType": "circle",
-        "colorKey": "c-gray",
-        "nodeWidth": null,
-        "nodeHeight": null,
-        "fontSize": null,
-        "textAlign": null,
-        "textValign": null,
-        "x": 115,
-        "y": 75
-      },
-      {
-        "id": "n1775164762659",
-        "label": "Node",
-        "shapeType": "circle",
-        "colorKey": "c-gray",
-        "nodeWidth": null,
-        "nodeHeight": null,
-        "fontSize": null,
-        "textAlign": null,
-        "textValign": null,
-        "x": 35,
-        "y": -165
-      },
-      {
-        "id": "n1775164813601",
-        "label": "\n\nPOSTGRES",
+        "id": "n1775221676161",
+        "label": "Postgres",
         "shapeType": "database",
         "colorKey": "c-gray",
-        "nodeWidth": 141,
-        "nodeHeight": 150,
+        "nodeWidth": 307,
+        "nodeHeight": 47,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": "bottom",
+        "x": -704,
+        "y": -259
+      },
+      {
+        "id": "n1775221673161",
+        "label": "Node",
+        "shapeType": "circle",
+        "colorKey": "c-gray",
+        "nodeWidth": null,
+        "nodeHeight": null,
         "fontSize": null,
         "textAlign": null,
         "textValign": null,
-        "x": -444,
-        "y": -244
+        "x": -557,
+        "y": -396
+      },
+      {
+        "id": "n1775222569652crlmggebtz",
+        "label": "Node",
+        "shapeType": "circle",
+        "colorKey": "c-gray",
+        "nodeWidth": null,
+        "nodeHeight": null,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": null,
+        "x": -520,
+        "y": -419
       }
     ],
-    "edges": [
-      {
-        "id": "e1775164779484",
-        "from": "n1775164760318",
-        "to": "n1775164761093",
-        "label": "",
-        "arrowDir": "to",
-        "dashes": false,
-        "fontSize": null
-      },
-      {
-        "id": "e1775164780568",
-        "from": "n1775164761093",
-        "to": "n1775164761902",
-        "label": "",
-        "arrowDir": "to",
-        "dashes": false,
-        "fontSize": null
-      },
-      {
-        "id": "e1775164783117",
-        "from": "n1775164761902",
-        "to": "n1775164762659",
-        "label": "",
-        "arrowDir": "to",
-        "dashes": false,
-        "fontSize": null
-      },
-      {
-        "id": "e1775164785651",
-        "from": "n1775164762659",
-        "to": "n1775164760318",
-        "label": "",
-        "arrowDir": "to",
-        "dashes": false,
-        "fontSize": null
-      },
-      {
-        "id": "e1775164848358",
-        "from": "n1775164813601",
-        "to": "n1775164760318",
-        "label": "",
-        "arrowDir": "to",
-        "dashes": false,
-        "fontSize": null
-      }
-    ]
+    "edges": []
   }
 ]
