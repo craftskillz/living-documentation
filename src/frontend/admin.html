@@ -146,6 +146,14 @@
                 </select>
                 <p class="text-xs text-gray-400 dark:text-gray-500">Users can always override with the toggle button.</p>
               </div>
+              <div class="px-5 py-4">
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input id="field-debug" name="showDiagramDebug" type="checkbox"
+                    class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500" />
+                  <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Show debug button in diagram editor</span>
+                </label>
+                <p class="mt-1 text-xs text-gray-400 dark:text-gray-500 ml-7">Displays a Debug button that overlays raw position and size info on each node — useful for diagnosing snap-to-grid issues.</p>
+              </div>
               <div class="px-5 py-4 space-y-1.5">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="field-pattern">Filename Pattern</label>
                 <input id="field-pattern" name="filenamePattern" type="text"
@@ -211,6 +219,7 @@
           document.getElementById("field-theme").value = cfg.theme || "system";
           document.getElementById("field-pattern").value =
             cfg.filenamePattern || "";
+          document.getElementById("field-debug").checked = !!cfg.showDiagramDebug;
           updatePreview(cfg.filenamePattern);
           initExtraFiles(cfg);
         } catch {
@@ -236,6 +245,7 @@
           title: document.getElementById("field-title").value.trim(),
           theme: document.getElementById("field-theme").value,
           filenamePattern,
+          showDiagramDebug: document.getElementById("field-debug").checked,
         };
 
         try {

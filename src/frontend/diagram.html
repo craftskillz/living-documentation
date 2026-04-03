@@ -52,6 +52,21 @@
       .dark #labelInput { background: rgba(17,24,39,.95); color: #f3f4f6; }
       #labelInput.hidden { display: none; }
 
+      /* Debug overlay layer */
+      #debugLayer {
+        position: absolute; inset: 0;
+        pointer-events: none; z-index: 12; overflow: hidden;
+      }
+      .debug-box {
+        position: absolute; pointer-events: auto;
+        font: 10px/1.4 monospace; white-space: pre;
+        user-select: text; cursor: text;
+        padding: 3px 6px;
+        border: 1px solid #f97316; border-radius: 3px;
+        color: #c2410c; background: rgba(255,255,255,0.9);
+      }
+      .dark .debug-box { color: #fbbf24; background: rgba(0,0,0,0.78); }
+
       /* Resize / selection overlay */
       #selectionOverlay {
         position: absolute; display: none;
@@ -150,6 +165,9 @@
       <button onclick="toggleDark()" class="tool-btn"><span id="darkIcon">☽</span></button>
       <div class="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-0.5"></div>
 
+      <button id="btnDebug" onclick="toggleDebug()" class="hidden tool-btn text-xs font-mono" title="Debug overlay">dbg</button>
+      <div id="sepDebug" class="hidden w-px h-6 bg-gray-200 dark:bg-gray-700 mx-0.5"></div>
+
       <button id="btnSave" onclick="saveDiagram()" disabled
         class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-40 disabled:cursor-not-allowed shrink-0 transition-colors">
         Enregistrer
@@ -174,6 +192,9 @@
       <div class="relative flex-1 overflow-hidden bg-gray-50 dark:bg-gray-950">
 
         <div id="vis-canvas" class="w-full h-full"></div>
+
+        <!-- Debug overlay layer -->
+        <div id="debugLayer"></div>
 
         <!-- Selection / resize overlay -->
         <div id="selectionOverlay">
@@ -302,6 +323,7 @@
     let selectedEdgeIds  = [];
     let physicsEnabled   = true;
     let gridEnabled      = false;
+    let debugMode        = false;
     const GRID_SIZE      = 40;
     let isDirty          = false;
     let sidebarOpen      = true;
@@ -498,6 +520,7 @@
       network.on('dragEnd',       onDragEnd);
       network.on('beforeDrawing', drawGrid);
       network.on('afterDrawing',  updateSelectionOverlay);
+      network.on('afterDrawing',  () => drawDebugOverlay());
 
       document.getElementById('emptyState').classList.add('hidden');
       updateZoomDisplay();
@@ -886,6 +909,58 @@
       btn.title = physicsEnabled ? 'Auto-espacement actif' : 'Auto-espacement inactif';
     }
 
+    // ── Debug overlay ─────────────────────────────────────────────────────────
+    function toggleDebug() {
+      debugMode = !debugMode;
+      document.getElementById('btnDebug').classList.toggle('tool-active', debugMode);
+      if (network) network.redraw();
+    }
+
+    function drawDebugOverlay() {
+      const layer = document.getElementById('debugLayer');
+      if (!debugMode || !network) { layer.innerHTML = ''; return; }
+
+      // Recycle existing boxes keyed by node id
+      const existing = new Map([...layer.querySelectorAll('.debug-box')].map(el => [el.dataset.nid, el]));
+      const seen = new Set();
+
+      for (const id of _canonicalOrder) {
+        const bodyNode = network.body.nodes[id];
+        if (!bodyNode) continue;
+        const w  = bodyNode.shape.width  || 0;
+        const h  = bodyNode.shape.height || 0;
+        const cx = bodyNode.x;
+        const cy = bodyNode.y;
+        const L  = cx - w / 2;
+        const T  = cy - h / 2;
+
+        // DOM position: right edge of the node + offset
+        const dom = network.canvasToDOM({ x: cx + w / 2 + 8, y: cy - h / 2 });
+
+        const text = [
+          `id : ${id}`,
+          `cx=${Math.round(cx)}  cy=${Math.round(cy)}`,
+          `w =${Math.round(w)}   h =${Math.round(h)}`,
+          `L =${Math.round(L)}   T =${Math.round(T)}`,
+        ].join('\n');
+
+        let box = existing.get(String(id));
+        if (!box) {
+          box = document.createElement('div');
+          box.className = 'debug-box';
+          box.dataset.nid = String(id);
+          layer.appendChild(box);
+        }
+        box.textContent = text;
+        box.style.left = Math.round(dom.x) + 'px';
+        box.style.top  = Math.round(dom.y) + 'px';
+        seen.add(String(id));
+      }
+
+      // Remove boxes for deleted nodes
+      existing.forEach((el, nid) => { if (!seen.has(nid)) el.remove(); });
+    }
+
     // ── Grid ─────────────────────────────────────────────────────────────────
     function toggleGrid() {
       gridEnabled = !gridEnabled;
@@ -904,17 +979,16 @@
       const canvas  = ctx.canvas;
       const W = canvas.width, H = canvas.height;
 
-      // Canvas-space grid step
-      const step = GRID_SIZE * scale;
+      // DPR: beforeDrawing ctx is in physical pixels (after setTransform(1,0,0,1,0,0))
+      // but center.x/y and scale are in vis.js CSS-pixel space → must multiply by DPR
+      const dpr  = window.devicePixelRatio || 1;
+      const step = GRID_SIZE * scale * dpr;
 
-      // Offset so grid aligns to canvas-space multiples of GRID_SIZE
-      // Use positive modulo to avoid negative offsets when panning left/up
-      const offsetX = ((W / 2 - center.x * scale) % step + step) % step;
-      const offsetY = ((H / 2 - center.y * scale) % step + step) % step;
+      const offsetX = ((W / 2 - center.x * scale * dpr) % step + step) % step;
+      const offsetY = ((H / 2 - center.y * scale * dpr) % step + step) % step;
 
       ctx.save();
-      // Reset transform — we work in screen (canvas pixel) space
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);  // physical pixel space
       ctx.strokeStyle = color;
       ctx.lineWidth   = 1;
       ctx.beginPath();
@@ -924,16 +998,20 @@
       ctx.restore();
     }
 
-    function snapToGrid(v) {
-      return Math.round(v / GRID_SIZE) * GRID_SIZE;
-    }
-
     function onDragEnd(params) {
       if (gridEnabled && params.nodes && params.nodes.length > 0) {
-        const positions = network.getPositions(params.nodes);
         params.nodes.forEach(id => {
-          const p = positions[id];
-          if (p) network.moveNode(id, snapToGrid(p.x), snapToGrid(p.y));
+          const bodyNode = network.body.nodes[id];
+          if (!bodyNode) return;
+          // shape.width/height are set by resize() during each draw — exact visual size
+          const w  = bodyNode.shape.width  || 0;
+          const h  = bodyNode.shape.height || 0;
+          const cx = bodyNode.x;
+          const cy = bodyNode.y;
+          // Snap the visual top-left corner (x - w/2, y - h/2) to grid lines
+          const snappedLeft = Math.round((cx - w / 2) / GRID_SIZE) * GRID_SIZE;
+          const snappedTop  = Math.round((cy - h / 2) / GRID_SIZE) * GRID_SIZE;
+          network.moveNode(id, snappedLeft + w / 2, snappedTop + h / 2);
         });
       }
       markDirty();
@@ -1177,6 +1255,15 @@
     });
 
     // ── Init ──────────────────────────────────────────────────────────────────
+    (async () => {
+      try {
+        const cfg = await fetch('/api/config').then(r => r.json());
+        if (cfg.showDiagramDebug) {
+          document.getElementById('btnDebug').classList.remove('hidden');
+          document.getElementById('sepDebug').classList.remove('hidden');
+        }
+      } catch { /* config non disponible — debug button reste caché */ }
+    })();
     loadDiagramList();
     </script>
   </body>

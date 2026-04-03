@@ -23,6 +23,7 @@ export function configRouter(docsPath: string): Router {
         'title',
         'filenamePattern',
         'theme',
+        'showDiagramDebug',
       ];
       const safe: Partial<LivingDocConfig> = {};
       for (const key of allowed) {

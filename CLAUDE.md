@@ -58,8 +58,10 @@ Documents are sorted by **full filename** (ascending `localeCompare`) within eac
 ## Config
 
 Persisted as `.living-doc.json` inside the docs folder.
-Editable fields via `PUT /api/config`: `title`, `theme`, `filenamePattern`, `extraFiles`.
+Editable fields via `PUT /api/config`: `title`, `theme`, `filenamePattern`, `extraFiles`, `showDiagramDebug`.
 `docsFolder` and `port` are write-once from CLI and are informational only in the API.
+
+`showDiagramDebug` (bool, default `false`) — when `true`, a "dbg" button appears in the diagram editor top bar that toggles a DOM debug overlay showing each node's position and dimensions. Toggled from the Admin panel.
 
 ### extraFiles
 
@@ -93,6 +95,42 @@ Validated on write: must be absolute paths ending in `.md`.
 - Server saves it to `DOCS_FOLDER/images/` (directory created if absent) with a timestamped filename.
 - Placeholder is replaced by `![image](./images/<filename>)`.
 - Images are served statically by Express at `/images/*` → `DOCS_FOLDER/images/`.
+
+## Diagram editor
+
+`src/frontend/diagram.html` — standalone vis-network 9.1.9 canvas editor, served at `/diagram`.
+
+### Z-order (`_canonicalOrder`)
+
+vis.js renders nodes in three passes (normal → selected → hovered), always drawing hover/selected nodes on top. To preserve user-defined stacking, `network.renderer._drawNodes` is **monkey-patched** at network creation time to perform a single pass in `_canonicalOrder` — an app-managed array that holds node IDs in the desired draw order (first = bottom, last = top).
+
+- `_canonicalOrder` is initialised from `network.body.nodeIndices` after `new vis.Network(...)`.
+- `nodes.on('add')` / `nodes.on('remove')` keep it in sync when nodes are added or deleted.
+- `changeZOrder(+1/-1)` mutates `_canonicalOrder` directly then calls `network.redraw()`.
+- `saveDiagram` serialises nodes in `_canonicalOrder` order so z-order is restored on reload.
+- **If vis-network is upgraded**, re-verify `_drawNodes`'s signature and internal logic before releasing.
+
+### Snap to grid
+
+Grid size: `GRID_SIZE = 40` world units. Snap targets the **visual top-left corner** of each shape, not the centre.
+
+```js
+const w  = bodyNode.shape.width;   // set by shape.resize() on every draw — correct for all shapes
+const h  = bodyNode.shape.height;
+const snappedLeft = Math.round((cx - w/2) / GRID_SIZE) * GRID_SIZE;
+const snappedTop  = Math.round((cy - h/2) / GRID_SIZE) * GRID_SIZE;
+network.moveNode(id, snappedLeft + w/2, snappedTop + h/2);
+```
+
+Do **not** use `network.getBoundingBox()` for snap: it inflates `box` shapes by `borderRadius` and returns wrong values for `actor` (custom shape).
+
+### Grid drawing (DPR)
+
+`drawGrid` resets to physical pixels with `ctx.setTransform(1,0,0,1,0,0)`. vis.js coordinates (`center.x`, `scale`) are in CSS pixels, so they must be multiplied by `window.devicePixelRatio` to match physical pixel space — otherwise the grid is misaligned on Retina displays.
+
+### Debug overlay
+
+Toggled by the `showDiagramDebug` config flag (Admin panel checkbox). Renders DOM `div` elements (selectable text) positioned with `network.canvasToDOM()`, showing `cx`, `cy`, `w`, `h`, `L = cx-w/2`, `T = cy-h/2` for each node. Updated on every `afterDrawing` event.
 
 ## Security notes
 
@@ -134,3 +172,6 @@ Published on npm as `living-documentation`.
 | Extra files outside docs folder     | [2026*03_20*[CONFIGURATION]\_link_extra_files_as_documentation.md](documentation/adrs/2026_03_20_[CONFIGURATION]_link_extra_files_as_documentation.md)         |
 | General category & sidebar collapse | [2026*03_21*[CONFIGURATION]\_general_category_and_sidebar_defaults.md](documentation/adrs/2026_03_21_[CONFIGURATION]_general_category_and_sidebar_defaults.md) |
 | Always-dark syntax highlighting     | [2026*03_22*[STYLE]\_always_dark_syntax_highlighting.md](documentation/adrs/2026_03_22_[STYLE]_always_dark_syntax_highlighting.md)                             |
+| Diagram z-order (vis-network patch) | [2026*04_03*[DIAGRAM]\_vis_network_z_order_patch.md](documentation/adrs/2026_04_03_[DIAGRAM]_vis_network_z_order_patch.md)                                     |
+| Diagram snap-to-grid & DPR grid     | [2026*04_03*[DIAGRAM]\_snap_to_grid.md](documentation/adrs/2026_04_03_[DIAGRAM]_snap_to_grid.md)                                                               |
+| Diagram debug overlay               | [2026*04_03*[DIAGRAM]\_debug_overlay.md](documentation/adrs/2026_04_03_[DIAGRAM]_debug_overlay.md)                                                             |

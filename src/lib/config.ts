@@ -8,6 +8,7 @@ export interface LivingDocConfig {
   theme: 'light' | 'dark' | 'system';
   port: number;
   extraFiles: string[];
+  showDiagramDebug: boolean;
 }
 
 const CONFIG_FILENAME = '.living-doc.json';
@@ -19,6 +20,7 @@ const DEFAULTS: LivingDocConfig = {
   theme: 'system',
   port: 4321,
   extraFiles: [],
+  showDiagramDebug: false,
 };
 
 export function getConfigPath(docsPath: string): string {
