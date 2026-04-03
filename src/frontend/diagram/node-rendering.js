@@ -4,25 +4,64 @@
 import { NODE_COLORS } from './constants.js';
 import { st } from './state.js';
 
+// Reference dimensions of the actor figure at scale 1.
+const ACTOR_W0 = 30;
+const ACTOR_H0 = 52;
+
 // Factory: returns a vis.js ctxRenderer for the "actor" custom shape.
+//
+// Key design: this is a STABLE function — it is created ONCE per colorKey and
+// never replaced. vis-network caches the ctxRenderer reference inside its
+// CustomShape object and does NOT re-read it from the DataSet after updates,
+// so rebuilding the closure on every resize would have no effect.
+//
+// Instead, the renderer reads live dimensions on every draw call via the node
+// `id` that vis-network passes to ctxRenderer. `st.nodes.get(id)` always
+// returns the latest nodeWidth / nodeHeight written by the resize handler.
 export function makeActorRenderer(colorKey) {
-  return function ({ ctx, x, y, state: visState }) {
-    const c = NODE_COLORS[colorKey] || NODE_COLORS['c-gray'];
+  const c = NODE_COLORS[colorKey] || NODE_COLORS['c-gray'];
+
+  return function ({ ctx, x, y, id, state: visState, label, style }) {
+    // Read the current dimensions from the DataSet on every draw.
+    const n  = st.nodes && st.nodes.get(id);
+    const W  = (n && n.nodeWidth)  || ACTOR_W0;
+    const H  = (n && n.nodeHeight) || ACTOR_H0;
+    const sx = W / ACTOR_W0;
+    const sy = H / ACTOR_H0;
+    const fontSize = (style && style.font && style.font.size) ? style.font.size : 13;
+
     return {
       drawNode() {
+        // ── Scaled stick figure ───────────────────────────────────────────────
         ctx.save();
         ctx.strokeStyle = visState.selected ? '#f97316' : c.border;
         ctx.fillStyle   = visState.selected ? c.hbg : c.bg;
         ctx.lineWidth   = 2;
         ctx.lineCap     = 'round';
-        ctx.beginPath(); ctx.arc(x, y - 20, 8, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(x, y - 12); ctx.lineTo(x, y + 8); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(x - 13, y - 3); ctx.lineTo(x + 13, y - 3); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(x, y + 8); ctx.lineTo(x - 10, y + 24); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(x, y + 8); ctx.lineTo(x + 10, y + 24); ctx.stroke();
+        ctx.beginPath(); ctx.arc(x, y - 20*sy, 8*sy, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x, y - 12*sy); ctx.lineTo(x, y + 8*sy);                ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x - 13*sx, y - 3*sy); ctx.lineTo(x + 13*sx, y - 3*sy); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x, y + 8*sy); ctx.lineTo(x - 10*sx, y + 24*sy);        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x, y + 8*sy); ctx.lineTo(x + 10*sx, y + 24*sy);        ctx.stroke();
         ctx.restore();
+
+        // ── Label below the figure ────────────────────────────────────────────
+        if (label) {
+          ctx.save();
+          ctx.font         = `${fontSize}px system-ui,-apple-system,sans-serif`;
+          ctx.fillStyle    = c.font;
+          ctx.textAlign    = 'center';
+          ctx.textBaseline = 'top';
+          const lines  = String(label).split('\n');
+          const lineH  = fontSize * 1.3;
+          const startY = y + 24*sy + 4; // 4 px gap below scaled leg tips
+          lines.forEach((line, i) => ctx.fillText(line, x, startY + i * lineH));
+          ctx.restore();
+        }
       },
-      nodeDimensions: { width: 30, height: 52 },
+      // nodeDimensions must also reflect the current size so vis-network uses
+      // the right bounding box for collision detection and layout.
+      nodeDimensions: { width: W, height: H },
     };
   };
 }
@@ -67,6 +106,7 @@ export function visNodeProps(shapeType, colorKey, nodeWidth, nodeHeight, fontSiz
   if (nodeHeight) sizeP.heightConstraint = { minimum: nodeHeight, maximum: nodeHeight };
 
   if (shapeType === 'actor') {
+    // The renderer reads dimensions from st.nodes at draw time — never recreated.
     return { shape: 'custom', ctxRenderer: makeActorRenderer(colorKey), ...colorP, ...sizeP };
   }
   return { shape: shapeType, ...colorP, ...sizeP };

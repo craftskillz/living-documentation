@@ -10,11 +10,27 @@ export function updateSelectionOverlay() {
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   for (const id of st.selectedNodeIds) {
     try {
-      const bb = st.network.getBoundingBox(id);
-      minX = Math.min(minX, bb.left);
-      minY = Math.min(minY, bb.top);
-      maxX = Math.max(maxX, bb.right);
-      maxY = Math.max(maxY, bb.bottom);
+      const n = st.nodes.get(id);
+      if (n && n.shapeType === 'actor') {
+        // getBoundingBox() returns wrong values for custom ctxRenderer shapes.
+        // Compute the visual bounds from the node's centre + scaled actor geometry.
+        const bodyNode = st.network.body.nodes[id];
+        if (!bodyNode) continue;
+        const cx = bodyNode.x, cy = bodyNode.y;
+        const W  = n.nodeWidth  || 30;
+        const H  = n.nodeHeight || 52;
+        const sy = H / 52;
+        minX = Math.min(minX, cx - W / 2);
+        minY = Math.min(minY, cy - 28 * sy); // head top
+        maxX = Math.max(maxX, cx + W / 2);
+        maxY = Math.max(maxY, cy + 24 * sy); // legs bottom
+      } else {
+        const bb = st.network.getBoundingBox(id);
+        minX = Math.min(minX, bb.left);
+        minY = Math.min(minY, bb.top);
+        maxX = Math.max(maxX, bb.right);
+        maxY = Math.max(maxY, bb.bottom);
+      }
     } catch (_) { /* node still being created */ }
   }
   if (minX === Infinity) { hideSelectionOverlay(); return; }
@@ -28,6 +44,7 @@ export function updateSelectionOverlay() {
   ov.style.top     = tl.y - PAD + 'px';
   ov.style.width   = br.x - tl.x + PAD * 2 + 'px';
   ov.style.height  = br.y - tl.y + PAD * 2 + 'px';
+
 }
 
 export function hideSelectionOverlay() {
@@ -40,14 +57,23 @@ function onResizeStart(e, corner) {
   e.stopPropagation();
 
   const startBBs = st.selectedNodeIds.map((id) => {
-    const bb = st.network.getBoundingBox(id);
     const n  = st.nodes.get(id);
-    return { id, node: n, initW: n.nodeWidth || Math.round(bb.right - bb.left), initH: n.nodeHeight || Math.round(bb.bottom - bb.top) };
+    // getBoundingBox() returns wrong values for custom ctxRenderer shapes (actor).
+    // Fall back to the actor's reference dimensions when no resize has happened yet.
+    let initW, initH;
+    if (n && n.shapeType === 'actor') {
+      initW = n.nodeWidth  || 30;
+      initH = n.nodeHeight || 52;
+    } else {
+      const bb = st.network.getBoundingBox(id);
+      initW = n.nodeWidth  || Math.round(bb.right  - bb.left);
+      initH = n.nodeHeight || Math.round(bb.bottom - bb.top);
+    }
+    return { id, node: n, initW, initH };
   });
 
-  const allBBs   = st.selectedNodeIds.map((id) => st.network.getBoundingBox(id));
-  const initBoxW = Math.max(...allBBs.map((b) => b.right))  - Math.min(...allBBs.map((b) => b.left));
-  const initBoxH = Math.max(...allBBs.map((b) => b.bottom)) - Math.min(...allBBs.map((b) => b.top));
+  const initBoxW = startBBs.reduce((max, b) => Math.max(max, b.initW), 0);
+  const initBoxH = startBBs.reduce((max, b) => Math.max(max, b.initH), 0);
 
   st.resizeDrag = { corner, startMouse: { x: e.clientX, y: e.clientY }, startBBs, initBoxW, initBoxH };
 
@@ -65,6 +91,8 @@ function onResizeDrag(e) {
   const MIN   = 40;
   const c     = st.resizeDrag.corner;
 
+  const updatedIds = [];
+
   if (st.resizeDrag.startBBs.length === 1) {
     const { id, node, initW, initH } = st.resizeDrag.startBBs[0];
     let nW = initW, nH = initH;
@@ -75,6 +103,7 @@ function onResizeDrag(e) {
     nW = Math.max(MIN, Math.round(nW));
     nH = Math.max(MIN, Math.round(nH));
     st.nodes.update({ id, nodeWidth: nW, nodeHeight: nH, ...visNodeProps(node.shapeType || 'box', node.colorKey || 'c-gray', nW, nH, node.fontSize, node.textAlign, node.textValign, nH) });
+    updatedIds.push(id);
   } else {
     const { initBoxW, initBoxH } = st.resizeDrag;
     let sx = 1, sy = 1;
@@ -88,8 +117,19 @@ function onResizeDrag(e) {
       const nW = Math.max(MIN, Math.round(initW * sx));
       const nH = Math.max(MIN, Math.round(initH * sy));
       st.nodes.update({ id, nodeWidth: nW, nodeHeight: nH, ...visNodeProps(node.shapeType || 'box', node.colorKey || 'c-gray', nW, nH, node.fontSize, node.textAlign, node.textValign, nH) });
+      updatedIds.push(id);
     }
   }
+
+  // vis-network's needsRefresh() can return false for certain shapes (e.g. database)
+  // when only widthConstraint or heightConstraint changes, because the check is based
+  // on label/font state, not constraints. Force the internal refresh flag and redraw.
+  updatedIds.forEach((id) => {
+    const bn = st.network.body.nodes[id];
+    if (bn) bn.refreshNeeded = true;
+  });
+  st.network.redraw();
+
   updateSelectionOverlay();
 }
 

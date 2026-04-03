@@ -74,7 +74,11 @@ export function initNetwork(savedNodes, savedEdges) {
       if (!node) continue;
       if (alwaysShow === true || node.isBoundingBoxOverlappingWith(viewableArea) === true) {
         const r = node.draw(ctx);
-        if (r.drawExternalLabel != null) drawExternalLabelCallbacks.push(r.drawExternalLabel);
+        // Custom shapes (actor) draw their own label inside drawNode(); skip
+        // vis-network's external-label callback to avoid double-rendering.
+        if (r.drawExternalLabel != null && node.options.shape !== 'custom') {
+          drawExternalLabelCallbacks.push(r.drawExternalLabel);
+        }
       } else {
         node.updateBoundingBox(ctx, node.selected);
       }

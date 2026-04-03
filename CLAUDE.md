@@ -122,6 +122,14 @@ diagram/main.js             → entry point: toolbar wiring, keyboard shortcuts,
 
 All `onclick` attributes removed from HTML; buttons have explicit `id` or `data-color`; listeners wired in `main.js` via `addEventListener`. No globals added — `vis` remains the only CDN global.
 
+### vis-network gotchas (read before touching diagram code)
+
+- **`ctxRenderer` is cached** — vis-network instantiates `CustomShape` once and never re-reads `ctxRenderer` from the DataSet after `nodes.update()`. Rebuilding the closure on resize has zero effect. Fix: use a stable renderer that reads live state via `st.nodes.get(id)` on every draw call.
+- **`getBoundingBox()` is wrong for custom shapes** — always returns a near-zero box for `shape: 'custom'`. Compute actor bounds manually from `bodyNode.x/y` + scaled geometry.
+- **`refreshNeeded` must be forced for `database` shape** — `needsRefresh()` checks label/font state, not `widthConstraint`/`heightConstraint`. When only dimensions change, vis-network skips the resize pass. Fix: set `network.body.nodes[id].refreshNeeded = true` then `network.redraw()` after every `nodes.update()` during resize.
+- **`drawExternalLabel` double-renders for `ctxRenderer`** — the `_drawNodes` patch must skip `drawExternalLabel` callbacks for `node.options.shape === 'custom'`, otherwise the label is drawn twice (once by the renderer, once externally).
+- **`_drawNodes` patch** — replaces vis-network's 3-pass render (normal → selected → hovered) with a single pass in `canonicalOrder`. If vis-network is upgraded, re-verify the signature.
+
 ### Z-order (`_canonicalOrder`)
 
 vis.js renders nodes in three passes (normal → selected → hovered), always drawing hover/selected nodes on top. To preserve user-defined stacking, `network.renderer._drawNodes` is **monkey-patched** at network creation time to perform a single pass in `_canonicalOrder` — an app-managed array that holds node IDs in the desired draw order (first = bottom, last = top).
