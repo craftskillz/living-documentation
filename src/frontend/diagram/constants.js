@@ -5,11 +5,13 @@ export const GRID_SIZE = 40;
 
 export const TOOL_BTN_MAP = {
   select: 'toolSelect',
-  'addNode:box': 'toolBox',
-  'addNode:ellipse': 'toolEllipse',
-  'addNode:database': 'toolDatabase',
-  'addNode:circle': 'toolCircle',
-  'addNode:actor': 'toolActor',
+  'addNode:box':       'toolBox',
+  'addNode:ellipse':   'toolEllipse',
+  'addNode:database':  'toolDatabase',
+  'addNode:circle':    'toolCircle',
+  'addNode:actor':     'toolActor',
+  'addNode:post-it':   'toolPostIt',
+  'addNode:text-free': 'toolTextFree',
   addEdge: 'toolArrow',
 };
 

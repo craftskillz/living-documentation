@@ -3,7 +3,7 @@
 // and wires all network-level events.
 
 import { st, markDirty } from './state.js';
-import { visNodeProps }   from './node-rendering.js';
+import { visNodeProps, SHAPE_DEFAULTS }   from './node-rendering.js';
 import { visEdgeProps }   from './edge-rendering.js';
 import { showNodePanel, hideNodePanel } from './node-panel.js';
 import { showEdgePanel, hideEdgePanel } from './edge-panel.js';
@@ -74,11 +74,8 @@ export function initNetwork(savedNodes, savedEdges) {
       if (!node) continue;
       if (alwaysShow === true || node.isBoundingBoxOverlappingWith(viewableArea) === true) {
         const r = node.draw(ctx);
-        // Custom shapes (actor) draw their own label inside drawNode(); skip
-        // vis-network's external-label callback to avoid double-rendering.
-        if (r.drawExternalLabel != null && node.options.shape !== 'custom') {
-          drawExternalLabelCallbacks.push(r.drawExternalLabel);
-        }
+        // All shapes are ctxRenderer (shape:'custom') and draw their own labels.
+        // Skip drawExternalLabel entirely to avoid double-rendering.
       } else {
         node.updateBoundingBox(ctx, node.selected);
       }
@@ -124,13 +121,16 @@ function onDoubleClick(params) {
     showEdgePanel();
     startEdgeLabelEdit();
   } else if (st.currentTool === 'addNode') {
-    const id = 'n' + Date.now();
+    const id       = 'n' + Date.now();
+    const defaults = SHAPE_DEFAULTS[st.pendingShape] || [100, 40];
+    const defaultColor = st.pendingShape === 'post-it' ? 'c-amber' : 'c-gray';
     st.nodes.add({
-      id, label: 'Node',
-      shapeType: st.pendingShape, colorKey: 'c-gray',
-      nodeWidth: null, nodeHeight: null, fontSize: null,
+      id, label: st.pendingShape === 'text-free' ? 'Texte' : 'Node',
+      shapeType: st.pendingShape, colorKey: defaultColor,
+      nodeWidth: defaults[0], nodeHeight: defaults[1],
+      fontSize: null, rotation: 0,
       x: params.pointer.canvas.x, y: params.pointer.canvas.y,
-      ...visNodeProps(st.pendingShape, 'c-gray', null, null, null, null, null),
+      ...visNodeProps(st.pendingShape, defaultColor, defaults[0], defaults[1], null, null, null),
     });
     markDirty();
     setTimeout(() => {

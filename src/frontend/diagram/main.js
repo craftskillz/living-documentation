@@ -69,6 +69,8 @@ document.getElementById('toolEllipse').addEventListener('click',  () => setTool(
 document.getElementById('toolDatabase').addEventListener('click', () => setTool('addNode', 'database'));
 document.getElementById('toolCircle').addEventListener('click',   () => setTool('addNode', 'circle'));
 document.getElementById('toolActor').addEventListener('click',    () => setTool('addNode', 'actor'));
+document.getElementById('toolPostIt').addEventListener('click',   () => setTool('addNode', 'post-it'));
+document.getElementById('toolTextFree').addEventListener('click', () => setTool('addNode', 'text-free'));
 document.getElementById('toolArrow').addEventListener('click',    () => setTool('addEdge'));
 
 document.getElementById('btnDelete').addEventListener('click', deleteSelected);
@@ -130,7 +132,9 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'd' || e.key === 'D')  { setTool('addNode', 'database'); return; }
   if (e.key === 'c' || e.key === 'C')  { setTool('addNode', 'circle');   return; }
   if (e.key === 'a' || e.key === 'A')  { setTool('addNode', 'actor');    return; }
-  if (e.key === 'f' || e.key === 'F')  { setTool('addEdge');             return; }
+  if (e.key === 'f' || e.key === 'F')  { setTool('addEdge');                  return; }
+  if (e.key === 'p' || e.key === 'P')  { setTool('addNode', 'post-it');       return; }
+  if (e.key === 't' || e.key === 'T')  { setTool('addNode', 'text-free');     return; }
   if (e.key === 'g' || e.key === 'G')  { toggleGrid();                   return; }
 });
 

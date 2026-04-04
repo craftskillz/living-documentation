@@ -19,6 +19,7 @@ export const st = {
   editingNodeId: null,
   editingEdgeId: null,
   resizeDrag: null,
+  rotateDrag: null,   // { startAngle, nodeAngles: [{id, initRotation}], cx, cy }
   clipboard: null,        // { nodes: [], edges: [] }
   canonicalOrder: [],     // user-defined z-order, immune to vis.js hover reordering
 };
