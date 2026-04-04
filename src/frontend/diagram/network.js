@@ -128,7 +128,7 @@ function onDoubleClick(params) {
       id, label: st.pendingShape === 'text-free' ? 'Texte' : 'Node',
       shapeType: st.pendingShape, colorKey: defaultColor,
       nodeWidth: defaults[0], nodeHeight: defaults[1],
-      fontSize: null, rotation: 0,
+      fontSize: null, rotation: 0, labelRotation: 0,
       x: params.pointer.canvas.x, y: params.pointer.canvas.y,
       ...visNodeProps(st.pendingShape, defaultColor, defaults[0], defaults[1], null, null, null),
     });

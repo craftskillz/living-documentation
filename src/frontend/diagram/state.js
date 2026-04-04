@@ -19,7 +19,10 @@ export const st = {
   editingNodeId: null,
   editingEdgeId: null,
   resizeDrag: null,
-  rotateDrag: null,   // { startAngle, nodeAngles: [{id, initRotation}], cx, cy }
+  rotateDrag: null,        // { startX, nodeAngles: [{id, initRotation}] }
+  labelRotateDrag: null,   // { startX, nodeAngles: [{id, initLabelRotation}] }
+  activeStamp: null,       // 'color' | 'rotation' | 'fontSize' | null
+  stampTargetIds: [],      // node IDs waiting to receive the stamped property
   clipboard: null,        // { nodes: [], edges: [] }
   canonicalOrder: [],     // user-defined z-order, immune to vis.js hover reordering
 };

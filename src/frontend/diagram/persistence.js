@@ -115,7 +115,7 @@ export async function saveDiagram() {
       shapeType: n.shapeType || 'box', colorKey: n.colorKey || 'c-gray',
       nodeWidth: n.nodeWidth || null, nodeHeight: n.nodeHeight || null,
       fontSize: n.fontSize || null, textAlign: n.textAlign || null, textValign: n.textValign || null,
-      rotation: n.rotation || 0,
+      rotation: n.rotation || 0, labelRotation: n.labelRotation || 0,
       x: positions[n.id]?.x ?? n.x, y: positions[n.id]?.y ?? n.y,
     }));
 

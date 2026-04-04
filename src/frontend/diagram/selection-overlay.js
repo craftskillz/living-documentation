@@ -57,6 +57,11 @@ export function updateSelectionOverlay() {
   const rh = document.getElementById('rh-rotate');
   rh.style.left = (br.x - tl.x) / 2 + PAD - 8 + 'px';
   rh.style.top  = '-28px';
+
+  // Position label rotation handle: top-centre offset left by 24px to avoid overlap.
+  const lrh = document.getElementById('rh-label-rotate');
+  lrh.style.left = (br.x - tl.x) / 2 + PAD - 8 - 24 + 'px';
+  lrh.style.top  = '-28px';
 }
 
 export function hideSelectionOverlay() {
@@ -146,23 +151,27 @@ function onRotateStart(e) {
   e.preventDefault();
   e.stopPropagation();
 
-  // Compute the centre of the selection in DOM coordinates.
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  st.selectedNodeIds.forEach((id) => {
-    const b = nodeBounds(id); if (!b) return;
-    minX = Math.min(minX, b.minX); minY = Math.min(minY, b.minY);
-    maxX = Math.max(maxX, b.maxX); maxY = Math.max(maxY, b.maxY);
-  });
-  const centreCanvas = { x: (minX + maxX) / 2, y: (minY + maxY) / 2 };
-  const centreDOM    = st.network.canvasToDOM(centreCanvas);
+  // Barycentre of the selection in canvas coordinates.
+  const positions = st.network.getPositions(st.selectedNodeIds);
+  const ids = st.selectedNodeIds;
+  const cx = ids.reduce((s, id) => s + (positions[id] ? positions[id].x : 0), 0) / ids.length;
+  const cy = ids.reduce((s, id) => s + (positions[id] ? positions[id].y : 0), 0) / ids.length;
 
-  const startAngle = Math.atan2(e.clientY - centreDOM.y, e.clientX - centreDOM.x);
-  const nodeAngles = st.selectedNodeIds.map((id) => {
+  const nodeAngles = ids.map((id) => {
     const n = st.nodes.get(id);
-    return { id, initRotation: (n && n.rotation) || 0 };
+    const pos = positions[id] || { x: 0, y: 0 };
+    return {
+      id,
+      initRotation: (n && n.rotation) || 0,
+      // Position relative to barycentre at drag start
+      relX: pos.x - cx,
+      relY: pos.y - cy,
+    };
   });
 
-  st.rotateDrag = { startAngle, nodeAngles, centreDOM };
+  // Horizontal drag → rotation: right = clockwise, left = counter-clockwise.
+  // 1 px = 1 degree.
+  st.rotateDrag = { startX: e.clientX, nodeAngles, cx, cy };
   document.getElementById('vis-canvas').style.pointerEvents = 'none';
   document.addEventListener('mousemove', onRotateDrag);
   document.addEventListener('mouseup',   onRotateEnd);
@@ -170,13 +179,19 @@ function onRotateStart(e) {
 
 function onRotateDrag(e) {
   if (!st.rotateDrag || !st.network) return;
-  const { startAngle, nodeAngles, centreDOM } = st.rotateDrag;
-  const currentAngle = Math.atan2(e.clientY - centreDOM.y, e.clientX - centreDOM.x);
-  const delta        = currentAngle - startAngle;
+  const { startX, nodeAngles, cx, cy } = st.rotateDrag;
+  const dx    = e.clientX - startX;
+  const delta = dx * (Math.PI / 180); // 1 px = 1 degree
+  const cos   = Math.cos(delta);
+  const sin   = Math.sin(delta);
 
-  nodeAngles.forEach(({ id, initRotation }) => {
-    const newRotation = initRotation + delta;
-    st.nodes.update({ id, rotation: newRotation });
+  nodeAngles.forEach(({ id, initRotation, relX, relY }) => {
+    // Rotate the node's position around the barycentre
+    const newX = cx + relX * cos - relY * sin;
+    const newY = cy + relX * sin + relY * cos;
+    st.network.moveNode(id, newX, newY);
+    // Rotate the node's own orientation
+    st.nodes.update({ id, rotation: initRotation + delta });
     const bn = st.network.body.nodes[id];
     if (bn) bn.refreshNeeded = true;
   });
@@ -193,8 +208,49 @@ function onRotateEnd() {
   markDirty();
 }
 
+// ── Label rotation ────────────────────────────────────────────────────────────
+function onLabelRotateStart(e) {
+  if (!st.selectedNodeIds.length || !st.network) return;
+  e.preventDefault();
+  e.stopPropagation();
+
+  const nodeAngles = st.selectedNodeIds.map((id) => {
+    const n = st.nodes.get(id);
+    return { id, initLabelRotation: (n && n.labelRotation) || 0 };
+  });
+
+  st.labelRotateDrag = { startX: e.clientX, nodeAngles };
+  document.getElementById('vis-canvas').style.pointerEvents = 'none';
+  document.addEventListener('mousemove', onLabelRotateDrag);
+  document.addEventListener('mouseup',   onLabelRotateEnd);
+}
+
+function onLabelRotateDrag(e) {
+  if (!st.labelRotateDrag || !st.network) return;
+  const { startX, nodeAngles } = st.labelRotateDrag;
+  const dx    = e.clientX - startX;
+  const delta = dx * (Math.PI / 180); // 1 px = 1 degree
+
+  nodeAngles.forEach(({ id, initLabelRotation }) => {
+    st.nodes.update({ id, labelRotation: initLabelRotation + delta });
+    const bn = st.network.body.nodes[id];
+    if (bn) bn.refreshNeeded = true;
+  });
+  st.network.redraw();
+}
+
+function onLabelRotateEnd() {
+  if (!st.labelRotateDrag) return;
+  document.getElementById('vis-canvas').style.pointerEvents = '';
+  document.removeEventListener('mousemove', onLabelRotateDrag);
+  document.removeEventListener('mouseup',   onLabelRotateEnd);
+  st.labelRotateDrag = null;
+  markDirty();
+}
+
 // ── Wire handles ──────────────────────────────────────────────────────────────
 ['tl', 'tr', 'bl', 'br'].forEach((corner) => {
   document.getElementById('rh-' + corner).addEventListener('mousedown', (e) => onResizeStart(e, corner));
 });
 document.getElementById('rh-rotate').addEventListener('mousedown', onRotateStart);
+document.getElementById('rh-label-rotate').addEventListener('mousedown', onLabelRotateStart);

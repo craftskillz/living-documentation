@@ -10,9 +10,8 @@ import { st } from './state.js';
 // ── Drawing helpers ───────────────────────────────────────────────────────────
 
 // Draw multi-line label centred at (0,0) in the current (possibly rotated) ctx.
-// textAlign : 'left' | 'center' | 'right'
-// textValign: 'top'  | 'middle' | 'bottom'
-function drawLabel(ctx, label, fontSize, color, textAlign, textValign, W, H) {
+// labelRotation is applied around the label's own centre (independent of shape rotation).
+function drawLabel(ctx, label, fontSize, color, textAlign, textValign, W, H, labelRotation) {
   if (!label) return;
   const pad = 8;
   ctx.save();
@@ -21,19 +20,23 @@ function drawLabel(ctx, label, fontSize, color, textAlign, textValign, W, H) {
   ctx.textBaseline = 'middle';
 
   let xPos = 0;
-  if (textAlign === 'left')  { ctx.textAlign = 'left';  xPos = W ? -W / 2 + pad : -40; }
-  else if (textAlign === 'right') { ctx.textAlign = 'right'; xPos = W ? W / 2 - pad : 40; }
-  else                       { ctx.textAlign = 'center'; xPos = 0; }
+  if (textAlign === 'left')       { ctx.textAlign = 'left';   xPos = W ? -W / 2 + pad : -40; }
+  else if (textAlign === 'right') { ctx.textAlign = 'right';  xPos = W ? W / 2  - pad : 40;  }
+  else                            { ctx.textAlign = 'center'; xPos = 0; }
 
   let yOff = 0;
   if (W && H) {
-    if (textValign === 'top')    yOff = -(H / 2 - fontSize / 2 - pad);
-    else if (textValign === 'bottom') yOff = H / 2 - fontSize / 2 - pad;
+    if (textValign === 'top')         yOff = -(H / 2 - fontSize / 2 - pad);
+    else if (textValign === 'bottom') yOff =   H / 2 - fontSize / 2 - pad;
   }
 
   const lines  = String(label).split('\n');
   const lineH  = fontSize * 1.3;
   const startY = yOff - (lines.length - 1) * lineH / 2;
+
+  // Apply independent label rotation around the label centre.
+  if (labelRotation) ctx.rotate(labelRotation);
+
   lines.forEach((line, i) => ctx.fillText(line, xPos, startY + i * lineH));
   ctx.restore();
 }
@@ -62,12 +65,13 @@ function nodeData(id, defaultW, defaultH, defaultColorKey) {
   const n        = st.nodes && st.nodes.get(id);
   const colorKey = (n && n.colorKey) || defaultColorKey || 'c-gray';
   return {
-    W:         (n && n.nodeWidth)   || defaultW,
-    H:         (n && n.nodeHeight)  || defaultH,
-    rotation:  (n && n.rotation)    || 0,
-    textAlign: (n && n.textAlign)   || 'center',
-    textValign:(n && n.textValign)  || 'middle',
-    fontSize:  (n && n.fontSize)    || 13,
+    W:             (n && n.nodeWidth)      || defaultW,
+    H:             (n && n.nodeHeight)     || defaultH,
+    rotation:      (n && n.rotation)       || 0,
+    labelRotation: (n && n.labelRotation)  || 0,
+    textAlign:     (n && n.textAlign)      || 'center',
+    textValign:    (n && n.textValign)     || 'middle',
+    fontSize:      (n && n.fontSize)       || 13,
     colorKey,
     c: NODE_COLORS[colorKey] || NODE_COLORS['c-gray'],
   };
@@ -77,7 +81,7 @@ function nodeData(id, defaultW, defaultH, defaultColorKey) {
 
 export function makeBoxRenderer(colorKey) {
   return function ({ ctx, x, y, id, state: visState, label }) {
-    const { W, H, rotation, textAlign, textValign, fontSize, c } = nodeData(id, 100, 40, colorKey);
+    const { W, H, rotation, labelRotation, textAlign, textValign, fontSize, c } = nodeData(id, 100, 40, colorKey);
     return {
       drawNode() {
         ctx.save(); ctx.translate(x, y); ctx.rotate(rotation);
@@ -86,7 +90,7 @@ export function makeBoxRenderer(colorKey) {
         ctx.lineWidth   = 1.5;
         roundRect(ctx, -W / 2, -H / 2, W, H, 4);
         ctx.fill(); ctx.stroke();
-        drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, H);
+        drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, H, labelRotation);
         ctx.restore();
       },
       nodeDimensions: { width: W, height: H },
@@ -96,7 +100,7 @@ export function makeBoxRenderer(colorKey) {
 
 export function makeEllipseRenderer(colorKey) {
   return function ({ ctx, x, y, id, state: visState, label }) {
-    const { W, H, rotation, textAlign, textValign, fontSize, c } = nodeData(id, 110, 50, colorKey);
+    const { W, H, rotation, labelRotation, textAlign, textValign, fontSize, c } = nodeData(id, 110, 50, colorKey);
     return {
       drawNode() {
         ctx.save(); ctx.translate(x, y); ctx.rotate(rotation);
@@ -105,7 +109,7 @@ export function makeEllipseRenderer(colorKey) {
         ctx.lineWidth   = 1.5;
         ctx.beginPath(); ctx.ellipse(0, 0, W / 2, H / 2, 0, 0, Math.PI * 2);
         ctx.fill(); ctx.stroke();
-        drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, H);
+        drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, H, labelRotation);
         ctx.restore();
       },
       nodeDimensions: { width: W, height: H },
@@ -115,7 +119,7 @@ export function makeEllipseRenderer(colorKey) {
 
 export function makeCircleRenderer(colorKey) {
   return function ({ ctx, x, y, id, state: visState, label }) {
-    const { W, rotation, textAlign, textValign, fontSize, c } = nodeData(id, 55, 55, colorKey);
+    const { W, rotation, labelRotation, textAlign, textValign, fontSize, c } = nodeData(id, 55, 55, colorKey);
     const R = W / 2;
     return {
       drawNode() {
@@ -125,7 +129,7 @@ export function makeCircleRenderer(colorKey) {
         ctx.lineWidth   = 1.5;
         ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2);
         ctx.fill(); ctx.stroke();
-        drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, W);
+        drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, W, labelRotation);
         ctx.restore();
       },
       nodeDimensions: { width: W, height: W },
@@ -135,7 +139,7 @@ export function makeCircleRenderer(colorKey) {
 
 export function makeDatabaseRenderer(colorKey) {
   return function ({ ctx, x, y, id, state: visState, label }) {
-    const { W, H, rotation, textAlign, textValign, fontSize, c } = nodeData(id, 50, 70, colorKey);
+    const { W, H, rotation, labelRotation, textAlign, textValign, fontSize, c } = nodeData(id, 50, 70, colorKey);
     const rx = W / 2;
     const ry = Math.max(H * 0.12, 6);
     const bodyTop    = -H / 2 + ry;
@@ -155,7 +159,7 @@ export function makeDatabaseRenderer(colorKey) {
         ctx.stroke();
         ctx.beginPath(); ctx.ellipse(0, bodyTop, rx, ry, 0, 0, Math.PI * 2);
         ctx.fill(); ctx.stroke();
-        drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, H);
+        drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, H, labelRotation);
         ctx.restore();
       },
       nodeDimensions: { width: W, height: H },
@@ -166,7 +170,7 @@ export function makeDatabaseRenderer(colorKey) {
 // Post-IT: sticky note with folded top-right corner.
 export function makePostItRenderer(colorKey) {
   return function ({ ctx, x, y, id, state: visState, label }) {
-    const { W, H, rotation, textAlign, textValign, fontSize, c } = nodeData(id, 120, 100, colorKey || 'c-amber');
+    const { W, H, rotation, labelRotation, textAlign, textValign, fontSize, c } = nodeData(id, 120, 100, colorKey || 'c-amber');
     const fold = Math.min(W, H) * 0.18;
     return {
       drawNode() {
@@ -196,7 +200,7 @@ export function makePostItRenderer(colorKey) {
         ctx.lineTo(W / 2 - fold, -H / 2 + fold);
         ctx.lineTo(W / 2,        -H / 2 + fold);
         ctx.stroke();
-        drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, H);
+        drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, H, labelRotation);
         ctx.restore();
       },
       nodeDimensions: { width: W, height: H },
@@ -207,7 +211,7 @@ export function makePostItRenderer(colorKey) {
 // Free Text: no visible border or background — just the label.
 export function makeTextFreeRenderer(colorKey) {
   return function ({ ctx, x, y, id, state: visState, label }) {
-    const { W, H, rotation, textAlign, textValign, fontSize, c } = nodeData(id, 80, 30, colorKey);
+    const { W, H, rotation, labelRotation, textAlign, textValign, fontSize, c } = nodeData(id, 80, 30, colorKey);
     return {
       drawNode() {
         ctx.save(); ctx.translate(x, y); ctx.rotate(rotation);
@@ -219,7 +223,7 @@ export function makeTextFreeRenderer(colorKey) {
           ctx.stroke();
           ctx.setLineDash([]);
         }
-        drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, H);
+        drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, H, labelRotation);
         ctx.restore();
       },
       nodeDimensions: { width: W, height: H },
@@ -233,7 +237,7 @@ const ACTOR_H0 = 52;
 
 export function makeActorRenderer(colorKey) {
   return function ({ ctx, x, y, id, state: visState, label }) {
-    const { W, H, rotation, fontSize, c } = nodeData(id, ACTOR_W0, ACTOR_H0, colorKey);
+    const { W, H, rotation, labelRotation, fontSize, c } = nodeData(id, ACTOR_W0, ACTOR_H0, colorKey);
     const sx = W / ACTOR_W0;
     const sy = H / ACTOR_H0;
     return {
@@ -250,6 +254,8 @@ export function makeActorRenderer(colorKey) {
         ctx.beginPath(); ctx.moveTo(0, 8 * sy); ctx.lineTo( 10 * sx, 24 * sy); ctx.stroke();
         // Label below figure (rotates with the actor)
         if (label) {
+          ctx.save();
+          if (labelRotation) ctx.rotate(labelRotation);
           ctx.font         = `${fontSize}px system-ui,-apple-system,sans-serif`;
           ctx.fillStyle    = c.font;
           ctx.textAlign    = 'center';
@@ -258,6 +264,7 @@ export function makeActorRenderer(colorKey) {
           const lineH  = fontSize * 1.3;
           const startY = 24 * sy + 4;
           lines.forEach((line, i) => ctx.fillText(line, 0, startY + i * lineH));
+          ctx.restore();
         }
         ctx.restore();
       },

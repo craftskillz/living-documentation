@@ -192,6 +192,24 @@
       }
       #rh-rotate:active { cursor: grabbing; }
       .dark #rh-rotate { background: #374151; }
+      #rh-label-rotate {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        background: white;
+        border: 2px solid #6366f1;
+        border-radius: 50%;
+        pointer-events: all;
+        z-index: 1;
+        cursor: grab;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        color: #6366f1;
+      }
+      #rh-label-rotate:active { cursor: grabbing; }
+      .dark #rh-label-rotate { background: #374151; }
     </style>
   </head>
   <body
@@ -494,6 +512,9 @@
         <!-- Debug overlay layer -->
         <div id="debugLayer"></div>
 
+        <!-- Stamp overlay: intercepts canvas clicks during stamp mode -->
+        <div id="stampOverlay" style="position:absolute;inset:0;display:none;z-index:9;"></div>
+
         <!-- Selection / resize overlay -->
         <div id="selectionOverlay">
           <div
@@ -516,7 +537,8 @@
             class="resize-handle"
             style="bottom: -5px; right: -5px; cursor: se-resize"
           ></div>
-          <div id="rh-rotate" title="Rotation">↻</div>
+          <div id="rh-rotate" title="Rotation forme">↻</div>
+          <div id="rh-label-rotate" title="Rotation texte" style="left: 0; top: -28px;">T↻</div>
         </div>
 
         <!-- Node panel -->
@@ -789,6 +811,43 @@
               <rect x="5" y="1" width="8" height="8" rx="1" />
             </svg>
           </button>
+
+          <div class="panel-sep"></div>
+
+          <!-- Stamp: copy color -->
+          <button
+            id="btnStampColor"
+            class="tool-btn !w-7 !h-6"
+            title="Tampon couleur — sélectionner les cibles, cliquer ici, puis cliquer la source"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="1" width="6" height="6" rx="1" fill="currentColor" stroke="none" opacity="0.5"/>
+              <rect x="7" y="7" width="6" height="6" rx="1" fill="currentColor" stroke="none" opacity="0.5"/>
+              <path d="M7 3.5h4M3.5 7v4"/>
+              <circle cx="10.5" cy="10.5" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+          </button>
+
+          <!-- Stamp: copy rotation -->
+          <button
+            id="btnStampRotation"
+            class="tool-btn !w-7 !h-6"
+            title="Tampon rotation — sélectionner les cibles, cliquer ici, puis cliquer la source"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 7a5 5 0 1 0 1.5-3.5"/>
+              <polyline points="1,1 1.5,3.5 4,3"/>
+              <line x1="7" y1="4" x2="7" y2="7" stroke-width="1.8"/>
+              <line x1="7" y1="7" x2="9" y2="7" stroke-width="1.8"/>
+            </svg>
+          </button>
+
+          <!-- Stamp: copy font size -->
+          <button
+            id="btnStampFontSize"
+            class="tool-btn !w-7 !h-6 font-mono text-xs font-bold"
+            title="Tampon taille police — sélectionner les cibles, cliquer ici, puis cliquer la source"
+          >Aa</button>
         </div>
 
         <!-- Edge panel -->
