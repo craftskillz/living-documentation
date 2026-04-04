@@ -326,7 +326,41 @@ export function makeImageRenderer(colorKey) {
           ctx.fillText(src ? '…' : '🖼', 0, 0);
         }
 
-        if (label) drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, H, labelRotation);
+        if (label) {
+          const lines  = String(label).split('\n');
+          const lineH  = fontSize * 1.3;
+          const pad    = 6;
+          const stripH = lines.length * lineH + pad * 2 - (lineH - fontSize);
+          ctx.save();
+          ctx.font = `${fontSize}px system-ui,-apple-system,sans-serif`;
+          const maxTextW = Math.max(...lines.map((l) => ctx.measureText(l).width));
+          const stripW   = maxTextW + pad * 2;
+          const M = 5; // margin from image edge
+          // Horizontal position based on textAlign
+          let stripX;
+          if (textAlign === 'left')       stripX = -W / 2 + M;
+          else if (textAlign === 'right') stripX = W / 2 - stripW - M;
+          else                            stripX = -stripW / 2;
+          // Vertical position based on textValign
+          let stripY;
+          if (textValign === 'top')         stripY = -H / 2 + M;
+          else if (textValign === 'bottom') stripY = H / 2 - stripH - M;
+          else                              stripY = -stripH / 2;
+          ctx.globalAlpha = 0.7;
+          ctx.fillStyle   = '#000';
+          roundRect(ctx, stripX, stripY, stripW, stripH, 4);
+          ctx.fill();
+          ctx.globalAlpha = 1;
+          // Draw text centered inside the box
+          if (labelRotation) ctx.rotate(labelRotation);
+          ctx.fillStyle    = '#fff';
+          ctx.textAlign    = 'center';
+          ctx.textBaseline = 'middle';
+          const textCX = stripX + stripW / 2;
+          const startY = stripY + pad + fontSize / 2;
+          lines.forEach((line, i) => ctx.fillText(line, textCX, startY + i * lineH));
+          ctx.restore();
+        }
         ctx.restore();
       },
       nodeDimensions: { width: W, height: H },

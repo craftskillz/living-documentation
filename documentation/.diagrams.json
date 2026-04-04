@@ -5,18 +5,18 @@
     "nodes": [
       {
         "id": "n1775325223151",
-        "label": "",
+        "label": "This is a label",
         "shapeType": "image",
         "colorKey": "c-gray",
         "nodeWidth": 534,
         "nodeHeight": 288,
         "fontSize": null,
-        "textAlign": null,
-        "textValign": null,
+        "textAlign": "center",
+        "textValign": "middle",
         "rotation": 0,
         "labelRotation": 0,
         "imageSrc": "/images/image_2026_04_04_195343_7uq8.jpg",
-        "x": -444,
+        "x": -163,
         "y": -324
       },
       {
@@ -32,8 +32,8 @@
         "rotation": 0,
         "labelRotation": 0,
         "imageSrc": null,
-        "x": -474,
-        "y": -510
+        "x": -413,
+        "y": -563
       },
       {
         "id": "n1775325253519",
@@ -48,8 +48,8 @@
         "rotation": 0,
         "labelRotation": 0,
         "imageSrc": null,
-        "x": -726,
-        "y": -390
+        "x": -243,
+        "y": -562
       },
       {
         "id": "n1775325255952",
@@ -64,8 +64,8 @@
         "rotation": 0,
         "labelRotation": 0,
         "imageSrc": null,
-        "x": -167,
-        "y": -360
+        "x": -41,
+        "y": -562
       },
       {
         "id": "n1775325257128",
@@ -80,8 +80,8 @@
         "rotation": 0,
         "labelRotation": 0,
         "imageSrc": null,
-        "x": -234,
-        "y": -192
+        "x": -526,
+        "y": -259
       }
     ],
     "edges": []
