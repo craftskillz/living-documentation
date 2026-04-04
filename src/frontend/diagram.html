@@ -399,6 +399,17 @@
       >
         T
       </button>
+      <button
+        id="toolImage"
+        class="tool-btn"
+        title="Image — double-clic sur le canvas pour choisir un fichier, ou coller (⌘V) depuis le presse-papier"
+      >
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="1" width="12" height="12" rx="1.5"/>
+          <circle cx="4.5" cy="4.5" r="1.2"/>
+          <path d="M1 9.5 L4 6.5 L6.5 9 L9 7 L13 10.5"/>
+        </svg>
+      </button>
       <div class="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-0.5"></div>
 
       <button
@@ -855,31 +866,14 @@
 
           <div class="panel-sep"></div>
 
-          <!-- Stamp: copy color -->
+          <!-- Stamp: copy color (goutte) -->
           <button
             id="btnStampColor"
             class="tool-btn !w-7 !h-6"
             title="Tampon couleur — sélectionner les cibles, cliquer ici, puis cliquer la source"
           >
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="1" y="1" width="6" height="6" rx="1" fill="currentColor" stroke="none" opacity="0.5"/>
-              <rect x="7" y="7" width="6" height="6" rx="1" fill="currentColor" stroke="none" opacity="0.5"/>
-              <path d="M7 3.5h4M3.5 7v4"/>
-              <circle cx="10.5" cy="10.5" r="1" fill="currentColor" stroke="none"/>
-            </svg>
-          </button>
-
-          <!-- Stamp: copy rotation -->
-          <button
-            id="btnStampRotation"
-            class="tool-btn !w-7 !h-6"
-            title="Tampon rotation — sélectionner les cibles, cliquer ici, puis cliquer la source"
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M2 7a5 5 0 1 0 1.5-3.5"/>
-              <polyline points="1,1 1.5,3.5 4,3"/>
-              <line x1="7" y1="4" x2="7" y2="7" stroke-width="1.8"/>
-              <line x1="7" y1="7" x2="9" y2="7" stroke-width="1.8"/>
+              <path d="M7 2 C7 2 3 6.5 3 9 a4 4 0 0 0 8 0 C11 6.5 7 2 7 2 Z" fill="currentColor" fill-opacity="0.25"/>
             </svg>
           </button>
 
@@ -890,19 +884,60 @@
             title="Tampon taille police — sélectionner les cibles, cliquer ici, puis cliquer la source"
           >Aa</button>
 
+          <!-- Stamp: copy rotation -->
+          <button
+            id="btnStampRotation"
+            class="tool-btn !w-7 !h-6"
+            title="Tampon rotation — sélectionner les cibles, cliquer ici, puis cliquer la source"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.5 3.5 A5 5 0 1 0 12 8"/>
+              <polyline points="10,1 10.5,3.5 13,3"/>
+              <line x1="7" y1="5" x2="7" y2="7.5"/>
+              <line x1="7" y1="7.5" x2="9" y2="7.5"/>
+            </svg>
+          </button>
+
+          <div class="panel-sep"></div>
+
+          <!-- Rotation anti-horaire 10° -->
+          <button
+            id="btnRotateCCW"
+            class="tool-btn !w-7 !h-6"
+            title="Rotation anti-horaire 10°"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3.5 3.5 A5 5 0 1 0 2 8"/>
+              <polyline points="4,1 3.5,3.5 1,3"/>
+            </svg>
+          </button>
+
+          <!-- Rotation horaire 10° -->
+          <button
+            id="btnRotateCW"
+            class="tool-btn !w-7 !h-6"
+            title="Rotation horaire 10°"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.5 3.5 A5 5 0 1 1 12 8"/>
+              <polyline points="10,1 10.5,3.5 13,3"/>
+            </svg>
+          </button>
+
           <div class="panel-sep"></div>
 
           <!-- Copy as PNG -->
           <button
             id="btnCopyPng"
-            class="tool-btn !w-7 !h-6"
+            class="tool-btn !h-6 px-1.5 font-mono text-xs font-semibold flex items-center gap-0.5"
             title="Copier la sélection en PNG (⌘⇧C)"
           >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="1" y="3" width="9" height="9" rx="1"/>
-              <path d="M4 3V2a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-1"/>
-              <polyline points="4,8 6,10 9,6"/>
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="7" x2="5" y2="1"/>
+              <polyline points="2,4 5,1 8,4"/>
+              <line x1="1" y1="9" x2="9" y2="9"/>
             </svg>
+            PNG
           </button>
         </div>
 

@@ -12,6 +12,7 @@ export const TOOL_BTN_MAP = {
   'addNode:actor':     'toolActor',
   'addNode:post-it':   'toolPostIt',
   'addNode:text-free': 'toolTextFree',
+  'addNode:image':     'toolImage',
   addEdge: 'toolArrow',
 };
 

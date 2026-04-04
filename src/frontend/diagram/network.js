@@ -4,6 +4,8 @@
 
 import { st, markDirty } from './state.js';
 import { visNodeProps, SHAPE_DEFAULTS }   from './node-rendering.js';
+import { uploadImageFile } from './image-upload.js';
+import { showToast }       from './toast.js';
 import { visEdgeProps }   from './edge-rendering.js';
 import { showNodePanel, hideNodePanel } from './node-panel.js';
 import { showEdgePanel, hideEdgePanel } from './edge-panel.js';
@@ -120,6 +122,9 @@ function onDoubleClick(params) {
     st.selectedEdgeIds = [params.edges[0]];
     showEdgePanel();
     startEdgeLabelEdit();
+  } else if (st.currentTool === 'addNode' && st.pendingShape === 'image') {
+    const canvasPos = params.pointer.canvas;
+    pickAndCreateImageNode(canvasPos.x, canvasPos.y);
   } else if (st.currentTool === 'addNode') {
     const id       = 'n' + Date.now();
     const defaults = SHAPE_DEFAULTS[st.pendingShape] || [100, 40];
@@ -140,6 +145,45 @@ function onDoubleClick(params) {
       startLabelEdit();
     }, 50);
   }
+}
+
+// ── Image node creation ───────────────────────────────────────────────────────
+
+function pickAndCreateImageNode(canvasX, canvasY) {
+  const input = document.createElement('input');
+  input.type   = 'file';
+  input.accept = 'image/*';
+  input.onchange = async () => {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    try {
+      const src = await uploadImageFile(file);
+      createImageNode(src, canvasX, canvasY);
+    } catch {
+      showToast('Impossible d\'importer l\'image', 'error');
+    }
+  };
+  input.click();
+}
+
+export function createImageNode(imageSrc, canvasX, canvasY) {
+  if (!st.network) return;
+  const id = 'n' + Date.now();
+  const defaults = SHAPE_DEFAULTS['image'];
+  st.nodes.add({
+    id, label: '', imageSrc,
+    shapeType: 'image', colorKey: 'c-gray',
+    nodeWidth: defaults[0], nodeHeight: defaults[1],
+    fontSize: null, rotation: 0, labelRotation: 0,
+    x: canvasX, y: canvasY,
+    ...visNodeProps('image', 'c-gray', defaults[0], defaults[1], null, null, null),
+  });
+  markDirty();
+  setTimeout(() => {
+    st.network.selectNodes([id]);
+    st.selectedNodeIds = [id];
+    showNodePanel();
+  }, 50);
 }
 
 function onSelectNode(params) {

@@ -273,6 +273,67 @@ export function makeActorRenderer(colorKey) {
   };
 }
 
+// ── Image node ────────────────────────────────────────────────────────────────
+// Images are loaded once and cached. When still loading a placeholder is drawn;
+// once the image is ready network.redraw() is called so the frame updates.
+
+const _imgCache = new Map(); // src → HTMLImageElement | 'loading' | 'error'
+
+function getCachedImage(src, redrawFn) {
+  if (!src) return null;
+  const cached = _imgCache.get(src);
+  if (cached === 'loading' || cached === 'error') return null;
+  if (cached) return cached;
+  _imgCache.set(src, 'loading');
+  const img = new Image();
+  img.onload  = () => { _imgCache.set(src, img); redrawFn && redrawFn(); };
+  img.onerror = () => { _imgCache.set(src, 'error'); };
+  img.src = src;
+  return null;
+}
+
+export function makeImageRenderer(colorKey) {
+  return function ({ ctx, x, y, id, state: visState, label }) {
+    const { W, H, rotation, labelRotation, textAlign, textValign, fontSize, c } = nodeData(id, 160, 120, colorKey || 'c-gray');
+    const n      = st.nodes && st.nodes.get(id);
+    const src    = n && n.imageSrc;
+    const img    = getCachedImage(src, () => st.network && st.network.redraw());
+    return {
+      drawNode() {
+        ctx.save(); ctx.translate(x, y); ctx.rotate(rotation);
+        // Border (always visible, orange when selected)
+        ctx.strokeStyle = visState.selected ? '#f97316' : c.border;
+        ctx.lineWidth   = visState.selected ? 2 : 1;
+        roundRect(ctx, -W / 2, -H / 2, W, H, 4);
+        ctx.stroke();
+
+        if (img) {
+          // Clip to rounded rect then draw image
+          ctx.save();
+          roundRect(ctx, -W / 2, -H / 2, W, H, 4);
+          ctx.clip();
+          ctx.drawImage(img, -W / 2, -H / 2, W, H);
+          ctx.restore();
+        } else {
+          // Placeholder: light fill + icon
+          ctx.fillStyle = visState.selected ? c.hbg : c.bg;
+          roundRect(ctx, -W / 2, -H / 2, W, H, 4);
+          ctx.fill();
+          ctx.fillStyle = c.border;
+          ctx.font = `${Math.round(Math.min(W, H) * 0.25)}px system-ui`;
+          ctx.textAlign    = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(src ? '…' : '🖼', 0, 0);
+        }
+
+        if (label) drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, H, labelRotation);
+        ctx.restore();
+      },
+      nodeDimensions: { width: W, height: H },
+    };
+  };
+}
+
 // ── Public API ────────────────────────────────────────────────────────────────
 
 // Returns the rendered height from vis-network internals (used by node-panel
@@ -294,6 +355,7 @@ const RENDERER_MAP = {
   'post-it':  makePostItRenderer,
   'text-free':makeTextFreeRenderer,
   actor:      makeActorRenderer,
+  image:      makeImageRenderer,
 };
 
 // Default dimensions per shape type (used when nodeWidth/nodeHeight are null).
@@ -305,6 +367,7 @@ export const SHAPE_DEFAULTS = {
   actor:      [30,  52],
   'post-it':  [120, 100],
   'text-free':[80,  30],
+  image:      [160, 120],
 };
 
 // Builds the full vis.js node property object.

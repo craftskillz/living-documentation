@@ -154,6 +154,22 @@ document.getElementById('stampOverlay').addEventListener('click', (e) => {
   }
 });
 
+// ── Step rotation ─────────────────────────────────────────────────────────────
+
+export function stepRotate(degrees) {
+  if (!st.selectedNodeIds.length) return;
+  const delta = degrees * (Math.PI / 180);
+  st.selectedNodeIds.forEach((id) => {
+    const n = st.nodes.get(id);
+    if (!n) return;
+    st.nodes.update({ id, rotation: (n.rotation || 0) + delta });
+    const bn = st.network && st.network.body.nodes[id];
+    if (bn) bn.refreshNeeded = true;
+  });
+  if (st.network) st.network.redraw();
+  markDirty();
+}
+
 export function changeZOrder(direction) {
   // direction: +1 = bring to front (last in canonicalOrder = drawn on top)
   //            -1 = send to back   (first in canonicalOrder = drawn below)

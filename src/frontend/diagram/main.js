@@ -3,7 +3,7 @@
 
 import { st, markDirty }      from './state.js';
 import { TOOL_BTN_MAP }       from './constants.js';
-import { showNodePanel, hideNodePanel, setNodeColor, changeNodeFontSize, setTextAlign, setTextValign, changeZOrder, activateStamp, cancelStamp } from './node-panel.js';
+import { showNodePanel, hideNodePanel, setNodeColor, changeNodeFontSize, setTextAlign, setTextValign, changeZOrder, activateStamp, cancelStamp, stepRotate } from './node-panel.js';
 import { hideEdgePanel, setEdgeArrow, setEdgeDashes, changeEdgeFontSize } from './edge-panel.js';
 import { startLabelEdit, startEdgeLabelEdit, hideLabelInput } from './label-editor.js';
 import { hideSelectionOverlay } from './selection-overlay.js';
@@ -12,6 +12,9 @@ import { toggleDebug }   from './debug.js';
 import { adjustZoom, resetZoom } from './zoom.js';
 import { loadDiagramList, newDiagram, saveDiagram } from './persistence.js';
 import { copySelected, pasteClipboard, copySelectionAsPng } from './clipboard.js';
+import { createImageNode } from './network.js';
+import { uploadImageBlob } from './image-upload.js';
+import { showToast }       from './toast.js';
 
 // ── Tool management ───────────────────────────────────────────────────────────
 
@@ -79,6 +82,7 @@ document.getElementById('toolCircle').addEventListener('click',   () => setTool(
 document.getElementById('toolActor').addEventListener('click',    () => setTool('addNode', 'actor'));
 document.getElementById('toolPostIt').addEventListener('click',   () => setTool('addNode', 'post-it'));
 document.getElementById('toolTextFree').addEventListener('click', () => setTool('addNode', 'text-free'));
+document.getElementById('toolImage').addEventListener('click',    () => setTool('addNode', 'image'));
 document.getElementById('toolArrow').addEventListener('click',    () => setTool('addEdge'));
 
 document.getElementById('btnDelete').addEventListener('click', deleteSelected);
@@ -114,6 +118,8 @@ document.getElementById('btnValignMiddle').addEventListener('click', () => setTe
 document.getElementById('btnValignBottom').addEventListener('click', () => setTextValign('bottom'));
 document.getElementById('btnZOrderBack').addEventListener('click',  () => changeZOrder(-1));
 document.getElementById('btnZOrderFront').addEventListener('click', () => changeZOrder(1));
+document.getElementById('btnRotateCW').addEventListener('click',    () => stepRotate(10));
+document.getElementById('btnRotateCCW').addEventListener('click',   () => stepRotate(-10));
 // Stamp buttons: capture targets on mousedown (before vis-network can fire
 // deselectNode), then activate the stamp mode on click.
 ['btnStampColor', 'btnStampRotation', 'btnStampFontSize'].forEach((id) => {
@@ -158,6 +164,28 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'p' || e.key === 'P')  { setTool('addNode', 'post-it');       return; }
   if (e.key === 't' || e.key === 'T')  { setTool('addNode', 'text-free');     return; }
   if (e.key === 'g' || e.key === 'G')  { toggleGrid();                   return; }
+});
+
+// ── Paste image from clipboard ────────────────────────────────────────────────
+document.addEventListener('paste', async (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (!st.network) return;
+  const items = Array.from(e.clipboardData.items || []);
+  const imageItem = items.find((it) => it.type.startsWith('image/'));
+  if (!imageItem) return;
+  e.preventDefault();
+  const blob = imageItem.getAsFile();
+  if (!blob) return;
+  const ext = imageItem.type.split('/')[1] || 'png';
+  try {
+    const src = await uploadImageBlob(blob, ext);
+    // Place at centre of current viewport
+    const center = st.network.getViewPosition();
+    createImageNode(src, center.x, center.y);
+    showToast('Image ajoutée');
+  } catch {
+    showToast('Impossible d\'importer l\'image', 'error');
+  }
 });
 
 // ── Dark mode initialisation ──────────────────────────────────────────────────
