@@ -210,6 +210,47 @@
       }
       #rh-label-rotate:active { cursor: grabbing; }
       .dark #rh-label-rotate { background: #374151; }
+
+      /* Toast notifications */
+      #toastContainer {
+        position: fixed;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 0.5rem;
+        z-index: 1000;
+        pointer-events: none;
+      }
+      .ld-toast {
+        pointer-events: all;
+        padding: 0.6rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+        cursor: pointer;
+        opacity: 0;
+        transform: translateY(0.5rem);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        background: #1c1917;
+        color: #fafaf9;
+        border: 1px solid #292524;
+      }
+      .dark .ld-toast {
+        background: #fafaf9;
+        color: #1c1917;
+        border-color: #e7e5e4;
+      }
+      .ld-toast--error {
+        background: #7f1d1d;
+        color: #fef2f2;
+        border-color: #991b1b;
+      }
+      .ld-toast--visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
     </style>
   </head>
   <body
@@ -848,6 +889,21 @@
             class="tool-btn !w-7 !h-6 font-mono text-xs font-bold"
             title="Tampon taille police — sélectionner les cibles, cliquer ici, puis cliquer la source"
           >Aa</button>
+
+          <div class="panel-sep"></div>
+
+          <!-- Copy as PNG -->
+          <button
+            id="btnCopyPng"
+            class="tool-btn !w-7 !h-6"
+            title="Copier la sélection en PNG (⌘⇧C)"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="3" width="9" height="9" rx="1"/>
+              <path d="M4 3V2a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-1"/>
+              <polyline points="4,8 6,10 9,6"/>
+            </svg>
+          </button>
         </div>
 
         <!-- Edge panel -->
@@ -969,6 +1025,7 @@
       </div>
     </div>
 
+    <div id="toastContainer"></div>
     <script type="module" src="/diagram/main.js"></script>
   </body>
 </html>

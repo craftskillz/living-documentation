@@ -11,7 +11,7 @@ import { togglePhysics, toggleGrid } from './grid.js';
 import { toggleDebug }   from './debug.js';
 import { adjustZoom, resetZoom } from './zoom.js';
 import { loadDiagramList, newDiagram, saveDiagram } from './persistence.js';
-import { copySelected, pasteClipboard } from './clipboard.js';
+import { copySelected, pasteClipboard, copySelectionAsPng } from './clipboard.js';
 
 // ── Tool management ───────────────────────────────────────────────────────────
 
@@ -30,6 +30,14 @@ function setTool(tool, shape) {
 
   if (tool === 'addEdge' && st.network) st.network.addEdgeMode();
   else if (st.network) st.network.disableEditMode();
+}
+
+function selectAll() {
+  if (!st.network || !st.nodes) return;
+  const ids = st.nodes.getIds();
+  st.network.selectNodes(ids);
+  st.selectedNodeIds = ids;
+  showNodePanel();
 }
 
 function deleteSelected() {
@@ -117,6 +125,7 @@ document.getElementById('btnZOrderFront').addEventListener('click', () => change
 document.getElementById('btnStampColor').addEventListener('click',    () => activateStamp('color'));
 document.getElementById('btnStampRotation').addEventListener('click', () => activateStamp('rotation'));
 document.getElementById('btnStampFontSize').addEventListener('click', () => activateStamp('fontSize'));
+document.getElementById('btnCopyPng').addEventListener('click', () => copySelectionAsPng());
 
 // ── Edge panel wiring ─────────────────────────────────────────────────────────
 
@@ -134,7 +143,9 @@ document.getElementById('btnEdgeLabelEdit').addEventListener('click', startEdgeL
 document.addEventListener('keydown', (e) => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   if (e.key === 'Delete' || e.key === 'Backspace')            { deleteSelected();           return; }
-  if ((e.metaKey || e.ctrlKey) && e.key === 'c')             { e.preventDefault(); copySelected();    return; }
+  if ((e.metaKey || e.ctrlKey) && e.key === 'a')             { e.preventDefault(); selectAll();       return; }
+  if ((e.metaKey || e.ctrlKey) && e.key === 'c' && e.shiftKey) { e.preventDefault(); copySelectionAsPng(); return; }
+  if ((e.metaKey || e.ctrlKey) && e.key === 'c')               { e.preventDefault(); copySelected();       return; }
   if ((e.metaKey || e.ctrlKey) && e.key === 'v')             { e.preventDefault(); pasteClipboard();  return; }
   if ((e.metaKey || e.ctrlKey) && e.key === 's')             { e.preventDefault(); saveDiagram();     return; }
   if (e.key === 'Escape' || e.key === 's' || e.key === 'S')  { cancelStamp(); setTool('select'); return; }
