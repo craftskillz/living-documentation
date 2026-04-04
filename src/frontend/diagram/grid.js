@@ -4,12 +4,29 @@
 import { st, markDirty } from './state.js';
 import { GRID_SIZE } from './constants.js';
 
+
 export function togglePhysics() {
   st.physicsEnabled = !st.physicsEnabled;
-  if (st.network) st.network.setOptions({ physics: { enabled: st.physicsEnabled } });
   const btn = document.getElementById('btnPhysics');
   btn.classList.toggle('tool-active', st.physicsEnabled);
-  btn.title = st.physicsEnabled ? 'Auto-espacement actif' : 'Auto-espacement inactif';
+  btn.title = st.physicsEnabled ? 'Anti-chevauchement actif' : 'Anti-chevauchement (espace les nœuds qui se superposent)';
+
+  if (!st.network) return;
+
+  st.network.setOptions({
+    physics: {
+      enabled: st.physicsEnabled,
+      stabilization: { enabled: false }, // no auto-stop — stays on until user toggles off
+      barnesHut: {
+        gravitationalConstant: -800, // mild repulsion — only pushes overlapping nodes
+        centralGravity: 0,           // no pull toward centre — distant nodes stay put
+        springLength: 100,
+        springConstant: 0.01,
+        damping: 0.6,                // high damping — nodes settle fast, no oscillation
+        avoidOverlap: 1,             // vis-network built-in overlap avoidance
+      },
+    },
+  });
 }
 
 export function toggleGrid() {

@@ -2,7 +2,242 @@
   {
     "id": "d1775242615386",
     "title": "Nouveau diagramme",
-    "nodes": [],
-    "edges": []
+    "nodes": [
+      {
+        "id": "n1775297908950",
+        "label": "Node",
+        "shapeType": "database",
+        "colorKey": "c-gray",
+        "nodeWidth": null,
+        "nodeHeight": null,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": null,
+        "x": -365,
+        "y": -85
+      },
+      {
+        "id": "n1775297910237",
+        "label": "Node",
+        "shapeType": "actor",
+        "colorKey": "c-gray",
+        "nodeWidth": null,
+        "nodeHeight": null,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": null,
+        "x": -537,
+        "y": -85
+      },
+      {
+        "id": "n1775297912343",
+        "label": "Node",
+        "shapeType": "circle",
+        "colorKey": "c-gray",
+        "nodeWidth": null,
+        "nodeHeight": null,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": null,
+        "x": -205,
+        "y": 53
+      },
+      {
+        "id": "n1775297914971",
+        "label": "Node",
+        "shapeType": "circle",
+        "colorKey": "c-gray",
+        "nodeWidth": null,
+        "nodeHeight": null,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": null,
+        "x": -205,
+        "y": -85
+      },
+      {
+        "id": "n1775297916596",
+        "label": "Node",
+        "shapeType": "circle",
+        "colorKey": "c-gray",
+        "nodeWidth": null,
+        "nodeHeight": null,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": null,
+        "x": -205,
+        "y": -245
+      },
+      {
+        "id": "n1775297958193",
+        "label": "Node",
+        "shapeType": "box",
+        "colorKey": "c-gray",
+        "nodeWidth": null,
+        "nodeHeight": null,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": null,
+        "x": -48,
+        "y": -314
+      },
+      {
+        "id": "n1775297968064qxdgfzibm9",
+        "label": "Node",
+        "shapeType": "box",
+        "colorKey": "c-gray",
+        "nodeWidth": null,
+        "nodeHeight": null,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": null,
+        "x": -50,
+        "y": -244
+      },
+      {
+        "id": "n1775297970789imz3qtm553q",
+        "label": "Node",
+        "shapeType": "box",
+        "colorKey": "c-gray",
+        "nodeWidth": null,
+        "nodeHeight": null,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": null,
+        "x": -50,
+        "y": -180
+      },
+      {
+        "id": "n177529797402345m17pvl6vx",
+        "label": "Node",
+        "shapeType": "box",
+        "colorKey": "c-gray",
+        "nodeWidth": null,
+        "nodeHeight": null,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": null,
+        "x": -54,
+        "y": 125
+      },
+      {
+        "id": "n177529797611881ydrdf91mk",
+        "label": "Node",
+        "shapeType": "box",
+        "colorKey": "c-gray",
+        "nodeWidth": null,
+        "nodeHeight": null,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": null,
+        "x": -54,
+        "y": 40
+      },
+      {
+        "id": "n1775297994664s0nqvyv07c",
+        "label": "Node",
+        "shapeType": "box",
+        "colorKey": "c-gray",
+        "nodeWidth": null,
+        "nodeHeight": null,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": null,
+        "x": -53,
+        "y": -79
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1775297925068",
+        "from": "n1775297910237",
+        "to": "n1775297908950",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null
+      },
+      {
+        "id": "e1775297927426",
+        "from": "n1775297908950",
+        "to": "n1775297916596",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null
+      },
+      {
+        "id": "e1775297928558",
+        "from": "n1775297908950",
+        "to": "n1775297914971",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null
+      },
+      {
+        "id": "e1775297929850",
+        "from": "n1775297908950",
+        "to": "n1775297912343",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null
+      },
+      {
+        "id": "e1775297980992",
+        "from": "n1775297916596",
+        "to": "n1775297958193",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null
+      },
+      {
+        "id": "e1775297982183",
+        "from": "n1775297916596",
+        "to": "n1775297968064qxdgfzibm9",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null
+      },
+      {
+        "id": "e1775297983183",
+        "from": "n1775297916596",
+        "to": "n1775297970789imz3qtm553q",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null
+      },
+      {
+        "id": "e1775297984483",
+        "from": "n1775297912343",
+        "to": "n177529797611881ydrdf91mk",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null
+      },
+      {
+        "id": "e1775297985841",
+        "from": "n1775297912343",
+        "to": "n177529797402345m17pvl6vx",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null
+      },
+      {
+        "id": "e1775297998287",
+        "from": "n1775297914971",
+        "to": "n1775297994664s0nqvyv07c",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null
+      }
+    ]
   }
 ]
