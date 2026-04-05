@@ -139,9 +139,17 @@
         border-radius: 2px;
         padding: 0 2px;
       }
+      mark.match-active {
+        background: #f97316;
+        color: #fff;
+      }
       .dark mark {
         background: #713f12;
         color: #fef9c3;
+      }
+      .dark mark.match-active {
+        background: #ea580c;
+        color: #fff;
       }
     </style>
   </head>
@@ -920,7 +928,7 @@
         const list = document.getElementById("search-notice-list");
         list.innerHTML = matches.map((m, i) =>
           `<li>
-            <button onclick="scrollToMatch('${m.id}')"
+            <button onclick="scrollToMatch('${m.id}')" data-match-id="${m.id}"
               class="w-full text-left px-3 py-1.5 hover:bg-yellow-100 dark:hover:bg-yellow-900/30 transition-colors">
               <span class="text-yellow-600 dark:text-yellow-500 font-mono text-xs mr-2">${i + 1}.</span
               ><span class="text-xs">${esc(m.snippet)}</span>
@@ -933,9 +941,23 @@
         const mark      = document.getElementById(id);
         const container = document.getElementById("content-area");
         if (!mark || !container) return;
-        const markTop      = mark.getBoundingClientRect().top;
-        const containerTop = container.getBoundingClientRect().top;
-        container.scrollTop += markTop - containerTop - container.clientHeight / 3;
+
+        // Orange on the active mark, yellow on the rest
+        document.querySelectorAll("mark.match-active").forEach((m) => m.classList.remove("match-active"));
+        mark.classList.add("match-active");
+
+        // Highlight active list item
+        document.querySelectorAll("#search-notice-list button").forEach((b) => {
+          b.classList.toggle("bg-orange-100", b.dataset.matchId === id);
+          b.classList.toggle("dark:bg-orange-900/30", b.dataset.matchId === id);
+        });
+
+        const stickyHeader  = document.querySelector("#doc-view header");
+        const headerHeight  = stickyHeader ? stickyHeader.getBoundingClientRect().height : 0;
+        const markTop       = mark.getBoundingClientRect().top;
+        const containerTop  = container.getBoundingClientRect().top;
+        const targetOffset  = headerHeight + (container.clientHeight - headerHeight) / 3;
+        container.scrollTop += markTop - containerTop - targetOffset;
       }
 
       function esc(str) {
