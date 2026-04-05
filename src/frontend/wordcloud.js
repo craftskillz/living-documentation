@@ -223,6 +223,9 @@ function extractWordsFromFile(text, ext) {
       text = text.replace(/\b(className|onClick|onChange|onSubmit|onFocus|onBlur|onKeyDown|onKeyUp|onMouseDown|onMouseUp|htmlFor|tabIndex|strokeWidth|viewBox|fillOpacity|strokeOpacity|defaultValue|placeholder|disabled|checked|readOnly|required|multiple|autoFocus|autoComplete|type|href|src|alt|width|height|style|key|ref)\s*=/g, ' =');
     }
 
+    // Strip import/package/namespace/using/require lines before any extraction
+    text = text.replace(/^\s*(import\s+[\w.*{},\s'"@/-]+;?|from\s+['"][^'"]+['"]\s*;?|package\s+[\w.]+;?|namespace\s+[\w.]+;?|using\s+[\w.]+;?|require\s*\(?\s*['"][^'"]+['"]\s*\)?;?)\s*$/gm, '');
+
     // Extract from line comments (// # --)
     text.replace(/(?:\/\/|#(?!.*[{}[\]<>])| -- )\s*(.+)$/gm, (_, c) => {
       words.push(...wcTokenize(c));
@@ -551,6 +554,12 @@ function wcSelectFolder() {
   document.getElementById('wc-root').value = _wcBrowseCurrent;
   localStorage.setItem('wc-root', _wcBrowseCurrent);
   document.getElementById('wc-browser').classList.add('hidden');
+
+  // Reset exclude field and sync exclude browser path to new root
+  const ta = document.getElementById('wc-exclude');
+  ta.value = '';
+  localStorage.removeItem('wc-exclude');
+  _wcExclBrowseCurrent = _wcBrowseCurrent;
 }
 
 // ── Persistence (localStorage) ────────────────────────────────────────────────
