@@ -494,16 +494,48 @@
             &#9654; Launch
           </button>
         </div>
+        <!-- Row 1b: exclude folders -->
+        <div class="flex items-start gap-3 px-6 pb-2">
+          <label class="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0 pt-1.5">Exclude</label>
+          <textarea
+            id="wc-exclude"
+            rows="3"
+            spellcheck="false"
+            placeholder="components/ui, package-lock.json  (one per line or comma-separated)"
+            oninput="wcOnExcludeChange()"
+            class="flex-1 px-3 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono focus:outline-none focus:ring-1 focus:ring-blue-400 resize-y"
+          ></textarea>
+          <button
+            onclick="wcToggleExcludeBrowser()"
+            class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shrink-0"
+          >
+            &#128193; Browse
+          </button>
+        </div>
+        <!-- Row 1c: exclude browser (collapsed by default) -->
+        <div id="wc-exclude-browser" class="hidden border-t border-gray-200 dark:border-gray-700">
+          <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <button id="wc-excl-browse-up" onclick="wcExclBrowseUp()"
+              class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0">
+              &#8593; Up
+            </button>
+            <span id="wc-excl-browse-path" class="font-mono text-xs text-gray-400 dark:text-gray-500 truncate flex-1 text-right"></span>
+          </div>
+          <div id="wc-excl-browse-list" class="divide-y divide-gray-100 dark:divide-gray-800 max-h-52 overflow-y-auto"></div>
+        </div>
         <!-- Row 2: extension checkboxes -->
         <div class="flex items-center gap-x-4 gap-y-2 px-6 pb-3 flex-wrap">
           <span class="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0">Extensions</span>
+          <button onclick="wcToggleAllExts()" id="wcToggleAllBtn" class="text-xs text-blue-600 dark:text-blue-400 hover:underline shrink-0">All</button>
           <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="md" checked /> .md</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="mdx" /> .mdx</label>
           <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="txt" /> .txt</label>
           <span class="text-gray-200 dark:text-gray-700 text-xs">|</span>
           <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="ts" /> .ts</label>
           <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="tsx" /> .tsx</label>
           <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="js" /> .js</label>
           <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="jsx" /> .jsx</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="mjs" /> .mjs</label>
           <span class="text-gray-200 dark:text-gray-700 text-xs">|</span>
           <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="java" /> .java</label>
           <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="kt" /> .kt</label>
@@ -513,6 +545,10 @@
           <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="cs" /> .cs</label>
           <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="swift" /> .swift</label>
           <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="rb" /> .rb</label>
+          <span class="text-gray-200 dark:text-gray-700 text-xs">|</span>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="prisma" /> .prisma</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="graphql" /> .graphql</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="gql" /> .gql</label>
           <span class="text-gray-200 dark:text-gray-700 text-xs">|</span>
           <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="html" /> .html</label>
           <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="css" /> .css</label>
@@ -536,18 +572,33 @@
           <div id="wc-browse-list" class="divide-y divide-gray-100 dark:divide-gray-800 max-h-52 overflow-y-auto"></div>
         </div>
       </div>
-      <div
-        id="wc-body"
-        class="flex-1 relative overflow-hidden flex items-center justify-center"
-      >
-        <p
-          id="wc-status"
-          class="text-gray-400 dark:text-gray-500 text-sm animate-pulse"
-        ></p>
-        <canvas
-          id="wc-canvas"
-          class="hidden absolute inset-0 w-full h-full"
-        ></canvas>
+      <div id="wc-body" class="flex-1 overflow-hidden flex">
+        <!-- Left sidebar: stats + controls + top-50 words -->
+        <div id="wc-sidebar" class="hidden w-56 shrink-0 border-r border-gray-200 dark:border-gray-800 flex flex-col bg-white dark:bg-gray-900 overflow-hidden">
+          <div id="wc-stats" class="px-3 py-2 text-xs text-gray-500 dark:text-gray-400 space-y-0.5 border-b border-gray-100 dark:border-gray-800"></div>
+          <div class="px-3 py-2 border-b border-gray-100 dark:border-gray-800 flex items-center gap-2">
+            <span class="text-xs text-gray-500 dark:text-gray-400 shrink-0">Min files</span>
+            <input id="wc-min-files" type="number" min="1" max="20" value="1"
+              class="w-12 px-1.5 py-0.5 text-xs rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none" />
+            <button onclick="wcApplyFilter()" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">Apply</button>
+          </div>
+          <p class="px-3 pt-2 pb-1 text-xs font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-wider">Top words</p>
+          <div id="wc-top-list" class="flex-1 overflow-y-auto"></div>
+        </div>
+        <!-- Canvas / status area -->
+        <div id="wc-canvas-wrap" class="flex-1 relative overflow-hidden">
+          <p id="wc-status" class="absolute inset-0 flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm animate-pulse"></p>
+          <canvas id="wc-canvas" class="hidden" style="position:absolute;inset:0"></canvas>
+        </div>
+        <!-- Right detail panel: shown on word click -->
+        <div id="wc-detail" class="hidden w-80 shrink-0 border-l border-gray-200 dark:border-gray-800 flex flex-col bg-white dark:bg-gray-900 overflow-hidden">
+          <div class="px-3 py-2 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+            <span id="wc-detail-word" class="font-bold text-sm text-gray-900 dark:text-gray-100"></span>
+            <button onclick="wcCloseDetail()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xs leading-none">✕</button>
+          </div>
+          <p class="px-3 pt-2 pb-1 text-xs font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-wider">Found in</p>
+          <div id="wc-detail-files" class="flex-1 overflow-y-auto px-3 py-1 space-y-1 text-xs"></div>
+        </div>
       </div>
     </div>
 

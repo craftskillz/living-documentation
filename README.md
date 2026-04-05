@@ -26,15 +26,16 @@ ExtraFiles (added in the admin section) are always first, always expanded in a `
 - **Syntax highlighting** — always dark, high-contrast code blocks
 [![README Diagrams](./images/readme-code-blocks.png)](/diagram?id=d1775399110713)
 
-- **Full-text search** — instant filter + server-side content search
-- **Export to PDF** — print-friendly layout via `window.print()`
-- **Deep links** — share a direct URL to any document (`?doc=…`)
-- **Admin panel** — configure title, theme, filename pattern, and extra files in the browser
+- **Full-text search** — instant filter + server-side content search. Returns all the files containing searched occurences, and for each file lists all the occurences, highlight them, and visit them.
+[![README Diagrams](./images/readme-intelligent-search-demo.png)](/diagram?id=d1775399110713)
+
 - **Inline editing** — edit any document directly in the browser, saves to disk instantly
 - **Image paste** — paste an image from clipboard in the editor; auto-uploaded and inserted as Markdown
+- **Export to PDF** — Export the markdown as a PDF document
+- **Diagram editor** — built-in canvas diagram editor; deep-link to any diagram in the C4 Model Style; Paste images into diagrams; Export PNG From Images; And Many more features ...
+
+- **Admin panel** — configure title, theme, filename pattern, and extra files in the browser
 - **Word Cloud** — visualise the dominant vocabulary of any folder on disk; supports `.md`, `.ts`, `.java`, `.kt`, `.py`, `.go`, `.rs`, `.cs`, `.swift`, `.rb`, `.html`, `.css`, `.yml`, `.json` and more; stop words filtered per language
-- **Diagram editor** — built-in canvas diagram editor (vis-network); deep-link to any diagram with `?id=`
-- **Zero frontend build** — Tailwind and highlight.js loaded from CDN
 
 ---
 

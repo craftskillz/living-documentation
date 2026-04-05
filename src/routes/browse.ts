@@ -18,8 +18,9 @@ export function browseRouter(): Router {
         .map((e) => ({ name: e.name, path: path.join(current, e.name) }))
         .sort((a, b) => a.name.localeCompare(b.name));
 
+      const allFiles = req.query.all === '1';
       const files = entries
-        .filter((e) => e.isFile() && e.name.toLowerCase().endsWith('.md'))
+        .filter((e) => e.isFile() && (allFiles || e.name.toLowerCase().endsWith('.md')))
         .map((e) => ({ name: e.name, path: path.join(current, e.name) }))
         .sort((a, b) => a.name.localeCompare(b.name));
 

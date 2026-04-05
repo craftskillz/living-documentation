@@ -1308,7 +1308,7 @@
         "groupId": null,
         "nodeLink": null,
         "x": 592,
-        "y": 679
+        "y": 677
       },
       {
         "id": "n1775405034084fyjnerbuo3a",
@@ -1343,8 +1343,8 @@
         "imageSrc": null,
         "groupId": null,
         "nodeLink": null,
-        "x": 863,
-        "y": -13
+        "x": 855,
+        "y": 20
       },
       {
         "id": "n1775405247554322mv5xvray",
@@ -1361,44 +1361,8 @@
         "imageSrc": null,
         "groupId": null,
         "nodeLink": null,
-        "x": 818,
-        "y": 718
-      },
-      {
-        "id": "n1775411100491",
-        "label": "Node",
-        "shapeType": "actor",
-        "colorKey": "c-gray",
-        "nodeWidth": 30,
-        "nodeHeight": 52,
-        "fontSize": null,
-        "textAlign": null,
-        "textValign": null,
-        "rotation": 0,
-        "labelRotation": 0,
-        "imageSrc": null,
-        "groupId": null,
-        "nodeLink": null,
-        "x": 139,
-        "y": 775
-      },
-      {
-        "id": "n1775411103440",
-        "label": "Node",
-        "shapeType": "post-it",
-        "colorKey": "c-amber",
-        "nodeWidth": 120,
-        "nodeHeight": 100,
-        "fontSize": null,
-        "textAlign": null,
-        "textValign": null,
-        "rotation": 0,
-        "labelRotation": 0,
-        "imageSrc": null,
-        "groupId": null,
-        "nodeLink": null,
-        "x": 284,
-        "y": 775
+        "x": 802,
+        "y": 670
       }
     ],
     "edges": [
@@ -1415,15 +1379,6 @@
         "id": "e1775405792368",
         "from": "n1775405247554322mv5xvray",
         "to": "a1775405792366",
-        "label": "",
-        "arrowDir": "to",
-        "dashes": false,
-        "fontSize": null
-      },
-      {
-        "id": "e1775411107203",
-        "from": "n1775411103440",
-        "to": "n1775411100491",
         "label": "",
         "arrowDir": "to",
         "dashes": false,
