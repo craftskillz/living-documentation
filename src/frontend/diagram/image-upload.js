@@ -11,22 +11,24 @@ async function toBase64(blob) {
   });
 }
 
-export async function uploadImageFile(file) {
+export async function uploadImageFile(file, name = '') {
   const ext    = (file.name.split('.').pop() || 'png').toLowerCase();
   const base64 = await toBase64(file);
-  return _upload(base64, ext);
+  return _upload(base64, ext, name);
 }
 
-export async function uploadImageBlob(blob, ext = 'png') {
+export async function uploadImageBlob(blob, ext = 'png', name = '') {
   const base64 = await toBase64(blob);
-  return _upload(base64, ext);
+  return _upload(base64, ext, name);
 }
 
-async function _upload(base64, ext) {
+async function _upload(base64, ext, name = '') {
+  const body = { data: base64, ext };
+  if (name) body.name = name;
   const res  = await fetch('/api/images/upload', {
     method:  'POST',
     headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({ data: base64, ext }),
+    body:    JSON.stringify(body),
   });
   if (!res.ok) throw new Error('Upload failed');
   const { filename } = await res.json();

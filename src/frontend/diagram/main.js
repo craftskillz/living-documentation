@@ -16,6 +16,7 @@ import { loadDiagramList, newDiagram, saveDiagram } from './persistence.js';
 import { copySelected, pasteClipboard, copySelectionAsPng } from './clipboard.js';
 import { createImageNode } from './network.js';
 import { uploadImageBlob } from './image-upload.js';
+import { promptImageName } from './image-name-modal.js';
 import { showToast }       from './toast.js';
 
 // ── Tool management ───────────────────────────────────────────────────────────
@@ -158,7 +159,7 @@ document.addEventListener('keydown', (e) => {
   if ((e.metaKey || e.ctrlKey) && e.key === 'a')             { e.preventDefault(); selectAll();       return; }
   if ((e.metaKey || e.ctrlKey) && e.key === 'c' && e.shiftKey) { e.preventDefault(); copySelectionAsPng(); return; }
   if ((e.metaKey || e.ctrlKey) && e.key === 'c')               { e.preventDefault(); copySelected();       return; }
-  if ((e.metaKey || e.ctrlKey) && e.key === 'v')             { e.preventDefault(); pasteClipboard();  return; }
+  // Cmd+V is handled in the 'paste' event below (needs clipboardData access)
   if ((e.metaKey || e.ctrlKey) && e.key === 's')             { e.preventDefault(); saveDiagram();     return; }
   if (e.key === 'Escape' || e.key === 's' || e.key === 'S')  { cancelStamp(); hideLinkPanel(); setTool('select'); return; }
   if (e.key === 'r' || e.key === 'R')  { setTool('addNode', 'box');      return; }
@@ -172,25 +173,37 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'g' || e.key === 'G')  { toggleGrid();                   return; }
 });
 
-// ── Paste image from clipboard ────────────────────────────────────────────────
+// ── Paste (image or shapes) ───────────────────────────────────────────────────
 document.addEventListener('paste', async (e) => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   if (!st.network) return;
-  const items = Array.from(e.clipboardData.items || []);
-  const imageItem = items.find((it) => it.type.startsWith('image/'));
-  if (!imageItem) return;
   e.preventDefault();
-  const blob = imageItem.getAsFile();
-  if (!blob) return;
-  const ext = imageItem.type.split('/')[1] || 'png';
-  try {
-    const src = await uploadImageBlob(blob, ext);
-    // Place at centre of current viewport
-    const center = st.network.getViewPosition();
-    createImageNode(src, center.x, center.y);
-    showToast('Image ajoutée');
-  } catch {
-    showToast('Impossible d\'importer l\'image', 'error');
+
+  const items     = Array.from(e.clipboardData?.items || []);
+  const imageItem = items.find((it) => it.type.startsWith('image/'));
+
+  if (imageItem) {
+    const blob = imageItem.getAsFile();
+    if (!blob) return;
+    const ext = imageItem.type.split('/')[1] || 'png';
+
+    const name = await promptImageName();
+    if (name === null) return; // user cancelled
+
+    try {
+      const src = await uploadImageBlob(blob, ext, name);
+      const center = st.network.getViewPosition();
+      createImageNode(src, center.x, center.y);
+      showToast('Image ajoutée');
+      // Clear system clipboard so the next Cmd+V pastes shapes, not the image again
+      // (our Cmd+C only writes to st.clipboard, not the system clipboard)
+      navigator.clipboard.writeText('').catch(() => {});
+    } catch {
+      showToast('Impossible d\'importer l\'image', 'error');
+    }
+  } else {
+    // No image — paste shapes from internal clipboard
+    pasteClipboard();
   }
 });
 

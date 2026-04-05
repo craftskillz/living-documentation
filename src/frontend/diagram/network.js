@@ -5,6 +5,7 @@
 import { st, markDirty } from './state.js';
 import { visNodeProps, SHAPE_DEFAULTS }   from './node-rendering.js';
 import { uploadImageFile } from './image-upload.js';
+import { promptImageName } from './image-name-modal.js';
 import { showToast }       from './toast.js';
 import { visEdgeProps }   from './edge-rendering.js';
 import { showNodePanel, hideNodePanel } from './node-panel.js';
@@ -184,8 +185,10 @@ function pickAndCreateImageNode(canvasX, canvasY) {
   input.onchange = async () => {
     const file = input.files && input.files[0];
     if (!file) return;
+    const name = await promptImageName();
+    if (name === null) return; // user cancelled
     try {
-      const src = await uploadImageFile(file);
+      const src = await uploadImageFile(file, name);
       createImageNode(src, canvasX, canvasY);
     } catch {
       showToast('Impossible d\'importer l\'image', 'error');
@@ -196,22 +199,53 @@ function pickAndCreateImageNode(canvasX, canvasY) {
 
 export function createImageNode(imageSrc, canvasX, canvasY) {
   if (!st.network) return;
-  const id = 'n' + Date.now();
-  const defaults = SHAPE_DEFAULTS['image'];
-  st.nodes.add({
-    id, label: '', imageSrc,
-    shapeType: 'image', colorKey: 'c-gray',
-    nodeWidth: defaults[0], nodeHeight: defaults[1],
-    fontSize: null, rotation: 0, labelRotation: 0,
-    x: canvasX, y: canvasY,
-    ...visNodeProps('image', 'c-gray', defaults[0], defaults[1], null, null, null),
-  });
-  markDirty();
-  setTimeout(() => {
-    st.network.selectNodes([id]);
-    st.selectedNodeIds = [id];
-    showNodePanel();
-  }, 50);
+  const id      = 'n' + Date.now();
+  const captionId = id + 'c';
+
+  const addNode = (nW, nH) => {
+    const filename   = imageSrc.split('/').pop() || '';
+    const textDefs   = SHAPE_DEFAULTS['text-free'];
+    const captionH   = textDefs[1];
+    const GAP        = 8;
+
+    const groupId = 'g' + Date.now();
+    st.nodes.add({
+      id, label: '', imageSrc, groupId,
+      shapeType: 'image', colorKey: 'c-gray',
+      nodeWidth: nW, nodeHeight: nH,
+      fontSize: null, rotation: 0, labelRotation: 0,
+      x: canvasX, y: canvasY,
+      ...visNodeProps('image', 'c-gray', nW, nH, null, null, null),
+    });
+    st.nodes.add({
+      id: captionId, label: filename, groupId,
+      shapeType: 'text-free', colorKey: 'c-gray',
+      nodeWidth: nW, nodeHeight: captionH,
+      fontSize: null, rotation: 0, labelRotation: 0,
+      x: canvasX, y: canvasY + nH / 2 + GAP + captionH / 2,
+      ...visNodeProps('text-free', 'c-gray', nW, captionH, null, null, null),
+    });
+    markDirty();
+    setTimeout(() => {
+      st.network.selectNodes([id]);
+      st.selectedNodeIds = [id];
+      showNodePanel();
+    }, 50);
+  };
+
+  const img = new Image();
+  img.onload = () => {
+    const MAX = 300;
+    const ratio = img.naturalWidth / img.naturalHeight;
+    let nW = img.naturalWidth, nH = img.naturalHeight;
+    if (nW > MAX) { nW = MAX; nH = Math.round(MAX / ratio); }
+    addNode(nW, nH);
+  };
+  img.onerror = () => {
+    const d = SHAPE_DEFAULTS['image'];
+    addNode(d[0], d[1]);
+  };
+  img.src = imageSrc;
 }
 
 function onClickNode(params) {

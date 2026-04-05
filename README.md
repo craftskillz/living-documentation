@@ -2,7 +2,7 @@
 
 A CLI tool that serves a local Markdown documentation viewer in your browser.
 
-No cloud, no database, no build step — just point it at a folder of `.md` files.
+No cloud, no database, no build step — just point it at a folder where you add your project's folder documentation composed of `.md` files (ADR : Architecture Decision Records, generally).
 
 ![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)
@@ -11,12 +11,22 @@ No cloud, no database, no build step — just point it at a folder of `.md` file
 ## Features
 
 - **Sidebar** grouped by category, sorted alphabetically by full filename
+[![README Diagrams](./images/readme-sidebar.png)](/diagram?id=d1775399110713)
+
+- **Categories Sections and General section** — Categories are extracted from the fileName pattern of your Markdown documents (that may be Architecture Decision Records ADRs).
+ExtraFiles (added in the admin section) are always first, always expanded in a `GENERAL Section` that holds uncategorized docs and extra files
+[![README Diagrams](./images/readme-filename-pattern.png)](/diagram?id=d1775399110713)
+
 - **Recursive folder scanning** — subdirectories are scanned automatically; subdirectory name becomes the category
-- **General section** — always first, always expanded; holds uncategorized docs and extra files
-- **Extra files** — include Markdown files from outside the docs folder (e.g. `README.md`, `CLAUDE.md`)
-- **Full-text search** — instant filter + server-side content search
+
+- **Extra files** — You can add custom ExtraFiles to your documentation that are outside the docs folder (e.g. `README.md`, `CLAUDE.md`) in the `Admin` Page
+[![README Diagrams](./images/readme-extra-files.png)](/diagram?id=d1775399110713)
+
 - **Dark mode** — follows system preference, manually toggleable
 - **Syntax highlighting** — always dark, high-contrast code blocks
+[![README Diagrams](./images/readme-code-blocks.png)](/diagram?id=d1775399110713)
+
+- **Full-text search** — instant filter + server-side content search
 - **Export to PDF** — print-friendly layout via `window.print()`
 - **Deep links** — share a direct URL to any document (`?doc=…`)
 - **Admin panel** — configure title, theme, filename pattern, and extra files in the browser

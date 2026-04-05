@@ -1124,6 +1124,39 @@
     </div>
 
     <div id="toastContainer"></div>
+
+    <!-- Image name modal -->
+    <div id="imageNameModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.5);"
+         class="flex items-center justify-center">
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 w-80 flex flex-col gap-3">
+        <p class="text-sm font-semibold text-gray-700 dark:text-gray-200">Nom du fichier image</p>
+        <p class="text-xs text-gray-400 dark:text-gray-500">
+          Lettres, chiffres, <code class="bg-gray-100 dark:bg-gray-700 px-0.5 rounded">_</code> et
+          <code class="bg-gray-100 dark:bg-gray-700 px-0.5 rounded">-</code> uniquement.
+          Laisser vide pour un nom automatique.
+        </p>
+        <div class="flex items-center gap-1">
+          <input id="imageNameInput" type="text" autocomplete="off" spellcheck="false"
+                 class="flex-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700
+                        text-gray-900 dark:text-gray-100 text-sm px-2 py-1 outline-none focus:ring-2 focus:ring-blue-400"
+                 placeholder="nom_image" />
+          <span class="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">.png</span>
+        </div>
+        <p id="imageNameError" class="text-xs text-red-500 hidden">Caractères autorisés : lettres, chiffres, _ et -</p>
+        <div class="flex gap-2 justify-end">
+          <button id="imageNameCancel"
+                  class="px-3 py-1 text-xs rounded border border-gray-300 dark:border-gray-600
+                         text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+            Annuler
+          </button>
+          <button id="imageNameConfirm"
+                  class="px-3 py-1 text-xs rounded bg-blue-500 text-white hover:bg-blue-600">
+            Coller
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script type="module" src="/diagram/main.js"></script>
   </body>
 </html>

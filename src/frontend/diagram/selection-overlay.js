@@ -74,6 +74,7 @@ function onResizeStart(e, corner) {
   e.preventDefault();
   e.stopPropagation();
 
+  const positions = st.network.getPositions(st.selectedNodeIds);
   const startBBs = st.selectedNodeIds.map((id) => {
     const n = st.nodes.get(id);
     const b = nodeBounds(id);
@@ -81,13 +82,22 @@ function onResizeStart(e, corner) {
     const defaults = SHAPE_DEFAULTS[shape] || [60, 28];
     const initW = (n && n.nodeWidth)  || (b ? Math.round(b.maxX - b.minX) : defaults[0]);
     const initH = (n && n.nodeHeight) || (b ? Math.round(b.maxY - b.minY) : defaults[1]);
-    return { id, node: n, initW, initH };
+    const pos = positions[id] || { x: 0, y: 0 };
+    return { id, node: n, initW, initH, initX: pos.x, initY: pos.y };
   });
 
-  const initBoxW = startBBs.reduce((m, b) => Math.max(m, b.initW), 0);
-  const initBoxH = startBBs.reduce((m, b) => Math.max(m, b.initH), 0);
+  // True bounding box of the whole selection (for scale reference and pivot)
+  let bbMinX = Infinity, bbMinY = Infinity, bbMaxX = -Infinity, bbMaxY = -Infinity;
+  for (const { id } of startBBs) {
+    const b = nodeBounds(id);
+    if (!b) continue;
+    bbMinX = Math.min(bbMinX, b.minX); bbMinY = Math.min(bbMinY, b.minY);
+    bbMaxX = Math.max(bbMaxX, b.maxX); bbMaxY = Math.max(bbMaxY, b.maxY);
+  }
+  const initBoxW = (bbMaxX - bbMinX) || 1;
+  const initBoxH = (bbMaxY - bbMinY) || 1;
 
-  st.resizeDrag = { corner, startMouse: { x: e.clientX, y: e.clientY }, startBBs, initBoxW, initBoxH };
+  st.resizeDrag = { corner, startMouse: { x: e.clientX, y: e.clientY }, startBBs, initBoxW, initBoxH, bbMinX, bbMinY, bbMaxX, bbMaxY };
   st.selectedNodeIds.forEach((id) => st.nodes.update({ id, fixed: true }));
   document.getElementById('vis-canvas').style.pointerEvents = 'none';
   document.addEventListener('mousemove', onResizeDrag);
@@ -110,22 +120,34 @@ function onResizeDrag(e) {
     if (c === 'bl') { nW = initW - cdx; nH = initH + cdy; }
     if (c === 'tr') { nW = initW + cdx; nH = initH - cdy; }
     if (c === 'tl') { nW = initW - cdx; nH = initH - cdy; }
+    if (e.shiftKey && initW > 0 && initH > 0) {
+      const scale = Math.max(nW / initW, nH / initH);
+      nW = initW * scale;
+      nH = initH * scale;
+    }
     nW = Math.max(MIN, Math.round(nW));
     nH = Math.max(MIN, Math.round(nH));
     st.nodes.update({ id, nodeWidth: nW, nodeHeight: nH, ...visNodeProps(node.shapeType || 'box', node.colorKey || 'c-gray', nW, nH, node.fontSize, node.textAlign, node.textValign) });
     updatedIds.push(id);
   } else {
-    const { initBoxW, initBoxH } = st.resizeDrag;
+    const { initBoxW, initBoxH, bbMinX, bbMinY, bbMaxX, bbMaxY } = st.resizeDrag;
     let sx = 1, sy = 1;
     if (c === 'br') { sx = (initBoxW + cdx) / initBoxW; sy = (initBoxH + cdy) / initBoxH; }
     if (c === 'bl') { sx = (initBoxW - cdx) / initBoxW; sy = (initBoxH + cdy) / initBoxH; }
     if (c === 'tr') { sx = (initBoxW + cdx) / initBoxW; sy = (initBoxH - cdy) / initBoxH; }
     if (c === 'tl') { sx = (initBoxW - cdx) / initBoxW; sy = (initBoxH - cdy) / initBoxH; }
     sx = Math.max(0.1, sx); sy = Math.max(0.1, sy);
-    for (const { id, node, initW, initH } of st.resizeDrag.startBBs) {
+    if (e.shiftKey) { const s = Math.max(sx, sy); sx = s; sy = s; }
+
+    // Pivot = corner opposite to the drag corner (stays fixed during scale)
+    const pivotX = (c === 'br' || c === 'tr') ? bbMinX : bbMaxX;
+    const pivotY = (c === 'br' || c === 'bl') ? bbMinY : bbMaxY;
+
+    for (const { id, node, initW, initH, initX, initY } of st.resizeDrag.startBBs) {
       const nW = Math.max(MIN, Math.round(initW * sx));
       const nH = Math.max(MIN, Math.round(initH * sy));
       st.nodes.update({ id, nodeWidth: nW, nodeHeight: nH, ...visNodeProps(node.shapeType || 'box', node.colorKey || 'c-gray', nW, nH, node.fontSize, node.textAlign, node.textValign) });
+      st.network.moveNode(id, pivotX + (initX - pivotX) * sx, pivotY + (initY - pivotY) * sy);
       updatedIds.push(id);
     }
   }
