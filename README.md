@@ -22,6 +22,8 @@ No cloud, no database, no build step — just point it at a folder of `.md` file
 - **Admin panel** — configure title, theme, filename pattern, and extra files in the browser
 - **Inline editing** — edit any document directly in the browser, saves to disk instantly
 - **Image paste** — paste an image from clipboard in the editor; auto-uploaded and inserted as Markdown
+- **Word Cloud** — visualise the dominant vocabulary of any folder on disk; supports `.md`, `.ts`, `.java`, `.kt`, `.py`, `.go`, `.rs`, `.cs`, `.swift`, `.rb`, `.html`, `.css`, `.yml`, `.json` and more; stop words filtered per language
+- **Diagram editor** — built-in canvas diagram editor (vis-network); deep-link to any diagram with `?id=`
 - **Zero frontend build** — Tailwind and highlight.js loaded from CDN
 
 ---

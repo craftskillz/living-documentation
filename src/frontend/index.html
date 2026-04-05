@@ -17,6 +17,8 @@
 
     <!-- WordCloud2.js — vendored from npm, no CDN dependency -->
     <script src="/vendor/wordcloud2.js"></script>
+    <!-- Word Cloud logic — stop words, browser, rendering -->
+    <script src="/wordcloud.js"></script>
 
     <script>
       tailwind.config = {
@@ -392,20 +394,71 @@
         </button>
       </div>
       <!-- Search root toolbar -->
-      <div class="flex items-center gap-3 px-6 py-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
-        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0">Search root</label>
-        <input
-          id="wc-root"
-          type="text"
-          spellcheck="false"
-          class="flex-1 px-3 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <button
-          onclick="launchWordCloud()"
-          class="text-sm px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors shrink-0"
-        >
-          &#9654; Launch
-        </button>
+      <div class="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
+        <!-- Row 1: path + browse + launch -->
+        <div class="flex items-center gap-3 px-6 py-3">
+          <label class="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0">Search root</label>
+          <input
+            id="wc-root"
+            type="text"
+            readonly
+            spellcheck="false"
+            class="flex-1 px-3 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono cursor-default focus:outline-none"
+          />
+          <button
+            onclick="wcToggleBrowser()"
+            class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shrink-0"
+          >
+            &#128193; Browse
+          </button>
+          <button
+            onclick="launchWordCloud()"
+            class="text-sm px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors shrink-0"
+          >
+            &#9654; Launch
+          </button>
+        </div>
+        <!-- Row 2: extension checkboxes -->
+        <div class="flex items-center gap-x-4 gap-y-2 px-6 pb-3 flex-wrap">
+          <span class="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0">Extensions</span>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="md" checked /> .md</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="txt" /> .txt</label>
+          <span class="text-gray-200 dark:text-gray-700 text-xs">|</span>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="ts" /> .ts</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="tsx" /> .tsx</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="js" /> .js</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="jsx" /> .jsx</label>
+          <span class="text-gray-200 dark:text-gray-700 text-xs">|</span>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="java" /> .java</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="kt" /> .kt</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="py" /> .py</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="go" /> .go</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="rs" /> .rs</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="cs" /> .cs</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="swift" /> .swift</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="rb" /> .rb</label>
+          <span class="text-gray-200 dark:text-gray-700 text-xs">|</span>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="html" /> .html</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="css" /> .css</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="scss" /> .scss</label>
+          <span class="text-gray-200 dark:text-gray-700 text-xs">|</span>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="yml" /> .yml</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="yaml" /> .yaml</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="json" /> .json</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="xml" /> .xml</label>
+          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="toml" /> .toml</label>
+        </div>
+        <!-- Row 3: inline folder browser (collapsed by default) -->
+        <div id="wc-browser" class="hidden border-t border-gray-200 dark:border-gray-700">
+          <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <button id="wc-browse-up" onclick="wcBrowseUp()"
+              class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0">
+              &#8593; Up
+            </button>
+            <span id="wc-browse-path" class="font-mono text-xs text-gray-400 dark:text-gray-500 truncate flex-1 text-right"></span>
+          </div>
+          <div id="wc-browse-list" class="divide-y divide-gray-100 dark:divide-gray-800 max-h-52 overflow-y-auto"></div>
+        </div>
       </div>
       <div
         id="wc-body"
@@ -435,6 +488,7 @@
         applyDarkMode(loadDarkPref());
         setupDarkToggle();
         setupSearch();
+        wcRestorePrefs();
         await loadConfig();
         await loadDocuments();
 
@@ -857,261 +911,6 @@
           .replace(/'/g, "&#39;");
       }
 
-      // ── Word Cloud ─────────────────────────────────────────────
-      const WC_STOP_WORDS = new Set([
-        // English
-        "the",
-        "and",
-        "for",
-        "are",
-        "but",
-        "not",
-        "you",
-        "all",
-        "this",
-        "that",
-        "with",
-        "have",
-        "from",
-        "they",
-        "will",
-        "one",
-        "been",
-        "can",
-        "has",
-        "was",
-        "more",
-        "also",
-        "when",
-        "there",
-        "their",
-        "what",
-        "about",
-        "which",
-        "would",
-        "into",
-        "than",
-        "then",
-        "each",
-        "just",
-        "over",
-        "after",
-        "such",
-        "here",
-        "its",
-        "your",
-        "our",
-        "some",
-        "were",
-        "very",
-        "only",
-        "out",
-        "had",
-        "she",
-        "his",
-        "her",
-        "him",
-        "who",
-        "how",
-        "any",
-        "other",
-        "these",
-        "those",
-        "being",
-        "may",
-        "use",
-        "used",
-        "using",
-        "should",
-        "could",
-        "would",
-        "shall",
-        "must",
-        "need",
-        "via",
-        "per",
-        "like",
-        // French
-        "les",
-        "des",
-        "une",
-        "pour",
-        "pas",
-        "sur",
-        "par",
-        "est",
-        "qui",
-        "que",
-        "dans",
-        "avec",
-        "sont",
-        "plus",
-        "tout",
-        "aux",
-        "mais",
-        "comme",
-        "vous",
-        "nous",
-        "leur",
-        "lui",
-        "elle",
-        "ils",
-        "elles",
-        "ces",
-        "ses",
-        "mon",
-        "ton",
-        "son",
-        "mes",
-        "tes",
-        "ainsi",
-        "donc",
-        "alors",
-        "car",
-        "peut",
-        "fait",
-        "encore",
-        "bien",
-        "aussi",
-        "très",
-        "même",
-        "entre",
-        "vers",
-        "dont",
-        "sans",
-        "sous",
-      ]);
-
-      async function openWordCloud() {
-        const overlay = document.getElementById("wc-overlay");
-        const status = document.getElementById("wc-status");
-        const canvas = document.getElementById("wc-canvas");
-        overlay.classList.remove("hidden");
-        status.textContent = "Choose a root folder and click Launch.";
-        status.classList.remove("hidden");
-        canvas.classList.add("hidden");
-
-        // Pre-fill root with docsFolder from config if not already set
-        const rootInput = document.getElementById("wc-root");
-        if (!rootInput.value) {
-          try {
-            const cfg = await fetch("/api/config").then((r) => r.json());
-            if (cfg.docsFolder) rootInput.value = cfg.docsFolder;
-          } catch { /* ignore */ }
-        }
-      }
-
-      async function launchWordCloud() {
-        const status = document.getElementById("wc-status");
-        const canvas = document.getElementById("wc-canvas");
-        const root = document.getElementById("wc-root").value.trim();
-
-        if (!root) {
-          status.textContent = "Please enter a root path.";
-          status.classList.remove("hidden");
-          return;
-        }
-
-        status.textContent = "Reading files…";
-        status.classList.remove("hidden");
-        canvas.classList.add("hidden");
-
-        try {
-          const res = await fetch("/api/wordcloud?path=" + encodeURIComponent(root));
-          if (!res.ok) {
-            const err = await res.json();
-            status.textContent = "Error: " + (err.error || res.statusText);
-            return;
-          }
-          const { files, text } = await res.json();
-          status.textContent = `Analyzing ${files} file(s)…`;
-
-          const freq = {};
-          for (const w of extractWordsFromMarkdown(text)) {
-            freq[w] = (freq[w] || 0) + 1;
-          }
-
-          const list = Object.entries(freq)
-            .filter(([, n]) => n >= 2)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 150);
-
-          if (!list.length) {
-            status.textContent = "Not enough words found.";
-            return;
-          }
-
-          renderWordCloud(list);
-        } catch (err) {
-          status.textContent = "Error: " + err.message;
-        }
-      }
-
-      function extractWordsFromMarkdown(text) {
-        return text
-          .replace(/```[\s\S]*?```/g, "")
-          .replace(/`[^`\n]+`/g, "")
-          .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
-          .replace(/https?:\/\/\S+/g, "")
-          .replace(/[#*_~>`|!\[\](){}=\-+]/g, " ")
-          .toLowerCase()
-          .split(/[^a-zàâäéèêëïîôùûü']+/)
-          .map((w) => w.replace(/^'+|'+$/g, ""))
-          .filter((w) => w.length > 3 && !WC_STOP_WORDS.has(w));
-      }
-
-      function renderWordCloud(list) {
-        const canvas = document.getElementById("wc-canvas");
-        const body = document.getElementById("wc-body");
-        canvas.width = body.clientWidth;
-        canvas.height = body.clientHeight;
-
-        const isDark = document.documentElement.classList.contains("dark");
-        const colors = isDark
-          ? [
-              "#60a5fa",
-              "#34d399",
-              "#f9a8d4",
-              "#a78bfa",
-              "#fbbf24",
-              "#6ee7b7",
-              "#93c5fd",
-              "#fb923c",
-            ]
-          : [
-              "#1d4ed8",
-              "#047857",
-              "#7c3aed",
-              "#b45309",
-              "#be123c",
-              "#0369a1",
-              "#4338ca",
-              "#c2410c",
-            ];
-
-        const maxFreq = list[0][1];
-        const wordList = list.map(([w, n]) => [
-          w,
-          Math.max(10, Math.round((72 * n) / maxFreq)),
-        ]);
-
-        document.getElementById("wc-status").classList.add("hidden");
-        canvas.classList.remove("hidden");
-
-        WordCloud(canvas, {
-          list: wordList,
-          gridSize: Math.round((8 * canvas.width) / 1024),
-          fontFamily: "ui-sans-serif, system-ui, sans-serif",
-          color: () => colors[Math.floor(Math.random() * colors.length)],
-          backgroundColor: isDark ? "#030712" : "#ffffff",
-          rotateRatio: 0.3,
-          minSize: 10,
-        });
-      }
-
-      function closeWordCloud() {
-        document.getElementById("wc-overlay").classList.add("hidden");
-      }
 
       // Browser back/forward
       window.addEventListener("popstate", (e) => {

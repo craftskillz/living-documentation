@@ -17,13 +17,15 @@ bin/cli.ts                  → CLI entry (Commander), validates args, calls sta
 src/server.ts               → Express app, mounts API routes + serves static frontend
 src/routes/documents.ts     → /api/documents  (list, search, read, write)
 src/routes/config.ts        → /api/config     (read, write)
-src/routes/browse.ts        → /api/browse     (filesystem navigator, .md files only)
+src/routes/browse.ts        → /api/browse     (filesystem navigator, dirs + .md files)
 src/routes/images.ts        → /api/images     (image upload from clipboard paste)
+src/routes/wordcloud.ts     → /api/wordcloud  (recursive file reader, returns raw text)
 src/lib/parser.ts           → filename parsing logic (dynamic, driven by filenamePattern)
 src/lib/config.ts           → .living-doc.json read/write with defaults
 src/frontend/index.html     → single-page viewer (Tailwind CDN, hljs CDN, vanilla JS)
+src/frontend/wordcloud.js   → word cloud logic: stop words, browser, rendering (loaded by index.html)
 src/frontend/admin.html     → admin panel (config editor + extra files browser)
-scripts/copy-assets.js      → copies src/frontend/ → dist/src/frontend/ after tsc
+scripts/copy-assets.ts      → copies src/frontend/ → dist/src/frontend/ after tsc
 ```
 
 ## Build
@@ -80,12 +82,26 @@ Validated on write: must be absolute paths ending in `.md`.
 - Sidebar: **General** category always first and expanded on load; all others collapsed.
 - Auto-open: first doc in General is opened automatically when no `?doc=` param is present.
 - Welcome screen pattern hint reads `filenamePattern` from config (not hardcoded).
+- Article header is `sticky top-0` — title and action buttons remain visible while scrolling.
 
 ### Inline editing
 
 - **Edit button** on each document switches to a `<textarea>` with the raw markdown.
 - **Save** → `PUT /api/documents/:id` → re-renders HTML in place without page reload.
 - **Cancel** → reverts to read view; switching document also exits edit mode.
+- Scroll position of `content-area` is saved on enter and restored on exit (Cancel or Save).
+
+### Word Cloud
+
+Accessible via the **☁ Word Cloud** button in the header. Opens a full-screen overlay.
+
+- **Search root** — pre-filled from `docsFolder` config (or `localStorage` on subsequent visits).
+- **Browse** — inline folder browser (uses `/api/browse`) to navigate and select any directory.
+- **Extensions** — checkboxes grouped by family: docs (`.md`, `.txt`), JS/TS, JVM, systems, web, config.
+- **Launch** — calls `GET /api/wordcloud?path=…&ext=…` which recursively reads matching files and returns concatenated text.
+- Stop words: human (EN + FR) in `WC_STOP_WORDS`; language keywords per extension in `WC_LANG_STOP_WORDS` (activated dynamically). Import/package lines stripped before tokenisation.
+- Root path and selected extensions persisted in `localStorage` (`wc-root`, `wc-exts`).
+- All logic lives in `src/frontend/wordcloud.js` (plain script, global symbols — not an ES module).
 
 ### Image paste
 
@@ -99,6 +115,10 @@ Validated on write: must be absolute paths ending in `.md`.
 ## Diagram editor
 
 `src/frontend/diagram.html` — standalone vis-network 9.1.9 canvas editor, served at `/diagram`.
+
+Deep-link to a specific diagram: `/diagram?id=<diagramId>` — `loadDiagramList()` reads the `id` query param and opens the matching diagram on load.
+
+The **← Back** button calls `history.back()` — returns to the referring page (e.g. a document that linked to the diagram via a clickable image).
 
 JavaScript extracted into ES modules under `src/frontend/diagram/` (copied to `dist/` by `copy-assets.ts`):
 
@@ -172,6 +192,7 @@ Toggled by the `showDiagramDebug` config flag (Admin panel checkbox). Renders DO
 - `POST /api/images/upload` saves only to `DOCS_FOLDER/images/` — no path parameter accepted.
 - Image filenames are server-generated (timestamp + random suffix) — client cannot control the path.
 - Express body limit raised to `20mb` to accommodate base64-encoded image uploads.
+- `GET /api/wordcloud` reads arbitrary paths on disk — intentionally unrestricted since the server is local-only.
 
 ## Key commands
 
@@ -206,3 +227,4 @@ Published on npm as `living-documentation`.
 | Diagram snap-to-grid & DPR grid     | [2026*04_03*[DIAGRAM]\_snap_to_grid.md](documentation/adrs/2026_04_03_[DIAGRAM]_snap_to_grid.md)                                                               |
 | Diagram debug overlay               | [2026*04_03*[DIAGRAM]\_debug_overlay.md](documentation/adrs/2026_04_03_[DIAGRAM]_debug_overlay.md)                                                             |
 | Diagram JS modularisation           | [2026*04_03*[DIAGRAM]\_modularisation_javascript.md](documentation/adrs/2026_04_03_[DIAGRAM]_modularisation_javascript.md)                                     |
+| Word Cloud feature                  | [2026*04_05*[FRONTEND]\_word_cloud.md](documentation/adrs/2026_04_05_[FRONTEND]_word_cloud.md)                                                                 |
