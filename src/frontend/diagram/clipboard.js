@@ -45,9 +45,17 @@ export async function copySelectionAsPng() {
   const cropW = Math.ceil(br.x - tl.x + PAD * 2);
   const cropH = Math.ceil(br.y - tl.y + PAD * 2);
 
+  // Temporarily deselect everything so orange highlights don't appear in the PNG
+  const savedNodeIds = [...st.selectedNodeIds];
+  st.network.unselectAll();
+  st.network.redraw();
+
   // Grab vis-network's canvas element
   const visCanvas = document.querySelector('#vis-canvas canvas');
-  if (!visCanvas) return;
+  if (!visCanvas) {
+    st.network.selectNodes(savedNodeIds);
+    return;
+  }
 
   // Crop into an offscreen canvas
   const out = document.createElement('canvas');
@@ -71,6 +79,8 @@ export async function copySelectionAsPng() {
     showToast('PNG copié dans le presse-papier');
   } catch {
     showToast('Impossible de copier l\'image', 'error');
+  } finally {
+    st.network.selectNodes(savedNodeIds);
   }
 }
 

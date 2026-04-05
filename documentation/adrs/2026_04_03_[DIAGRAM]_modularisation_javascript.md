@@ -46,14 +46,7 @@ Tous les attributs `onclick="..."` ont été supprimés du HTML. Les boutons ont
 
 ### Graphe de dépendances (simplifié)
 
-```
-constants ← state ← node-rendering ← node-panel ← network ← persistence ← main
-                  ← edge-rendering ← edge-panel ↗                        ↗
-                  ← label-editor              ↗                          ↗
-                  ← selection-overlay        ↗                          ↗
-                  ← grid / debug / zoom     ↗                          ↗
-                  ← clipboard              ↗                           ↗
-```
+[![Graphe de dépendances des modules diagram JS](./images/diagram_js_module_dependencies.png)](/diagram?id=d1775347200001)
 
 Aucun cycle de dépendances : `constants` et `state` n'importent rien, `main` importe tout.
 

@@ -6,6 +6,7 @@ import { configRouter } from './routes/config';
 import { browseRouter } from './routes/browse';
 import { imagesRouter } from './routes/images';
 import { diagramsRouter } from './routes/diagrams';
+import { wordcloudRouter } from './routes/wordcloud';
 import { writeConfig } from './lib/config';
 
 export interface ServerOptions {
@@ -32,6 +33,7 @@ export async function startServer({
   app.use('/api/browse', browseRouter());
   app.use('/api/images', imagesRouter(docsPath));
   app.use('/api/diagrams', diagramsRouter(docsPath));
+  app.use('/api/wordcloud', wordcloudRouter());
 
   // Static frontend assets
   const frontendPath = path.join(__dirname, 'frontend');

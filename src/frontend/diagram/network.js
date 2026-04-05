@@ -14,6 +14,8 @@ import { updateSelectionOverlay, hideSelectionOverlay } from './selection-overla
 import { drawGrid, onDragEnd } from './grid.js';
 import { drawDebugOverlay }    from './debug.js';
 import { updateZoomDisplay }   from './zoom.js';
+import { expandSelectionToGroup, drawGroupOutlines } from './groups.js';
+import { navigateNodeLink, hideLinkPanel }           from './link-panel.js';
 
 export function initNetwork(savedNodes, savedEdges) {
   const container = document.getElementById('vis-canvas');
@@ -65,25 +67,48 @@ export function initNetwork(savedNodes, savedEdges) {
   st.canonicalOrder = [...st.network.body.nodeIndices];
   st.network.renderer._drawNodes = function (ctx, alwaysShow = false) {
     const bodyNodes = this.body.nodes;
+    const bodyEdges = this.body.edges;
     const margin    = 20;
     const topLeft     = this.canvas.DOMtoCanvas({ x: -margin, y: -margin });
     const bottomRight = this.canvas.DOMtoCanvas({ x: this.canvas.frame.canvas.clientWidth + margin, y: this.canvas.frame.canvas.clientHeight + margin });
     const viewableArea = { top: topLeft.y, left: topLeft.x, bottom: bottomRight.y, right: bottomRight.x };
-    const drawExternalLabelCallbacks = [];
 
-    for (const id of st.canonicalOrder) {
+    // Build a map: canonical index → list of edges whose topmost endpoint is at that index.
+    const orderMap = new Map();
+    st.canonicalOrder.forEach((id, i) => orderMap.set(id, i));
+
+    const edgesByLevel = new Map(); // canonicalIndex → edge[]
+    for (const edgeId of Object.keys(bodyEdges)) {
+      const edge = bodyEdges[edgeId];
+      if (!edge.connected) continue;
+      const level = Math.min(orderMap.get(edge.fromId) ?? 0, orderMap.get(edge.toId) ?? 0);
+      if (!edgesByLevel.has(level)) edgesByLevel.set(level, []);
+      edgesByLevel.get(level).push(edge);
+    }
+
+    for (let i = 0; i < st.canonicalOrder.length; i++) {
+      const id   = st.canonicalOrder[i];
+      // Draw edges whose topmost node is at this level, before drawing the node.
+      const edges = edgesByLevel.get(i);
+      if (edges) edges.forEach((e) => e.draw(ctx));
+
       const node = bodyNodes[id];
       if (!node) continue;
       if (alwaysShow === true || node.isBoundingBoxOverlappingWith(viewableArea) === true) {
-        const r = node.draw(ctx);
-        // All shapes are ctxRenderer (shape:'custom') and draw their own labels.
-        // Skip drawExternalLabel entirely to avoid double-rendering.
+        node.draw(ctx);
       } else {
         node.updateBoundingBox(ctx, node.selected);
       }
     }
-    return { drawExternalLabels() { for (const draw of drawExternalLabelCallbacks) draw(); } };
+    return { drawExternalLabels() {} };
   };
+
+  // ── Z-order patch for edges ────────────────────────────────────────────────
+  // vis.js draws all edges before all nodes in separate passes.
+  // We neutralise _drawEdges (make it a no-op) and instead draw each edge
+  // inside _drawNodes, just before the node whose canonical index equals the
+  // max index of its two endpoints. This guarantees true z-order interleaving.
+  st.network.renderer._drawEdges = function () { /* no-op — edges drawn in _drawNodes */ };
 
   // Keep canonicalOrder in sync with DataSet add/remove events
   st.nodes.on('add', (_, { items }) => {
@@ -95,7 +120,9 @@ export function initNetwork(savedNodes, savedEdges) {
     st.canonicalOrder = st.canonicalOrder.filter((id) => !removed.has(id));
   });
 
+  st.network.on('click',        onClickNode);
   st.network.on('doubleClick',  onDoubleClick);
+  st.network.on('dragStart',    onDragStart);
   st.network.on('selectNode',   onSelectNode);
   st.network.on('deselectNode', onDeselectAll);
   st.network.on('selectEdge',   onSelectEdge);
@@ -104,6 +131,7 @@ export function initNetwork(savedNodes, savedEdges) {
   st.network.on('dragEnd',      onDragEnd);
   st.network.on('beforeDrawing', drawGrid);
   st.network.on('afterDrawing',  updateSelectionOverlay);
+  st.network.on('afterDrawing',  (ctx) => drawGroupOutlines(ctx));
   st.network.on('afterDrawing',  () => drawDebugOverlay());
 
   document.getElementById('emptyState').classList.add('hidden');
@@ -186,8 +214,35 @@ export function createImageNode(imageSrc, canvasX, canvasY) {
   }, 50);
 }
 
+function onClickNode(params) {
+  if (params.nodes.length === 1 && params.event.srcEvent.shiftKey) {
+    navigateNodeLink(params.nodes[0]);
+  }
+}
+
+// Expand group selection at dragStart so vis-network moves all members together.
+// dragStart fires before the move, unlike selectNode which fires after mouseup.
+function onDragStart(params) {
+  if (!params.nodes.length) return;
+  const expanded = expandSelectionToGroup(params.nodes);
+  if (expanded.length > params.nodes.length) {
+    st.network.selectNodes(expanded);
+    st.selectedNodeIds = expanded;
+  }
+}
+
+let _expandingGroup = false;
 function onSelectNode(params) {
-  st.selectedNodeIds = params.nodes;
+  if (_expandingGroup) return;
+  const expanded = expandSelectionToGroup(params.nodes);
+  if (expanded.length > params.nodes.length) {
+    _expandingGroup = true;
+    st.network.selectNodes(expanded);
+    _expandingGroup = false;
+    st.selectedNodeIds = expanded;
+  } else {
+    st.selectedNodeIds = params.nodes;
+  }
   st.selectedEdgeIds = [];
   hideEdgePanel();
   showNodePanel();
@@ -202,6 +257,7 @@ function onSelectEdge(params) {
 }
 
 function onDeselectAll() {
+  hideLinkPanel();
   st.selectedNodeIds = [];
   st.selectedEdgeIds = [];
   hideNodePanel();

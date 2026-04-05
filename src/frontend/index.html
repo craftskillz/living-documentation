@@ -281,7 +281,7 @@
           <article id="doc-view" class="hidden max-w-4xl mx-auto px-6 py-8">
             <!-- Doc header -->
             <header
-              class="mb-8 pb-6 border-b border-gray-100 dark:border-gray-800"
+              class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-950 -mx-6 px-6 pt-8 mb-8 pb-6 border-b border-gray-300 dark:border-gray-800"
             >
               <div class="flex items-start justify-between gap-4 flex-wrap">
                 <div class="flex-1 min-w-0">
@@ -389,6 +389,22 @@
           class="text-sm px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
         >
           &#10005; Close
+        </button>
+      </div>
+      <!-- Search root toolbar -->
+      <div class="flex items-center gap-3 px-6 py-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
+        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0">Search root</label>
+        <input
+          id="wc-root"
+          type="text"
+          spellcheck="false"
+          class="flex-1 px-3 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button
+          onclick="launchWordCloud()"
+          class="text-sm px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors shrink-0"
+        >
+          &#9654; Launch
         </button>
       </div>
       <div
@@ -685,7 +701,10 @@
       }
 
       // ── Edit mode ──────────────────────────────────────────────
+      let _editScrollTop = 0;
+
       function enterEditMode() {
+        _editScrollTop = document.getElementById("content-area").scrollTop;
         const editor = document.getElementById("doc-editor");
         editor.value = currentDocContent;
         document.getElementById("doc-content").classList.add("hidden");
@@ -704,6 +723,7 @@
         document.getElementById("edit-actions").classList.add("hidden");
         document.getElementById("view-actions").classList.remove("hidden");
         document.getElementById("edit-save-msg").textContent = "";
+        document.getElementById("content-area").scrollTop = _editScrollTop;
       }
 
       async function handleEditorPaste(e) {
@@ -967,31 +987,48 @@
         const status = document.getElementById("wc-status");
         const canvas = document.getElementById("wc-canvas");
         overlay.classList.remove("hidden");
-        status.textContent = "Loading documents…";
+        status.textContent = "Choose a root folder and click Launch.";
+        status.classList.remove("hidden");
+        canvas.classList.add("hidden");
+
+        // Pre-fill root with docsFolder from config if not already set
+        const rootInput = document.getElementById("wc-root");
+        if (!rootInput.value) {
+          try {
+            const cfg = await fetch("/api/config").then((r) => r.json());
+            if (cfg.docsFolder) rootInput.value = cfg.docsFolder;
+          } catch { /* ignore */ }
+        }
+      }
+
+      async function launchWordCloud() {
+        const status = document.getElementById("wc-status");
+        const canvas = document.getElementById("wc-canvas");
+        const root = document.getElementById("wc-root").value.trim();
+
+        if (!root) {
+          status.textContent = "Please enter a root path.";
+          status.classList.remove("hidden");
+          return;
+        }
+
+        status.textContent = "Reading files…";
         status.classList.remove("hidden");
         canvas.classList.add("hidden");
 
         try {
-          const docs = allDocs.length
-            ? allDocs
-            : await fetch("/api/documents").then((r) => r.json());
-          status.textContent = `Analyzing ${docs.length} documents…`;
-
-          const results = await Promise.all(
-            docs.map((doc) =>
-              fetch("/api/documents/" + doc.id)
-                .then((r) => (r.ok ? r.json() : null))
-                .catch(() => null),
-            ),
-          );
+          const res = await fetch("/api/wordcloud?path=" + encodeURIComponent(root));
+          if (!res.ok) {
+            const err = await res.json();
+            status.textContent = "Error: " + (err.error || res.statusText);
+            return;
+          }
+          const { files, text } = await res.json();
+          status.textContent = `Analyzing ${files} file(s)…`;
 
           const freq = {};
-          for (const doc of results) {
-            console.log("doc = ", doc);
-            if (!doc?.content) continue;
-            for (const w of extractWordsFromMarkdown(doc.content)) {
-              freq[w] = (freq[w] || 0) + 1;
-            }
+          for (const w of extractWordsFromMarkdown(text)) {
+            freq[w] = (freq[w] || 0) + 1;
           }
 
           const list = Object.entries(freq)

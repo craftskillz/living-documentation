@@ -4,6 +4,8 @@
 import { st, markDirty }      from './state.js';
 import { TOOL_BTN_MAP }       from './constants.js';
 import { showNodePanel, hideNodePanel, setNodeColor, changeNodeFontSize, setTextAlign, setTextValign, changeZOrder, activateStamp, cancelStamp, stepRotate } from './node-panel.js';
+import { groupNodes, ungroupNodes } from './groups.js';
+import { showLinkPanel, hideLinkPanel } from './link-panel.js';
 import { hideEdgePanel, setEdgeArrow, setEdgeDashes, changeEdgeFontSize } from './edge-panel.js';
 import { startLabelEdit, startEdgeLabelEdit, hideLabelInput } from './label-editor.js';
 import { hideSelectionOverlay } from './selection-overlay.js';
@@ -108,6 +110,9 @@ document.getElementById('nodePanel').addEventListener('click', (e) => {
   if (colorBtn) setNodeColor(colorBtn.dataset.color);
 });
 document.getElementById('btnNodeLabelEdit').addEventListener('click', startLabelEdit);
+document.getElementById('btnNodeLink').addEventListener('click', () => {
+  if (st.selectedNodeIds.length === 1) showLinkPanel(st.selectedNodeIds[0]);
+});
 document.getElementById('btnNodeFontDecrease').addEventListener('click', () => changeNodeFontSize(-1));
 document.getElementById('btnNodeFontIncrease').addEventListener('click', () => changeNodeFontSize(1));
 document.getElementById('btnAlignLeft').addEventListener('click',   () => setTextAlign('left'));
@@ -131,6 +136,8 @@ document.getElementById('btnRotateCCW').addEventListener('click',   () => stepRo
 document.getElementById('btnStampColor').addEventListener('click',    () => activateStamp('color'));
 document.getElementById('btnStampFontSize').addEventListener('click', () => activateStamp('fontSize'));
 document.getElementById('btnCopyPng').addEventListener('click', () => copySelectionAsPng());
+document.getElementById('btnGroup').addEventListener('click',   () => groupNodes());
+document.getElementById('btnUngroup').addEventListener('click', () => ungroupNodes());
 
 // ── Edge panel wiring ─────────────────────────────────────────────────────────
 
@@ -153,7 +160,7 @@ document.addEventListener('keydown', (e) => {
   if ((e.metaKey || e.ctrlKey) && e.key === 'c')               { e.preventDefault(); copySelected();       return; }
   if ((e.metaKey || e.ctrlKey) && e.key === 'v')             { e.preventDefault(); pasteClipboard();  return; }
   if ((e.metaKey || e.ctrlKey) && e.key === 's')             { e.preventDefault(); saveDiagram();     return; }
-  if (e.key === 'Escape' || e.key === 's' || e.key === 'S')  { cancelStamp(); setTool('select'); return; }
+  if (e.key === 'Escape' || e.key === 's' || e.key === 'S')  { cancelStamp(); hideLinkPanel(); setTool('select'); return; }
   if (e.key === 'r' || e.key === 'R')  { setTool('addNode', 'box');      return; }
   if (e.key === 'e' || e.key === 'E')  { setTool('addNode', 'ellipse');  return; }
   if (e.key === 'd' || e.key === 'D')  { setTool('addNode', 'database'); return; }

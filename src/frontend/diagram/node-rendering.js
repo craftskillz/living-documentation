@@ -7,6 +7,31 @@
 import { NODE_COLORS } from './constants.js';
 import { st } from './state.js';
 
+// ── Link indicator ────────────────────────────────────────────────────────────
+// Small chain icon drawn at bottom-right of any node that has a nodeLink.
+function drawLinkIndicator(ctx, id, W, H) {
+  const n = st.nodes && st.nodes.get(id);
+  if (!n || !n.nodeLink) return;
+  const r = 7;
+  const bx = W / 2 - r;
+  const by = H / 2 - r;
+  ctx.save();
+  ctx.fillStyle   = n.nodeLink.type === 'url' ? '#3b82f6' : '#f97316';
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth   = 1;
+  ctx.beginPath(); ctx.arc(bx, by, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth   = 1.2;
+  ctx.lineCap     = 'round';
+  // Tiny link icon inside the badge
+  ctx.beginPath();
+  ctx.moveTo(bx - 1.5, by + 1.5); ctx.lineTo(bx + 1.5, by - 1.5);
+  ctx.moveTo(bx - 2.5, by - 0.5); ctx.lineTo(bx - 0.5, by - 2.5);
+  ctx.moveTo(bx + 0.5, by + 2.5); ctx.lineTo(bx + 2.5, by + 0.5);
+  ctx.stroke();
+  ctx.restore();
+}
+
 // ── Drawing helpers ───────────────────────────────────────────────────────────
 
 // Draw multi-line label centred at (0,0) in the current (possibly rotated) ctx.
@@ -91,6 +116,7 @@ export function makeBoxRenderer(colorKey) {
         roundRect(ctx, -W / 2, -H / 2, W, H, 4);
         ctx.fill(); ctx.stroke();
         drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, H, labelRotation);
+        drawLinkIndicator(ctx, id, W, H);
         ctx.restore();
       },
       nodeDimensions: { width: W, height: H },
@@ -110,6 +136,7 @@ export function makeEllipseRenderer(colorKey) {
         ctx.beginPath(); ctx.ellipse(0, 0, W / 2, H / 2, 0, 0, Math.PI * 2);
         ctx.fill(); ctx.stroke();
         drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, H, labelRotation);
+        drawLinkIndicator(ctx, id, W, H);
         ctx.restore();
       },
       nodeDimensions: { width: W, height: H },
@@ -130,6 +157,7 @@ export function makeCircleRenderer(colorKey) {
         ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2);
         ctx.fill(); ctx.stroke();
         drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, W, labelRotation);
+        drawLinkIndicator(ctx, id, W, W);
         ctx.restore();
       },
       nodeDimensions: { width: W, height: W },
@@ -160,6 +188,7 @@ export function makeDatabaseRenderer(colorKey) {
         ctx.beginPath(); ctx.ellipse(0, bodyTop, rx, ry, 0, 0, Math.PI * 2);
         ctx.fill(); ctx.stroke();
         drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, H, labelRotation);
+        drawLinkIndicator(ctx, id, W, H);
         ctx.restore();
       },
       nodeDimensions: { width: W, height: H },
@@ -201,6 +230,7 @@ export function makePostItRenderer(colorKey) {
         ctx.lineTo(W / 2,        -H / 2 + fold);
         ctx.stroke();
         drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, H, labelRotation);
+        drawLinkIndicator(ctx, id, W, H);
         ctx.restore();
       },
       nodeDimensions: { width: W, height: H },
@@ -224,6 +254,7 @@ export function makeTextFreeRenderer(colorKey) {
           ctx.setLineDash([]);
         }
         drawLabel(ctx, label, fontSize, c.font, textAlign, textValign, W, H, labelRotation);
+        drawLinkIndicator(ctx, id, W, H);
         ctx.restore();
       },
       nodeDimensions: { width: W, height: H },
@@ -266,6 +297,7 @@ export function makeActorRenderer(colorKey) {
           lines.forEach((line, i) => ctx.fillText(line, 0, startY + i * lineH));
           ctx.restore();
         }
+        drawLinkIndicator(ctx, id, W, H);
         ctx.restore();
       },
       nodeDimensions: { width: W, height: H },
@@ -361,6 +393,7 @@ export function makeImageRenderer(colorKey) {
           lines.forEach((line, i) => ctx.fillText(line, textCX, startY + i * lineH));
           ctx.restore();
         }
+        drawLinkIndicator(ctx, id, W, H);
         ctx.restore();
       },
       nodeDimensions: { width: W, height: H },

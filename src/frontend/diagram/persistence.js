@@ -52,7 +52,10 @@ export async function loadDiagramList() {
   const res   = await fetch('/api/diagrams');
   st.diagrams = await res.json();
   renderDiagramList();
-  if (st.diagrams.length > 0) openDiagram(st.diagrams[0].id);
+  if (!st.diagrams.length) return;
+  const urlId  = new URLSearchParams(window.location.search).get('id');
+  const target = urlId && st.diagrams.find((d) => d.id === urlId) ? urlId : st.diagrams[0].id;
+  openDiagram(target);
 }
 
 export async function openDiagram(id) {
@@ -117,6 +120,8 @@ export async function saveDiagram() {
       fontSize: n.fontSize || null, textAlign: n.textAlign || null, textValign: n.textValign || null,
       rotation: n.rotation || 0, labelRotation: n.labelRotation || 0,
       imageSrc: n.imageSrc || null,
+      groupId: n.groupId || null,
+      nodeLink: n.nodeLink || null,
       x: positions[n.id]?.x ?? n.x, y: positions[n.id]?.y ?? n.y,
     }));
 
