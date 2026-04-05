@@ -350,13 +350,15 @@
                   </div>
                 </div>
               </div>
+              <!-- Search match notice (inside sticky header) -->
+              <div
+                id="search-notice"
+                class="hidden mt-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-sm text-yellow-800 dark:text-yellow-300 overflow-hidden"
+              >
+                <div id="search-notice-title" class="px-3 py-2 font-medium border-b border-yellow-200 dark:border-yellow-800"></div>
+                <ol id="search-notice-list" class="max-h-40 overflow-y-auto divide-y divide-yellow-100 dark:divide-yellow-900/40 list-none m-0 p-0"></ol>
+              </div>
             </header>
-
-            <!-- Search match notice -->
-            <div
-              id="search-notice"
-              class="hidden mb-4 px-3 py-2 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-sm text-yellow-800 dark:text-yellow-300"
-            ></div>
 
             <!-- Rendered markdown -->
             <div
@@ -692,8 +694,8 @@
           // Highlight search matches in content
           const notice = document.getElementById("search-notice");
           if (searchQuery) {
-            highlightMatches(contentEl, searchQuery);
-            notice.textContent = `Showing matches for "${searchQuery}"`;
+            const matches = highlightMatches(contentEl, searchQuery);
+            buildSearchNotice(matches, searchQuery);
             notice.classList.remove("hidden");
           } else {
             notice.classList.add("hidden");
@@ -890,16 +892,50 @@
         const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
         const nodes = [];
         while (walker.nextNode()) nodes.push(walker.currentNode);
-        const re = new RegExp(
-          `(${q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
-          "gi",
-        );
+        const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
+        let idx = 0;
         nodes.forEach((node) => {
           if (!node.textContent.toLowerCase().includes(q.toLowerCase())) return;
           const span = document.createElement("span");
-          span.innerHTML = node.textContent.replace(re, "<mark>$1</mark>");
+          span.innerHTML = node.textContent.replace(re, (m) => `<mark id="match-${idx++}">${m}</mark>`);
           node.parentNode.replaceChild(span, node);
         });
+        // Build snippet list from inserted marks
+        const matches = [];
+        el.querySelectorAll("mark[id^='match-']").forEach((mark) => {
+          const block = mark.closest("p, li, td, h1, h2, h3, h4, h5, h6, pre") || mark.parentElement;
+          const full  = block.textContent.trim();
+          const pos   = full.toLowerCase().indexOf(q.toLowerCase());
+          const start = Math.max(0, pos - 40);
+          const end   = Math.min(full.length, pos + q.length + 40);
+          const snippet = (start > 0 ? "…" : "") + full.slice(start, end) + (end < full.length ? "…" : "");
+          matches.push({ id: mark.id, snippet });
+        });
+        return matches;
+      }
+
+      function buildSearchNotice(matches, q) {
+        document.getElementById("search-notice-title").textContent =
+          `Showing ${matches.length} match${matches.length === 1 ? "" : "es"} for "${q}"`;
+        const list = document.getElementById("search-notice-list");
+        list.innerHTML = matches.map((m, i) =>
+          `<li>
+            <button onclick="scrollToMatch('${m.id}')"
+              class="w-full text-left px-3 py-1.5 hover:bg-yellow-100 dark:hover:bg-yellow-900/30 transition-colors">
+              <span class="text-yellow-600 dark:text-yellow-500 font-mono text-xs mr-2">${i + 1}.</span
+              ><span class="text-xs">${esc(m.snippet)}</span>
+            </button>
+          </li>`
+        ).join("");
+      }
+
+      function scrollToMatch(id) {
+        const mark      = document.getElementById(id);
+        const container = document.getElementById("content-area");
+        if (!mark || !container) return;
+        const markTop      = mark.getBoundingClientRect().top;
+        const containerTop = container.getBoundingClientRect().top;
+        container.scrollTop += markTop - containerTop - container.clientHeight / 3;
       }
 
       function esc(str) {
