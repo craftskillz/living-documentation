@@ -24,6 +24,7 @@ interface Diagram {
   title: string;
   nodes: DiagramNode[];
   edges: DiagramEdge[];
+  edgesStraight?: boolean;
 }
 
 function diagramsFilePath(docsPath: string): string {
@@ -61,12 +62,13 @@ export function diagramsRouter(docsPath: string): Router {
 
   router.put('/:id', (req, res) => {
     const diagrams = loadDiagrams(docsPath);
-    const { title, nodes, edges } = req.body;
+    const { title, nodes, edges, edgesStraight } = req.body;
     const diagram: Diagram = {
       id: req.params.id,
       title: typeof title === 'string' ? title : 'Sans titre',
       nodes: Array.isArray(nodes) ? nodes : [],
       edges: Array.isArray(edges) ? edges : [],
+      edgesStraight: edgesStraight === true,
     };
     const idx = diagrams.findIndex(d => d.id === req.params.id);
     if (idx >= 0) {

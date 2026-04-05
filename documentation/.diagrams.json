@@ -482,7 +482,8 @@
         "dashes": false,
         "fontSize": null
       }
-    ]
+    ],
+    "edgesStraight": false
   },
   {
     "id": "d1775242615386",
@@ -883,7 +884,8 @@
         "dashes": false,
         "fontSize": null
       }
-    ]
+    ],
+    "edgesStraight": false
   },
   {
     "id": "d1775335847409",
@@ -1237,6 +1239,42 @@
     "title": "Readme Intelligent Search",
     "nodes": [
       {
+        "id": "a1775405669962",
+        "label": "",
+        "shapeType": "anchor",
+        "colorKey": "c-gray",
+        "nodeWidth": 8,
+        "nodeHeight": 8,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": null,
+        "rotation": 0,
+        "labelRotation": 0,
+        "imageSrc": null,
+        "groupId": null,
+        "nodeLink": null,
+        "x": 791,
+        "y": 91
+      },
+      {
+        "id": "a1775405792366",
+        "label": "",
+        "shapeType": "anchor",
+        "colorKey": "c-gray",
+        "nodeWidth": 8,
+        "nodeHeight": 8,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": null,
+        "rotation": 0,
+        "labelRotation": 0,
+        "imageSrc": null,
+        "groupId": null,
+        "nodeLink": null,
+        "x": 681,
+        "y": 600
+      },
+      {
         "id": "n1775404956808bknaxp1xd55",
         "label": "",
         "shapeType": "image",
@@ -1251,8 +1289,8 @@
         "imageSrc": "/images/readme-intelligent-search.png",
         "groupId": null,
         "nodeLink": null,
-        "x": 529,
-        "y": 362
+        "x": 594,
+        "y": 363
       },
       {
         "id": "n1775404956808ai4jg922lv",
@@ -1269,26 +1307,8 @@
         "imageSrc": null,
         "groupId": null,
         "nodeLink": null,
-        "x": 527,
-        "y": 678
-      },
-      {
-        "id": "n1775404989847",
-        "label": "Intelligent\nSearch",
-        "shapeType": "post-it",
-        "colorKey": "c-lime",
-        "nodeWidth": 120,
-        "nodeHeight": 100,
-        "fontSize": null,
-        "textAlign": null,
-        "textValign": null,
-        "rotation": 0,
-        "labelRotation": 0,
-        "imageSrc": null,
-        "groupId": null,
-        "nodeLink": null,
-        "x": 192,
-        "y": 190
+        "x": 592,
+        "y": 679
       },
       {
         "id": "n1775405034084fyjnerbuo3a",
@@ -1305,10 +1325,111 @@
         "imageSrc": null,
         "groupId": null,
         "nodeLink": null,
-        "x": 232,
-        "y": 230
+        "x": 1123,
+        "y": 313
+      },
+      {
+        "id": "n1775404989847",
+        "label": "Intelligent Search",
+        "shapeType": "post-it",
+        "colorKey": "c-lime",
+        "nodeWidth": 93,
+        "nodeHeight": 70,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": null,
+        "rotation": 0,
+        "labelRotation": 0,
+        "imageSrc": null,
+        "groupId": null,
+        "nodeLink": null,
+        "x": 863,
+        "y": -13
+      },
+      {
+        "id": "n1775405247554322mv5xvray",
+        "label": "Link Scrolls and highlight occurence",
+        "shapeType": "post-it",
+        "colorKey": "c-orange",
+        "nodeWidth": 126,
+        "nodeHeight": 75,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": null,
+        "rotation": 0,
+        "labelRotation": 0,
+        "imageSrc": null,
+        "groupId": null,
+        "nodeLink": null,
+        "x": 818,
+        "y": 718
+      },
+      {
+        "id": "n1775411100491",
+        "label": "Node",
+        "shapeType": "actor",
+        "colorKey": "c-gray",
+        "nodeWidth": 30,
+        "nodeHeight": 52,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": null,
+        "rotation": 0,
+        "labelRotation": 0,
+        "imageSrc": null,
+        "groupId": null,
+        "nodeLink": null,
+        "x": 139,
+        "y": 775
+      },
+      {
+        "id": "n1775411103440",
+        "label": "Node",
+        "shapeType": "post-it",
+        "colorKey": "c-amber",
+        "nodeWidth": 120,
+        "nodeHeight": 100,
+        "fontSize": null,
+        "textAlign": null,
+        "textValign": null,
+        "rotation": 0,
+        "labelRotation": 0,
+        "imageSrc": null,
+        "groupId": null,
+        "nodeLink": null,
+        "x": 284,
+        "y": 775
       }
     ],
-    "edges": []
+    "edges": [
+      {
+        "id": "e1775405669962",
+        "from": "n1775404989847",
+        "to": "a1775405669962",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null
+      },
+      {
+        "id": "e1775405792368",
+        "from": "n1775405247554322mv5xvray",
+        "to": "a1775405792366",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null
+      },
+      {
+        "id": "e1775411107203",
+        "from": "n1775411103440",
+        "to": "n1775411100491",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null
+      }
+    ],
+    "edgesStraight": false
   }
 ]

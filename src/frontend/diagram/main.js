@@ -14,7 +14,7 @@ import { toggleDebug }   from './debug.js';
 import { adjustZoom, resetZoom } from './zoom.js';
 import { loadDiagramList, newDiagram, saveDiagram } from './persistence.js';
 import { copySelected, pasteClipboard, copySelectionAsPng } from './clipboard.js';
-import { createImageNode } from './network.js';
+import { createImageNode, toggleEdgeStraight } from './network.js';
 import { uploadImageBlob } from './image-upload.js';
 import { promptImageName } from './image-name-modal.js';
 import { showToast }       from './toast.js';
@@ -91,6 +91,7 @@ document.getElementById('toolArrow').addEventListener('click',    () => setTool(
 document.getElementById('btnDelete').addEventListener('click', deleteSelected);
 document.getElementById('btnPhysics').addEventListener('click', togglePhysics);
 document.getElementById('btnGrid').addEventListener('click', toggleGrid);
+document.getElementById('btnEdgeStraight').addEventListener('click', toggleEdgeStraight);
 
 document.getElementById('btnZoomOut').addEventListener('click',   () => adjustZoom(-0.2));
 document.getElementById('btnZoomIn').addEventListener('click',    () => adjustZoom(0.2));

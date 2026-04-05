@@ -25,6 +25,7 @@ export const st = {
   stampTargetIds: [],      // node IDs waiting to receive the stamped property
   clipboard: null,        // { nodes: [], edges: [] }
   canonicalOrder: [],     // user-defined z-order, immune to vis.js hover reordering
+  edgesStraight: false,  // when true, all edges use smooth: disabled (straight lines)
 };
 
 export function markDirty() {

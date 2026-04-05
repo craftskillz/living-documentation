@@ -63,9 +63,11 @@ export async function openDiagram(id) {
   const diagram = await res.json();
   st.currentDiagramId = id;
   st.isDirty          = false;
+  st.edgesStraight    = diagram.edgesStraight === true;
   document.getElementById('btnSave').disabled      = true;
   document.getElementById('diagramTitle').value    = diagram.title || '';
-  initNetwork(diagram.nodes || [], diagram.edges || []);
+  document.getElementById('btnEdgeStraight').classList.toggle('tool-active', st.edgesStraight);
+  initNetwork(diagram.nodes || [], diagram.edges || [], st.edgesStraight);
   renderDiagramList();
 }
 
@@ -135,7 +137,7 @@ export async function saveDiagram() {
   await fetch(`/api/diagrams/${st.currentDiagramId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, nodes: nodeData, edges: edgeData }),
+    body: JSON.stringify({ title, nodes: nodeData, edges: edgeData, edgesStraight: st.edgesStraight }),
   });
   st.isDirty = false;
   document.getElementById('btnSave').disabled = true;

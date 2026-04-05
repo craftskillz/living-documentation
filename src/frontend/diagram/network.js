@@ -18,8 +18,10 @@ import { updateZoomDisplay }   from './zoom.js';
 import { expandSelectionToGroup, drawGroupOutlines } from './groups.js';
 import { navigateNodeLink, hideLinkPanel }           from './link-panel.js';
 
-export function initNetwork(savedNodes, savedEdges) {
+export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
   const container = document.getElementById('vis-canvas');
+
+  const edgeSmooth = edgesStraight ? { enabled: false } : { type: 'continuous' };
 
   st.nodes = new vis.DataSet(
     savedNodes.map((n) => ({
@@ -28,11 +30,16 @@ export function initNetwork(savedNodes, savedEdges) {
     }))
   );
   st.edges = new vis.DataSet(
-    savedEdges.map((e) => ({
-      ...e,
-      ...visEdgeProps(e.arrowDir ?? 'to', e.dashes ?? false),
-      ...(e.fontSize ? { font: { size: e.fontSize, align: 'middle', color: '#6b7280' } } : {}),
-    }))
+    savedEdges.map((e) => {
+      const toNode = savedNodes.find((n) => n.id === e.to);
+      const isAnchor = toNode && toNode.shapeType === 'anchor';
+      return {
+        ...e,
+        ...visEdgeProps(e.arrowDir ?? 'to', e.dashes ?? false),
+        smooth: isAnchor ? { enabled: false } : edgeSmooth,
+        ...(e.fontSize ? { font: { size: e.fontSize, align: 'middle', color: '#6b7280' } } : {}),
+      };
+    })
   );
 
   const options = {
@@ -43,7 +50,7 @@ export function initNetwork(savedNodes, savedEdges) {
     },
     interaction: { hover: true, navigationButtons: false, keyboard: false, multiselect: true },
     nodes: { font: { size: 13, face: 'system-ui,-apple-system,sans-serif' }, borderWidth: 1.5, borderWidthSelected: 2.5, shadow: false, widthConstraint: { minimum: 60 }, heightConstraint: { minimum: 28 } },
-    edges: { smooth: { type: 'continuous' }, color: { color: '#a8a29e', highlight: '#f97316', hover: '#f97316' }, width: 1.5, selectionWidth: 2.5, font: { size: 11, align: 'middle', color: '#6b7280' } },
+    edges: { smooth: edgeSmooth, color: { color: '#a8a29e', highlight: '#f97316', hover: '#f97316' }, width: 1.5, selectionWidth: 2.5, font: { size: 11, align: 'middle', color: '#6b7280' } },
     manipulation: {
       enabled: false,
       addEdge(data, callback) {
@@ -82,16 +89,70 @@ export function initNetwork(savedNodes, savedEdges) {
     for (const edgeId of Object.keys(bodyEdges)) {
       const edge = bodyEdges[edgeId];
       if (!edge.connected) continue;
-      const level = Math.min(orderMap.get(edge.fromId) ?? 0, orderMap.get(edge.toId) ?? 0);
+      // Edges are drawn just before the node at their assigned level, so they
+      // appear on top of all nodes below that level.
+      // Use Math.max so the edge follows the higher-z endpoint — it stays visible
+      // above any intermediate nodes between the two endpoints.
+      // Anchor nodes are floating endpoints that must not raise the edge above the
+      // real source: for anchor edges, use the non-anchor endpoint's level.
+      const fromData = st.nodes.get(edge.fromId);
+      const toData   = st.nodes.get(edge.toId);
+      const fromIsAnchor = fromData && fromData.shapeType === 'anchor';
+      const toIsAnchor   = toData   && toData.shapeType   === 'anchor';
+      let level;
+      if (toIsAnchor && !fromIsAnchor) {
+        level = orderMap.get(edge.fromId) ?? 0;
+      } else if (fromIsAnchor && !toIsAnchor) {
+        level = orderMap.get(edge.toId) ?? 0;
+      } else {
+        level = Math.min(orderMap.get(edge.fromId) ?? 0, orderMap.get(edge.toId) ?? 0);
+      }
       if (!edgesByLevel.has(level)) edgesByLevel.set(level, []);
       edgesByLevel.get(level).push(edge);
     }
 
+    // Build a map: anchorId → the edge(s) that connect to it, so we can draw
+    // each anchor dot AFTER its edge (giving the "planted arrowhead" effect).
+    const anchorEdgeLevel = new Map(); // anchorId → level at which its edge is drawn
+    for (const [level, edges] of edgesByLevel) {
+      for (const edge of edges) {
+        const fromData = st.nodes.get(edge.fromId);
+        const toData   = st.nodes.get(edge.toId);
+        if (toData   && toData.shapeType   === 'anchor') anchorEdgeLevel.set(edge.toId,   level);
+        if (fromData && fromData.shapeType === 'anchor') anchorEdgeLevel.set(edge.fromId, level);
+      }
+    }
+
+    // Anchors with no connected edge are drawn at level 0 (bottom).
+    for (const id of st.canonicalOrder) {
+      const n = st.nodes.get(id);
+      if (!n || n.shapeType !== 'anchor') continue;
+      if (!anchorEdgeLevel.has(id)) anchorEdgeLevel.set(id, 0);
+    }
+
     for (let i = 0; i < st.canonicalOrder.length; i++) {
-      const id   = st.canonicalOrder[i];
-      // Draw edges whose topmost node is at this level, before drawing the node.
+      const id = st.canonicalOrder[i];
+      const n  = st.nodes.get(id);
+
+      // Draw edges whose level is i, before drawing the node at level i.
       const edges = edgesByLevel.get(i);
-      if (edges) edges.forEach((e) => e.draw(ctx));
+      if (edges) {
+        edges.forEach((e) => e.draw(ctx));
+        // Draw any anchor whose edge was just drawn, so the dot appears on top.
+        for (const [anchorId, level] of anchorEdgeLevel) {
+          if (level !== i) continue;
+          const anchorNode = bodyNodes[anchorId];
+          if (!anchorNode) continue;
+          if (alwaysShow === true || anchorNode.isBoundingBoxOverlappingWith(viewableArea) === true) {
+            anchorNode.draw(ctx);
+          } else {
+            anchorNode.updateBoundingBox(ctx, anchorNode.selected);
+          }
+        }
+      }
+
+      // Skip anchor nodes here — they were drawn right after their edge above.
+      if (n && n.shapeType === 'anchor') continue;
 
       const node = bodyNodes[id];
       if (!node) continue;
@@ -116,9 +177,30 @@ export function initNetwork(savedNodes, savedEdges) {
     const existing = new Set(st.canonicalOrder);
     items.forEach((id) => { if (!existing.has(id)) st.canonicalOrder.push(id); });
   });
-  st.nodes.on('remove', (_, { items }) => {
+  st.nodes.on('remove', (_, { items, oldData }) => {
     const removed = new Set(items);
     st.canonicalOrder = st.canonicalOrder.filter((id) => !removed.has(id));
+    // If an anchor was deleted directly, also remove its connected edges.
+    (oldData || []).forEach((n) => {
+      if (n.shapeType !== 'anchor') return;
+      const connected = st.edges.get({ filter: (e) => e.from === n.id || e.to === n.id });
+      if (connected.length) st.edges.remove(connected.map((e) => e.id));
+    });
+  });
+
+  // When an edge is removed, delete any anchor node that has no remaining edges.
+  st.edges.on('remove', (_, { oldData }) => {
+    const anchorsToCheck = new Set();
+    (oldData || []).forEach((edge) => {
+      const toData   = st.nodes.get(edge.to);
+      const fromData = st.nodes.get(edge.from);
+      if (toData   && toData.shapeType   === 'anchor') anchorsToCheck.add(edge.to);
+      if (fromData && fromData.shapeType === 'anchor') anchorsToCheck.add(edge.from);
+    });
+    anchorsToCheck.forEach((anchorId) => {
+      const remaining = st.edges.get({ filter: (e) => e.from === anchorId || e.to === anchorId });
+      if (remaining.length === 0) st.nodes.remove(anchorId);
+    });
   });
 
   st.network.on('click',        onClickNode);
@@ -134,6 +216,41 @@ export function initNetwork(savedNodes, savedEdges) {
   st.network.on('afterDrawing',  updateSelectionOverlay);
   st.network.on('afterDrawing',  (ctx) => drawGroupOutlines(ctx));
   st.network.on('afterDrawing',  () => drawDebugOverlay());
+
+  // ── Free-floating edge: drop on empty canvas creates an anchor node ──────────
+  // vis-network only fires addEdge callback when dropping on an existing node.
+  // We intercept mousedown (capture source) + mouseup (detect empty-canvas drop).
+  let _addEdgeFromId = null;
+  const visCanvas = document.getElementById('vis-canvas');
+
+  visCanvas.addEventListener('mousedown', (e) => {
+    if (st.currentTool !== 'addEdge') return;
+    _addEdgeFromId = st.network.getNodeAt({ x: e.offsetX, y: e.offsetY }) || null;
+  });
+
+  visCanvas.addEventListener('mouseup', (e) => {
+    if (st.currentTool !== 'addEdge' || !_addEdgeFromId) { _addEdgeFromId = null; return; }
+    const pos = { x: e.offsetX, y: e.offsetY };
+    if (!st.network.getNodeAt(pos)) {
+      const cp       = st.network.DOMtoCanvas(pos);
+      const anchorId = 'a' + Date.now();
+      st.nodes.add({
+        id: anchorId, label: '', shapeType: 'anchor', colorKey: 'c-gray',
+        nodeWidth: 8, nodeHeight: 8, fontSize: null, rotation: 0, labelRotation: 0,
+        x: cp.x, y: cp.y,
+        ...visNodeProps('anchor', 'c-gray', 8, 8, null, null, null),
+      });
+      st.edges.add({
+        id: 'e' + Date.now(), from: _addEdgeFromId, to: anchorId,
+        arrowDir: 'to', dashes: false,
+        smooth: { enabled: false },
+        ...visEdgeProps('to', false),
+      });
+      markDirty();
+      setTimeout(() => st.network.addEdgeMode(), 0);
+    }
+    _addEdgeFromId = null;
+  });
 
   document.getElementById('emptyState').classList.add('hidden');
   updateZoomDisplay();
@@ -248,9 +365,47 @@ export function createImageNode(imageSrc, canvasX, canvasY) {
   img.src = imageSrc;
 }
 
+// ── Edge straight / curved toggle ────────────────────────────────────────────
+export function toggleEdgeStraight() {
+  if (!st.network) return;
+  st.edgesStraight = !st.edgesStraight;
+  const smooth = st.edgesStraight ? { enabled: false } : { type: 'continuous' };
+  // Update global network option first (overrides per-edge inherited defaults).
+  st.network.setOptions({ edges: { smooth } });
+  // Then update each edge individually, keeping anchor edges always straight.
+  const updates = st.edges.get().map((e) => {
+    const toData = st.nodes.get(e.to);
+    const s = (toData && toData.shapeType === 'anchor') ? { enabled: false } : smooth;
+    return { id: e.id, smooth: s };
+  });
+  if (updates.length) st.edges.update(updates);
+  document.getElementById('btnEdgeStraight').classList.toggle('tool-active', st.edgesStraight);
+  markDirty();
+}
+
 function onClickNode(params) {
   if (params.nodes.length === 1 && params.event.srcEvent.shiftKey) {
     navigateNodeLink(params.nodes[0]);
+    return;
+  }
+  // Anchor nodes have nodeDimensions=0 so vis-network cannot detect clicks on
+  // them. Manually check proximity (8px threshold in canvas space).
+  if (params.nodes.length === 0 && params.edges.length === 0) {
+    const cp        = params.pointer.canvas;
+    const THRESHOLD = 8;
+    const anchors   = st.nodes.get({ filter: (n) => n.shapeType === 'anchor' });
+    const positions = st.network.getPositions(anchors.map((a) => a.id));
+    for (const anchor of anchors) {
+      const pos = positions[anchor.id];
+      if (!pos) continue;
+      const dx = cp.x - pos.x, dy = cp.y - pos.y;
+      if (Math.sqrt(dx * dx + dy * dy) <= THRESHOLD) {
+        st.network.selectNodes([anchor.id]);
+        st.selectedNodeIds = [anchor.id];
+        showNodePanel();
+        return;
+      }
+    }
   }
 }
 
