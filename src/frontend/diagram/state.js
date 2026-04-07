@@ -26,6 +26,7 @@ export const st = {
   clipboard: null,        // { nodes: [], edges: [] }
   canonicalOrder: [],     // user-defined z-order, immune to vis.js hover reordering
   edgesStraight: false,  // when true, all edges use smooth: disabled (straight lines)
+  resizeSymmetric: false, // when true, center is fixed during resize; when false, opposite corner is fixed
 };
 
 export function markDirty() {

@@ -114,20 +114,29 @@ function onResizeDrag(e) {
   const updatedIds = [];
 
   if (st.resizeDrag.startBBs.length === 1) {
-    const { id, node, initW, initH } = st.resizeDrag.startBBs[0];
+    const { id, node, initW, initH, initX, initY } = st.resizeDrag.startBBs[0];
     let nW = initW, nH = initH;
     if (c === 'br') { nW = initW + cdx; nH = initH + cdy; }
     if (c === 'bl') { nW = initW - cdx; nH = initH + cdy; }
     if (c === 'tr') { nW = initW + cdx; nH = initH - cdy; }
     if (c === 'tl') { nW = initW - cdx; nH = initH - cdy; }
     if (e.shiftKey && initW > 0 && initH > 0) {
-      const scale = Math.max(nW / initW, nH / initH);
-      nW = initW * scale;
-      nH = initH * scale;
+      const s = Math.max(nW / initW, nH / initH);
+      nW = initW * s;
+      nH = initH * s;
     }
     nW = Math.max(MIN, Math.round(nW));
     nH = Math.max(MIN, Math.round(nH));
     st.nodes.update({ id, nodeWidth: nW, nodeHeight: nH, ...visNodeProps(node.shapeType || 'box', node.colorKey || 'c-gray', nW, nH, node.fontSize, node.textAlign, node.textValign) });
+    if (!st.resizeSymmetric) {
+      // Anchor the opposite corner: move center so that the fixed corner stays put.
+      let nx = initX, ny = initY;
+      if (c === 'br') { nx = initX - initW / 2 + nW / 2; ny = initY - initH / 2 + nH / 2; }
+      if (c === 'bl') { nx = initX + initW / 2 - nW / 2; ny = initY - initH / 2 + nH / 2; }
+      if (c === 'tr') { nx = initX - initW / 2 + nW / 2; ny = initY + initH / 2 - nH / 2; }
+      if (c === 'tl') { nx = initX + initW / 2 - nW / 2; ny = initY + initH / 2 - nH / 2; }
+      st.network.moveNode(id, nx, ny);
+    }
     updatedIds.push(id);
   } else {
     const { initBoxW, initBoxH, bbMinX, bbMinY, bbMaxX, bbMaxY } = st.resizeDrag;
@@ -276,3 +285,22 @@ function onLabelRotateEnd() {
 });
 document.getElementById('rh-rotate').addEventListener('mousedown', onRotateStart);
 document.getElementById('rh-label-rotate').addEventListener('mousedown', onLabelRotateStart);
+
+// ── Resize mode toggle ────────────────────────────────────────────────────────
+export function toggleResizeMode() {
+  st.resizeSymmetric = !st.resizeSymmetric;
+  const btn        = document.getElementById('btnResizeMode');
+  const iconCorner = document.getElementById('icon-resize-corner');
+  const iconCenter = document.getElementById('icon-resize-center');
+  if (st.resizeSymmetric) {
+    btn.title = 'Mode redimensionnement : Centre fixe (cliquer pour Coin fixe)';
+    btn.classList.remove('active-tool');
+    iconCorner.classList.add('hidden');
+    iconCenter.classList.remove('hidden');
+  } else {
+    btn.title = 'Mode redimensionnement : Coin fixe (cliquer pour Centre fixe)';
+    btn.classList.add('active-tool');
+    iconCorner.classList.remove('hidden');
+    iconCenter.classList.add('hidden');
+  }
+}

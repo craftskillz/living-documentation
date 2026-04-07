@@ -8,7 +8,7 @@ import { groupNodes, ungroupNodes } from './groups.js';
 import { showLinkPanel, hideLinkPanel } from './link-panel.js';
 import { hideEdgePanel, setEdgeArrow, setEdgeDashes, changeEdgeFontSize } from './edge-panel.js';
 import { startLabelEdit, startEdgeLabelEdit, hideLabelInput } from './label-editor.js';
-import { hideSelectionOverlay } from './selection-overlay.js';
+import { hideSelectionOverlay, toggleResizeMode } from './selection-overlay.js';
 import { togglePhysics, toggleGrid } from './grid.js';
 import { toggleDebug }   from './debug.js';
 import { adjustZoom, resetZoom } from './zoom.js';
@@ -92,6 +92,7 @@ document.getElementById('btnDelete').addEventListener('click', deleteSelected);
 document.getElementById('btnPhysics').addEventListener('click', togglePhysics);
 document.getElementById('btnGrid').addEventListener('click', toggleGrid);
 document.getElementById('btnEdgeStraight').addEventListener('click', toggleEdgeStraight);
+document.getElementById('btnResizeMode').addEventListener('click', toggleResizeMode);
 
 document.getElementById('btnZoomOut').addEventListener('click',   () => adjustZoom(-0.2));
 document.getElementById('btnZoomIn').addEventListener('click',    () => adjustZoom(0.2));
