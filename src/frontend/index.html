@@ -316,6 +316,14 @@
                   <!-- View mode actions -->
                   <div id="view-actions" class="flex items-center gap-2">
                     <button
+                      onclick="toggleFullWidth()"
+                      id="full-width-btn"
+                      title="Toggle full width"
+                      class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      &#8596; Pleine page
+                    </button>
+                    <button
                       onclick="exportPDF()"
                       title="Export as PDF"
                       class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
@@ -1000,6 +1008,15 @@
       // ── Helpers ────────────────────────────────────────────────
       function exportPDF() {
         window.print();
+      }
+
+      function toggleFullWidth() {
+        const article = document.getElementById('doc-view');
+        const btn     = document.getElementById('full-width-btn');
+        const isWide  = article.classList.toggle('max-w-none');
+        article.classList.toggle('max-w-4xl', !isWide);
+        article.classList.toggle('mx-auto',   !isWide);
+        btn.textContent = isWide ? '⇤ Réduire' : '↔ Pleine page';
       }
 
       function copyLink() {
