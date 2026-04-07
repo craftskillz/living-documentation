@@ -1,9 +1,12 @@
-# 2026-04-03 [DIAGRAM] Modularisation du JavaScript de diagram.html
+---
+`🗄️ ADR : 2026_04_03_[DIAGRAM]_modularisation_javascript.md`
+**date:** 2026-04-03
+**status:** Accepted
+**description:** Extract diagram.html's 2390-line JS monolith into 15 ES native modules under src/frontend/diagram/, each with a single responsibility.
+**tags:** diagram, modularisation, es-modules, javascript, architecture, refactoring, main.js, state.js
+---
 
-## Statut
-Accepté
-
-## Contexte
+## Context
 
 `src/frontend/diagram.html` contenait l'intégralité du code JavaScript de l'éditeur de diagrammes dans un unique bloc `<script>` de **2 390 lignes**, regroupant ~45 fonctions couvrant des domaines très variés : état mutable, rendu vis.js, panneaux de formatage, grille, debug, persistance API, clipboard, raccourcis clavier, etc.
 
@@ -12,7 +15,7 @@ Ce monolithe rendait difficile :
 - l'évolution isolée d'une fonctionnalité (ex. grid, z-order) sans risquer de régression sur les autres ;
 - l'association d'une décision technique à son ADR de référence.
 
-## Décision
+## Decision
 
 Extraire tout le JavaScript en **modules ES natifs** (`type="module"`) répartis dans `src/frontend/diagram/`. Le répertoire est copié automatiquement vers `dist/` par `scripts/copy-assets.ts` (déjà récursif).
 
@@ -50,15 +53,17 @@ Tous les attributs `onclick="..."` ont été supprimés du HTML. Les boutons ont
 
 Aucun cycle de dépendances : `constants` et `state` n'importent rien, `main` importe tout.
 
-## Conséquences
+## Consequences
 
-**Positives**
+### PROS
+
 - Chaque fichier a une responsabilité unique et correspond à un ADR existant ou à un domaine clairement délimité.
 - Les modifications futures (ex. nouveau type de forme, nouvelle commande clavier) touchent un seul module.
 - Pas de build step supplémentaire : les ES modules sont supportés nativement par tous les navigateurs modernes.
 - `copy-assets.ts` copie déjà récursivement `src/frontend/` → pas d'adaptation nécessaire.
 
-**Contraintes à respecter**
+### CONS
+
 - `vis` reste une globale CDN (`window.vis`) ; les modules y accèdent directement sans import.
 - Si un module a besoin d'appeler une fonction d'un autre module, il doit l'importer explicitement — **ne pas ajouter de globals**.
 - Si vis-network est mis à jour, vérifier `_drawNodes` dans `network.js` (cf. ADR z-order).

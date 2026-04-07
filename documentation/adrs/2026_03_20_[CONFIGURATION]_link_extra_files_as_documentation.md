@@ -1,7 +1,10 @@
+---
 `🗄️ ADR : 2026_03_20_[CONFIGURATION]_link_extra_files_as_documentation.md`
-
-**Date:** 2026-03-22
-**Status:** Accepted
+**date:** 2026-03-20
+**status:** Accepted
+**description:** Support for including Markdown files outside the docs folder via an extraFiles config array, with a filesystem browser in the admin panel.
+**tags:** configuration, extraFiles, sidebar, security, api, browse, path-traversal, document-id
+---
 
 ## Context
 
@@ -17,10 +20,15 @@ A new API endpoint `GET /api/browse?path=...` returns the directories and `.md` 
 
 ## Consequences
 
-**Security:** The existing path traversal guard (resolved path must start with `docsPath`) is preserved for regular documents. Extra files bypass this guard intentionally, but are validated against an explicit whitelist: only paths present in `extraFiles` can be read, and only `.md` files are accepted both at browse time and at config-write time.
+### PROS
 
-**Config:** `extraFiles` is validated on `PUT /api/config` — each entry must be an absolute path ending in `.md`. Non-conforming entries are silently dropped.
+- Important files like `README.md` or `CLAUDE.md` at the repository root can be surfaced in the viewer without moving them into the docs folder.
+- The admin UI allows managing extra files without manually editing `.living-doc.json`.
+- Extra files maintain their user-defined config order (not date-sorted), giving full control over priority via the reorder UI.
+- Security is preserved: only paths present in the `extraFiles` whitelist can be read; only `.md` files are accepted both at browse time and at config-write time.
 
-**Ordering:** Extra files maintain their config-defined order (not sorted by date). This is intentional — the user controls priority via the admin panel's reorder UI.
+### CONS
 
-**Document ID scheme:** Regular documents use `encodeURIComponent(filename)` as their ID. Extra files use `encodeURIComponent(absolutePathWithoutExtension)` to guarantee uniqueness across directories. The `/:id` route detects extra files by checking `path.isAbsolute(decodedId)`.
+- Extra files bypass the `docsPath` path traversal guard (intentional, but widens the accessible surface).
+- Absolute paths in config are not portable between machines or users.
+- The document ID scheme becomes more complex: extra files use `encodeURIComponent(absolutePathWithoutExtension)` instead of `encodeURIComponent(filename)`, and the `/:id` route must detect extra files by checking `path.isAbsolute(decodedId)`.

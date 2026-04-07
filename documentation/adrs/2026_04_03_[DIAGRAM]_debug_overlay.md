@@ -1,7 +1,10 @@
+---
 `🗄️ ADR : 2026_04_03_[DIAGRAM]_debug_overlay.md`
-
-**Date:** 2026-04-03
-**Status:** Accepted
+**date:** 2026-04-03
+**status:** Accepted
+**description:** DOM-based debug overlay for diagram nodes showing centre coordinates and shape dimensions, gated by a showDiagramDebug config flag toggled from the Admin panel.
+**tags:** diagram, debug, overlay, config, admin, vis-network, canvasToDOM, showDiagramDebug
+---
 
 ## Context
 
@@ -33,7 +36,14 @@ The `showDiagramDebug` field is added to `LivingDocConfig` and whitelisted in th
 
 ## Consequences
 
+### PROS
+
 - Debug information is always available during development without modifying code — just toggle the Admin checkbox.
-- Users who never visit the Admin panel are unaffected (button hidden, no overhead).
+- DOM text is selectable and copyable, unlike canvas-rendered text.
 - The overlay repositions correctly during pan and zoom because it is rebuilt on every `afterDrawing` call using live `canvasToDOM` conversions.
+- Users who never visit the Admin panel are unaffected (button hidden, no overhead).
+
+### CONS
+
 - `showDiagramDebug` should remain `false` in production; there is no server-side enforcement of this.
+- Rebuilding DOM elements on every `afterDrawing` event has a minor layout cost at high frame rates.

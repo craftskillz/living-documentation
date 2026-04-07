@@ -1,7 +1,10 @@
+---
 `🗄️ ADR : 2026_03_21_[CONFIGURATION]_general_category_and_sidebar_defaults.md`
-
-**Date:** 2026-03-22
-**Status:** Accepted
+**date:** 2026-03-21
+**status:** Accepted
+**description:** Rename "Uncategorized" to "General", pin it first in the sidebar, and collapse all other categories on load.
+**tags:** configuration, sidebar, category, parser, frontend, ux, general, uncategorized
+---
 
 ## Context
 
@@ -17,4 +20,13 @@ Files that do not match the filename pattern were grouped under a category calle
 
 ## Consequences
 
-Any existing `.living-doc.json` that stores category information derived from filenames is unaffected — the change is in the display label only, not in the stored data. Projects that previously relied on "Uncategorized" as a category filter string in search will no longer match (the string is now "General").
+### PROS
+
+- "General" is a more intuitive and non-judgmental label for ungrouped documents.
+- Pinning General to the top ensures the most commonly accessed documents are immediately visible.
+- Collapsing all other categories on load reduces visual noise for projects with many categories.
+
+### CONS
+
+- Projects that previously relied on "Uncategorized" as a category filter string in search will no longer match (the string is now "General").
+- Any existing `.living-doc.json` that stores category information derived from filenames is unaffected — the change is in the display label only, not in stored data.

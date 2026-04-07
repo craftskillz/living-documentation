@@ -1,13 +1,16 @@
-# 2026-04-05 [FRONTEND] Word Cloud
+---
+`🗄️ ADR : 2026_04_05_[FRONTEND]_word_cloud.md`
+**date:** 2026-04-05
+**status:** Accepted
+**description:** Add a Word Cloud feature with a recursive backend API and a frontend overlay with stop-word filtering, folder browser, and extension selection.
+**tags:** frontend, word-cloud, api, wordcloud, stop-words, localStorage, wordcloud.js, browse, extensions
+---
 
-## Statut
-Accepté
-
-## Contexte
+## Context
 
 L'outil manquait d'une vue synthétique du vocabulaire dominant dans une base de code ou une base documentaire. Un nuage de mots permet d'identifier en un coup d'œil les concepts récurrents sans lire chaque fichier.
 
-## Décision
+## Decision
 
 ### Route backend
 
@@ -59,14 +62,17 @@ import … / export { } / export * / package / require / #include / #import / us
 
 `copySelectionAsPng()` dans `clipboard.js` appelle `network.unselectAll()` + `network.redraw()` avant de capturer le canvas, puis restaure la sélection dans un bloc `finally`. Cela évite que les bordures orange de sélection vis-network apparaissent dans l'image exportée.
 
-## Conséquences
+## Consequences
 
-**Positives**
+### PROS
+
 - `index.html` allégé de ~340 lignes.
 - Vocabulaire dominant visible en quelques secondes sur n'importe quel dossier du disque.
-- Extensions et dossier mémorisés entre sessions.
+- Extensions et dossier mémorisés entre sessions (localStorage).
+- Le nuage n'est pas calculé automatiquement — évite les lectures récursives lentes sur de gros dépôts.
 
-**Contraintes**
+### CONS
+
 - `/api/wordcloud` lit des chemins arbitraires sur le disque — acceptable car le serveur est local.
 - `wordcloud.js` est un script classique (non-module) : ses symboles sont globaux, cohérent avec l'architecture `index.html`.
 - `WordCloud2.js` reste vendorisé dans `src/frontend/vendor/` (pas de CDN).

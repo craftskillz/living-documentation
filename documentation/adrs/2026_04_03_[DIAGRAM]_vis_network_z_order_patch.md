@@ -1,7 +1,10 @@
+---
 `🗄️ ADR : 2026_04_03_[DIAGRAM]_vis_network_z_order_patch.md`
-
-**Date:** 2026-04-03
-**Status:** Accepted
+**date:** 2026-04-03
+**status:** Accepted
+**description:** Monkey-patch vis-network _drawNodes to perform a single pass in canonical order, preserving user-defined z-order against hover/select reordering.
+**tags:** diagram, vis-network, z-order, rendering, monkey-patch, canvas, _drawNodes, canonicalOrder
+---
 
 ## Context
 
@@ -25,8 +28,14 @@ The patched function replicates the original's viewport culling logic (`isBoundi
 
 ## Consequences
 
+### PROS
+
 - Hover and selection no longer change the visual stacking order — the user-defined z-order is always respected.
 - `changeZOrder(+1/-1)` (bring to front / send to back) now works correctly and visually.
 - `saveDiagram` uses `_canonicalOrder` to persist nodes in z-order so reloading restores the same stacking.
+- The patch is re-applied every time `initNetwork` is called (network destroy + recreate), so it survives network resets.
+
+### CONS
+
 - The patch is fragile if vis-network is upgraded: `_drawNodes`'s internal signature must be re-verified against the new version's source before upgrading.
-- The patch must be re-applied every time `initNetwork` is called (network destroy + recreate), which it already is.
+- Instance-level monkey-patching is not a clean abstraction — it relies on internal vis-network implementation details.

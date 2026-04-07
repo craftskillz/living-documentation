@@ -74,6 +74,13 @@ function resolveDocPath(
   return safeFilePath(docsPath, doc.filename);
 }
 
+function stripFrontmatter(content: string): string {
+  if (!content.startsWith("---")) return content;
+  const end = content.indexOf("\n---", 3);
+  if (end === -1) return content;
+  return content.slice(end + 4).replace(/^\n/, "");
+}
+
 export function documentsRouter(docsPath: string): Router {
   const router = Router();
 
@@ -144,7 +151,7 @@ export function documentsRouter(docsPath: string): Router {
       try {
         const content = fs.readFileSync(filePath, "utf-8");
         const meta = parseFilename(path.basename(filePath), filenamePattern);
-        const html = marked.parse(content) as string;
+        const html = marked.parse(stripFrontmatter(content)) as string;
         res.json({
           ...meta,
           id: req.params.id,
@@ -173,7 +180,7 @@ export function documentsRouter(docsPath: string): Router {
     try {
       const content = fs.readFileSync(filePath, "utf-8");
       const metadata = parseFilename(filename, filenamePattern);
-      const html = marked.parse(content) as string;
+      const html = marked.parse(stripFrontmatter(content)) as string;
       res.json({ ...metadata, content, html });
     } catch {
       res.status(500).json({ error: "Failed to read document" });

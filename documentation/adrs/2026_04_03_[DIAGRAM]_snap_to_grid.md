@@ -1,7 +1,10 @@
+---
 `🗄️ ADR : 2026_04_03_[DIAGRAM]_snap_to_grid.md`
-
-**Date:** 2026-04-03
-**Status:** Accepted
+**date:** 2026-04-03
+**status:** Accepted
+**description:** Fix snap-to-grid using shape.width/height for visual edge alignment, and fix grid DPR mismatch on Retina displays by multiplying vis.js CSS-pixel coordinates by devicePixelRatio.
+**tags:** diagram, snap-to-grid, grid, DPR, retina, vis-network, rendering, bounding-box, shape
+---
 
 ## Context
 
@@ -69,7 +72,13 @@ const offsetY = ((H / 2 - center.y * scale * dpr) % step + step) % step;
 
 ## Consequences
 
+### PROS
+
 - Node left/top edges now land exactly on grid lines after a drag, for all shape types.
 - Grid lines and snapped node edges are visually coincident on both standard (DPR=1) and Retina (DPR=2+) displays.
+- The fix is uniform across all shape types — no special cases per shape.
+
+### CONS
+
 - `shape.width/height` are internal vis-network properties — they should be re-verified if vis-network is upgraded.
-- `network.getBoundingBox()` is **not** suitable for snap calculations and should not be used for this purpose.
+- `network.getBoundingBox()` is **not** suitable for snap calculations and must not be used for this purpose.

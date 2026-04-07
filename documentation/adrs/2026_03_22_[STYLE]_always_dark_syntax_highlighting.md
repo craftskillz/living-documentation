@@ -1,7 +1,10 @@
+---
 `🗄️ ADR : 2026_03_22_[STYLE]_always_dark_syntax_highlighting.md`
-
-**Date:** 2026-03-22
-**Status:** Accepted
+**date:** 2026-03-22
+**status:** Accepted
+**description:** Always use the github-dark highlight.js theme regardless of light/dark mode, removing the light stylesheet entirely.
+**tags:** style, syntax-highlighting, dark-mode, highlight.js, frontend, github-dark, prose
+---
 
 ## Context
 
@@ -13,6 +16,12 @@ Remove the light stylesheet entirely. Always load `github-dark.min.css` regardle
 
 ## Consequences
 
-Code blocks have a consistently dark, high-contrast appearance in both light and dark mode. This is an intentional UX trade-off: code readability is prioritised over strict theme consistency. The dark block visually separates code from prose in both modes, which improves scanability.
+### PROS
 
-The JS dark-mode toggle no longer needs to manipulate any stylesheet `disabled` flags, simplifying the `applyDarkMode` and `setupDarkToggle` functions.
+- Code blocks have a consistently dark, high-contrast appearance in both light and dark mode.
+- The dark block visually separates code from prose in both modes, improving scanability.
+- The JS dark-mode toggle no longer needs to manipulate any stylesheet `disabled` flags, simplifying `applyDarkMode` and `setupDarkToggle`.
+
+### CONS
+
+- This is an intentional UX trade-off: code readability is prioritised over strict theme consistency (light mode has dark code blocks).

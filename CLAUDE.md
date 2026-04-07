@@ -1,7 +1,7 @@
 # CLAUDE.md — Living Documentation
 
 > **Usage**: This file is the entry point for any task on this project. It contains the critical rules and context needed before making changes.
-> To understand the _why_ behind a decision, refer to the relevant ADR in `documentation/adrs/` — load those files only when working on the related domain.
+> To understand the _why_ behind a decision, glob `documentation/adrs/` and read only each ADR's frontmatter `description` and `tags` to identify the relevant one — then load the full file.
 > **Memory**: At the start of each session, read `memory/MEMORY.md` and load the relevant memory files listed there.
 > **Library docs**: Use the **context7 MCP** (installed globally) to fetch up-to-date library documentation instead of scraping/downloading raw bundles. Example: query context7 for `vis-network` to get accurate API docs without token-heavy file fetches.
 
@@ -214,17 +214,6 @@ Published on npm as `living-documentation`.
 - `prepublishOnly` runs `npm run build` automatically before each publish
 - Default port: **4321**
 
-## ADR Index
+## ADRs
 
-> Load an ADR only when working on the related domain.
-
-| Domain                              | ADR                                                                                                                                                            |
-| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Extra files outside docs folder     | [2026*03_20*[CONFIGURATION]\_link_extra_files_as_documentation.md](documentation/adrs/2026_03_20_[CONFIGURATION]_link_extra_files_as_documentation.md)         |
-| General category & sidebar collapse | [2026*03_21*[CONFIGURATION]\_general_category_and_sidebar_defaults.md](documentation/adrs/2026_03_21_[CONFIGURATION]_general_category_and_sidebar_defaults.md) |
-| Always-dark syntax highlighting     | [2026*03_22*[STYLE]\_always_dark_syntax_highlighting.md](documentation/adrs/2026_03_22_[STYLE]_always_dark_syntax_highlighting.md)                             |
-| Diagram z-order (vis-network patch) | [2026*04_03*[DIAGRAM]\_vis_network_z_order_patch.md](documentation/adrs/2026_04_03_[DIAGRAM]_vis_network_z_order_patch.md)                                     |
-| Diagram snap-to-grid & DPR grid     | [2026*04_03*[DIAGRAM]\_snap_to_grid.md](documentation/adrs/2026_04_03_[DIAGRAM]_snap_to_grid.md)                                                               |
-| Diagram debug overlay               | [2026*04_03*[DIAGRAM]\_debug_overlay.md](documentation/adrs/2026_04_03_[DIAGRAM]_debug_overlay.md)                                                             |
-| Diagram JS modularisation           | [2026*04_03*[DIAGRAM]\_modularisation_javascript.md](documentation/adrs/2026_04_03_[DIAGRAM]_modularisation_javascript.md)                                     |
-| Word Cloud feature                  | [2026*04_05*[FRONTEND]\_word_cloud.md](documentation/adrs/2026_04_05_[FRONTEND]_word_cloud.md)                                                                 |
+ADRs are in `documentation/adrs/`. To find relevant ones, glob that directory and read only the frontmatter `description` and `tags` of each file — load the full ADR only when working on the related domain.
