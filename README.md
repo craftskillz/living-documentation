@@ -10,14 +10,14 @@ No cloud, no database, no build step — just point it at a folder where you add
 
 ## Features
 
-- **Sidebar** grouped by category, sorted alphabetically by full filename
+- **Sidebar** grouped by folder → category, sorted alphabetically; **General** always first
 [![README Diagrams](./images/readme-sidebar.png)](/diagram?id=d1775399110713)
 
 - **Categories Sections and General section** — Categories are extracted from the fileName pattern of your Markdown documents (that may be Architecture Decision Records ADRs).
 ExtraFiles (added in the admin section) are always first, always expanded in a `GENERAL Section` that holds uncategorized docs and extra files
 [![README Diagrams](./images/readme-filename-pattern.png)](/diagram?id=d1775399110713)
 
-- **Recursive folder scanning** — subdirectories are scanned automatically; subdirectory name becomes nested categories
+- **Recursive folder scanning** — subdirectories are scanned automatically; each directory level becomes a collapsible folder in the sidebar, nested above the category groups
 
 - **Extra files** — You can add custom ExtraFiles to your documentation that are outside the docs folder (e.g. `README.md`, `CLAUDE.md`) in the `Admin` Page
 [![README Diagrams](./images/readme-extra-files.png)](/diagram?id=d1775399110713)
@@ -126,20 +126,28 @@ Files that don't match the pattern are still shown — they appear under **Gener
 
 ### Subdirectories
 
-The docs folder is scanned **recursively**. Files in subdirectories are automatically discovered:
+The docs folder is scanned **recursively**. Each subdirectory level becomes a collapsible **folder** in the sidebar, nested above the category groups extracted from filenames.
 
-- If the filename matches the pattern (contains `[Category]`), the category from the filename is used.
-- Otherwise, the **subdirectory name** becomes the category.
+- The `[Category]` tag in the filename is always the category, regardless of which folder the file lives in.
+- Files without a `[Category]` tag fall into **General**.
+- Subdirectory names become the folder labels in the sidebar (title-cased).
+- Deep nesting is supported: `adrs/test/file.md` → folder **Adrs** > subfolder **Test** > category > doc.
 
 ```
 docs/
-├── 2024_01_15_[DevOps]_deploy.md      → category: DevOps
+├── 2024_01_15_[DevOps]_deploy.md          → (root) category: DevOps
 ├── adrs/
-│   ├── my-decision.md                 → category: Adrs
-│   └── 2024_03_01_[Architecture]_event_sourcing.md  → category: Architecture
+│   ├── my-decision.md                     → folder: Adrs / category: General
+│   ├── 2024_03_01_[Architecture]_eventsourcing.md  → folder: Adrs / category: Architecture
+│   └── test/
+│       └── 2024_05_01_[Architecture]_saga.md       → folder: Adrs > Test / category: Architecture
 └── guides/
-    └── onboarding.md                  → category: Guides
+    └── 2024_06_01_[Onboarding]_setup.md   → folder: Guides / category: Onboarding
 ```
+
+**Sidebar rendering order at each level:** General first → subfolders (alphabetical) → other categories (alphabetical).
+
+**Article header** shows one violet pill per folder segment, then a blue pill for the category.
 
 The pattern is **configurable** in the Admin panel. Token order is respected — `[Category]_YYYY_MM_DD_title` is valid. `[Category]` must appear exactly once.
 
