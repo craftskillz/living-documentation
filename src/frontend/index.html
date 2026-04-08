@@ -408,6 +408,8 @@
                   </div>
                 </div>
               </div>
+              <!-- Navigation history back-links -->
+              <div id="doc-back" class="hidden mt-2 flex flex-wrap gap-1 text-xs"></div>
               <!-- Search match notice (inside sticky header) -->
               <div
                 id="search-notice"
@@ -1454,6 +1456,7 @@
       let currentDocId = null;
       let currentDocContent = "";
       let searchQuery = "";
+      let navHistory = []; // stack of { id, title } visited via in-doc links
       let expandedCategories = new Set();
       let expandedFolders = new Set();
 
@@ -1685,8 +1688,45 @@
       }
 
       // ── Open document ──────────────────────────────────────────
-      async function openDocument(id, skipHistory = false) {
+      async function openDocument(id, skipHistory = false, fromLink = false) {
+        // Track navigation history for breadcrumb trail
+        // fromLink===true  : forward navigation via in-doc link → push current to stack
+        // fromLink==="restore" : back navigation via history breadcrumb → stack already trimmed, don't touch
+        // fromLink===false : sidebar/direct navigation → reset stack
+        if (fromLink === true && currentDocId && currentDocId !== id) {
+          const prev = allDocs && allDocs.find((d) => d.id === currentDocId);
+          navHistory.push({ id: currentDocId, title: prev ? prev.title : currentDocId });
+        } else if (!fromLink) {
+          navHistory = [];
+        }
+
+        // Update back-link banner
+        const backEl = document.getElementById("doc-back");
+        if (navHistory.length > 0) {
+          backEl.innerHTML = navHistory.map((entry, i) =>
+            `<button onclick="goBackToIndex(${i})"
+              class="no-print text-blue-600 dark:text-blue-400 hover:underline">&#8592; ${esc(entry.title)}</button>`
+          ).join('<span class="text-gray-300 dark:text-gray-600 mx-1">·</span>');
+          backEl.classList.remove("hidden");
+        } else {
+          backEl.classList.add("hidden");
+          backEl.innerHTML = "";
+        }
+
         currentDocId = id;
+
+        // Expand sidebar path to reveal the document
+        const doc = allDocs && allDocs.find((d) => d.id === id);
+        if (doc) {
+          const folder = doc.folder || [];
+          // Expand every ancestor folder
+          for (let i = 0; i < folder.length; i++) {
+            expandedFolders.add(folder.slice(0, i + 1).join("|"));
+          }
+          // Expand the category at this folder level
+          expandedCategories.add([...folder, doc.category].join("|"));
+          renderSidebar(allDocs);
+        }
 
         // Update active state in sidebar
         document
@@ -1750,6 +1790,17 @@
           // Syntax highlighting
           contentEl.querySelectorAll("pre code").forEach((block) => {
             hljs.highlightElement(block);
+          });
+
+          // Intercept inter-doc links (?doc=X) to stay in SPA and track origin
+          contentEl.querySelectorAll('a[href]').forEach((a) => {
+            const href = a.getAttribute("href");
+            const m = href && href.match(/[?&]doc=([^&#]+)/);
+            if (!m) return;
+            a.addEventListener("click", (e) => {
+              e.preventDefault();
+              openDocument(decodeURIComponent(m[1]), false, true);
+            });
           });
 
           // Make tables responsive
@@ -2495,6 +2546,13 @@
         document.getElementById("sidebar").classList.toggle("hidden");
       }
 
+      function goBackToIndex(i) {
+        const entry = navHistory[i];
+        if (!entry) return;
+        navHistory = navHistory.slice(0, i); // drop this entry and everything after
+        openDocument(entry.id, false, "restore");
+      }
+
       async function exportAllPDF() {
         const btn = document.getElementById("export-all-pdf-btn");
         const originalHtml = btn.innerHTML;
@@ -2703,22 +2761,18 @@
         }
       }
 
-      // ── Image lightbox (Shift+Click) ────────────────────────────
+      // ── Image lightbox (Shift+Click) / follow link (Click) ──────
+      // Capture phase so we intercept before link handlers on child <a> elements
       document.getElementById("doc-content").addEventListener("click", (e) => {
         const img = e.target.closest("img");
         if (!img) return;
         if (e.shiftKey) {
-          const link = e.target.closest("a");
-          if (link) {
-            e.preventDefault();
-            window.location.href = link.href;
-          }
-          return;
+          e.preventDefault();
+          e.stopPropagation();
+          openLightbox(img.src, img.alt);
         }
-        e.preventDefault();
-        e.stopPropagation();
-        openLightbox(img.src, img.alt);
-      });
+        // Click simple : laisse le lien parent fonctionner normalement
+      }, true);
 
       function openLightbox(src, alt) {
         const lb = document.getElementById("img-lightbox");

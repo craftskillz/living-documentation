@@ -1,0 +1,9 @@
+{
+  "docsFolder": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starting-doc",
+  "filenamePattern": "YYYY_MM_DD_HH_mm_[Category]_title",
+  "title": "Living Documentation",
+  "theme": "system",
+  "port": 4321,
+  "extraFiles": [],
+  "showDiagramDebug": false
+}
