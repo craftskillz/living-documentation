@@ -3,6 +3,7 @@ export interface DocMetadata {
   filename: string;     // original filename
   title: string;        // human-readable title
   category: string;     // extracted category
+  folder: string[] | null; // path segments from root to parent dir, null if at root
   date: string | null;  // ISO date string YYYY-MM-DD
   formattedDate: string | null;
 }
@@ -84,10 +85,10 @@ export function parseFilename(filename: string, filenamePattern?: string): DocMe
         const category = catBeforeDate ? full[1] : full[2];
         const titlePart = full[3];
         const date = dateStr.replace(/_/g, '-');
-        return { id, filename, title: titleCase(titlePart), category, date, formattedDate: formatDate(date) };
+        return { id, filename, title: titleCase(titlePart), category, folder: null, date, formattedDate: formatDate(date) };
       } else if (hasCategory) {
         const [, category, titlePart] = full;
-        return { id, filename, title: titleCase(titlePart), category, date: null, formattedDate: null };
+        return { id, filename, title: titleCase(titlePart), category, folder: null, date: null, formattedDate: null };
       }
     }
   }
@@ -97,7 +98,7 @@ export function parseFilename(filename: string, filenamePattern?: string): DocMe
     if (dateOnly) {
       const [, dateStr, titlePart] = dateOnly;
       const date = dateStr.replace(/_/g, '-');
-      return { id, filename, title: titleCase(titlePart), category: 'General', date, formattedDate: formatDate(date) };
+      return { id, filename, title: titleCase(titlePart), category: 'General', folder: null, date, formattedDate: formatDate(date) };
     }
   }
 
@@ -108,6 +109,7 @@ export function parseFilename(filename: string, filenamePattern?: string): DocMe
     filename,
     title: rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1),
     category: 'General',
+    folder: null,
     date: null,
     formattedDate: null,
   };

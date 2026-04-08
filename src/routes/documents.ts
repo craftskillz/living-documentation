@@ -34,6 +34,7 @@ function listDocs(
       ...meta,
       id: encodeURIComponent(filePath.slice(0, -3)),
       category: "General",
+      folder: null,
     });
   }
 
@@ -43,11 +44,13 @@ function listDocs(
     const subdir = path.dirname(relPath);
     const meta = parseFilename(filename, filenamePattern);
     const id = encodeURIComponent(relPath.slice(0, -3));
-    const category =
-      meta.category === "General" && subdir !== "."
-        ? subdir.replace(/[_-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
-        : meta.category;
-    return { ...meta, id, filename: relPath, category };
+    const folder =
+      subdir !== "."
+        ? subdir.split(path.sep).map((s) =>
+            s.replace(/[_-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+          )
+        : null;
+    return { ...meta, id, filename: relPath, folder };
   });
 
   regularDocs.sort((a, b) => a.filename.localeCompare(b.filename));
@@ -179,9 +182,16 @@ export function documentsRouter(docsPath: string): Router {
 
     try {
       const content = fs.readFileSync(filePath, "utf-8");
-      const metadata = parseFilename(filename, filenamePattern);
+      const metadata = parseFilename(path.basename(filename), filenamePattern);
+      const subdir = path.dirname(id);
+      const folder =
+        subdir !== "."
+          ? subdir.split("/").map((s) =>
+              s.replace(/[_-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+            )
+          : null;
       const html = marked.parse(stripFrontmatter(content)) as string;
-      res.json({ ...metadata, content, html });
+      res.json({ ...metadata, folder, content, html });
     } catch {
       res.status(500).json({ error: "Failed to read document" });
     }

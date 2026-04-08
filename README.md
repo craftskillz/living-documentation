@@ -17,7 +17,7 @@ No cloud, no database, no build step — just point it at a folder where you add
 ExtraFiles (added in the admin section) are always first, always expanded in a `GENERAL Section` that holds uncategorized docs and extra files
 [![README Diagrams](./images/readme-filename-pattern.png)](/diagram?id=d1775399110713)
 
-- **Recursive folder scanning** — subdirectories are scanned automatically; subdirectory name becomes the category
+- **Recursive folder scanning** — subdirectories are scanned automatically; subdirectory name becomes nested categories
 
 - **Extra files** — You can add custom ExtraFiles to your documentation that are outside the docs folder (e.g. `README.md`, `CLAUDE.md`) in the `Admin` Page
 [![README Diagrams](./images/readme-extra-files.png)](/diagram?id=d1775399110713)
