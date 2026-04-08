@@ -31,6 +31,11 @@ ExtraFiles (added in the admin section) are always first, always expanded in a `
 
 - **Inline editing** — edit any document directly in the browser, saves to disk instantly
 - **Image paste** — paste an image from clipboard in the editor; auto-uploaded and inserted as Markdown
+- **Snippet inserter** — click **🧩 Snippets** while editing to insert pre-built Markdown constructs at the cursor position:
+  - *Simple snippets*: collapsible block (`<details>`), link, link to another document, anchor link, anchor link in another document, numbered list (3 levels), bullet list (3 levels), code block, blockquote, horizontal separator, image
+  - *Complex snippets*: **table editor** (dynamic rows/columns grid, generates aligned Markdown table) and **tree editor** (indentation-based ASCII tree, generates a `text` code block with `├──` / `└──` connectors)
+  - **Detection mode**: select an existing snippet in the editor before opening the panel — the type is detected automatically and all fields are pre-filled for editing; an informational message is shown when the selection is recognised (green) or unrecognised (orange)
+- **Anchor navigation** — links to headings within a document (e.g. `[See section](#my-heading)`) scroll to the correct position after async rendering; heading IDs are generated automatically from their text content
 - **Export to PDF** — Export the markdown as a PDF document
 - **Diagram editor** — built-in canvas diagram editor; deep-link to any diagram in the C4 Model Style; Paste images into diagrams; Export PNG From Images; And Many more features ...
 
@@ -147,6 +152,19 @@ docs/
 ```
 
 **Sidebar rendering order at each level:** General first → subfolders (alphabetical) → other categories (alphabetical).
+
+#### Controlling folder order with a numeric prefix
+
+Folders are sorted alphabetically, which means you can control their order by prefixing the directory name with a number followed by `_`:
+
+```
+docs/
+├── 1_TUTORIAL/
+├── 2_REFERENCE/
+└── 3_ADVANCED/
+```
+
+The prefix is **hidden in the UI** — the sidebar shows `TUTORIAL`, `REFERENCE`, `ADVANCED` — but the full name (e.g. `1_TUTORIAL`) is visible in the tooltip on hover. Breadcrumb pills on articles follow the same rule.
 
 **Article header** shows one violet pill per folder segment, then a blue pill for the category.
 
