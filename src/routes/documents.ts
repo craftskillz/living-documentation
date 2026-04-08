@@ -75,7 +75,7 @@ function buildFilename(filenamePattern: string, title: string, category: string,
     .replace('HH', hours)
     .replace('mm', minutes)
     .replace(/\[Category\]/i, `[${category}]`)
-    .replace(/\b(?:title_words|title)\b/i, titleSlug) + '.md';
+    .replace(/(?<![a-z0-9])(?:title_words|title)(?![a-z0-9])/i, titleSlug) + '.md';
 }
 
 function safeFilePath(docsPath: string, filename: string): string | null {

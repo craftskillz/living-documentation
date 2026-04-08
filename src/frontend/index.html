@@ -2258,7 +2258,7 @@
           .replace("HH", hours)
           .replace("mm", minutes)
           .replace(/\[Category\]/i, `[${category}]`)
-          .replace(/\b(?:title_words|title)\b/i, titleSlug) + ".md";
+          .replace(/(?<![a-z0-9])(?:title_words|title)(?![a-z0-9])/i, titleSlug) + ".md";
 
         previewEl.textContent = _newDocSelectedFolder
           ? _newDocSelectedFolder + "/" + filename
