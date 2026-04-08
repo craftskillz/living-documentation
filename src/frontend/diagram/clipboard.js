@@ -45,9 +45,13 @@ export async function copySelectionAsPng() {
   const cropW = Math.ceil(br.x - tl.x + PAD * 2);
   const cropH = Math.ceil(br.y - tl.y + PAD * 2);
 
-  // Temporarily deselect everything so orange highlights don't appear in the PNG
+  // Temporarily deselect everything so orange highlights and group outlines
+  // don't appear in the PNG. unselectAll() clears vis-network's internal
+  // selection (removes orange borders), but drawGroupOutlines() reads
+  // st.selectedNodeIds — so we must clear it explicitly before redraw.
   const savedNodeIds = [...st.selectedNodeIds];
   st.network.unselectAll();
+  st.selectedNodeIds = [];
   st.network.redraw();
 
   // Grab vis-network's canvas element

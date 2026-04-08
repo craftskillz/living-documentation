@@ -37,7 +37,13 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
         ...e,
         ...visEdgeProps(e.arrowDir ?? 'to', e.dashes ?? false),
         smooth: isAnchor ? { enabled: false } : edgeSmooth,
-        ...(e.fontSize ? { font: { size: e.fontSize, align: 'middle', color: '#6b7280' } } : {}),
+        ...(e.fontSize || e.labelRotation ? {
+        font: {
+          size: e.fontSize || 11,
+          align: 'middle',
+          color: (e.labelRotation && Math.abs(e.labelRotation) > 0.001) ? 'rgba(0,0,0,0)' : '#6b7280',
+        },
+      } : {}),
       };
     })
   );
@@ -216,6 +222,7 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
   st.network.on('afterDrawing',  updateSelectionOverlay);
   st.network.on('afterDrawing',  (ctx) => drawGroupOutlines(ctx));
   st.network.on('afterDrawing',  () => drawDebugOverlay());
+  st.network.on('afterDrawing',  drawRotatedEdgeLabels);
 
   // ── Free-floating edge: drop on empty canvas creates an anchor node ──────────
   // vis-network only fires addEdge callback when dropping on an existing node.
@@ -254,6 +261,32 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
 
   document.getElementById('emptyState').classList.add('hidden');
   updateZoomDisplay();
+}
+
+// ── Rotated edge label rendering ─────────────────────────────────────────────
+// vis-network has no native label rotation for edges. When labelRotation != 0,
+// the edge font color is set to transparent and we draw the label ourselves
+// in afterDrawing, rotated around the visual midpoint of the edge.
+function drawRotatedEdgeLabels(ctx) {
+  if (!st.edges || !st.network) return;
+  st.edges.get().forEach((e) => {
+    if (!e.labelRotation || Math.abs(e.labelRotation) < 0.001 || !e.label) return;
+    const positions = st.network.getPositions([e.from, e.to]);
+    const fp = positions[e.from];
+    const tp = positions[e.to];
+    if (!fp || !tp) return;
+    const mx = (fp.x + tp.x) / 2;
+    const my = (fp.y + tp.y) / 2;
+    ctx.save();
+    ctx.translate(mx, my);
+    ctx.rotate(e.labelRotation);
+    ctx.font = `${e.fontSize || 11}px system-ui,-apple-system,sans-serif`;
+    ctx.fillStyle = '#6b7280';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(e.label, 0, 0);
+    ctx.restore();
+  });
 }
 
 // ── Network event handlers ────────────────────────────────────────────────────
