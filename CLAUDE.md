@@ -217,15 +217,3 @@ Published on npm as `living-documentation`.
 ## ADRs
 
 ADRs are in `documentation/adrs/`. To find relevant ones, glob that directory and read only the frontmatter `description` and `tags` of each file — load the full ADR only when working on the related domain.
-
-```text
-dossier/
-├── fichier.md
-└── toto/
-    └── text.md
-```
-
-| En-tête 1 | En-tête 2 | En-tête 3 |
-| --------- | --------- | --------- |
-| a         | b         | v         |
-| d         | f         | g         |
