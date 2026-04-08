@@ -723,6 +723,33 @@
       </div>
     </div>
 
+    <!-- ── Image paste confirmation modal ── -->
+    <div id="img-paste-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-sm mx-4 p-6 space-y-5">
+        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">🖼️ Coller l'image du presse-papiers ?</h3>
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">
+            Nom du fichier <span class="font-normal text-gray-400">(enregistré dans images/)</span>
+          </label>
+          <div class="flex items-center gap-2">
+            <input id="img-paste-name" type="text"
+              class="flex-1 px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <span id="img-paste-ext" class="text-xs text-gray-400 shrink-0"></span>
+          </div>
+        </div>
+        <div class="flex justify-end gap-3 pt-1">
+          <button onclick="imgPasteCancel()"
+            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+            Annuler
+          </button>
+          <button onclick="imgPasteConfirm()"
+            class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">
+            Coller
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- ── Image lightbox overlay ── -->
     <div id="img-lightbox" class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center cursor-pointer"
       onclick="closeLightbox()">
@@ -1277,6 +1304,12 @@
         document.getElementById("content-area").scrollTop = _editScrollTop;
       }
 
+      // State for the image paste confirmation flow
+      let _imgPasteBlob = null;
+      let _imgPasteExt = "png";
+      let _imgPasteCursorStart = 0;
+      let _imgPasteCursorEnd = 0;
+
       async function handleEditorPaste(e) {
         const items = Array.from(e.clipboardData?.items ?? []);
         const imageItem = items.find((item) => item.type.startsWith("image/"));
@@ -1284,22 +1317,36 @@
 
         e.preventDefault();
 
-        const ext =
-          imageItem.type.split("/")[1].replace("jpeg", "jpg") || "png";
-        const blob = imageItem.getAsFile();
-        if (!blob) return;
+        const editor = document.getElementById("doc-editor");
+        _imgPasteCursorStart = editor.selectionStart;
+        _imgPasteCursorEnd = editor.selectionEnd;
+        _imgPasteExt = imageItem.type.split("/")[1].replace("jpeg", "jpg") || "png";
+        _imgPasteBlob = imageItem.getAsFile();
+        if (!_imgPasteBlob) return;
+
+        // Propose a default name: timestamp in ms
+        const defaultName = Date.now().toString();
+        document.getElementById("img-paste-name").value = defaultName;
+        document.getElementById("img-paste-ext").textContent = "." + _imgPasteExt;
+        document.getElementById("img-paste-modal").classList.remove("hidden");
+
+        // Focus the name input and select all for quick renaming
+        const nameInput = document.getElementById("img-paste-name");
+        nameInput.focus();
+        nameInput.select();
+      }
+
+      function imgPasteCancel() {
+        document.getElementById("img-paste-modal").classList.add("hidden");
+        _imgPasteBlob = null;
+      }
+
+      async function imgPasteConfirm() {
+        const name = document.getElementById("img-paste-name").value.trim() || Date.now().toString();
+        document.getElementById("img-paste-modal").classList.add("hidden");
 
         const editor = document.getElementById("doc-editor");
         const msgEl = document.getElementById("edit-save-msg");
-
-        // Insert placeholder at cursor while uploading
-        const placeholder = `![image](uploading...)`;
-        const start = editor.selectionStart;
-        const before = editor.value.slice(0, start);
-        const after = editor.value.slice(editor.selectionEnd);
-        editor.value = before + placeholder + after;
-        editor.selectionStart = editor.selectionEnd =
-          start + placeholder.length;
 
         msgEl.textContent = "Uploading image…";
         msgEl.className = "text-xs text-gray-400";
@@ -1309,27 +1356,30 @@
             const reader = new FileReader();
             reader.onload = () => resolve(reader.result);
             reader.onerror = reject;
-            reader.readAsDataURL(blob);
+            reader.readAsDataURL(_imgPasteBlob);
           });
 
           const res = await fetch("/api/images/upload", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ data: base64, ext }),
+            body: JSON.stringify({ data: base64, ext: _imgPasteExt, name }),
           });
           if (!res.ok) throw new Error(await res.text());
 
           const { filename } = await res.json();
           const mdImage = `![image](./images/${filename})`;
 
-          // Replace placeholder with final markdown
-          editor.value = editor.value.replace(placeholder, mdImage);
+          const before = editor.value.slice(0, _imgPasteCursorStart);
+          const after = editor.value.slice(_imgPasteCursorEnd);
+          editor.value = before + mdImage + after;
+          editor.selectionStart = editor.selectionEnd = _imgPasteCursorStart + mdImage.length;
+          editor.focus();
           msgEl.textContent = "";
         } catch (err) {
-          // Remove placeholder on failure
-          editor.value = editor.value.replace(placeholder, "");
           msgEl.textContent = "Image upload failed: " + err.message;
           msgEl.className = "text-xs text-red-500 dark:text-red-400";
+        } finally {
+          _imgPasteBlob = null;
         }
       }
 
@@ -1854,6 +1904,11 @@
         if (e.key === 'Escape' && !document.getElementById('img-lightbox').classList.contains('hidden')) {
           closeLightbox();
         }
+      });
+
+      document.getElementById("img-paste-name").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") imgPasteConfirm();
+        if (e.key === "Escape") imgPasteCancel();
       });
 
       function toggleFullWidth() {
