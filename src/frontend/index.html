@@ -367,6 +367,13 @@
                       Cancel
                     </button>
                     <button
+                      onclick="openSnippetsModal()"
+                      title="Insert a snippet"
+                      class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      🧩 Snippets
+                    </button>
+                    <button
                       onclick="saveDocument()"
                       title="Save document"
                       class="text-sm px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
@@ -539,6 +546,145 @@
           <button onclick="insertDiagramLink()" id="diag-insert-btn"
             class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">
             Insert &amp; Open Diagram
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Snippets modal ── -->
+    <div id="snippets-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-lg mx-4 p-6 space-y-5 max-h-[90vh] overflow-y-auto">
+        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">🧩 Insérer un snippet</h3>
+
+        <!-- Snippet type selector -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Type de snippet</label>
+          <select id="snippet-type" onchange="snippetTypeChanged()"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="collapsible">Bloc repliable (détails)</option>
+            <option value="link">Lien</option>
+            <option value="doc-link">Lien vers un document</option>
+            <option value="anchor-link">Lien vers une ancre</option>
+            <option value="anchor-doc-link">Lien vers une ancre d'un autre document</option>
+            <option value="ordered-list">Liste numérotée</option>
+            <option value="unordered-list">Liste à puces</option>
+            <option value="code-block">Bloc de code</option>
+            <option value="blockquote">Citation (blockquote)</option>
+            <option value="separator">Séparateur horizontal</option>
+            <option value="image">Image</option>
+          </select>
+        </div>
+
+        <!-- Panel: collapsible -->
+        <div id="snip-panel-collapsible" class="space-y-3">
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Titre du résumé</label>
+            <input id="snip-collapsible-summary" type="text" value="Détails" oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+
+        <!-- Panel: link -->
+        <div id="snip-panel-link" class="hidden space-y-3">
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Texte du lien</label>
+            <input id="snip-link-text" type="text" placeholder="Mon lien" oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">URL</label>
+            <input id="snip-link-url" type="text" placeholder="https://..." oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+
+        <!-- Panel: doc-link -->
+        <div id="snip-panel-doc-link" class="hidden space-y-3">
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Document</label>
+            <select id="snip-doc-select" onchange="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </select>
+          </div>
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Texte du lien <span class="font-normal text-gray-400">(optionnel, utilise le titre par défaut)</span></label>
+            <input id="snip-doc-link-text" type="text" placeholder="" oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+
+        <!-- Panel: anchor-link -->
+        <div id="snip-panel-anchor-link" class="hidden space-y-3">
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Texte du lien</label>
+            <input id="snip-anchor-text" type="text" placeholder="Voir la section" oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Ancre <span class="font-normal text-gray-400">(sans #, ex&nbsp;: mon-titre)</span></label>
+            <input id="snip-anchor-id" type="text" placeholder="mon-titre" oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+
+        <!-- Panel: anchor-doc-link -->
+        <div id="snip-panel-anchor-doc-link" class="hidden space-y-3">
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Document cible</label>
+            <select id="snip-anchor-doc-select" onchange="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </select>
+          </div>
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Texte du lien</label>
+            <input id="snip-anchor-doc-text" type="text" placeholder="Voir la section" oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Ancre <span class="font-normal text-gray-400">(sans #, ex&nbsp;: mon-titre)</span></label>
+            <input id="snip-anchor-doc-id" type="text" placeholder="mon-titre" oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+
+        <!-- Panel: code-block -->
+        <div id="snip-panel-code-block" class="hidden space-y-3">
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Langage <span class="font-normal text-gray-400">(ex&nbsp;: javascript, python, bash…)</span></label>
+            <input id="snip-code-lang" type="text" placeholder="javascript" oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+
+        <!-- Panel: image -->
+        <div id="snip-panel-image" class="hidden space-y-3">
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Texte alternatif</label>
+            <input id="snip-image-alt" type="text" placeholder="Description de l'image" oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">URL de l'image</label>
+            <input id="snip-image-url" type="text" placeholder="./images/mon-image.png" oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+
+        <!-- Markdown preview -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Aperçu du markdown</label>
+          <pre id="snippet-preview" class="text-xs bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 overflow-x-auto text-gray-700 dark:text-gray-300 whitespace-pre-wrap"></pre>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-end gap-3 pt-1">
+          <button onclick="closeSnippetsModal()"
+            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+            Annuler
+          </button>
+          <button onclick="insertSnippet()"
+            class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">
+            Insérer
           </button>
         </div>
       </div>
@@ -973,6 +1119,17 @@
           const contentEl = document.getElementById("doc-content");
           contentEl.innerHTML = doc.html;
 
+          // Add IDs to headings for anchor navigation
+          contentEl.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach((h) => {
+            if (!h.id) {
+              h.id = h.textContent
+                .toLowerCase()
+                .replace(/[^\w\s-]/g, "")
+                .trim()
+                .replace(/\s+/g, "-");
+            }
+          });
+
           // Syntax highlighting
           contentEl.querySelectorAll("pre code").forEach((block) => {
             hljs.highlightElement(block);
@@ -997,7 +1154,17 @@
           }
 
           document.title = doc.title;
-          docView.scrollTop = 0;
+
+          // Scroll to anchor if present in URL
+          const hash = window.location.hash;
+          if (hash) {
+            const target = contentEl.querySelector(hash);
+            if (target) {
+              target.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          } else {
+            docView.scrollTop = 0;
+          }
         } catch (err) {
           document.getElementById("doc-content").innerHTML =
             `<p class="text-red-500">Failed to load document: ${err.message}</p>`;
@@ -1165,6 +1332,145 @@
           msgEl.textContent = "Save failed: " + err.message;
           msgEl.className = "text-xs text-red-500 dark:text-red-400";
         }
+      }
+
+      // ── Snippets ───────────────────────────────────────────────
+      let _snippetSelStart = 0;
+      let _snippetSelEnd = 0;
+      const _SNIPPET_PANELS = [
+        "collapsible", "link", "doc-link", "anchor-link",
+        "anchor-doc-link", "code-block", "image",
+      ];
+
+      function openSnippetsModal() {
+        const editor = document.getElementById("doc-editor");
+        _snippetSelStart = editor.selectionStart;
+        _snippetSelEnd = editor.selectionEnd;
+
+        const docOpts = allDocs
+          .map((d) => `<option value="${d.id}">${d.title}</option>`)
+          .join("");
+        document.getElementById("snip-doc-select").innerHTML = docOpts;
+        document.getElementById("snip-anchor-doc-select").innerHTML = docOpts;
+
+        document.getElementById("snippet-type").value = "collapsible";
+        snippetTypeChanged();
+        document.getElementById("snippets-modal").classList.remove("hidden");
+      }
+
+      function closeSnippetsModal() {
+        document.getElementById("snippets-modal").classList.add("hidden");
+      }
+
+      function snippetTypeChanged() {
+        const type = document.getElementById("snippet-type").value;
+        _SNIPPET_PANELS.forEach((p) => {
+          const panel = document.getElementById("snip-panel-" + p);
+          if (panel) panel.classList.toggle("hidden", p !== type);
+        });
+        snippetUpdatePreview();
+      }
+
+      function buildSnippetMarkdown() {
+        const type = document.getElementById("snippet-type").value;
+        switch (type) {
+          case "collapsible": {
+            const summary =
+              document.getElementById("snip-collapsible-summary").value ||
+              "Détails";
+            return `<details>\n<summary>${summary}</summary>\n\n## Titre\n\nTexte\n\n</details>`;
+          }
+          case "link": {
+            const text =
+              document.getElementById("snip-link-text").value || "Texte du lien";
+            const url =
+              document.getElementById("snip-link-url").value || "https://...";
+            return `[${text}](${url})`;
+          }
+          case "doc-link": {
+            const sel = document.getElementById("snip-doc-select");
+            const docId = sel.value;
+            const customText =
+              document.getElementById("snip-doc-link-text").value;
+            const docTitle = sel.options[sel.selectedIndex]?.text ?? docId;
+            const text = customText || docTitle;
+            return `[${text}](?doc=${encodeURIComponent(docId)})`;
+          }
+          case "anchor-link": {
+            const text =
+              document.getElementById("snip-anchor-text").value ||
+              "Voir la section";
+            const anchor =
+              document.getElementById("snip-anchor-id").value || "mon-titre";
+            return `[${text}](#${anchor})`;
+          }
+          case "anchor-doc-link": {
+            const sel = document.getElementById("snip-anchor-doc-select");
+            const docId = sel.value;
+            const text =
+              document.getElementById("snip-anchor-doc-text").value ||
+              "Voir la section";
+            const anchor =
+              document.getElementById("snip-anchor-doc-id").value || "mon-titre";
+            return `[${text}](?doc=${encodeURIComponent(docId)}#${anchor})`;
+          }
+          case "ordered-list":
+            return [
+              "1. Élément 1",
+              "2. Élément 2",
+              "   1. Sous-élément 2.1",
+              "   2. Sous-élément 2.2",
+              "3. Élément 3",
+              "   1. Sous-élément 3.1",
+              "      1. Sous-sous-élément 3.1.1",
+            ].join("\n");
+          case "unordered-list":
+            return [
+              "- Élément 1",
+              "- Élément 2",
+              "  - Sous-élément 2.1",
+              "  - Sous-élément 2.2",
+              "- Élément 3",
+              "  - Sous-élément 3.1",
+              "    - Sous-sous-élément 3.1.1",
+            ].join("\n");
+          case "code-block": {
+            const lang =
+              document.getElementById("snip-code-lang").value || "";
+            return `\`\`\`${lang}\n// code ici\n\`\`\``;
+          }
+          case "blockquote":
+            return `> Citation ici\n>\n> — Auteur`;
+          case "separator":
+            return `\n---\n`;
+          case "image": {
+            const alt =
+              document.getElementById("snip-image-alt").value || "image";
+            const url =
+              document.getElementById("snip-image-url").value ||
+              "./images/mon-image.png";
+            return `![${alt}](${url})`;
+          }
+          default:
+            return "";
+        }
+      }
+
+      function snippetUpdatePreview() {
+        document.getElementById("snippet-preview").textContent =
+          buildSnippetMarkdown();
+      }
+
+      function insertSnippet() {
+        const text = buildSnippetMarkdown();
+        closeSnippetsModal();
+        const editor = document.getElementById("doc-editor");
+        const before = editor.value.slice(0, _snippetSelStart);
+        const after = editor.value.slice(_snippetSelEnd);
+        editor.value = before + text + after;
+        editor.selectionStart = editor.selectionEnd =
+          _snippetSelStart + text.length;
+        editor.focus();
       }
 
       // ── Helpers ────────────────────────────────────────────────
