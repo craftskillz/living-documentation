@@ -174,8 +174,9 @@
       >
         <div class="flex items-center gap-3">
           <span
-            class="text-blue-600 dark:text-blue-400 text-xl select-none"
-            aria-hidden="true"
+            onclick="toggleSidebar()"
+            title="Toggle sidebar"
+            class="text-blue-600 dark:text-blue-400 text-xl select-none cursor-pointer hover:opacity-70 transition-opacity"
             >&#128218;</span
           >
           <span id="app-title" class="font-semibold text-base tracking-tight"
@@ -267,12 +268,16 @@
                   onclick="exportAllPDF()"
                   title="Export all documents as PDF"
                   class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors text-xs leading-none"
-                >&#128196; PDF</button>
+                >
+                  &#128196; PDF
+                </button>
                 <button
                   onclick="openNewDocModal()"
                   title="New document"
                   class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors text-lg leading-none font-light"
-                >+</button>
+                >
+                  +
+                </button>
               </div>
             </div>
           </div>
@@ -320,7 +325,10 @@
               <div class="flex items-start justify-between gap-4 flex-wrap">
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center gap-2 mb-2 flex-wrap">
-                    <span id="doc-breadcrumbs" class="flex items-center gap-2 flex-wrap"></span>
+                    <span
+                      id="doc-breadcrumbs"
+                      class="flex items-center gap-2 flex-wrap"
+                    ></span>
                     <span
                       id="doc-date"
                       class="text-xs text-gray-400 dark:text-gray-500"
@@ -405,8 +413,14 @@
                 id="search-notice"
                 class="hidden mt-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-sm text-yellow-800 dark:text-yellow-300 overflow-hidden"
               >
-                <div id="search-notice-title" class="px-3 py-2 font-medium border-b border-yellow-200 dark:border-yellow-800"></div>
-                <ol id="search-notice-list" class="max-h-40 overflow-y-auto divide-y divide-yellow-100 dark:divide-yellow-900/40 list-none m-0 p-0"></ol>
+                <div
+                  id="search-notice-title"
+                  class="px-3 py-2 font-medium border-b border-yellow-200 dark:border-yellow-800"
+                ></div>
+                <ol
+                  id="search-notice-list"
+                  class="max-h-40 overflow-y-auto divide-y divide-yellow-100 dark:divide-yellow-900/40 list-none m-0 p-0"
+                ></ol>
               </div>
             </header>
 
@@ -430,53 +444,105 @@
     <!-- end root -->
 
     <!-- ── New Document modal ── -->
-    <div id="new-doc-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-lg mx-4 p-6 space-y-4">
-        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">&#10133; New Document</h3>
+    <div
+      id="new-doc-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    >
+      <div
+        class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-lg mx-4 p-6 space-y-4"
+      >
+        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+          &#10133; New Document
+        </h3>
 
         <!-- Title -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Title</label>
-          <input id="new-doc-title" type="text" placeholder="My document" oninput="newDocUpdatePreview()"
-            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <label
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Title</label
+          >
+          <input
+            id="new-doc-title"
+            type="text"
+            placeholder="My document"
+            oninput="newDocUpdatePreview()"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
 
         <!-- Category -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Category</label>
-          <input id="new-doc-category" type="text" placeholder="General" oninput="newDocUpdatePreview()"
-            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <label
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Category</label
+          >
+          <input
+            id="new-doc-category"
+            type="text"
+            placeholder="General"
+            oninput="newDocUpdatePreview()"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
 
         <!-- Location -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Location</label>
+          <label
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Location</label
+          >
           <div class="flex items-center gap-2">
-            <span id="new-doc-folder-display"
-              class="flex-1 px-3 py-2 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-mono truncate">
+            <span
+              id="new-doc-folder-display"
+              class="flex-1 px-3 py-2 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-mono truncate"
+            >
               / (root)
             </span>
-            <button onclick="newDocToggleBrowser()"
-              class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shrink-0">
+            <button
+              onclick="newDocToggleBrowser()"
+              class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shrink-0"
+            >
               &#128193; Browse
             </button>
           </div>
           <!-- Inline folder browser -->
-          <div id="new-doc-browser" class="hidden border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-            <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-              <button id="new-doc-browse-up" onclick="newDocBrowseUp()"
-                class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0">
+          <div
+            id="new-doc-browser"
+            class="hidden border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
+          >
+            <div
+              class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"
+            >
+              <button
+                id="new-doc-browse-up"
+                onclick="newDocBrowseUp()"
+                class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0"
+              >
                 &#8593; Up
               </button>
-              <span id="new-doc-browse-path" class="font-mono text-xs text-gray-400 dark:text-gray-500 truncate flex-1 text-right"></span>
+              <span
+                id="new-doc-browse-path"
+                class="font-mono text-xs text-gray-400 dark:text-gray-500 truncate flex-1 text-right"
+              ></span>
             </div>
-            <div id="new-doc-browse-list" class="divide-y divide-gray-100 dark:divide-gray-800 max-h-40 overflow-y-auto"></div>
+            <div
+              id="new-doc-browse-list"
+              class="divide-y divide-gray-100 dark:divide-gray-800 max-h-40 overflow-y-auto"
+            ></div>
             <!-- Create new folder row -->
-            <div class="border-t border-gray-200 dark:border-gray-700 flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800/50">
-              <input id="new-doc-new-folder-name" type="text" placeholder="New folder name…"
-                class="flex-1 px-2 py-1 text-xs rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-400" />
-              <button onclick="newDocCreateFolder()"
-                class="text-xs px-2 py-1 rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors shrink-0">
+            <div
+              class="border-t border-gray-200 dark:border-gray-700 flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800/50"
+            >
+              <input
+                id="new-doc-new-folder-name"
+                type="text"
+                placeholder="New folder name…"
+                class="flex-1 px-2 py-1 text-xs rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-400"
+              />
+              <button
+                onclick="newDocCreateFolder()"
+                class="text-xs px-2 py-1 rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors shrink-0"
+              >
                 + Create
               </button>
             </div>
@@ -485,9 +551,14 @@
 
         <!-- Filename preview -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Generated filename</label>
-          <p id="new-doc-filename-preview"
-            class="text-xs bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 font-mono text-gray-600 dark:text-gray-300 break-all">
+          <label
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Generated filename</label
+          >
+          <p
+            id="new-doc-filename-preview"
+            class="text-xs bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 font-mono text-gray-600 dark:text-gray-300 break-all"
+          >
             (enter a title)
           </p>
         </div>
@@ -497,12 +568,17 @@
 
         <!-- Actions -->
         <div class="flex justify-end gap-3 pt-1">
-          <button onclick="closeNewDocModal()"
-            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+          <button
+            onclick="closeNewDocModal()"
+            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
             Cancel
           </button>
-          <button onclick="createNewDocument()" id="new-doc-create-btn"
-            class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">
+          <button
+            onclick="createNewDocument()"
+            id="new-doc-create-btn"
+            class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+          >
             Create
           </button>
         </div>
@@ -510,58 +586,115 @@
     </div>
 
     <!-- ── Diagram link modal ── -->
-    <div id="diag-link-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-lg mx-4 p-6 space-y-5">
-        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">&#9671; Link a diagram</h3>
+    <div
+      id="diag-link-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    >
+      <div
+        class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-lg mx-4 p-6 space-y-5"
+      >
+        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+          &#9671; Link a diagram
+        </h3>
 
         <!-- Mode toggle -->
         <div class="flex gap-4 text-sm">
           <label class="flex items-center gap-2 cursor-pointer">
-            <input type="radio" name="diag-mode" id="diag-mode-existing" value="existing" checked onchange="diagModeChanged()" />
-            <span class="text-gray-700 dark:text-gray-300">Existing diagram</span>
+            <input
+              type="radio"
+              name="diag-mode"
+              id="diag-mode-existing"
+              value="existing"
+              checked
+              onchange="diagModeChanged()"
+            />
+            <span class="text-gray-700 dark:text-gray-300"
+              >Existing diagram</span
+            >
           </label>
           <label class="flex items-center gap-2 cursor-pointer">
-            <input type="radio" name="diag-mode" id="diag-mode-new" value="new" onchange="diagModeChanged()" />
+            <input
+              type="radio"
+              name="diag-mode"
+              id="diag-mode-new"
+              value="new"
+              onchange="diagModeChanged()"
+            />
             <span class="text-gray-700 dark:text-gray-300">New diagram</span>
           </label>
         </div>
 
         <!-- Existing diagram picker -->
         <div id="diag-existing-section" class="space-y-1.5">
-          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Select diagram</label>
-          <select id="diag-select" onchange="diagUpdatePreview()"
-            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          </select>
+          <label
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Select diagram</label
+          >
+          <select
+            id="diag-select"
+            onchange="diagUpdatePreview()"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          ></select>
         </div>
 
         <!-- New diagram name -->
         <div id="diag-new-section" class="hidden space-y-1.5">
-          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Diagram name</label>
-          <input id="diag-new-name" type="text" placeholder="My diagram" oninput="diagUpdatePreview()"
-            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <label
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Diagram name</label
+          >
+          <input
+            id="diag-new-name"
+            type="text"
+            placeholder="My diagram"
+            oninput="diagUpdatePreview()"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
 
         <!-- Image filename -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Image filename <span class="font-normal text-gray-400">(saved in ./images/)</span></label>
-          <input id="diag-img-name" type="text" placeholder="diagram.png" oninput="diagUpdatePreview()"
-            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <label
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Image filename
+            <span class="font-normal text-gray-400"
+              >(saved in ./images/)</span
+            ></label
+          >
+          <input
+            id="diag-img-name"
+            type="text"
+            placeholder="diagram.png"
+            oninput="diagUpdatePreview()"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
 
         <!-- Markdown preview -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Markdown that will be appended</label>
-          <pre id="diag-preview" class="text-xs bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 overflow-x-auto text-gray-700 dark:text-gray-300 whitespace-pre-wrap"></pre>
+          <label
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Markdown that will be appended</label
+          >
+          <pre
+            id="diag-preview"
+            class="text-xs bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 overflow-x-auto text-gray-700 dark:text-gray-300 whitespace-pre-wrap"
+          ></pre>
         </div>
 
         <!-- Actions -->
         <div class="flex justify-end gap-3 pt-1">
-          <button onclick="closeDiagramLinkModal()"
-            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+          <button
+            onclick="closeDiagramLinkModal()"
+            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
             Cancel
           </button>
-          <button onclick="insertDiagramLink()" id="diag-insert-btn"
-            class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">
+          <button
+            onclick="insertDiagramLink()"
+            id="diag-insert-btn"
+            class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+          >
             Insert &amp; Open Diagram
           </button>
         </div>
@@ -569,22 +702,40 @@
     </div>
 
     <!-- ── Snippets modal ── -->
-    <div id="snippets-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-lg mx-4 p-6 space-y-5 max-h-[90vh] overflow-y-auto">
-        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">🧩 Insérer un snippet</h3>
+    <div
+      id="snippets-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    >
+      <div
+        class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-lg mx-4 p-6 space-y-5 max-h-[90vh] overflow-y-auto"
+      >
+        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+          🧩 Insérer un snippet
+        </h3>
 
-        <div id="snippet-detect-msg" class="hidden rounded-lg px-3 py-2 text-xs"></div>
+        <div
+          id="snippet-detect-msg"
+          class="hidden rounded-lg px-3 py-2 text-xs"
+        ></div>
 
         <!-- Snippet type selector -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Type de snippet</label>
-          <select id="snippet-type" onchange="snippetTypeChanged()"
-            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Type de snippet</label
+          >
+          <select
+            id="snippet-type"
+            onchange="snippetTypeChanged()"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
             <option value="collapsible">Bloc repliable (détails)</option>
             <option value="link">Lien</option>
             <option value="doc-link">Lien vers un document</option>
             <option value="anchor-link">Lien vers une ancre</option>
-            <option value="anchor-doc-link">Lien vers une ancre d'un autre document</option>
+            <option value="anchor-doc-link">
+              Lien vers une ancre d'un autre document
+            </option>
             <option value="ordered-list">Liste numérotée</option>
             <option value="unordered-list">Liste à puces</option>
             <option value="code-block">Bloc de code</option>
@@ -599,95 +750,205 @@
         <!-- Panel: collapsible -->
         <div id="snip-panel-collapsible" class="space-y-3">
           <div class="space-y-1.5">
-            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Titre du résumé</label>
-            <input id="snip-collapsible-summary" type="text" value="Détails" oninput="snippetUpdatePreview()"
-              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Titre du résumé</label
+            >
+            <input
+              id="snip-collapsible-summary"
+              type="text"
+              value="Détails"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
         </div>
 
         <!-- Panel: link -->
         <div id="snip-panel-link" class="hidden space-y-3">
           <div class="space-y-1.5">
-            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Texte du lien</label>
-            <input id="snip-link-text" type="text" placeholder="Mon lien" oninput="snippetUpdatePreview()"
-              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Texte du lien</label
+            >
+            <input
+              id="snip-link-text"
+              type="text"
+              placeholder="Mon lien"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
           <div class="space-y-1.5">
-            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">URL</label>
-            <input id="snip-link-url" type="text" placeholder="https://..." oninput="snippetUpdatePreview()"
-              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >URL</label
+            >
+            <input
+              id="snip-link-url"
+              type="text"
+              placeholder="https://..."
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
         </div>
 
         <!-- Panel: doc-link -->
         <div id="snip-panel-doc-link" class="hidden space-y-3">
           <div class="space-y-1.5">
-            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Document</label>
-            <select id="snip-doc-select" onchange="snippetUpdatePreview()"
-              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </select>
+            <label
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Document</label
+            >
+            <select
+              id="snip-doc-select"
+              onchange="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ></select>
           </div>
           <div class="space-y-1.5">
-            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Texte du lien <span class="font-normal text-gray-400">(optionnel, utilise le titre par défaut)</span></label>
-            <input id="snip-doc-link-text" type="text" placeholder="" oninput="snippetUpdatePreview()"
-              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Texte du lien
+              <span class="font-normal text-gray-400"
+                >(optionnel, utilise le titre par défaut)</span
+              ></label
+            >
+            <input
+              id="snip-doc-link-text"
+              type="text"
+              placeholder=""
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
         </div>
 
         <!-- Panel: anchor-link -->
         <div id="snip-panel-anchor-link" class="hidden space-y-3">
           <div class="space-y-1.5">
-            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Texte du lien</label>
-            <input id="snip-anchor-text" type="text" placeholder="Voir la section" oninput="snippetUpdatePreview()"
-              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Texte du lien</label
+            >
+            <input
+              id="snip-anchor-text"
+              type="text"
+              placeholder="Voir la section"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
           <div class="space-y-1.5">
-            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Ancre <span class="font-normal text-gray-400">(sans #, ex&nbsp;: mon-titre)</span></label>
-            <input id="snip-anchor-id" type="text" placeholder="mon-titre" oninput="snippetUpdatePreview()"
-              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Ancre
+              <span class="font-normal text-gray-400"
+                >(sans #, ex&nbsp;: mon-titre)</span
+              ></label
+            >
+            <input
+              id="snip-anchor-id"
+              type="text"
+              placeholder="mon-titre"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
         </div>
 
         <!-- Panel: anchor-doc-link -->
         <div id="snip-panel-anchor-doc-link" class="hidden space-y-3">
           <div class="space-y-1.5">
-            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Document cible</label>
-            <select id="snip-anchor-doc-select" onchange="snippetUpdatePreview()"
-              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </select>
+            <label
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Document cible</label
+            >
+            <select
+              id="snip-anchor-doc-select"
+              onchange="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ></select>
           </div>
           <div class="space-y-1.5">
-            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Texte du lien</label>
-            <input id="snip-anchor-doc-text" type="text" placeholder="Voir la section" oninput="snippetUpdatePreview()"
-              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Texte du lien</label
+            >
+            <input
+              id="snip-anchor-doc-text"
+              type="text"
+              placeholder="Voir la section"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
           <div class="space-y-1.5">
-            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Ancre <span class="font-normal text-gray-400">(sans #, ex&nbsp;: mon-titre)</span></label>
-            <input id="snip-anchor-doc-id" type="text" placeholder="mon-titre" oninput="snippetUpdatePreview()"
-              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Ancre
+              <span class="font-normal text-gray-400"
+                >(sans #, ex&nbsp;: mon-titre)</span
+              ></label
+            >
+            <input
+              id="snip-anchor-doc-id"
+              type="text"
+              placeholder="mon-titre"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
         </div>
 
         <!-- Panel: code-block -->
         <div id="snip-panel-code-block" class="hidden space-y-3">
           <div class="space-y-1.5">
-            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Langage <span class="font-normal text-gray-400">(ex&nbsp;: javascript, python, bash…)</span></label>
-            <input id="snip-code-lang" type="text" placeholder="javascript" oninput="snippetUpdatePreview()"
-              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Langage
+              <span class="font-normal text-gray-400"
+                >(ex&nbsp;: javascript, python, bash…)</span
+              ></label
+            >
+            <input
+              id="snip-code-lang"
+              type="text"
+              placeholder="javascript"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
         </div>
 
         <!-- Panel: image -->
         <div id="snip-panel-image" class="hidden space-y-3">
           <div class="space-y-1.5">
-            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Texte alternatif</label>
-            <input id="snip-image-alt" type="text" placeholder="Description de l'image" oninput="snippetUpdatePreview()"
-              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Texte alternatif</label
+            >
+            <input
+              id="snip-image-alt"
+              type="text"
+              placeholder="Description de l'image"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
           <div class="space-y-1.5">
-            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">URL de l'image</label>
-            <input id="snip-image-url" type="text" placeholder="./images/mon-image.png" oninput="snippetUpdatePreview()"
-              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >URL de l'image</label
+            >
+            <input
+              id="snip-image-url"
+              type="text"
+              placeholder="./images/mon-image.png"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
         </div>
 
@@ -695,16 +956,48 @@
         <div id="snip-panel-table" class="hidden space-y-3">
           <div class="flex items-center gap-5">
             <div class="flex items-center gap-2">
-              <span class="text-xs text-gray-500 dark:text-gray-400">Lignes</span>
-              <button onclick="tableChangeRows(-1)" class="text-xs px-2 py-0.5 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">−</button>
-              <span id="snip-table-rows" class="text-xs font-mono w-4 text-center">3</span>
-              <button onclick="tableChangeRows(1)" class="text-xs px-2 py-0.5 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">+</button>
+              <span class="text-xs text-gray-500 dark:text-gray-400"
+                >Lignes</span
+              >
+              <button
+                onclick="tableChangeRows(-1)"
+                class="text-xs px-2 py-0.5 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                −
+              </button>
+              <span
+                id="snip-table-rows"
+                class="text-xs font-mono w-4 text-center"
+                >3</span
+              >
+              <button
+                onclick="tableChangeRows(1)"
+                class="text-xs px-2 py-0.5 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                +
+              </button>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-xs text-gray-500 dark:text-gray-400">Colonnes</span>
-              <button onclick="tableChangeCols(-1)" class="text-xs px-2 py-0.5 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">−</button>
-              <span id="snip-table-cols" class="text-xs font-mono w-4 text-center">3</span>
-              <button onclick="tableChangeCols(1)" class="text-xs px-2 py-0.5 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">+</button>
+              <span class="text-xs text-gray-500 dark:text-gray-400"
+                >Colonnes</span
+              >
+              <button
+                onclick="tableChangeCols(-1)"
+                class="text-xs px-2 py-0.5 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                −
+              </button>
+              <span
+                id="snip-table-cols"
+                class="text-xs font-mono w-4 text-center"
+                >3</span
+              >
+              <button
+                onclick="tableChangeCols(1)"
+                class="text-xs px-2 py-0.5 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                +
+              </button>
             </div>
           </div>
           <div id="snip-table-grid" class="overflow-x-auto"></div>
@@ -712,28 +1005,42 @@
 
         <!-- Panel: tree -->
         <div id="snip-panel-tree" class="hidden space-y-2">
-          <p class="text-xs text-gray-400 dark:text-gray-500">← → pour indenter · les noms avec / seront des dossiers</p>
+          <p class="text-xs text-gray-400 dark:text-gray-500">
+            ← → pour indenter · les noms avec / seront des dossiers
+          </p>
           <div id="snip-tree-list" class="space-y-1"></div>
-          <button onclick="treeAddItem()"
-            class="text-xs px-3 py-1.5 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors w-full">
+          <button
+            onclick="treeAddItem()"
+            class="text-xs px-3 py-1.5 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors w-full"
+          >
             + Ajouter un élément
           </button>
         </div>
 
         <!-- Markdown preview -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Aperçu du markdown</label>
-          <pre id="snippet-preview" class="text-xs bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 overflow-x-auto text-gray-700 dark:text-gray-300 whitespace-pre-wrap"></pre>
+          <label
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Aperçu du markdown</label
+          >
+          <pre
+            id="snippet-preview"
+            class="text-xs bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 overflow-x-auto text-gray-700 dark:text-gray-300 whitespace-pre-wrap"
+          ></pre>
         </div>
 
         <!-- Actions -->
         <div class="flex justify-end gap-3 pt-1">
-          <button onclick="closeSnippetsModal()"
-            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+          <button
+            onclick="closeSnippetsModal()"
+            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
             Annuler
           </button>
-          <button onclick="insertSnippet()"
-            class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">
+          <button
+            onclick="insertSnippet()"
+            class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+          >
             Insérer
           </button>
         </div>
@@ -741,26 +1048,48 @@
     </div>
 
     <!-- ── Image paste confirmation modal ── -->
-    <div id="img-paste-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-sm mx-4 p-6 space-y-5">
-        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">🖼️ Coller l'image du presse-papiers ?</h3>
+    <div
+      id="img-paste-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    >
+      <div
+        class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-sm mx-4 p-6 space-y-5"
+      >
+        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+          🖼️ Coller l'image du presse-papiers ?
+        </h3>
         <div class="space-y-1.5">
-          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">
-            Nom du fichier <span class="font-normal text-gray-400">(enregistré dans images/)</span>
+          <label
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+          >
+            Nom du fichier
+            <span class="font-normal text-gray-400"
+              >(enregistré dans images/)</span
+            >
           </label>
           <div class="flex items-center gap-2">
-            <input id="img-paste-name" type="text"
-              class="flex-1 px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            <span id="img-paste-ext" class="text-xs text-gray-400 shrink-0"></span>
+            <input
+              id="img-paste-name"
+              type="text"
+              class="flex-1 px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <span
+              id="img-paste-ext"
+              class="text-xs text-gray-400 shrink-0"
+            ></span>
           </div>
         </div>
         <div class="flex justify-end gap-3 pt-1">
-          <button onclick="imgPasteCancel()"
-            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+          <button
+            onclick="imgPasteCancel()"
+            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
             Annuler
           </button>
-          <button onclick="imgPasteConfirm()"
-            class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">
+          <button
+            onclick="imgPasteConfirm()"
+            class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+          >
             Coller
           </button>
         </div>
@@ -768,10 +1097,24 @@
     </div>
 
     <!-- ── Image lightbox overlay ── -->
-    <div id="img-lightbox" class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center cursor-pointer"
-      onclick="closeLightbox()">
-      <img id="img-lightbox-img" src="" alt="" class="max-w-full max-h-full object-contain select-none" onclick="event.stopPropagation()" />
-      <button onclick="closeLightbox()" class="absolute top-4 right-4 text-white/70 hover:text-white text-2xl leading-none">&times;</button>
+    <div
+      id="img-lightbox"
+      class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center cursor-pointer"
+      onclick="closeLightbox()"
+    >
+      <img
+        id="img-lightbox-img"
+        src=""
+        alt=""
+        class="max-w-full max-h-full object-contain select-none"
+        onclick="event.stopPropagation()"
+      />
+      <button
+        onclick="closeLightbox()"
+        class="absolute top-4 right-4 text-white/70 hover:text-white text-2xl leading-none"
+      >
+        &times;
+      </button>
     </div>
 
     <!-- ── Word Cloud overlay ── -->
@@ -791,10 +1134,15 @@
         </button>
       </div>
       <!-- Search root toolbar -->
-      <div class="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
+      <div
+        class="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0"
+      >
         <!-- Row 1: path + browse + launch -->
         <div class="flex items-center gap-3 px-6 py-3">
-          <label class="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0">Search root</label>
+          <label
+            class="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0"
+            >Search root</label
+          >
           <input
             id="wc-root"
             type="text"
@@ -817,7 +1165,10 @@
         </div>
         <!-- Row 1b: exclude folders -->
         <div class="flex items-start gap-3 px-6 pb-2">
-          <label class="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0 pt-1.5">Exclude</label>
+          <label
+            class="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0 pt-1.5"
+            >Exclude</label
+          >
           <textarea
             id="wc-exclude"
             rows="3"
@@ -834,91 +1185,265 @@
           </button>
         </div>
         <!-- Row 1c: exclude browser (collapsed by default) -->
-        <div id="wc-exclude-browser" class="hidden border-t border-gray-200 dark:border-gray-700">
-          <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-            <button id="wc-excl-browse-up" onclick="wcExclBrowseUp()"
-              class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0">
+        <div
+          id="wc-exclude-browser"
+          class="hidden border-t border-gray-200 dark:border-gray-700"
+        >
+          <div
+            class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"
+          >
+            <button
+              id="wc-excl-browse-up"
+              onclick="wcExclBrowseUp()"
+              class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0"
+            >
               &#8593; Up
             </button>
-            <span id="wc-excl-browse-path" class="font-mono text-xs text-gray-400 dark:text-gray-500 truncate flex-1 text-right"></span>
+            <span
+              id="wc-excl-browse-path"
+              class="font-mono text-xs text-gray-400 dark:text-gray-500 truncate flex-1 text-right"
+            ></span>
           </div>
-          <div id="wc-excl-browse-list" class="divide-y divide-gray-100 dark:divide-gray-800 max-h-52 overflow-y-auto"></div>
+          <div
+            id="wc-excl-browse-list"
+            class="divide-y divide-gray-100 dark:divide-gray-800 max-h-52 overflow-y-auto"
+          ></div>
         </div>
         <!-- Row 2: extension checkboxes -->
         <div class="flex items-center gap-x-4 gap-y-2 px-6 pb-3 flex-wrap">
-          <span class="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0">Extensions</span>
-          <button onclick="wcToggleAllExts()" id="wcToggleAllBtn" class="text-xs text-blue-600 dark:text-blue-400 hover:underline shrink-0">All</button>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="md" checked /> .md</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="mdx" /> .mdx</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="txt" /> .txt</label>
+          <span
+            class="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0"
+            >Extensions</span
+          >
+          <button
+            onclick="wcToggleAllExts()"
+            id="wcToggleAllBtn"
+            class="text-xs text-blue-600 dark:text-blue-400 hover:underline shrink-0"
+          >
+            All
+          </button>
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="md" checked />
+            .md</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="mdx" /> .mdx</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="txt" /> .txt</label
+          >
           <span class="text-gray-200 dark:text-gray-700 text-xs">|</span>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="ts" /> .ts</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="tsx" /> .tsx</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="js" /> .js</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="jsx" /> .jsx</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="mjs" /> .mjs</label>
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="ts" /> .ts</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="tsx" /> .tsx</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="js" /> .js</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="jsx" /> .jsx</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="mjs" /> .mjs</label
+          >
           <span class="text-gray-200 dark:text-gray-700 text-xs">|</span>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="java" /> .java</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="kt" /> .kt</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="py" /> .py</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="go" /> .go</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="rs" /> .rs</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="cs" /> .cs</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="swift" /> .swift</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="rb" /> .rb</label>
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="java" /> .java</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="kt" /> .kt</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="py" /> .py</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="go" /> .go</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="rs" /> .rs</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="cs" /> .cs</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="swift" />
+            .swift</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="rb" /> .rb</label
+          >
           <span class="text-gray-200 dark:text-gray-700 text-xs">|</span>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="prisma" /> .prisma</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="graphql" /> .graphql</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="gql" /> .gql</label>
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="prisma" />
+            .prisma</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="graphql" />
+            .graphql</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="gql" /> .gql</label
+          >
           <span class="text-gray-200 dark:text-gray-700 text-xs">|</span>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="html" /> .html</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="css" /> .css</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="scss" /> .scss</label>
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="html" /> .html</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="css" /> .css</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="scss" /> .scss</label
+          >
           <span class="text-gray-200 dark:text-gray-700 text-xs">|</span>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="yml" /> .yml</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="yaml" /> .yaml</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="json" /> .json</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="xml" /> .xml</label>
-          <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"><input type="checkbox" class="wc-ext" value="toml" /> .toml</label>
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="yml" /> .yml</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="yaml" /> .yaml</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="json" /> .json</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="xml" /> .xml</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="toml" /> .toml</label
+          >
         </div>
         <!-- Row 3: inline folder browser (collapsed by default) -->
-        <div id="wc-browser" class="hidden border-t border-gray-200 dark:border-gray-700">
-          <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-            <button id="wc-browse-up" onclick="wcBrowseUp()"
-              class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0">
+        <div
+          id="wc-browser"
+          class="hidden border-t border-gray-200 dark:border-gray-700"
+        >
+          <div
+            class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"
+          >
+            <button
+              id="wc-browse-up"
+              onclick="wcBrowseUp()"
+              class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0"
+            >
               &#8593; Up
             </button>
-            <span id="wc-browse-path" class="font-mono text-xs text-gray-400 dark:text-gray-500 truncate flex-1 text-right"></span>
+            <span
+              id="wc-browse-path"
+              class="font-mono text-xs text-gray-400 dark:text-gray-500 truncate flex-1 text-right"
+            ></span>
           </div>
-          <div id="wc-browse-list" class="divide-y divide-gray-100 dark:divide-gray-800 max-h-52 overflow-y-auto"></div>
+          <div
+            id="wc-browse-list"
+            class="divide-y divide-gray-100 dark:divide-gray-800 max-h-52 overflow-y-auto"
+          ></div>
         </div>
       </div>
       <div id="wc-body" class="flex-1 overflow-hidden flex">
         <!-- Left sidebar: stats + controls + top-50 words -->
-        <div id="wc-sidebar" class="hidden w-56 shrink-0 border-r border-gray-200 dark:border-gray-800 flex flex-col bg-white dark:bg-gray-900 overflow-hidden">
-          <div id="wc-stats" class="px-3 py-2 text-xs text-gray-500 dark:text-gray-400 space-y-0.5 border-b border-gray-100 dark:border-gray-800"></div>
-          <div class="px-3 py-2 border-b border-gray-100 dark:border-gray-800 flex items-center gap-2">
-            <span class="text-xs text-gray-500 dark:text-gray-400 shrink-0">Min files</span>
-            <input id="wc-min-files" type="number" min="1" max="20" value="1"
-              class="w-12 px-1.5 py-0.5 text-xs rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none" />
-            <button onclick="wcApplyFilter()" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">Apply</button>
+        <div
+          id="wc-sidebar"
+          class="hidden w-56 shrink-0 border-r border-gray-200 dark:border-gray-800 flex flex-col bg-white dark:bg-gray-900 overflow-hidden"
+        >
+          <div
+            id="wc-stats"
+            class="px-3 py-2 text-xs text-gray-500 dark:text-gray-400 space-y-0.5 border-b border-gray-100 dark:border-gray-800"
+          ></div>
+          <div
+            class="px-3 py-2 border-b border-gray-100 dark:border-gray-800 flex items-center gap-2"
+          >
+            <span class="text-xs text-gray-500 dark:text-gray-400 shrink-0"
+              >Min files</span
+            >
+            <input
+              id="wc-min-files"
+              type="number"
+              min="1"
+              max="20"
+              value="1"
+              class="w-12 px-1.5 py-0.5 text-xs rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none"
+            />
+            <button
+              onclick="wcApplyFilter()"
+              class="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              Apply
+            </button>
           </div>
-          <p class="px-3 pt-2 pb-1 text-xs font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-wider">Top words</p>
+          <p
+            class="px-3 pt-2 pb-1 text-xs font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-wider"
+          >
+            Top words
+          </p>
           <div id="wc-top-list" class="flex-1 overflow-y-auto"></div>
         </div>
         <!-- Canvas / status area -->
         <div id="wc-canvas-wrap" class="flex-1 relative overflow-hidden">
-          <p id="wc-status" class="absolute inset-0 flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm animate-pulse"></p>
-          <canvas id="wc-canvas" class="hidden" style="position:absolute;inset:0"></canvas>
+          <p
+            id="wc-status"
+            class="absolute inset-0 flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm animate-pulse"
+          ></p>
+          <canvas
+            id="wc-canvas"
+            class="hidden"
+            style="position: absolute; inset: 0"
+          ></canvas>
         </div>
         <!-- Right detail panel: shown on word click -->
-        <div id="wc-detail" class="hidden w-80 shrink-0 border-l border-gray-200 dark:border-gray-800 flex flex-col bg-white dark:bg-gray-900 overflow-hidden">
-          <div class="px-3 py-2 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
-            <span id="wc-detail-word" class="font-bold text-sm text-gray-900 dark:text-gray-100"></span>
-            <button onclick="wcCloseDetail()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xs leading-none">✕</button>
+        <div
+          id="wc-detail"
+          class="hidden w-80 shrink-0 border-l border-gray-200 dark:border-gray-800 flex flex-col bg-white dark:bg-gray-900 overflow-hidden"
+        >
+          <div
+            class="px-3 py-2 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between"
+          >
+            <span
+              id="wc-detail-word"
+              class="font-bold text-sm text-gray-900 dark:text-gray-100"
+            ></span>
+            <button
+              onclick="wcCloseDetail()"
+              class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xs leading-none"
+            >
+              ✕
+            </button>
           </div>
-          <p class="px-3 pt-2 pb-1 text-xs font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-wider">Found in</p>
-          <div id="wc-detail-files" class="flex-1 overflow-y-auto px-3 py-1 space-y-1 text-xs"></div>
+          <p
+            class="px-3 pt-2 pb-1 text-xs font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-wider"
+          >
+            Found in
+          </p>
+          <div
+            id="wc-detail-files"
+            class="flex-1 overflow-y-auto px-3 py-1 space-y-1 text-xs"
+          ></div>
         </div>
       </div>
     </div>
@@ -1024,19 +1549,25 @@
         const root = { categories: {}, children: {} };
         for (const doc of docs) {
           let node = root;
-          for (const seg of (doc.folder || [])) {
-            if (!node.children[seg]) node.children[seg] = { categories: {}, children: {} };
+          for (const seg of doc.folder || []) {
+            if (!node.children[seg])
+              node.children[seg] = { categories: {}, children: {} };
             node = node.children[seg];
           }
-          if (!node.categories[doc.category]) node.categories[doc.category] = [];
+          if (!node.categories[doc.category])
+            node.categories[doc.category] = [];
           node.categories[doc.category].push(doc);
         }
         return root;
       }
 
       function countTreeDocs(node) {
-        let n = Object.values(node.categories).reduce((s, arr) => s + arr.length, 0);
-        for (const child of Object.values(node.children)) n += countTreeDocs(child);
+        let n = Object.values(node.categories).reduce(
+          (s, arr) => s + arr.length,
+          0,
+        );
+        for (const child of Object.values(node.children))
+          n += countTreeDocs(child);
         return n;
       }
 
@@ -1047,7 +1578,9 @@
         // Helper to render one category group
         const renderCat = (cat) => {
           const catPathKey = [...folderPath, cat].join("|");
-          const catNodeId = "cat-" + [...folderPath, cat].map((s) => s.replace(/\W/g, "-")).join("-");
+          const catNodeId =
+            "cat-" +
+            [...folderPath, cat].map((s) => s.replace(/\W/g, "-")).join("-");
           const isExpanded = expandedCategories.has(catPathKey);
           return `
       <div class="mb-0.5">
@@ -1071,11 +1604,14 @@
         if (node.categories["General"]) html += renderCat("General");
 
         // Subfolders (sorted alphabetically — numeric prefix like "1_" sorts naturally)
-        const childKeys = Object.keys(node.children).sort((a, b) => a.localeCompare(b));
+        const childKeys = Object.keys(node.children).sort((a, b) =>
+          a.localeCompare(b),
+        );
         for (const key of childKeys) {
           const childPath = [...folderPath, key];
           const pathKey = childPath.join("|");
-          const nodeId = "folder-" + childPath.map((s) => s.replace(/\W/g, "-")).join("-");
+          const nodeId =
+            "folder-" + childPath.map((s) => s.replace(/\W/g, "-")).join("-");
           const isExpanded = expandedFolders.has(pathKey);
           const docCount = countTreeDocs(node.children[key]);
           html += `
@@ -1097,7 +1633,9 @@
         }
 
         // Non-General category groups (sorted alphabetically)
-        const otherCats = Object.keys(node.categories).filter((c) => c !== "General").sort((a, b) => a.localeCompare(b));
+        const otherCats = Object.keys(node.categories)
+          .filter((c) => c !== "General")
+          .sort((a, b) => a.localeCompare(b));
         for (const cat of otherCats) html += renderCat(cat);
 
         return html;
@@ -1118,7 +1656,8 @@
 
       function toggleCategory(key) {
         const parts = key.split("|");
-        const catNodeId = "cat-" + parts.map((p) => p.replace(/\W/g, "-")).join("-");
+        const catNodeId =
+          "cat-" + parts.map((p) => p.replace(/\W/g, "-")).join("-");
         const el = document.getElementById(catNodeId);
         const arrow = document.getElementById("arrow-" + catNodeId);
         if (!el) return;
@@ -1132,7 +1671,8 @@
 
       function toggleFolder(pathKey) {
         const parts = pathKey.split("|");
-        const nodeId = "folder-" + parts.map((p) => p.replace(/\W/g, "-")).join("-");
+        const nodeId =
+          "folder-" + parts.map((p) => p.replace(/\W/g, "-")).join("-");
         const el = document.getElementById(nodeId);
         const arrow = document.getElementById("arrow-" + nodeId);
         if (!el) return;
@@ -1337,14 +1877,16 @@
         const editor = document.getElementById("doc-editor");
         _imgPasteCursorStart = editor.selectionStart;
         _imgPasteCursorEnd = editor.selectionEnd;
-        _imgPasteExt = imageItem.type.split("/")[1].replace("jpeg", "jpg") || "png";
+        _imgPasteExt =
+          imageItem.type.split("/")[1].replace("jpeg", "jpg") || "png";
         _imgPasteBlob = imageItem.getAsFile();
         if (!_imgPasteBlob) return;
 
         // Propose a default name: timestamp in ms
         const defaultName = Date.now().toString();
         document.getElementById("img-paste-name").value = defaultName;
-        document.getElementById("img-paste-ext").textContent = "." + _imgPasteExt;
+        document.getElementById("img-paste-ext").textContent =
+          "." + _imgPasteExt;
         document.getElementById("img-paste-modal").classList.remove("hidden");
 
         // Focus the name input and select all for quick renaming
@@ -1359,7 +1901,9 @@
       }
 
       async function imgPasteConfirm() {
-        const name = document.getElementById("img-paste-name").value.trim() || Date.now().toString();
+        const name =
+          document.getElementById("img-paste-name").value.trim() ||
+          Date.now().toString();
         document.getElementById("img-paste-modal").classList.add("hidden");
 
         const editor = document.getElementById("doc-editor");
@@ -1389,7 +1933,8 @@
           const before = editor.value.slice(0, _imgPasteCursorStart);
           const after = editor.value.slice(_imgPasteCursorEnd);
           editor.value = before + mdImage + after;
-          editor.selectionStart = editor.selectionEnd = _imgPasteCursorStart + mdImage.length;
+          editor.selectionStart = editor.selectionEnd =
+            _imgPasteCursorStart + mdImage.length;
           editor.focus();
           msgEl.textContent = "";
         } catch (err) {
@@ -1438,8 +1983,15 @@
       let _snippetSelStart = 0;
       let _snippetSelEnd = 0;
       const _SNIPPET_PANELS = [
-        "collapsible", "link", "doc-link", "anchor-link",
-        "anchor-doc-link", "code-block", "image", "table", "tree",
+        "collapsible",
+        "link",
+        "doc-link",
+        "anchor-link",
+        "anchor-doc-link",
+        "code-block",
+        "image",
+        "table",
+        "tree",
       ];
 
       function openSnippetsModal() {
@@ -1454,7 +2006,10 @@
         document.getElementById("snip-anchor-doc-select").innerHTML = docOpts;
 
         const msgEl = document.getElementById("snippet-detect-msg");
-        const selectedText = editor.value.slice(_snippetSelStart, _snippetSelEnd);
+        const selectedText = editor.value.slice(
+          _snippetSelStart,
+          _snippetSelEnd,
+        );
 
         if (selectedText) {
           const detected = detectSnippetType(selectedText);
@@ -1463,21 +2018,30 @@
             snippetTypeChanged();
             parseAndFillSnippet(selectedText, detected);
             const labels = {
-              "collapsible": "Bloc repliable", "link": "Lien",
-              "doc-link": "Lien vers un document", "anchor-link": "Lien vers une ancre",
+              collapsible: "Bloc repliable",
+              link: "Lien",
+              "doc-link": "Lien vers un document",
+              "anchor-link": "Lien vers une ancre",
               "anchor-doc-link": "Lien vers une ancre d'un autre document",
-              "ordered-list": "Liste numérotée", "unordered-list": "Liste à puces",
-              "code-block": "Bloc de code", "blockquote": "Citation",
-              "separator": "Séparateur", "image": "Image",
-              "table": "Tableau", "tree": "Arborescence",
+              "ordered-list": "Liste numérotée",
+              "unordered-list": "Liste à puces",
+              "code-block": "Bloc de code",
+              blockquote: "Citation",
+              separator: "Séparateur",
+              image: "Image",
+              table: "Tableau",
+              tree: "Arborescence",
             };
             msgEl.textContent = `✓ Type détecté : ${labels[detected] ?? detected}. Les champs ont été pré-remplis — modifiez puis cliquez sur Insérer pour remplacer la sélection.`;
-            msgEl.className = "rounded-lg px-3 py-2 text-xs bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800";
+            msgEl.className =
+              "rounded-lg px-3 py-2 text-xs bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800";
           } else {
             document.getElementById("snippet-type").value = "collapsible";
             snippetTypeChanged();
-            msgEl.textContent = "⚠ Le texte sélectionné ne correspond à aucun type de snippet reconnu. Choisissez un type ci-dessous — le snippet remplacera quand même la sélection.";
-            msgEl.className = "rounded-lg px-3 py-2 text-xs bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800";
+            msgEl.textContent =
+              "⚠ Le texte sélectionné ne correspond à aucun type de snippet reconnu. Choisissez un type ci-dessous — le snippet remplacera quand même la sélection.";
+            msgEl.className =
+              "rounded-lg px-3 py-2 text-xs bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800";
           }
           msgEl.classList.remove("hidden");
         } else {
@@ -1515,7 +2079,8 @@
           }
           case "link": {
             const text =
-              document.getElementById("snip-link-text").value || "Texte du lien";
+              document.getElementById("snip-link-text").value ||
+              "Texte du lien";
             const url =
               document.getElementById("snip-link-url").value || "https://...";
             return `[${text}](${url})`;
@@ -1544,7 +2109,8 @@
               document.getElementById("snip-anchor-doc-text").value ||
               "Voir la section";
             const anchor =
-              document.getElementById("snip-anchor-doc-id").value || "mon-titre";
+              document.getElementById("snip-anchor-doc-id").value ||
+              "mon-titre";
             return `[${text}](?doc=${encodeURIComponent(docId)}#${anchor})`;
           }
           case "ordered-list":
@@ -1568,8 +2134,7 @@
               "    - Sous-sous-élément 3.1.1",
             ].join("\n");
           case "code-block": {
-            const lang =
-              document.getElementById("snip-code-lang").value || "";
+            const lang = document.getElementById("snip-code-lang").value || "";
             return `\`\`\`${lang}\n// code ici\n\`\`\``;
           }
           case "blockquote":
@@ -1628,7 +2193,8 @@
         document.getElementById("snip-table-rows").textContent = rows;
         document.getElementById("snip-table-cols").textContent = cols;
 
-        const inputBase = "px-2 py-1 text-xs rounded border focus:outline-none focus:ring-1 focus:ring-blue-500 w-full min-w-[80px]";
+        const inputBase =
+          "px-2 py-1 text-xs rounded border focus:outline-none focus:ring-1 focus:ring-blue-500 w-full min-w-[80px]";
         const hdrCls = `${inputBase} font-semibold border-blue-300 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-gray-900 dark:text-gray-100`;
         const cellCls = `${inputBase} border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100`;
 
@@ -1680,9 +2246,15 @@
           });
         });
         const fmtRow = (row) =>
-          "| " + row.map((cell, c) => cell.padEnd(widths[c])).join(" | ") + " |";
+          "| " +
+          row.map((cell, c) => cell.padEnd(widths[c])).join(" | ") +
+          " |";
         const sep = "| " + widths.map((w) => "-".repeat(w)).join(" | ") + " |";
-        return [fmtRow(_tableData[0]), sep, ..._tableData.slice(1).map(fmtRow)].join("\n");
+        return [
+          fmtRow(_tableData[0]),
+          sep,
+          ..._tableData.slice(1).map(fmtRow),
+        ].join("\n");
       }
 
       // ── Snippet: Tree ──────────────────────────────────────────
@@ -1697,7 +2269,8 @@
       }
 
       function treeRenderList() {
-        const btnCls = "text-xs px-1.5 py-1 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors";
+        const btnCls =
+          "text-xs px-1.5 py-1 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors";
         document.getElementById("snip-tree-list").innerHTML = _treeItems
           .map(
             (item, i) => `
@@ -1708,7 +2281,7 @@
               <input type="text" value="${esc(item.name)}" oninput="treeUpdate(${i}, this.value)"
                 class="flex-1 px-2 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono" />
               <button onclick="treeRemoveItem(${i})" class="${btnCls}" title="Supprimer">×</button>
-            </div>`
+            </div>`,
           )
           .join("");
         snippetUpdatePreview();
@@ -1725,7 +2298,9 @@
       }
 
       function treeAddItem() {
-        const lastDepth = _treeItems.length ? _treeItems[_treeItems.length - 1].depth : 0;
+        const lastDepth = _treeItems.length
+          ? _treeItems[_treeItems.length - 1].depth
+          : 0;
         _treeItems.push({ name: "", depth: lastDepth });
         treeRenderList();
       }
@@ -1740,7 +2315,10 @@
         const lines = [];
         for (let i = 0; i < _treeItems.length; i++) {
           const { name, depth } = _treeItems[i];
-          if (depth === 0) { lines.push(name); continue; }
+          if (depth === 0) {
+            lines.push(name);
+            continue;
+          }
 
           // Prefix: for each ancestor level a (0..depth-2),
           // show │ if there's a sibling at depth a+1 after this item
@@ -1760,7 +2338,10 @@
           let isLast = true;
           for (let j = i + 1; j < _treeItems.length; j++) {
             if (_treeItems[j].depth < depth) break;
-            if (_treeItems[j].depth === depth) { isLast = false; break; }
+            if (_treeItems[j].depth === depth) {
+              isLast = false;
+              break;
+            }
           }
           lines.push(prefix + (isLast ? "└── " : "├── ") + name);
         }
@@ -1772,18 +2353,18 @@
         const t = text.trim();
         // anchor-doc-link before doc-link and anchor-link
         if (/^\[.*?\]\(\?doc=.+#.+\)$/.test(t)) return "anchor-doc-link";
-        if (/^\[.*?\]\(\?doc=.+\)$/.test(t))    return "doc-link";
-        if (/^\[.*?\]\(#.+\)$/.test(t))          return "anchor-link";
-        if (/^!\[.*?\]\(.*?\)$/.test(t))         return "image";
-        if (/^\[.*?\]\(.*?\)$/.test(t))          return "link";
-        if (/^<details[\s>]/i.test(t))            return "collapsible";
+        if (/^\[.*?\]\(\?doc=.+\)$/.test(t)) return "doc-link";
+        if (/^\[.*?\]\(#.+\)$/.test(t)) return "anchor-link";
+        if (/^!\[.*?\]\(.*?\)$/.test(t)) return "image";
+        if (/^\[.*?\]\(.*?\)$/.test(t)) return "link";
+        if (/^<details[\s>]/i.test(t)) return "collapsible";
         if (/^```text\n/.test(t) && /[├└│]/.test(t)) return "tree";
-        if (/^```/.test(t))                       return "code-block";
+        if (/^```/.test(t)) return "code-block";
         if (/^(\| *.*? *\|)+\n(\| *-+.*\|)+/.test(t)) return "table";
-        if (/^> /.test(t))                        return "blockquote";
-        if (/^(---|\n---\n)$/.test(t))            return "separator";
-        if (/^1\. /.test(t))                      return "ordered-list";
-        if (/^- /.test(t))                        return "unordered-list";
+        if (/^> /.test(t)) return "blockquote";
+        if (/^(---|\n---\n)$/.test(t)) return "separator";
+        if (/^1\. /.test(t)) return "ordered-list";
+        if (/^- /.test(t)) return "unordered-list";
         return null;
       }
 
@@ -1792,7 +2373,9 @@
         switch (type) {
           case "collapsible": {
             const m = t.match(/<summary>([\s\S]*?)<\/summary>/i);
-            if (m) document.getElementById("snip-collapsible-summary").value = m[1].trim();
+            if (m)
+              document.getElementById("snip-collapsible-summary").value =
+                m[1].trim();
             break;
           }
           case "link": {
@@ -1809,10 +2392,14 @@
               const docId = decodeURIComponent(m[1] === "" ? m[2] : m[2]);
               const sel = document.getElementById("snip-doc-select");
               for (const opt of sel.options) {
-                if (opt.value === decodeURIComponent(m[2])) { sel.value = opt.value; break; }
+                if (opt.value === decodeURIComponent(m[2])) {
+                  sel.value = opt.value;
+                  break;
+                }
               }
               const autoTitle = sel.options[sel.selectedIndex]?.text ?? "";
-              document.getElementById("snip-doc-link-text").value = m[1] === autoTitle ? "" : m[1];
+              document.getElementById("snip-doc-link-text").value =
+                m[1] === autoTitle ? "" : m[1];
             }
             break;
           }
@@ -1825,11 +2412,16 @@
             break;
           }
           case "anchor-doc-link": {
-            const m = t.match(/^\[([\s\S]*?)\]\(\?doc=([\s\S]*?)#([\s\S]*?)\)$/);
+            const m = t.match(
+              /^\[([\s\S]*?)\]\(\?doc=([\s\S]*?)#([\s\S]*?)\)$/,
+            );
             if (m) {
               const sel = document.getElementById("snip-anchor-doc-select");
               for (const opt of sel.options) {
-                if (opt.value === decodeURIComponent(m[2])) { sel.value = opt.value; break; }
+                if (opt.value === decodeURIComponent(m[2])) {
+                  sel.value = opt.value;
+                  break;
+                }
               }
               document.getElementById("snip-anchor-doc-text").value = m[1];
               document.getElementById("snip-anchor-doc-id").value = m[3];
@@ -1850,13 +2442,22 @@
             break;
           }
           case "table": {
-            const allLines = t.split("\n").filter((l) => /^\|.*\|$/.test(l.trim()));
-            const dataLines = allLines.filter((l) => !/^\| *[-: ][-| :]*\|/.test(l));
+            const allLines = t
+              .split("\n")
+              .filter((l) => /^\|.*\|$/.test(l.trim()));
+            const dataLines = allLines.filter(
+              (l) => !/^\| *[-: ][-| :]*\|/.test(l),
+            );
             _tableData = dataLines.map((line) =>
-              line.split("|").slice(1, -1).map((c) => c.trim())
+              line
+                .split("|")
+                .slice(1, -1)
+                .map((c) => c.trim()),
             );
             const maxCols = Math.max(..._tableData.map((r) => r.length));
-            _tableData.forEach((row) => { while (row.length < maxCols) row.push(""); });
+            _tableData.forEach((row) => {
+              while (row.length < maxCols) row.push("");
+            });
             tableRenderGrid();
             break;
           }
@@ -1890,14 +2491,21 @@
         window.print();
       }
 
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("hidden");
+      }
+
       async function exportAllPDF() {
-        const btn = document.getElementById('export-all-pdf-btn');
+        const btn = document.getElementById("export-all-pdf-btn");
         const originalHtml = btn.innerHTML;
-        btn.innerHTML = '⏳';
+        btn.innerHTML = "⏳";
         btn.disabled = true;
 
         try {
-          const docs = (allDocs && allDocs.length) ? allDocs : await fetch('/api/documents').then(r => r.json());
+          const docs =
+            allDocs && allDocs.length
+              ? allDocs
+              : await fetch("/api/documents").then((r) => r.json());
 
           // Batch-fetch full HTML content (5 at a time), keyed by id
           const htmlById = {};
@@ -1905,11 +2513,19 @@
           for (let i = 0; i < docs.length; i += batchSize) {
             const batch = docs.slice(i, i + batchSize);
             const results = await Promise.all(
-              batch.map(d => fetch('/api/documents/' + d.id).then(r => r.ok ? r.json() : null).catch(() => null))
+              batch.map((d) =>
+                fetch("/api/documents/" + d.id)
+                  .then((r) => (r.ok ? r.json() : null))
+                  .catch(() => null),
+              ),
             );
-            for (const r of results) { if (r) htmlById[r.id ?? docs[i]?.id] = r; }
+            for (const r of results) {
+              if (r) htmlById[r.id ?? docs[i]?.id] = r;
+            }
             // re-key by id using the batch metadata
-            batch.forEach((d, j) => { if (results[j]) htmlById[d.id] = results[j]; });
+            batch.forEach((d, j) => {
+              if (results[j]) htmlById[d.id] = results[j];
+            });
           }
 
           // Build folder tree identical to sidebar's buildFolderTree
@@ -1917,11 +2533,13 @@
             const root = { categories: {}, children: {} };
             for (const doc of list) {
               let node = root;
-              for (const seg of (doc.folder || [])) {
-                if (!node.children[seg]) node.children[seg] = { categories: {}, children: {} };
+              for (const seg of doc.folder || []) {
+                if (!node.children[seg])
+                  node.children[seg] = { categories: {}, children: {} };
                 node = node.children[seg];
               }
-              if (!node.categories[doc.category]) node.categories[doc.category] = [];
+              if (!node.categories[doc.category])
+                node.categories[doc.category] = [];
               node.categories[doc.category].push(doc);
             }
             return root;
@@ -1930,40 +2548,54 @@
           // Traverse in sidebar order: General → subfolders (alpha) → other cats (alpha)
           function orderedDocs(node) {
             const result = [];
-            if (node.categories['General']) result.push(...node.categories['General']);
-            const childKeys = Object.keys(node.children).sort((a, b) => a.localeCompare(b));
-            for (const key of childKeys) result.push(...orderedDocs(node.children[key]));
-            const otherCats = Object.keys(node.categories).filter(c => c !== 'General').sort((a, b) => a.localeCompare(b));
+            if (node.categories["General"])
+              result.push(...node.categories["General"]);
+            const childKeys = Object.keys(node.children).sort((a, b) =>
+              a.localeCompare(b),
+            );
+            for (const key of childKeys)
+              result.push(...orderedDocs(node.children[key]));
+            const otherCats = Object.keys(node.categories)
+              .filter((c) => c !== "General")
+              .sort((a, b) => a.localeCompare(b));
             for (const cat of otherCats) result.push(...node.categories[cat]);
             return result;
           }
 
           // Strip leading numeric prefix, same as folderLabel()
           function fLabel(seg) {
-            return seg.replace(/^\d+_/, '').replace(/[_-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            return seg
+              .replace(/^\d+_/, "")
+              .replace(/[_-]+/g, " ")
+              .replace(/\b\w/g, (c) => c.toUpperCase());
           }
 
           // Build TOC HTML mirroring sidebar structure
           function buildTocNode(node, depth) {
-            let html = '';
+            let html = "";
             const indent = depth * 1.25;
             const renderCatItems = (cat, catDocs) => {
-              const catLabel = depth === 0 && cat === 'General' ? 'General' : cat;
-              html += `<li style="margin-left:${indent}rem;margin-top:${depth === 0 ? '0.75' : '0.4'}rem;">`;
+              const catLabel =
+                depth === 0 && cat === "General" ? "General" : cat;
+              html += `<li style="margin-left:${indent}rem;margin-top:${depth === 0 ? "0.75" : "0.4"}rem;">`;
               html += `<span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6b7280;">${catLabel}</span>`;
               html += `<ul style="margin:0.2rem 0 0 0;padding:0;list-style:none;">`;
               for (const doc of catDocs) {
                 html += `<li style="margin-left:${indent + 0.75}rem;padding:0.15rem 0;">`;
                 html += `<a href="#doc-${doc.id}" style="color:#1d4ed8;text-decoration:none;font-size:0.875rem;">${esc(doc.title)}</a>`;
-                if (doc.formattedDate) html += `<span style="color:#9ca3af;font-size:0.7rem;margin-left:0.5rem;">${esc(doc.formattedDate)}</span>`;
+                if (doc.formattedDate)
+                  html += `<span style="color:#9ca3af;font-size:0.7rem;margin-left:0.5rem;">${esc(doc.formattedDate)}</span>`;
                 html += `</li>`;
               }
               html += `</ul></li>`;
             };
 
-            if (node.categories['General']) renderCatItems('General', node.categories['General']);
+            if (node.categories["General"])
+              renderCatItems("General", node.categories["General"]);
 
-            const childKeys = Object.keys(node.children).sort((a, b) => a.localeCompare(b));
+            const childKeys = Object.keys(node.children).sort((a, b) =>
+              a.localeCompare(b),
+            );
             for (const key of childKeys) {
               html += `<li style="margin-left:${indent}rem;margin-top:0.75rem;">`;
               html += `<span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#7c3aed;">&#128193; ${fLabel(key)}</span>`;
@@ -1972,18 +2604,24 @@
               html += `</ul></li>`;
             }
 
-            const otherCats = Object.keys(node.categories).filter(c => c !== 'General').sort((a, b) => a.localeCompare(b));
-            for (const cat of otherCats) renderCatItems(cat, node.categories[cat]);
+            const otherCats = Object.keys(node.categories)
+              .filter((c) => c !== "General")
+              .sort((a, b) => a.localeCompare(b));
+            for (const cat of otherCats)
+              renderCatItems(cat, node.categories[cat]);
 
             return html;
           }
 
           // Rewrite ?doc=X links to internal anchors #doc-X
           function rewriteDocLinks(html) {
-            return html.replace(/href="[^"]*\?doc=([^"&#]+)(?:#[^"]*)?"/g, (match, docId) => `href="#doc-${docId}"`);
+            return html.replace(
+              /href="[^"]*\?doc=([^"&#]+)(?:#[^"]*)?"/g,
+              (match, docId) => `href="#doc-${docId}"`,
+            );
           }
 
-          const appTitle = esc(document.title || 'Living Documentation');
+          const appTitle = esc(document.title || "Living Documentation");
           const tree = buildTree(docs);
           const ordered = orderedDocs(tree);
 
@@ -1995,14 +2633,20 @@
   </ul>
 </div>`;
 
-          const sectionsHtml = ordered.map((doc, idx) => {
-            const full = htmlById[doc.id];
-            if (!full) return '';
-            const html = rewriteDocLinks(full.html);
-            const folderPath = Array.isArray(doc.folder) ? doc.folder.map(f => esc(fLabel(f))).join(' › ') + ' › ' : '';
-            const meta = `${folderPath}${esc(doc.category)}${doc.formattedDate ? ' · ' + esc(doc.formattedDate) : ''}`;
-            const pageBreak = idx > 0 ? '<div style="page-break-before:always;height:0;"></div>' : '';
-            return `${pageBreak}
+          const sectionsHtml = ordered
+            .map((doc, idx) => {
+              const full = htmlById[doc.id];
+              if (!full) return "";
+              const html = rewriteDocLinks(full.html);
+              const folderPath = Array.isArray(doc.folder)
+                ? doc.folder.map((f) => esc(fLabel(f))).join(" › ") + " › "
+                : "";
+              const meta = `${folderPath}${esc(doc.category)}${doc.formattedDate ? " · " + esc(doc.formattedDate) : ""}`;
+              const pageBreak =
+                idx > 0
+                  ? '<div style="page-break-before:always;height:0;"></div>'
+                  : "";
+              return `${pageBreak}
 <section id="doc-${doc.id}" style="padding:2rem 0;">
   <div style="border-bottom:2px solid #e5e7eb;padding-bottom:0.75rem;margin-bottom:1.5rem;">
     <div style="font-size:0.7rem;color:#6b7280;margin-bottom:0.25rem;">${meta}</div>
@@ -2010,7 +2654,8 @@
   </div>
   <div class="prose max-w-none">${html}</div>
 </section>`;
-          }).join('\n');
+            })
+            .join("\n");
 
           const fullHtml = `<!DOCTYPE html>
 <html>
@@ -2043,15 +2688,15 @@
 </body>
 </html>`;
 
-          const w = window.open('', '_blank');
+          const w = window.open("", "_blank");
           if (!w) {
-            alert('Veuillez autoriser les popups pour exporter en PDF.');
+            alert("Veuillez autoriser les popups pour exporter en PDF.");
             return;
           }
           w.document.write(fullHtml);
           w.document.close();
         } catch (err) {
-          alert('Export échoué\u00a0: ' + err.message);
+          alert("Export échoué\u00a0: " + err.message);
         } finally {
           btn.innerHTML = originalHtml;
           btn.disabled = false;
@@ -2059,12 +2704,15 @@
       }
 
       // ── Image lightbox (Shift+Click) ────────────────────────────
-      document.getElementById('doc-content').addEventListener('click', (e) => {
-        const img = e.target.closest('img');
+      document.getElementById("doc-content").addEventListener("click", (e) => {
+        const img = e.target.closest("img");
         if (!img) return;
         if (e.shiftKey) {
-          const link = e.target.closest('a');
-          if (link) { e.preventDefault(); window.location.href = link.href; }
+          const link = e.target.closest("a");
+          if (link) {
+            e.preventDefault();
+            window.location.href = link.href;
+          }
           return;
         }
         e.preventDefault();
@@ -2073,36 +2721,41 @@
       });
 
       function openLightbox(src, alt) {
-        const lb = document.getElementById('img-lightbox');
-        document.getElementById('img-lightbox-img').src = src;
-        document.getElementById('img-lightbox-img').alt = alt || '';
-        lb.classList.remove('hidden');
+        const lb = document.getElementById("img-lightbox");
+        document.getElementById("img-lightbox-img").src = src;
+        document.getElementById("img-lightbox-img").alt = alt || "";
+        lb.classList.remove("hidden");
       }
 
       function closeLightbox() {
-        const lb = document.getElementById('img-lightbox');
-        lb.classList.add('hidden');
-        document.getElementById('img-lightbox-img').src = '';
+        const lb = document.getElementById("img-lightbox");
+        lb.classList.add("hidden");
+        document.getElementById("img-lightbox-img").src = "";
       }
 
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !document.getElementById('img-lightbox').classList.contains('hidden')) {
+      document.addEventListener("keydown", (e) => {
+        if (
+          e.key === "Escape" &&
+          !document.getElementById("img-lightbox").classList.contains("hidden")
+        ) {
           closeLightbox();
         }
       });
 
-      document.getElementById("img-paste-name").addEventListener("keydown", (e) => {
-        if (e.key === "Enter") imgPasteConfirm();
-        if (e.key === "Escape") imgPasteCancel();
-      });
+      document
+        .getElementById("img-paste-name")
+        .addEventListener("keydown", (e) => {
+          if (e.key === "Enter") imgPasteConfirm();
+          if (e.key === "Escape") imgPasteCancel();
+        });
 
       function toggleFullWidth() {
-        const article = document.getElementById('doc-view');
-        const btn     = document.getElementById('full-width-btn');
-        const isWide  = article.classList.toggle('max-w-none');
-        article.classList.toggle('max-w-4xl', !isWide);
-        article.classList.toggle('mx-auto',   !isWide);
-        btn.textContent = isWide ? '⇤ Réduire' : '↔ Pleine page';
+        const article = document.getElementById("doc-view");
+        const btn = document.getElementById("full-width-btn");
+        const isWide = article.classList.toggle("max-w-none");
+        article.classList.toggle("max-w-4xl", !isWide);
+        article.classList.toggle("mx-auto", !isWide);
+        btn.textContent = isWide ? "⇤ Réduire" : "↔ Pleine page";
       }
 
       function copyLink() {
@@ -2120,23 +2773,34 @@
         const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
         const nodes = [];
         while (walker.nextNode()) nodes.push(walker.currentNode);
-        const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
+        const re = new RegExp(
+          `(${q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+          "gi",
+        );
         let idx = 0;
         nodes.forEach((node) => {
           if (!node.textContent.toLowerCase().includes(q.toLowerCase())) return;
           const span = document.createElement("span");
-          span.innerHTML = node.textContent.replace(re, (m) => `<mark id="match-${idx++}">${m}</mark>`);
+          span.innerHTML = node.textContent.replace(
+            re,
+            (m) => `<mark id="match-${idx++}">${m}</mark>`,
+          );
           node.parentNode.replaceChild(span, node);
         });
         // Build snippet list from inserted marks
         const matches = [];
         el.querySelectorAll("mark[id^='match-']").forEach((mark) => {
-          const block = mark.closest("p, li, td, h1, h2, h3, h4, h5, h6, pre") || mark.parentElement;
-          const full  = block.textContent.trim();
-          const pos   = full.toLowerCase().indexOf(q.toLowerCase());
+          const block =
+            mark.closest("p, li, td, h1, h2, h3, h4, h5, h6, pre") ||
+            mark.parentElement;
+          const full = block.textContent.trim();
+          const pos = full.toLowerCase().indexOf(q.toLowerCase());
           const start = Math.max(0, pos - 40);
-          const end   = Math.min(full.length, pos + q.length + 40);
-          const snippet = (start > 0 ? "…" : "") + full.slice(start, end) + (end < full.length ? "…" : "");
+          const end = Math.min(full.length, pos + q.length + 40);
+          const snippet =
+            (start > 0 ? "…" : "") +
+            full.slice(start, end) +
+            (end < full.length ? "…" : "");
           matches.push({ id: mark.id, snippet });
         });
         return matches;
@@ -2146,24 +2810,29 @@
         document.getElementById("search-notice-title").textContent =
           `Showing ${matches.length} match${matches.length === 1 ? "" : "es"} for "${q}"`;
         const list = document.getElementById("search-notice-list");
-        list.innerHTML = matches.map((m, i) =>
-          `<li>
+        list.innerHTML = matches
+          .map(
+            (m, i) =>
+              `<li>
             <button onclick="scrollToMatch('${m.id}')" data-match-id="${m.id}"
               class="w-full text-left px-3 py-1.5 hover:bg-yellow-100 dark:hover:bg-yellow-900/30 transition-colors">
               <span class="text-yellow-600 dark:text-yellow-500 font-mono text-xs mr-2">${i + 1}.</span
               ><span class="text-xs">${esc(m.snippet)}</span>
             </button>
-          </li>`
-        ).join("");
+          </li>`,
+          )
+          .join("");
       }
 
       function scrollToMatch(id) {
-        const mark      = document.getElementById(id);
+        const mark = document.getElementById(id);
         const container = document.getElementById("content-area");
         if (!mark || !container) return;
 
         // Orange on the active mark, yellow on the rest
-        document.querySelectorAll("mark.match-active").forEach((m) => m.classList.remove("match-active"));
+        document
+          .querySelectorAll("mark.match-active")
+          .forEach((m) => m.classList.remove("match-active"));
         mark.classList.add("match-active");
 
         // Highlight active list item
@@ -2172,11 +2841,14 @@
           b.classList.toggle("dark:bg-orange-900/30", b.dataset.matchId === id);
         });
 
-        const stickyHeader  = document.querySelector("#doc-view header");
-        const headerHeight  = stickyHeader ? stickyHeader.getBoundingClientRect().height : 0;
-        const markTop       = mark.getBoundingClientRect().top;
-        const containerTop  = container.getBoundingClientRect().top;
-        const targetOffset  = headerHeight + (container.clientHeight - headerHeight) / 3;
+        const stickyHeader = document.querySelector("#doc-view header");
+        const headerHeight = stickyHeader
+          ? stickyHeader.getBoundingClientRect().height
+          : 0;
+        const markTop = mark.getBoundingClientRect().top;
+        const containerTop = container.getBoundingClientRect().top;
+        const targetOffset =
+          headerHeight + (container.clientHeight - headerHeight) / 3;
         container.scrollTop += markTop - containerTop - targetOffset;
       }
 
@@ -2189,7 +2861,6 @@
           .replace(/'/g, "&#39;");
       }
 
-
       // ── Diagram link modal ────────────────────────────────────
       let _diagrams = [];
 
@@ -2198,18 +2869,33 @@
         // Fetch diagram list
         try {
           _diagrams = await fetch("/api/diagrams").then((r) => r.json());
-        } catch { _diagrams = []; }
+        } catch {
+          _diagrams = [];
+        }
 
         const sel = document.getElementById("diag-select");
         sel.innerHTML = _diagrams.length
-          ? _diagrams.map((d) => `<option value="${esc(d.id)}">${esc(d.title)}</option>`).join("")
+          ? _diagrams
+              .map(
+                (d) => `<option value="${esc(d.id)}">${esc(d.title)}</option>`,
+              )
+              .join("")
           : `<option value="" disabled>No diagrams yet</option>`;
 
         // Pre-fill image name from current doc title
-        const docTitle = document.getElementById("doc-title").textContent.trim();
-        const slug = docTitle.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
-        document.getElementById("diag-img-name").value = slug ? slug + ".png" : "diagram.png";
-        document.getElementById("diag-new-name").value = docTitle ? docTitle + " Diagram" : "";
+        const docTitle = document
+          .getElementById("doc-title")
+          .textContent.trim();
+        const slug = docTitle
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "_")
+          .replace(/^_|_$/g, "");
+        document.getElementById("diag-img-name").value = slug
+          ? slug + ".png"
+          : "diagram.png";
+        document.getElementById("diag-new-name").value = docTitle
+          ? docTitle + " Diagram"
+          : "";
 
         // Default mode
         document.getElementById("diag-mode-existing").checked = true;
@@ -2224,38 +2910,48 @@
 
       function diagModeChanged() {
         const isNew = document.getElementById("diag-mode-new").checked;
-        document.getElementById("diag-existing-section").classList.toggle("hidden", isNew);
-        document.getElementById("diag-new-section").classList.toggle("hidden", !isNew);
+        document
+          .getElementById("diag-existing-section")
+          .classList.toggle("hidden", isNew);
+        document
+          .getElementById("diag-new-section")
+          .classList.toggle("hidden", !isNew);
         diagUpdatePreview();
       }
 
       function diagUpdatePreview() {
-        const isNew   = document.getElementById("diag-mode-new").checked;
-        const imgName = document.getElementById("diag-img-name").value.trim() || "diagram.png";
+        const isNew = document.getElementById("diag-mode-new").checked;
+        const imgName =
+          document.getElementById("diag-img-name").value.trim() ||
+          "diagram.png";
         let diagId, diagLabel;
         if (isNew) {
-          diagId    = "d" + Date.now();
-          diagLabel = document.getElementById("diag-new-name").value.trim() || "Diagram";
+          diagId = "d" + Date.now();
+          diagLabel =
+            document.getElementById("diag-new-name").value.trim() || "Diagram";
         } else {
           const sel = document.getElementById("diag-select");
-          diagId    = sel.value;
+          diagId = sel.value;
           diagLabel = sel.options[sel.selectedIndex]?.text || "Diagram";
         }
         const md = `\n\n[![${diagLabel}](./images/${imgName})](/diagram?id=${diagId})`;
         document.getElementById("diag-preview").textContent = md.trim();
         // store for insertDiagramLink
-        document.getElementById("diag-insert-btn").dataset.diagId    = diagId;
-        document.getElementById("diag-insert-btn").dataset.diagLabel = diagLabel;
-        document.getElementById("diag-insert-btn").dataset.imgName   = imgName;
-        document.getElementById("diag-insert-btn").dataset.isNew     = isNew ? "1" : "0";
+        document.getElementById("diag-insert-btn").dataset.diagId = diagId;
+        document.getElementById("diag-insert-btn").dataset.diagLabel =
+          diagLabel;
+        document.getElementById("diag-insert-btn").dataset.imgName = imgName;
+        document.getElementById("diag-insert-btn").dataset.isNew = isNew
+          ? "1"
+          : "0";
       }
 
       async function insertDiagramLink() {
-        const btn      = document.getElementById("diag-insert-btn");
-        const diagId   = btn.dataset.diagId;
-        const diagLabel= btn.dataset.diagLabel;
-        const imgName  = btn.dataset.imgName;
-        const isNew    = btn.dataset.isNew === "1";
+        const btn = document.getElementById("diag-insert-btn");
+        const diagId = btn.dataset.diagId;
+        const diagLabel = btn.dataset.diagLabel;
+        const imgName = btn.dataset.imgName;
+        const isNew = btn.dataset.isNew === "1";
 
         btn.disabled = true;
         btn.textContent = "Saving…";
@@ -2282,10 +2978,14 @@
           currentDocContent = newContent;
 
           // Re-render the document so the page is up-to-date when the user navigates back
-          const doc = await fetch("/api/documents/" + currentDocId).then((r) => r.json());
+          const doc = await fetch("/api/documents/" + currentDocId).then((r) =>
+            r.json(),
+          );
           const contentEl = document.getElementById("doc-content");
           contentEl.innerHTML = doc.html;
-          contentEl.querySelectorAll("pre code").forEach((b) => hljs.highlightElement(b));
+          contentEl
+            .querySelectorAll("pre code")
+            .forEach((b) => hljs.highlightElement(b));
 
           closeDiagramLinkModal();
           window.location.href = `/diagram?id=${diagId}`;
@@ -2307,7 +3007,8 @@
         try {
           const cfg = await fetch("/api/config").then((r) => r.json());
           _newDocDocsFolder = cfg.docsFolder || "";
-          _newDocPattern = cfg.filenamePattern || "YYYY_MM_DD_HH_mm_[Category]_title";
+          _newDocPattern =
+            cfg.filenamePattern || "YYYY_MM_DD_HH_mm_[Category]_title";
         } catch {
           _newDocDocsFolder = "";
           _newDocPattern = "YYYY_MM_DD_HH_mm_[Category]_title";
@@ -2317,7 +3018,8 @@
         _newDocBrowseParent = null;
         document.getElementById("new-doc-title").value = "";
         document.getElementById("new-doc-category").value = "General";
-        document.getElementById("new-doc-folder-display").textContent = "/ (root)";
+        document.getElementById("new-doc-folder-display").textContent =
+          "/ (root)";
         document.getElementById("new-doc-browser").classList.add("hidden");
         document.getElementById("new-doc-new-folder-name").value = "";
         document.getElementById("new-doc-error").classList.add("hidden");
@@ -2336,17 +3038,22 @@
       function newDocToggleBrowser() {
         const browser = document.getElementById("new-doc-browser");
         const isHidden = browser.classList.toggle("hidden");
-        if (!isHidden) newDocLoadBrowse(_newDocBrowseCurrent || _newDocDocsFolder);
+        if (!isHidden)
+          newDocLoadBrowse(_newDocBrowseCurrent || _newDocDocsFolder);
       }
 
       async function newDocLoadBrowse(dirPath) {
         const list = document.getElementById("new-doc-browse-list");
-        list.innerHTML = '<p class="px-3 py-4 text-xs text-gray-400 text-center">Loading…</p>';
+        list.innerHTML =
+          '<p class="px-3 py-4 text-xs text-gray-400 text-center">Loading…</p>';
         try {
-          const data = await fetch("/api/browse?path=" + encodeURIComponent(dirPath)).then((r) => r.json());
+          const data = await fetch(
+            "/api/browse?path=" + encodeURIComponent(dirPath),
+          ).then((r) => r.json());
           _newDocBrowseCurrent = data.current;
           _newDocBrowseParent = data.parent;
-          document.getElementById("new-doc-browse-path").textContent = data.current;
+          document.getElementById("new-doc-browse-path").textContent =
+            data.current;
           const atRoot = data.current === _newDocDocsFolder;
           document.getElementById("new-doc-browse-up").disabled = atRoot;
 
@@ -2372,9 +3079,11 @@
           list.innerHTML =
             (rows.length
               ? rows.join("")
-              : '<p class="px-3 py-3 text-xs text-gray-400 text-center">No sub-folders</p>') + selectBtn;
+              : '<p class="px-3 py-3 text-xs text-gray-400 text-center">No sub-folders</p>') +
+            selectBtn;
         } catch {
-          list.innerHTML = '<p class="px-3 py-4 text-xs text-red-400 text-center">Cannot read directory</p>';
+          list.innerHTML =
+            '<p class="px-3 py-4 text-xs text-red-400 text-center">Cannot read directory</p>';
         }
       }
 
@@ -2387,7 +3096,8 @@
       function _newDocAbsToRel(absPath) {
         const base = _newDocDocsFolder;
         if (absPath === base) return "";
-        if (absPath.startsWith(base + "/")) return absPath.slice(base.length + 1);
+        if (absPath.startsWith(base + "/"))
+          return absPath.slice(base.length + 1);
         return absPath;
       }
 
@@ -2405,12 +3115,16 @@
       }
 
       function newDocCreateFolder() {
-        const name = document.getElementById("new-doc-new-folder-name").value.trim();
+        const name = document
+          .getElementById("new-doc-new-folder-name")
+          .value.trim();
         if (!name) return;
         const parent = _newDocBrowseCurrent || _newDocDocsFolder;
-        const newRelPath = (_newDocAbsToRel(parent) ? _newDocAbsToRel(parent) + "/" : "") + name;
+        const newRelPath =
+          (_newDocAbsToRel(parent) ? _newDocAbsToRel(parent) + "/" : "") + name;
         _newDocSelectedFolder = newRelPath;
-        document.getElementById("new-doc-folder-display").textContent = "/" + newRelPath;
+        document.getElementById("new-doc-folder-display").textContent =
+          "/" + newRelPath;
         document.getElementById("new-doc-new-folder-name").value = "";
         document.getElementById("new-doc-browser").classList.add("hidden");
         newDocUpdatePreview();
@@ -2418,7 +3132,8 @@
 
       function newDocUpdatePreview() {
         const title = document.getElementById("new-doc-title").value.trim();
-        const category = document.getElementById("new-doc-category").value.trim() || "General";
+        const category =
+          document.getElementById("new-doc-category").value.trim() || "General";
         const previewEl = document.getElementById("new-doc-filename-preview");
 
         if (!title) {
@@ -2432,21 +3147,26 @@
         const day = String(now.getDate()).padStart(2, "0");
         const hours = String(now.getHours()).padStart(2, "0");
         const minutes = String(now.getMinutes()).padStart(2, "0");
-        const titleSlug = title
-          .toLowerCase()
-          .replace(/\s+/g, "_")
-          .replace(/[^a-z0-9_]/g, "")
-          .replace(/_+/g, "_")
-          .replace(/^_|_$/g, "") || "document";
+        const titleSlug =
+          title
+            .toLowerCase()
+            .replace(/\s+/g, "_")
+            .replace(/[^a-z0-9_]/g, "")
+            .replace(/_+/g, "_")
+            .replace(/^_|_$/g, "") || "document";
 
-        const filename = _newDocPattern
-          .replace("YYYY", year)
-          .replace("MM", month)
-          .replace("DD", day)
-          .replace("HH", hours)
-          .replace("mm", minutes)
-          .replace(/\[Category\]/i, `[${category}]`)
-          .replace(/(?<![a-z0-9])(?:title_words|title)(?![a-z0-9])/i, titleSlug) + ".md";
+        const filename =
+          _newDocPattern
+            .replace("YYYY", year)
+            .replace("MM", month)
+            .replace("DD", day)
+            .replace("HH", hours)
+            .replace("mm", minutes)
+            .replace(/\[Category\]/i, `[${category}]`)
+            .replace(
+              /(?<![a-z0-9])(?:title_words|title)(?![a-z0-9])/i,
+              titleSlug,
+            ) + ".md";
 
         previewEl.textContent = _newDocSelectedFolder
           ? _newDocSelectedFolder + "/" + filename
@@ -2455,7 +3175,8 @@
 
       async function createNewDocument() {
         const title = document.getElementById("new-doc-title").value.trim();
-        const category = document.getElementById("new-doc-category").value.trim() || "General";
+        const category =
+          document.getElementById("new-doc-category").value.trim() || "General";
         const errorEl = document.getElementById("new-doc-error");
         const btn = document.getElementById("new-doc-create-btn");
 
@@ -2473,7 +3194,11 @@
           const res = await fetch("/api/documents", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title, category, folder: _newDocSelectedFolder }),
+            body: JSON.stringify({
+              title,
+              category,
+              folder: _newDocSelectedFolder,
+            }),
           });
 
           if (!res.ok) {
@@ -2501,9 +3226,11 @@
             if (e.key === "Escape") closeNewDocModal();
           });
         });
-        document.getElementById("new-doc-new-folder-name")?.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") newDocCreateFolder();
-        });
+        document
+          .getElementById("new-doc-new-folder-name")
+          ?.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") newDocCreateFolder();
+          });
       });
 
       // Browser back/forward
