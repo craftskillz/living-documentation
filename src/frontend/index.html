@@ -1809,10 +1809,14 @@
 
       // ── Helpers ────────────────────────────────────────────────
 
-      // Strip a leading numeric sort prefix (e.g. "1_TUTORIAL" → "TUTORIAL").
+      // Strip a leading numeric sort prefix (e.g. "1_tutorial" → "Tutorial").
+      // Underscores/hyphens become spaces, result is title-cased.
       // The full original name is preserved in the tooltip.
       function folderLabel(seg) {
-        return seg.replace(/^\d+_/, "");
+        return seg
+          .replace(/^\d+_/, "")
+          .replace(/[_-]+/g, " ")
+          .replace(/\b\w/g, (c) => c.toUpperCase());
       }
 
       function exportPDF() {

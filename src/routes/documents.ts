@@ -46,9 +46,7 @@ function listDocs(
     const id = encodeURIComponent(relPath.slice(0, -3));
     const folder =
       subdir !== "."
-        ? subdir.split(path.sep).map((s) =>
-            s.replace(/[_-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
-          )
+        ? subdir.split(path.sep)
         : null;
     return { ...meta, id, filename: relPath, folder };
   });
@@ -208,9 +206,7 @@ export function documentsRouter(docsPath: string): Router {
       const subdir = path.dirname(id);
       const folder =
         subdir !== "."
-          ? subdir.split("/").map((s) =>
-              s.replace(/[_-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
-            )
+          ? subdir.split("/")
           : null;
       const html = marked.parse(stripFrontmatter(content)) as string;
       res.json({ ...metadata, folder, content, html });
@@ -309,7 +305,7 @@ export function documentsRouter(docsPath: string): Router {
     const meta = parseFilename(filename, filenamePattern);
     const subdir = path.dirname(relPath);
     const folderSegments = subdir !== '.'
-      ? subdir.split(path.sep).map((s) => s.replace(/[_-]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()))
+      ? subdir.split(path.sep)
       : null;
 
     res.json({ ...meta, id: encodeURIComponent(relPath.slice(0, -3)), filename: relPath, folder: folderSegments });
