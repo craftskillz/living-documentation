@@ -261,11 +261,19 @@
                 id="doc-count"
                 class="text-xs text-gray-400 dark:text-gray-500"
               ></p>
-              <button
-                onclick="openNewDocModal()"
-                title="New document"
-                class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors text-lg leading-none font-light"
-              >+</button>
+              <div class="flex items-center gap-2">
+                <button
+                  id="export-all-pdf-btn"
+                  onclick="exportAllPDF()"
+                  title="Export all documents as PDF"
+                  class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors text-xs leading-none"
+                >&#128196; PDF</button>
+                <button
+                  onclick="openNewDocModal()"
+                  title="New document"
+                  class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors text-lg leading-none font-light"
+                >+</button>
+              </div>
             </div>
           </div>
 
@@ -1882,6 +1890,95 @@
         window.print();
       }
 
+      async function exportAllPDF() {
+        const btn = document.getElementById('export-all-pdf-btn');
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '⏳';
+        btn.disabled = true;
+
+        try {
+          const docs = (allDocs && allDocs.length) ? allDocs : await fetch('/api/documents').then(r => r.json());
+
+          // Batch-fetch full HTML content (5 at a time)
+          const fullDocs = [];
+          const batchSize = 5;
+          for (let i = 0; i < docs.length; i += batchSize) {
+            const batch = docs.slice(i, i + batchSize);
+            const results = await Promise.all(
+              batch.map(d => fetch('/api/documents/' + d.id).then(r => r.ok ? r.json() : null).catch(() => null))
+            );
+            fullDocs.push(...results.filter(Boolean));
+          }
+
+          // Rewrite ?doc=X links to internal anchors #doc-X
+          function rewriteDocLinks(html) {
+            return html.replace(/href="[^"]*\?doc=([^"&#]+)(?:#[^"]*)?"/g, (match, docId) => {
+              return `href="#doc-${docId}"`;
+            });
+          }
+
+          const appTitle = esc(document.title || 'Living Documentation');
+
+          const sectionsHtml = fullDocs.map((doc, idx) => {
+            const html = rewriteDocLinks(doc.html);
+            const folder = Array.isArray(doc.folder) ? doc.folder.map(f => esc(f)).join(' / ') + ' / ' : '';
+            const meta = `${folder}${esc(doc.category)}${doc.formattedDate ? ' · ' + esc(doc.formattedDate) : ''}`;
+            const pageBreak = idx > 0 ? '<div style="page-break-before:always;height:0;"></div>' : '';
+            return `${pageBreak}
+<section id="doc-${doc.id}" style="padding: 2rem 0;">
+  <div style="border-bottom:2px solid #e5e7eb;padding-bottom:0.75rem;margin-bottom:1.5rem;">
+    <div style="font-size:0.7rem;color:#6b7280;margin-bottom:0.25rem;">${meta}</div>
+    <h1 style="font-size:1.75rem;font-weight:800;color:#111827;margin:0;">${esc(doc.title)}</h1>
+  </div>
+  <div class="prose max-w-none">${html}</div>
+</section>`;
+          }).join('\n');
+
+          const fullHtml = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>${appTitle} — Export PDF</title>
+  <script src="https://cdn.tailwindcss.com?plugins=typography"><\/script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"><\/script>
+  <style>
+    body { font-family: system-ui,sans-serif; max-width: 860px; margin: 0 auto; padding: 2rem; color: #111827; background: #fff; }
+    .prose pre { border-radius: 0.5rem; }
+    .prose img { max-width: 100%; }
+    @media print {
+      body { padding: 0; }
+      a[href^="#doc-"] { color: #1d4ed8; text-decoration: underline; }
+    }
+  </style>
+</head>
+<body>
+  <div style="text-align:center;margin-bottom:3rem;padding-bottom:2rem;border-bottom:3px solid #e5e7eb;">
+    <h1 style="font-size:2rem;font-weight:900;color:#111827;margin:0;">${appTitle}</h1>
+  </div>
+  ${sectionsHtml}
+  <script>
+    document.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
+    setTimeout(() => window.print(), 800);
+  <\/script>
+</body>
+</html>`;
+
+          const w = window.open('', '_blank');
+          if (!w) {
+            alert('Veuillez autoriser les popups pour exporter en PDF.');
+            return;
+          }
+          w.document.write(fullHtml);
+          w.document.close();
+        } catch (err) {
+          alert('Export échoué\u00a0: ' + err.message);
+        } finally {
+          btn.innerHTML = originalHtml;
+          btn.disabled = false;
+        }
+      }
+
       // ── Image lightbox (Shift+Click) ────────────────────────────
       document.getElementById('doc-content').addEventListener('click', (e) => {
         const img = e.target.closest('img');
@@ -2145,6 +2242,9 @@
         document.getElementById("new-doc-browser").classList.add("hidden");
         document.getElementById("new-doc-new-folder-name").value = "";
         document.getElementById("new-doc-error").classList.add("hidden");
+        const createBtn = document.getElementById("new-doc-create-btn");
+        createBtn.disabled = false;
+        createBtn.textContent = "Create";
         newDocUpdatePreview();
         document.getElementById("new-doc-modal").classList.remove("hidden");
         setTimeout(() => document.getElementById("new-doc-title").focus(), 50);
