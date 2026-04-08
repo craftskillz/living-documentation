@@ -1,5 +1,5 @@
 ---
-`🗄️ ADR : 2026_04_08_[NAVIGATION]_recursive_folder_tree_sidebar_and_breadcrumbs.md`
+`🗄️ ADR : 2026_04_08_11_45_[NAVIGATION]_recursive_folder_tree_sidebar_and_breadcrumbs.md`
 **date:** 2026-04-08
 **status:** Pending Validation
 **description:** Sidebar now renders a recursive folder tree (subdirectory path segments → category → docs) with General always first; article header shows one violet pill per folder segment plus a blue category pill.

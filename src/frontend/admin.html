@@ -158,10 +158,10 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="field-pattern">Filename Pattern</label>
                 <input id="field-pattern" name="filenamePattern" type="text"
                   class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="YYYY_MM_DD_[Category]_title" />
+                  placeholder="YYYY_MM_DD_HH_mm_[Category]_title" />
                 <p class="text-xs text-gray-400 dark:text-gray-500">
                   Parsed for date, category, and title.
-                  <span id="pattern-desc-example" class="font-mono bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-1 rounded">YYYY_MM_DD_[Category]_title.md</span>
+                  <span id="pattern-desc-example" class="font-mono bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-1 rounded">YYYY_MM_DD_HH_mm_[Category]_title.md</span>
                 </p>
               </div>
             </div>
@@ -277,17 +277,27 @@
 
       // ── Pattern preview ────────────────────────────────────────
       const EXAMPLES = [
-        "2024_01_15_[DevOps]_deploy_pipeline.md",
-        "2023_11_03_[Frontend]_react_hooks_guide.md",
-        "2025_06_20_meeting_notes.md",
+        "2024_01_15_09_30_[DevOps]_deploy_pipeline.md",
+        "2023_11_03_14_45_[Frontend]_react_hooks_guide.md",
+        "2025_06_20_08_00_meeting_notes.md",
         "readme.md",
       ];
 
+      function dateStrToISO(s) {
+        const p = s.split("_");
+        return p.length === 5
+          ? p[0] + "-" + p[1] + "-" + p[2] + "T" + p[3] + ":" + p[4]
+          : p[0] + "-" + p[1] + "-" + p[2];
+      }
+
       function buildPatternsFromFormat(patternStr) {
-        if (!patternStr) patternStr = "YYYY_MM_DD_[Category]_title";
+        if (!patternStr) patternStr = "YYYY_MM_DD_HH_mm_[Category]_title";
         const hasDate = /YYYY.*MM.*DD/.test(patternStr);
+        const hasTime = hasDate && /HH.*mm/.test(patternStr);
         const hasCategory = /\[Category\]/i.test(patternStr);
-        const dateGroup = "(\\d{4}_\\d{2}_\\d{2})";
+        const dateGroup = hasTime
+          ? "(\\d{4}_\\d{2}_\\d{2}(?:_\\d{2}_\\d{2})?)"
+          : "(\\d{4}_\\d{2}_\\d{2})";
         const catGroup = "\\[([^\\]]+)\\]";
         const catBeforeDate =
           hasDate && hasCategory &&
@@ -314,7 +324,7 @@
             if (patterns.hasDate && patterns.hasCategory) {
               const dateStr = patterns.catBeforeDate ? m[2] : m[1];
               const category = patterns.catBeforeDate ? m[1] : m[2];
-              return { date: dateStr.replace(/_/g, "-"), category, title: titleCase(m[3]), match: true };
+              return { date: dateStrToISO(dateStr), category, title: titleCase(m[3]), match: true };
             } else if (patterns.hasCategory) {
               return { date: null, category: m[1], title: titleCase(m[2]), match: true };
             }
@@ -323,7 +333,7 @@
         if (patterns.dateOnly) {
           const m = filename.match(patterns.dateOnly);
           if (m) {
-            return { date: m[1].replace(/_/g, "-"), category: "General", title: titleCase(m[2]), match: true };
+            return { date: dateStrToISO(m[1]), category: "General", title: titleCase(m[2]), match: true };
           }
         }
         return {
@@ -344,7 +354,7 @@
       function updatePreview() {
         const patternVal = document.getElementById("field-pattern").value.trim();
         const descSpan = document.getElementById("pattern-desc-example");
-        descSpan.textContent = (patternVal || "YYYY_MM_DD_[Category]_title") + ".md";
+        descSpan.textContent = (patternVal || "YYYY_MM_DD_HH_mm_[Category]_title") + ".md";
         const patterns = buildPatternsFromFormat(patternVal);
         const rows = document.getElementById("preview-rows");
         rows.innerHTML = EXAMPLES.map((f) => {

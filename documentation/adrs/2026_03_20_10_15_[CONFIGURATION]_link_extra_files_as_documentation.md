@@ -1,5 +1,5 @@
 ---
-`🗄️ ADR : 2026_03_20_[CONFIGURATION]_link_extra_files_as_documentation.md`
+`🗄️ ADR : 2026_03_20_10_15_[CONFIGURATION]_link_extra_files_as_documentation.md`
 **date:** 2026-03-20
 **status:** Accepted
 **description:** Support for including Markdown files outside the docs folder via an extraFiles config array, with a filesystem browser in the admin panel.

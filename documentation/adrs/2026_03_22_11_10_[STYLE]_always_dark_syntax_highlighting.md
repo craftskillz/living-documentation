@@ -1,5 +1,5 @@
 ---
-`🗄️ ADR : 2026_03_22_[STYLE]_always_dark_syntax_highlighting.md`
+`🗄️ ADR : 2026_03_22_11_10_[STYLE]_always_dark_syntax_highlighting.md`
 **date:** 2026-03-22
 **status:** Accepted
 **description:** Always use the github-dark highlight.js theme regardless of light/dark mode, removing the light stylesheet entirely.

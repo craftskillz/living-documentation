@@ -15,7 +15,7 @@ const CONFIG_FILENAME = '.living-doc.json';
 
 const DEFAULTS: LivingDocConfig = {
   docsFolder: '.',
-  filenamePattern: 'YYYY_MM_DD_[Category]_title',
+  filenamePattern: 'YYYY_MM_DD_HH_mm_[Category]_title',
   title: 'Living Documentation',
   theme: 'system',
   port: 4321,

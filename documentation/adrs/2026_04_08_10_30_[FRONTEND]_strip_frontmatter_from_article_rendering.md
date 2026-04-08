@@ -1,5 +1,5 @@
 ---
-`🗄️ ADR : 2026_04_08_[FRONTEND]_strip_frontmatter_from_article_rendering.md`
+`🗄️ ADR : 2026_04_08_10_30_[FRONTEND]_strip_frontmatter_from_article_rendering.md`
 **date:** 2026-04-08
 **status:** Accepted
 **description:** Strip the leading frontmatter block (---...---) from markdown content before rendering to HTML, so metadata fields are not visible in the article view.

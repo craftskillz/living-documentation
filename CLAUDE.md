@@ -40,11 +40,11 @@ The server looks for frontend files at `path.join(__dirname, 'frontend')`, i.e. 
 
 ## Filename pattern
 
-Default: `YYYY_MM_DD_[Category]_title_words.md`
+Default: `YYYY_MM_DD_HH_mm_[Category]_title_words.md`
 
-The pattern is **configurable** via `filenamePattern` in `.living-doc.json`. `parser.ts` builds regex dynamically from the configured pattern at runtime — token order is respected (e.g. `[Category]_YYYY_MM_DD_title` works).
+The pattern is **configurable** via `filenamePattern` in `.living-doc.json`. `parser.ts` builds regex dynamically from the configured pattern at runtime — token order is respected (e.g. `[Category]_YYYY_MM_DD_HH_mm_title` works).
 
-Recognized tokens: `YYYY`, `MM`, `DD` (date group), `[Category]` (category group). Everything else is treated as the title placeholder.
+Recognized tokens: `YYYY`, `MM`, `DD`, `HH`, `mm` (date+time group), `[Category]` (category group). Everything else is treated as the title placeholder.
 
 Constraints on `filenamePattern`:
 - Must contain `[Category]` **exactly once** — validated on write (server 400 + client error).

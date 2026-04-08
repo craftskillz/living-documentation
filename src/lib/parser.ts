@@ -8,6 +8,13 @@ export interface DocMetadata {
   formattedDate: string | null;
 }
 
+function dateStrToISO(s: string): string {
+  const p = s.split('_');
+  return p.length === 5
+    ? `${p[0]}-${p[1]}-${p[2]}T${p[3]}:${p[4]}`
+    : `${p[0]}-${p[1]}-${p[2]}`;
+}
+
 function buildPatternsFromFormat(patternStr: string): {
   full: RegExp | null;
   dateOnly: RegExp | null;
@@ -16,8 +23,12 @@ function buildPatternsFromFormat(patternStr: string): {
   catBeforeDate: boolean;
 } {
   const hasDate = /YYYY.*MM.*DD/.test(patternStr);
+  const hasTime = hasDate && /HH.*mm/.test(patternStr);
   const hasCategory = /\[Category\]/i.test(patternStr);
-  const dateGroup = '(\\d{4}_\\d{2}_\\d{2})';
+  // When pattern includes HH/mm, allow optional time portion so old files still parse
+  const dateGroup = hasTime
+    ? '(\\d{4}_\\d{2}_\\d{2}(?:_\\d{2}_\\d{2})?)'
+    : '(\\d{4}_\\d{2}_\\d{2})';
   const catGroup = '\\[([^\\]]+)\\]';
   const catBeforeDate =
     hasDate && hasCategory &&
@@ -55,14 +66,17 @@ function buildPatternsFromFormat(patternStr: string): {
 }
 
 function formatDate(iso: string): string {
-  const [year, month, day] = iso.split('-').map(Number);
+  const hasTime = iso.includes('T');
+  const datePart = hasTime ? iso.split('T')[0] : iso;
+  const [year, month, day] = datePart.split('-').map(Number);
   const d = new Date(Date.UTC(year, month - 1, day));
-  return d.toLocaleDateString('en-US', {
+  const dateStr = d.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
     timeZone: 'UTC',
   });
+  return hasTime ? `${dateStr} ${iso.split('T')[1]}` : dateStr;
 }
 
 function titleCase(raw: string): string {
@@ -75,7 +89,7 @@ function titleCase(raw: string): string {
 export function parseFilename(filename: string, filenamePattern?: string): DocMetadata {
   const id = encodeURIComponent(filename.slice(0, -3));
   const { full: FULL_PAT, dateOnly: DATE_ONLY_PAT, hasDate, hasCategory, catBeforeDate } =
-    buildPatternsFromFormat(filenamePattern ?? 'YYYY_MM_DD_[Category]_title');
+    buildPatternsFromFormat(filenamePattern ?? 'YYYY_MM_DD_HH_mm_[Category]_title');
 
   if (FULL_PAT) {
     const full = filename.match(FULL_PAT);
@@ -84,7 +98,7 @@ export function parseFilename(filename: string, filenamePattern?: string): DocMe
         const dateStr = catBeforeDate ? full[2] : full[1];
         const category = catBeforeDate ? full[1] : full[2];
         const titlePart = full[3];
-        const date = dateStr.replace(/_/g, '-');
+        const date = dateStrToISO(dateStr);
         return { id, filename, title: titleCase(titlePart), category, folder: null, date, formattedDate: formatDate(date) };
       } else if (hasCategory) {
         const [, category, titlePart] = full;
@@ -97,7 +111,7 @@ export function parseFilename(filename: string, filenamePattern?: string): DocMe
     const dateOnly = filename.match(DATE_ONLY_PAT);
     if (dateOnly) {
       const [, dateStr, titlePart] = dateOnly;
-      const date = dateStr.replace(/_/g, '-');
+      const date = dateStrToISO(dateStr);
       return { id, filename, title: titleCase(titlePart), category: 'General', folder: null, date, formattedDate: formatDate(date) };
     }
   }

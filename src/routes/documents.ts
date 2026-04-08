@@ -58,6 +58,28 @@ function listDocs(
   return [...extraDocs, ...regularDocs];
 }
 
+function buildFilename(filenamePattern: string, title: string, category: string, date: string): string {
+  const [year, month, day] = date.split('-');
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const titleSlug = title.trim()
+    .toLowerCase()
+    .replace(/\s+/g, '_')
+    .replace(/[^a-z0-9_]/g, '')
+    .replace(/_+/g, '_')
+    .replace(/^_|_$/g, '') || 'document';
+
+  return (filenamePattern || 'YYYY_MM_DD_HH_mm_[Category]_title')
+    .replace('YYYY', year)
+    .replace('MM', month)
+    .replace('DD', day)
+    .replace('HH', hours)
+    .replace('mm', minutes)
+    .replace(/\[Category\]/i, `[${category}]`)
+    .replace(/\b(?:title_words|title)\b/i, titleSlug) + '.md';
+}
+
 function safeFilePath(docsPath: string, filename: string): string | null {
   const resolved = path.resolve(docsPath, filename);
   if (!resolved.startsWith(path.resolve(docsPath) + path.sep)) return null;
@@ -236,6 +258,61 @@ export function documentsRouter(docsPath: string): Router {
     } catch {
       return res.status(500).json({ error: "Failed to write document" });
     }
+  });
+
+  // POST /api/documents — create a new document
+  router.post('/', (req: Request, res: Response) => {
+    const { title, category = 'General', folder = '' } = req.body as {
+      title?: string; category?: string; folder?: string;
+    };
+
+    if (!title || !title.trim()) {
+      return res.status(400).json({ error: 'title is required' });
+    }
+
+    const { filenamePattern } = readConfig(docsPath);
+    const today = new Date().toISOString().slice(0, 10);
+    const filename = buildFilename(
+      filenamePattern || 'YYYY_MM_DD_HH_mm_[Category]_title',
+      title.trim(),
+      (category.trim() || 'General'),
+      today,
+    );
+
+    // Resolve target directory, constrained to docsPath
+    let targetDir = path.resolve(docsPath);
+    if (folder && folder.trim()) {
+      const resolved = path.resolve(docsPath, folder.trim());
+      if (!resolved.startsWith(path.resolve(docsPath) + path.sep) && resolved !== path.resolve(docsPath)) {
+        return res.status(403).json({ error: 'Access denied' });
+      }
+      targetDir = resolved;
+    }
+
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+
+    const filePath = path.join(targetDir, filename);
+    if (fs.existsSync(filePath)) {
+      return res.status(409).json({ error: 'A document with this name already exists' });
+    }
+
+    const content = `# ${title.trim()}\n`;
+    try {
+      fs.writeFileSync(filePath, content, 'utf-8');
+    } catch {
+      return res.status(500).json({ error: 'Failed to create document' });
+    }
+
+    const relPath = path.relative(docsPath, filePath);
+    const meta = parseFilename(filename, filenamePattern);
+    const subdir = path.dirname(relPath);
+    const folderSegments = subdir !== '.'
+      ? subdir.split(path.sep).map((s) => s.replace(/[_-]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()))
+      : null;
+
+    res.json({ ...meta, id: encodeURIComponent(relPath.slice(0, -3)), filename: relPath, folder: folderSegments });
   });
 
   return router;

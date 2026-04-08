@@ -1,5 +1,5 @@
 ---
-`🗄️ ADR : 2026_03_21_[CONFIGURATION]_general_category_and_sidebar_defaults.md`
+`🗄️ ADR : 2026_03_21_10_25_[CONFIGURATION]_general_category_and_sidebar_defaults.md`
 **date:** 2026-03-21
 **status:** Accepted
 **description:** Rename "Uncategorized" to "General", pin it first in the sidebar, and collapse all other categories on load.

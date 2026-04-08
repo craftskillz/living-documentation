@@ -1,5 +1,5 @@
 ---
-`🗄️ ADR : 2026_04_03_[DIAGRAM]_debug_overlay.md`
+`🗄️ ADR : 2026_04_03_10_15_[DIAGRAM]_debug_overlay.md`
 **date:** 2026-04-03
 **status:** Accepted
 **description:** DOM-based debug overlay for diagram nodes showing centre coordinates and shape dimensions, gated by a showDiagramDebug config flag toggled from the Admin panel.

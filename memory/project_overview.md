@@ -26,7 +26,7 @@ CLI tool (`living-documentation`) published on npm. Users run it with `npx livin
 
 **Default port:** 4321
 
-**Filename pattern:** Default `YYYY_MM_DD_[Category]_title_words.md`, configurable via `filenamePattern` in `.living-doc.json`. Tokens: `YYYY`, `MM`, `DD`, `[Category]`. Must contain `[Category]` exactly once.
+**Filename pattern:** Default `YYYY_MM_DD_HH_mm_[Category]_title_words.md`, configurable via `filenamePattern` in `.living-doc.json`. Tokens: `YYYY`, `MM`, `DD`, `HH`, `mm`, `[Category]`. Must contain `[Category]` exactly once. Old `YYYY_MM_DD` files (without time) remain backward-compatible.
 
 **Config:** Persisted as `.living-doc.json` inside docs folder. Editable: `title`, `theme`, `filenamePattern`, `extraFiles`.
 

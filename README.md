@@ -105,21 +105,22 @@ living-documentation .                          # current folder
 Documents are parsed using this default pattern:
 
 ```
-YYYY_MM_DD_[Category]_title_words.md
+YYYY_MM_DD_HH_mm_[Category]_title_words.md
 ```
 
-| Part              | Example           | Parsed as               |
-| ----------------- | ----------------- | ----------------------- |
-| `2024_01_15`      | `2024_01_15`      | Date → Jan 15, 2024     |
-| `[DevOps]`        | `[DevOps]`        | Category → DevOps       |
-| `deploy_pipeline` | `deploy_pipeline` | Title → Deploy Pipeline |
+| Part              | Example              | Parsed as                      |
+| ----------------- | -------------------- | ------------------------------ |
+| `2024_01_15`      | `2024_01_15`         | Date → Jan 15, 2024            |
+| `09_30`           | `09_30`              | Time → 09:30                   |
+| `[DevOps]`        | `[DevOps]`           | Category → DevOps              |
+| `deploy_pipeline` | `deploy_pipeline`    | Title → Deploy Pipeline        |
 
 **Full example:**
 
 ```
-2024_01_15_[DevOps]_deploy_pipeline.md
-2024_03_20_[Frontend]_react_hooks_guide.md
-2023_11_03_[Backend]_api_versioning_strategy.md
+2024_01_15_09_30_[DevOps]_deploy_pipeline.md
+2024_03_20_14_45_[Frontend]_react_hooks_guide.md
+2023_11_03_11_00_[Backend]_api_versioning_strategy.md
 ```
 
 Files that don't match the pattern are still shown — they appear under **General** with the filename as the title.
@@ -135,21 +136,21 @@ The docs folder is scanned **recursively**. Each subdirectory level becomes a co
 
 ```
 docs/
-├── 2024_01_15_[DevOps]_deploy.md          → (root) category: DevOps
+├── 2024_01_15_09_30_[DevOps]_deploy.md          → (root) category: DevOps
 ├── adrs/
-│   ├── my-decision.md                     → folder: Adrs / category: General
-│   ├── 2024_03_01_[Architecture]_eventsourcing.md  → folder: Adrs / category: Architecture
+│   ├── my-decision.md                           → folder: Adrs / category: General
+│   ├── 2024_03_01_10_00_[Architecture]_eventsourcing.md  → folder: Adrs / category: Architecture
 │   └── test/
-│       └── 2024_05_01_[Architecture]_saga.md       → folder: Adrs > Test / category: Architecture
+│       └── 2024_05_01_11_15_[Architecture]_saga.md       → folder: Adrs > Test / category: Architecture
 └── guides/
-    └── 2024_06_01_[Onboarding]_setup.md   → folder: Guides / category: Onboarding
+    └── 2024_06_01_14_00_[Onboarding]_setup.md   → folder: Guides / category: Onboarding
 ```
 
 **Sidebar rendering order at each level:** General first → subfolders (alphabetical) → other categories (alphabetical).
 
 **Article header** shows one violet pill per folder segment, then a blue pill for the category.
 
-The pattern is **configurable** in the Admin panel. Token order is respected — `[Category]_YYYY_MM_DD_title` is valid. `[Category]` must appear exactly once.
+The pattern is **configurable** in the Admin panel. Token order is respected — `[Category]_YYYY_MM_DD_HH_mm_title` is valid. `[Category]` must appear exactly once.
 
 ---
 
@@ -160,7 +161,7 @@ A `.living-doc.json` file is created automatically in your docs folder on first 
 ```json
 {
   "docsFolder": "/absolute/path/to/docs",
-  "filenamePattern": "YYYY_MM_DD_[Category]_title",
+  "filenamePattern": "YYYY_MM_DD_HH_mm_[Category]_title",
   "title": "Living Documentation",
   "theme": "system",
   "port": 4321,

@@ -247,10 +247,17 @@
             </div>
 
             <!-- Stats -->
-            <p
-              id="doc-count"
-              class="text-xs text-gray-400 dark:text-gray-500 mt-2 sm:mt-0"
-            ></p>
+            <div class="flex items-center justify-between mt-2 sm:mt-0">
+              <p
+                id="doc-count"
+                class="text-xs text-gray-400 dark:text-gray-500"
+              ></p>
+              <button
+                onclick="openNewDocModal()"
+                title="New document"
+                class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors text-lg leading-none font-light"
+              >+</button>
+            </div>
           </div>
 
           <!-- Category tree -->
@@ -279,7 +286,7 @@
                 id="welcome-pattern"
                 class="mt-4 text-xs text-gray-400 dark:text-gray-600 font-mono bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 inline-block"
               >
-                YYYY_MM_DD_[Category]_title.md
+                YYYY_MM_DD_HH_mm_[Category]_title.md
               </p>
               <p class="mt-2 text-xs text-gray-400">
                 Expected filename pattern
@@ -397,6 +404,86 @@
       <!-- end body row -->
     </div>
     <!-- end root -->
+
+    <!-- ── New Document modal ── -->
+    <div id="new-doc-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-lg mx-4 p-6 space-y-4">
+        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">&#10133; New Document</h3>
+
+        <!-- Title -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Title</label>
+          <input id="new-doc-title" type="text" placeholder="My document" oninput="newDocUpdatePreview()"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <!-- Category -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Category</label>
+          <input id="new-doc-category" type="text" placeholder="General" oninput="newDocUpdatePreview()"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <!-- Location -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Location</label>
+          <div class="flex items-center gap-2">
+            <span id="new-doc-folder-display"
+              class="flex-1 px-3 py-2 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-mono truncate">
+              / (root)
+            </span>
+            <button onclick="newDocToggleBrowser()"
+              class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shrink-0">
+              &#128193; Browse
+            </button>
+          </div>
+          <!-- Inline folder browser -->
+          <div id="new-doc-browser" class="hidden border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+              <button id="new-doc-browse-up" onclick="newDocBrowseUp()"
+                class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0">
+                &#8593; Up
+              </button>
+              <span id="new-doc-browse-path" class="font-mono text-xs text-gray-400 dark:text-gray-500 truncate flex-1 text-right"></span>
+            </div>
+            <div id="new-doc-browse-list" class="divide-y divide-gray-100 dark:divide-gray-800 max-h-40 overflow-y-auto"></div>
+            <!-- Create new folder row -->
+            <div class="border-t border-gray-200 dark:border-gray-700 flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800/50">
+              <input id="new-doc-new-folder-name" type="text" placeholder="New folder name…"
+                class="flex-1 px-2 py-1 text-xs rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-400" />
+              <button onclick="newDocCreateFolder()"
+                class="text-xs px-2 py-1 rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors shrink-0">
+                + Create
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filename preview -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Generated filename</label>
+          <p id="new-doc-filename-preview"
+            class="text-xs bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 font-mono text-gray-600 dark:text-gray-300 break-all">
+            (enter a title)
+          </p>
+        </div>
+
+        <!-- Error -->
+        <p id="new-doc-error" class="hidden text-xs text-red-500"></p>
+
+        <!-- Actions -->
+        <div class="flex justify-end gap-3 pt-1">
+          <button onclick="closeNewDocModal()"
+            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+            Cancel
+          </button>
+          <button onclick="createNewDocument()" id="new-doc-create-btn"
+            class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">
+            Create
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- ── Diagram link modal ── -->
     <div id="diag-link-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -1317,6 +1404,213 @@
           alert("Error: " + err.message);
         }
       }
+
+      // ── New Document modal ────────────────────────────────────────
+      let _newDocBrowseCurrent = null;
+      let _newDocBrowseParent = null;
+      let _newDocSelectedFolder = "";
+      let _newDocDocsFolder = "";
+      let _newDocPattern = "YYYY_MM_DD_HH_mm_[Category]_title";
+
+      async function openNewDocModal() {
+        try {
+          const cfg = await fetch("/api/config").then((r) => r.json());
+          _newDocDocsFolder = cfg.docsFolder || "";
+          _newDocPattern = cfg.filenamePattern || "YYYY_MM_DD_HH_mm_[Category]_title";
+        } catch {
+          _newDocDocsFolder = "";
+          _newDocPattern = "YYYY_MM_DD_HH_mm_[Category]_title";
+        }
+        _newDocSelectedFolder = "";
+        _newDocBrowseCurrent = null;
+        _newDocBrowseParent = null;
+        document.getElementById("new-doc-title").value = "";
+        document.getElementById("new-doc-category").value = "General";
+        document.getElementById("new-doc-folder-display").textContent = "/ (root)";
+        document.getElementById("new-doc-browser").classList.add("hidden");
+        document.getElementById("new-doc-new-folder-name").value = "";
+        document.getElementById("new-doc-error").classList.add("hidden");
+        newDocUpdatePreview();
+        document.getElementById("new-doc-modal").classList.remove("hidden");
+        setTimeout(() => document.getElementById("new-doc-title").focus(), 50);
+      }
+
+      function closeNewDocModal() {
+        document.getElementById("new-doc-modal").classList.add("hidden");
+      }
+
+      function newDocToggleBrowser() {
+        const browser = document.getElementById("new-doc-browser");
+        const isHidden = browser.classList.toggle("hidden");
+        if (!isHidden) newDocLoadBrowse(_newDocBrowseCurrent || _newDocDocsFolder);
+      }
+
+      async function newDocLoadBrowse(dirPath) {
+        const list = document.getElementById("new-doc-browse-list");
+        list.innerHTML = '<p class="px-3 py-4 text-xs text-gray-400 text-center">Loading…</p>';
+        try {
+          const data = await fetch("/api/browse?path=" + encodeURIComponent(dirPath)).then((r) => r.json());
+          _newDocBrowseCurrent = data.current;
+          _newDocBrowseParent = data.parent;
+          document.getElementById("new-doc-browse-path").textContent = data.current;
+          const atRoot = data.current === _newDocDocsFolder;
+          document.getElementById("new-doc-browse-up").disabled = atRoot;
+
+          const rows = data.dirs.map(
+            (dir) =>
+              `<div class="flex items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                <button data-path="${esc(dir.path)}" onclick="newDocLoadBrowse(this.dataset.path)"
+                  class="flex-1 flex items-center gap-2 px-3 py-2 text-sm text-left">
+                  <span class="text-gray-400 shrink-0">&#128193;</span>
+                  <span class="text-gray-700 dark:text-gray-300 truncate">${esc(dir.name)}</span>
+                </button>
+                <button data-path="${esc(dir.path)}" onclick="newDocSelectFolder(this.dataset.path)"
+                  title="Use this folder"
+                  class="shrink-0 text-blue-400 hover:text-blue-600 px-3 py-2 text-sm transition-colors">&#10003;</button>
+              </div>`,
+          );
+
+          const selectBtn = `<button onclick="newDocSelectCurrentFolder()"
+            class="w-full px-3 py-2 text-xs text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 text-left font-medium border-t border-gray-100 dark:border-gray-800">
+            &#10003; Use this folder
+          </button>`;
+
+          list.innerHTML =
+            (rows.length
+              ? rows.join("")
+              : '<p class="px-3 py-3 text-xs text-gray-400 text-center">No sub-folders</p>') + selectBtn;
+        } catch {
+          list.innerHTML = '<p class="px-3 py-4 text-xs text-red-400 text-center">Cannot read directory</p>';
+        }
+      }
+
+      function newDocBrowseUp() {
+        if (_newDocBrowseCurrent !== _newDocDocsFolder && _newDocBrowseParent) {
+          newDocLoadBrowse(_newDocBrowseParent);
+        }
+      }
+
+      function _newDocAbsToRel(absPath) {
+        const base = _newDocDocsFolder;
+        if (absPath === base) return "";
+        if (absPath.startsWith(base + "/")) return absPath.slice(base.length + 1);
+        return absPath;
+      }
+
+      function newDocSelectFolder(absPath) {
+        _newDocSelectedFolder = _newDocAbsToRel(absPath);
+        _newDocBrowseCurrent = absPath;
+        document.getElementById("new-doc-folder-display").textContent =
+          _newDocSelectedFolder ? "/" + _newDocSelectedFolder : "/ (root)";
+        document.getElementById("new-doc-browser").classList.add("hidden");
+        newDocUpdatePreview();
+      }
+
+      function newDocSelectCurrentFolder() {
+        newDocSelectFolder(_newDocBrowseCurrent || _newDocDocsFolder);
+      }
+
+      function newDocCreateFolder() {
+        const name = document.getElementById("new-doc-new-folder-name").value.trim();
+        if (!name) return;
+        const parent = _newDocBrowseCurrent || _newDocDocsFolder;
+        const newRelPath = (_newDocAbsToRel(parent) ? _newDocAbsToRel(parent) + "/" : "") + name;
+        _newDocSelectedFolder = newRelPath;
+        document.getElementById("new-doc-folder-display").textContent = "/" + newRelPath;
+        document.getElementById("new-doc-new-folder-name").value = "";
+        document.getElementById("new-doc-browser").classList.add("hidden");
+        newDocUpdatePreview();
+      }
+
+      function newDocUpdatePreview() {
+        const title = document.getElementById("new-doc-title").value.trim();
+        const category = document.getElementById("new-doc-category").value.trim() || "General";
+        const previewEl = document.getElementById("new-doc-filename-preview");
+
+        if (!title) {
+          previewEl.textContent = "(enter a title)";
+          return;
+        }
+
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        const hours = String(now.getHours()).padStart(2, "0");
+        const minutes = String(now.getMinutes()).padStart(2, "0");
+        const titleSlug = title
+          .toLowerCase()
+          .replace(/\s+/g, "_")
+          .replace(/[^a-z0-9_]/g, "")
+          .replace(/_+/g, "_")
+          .replace(/^_|_$/g, "") || "document";
+
+        const filename = _newDocPattern
+          .replace("YYYY", year)
+          .replace("MM", month)
+          .replace("DD", day)
+          .replace("HH", hours)
+          .replace("mm", minutes)
+          .replace(/\[Category\]/i, `[${category}]`)
+          .replace(/\b(?:title_words|title)\b/i, titleSlug) + ".md";
+
+        previewEl.textContent = _newDocSelectedFolder
+          ? _newDocSelectedFolder + "/" + filename
+          : filename;
+      }
+
+      async function createNewDocument() {
+        const title = document.getElementById("new-doc-title").value.trim();
+        const category = document.getElementById("new-doc-category").value.trim() || "General";
+        const errorEl = document.getElementById("new-doc-error");
+        const btn = document.getElementById("new-doc-create-btn");
+
+        if (!title) {
+          errorEl.textContent = "Please enter a title.";
+          errorEl.classList.remove("hidden");
+          return;
+        }
+
+        errorEl.classList.add("hidden");
+        btn.disabled = true;
+        btn.textContent = "Creating…";
+
+        try {
+          const res = await fetch("/api/documents", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title, category, folder: _newDocSelectedFolder }),
+          });
+
+          if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || "Creation failed");
+          }
+
+          const doc = await res.json();
+          closeNewDocModal();
+          await loadDocuments();
+          openDocument(doc.id);
+        } catch (err) {
+          errorEl.textContent = "Error: " + err.message;
+          errorEl.classList.remove("hidden");
+          btn.disabled = false;
+          btn.textContent = "Create";
+        }
+      }
+
+      // Allow Enter key in title/category to submit
+      document.addEventListener("DOMContentLoaded", () => {
+        ["new-doc-title", "new-doc-category"].forEach((id) => {
+          document.getElementById(id)?.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") createNewDocument();
+            if (e.key === "Escape") closeNewDocModal();
+          });
+        });
+        document.getElementById("new-doc-new-folder-name")?.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") newDocCreateFolder();
+        });
+      });
 
       // Browser back/forward
       window.addEventListener("popstate", (e) => {

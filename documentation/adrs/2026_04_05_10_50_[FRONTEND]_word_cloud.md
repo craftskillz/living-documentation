@@ -1,5 +1,5 @@
 ---
-`🗄️ ADR : 2026_04_05_[FRONTEND]_word_cloud.md`
+`🗄️ ADR : 2026_04_05_10_50_[FRONTEND]_word_cloud.md`
 **date:** 2026-04-05
 **status:** Accepted
 **description:** Add a Word Cloud feature with a recursive backend API and a frontend overlay with stop-word filtering, folder browser, and extension selection.

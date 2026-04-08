@@ -1,5 +1,5 @@
 ---
-`🗄️ ADR : 2026_04_03_[DIAGRAM]_modularisation_javascript.md`
+`🗄️ ADR : 2026_04_03_10_40_[DIAGRAM]_modularisation_javascript.md`
 **date:** 2026-04-03
 **status:** Accepted
 **description:** Extract diagram.html's 2390-line JS monolith into 15 ES native modules under src/frontend/diagram/, each with a single responsibility.

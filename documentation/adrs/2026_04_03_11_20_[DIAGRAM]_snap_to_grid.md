@@ -1,5 +1,5 @@
 ---
-`🗄️ ADR : 2026_04_03_[DIAGRAM]_snap_to_grid.md`
+`🗄️ ADR : 2026_04_03_11_20_[DIAGRAM]_snap_to_grid.md`
 **date:** 2026-04-03
 **status:** Accepted
 **description:** Fix snap-to-grid using shape.width/height for visual edge alignment, and fix grid DPR mismatch on Retina displays by multiplying vis.js CSS-pixel coordinates by devicePixelRatio.

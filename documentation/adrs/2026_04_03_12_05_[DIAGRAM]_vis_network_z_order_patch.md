@@ -1,5 +1,5 @@
 ---
-`🗄️ ADR : 2026_04_03_[DIAGRAM]_vis_network_z_order_patch.md`
+`🗄️ ADR : 2026_04_03_12_05_[DIAGRAM]_vis_network_z_order_patch.md`
 **date:** 2026-04-03
 **status:** Accepted
 **description:** Monkey-patch vis-network _drawNodes to perform a single pass in canonical order, preserving user-defined z-order against hover/select reordering.
