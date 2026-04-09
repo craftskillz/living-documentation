@@ -344,6 +344,28 @@
                   <!-- View mode actions -->
                   <div id="view-actions" class="flex items-center gap-2">
                     <button
+                      onclick="toggleMarker()"
+                      id="stabilo-btn"
+                      title="Mode Marker — surligner pour annoter"
+                      class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      <svg id="stabilo-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 100 100" fill="none" style="display:inline-block;vertical-align:middle;margin-right:4px;">
+                        <!-- body -->
+                        <rect x="28" y="10" width="44" height="62" rx="6" transform="rotate(40 50 50)" fill="#bfdbfe" stroke="currentColor" stroke-width="6"/>
+                        <!-- cap -->
+                        <rect x="52" y="8" width="22" height="30" rx="6" transform="rotate(40 50 50)" fill="#93c5fd" stroke="currentColor" stroke-width="6"/>
+                        <!-- nib -->
+                        <polygon points="28,60 10,80 30,80 38,72" fill="#93c5fd" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/>
+                        <!-- underline stroke -->
+                        <line x1="10" y1="90" x2="72" y2="90" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                        <!-- hidden cross (two diagonal bars) -->
+                        <g id="stabilo-cross" style="display:none;">
+                          <line x1="8" y1="8" x2="92" y2="92" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+                          <line x1="92" y1="8" x2="8" y2="92" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+                        </g>
+                      </svg>Marker
+                    </button>
+                    <button
                       onclick="toggleFullWidth()"
                       id="full-width-btn"
                       title="Toggle full width"
@@ -1098,6 +1120,69 @@
       </div>
     </div>
 
+    <!-- ── Marker: post-it creation popup ── -->
+    <div id="stabilo-popup" class="hidden fixed z-50 w-80 bg-yellow-50 dark:bg-yellow-900/80 border-2 border-yellow-300 dark:border-yellow-600 rounded-xl shadow-2xl p-4 flex flex-col gap-3"
+         style="top:0;left:0;">
+      <div class="text-xs font-semibold text-yellow-700 dark:text-yellow-300 flex items-center gap-2">
+        <span>&#9999;</span> Annotation
+      </div>
+      <div id="stabilo-selected-preview"
+           class="text-xs text-yellow-800 dark:text-yellow-200 bg-yellow-100 dark:bg-yellow-800/50 rounded px-2 py-1 italic max-h-16 overflow-y-auto border border-yellow-200 dark:border-yellow-700">
+      </div>
+      <textarea id="stabilo-note-input" rows="4" placeholder="Votre remarque ou suggestion…"
+        class="w-full text-sm rounded-lg border border-yellow-300 dark:border-yellow-600 bg-white dark:bg-yellow-950 text-gray-900 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none">
+      </textarea>
+      <div class="flex justify-end gap-2">
+        <button onclick="cancelMarkerPopup()"
+          class="text-sm px-3 py-1.5 rounded-lg border border-yellow-300 dark:border-yellow-600 text-yellow-700 dark:text-yellow-300 hover:bg-yellow-100 dark:hover:bg-yellow-800 transition-colors">
+          Annuler
+        </button>
+        <button onclick="saveAnnotation()"
+          class="text-sm px-4 py-1.5 rounded-lg bg-yellow-400 hover:bg-yellow-500 dark:bg-yellow-600 dark:hover:bg-yellow-500 text-yellow-900 dark:text-white font-semibold transition-colors">
+          Enregistrer
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Marker: read-only post-it hover popup ── -->
+    <div id="stabilo-read-popup" class="hidden fixed z-50 w-80 bg-yellow-50 dark:bg-yellow-900/80 border-2 border-yellow-300 dark:border-yellow-600 rounded-xl shadow-2xl p-4 flex flex-col gap-2 pointer-events-auto"
+         style="top:0;left:0;">
+      <div class="text-xs font-semibold text-yellow-700 dark:text-yellow-300 flex items-center gap-2">
+        <span>&#9999;</span> <span id="stabilo-read-date" class="font-normal text-yellow-600 dark:text-yellow-400"></span>
+      </div>
+      <div id="stabilo-read-text"
+           class="text-sm text-gray-800 dark:text-gray-100 whitespace-pre-wrap max-h-48 overflow-y-auto">
+      </div>
+      <div class="flex justify-end pt-1 border-t border-yellow-200 dark:border-yellow-700">
+        <button id="stabilo-delete-btn"
+          class="text-xs px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-700 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 transition-colors flex items-center gap-1">
+          &#128465; Supprimer
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Marker: delete confirmation ── -->
+    <div id="stabilo-confirm-delete" class="hidden fixed z-50 w-72 bg-white dark:bg-gray-900 border border-red-200 dark:border-red-700 rounded-xl shadow-2xl p-4 flex flex-col gap-3"
+         style="top:0;left:0;">
+      <p class="text-sm text-gray-700 dark:text-gray-200">Supprimer cette annotation ?</p>
+      <div class="flex justify-end gap-2">
+        <button onclick="cancelDeleteAnnotation()"
+          class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+          Annuler
+        </button>
+        <button onclick="confirmDeleteAnnotation()"
+          class="text-sm px-4 py-1.5 rounded-lg bg-red-500 hover:bg-red-600 text-white font-semibold transition-colors">
+          Supprimer
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Marker: right elevator ── -->
+    <div id="stabilo-elevator"
+         class="hidden fixed top-14 right-0 w-10 flex flex-col items-center py-2 gap-2 z-40 overflow-y-auto"
+         style="max-height:calc(100vh - 3.5rem);">
+    </div>
+
     <!-- ── Image lightbox overlay ── -->
     <div
       id="img-lightbox"
@@ -1479,6 +1564,22 @@
             allDocs.find((d) => d.category === "General") ?? allDocs[0];
           if (first) openDocument(first.id, true);
         }
+
+        // Event delegation for annotation spans — survives innerHTML replacements on doc-content
+        const contentEl = document.getElementById("doc-content");
+        if (contentEl) {
+          contentEl.addEventListener("mouseover", (e) => {
+            const span = e.target.closest("[data-annotation-id]");
+            if (!span) return;
+            const ann = stabiloAnnotations.find(a => a.id === span.dataset.annotationId);
+            if (ann) showReadPopup(ann, span);
+          });
+          contentEl.addEventListener("mouseout", (e) => {
+            if (!e.target.closest("[data-annotation-id]")) return;
+            if (e.relatedTarget && e.relatedTarget.closest("[data-annotation-id]")) return;
+            scheduleHideReadPopup();
+          });
+        }
       });
 
       // ── Dark mode ──────────────────────────────────────────────
@@ -1775,6 +1876,9 @@
 
           const contentEl = document.getElementById("doc-content");
           contentEl.innerHTML = doc.html;
+
+          // Load annotations for this document
+          loadAnnotations(id);
 
           // Add IDs to headings for anchor navigation
           contentEl.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach((h) => {
@@ -2758,6 +2862,386 @@
         } finally {
           btn.innerHTML = originalHtml;
           btn.disabled = false;
+        }
+      }
+
+      // ── Marker annotations ────────────────────────────────────
+      let stabiloActive = false;
+      let stabiloHidden = false; // state 3: highlights hidden
+      let stabiloPendingRange = null;
+      let stabiloAnnotations = [];
+      let stabiloDeleteTargetId = null;
+      let stabiloReadPopupAnnotationId = null;
+      let stabiloReadHideTimer = null;
+
+      // Cycles: normal → active → hidden → normal
+      function toggleMarker() {
+        const btn = document.getElementById("stabilo-btn");
+        const fills = btn.querySelectorAll("rect, polygon");
+        const crossEl = document.getElementById("stabilo-cross");
+
+        if (!stabiloActive && !stabiloHidden) {
+          // normal → active
+          stabiloActive = true;
+          btn.classList.remove("border-gray-200", "dark:border-gray-700", "text-gray-600", "dark:text-gray-400");
+          btn.classList.add("border-yellow-400", "bg-yellow-100", "dark:bg-yellow-900/40", "text-yellow-700", "dark:text-yellow-300");
+          fills.forEach(el => el.setAttribute("fill", el.tagName === "polygon" ? "#fde047" : "#fef08a"));
+          crossEl.style.display = "none";
+        } else if (stabiloActive) {
+          // active → hidden
+          stabiloActive = false;
+          stabiloHidden = true;
+          btn.classList.remove("border-yellow-400", "bg-yellow-100", "dark:bg-yellow-900/40", "text-yellow-700", "dark:text-yellow-300");
+          btn.classList.add("border-gray-200", "dark:border-gray-700", "text-gray-600", "dark:text-gray-400");
+          fills.forEach(el => el.setAttribute("fill", el.tagName === "polygon" ? "#93c5fd" : el.previousElementSibling ? "#93c5fd" : "#bfdbfe"));
+          crossEl.style.display = "block";
+          closeMarkerPopup();
+          setHighlightsVisible(false);
+        } else {
+          // hidden → normal
+          stabiloHidden = false;
+          crossEl.style.display = "none";
+          setHighlightsVisible(true);
+        }
+      }
+
+      function setHighlightsVisible(visible) {
+        document.querySelectorAll("mark[data-annotation-id]").forEach(m => {
+          m.style.background = visible ? "rgba(250,204,21,0.5)" : "transparent";
+          m.style.cursor = visible ? "pointer" : "default";
+          m.style.pointerEvents = visible ? "auto" : "none";
+        });
+        const elevator = document.getElementById("stabilo-elevator");
+        if (elevator) elevator.style.visibility = visible ? "visible" : "hidden";
+      }
+
+      // Load and apply annotations for current doc
+      async function loadAnnotations(docId) {
+        stabiloAnnotations = [];
+        try {
+          stabiloAnnotations = await fetch("/api/annotations/" + encodeURIComponent(docId)).then(r => r.json());
+        } catch { stabiloAnnotations = []; }
+        applyAnnotationHighlights();
+        renderElevator();
+      }
+
+      // Re-apply all highlight marks in the rendered content
+      function applyAnnotationHighlights() {
+        const contentEl = document.getElementById("doc-content");
+        if (!contentEl) return;
+
+        // Remove existing annotation spans and marks (unwrap, keep text content)
+        contentEl.querySelectorAll("span[data-annotation-id], mark[data-annotation-id]").forEach(el => {
+          const parent = el.parentNode;
+          parent.replaceChild(document.createTextNode(el.textContent), el);
+          parent.normalize();
+        });
+
+        // Step 1 — place all anchor spans via innerHTML (each call reads the updated innerHTML
+        // so previously placed anchors are carried forward in the string)
+        for (const ann of stabiloAnnotations) {
+          placeAnchors(contentEl, ann);
+        }
+
+        // Step 2 — highlight text nodes between each pair of anchors via DOM (no more innerHTML
+        // changes, so marks from earlier annotations are not destroyed)
+        for (const ann of stabiloAnnotations) {
+          highlightBetweenAnchors(ann.id);
+        }
+      }
+
+      // Insert two single-character anchor spans in the innerHTML string (no block issues possible).
+      function placeAnchors(contentEl, ann) {
+        const selText   = ann.selectedText.replace(/\s+/g, ' ').trim();
+        const ctxBefore = ann.contextBefore.replace(/\s+/g, ' ').trim();
+        const ctxAfter  = ann.contextAfter.replace(/\s+/g, ' ').trim();
+        if (!selText) return;
+
+        const html = contentEl.innerHTML;
+        function escRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+        const INLINE_GAP = '(?:<[^>]*>)*';
+        const WORD_GAP   = '(?:\\s*(?:<[^>]*>\\s*)*)';
+
+        function textToPattern(text) {
+          const words = text.split(/\s+/).filter(Boolean);
+          return words
+            .map(w => w.split('').map(escRe).join(INLINE_GAP))
+            .join(WORD_GAP);
+        }
+
+        const selPat = textToPattern(selText);
+        let re, match;
+
+        if (ctxBefore || ctxAfter) {
+          const fullPat = (ctxBefore ? textToPattern(ctxBefore) + WORD_GAP : '')
+            + `(${selPat})`
+            + (ctxAfter ? WORD_GAP + textToPattern(ctxAfter) : '');
+          try { re = new RegExp(fullPat, 'id'); match = re.exec(html); } catch { /* fall through */ }
+        }
+        if (!match) {
+          try { re = new RegExp(`(${selPat})`, 'id'); match = re.exec(html); } catch { return; }
+        }
+        if (!match || !match.indices || !match.indices[1]) return;
+
+        const [htmlStart, htmlEnd] = match.indices[1];
+        const id          = ann.id;
+        const anchorStyle = 'background:rgba(250,204,21,0.5);border-radius:2px;cursor:pointer;';
+        const mkSpan = (spanId, char) =>
+          `<span id="${spanId}" data-annotation-id="${id}" style="${anchorStyle}">${char}</span>`;
+
+        const firstChar = html[htmlStart];
+        const lastChar  = html[htmlEnd - 1];
+
+        let newHtml;
+        if (htmlEnd - htmlStart === 1) {
+          newHtml = html.slice(0, htmlStart) + mkSpan(id + '-s', firstChar) + html.slice(htmlEnd);
+        } else {
+          newHtml = html.slice(0, htmlStart)
+            + mkSpan(id + '-s', firstChar)
+            + html.slice(htmlStart + 1, htmlEnd - 1)
+            + mkSpan(id + '-e', lastChar)
+            + html.slice(htmlEnd);
+        }
+        contentEl.innerHTML = newHtml;
+      }
+
+      // Wrap every text node between the two anchor spans in a <mark> element.
+      // Text nodes are always within a single block element — no invalid HTML possible.
+      function highlightBetweenAnchors(annId) {
+        const startEl = document.getElementById(annId + '-s');
+        const endEl   = document.getElementById(annId + '-e');
+        if (!startEl || !endEl || startEl === endEl) return;
+
+        const range = document.createRange();
+        range.setStartAfter(startEl);
+        range.setEndBefore(endEl);
+
+        const walker = document.createTreeWalker(range.commonAncestorContainer, NodeFilter.SHOW_TEXT);
+        const toWrap = [];
+        while (walker.nextNode()) {
+          if (range.intersectsNode(walker.currentNode)) toWrap.push(walker.currentNode);
+        }
+
+        const markStyle = 'background:rgba(250,204,21,0.5);border-radius:2px;';
+        for (const textNode of toWrap) {
+          if (!textNode.textContent) continue;
+          const mark = document.createElement('mark');
+          mark.dataset.annotationId = annId;
+          mark.style.cssText = markStyle;
+          textNode.parentNode.insertBefore(mark, textNode);
+          mark.appendChild(textNode);
+        }
+      }
+
+      // ── Selection capture ──
+      document.addEventListener("mouseup", (e) => {
+        if (!stabiloActive) return;
+        if (document.getElementById("stabilo-popup") && !document.getElementById("stabilo-popup").classList.contains("hidden")) return;
+
+        const sel = window.getSelection();
+        if (!sel || sel.isCollapsed || !sel.toString().trim()) return;
+
+        const contentEl = document.getElementById("doc-content");
+        if (!contentEl || !contentEl.contains(sel.anchorNode)) return;
+
+        // Normalize: collapse newlines and multiple spaces to single space
+        // (textContent of DOM has no newlines between block elements)
+        const selectedText = sel.toString().trim().replace(/\s+/g, " ");
+        const range = sel.getRangeAt(0);
+        stabiloPendingRange = range.cloneRange();
+
+        // Extract context (30 chars before/after)
+        const fullText = contentEl.textContent;
+        const selStart = fullText.indexOf(selectedText);
+        const ctxBefore = selStart > 0 ? fullText.slice(Math.max(0, selStart - 30), selStart) : "";
+        const ctxAfter = fullText.slice(selStart + selectedText.length, selStart + selectedText.length + 30);
+
+        stabiloPendingRange._selectedText = selectedText;
+        stabiloPendingRange._contextBefore = ctxBefore;
+        stabiloPendingRange._contextAfter = ctxAfter;
+
+        // Position popup near selection
+        const rect = range.getBoundingClientRect();
+        positionPopup("stabilo-popup", rect.left + window.scrollX, rect.bottom + window.scrollY + 8);
+        document.getElementById("stabilo-selected-preview").textContent = selectedText.length > 120
+          ? selectedText.slice(0, 120) + "…" : selectedText;
+        document.getElementById("stabilo-note-input").value = "";
+        document.getElementById("stabilo-popup").classList.remove("hidden");
+        setTimeout(() => document.getElementById("stabilo-note-input").focus(), 50);
+      });
+
+      function positionPopup(id, x, y) {
+        const el = document.getElementById(id);
+        const w = 320;
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        let left = x;
+        let top = y;
+        if (left + w > vw - 16) left = vw - w - 16;
+        if (left < 8) left = 8;
+        el.style.left = left + "px";
+        el.style.top = Math.min(top, vh - 260) + "px";
+      }
+
+      function closeMarkerPopup() {
+        document.getElementById("stabilo-popup").classList.add("hidden");
+        stabiloPendingRange = null;
+        window.getSelection()?.removeAllRanges();
+      }
+
+      function cancelMarkerPopup() {
+        closeMarkerPopup();
+      }
+
+      async function saveAnnotation() {
+        if (!stabiloPendingRange || !currentDocId) return;
+        const note = document.getElementById("stabilo-note-input").value.trim();
+        if (!note) { document.getElementById("stabilo-note-input").focus(); return; }
+
+        try {
+          const ann = await fetch("/api/annotations/" + encodeURIComponent(currentDocId), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              selectedText: stabiloPendingRange._selectedText,
+              contextBefore: stabiloPendingRange._contextBefore,
+              contextAfter: stabiloPendingRange._contextAfter,
+              note,
+            }),
+          }).then(r => r.json());
+
+          stabiloAnnotations.push(ann);
+          closeMarkerPopup();
+          applyAnnotationHighlights();
+          renderElevator();
+        } catch { /* ignore */ }
+      }
+
+      // ── Read popup ──
+      function showReadPopup(ann, markEl) {
+        clearTimeout(stabiloReadHideTimer);
+        stabiloReadPopupAnnotationId = ann.id;
+        const popup = document.getElementById("stabilo-read-popup");
+        document.getElementById("stabilo-read-text").textContent = ann.note;
+        document.getElementById("stabilo-read-date").textContent =
+          new Date(ann.createdAt).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
+
+        document.getElementById("stabilo-delete-btn").onclick = () => askDeleteAnnotation(ann.id);
+
+        const rect = markEl.getBoundingClientRect();
+        positionPopup("stabilo-read-popup", rect.left + window.scrollX, rect.bottom + window.scrollY + 8);
+        popup.classList.remove("hidden");
+
+        // Highlight elevator pill
+        document.querySelectorAll(".stabilo-pill").forEach(p => {
+          p.style.background = p.dataset.id === ann.id ? "#f97316" : "#facc15";
+        });
+        // Scroll elevator pill into view
+        const pill = document.querySelector(`.stabilo-pill[data-id="${ann.id}"]`);
+        if (pill) pill.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
+
+      function scheduleHideReadPopup() {
+        stabiloReadHideTimer = setTimeout(() => {
+          document.getElementById("stabilo-read-popup").classList.add("hidden");
+          document.querySelectorAll(".stabilo-pill").forEach(p => p.style.background = "#facc15");
+        }, 300);
+      }
+
+      // Keep popup visible when hovering it
+      document.getElementById("stabilo-read-popup").addEventListener("mouseenter", () => clearTimeout(stabiloReadHideTimer));
+      document.getElementById("stabilo-read-popup").addEventListener("mouseleave", () => scheduleHideReadPopup());
+
+      // ── Delete ──
+      function askDeleteAnnotation(id) {
+        stabiloDeleteTargetId = id;
+        document.getElementById("stabilo-read-popup").classList.add("hidden");
+        const confirmEl = document.getElementById("stabilo-confirm-delete");
+        confirmEl.style.left = document.getElementById("stabilo-read-popup").style.left;
+        confirmEl.style.top = document.getElementById("stabilo-read-popup").style.top;
+        confirmEl.classList.remove("hidden");
+      }
+
+      function cancelDeleteAnnotation() {
+        document.getElementById("stabilo-confirm-delete").classList.add("hidden");
+        stabiloDeleteTargetId = null;
+      }
+
+      async function confirmDeleteAnnotation() {
+        if (!stabiloDeleteTargetId || !currentDocId) return;
+        try {
+          await fetch(`/api/annotations/${encodeURIComponent(currentDocId)}/${stabiloDeleteTargetId}`, { method: "DELETE" });
+          stabiloAnnotations = stabiloAnnotations.filter(a => a.id !== stabiloDeleteTargetId);
+          stabiloDeleteTargetId = null;
+          document.getElementById("stabilo-confirm-delete").classList.add("hidden");
+          applyAnnotationHighlights();
+          renderElevator();
+        } catch { /* ignore */ }
+      }
+
+      // ── Elevator ──
+      function renderElevator() {
+        const elevator = document.getElementById("stabilo-elevator");
+        const contentEl = document.getElementById("doc-content");
+        if (!contentEl) return;
+
+        if (stabiloAnnotations.length === 0) {
+          elevator.classList.add("hidden");
+          elevator.innerHTML = "";
+          return;
+        }
+
+        elevator.classList.remove("hidden");
+        const docHeight = contentEl.scrollHeight;
+        const elevatorHeight = window.innerHeight;
+
+        elevator.innerHTML = "";
+        for (const ann of stabiloAnnotations) {
+          const anchor = document.getElementById(ann.id + '-s');
+          const relPos = anchor
+            ? (anchor.offsetTop / Math.max(docHeight, 1)) * elevatorHeight
+            : 0;
+
+          const pill = document.createElement("button");
+          pill.className = "stabilo-pill w-8 h-8 rounded border-2 border-yellow-500 shadow text-xs flex items-center justify-center transition-colors shrink-0";
+          pill.dataset.id = ann.id;
+          pill.style.background = "#facc15";
+          pill.title = ann.note.length > 60 ? ann.note.slice(0, 60) + "…" : ann.note;
+          pill.textContent = "✎";
+
+          pill.addEventListener("click", () => {
+            const a = document.getElementById(ann.id + '-s');
+            if (a) {
+              const docView = document.getElementById("content-area");
+              docView.scrollTo({ top: a.offsetTop - 120, behavior: "smooth" });
+            }
+          });
+          pill.addEventListener("mouseenter", () => {
+            const a = document.getElementById(ann.id + '-s');
+            if (!a) return;
+            const docView = document.getElementById("content-area");
+            const anchorTop = a.getBoundingClientRect().top + docView.scrollTop - docView.getBoundingClientRect().top;
+            docView.scrollTo({ top: anchorTop - docView.clientHeight / 2, behavior: "smooth" });
+            // Wait for scroll to fully stop before showing popup
+            let scrollEndTimer;
+            const onScroll = () => {
+              clearTimeout(scrollEndTimer);
+              scrollEndTimer = setTimeout(() => {
+                docView.removeEventListener("scroll", onScroll);
+                showReadPopup(ann, a);
+              }, 80);
+            };
+            docView.addEventListener("scroll", onScroll);
+            // Fallback if already at position (no scroll event fires)
+            scrollEndTimer = setTimeout(() => {
+              docView.removeEventListener("scroll", onScroll);
+              showReadPopup(ann, a);
+            }, 600);
+          });
+          pill.addEventListener("mouseleave", () => scheduleHideReadPopup());
+
+          elevator.appendChild(pill);
         }
       }
 
