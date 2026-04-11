@@ -22,3 +22,9 @@ const dest = path.join(__dirname, '..', 'dist', 'src', 'frontend');
 
 copyDir(src, dest);
 console.log(`Copied frontend assets → dist/src/frontend/`);
+
+const startingDocSrc = path.join(__dirname, '..', 'starting-doc');
+const startingDocDest = path.join(__dirname, '..', 'dist', 'starting-doc');
+
+copyDir(startingDocSrc, startingDocDest);
+console.log(`Copied starting-doc → dist/starting-doc/`);
