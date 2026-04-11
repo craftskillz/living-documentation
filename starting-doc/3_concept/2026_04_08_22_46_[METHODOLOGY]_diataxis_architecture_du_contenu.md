@@ -1,7 +1,7 @@
 
 ## Diátaxis — l'architecture du contenu
 
-La méthode [**Diátaxis**](https://diataxis.fr/) répond à une question différente de celle de [`Living Documentation`](?doc=3_concept%252F2026_04_08_22_15_%255BDOCUMENTING%255D_living_documentation) mais néanmoins complémentaire : non pas *comment maintenir* la documentation, mais *comment la structurer* pour qu'elle serve vraiment.
+La méthode <a href="https://diataxis.fr/" target="_blank">**Diátaxis**</a> répond à une question différente de celle de [`Living Documentation`](?doc=3_concept%252F2026_04_08_22_15_%255BDOCUMENTING%255D_living_documentation) mais néanmoins complémentaire : non pas *comment maintenir* la documentation, mais *comment la structurer* pour qu'elle serve vraiment.
 
 Sa réponse tient en une règle : **un document, une seule orientation**.
 

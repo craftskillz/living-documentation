@@ -464,13 +464,6 @@
                     >
                       &#9998; Edit
                     </button>
-                    <button
-                      onclick="openDiagramLinkModal()"
-                      title="Link a diagram"
-                      class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                    >
-                      &#9671; Diagram
-                    </button>
                   </div>
                   <!-- Edit mode actions -->
                   <div id="edit-actions" class="hidden flex items-center gap-2">
@@ -825,6 +818,7 @@
             onchange="snippetTypeChanged()"
             class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
+            <option value="diagram" selected>Diagramme</option>
             <option value="collapsible">Bloc repliable (détails)</option>
             <option value="link">Lien</option>
             <option value="doc-link">Lien vers un document</option>
@@ -1111,6 +1105,67 @@
           >
             + Ajouter un élément
           </button>
+        </div>
+
+        <!-- Panel: diagram -->
+        <div id="snip-panel-diagram" class="hidden space-y-3">
+          <!-- Mode toggle -->
+          <div class="flex gap-4 text-sm">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="snip-diag-mode"
+                id="snip-diag-mode-existing"
+                value="existing"
+                checked
+                onchange="snippetDiagModeChanged()"
+              />
+              <span class="text-gray-700 dark:text-gray-300">Diagramme existant</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="snip-diag-mode"
+                id="snip-diag-mode-new"
+                value="new"
+                onchange="snippetDiagModeChanged()"
+              />
+              <span class="text-gray-700 dark:text-gray-300">Nouveau diagramme</span>
+            </label>
+          </div>
+          <!-- Existing picker -->
+          <div id="snip-diag-existing-section" class="space-y-1.5">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Sélectionner un diagramme</label>
+            <select
+              id="snip-diag-select"
+              onchange="snippetDiagSyncImgName(); snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ></select>
+          </div>
+          <!-- New diagram name -->
+          <div id="snip-diag-new-section" class="hidden space-y-1.5">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Nom du diagramme</label>
+            <input
+              id="snip-diag-new-name"
+              type="text"
+              placeholder="Mon diagramme"
+              oninput="snippetDiagSyncImgName(); snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <!-- Image filename -->
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">
+              Nom du fichier image <span class="font-normal text-gray-400">(sauvegardé dans ./images/)</span>
+            </label>
+            <input
+              id="snip-diag-img-name"
+              type="text"
+              placeholder="diagram.png"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
         </div>
 
         <!-- Markdown preview -->
@@ -2271,6 +2326,7 @@
         "image",
         "table",
         "tree",
+        "diagram",
       ];
 
       function openSnippetsModal() {
@@ -2315,7 +2371,7 @@
             msgEl.className =
               "rounded-lg px-3 py-2 text-xs bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800";
           } else {
-            document.getElementById("snippet-type").value = "collapsible";
+            document.getElementById("snippet-type").value = "diagram";
             snippetTypeChanged();
             msgEl.textContent =
               "⚠ Le texte sélectionné ne correspond à aucun type de snippet reconnu. Choisissez un type ci-dessous — le snippet remplacera quand même la sélection.";
@@ -2325,7 +2381,7 @@
           msgEl.classList.remove("hidden");
         } else {
           msgEl.classList.add("hidden");
-          document.getElementById("snippet-type").value = "collapsible";
+          document.getElementById("snippet-type").value = "diagram";
           snippetTypeChanged();
         }
 
@@ -2344,7 +2400,51 @@
         });
         if (type === "table") tableInit();
         else if (type === "tree") treeInit();
+        else if (type === "diagram") snippetDiagInit();
         else snippetUpdatePreview();
+      }
+
+      async function snippetDiagInit() {
+        let diagrams = [];
+        try {
+          diagrams = await fetch("/api/diagrams").then((r) => r.json());
+        } catch {
+          diagrams = [];
+        }
+        const sel = document.getElementById("snip-diag-select");
+        sel.innerHTML = diagrams.length
+          ? diagrams.map((d) => `<option value="${esc(d.id)}">${esc(d.title)}</option>`).join("")
+          : `<option value="" disabled>Aucun diagramme</option>`;
+
+        // Pre-fill image name from current doc title
+        const docTitle = document.getElementById("doc-title").textContent.trim();
+        const slug = docTitle.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
+        document.getElementById("snip-diag-img-name").value = slug ? slug + ".png" : "diagram.png";
+        document.getElementById("snip-diag-new-name").value = docTitle ? docTitle + " Diagram" : "";
+
+        document.getElementById("snip-diag-mode-existing").checked = true;
+        snippetDiagModeChanged();
+      }
+
+      function snippetDiagModeChanged() {
+        const isNew = document.getElementById("snip-diag-mode-new").checked;
+        document.getElementById("snip-diag-existing-section").classList.toggle("hidden", isNew);
+        document.getElementById("snip-diag-new-section").classList.toggle("hidden", !isNew);
+        snippetDiagSyncImgName();
+        snippetUpdatePreview();
+      }
+
+      function snippetDiagSyncImgName() {
+        const isNew = document.getElementById("snip-diag-mode-new").checked;
+        let label;
+        if (isNew) {
+          label = document.getElementById("snip-diag-new-name").value.trim();
+        } else {
+          const sel = document.getElementById("snip-diag-select");
+          label = sel.options[sel.selectedIndex]?.text ?? "";
+        }
+        const slug = label.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
+        document.getElementById("snip-diag-img-name").value = slug ? slug + ".png" : "diagram.png";
       }
 
       function buildSnippetMarkdown() {
@@ -2362,7 +2462,7 @@
               "Texte du lien";
             const url =
               document.getElementById("snip-link-url").value || "https://...";
-            return `[${text}](${url})`;
+            return `<a href="${url}" target="_blank">${text}</a>`; // [${text}](${url})
           }
           case "doc-link": {
             const sel = document.getElementById("snip-doc-select");
@@ -2432,6 +2532,20 @@
             return buildTableMarkdown();
           case "tree":
             return buildTreeMarkdown();
+          case "diagram": {
+            const isNew = document.getElementById("snip-diag-mode-new").checked;
+            const imgName = document.getElementById("snip-diag-img-name").value.trim() || "diagram.png";
+            let diagId, diagLabel;
+            if (isNew) {
+              diagId = "d" + Date.now();
+              diagLabel = document.getElementById("snip-diag-new-name").value.trim() || "Diagram";
+            } else {
+              const sel = document.getElementById("snip-diag-select");
+              diagId = sel.value;
+              diagLabel = sel.options[sel.selectedIndex]?.text || "Diagram";
+            }
+            return `[![${diagLabel}](./images/${imgName})](/diagram?id=${diagId})`;
+          }
           default:
             return "";
         }
@@ -2443,6 +2557,11 @@
       }
 
       function insertSnippet() {
+        const type = document.getElementById("snippet-type").value;
+        if (type === "diagram") {
+          insertDiagramSnippet();
+          return;
+        }
         const text = buildSnippetMarkdown();
         closeSnippetsModal();
         const editor = document.getElementById("doc-editor");
@@ -2452,6 +2571,55 @@
         editor.selectionStart = editor.selectionEnd =
           _snippetSelStart + text.length;
         editor.focus();
+      }
+
+      async function insertDiagramSnippet() {
+        const isNew = document.getElementById("snip-diag-mode-new").checked;
+        const imgName = document.getElementById("snip-diag-img-name").value.trim() || "diagram.png";
+        let diagId, diagLabel;
+        if (isNew) {
+          diagId = "d" + Date.now();
+          diagLabel = document.getElementById("snip-diag-new-name").value.trim() || "Diagram";
+          try {
+            await fetch(`/api/diagrams/${diagId}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ title: diagLabel, nodes: [], edges: [] }),
+            });
+          } catch (err) {
+            alert("Erreur lors de la création du diagramme : " + err.message);
+            return;
+          }
+        } else {
+          const sel = document.getElementById("snip-diag-select");
+          diagId = sel.value;
+          diagLabel = sel.options[sel.selectedIndex]?.text || "Diagram";
+        }
+
+        // Insert at cursor
+        const md = `[![${diagLabel}](./images/${imgName})](/diagram?id=${diagId})`;
+        closeSnippetsModal();
+        const editor = document.getElementById("doc-editor");
+        const before = editor.value.slice(0, _snippetSelStart);
+        const after = editor.value.slice(_snippetSelEnd);
+        editor.value = before + md + after;
+
+        // Auto-save then redirect to diagram editor
+        try {
+          const newContent = editor.value;
+          const res = await fetch("/api/documents/" + currentDocId, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ content: newContent }),
+          });
+          if (!res.ok) throw new Error(await res.text());
+          currentDocContent = newContent;
+        } catch (err) {
+          alert("Erreur lors de la sauvegarde : " + err.message);
+          return;
+        }
+
+        window.location.href = `/diagram?id=${diagId}&img=${encodeURIComponent(imgName)}`;
       }
 
       // ── Snippet: Table ─────────────────────────────────────────

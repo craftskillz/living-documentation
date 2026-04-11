@@ -5,11 +5,12 @@ import { visNodeProps, SHAPE_DEFAULTS }  from './node-rendering.js';
 import { visEdgeProps }  from './edge-rendering.js';
 import { showNodePanel } from './node-panel.js';
 import { showToast }     from './toast.js';
+import { uploadImageBlob } from './image-upload.js';
 
-// ── Copy selection as PNG ─────────────────────────────────────────────────────
+// ── Shared: render selection to a PNG blob ────────────────────────────────────
 
-export async function copySelectionAsPng() {
-  if (!st.network || !st.selectedNodeIds.length) return;
+async function _selectionToBlob() {
+  if (!st.network || !st.selectedNodeIds.length) return null;
 
   const PAD = 20;
   const dpr = window.devicePixelRatio || 1;
@@ -45,20 +46,16 @@ export async function copySelectionAsPng() {
   const cropW = Math.ceil(br.x - tl.x + PAD * 2);
   const cropH = Math.ceil(br.y - tl.y + PAD * 2);
 
-  // Temporarily deselect everything so orange highlights and group outlines
-  // don't appear in the PNG. unselectAll() clears vis-network's internal
-  // selection (removes orange borders), but drawGroupOutlines() reads
-  // st.selectedNodeIds — so we must clear it explicitly before redraw.
+  // Temporarily deselect so highlights don't appear in the PNG
   const savedNodeIds = [...st.selectedNodeIds];
   st.network.unselectAll();
   st.selectedNodeIds = [];
   st.network.redraw();
 
-  // Grab vis-network's canvas element
   const visCanvas = document.querySelector('#vis-canvas canvas');
   if (!visCanvas) {
     st.network.selectNodes(savedNodeIds);
-    return;
+    return null;
   }
 
   // Crop into an offscreen canvas
@@ -67,22 +64,46 @@ export async function copySelectionAsPng() {
   out.height = cropH * dpr;
   const octx = out.getContext('2d');
 
-  // Fill background matching current theme
   const isDark = document.documentElement.classList.contains('dark');
   octx.fillStyle = isDark ? '#030712' : '#f9fafb';
   octx.fillRect(0, 0, out.width, out.height);
-
   octx.drawImage(visCanvas,
     cropX * dpr, cropY * dpr, cropW * dpr, cropH * dpr,
     0, 0, out.width, out.height
   );
 
+  const blob = await new Promise((res) => out.toBlob(res, 'image/png'));
+  return { blob, savedNodeIds };
+}
+
+// ── Copy selection as PNG (to clipboard) ─────────────────────────────────────
+
+export async function copySelectionAsPng() {
+  const result = await _selectionToBlob();
+  if (!result) return;
+  const { blob, savedNodeIds } = result;
   try {
-    const blob = await new Promise((res) => out.toBlob(res, 'image/png'));
     await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
     showToast('PNG copié dans le presse-papier');
   } catch {
     showToast('Impossible de copier l\'image', 'error');
+  } finally {
+    st.network.selectNodes(savedNodeIds);
+  }
+}
+
+// ── Save selection as PNG to server ──────────────────────────────────────────
+
+export async function saveSelectionAsPng(filename) {
+  const result = await _selectionToBlob();
+  if (!result) return;
+  const { blob, savedNodeIds } = result;
+  try {
+    const name = filename.replace(/\.[^.]+$/, ''); // strip extension
+    await uploadImageBlob(blob, 'png', name);
+    showToast('Diagramme enregistré en tant qu\'image');
+  } catch {
+    showToast('Impossible d\'enregistrer l\'image', 'error');
   } finally {
     st.network.selectNodes(savedNodeIds);
   }

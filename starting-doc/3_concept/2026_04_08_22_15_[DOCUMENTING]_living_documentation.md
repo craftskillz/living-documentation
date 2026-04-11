@@ -1,6 +1,6 @@
 ## La documentation qui vit avec le code
 
-La formation que j'ai eu l'occasion de suivre et le livre de **Cyrille Martraire** [(*Living Documentation*, Addison-Wesley)](https://www.amazon.fr/Living-Documentation-Cyrille-Martraire/dp/0134689321) ont cristallisé quelque chose d'essentiel : la documentation traditionnelle est périmée dès qu'elle est écrite, parce qu'elle est séparée de ce qu'elle décrit.
+La formation que j'ai eu l'occasion de suivre et le livre de **Cyrille Martraire** <a href="https://www.amazon.fr/Living-Documentation-Cyrille-Martraire/dp/0134689321" target="_blank">*Living Documentation*, Addison-Wesley</a> ont cristallisé quelque chose d'essentiel : la documentation traditionnelle est périmée dès qu'elle est écrite, parce qu'elle est séparée de ce qu'elle décrit.
 
 Son principe directeur :
 

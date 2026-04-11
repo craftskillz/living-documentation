@@ -13,7 +13,7 @@ import { togglePhysics, toggleGrid } from './grid.js';
 import { toggleDebug }   from './debug.js';
 import { adjustZoom, resetZoom } from './zoom.js';
 import { loadDiagramList, newDiagram, saveDiagram } from './persistence.js';
-import { copySelected, pasteClipboard, copySelectionAsPng } from './clipboard.js';
+import { copySelected, pasteClipboard, copySelectionAsPng, saveSelectionAsPng } from './clipboard.js';
 import { createImageNode, toggleEdgeStraight } from './network.js';
 import { uploadImageBlob } from './image-upload.js';
 import { promptImageName } from './image-name-modal.js';
@@ -138,7 +138,11 @@ document.getElementById('btnRotateCCW').addEventListener('click',   () => stepRo
 });
 document.getElementById('btnStampColor').addEventListener('click',    () => activateStamp('color'));
 document.getElementById('btnStampFontSize').addEventListener('click', () => activateStamp('fontSize'));
-document.getElementById('btnCopyPng').addEventListener('click', () => copySelectionAsPng());
+const _autoSaveImg = new URLSearchParams(window.location.search).get('img');
+const _onCopyPng = _autoSaveImg
+  ? () => saveSelectionAsPng(_autoSaveImg)
+  : () => copySelectionAsPng();
+document.getElementById('btnCopyPng').addEventListener('click', _onCopyPng);
 document.getElementById('btnGroup').addEventListener('click',   () => groupNodes());
 document.getElementById('btnUngroup').addEventListener('click', () => ungroupNodes());
 
@@ -161,7 +165,7 @@ document.addEventListener('keydown', (e) => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   if (e.key === 'Delete' || e.key === 'Backspace')            { deleteSelected();           return; }
   if ((e.metaKey || e.ctrlKey) && e.key === 'a')             { e.preventDefault(); selectAll();       return; }
-  if ((e.metaKey || e.ctrlKey) && e.key === 'c' && e.shiftKey) { e.preventDefault(); copySelectionAsPng(); return; }
+  if ((e.metaKey || e.ctrlKey) && e.key === 'c' && e.shiftKey) { e.preventDefault(); _onCopyPng(); return; }
   if ((e.metaKey || e.ctrlKey) && e.key === 'c')               { e.preventDefault(); copySelected();       return; }
   // Cmd+V is handled in the 'paste' event below (needs clipboardData access)
   if ((e.metaKey || e.ctrlKey) && e.key === 's')             { e.preventDefault(); saveDiagram();     return; }
