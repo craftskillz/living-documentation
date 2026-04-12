@@ -33,5 +33,43 @@ export function browseRouter(): Router {
     }
   });
 
+  // GET /api/browse/alldirs?path=... — recursively list all subdirectories (relative paths)
+  router.get('/alldirs', (req: Request, res: Response) => {
+    const rawPath = (req.query.path as string) || '';
+    if (!rawPath) return res.status(400).json({ error: 'path is required' });
+    const base = path.resolve(rawPath);
+    const results: string[] = [];
+
+    function collect(dir: string) {
+      try {
+        const entries = fs.readdirSync(dir, { withFileTypes: true });
+        for (const e of entries) {
+          if (e.isDirectory() && !e.name.startsWith('.')) {
+            const full = path.join(dir, e.name);
+            results.push(path.relative(base, full));
+            collect(full);
+          }
+        }
+      } catch { /* skip unreadable dirs */ }
+    }
+    collect(base);
+    res.json(results);
+  });
+
+  // POST /api/browse/mkdir — create a directory
+  router.post('/mkdir', (req: Request, res: Response) => {
+    const { path: dirPath } = req.body as { path?: string };
+    if (!dirPath || typeof dirPath !== 'string') {
+      return res.status(400).json({ error: 'path is required' });
+    }
+    const resolved = path.resolve(dirPath);
+    try {
+      fs.mkdirSync(resolved, { recursive: true });
+      res.json({ created: resolved });
+    } catch {
+      res.status(500).json({ error: 'Failed to create directory' });
+    }
+  });
+
   return router;
 }
