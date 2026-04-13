@@ -33,3 +33,77 @@ export const NODE_COLORS = {
   'c-sky':    { bg: '#e0f2fe', border: '#0ea5e9', font: '#0c4a6e', hbg: '#bae6fd', hborder: '#0284c7' },
   'c-slate':  { bg: '#f1f5f9', border: '#64748b', font: '#0f172a', hbg: '#e2e8f0', hborder: '#475569' },
 };
+
+// Default palette shown in the diagram editor (can be overridden via admin config).
+export const DEFAULT_NODE_PALETTE = [
+  'c-gray','c-slate','c-blue','c-sky','c-cyan','c-teal','c-green','c-lime',
+  'c-amber','c-orange','c-red','c-rose','c-pink','c-purple','c-indigo',
+];
+
+export const DEFAULT_EDGE_PALETTE = [
+  '#a8a29e','#374151','#3b82f6','#14b8a6','#22c55e','#f97316','#ef4444','#a855f7',
+];
+
+// Per-slot lightness ratio (border_L / bg_L) derived from the original NODE_COLORS pairs.
+// Applied when a slot's bg is customised so the border preserves the same contrast as the original.
+export const NODE_L_RATIOS = {
+  'c-gray':   0.667, 'c-slate':  0.488, 'c-blue':   0.645, 'c-sky':    0.518,
+  'c-cyan':   0.473, 'c-teal':   0.448, 'c-green':  0.489, 'c-lime':   0.496,
+  'c-amber':  0.570, 'c-orange': 0.578, 'c-red':    0.640, 'c-rose':   0.636,
+  'c-pink':   0.638, 'c-purple': 0.694, 'c-indigo': 0.710,
+};
+
+// Derive border/font/hover colors from a custom bg hex, using HSL so the hue is preserved.
+// lRatio = border_L / bg_L; use NODE_L_RATIOS[key] for per-slot accuracy.
+export function deriveNodeColors(bgHex, lRatio = 0.60) {
+  const r = parseInt(bgHex.slice(1, 3), 16) / 255;
+  const g = parseInt(bgHex.slice(3, 5), 16) / 255;
+  const b = parseInt(bgHex.slice(5, 7), 16) / 255;
+
+  // RGB → HSL
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  const d = max - min;
+  let h = 0, s = 0;
+  if (d > 0) {
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if      (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+    else if (max === g) h = ((b - r) / d + 2) / 6;
+    else                h = ((r - g) / d + 4) / 6;
+  }
+
+  function hslToHex(hh, ss, ll) {
+    let rr, gg, bb;
+    if (ss === 0) {
+      rr = gg = bb = ll;
+    } else {
+      const hue2rgb = (p, q, t) => {
+        if (t < 0) t += 1; if (t > 1) t -= 1;
+        if (t < 1 / 6) return p + (q - p) * 6 * t;
+        if (t < 1 / 2) return q;
+        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+        return p;
+      };
+      const q = ll < 0.5 ? ll * (1 + ss) : ll + ss - ll * ss;
+      const p = 2 * ll - q;
+      rr = hue2rgb(p, q, hh + 1 / 3);
+      gg = hue2rgb(p, q, hh);
+      bb = hue2rgb(p, q, hh - 1 / 3);
+    }
+    return '#' + [rr, gg, bb]
+      .map((v) => Math.max(0, Math.min(255, Math.round(v * 255))).toString(16).padStart(2, '0'))
+      .join('');
+  }
+
+  const borderL   = l * lRatio;
+  const hbgL      = l * 0.93;          // slightly darker than bg for hover
+  const hborderL  = borderL * 0.89;    // slightly darker than border for hover
+
+  return {
+    bg:      bgHex,
+    border:  hslToHex(h, s, borderL),
+    font:    l > 0.5 ? '#292524' : '#fafaf9',
+    hbg:     hslToHex(h, s, Math.min(l, hbgL)),
+    hborder: hslToHex(h, s, Math.min(borderL, hborderL)),
+  };
+}

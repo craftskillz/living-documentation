@@ -27,6 +27,7 @@ export const st = {
   canonicalOrder: [],     // user-defined z-order, immune to vis.js hover reordering
   edgesStraight: false,  // when true, all edges use smooth: disabled (straight lines)
   resizeSymmetric: false, // when true, center is fixed during resize; when false, opposite corner is fixed
+  nodeColorOverrides: {}, // colorKey → {bg, border, font, hbg, hborder} — set from config at boot
 };
 
 export function markDirty() {

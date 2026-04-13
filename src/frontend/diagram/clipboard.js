@@ -112,15 +112,22 @@ export async function saveSelectionAsPng(filename) {
 export function copySelected() {
   if (!st.network || !st.selectedNodeIds.length) return;
 
-  const positions   = st.network.getPositions(st.selectedNodeIds);
-  const copiedNodes = st.selectedNodeIds.map((id) => {
+  // Use vis-network's full selection — includes anchor endpoints of free arrows,
+  // which are excluded from st.selectedNodeIds (no node panel for anchors).
+  const allNodeIds    = st.network.getSelectedNodes();
+  const allEdgeIds    = new Set(st.network.getSelectedEdges());
+
+  const positions   = st.network.getPositions(allNodeIds);
+  const copiedNodes = allNodeIds.map((id) => {
     const { ctxRenderer, ...rest } = st.nodes.get(id);
     return { ...rest, x: positions[id]?.x ?? rest.x, y: positions[id]?.y ?? rest.y };
   });
 
-  // Only copy edges where both endpoints are in the selection
-  const selectedSet = new Set(st.selectedNodeIds);
-  const copiedEdges = st.edges.get().filter((e) => selectedSet.has(e.from) && selectedSet.has(e.to));
+  // Edges where both endpoints are in the selection, plus any explicitly selected edges.
+  const selectedSet = new Set(allNodeIds);
+  const copiedEdges = st.edges.get().filter((e) =>
+    (selectedSet.has(e.from) && selectedSet.has(e.to)) || allEdgeIds.has(e.id)
+  );
 
   st.clipboard = { nodes: copiedNodes, edges: copiedEdges };
 }

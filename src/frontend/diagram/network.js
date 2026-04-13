@@ -18,6 +18,8 @@ import { updateZoomDisplay }   from './zoom.js';
 import { expandSelectionToGroup, drawGroupOutlines } from './groups.js';
 import { navigateNodeLink, hideLinkPanel }           from './link-panel.js';
 import { getNearestPort, drawPortDots, drawPortEdge, distanceToPortEdge } from './ports.js';
+import { getLastFreeArrowStyle } from './edge-panel.js';
+import { getLastNodeStyle } from './node-panel.js';
 
 export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
   const container = document.getElementById('vis-canvas');
@@ -28,7 +30,7 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
     savedNodes.map((n) => ({
       ...n,
       ...visNodeProps(n.shapeType || 'box', n.colorKey || 'c-gray', n.nodeWidth, n.nodeHeight, n.fontSize, n.textAlign, n.textValign),
-      ...(n.locked ? { fixed: { x: true, y: true } } : {}),
+      ...(n.locked ? { fixed: { x: true, y: true }, draggable: false } : {}),
     }))
   );
   st.edges = new vis.DataSet(
@@ -394,12 +396,20 @@ function onDoubleClick(params) {
       { id: fromId, label: '', shapeType: 'anchor', colorKey: 'c-gray', nodeWidth: 8, nodeHeight: 8, fontSize: null, rotation: 0, labelRotation: 0, x: cx, y: cy - 30, ...anchorProps },
       { id: toId,   label: '', shapeType: 'anchor', colorKey: 'c-gray', nodeWidth: 8, nodeHeight: 8, fontSize: null, rotation: 0, labelRotation: 0, x: cx, y: cy + 30, ...anchorProps },
     ]);
-    const edgeId = 'e' + t;
+    const edgeId   = 'e' + t;
+    const lastStyle = getLastFreeArrowStyle();
+    const arrowDir  = lastStyle.arrowDir  || 'to';
+    const dashes    = lastStyle.dashes    || false;
     st.edges.add({
       id: edgeId, from: fromId, to: toId,
-      arrowDir: 'to', dashes: false,
+      arrowDir,
+      dashes,
+      edgeColor: lastStyle.edgeColor || null,
+      edgeWidth: lastStyle.edgeWidth || null,
       smooth: { enabled: false },
-      ...visEdgeProps('to', false),
+      ...visEdgeProps(arrowDir, dashes),
+      ...(lastStyle.edgeColor ? { color: { color: lastStyle.edgeColor, highlight: '#f97316', hover: '#f97316' } } : {}),
+      ...(lastStyle.edgeWidth ? { width: lastStyle.edgeWidth } : {}),
     });
     markDirty();
     setTimeout(() => {
@@ -413,16 +423,22 @@ function onDoubleClick(params) {
     const canvasPos = params.pointer.canvas;
     pickAndCreateImageNode(canvasPos.x, canvasPos.y);
   } else if (st.currentTool === 'addNode') {
-    const id       = 'n' + Date.now();
-    const defaults = SHAPE_DEFAULTS[st.pendingShape] || [100, 40];
-    const defaultColor = st.pendingShape === 'post-it' ? 'c-amber' : 'c-gray';
+    const id         = 'n' + Date.now();
+    const defaults   = SHAPE_DEFAULTS[st.pendingShape] || [100, 40];
+    const fallbackColor = st.pendingShape === 'post-it' ? 'c-amber' : 'c-gray';
+    const lastStyle  = getLastNodeStyle(st.pendingShape);
+    const colorKey   = lastStyle.colorKey  || fallbackColor;
+    const fontSize   = lastStyle.fontSize  || null;
+    const textAlign  = lastStyle.textAlign  || null;
+    const textValign = lastStyle.textValign || null;
     st.nodes.add({
       id, label: st.pendingShape === 'text-free' ? 'Texte' : 'Node',
-      shapeType: st.pendingShape, colorKey: defaultColor,
+      shapeType: st.pendingShape, colorKey,
       nodeWidth: defaults[0], nodeHeight: defaults[1],
-      fontSize: null, rotation: 0, labelRotation: 0,
+      fontSize, textAlign, textValign,
+      rotation: 0, labelRotation: 0,
       x: params.pointer.canvas.x, y: params.pointer.canvas.y,
-      ...visNodeProps(st.pendingShape, defaultColor, defaults[0], defaults[1], null, null, null),
+      ...visNodeProps(st.pendingShape, colorKey, defaults[0], defaults[1], fontSize, textAlign, textValign),
     });
     markDirty();
     setTimeout(() => {

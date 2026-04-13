@@ -24,6 +24,8 @@ export function configRouter(docsPath: string): Router {
         'filenamePattern',
         'theme',
         'showDiagramDebug',
+        'diagramNodePalette',
+        'diagramEdgePalette',
       ];
       const safe: Partial<LivingDocConfig> = {};
       for (const key of allowed) {
@@ -39,6 +41,19 @@ export function configRouter(docsPath: string): Router {
         }
         if (matches.length > 1) {
           return res.status(400).json({ error: 'filenamePattern must contain [Category] exactly once' });
+        }
+      }
+      // diagramNodePalette / diagramEdgePalette: null or array of strings
+      if ('diagramNodePalette' in patch) {
+        const v = patch.diagramNodePalette;
+        if (v === null || (Array.isArray(v) && v.every((s) => typeof s === 'string'))) {
+          safe.diagramNodePalette = v as string[] | null;
+        }
+      }
+      if ('diagramEdgePalette' in patch) {
+        const v = patch.diagramEdgePalette;
+        if (v === null || (Array.isArray(v) && v.every((s) => typeof s === 'string'))) {
+          safe.diagramEdgePalette = v as string[] | null;
         }
       }
       // extraFiles: only absolute .md paths

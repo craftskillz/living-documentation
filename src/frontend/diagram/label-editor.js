@@ -17,13 +17,19 @@ export function startLabelEdit() {
   st.editingNodeId = nodeId;
   st.editingEdgeId = null;
 
-  const pos = st.network.getPositions([nodeId])[nodeId] || { x: 0, y: 0 };
-  const dom = st.network.canvasToDOM(pos);
+  const pos    = st.network.getPositions([nodeId])[nodeId] || { x: 0, y: 0 };
+  const dom    = st.network.canvasToDOM(pos);
+  const bn     = st.network.body.nodes[nodeId];
+  const scale  = st.network.getScale();
+  // Use the node's actual rendered canvas width scaled to DOM pixels.
+  // bn.shape.width is set by shape.resize() on every draw — correct for all shapes.
+  const canvasW = (bn && bn.shape && bn.shape.width) || (n.nodeWidth || 150);
+  const domW    = Math.max(120, Math.round(canvasW * scale));
   const ta  = document.getElementById('labelInput');
   ta.value       = n.label || '';
-  ta.style.left  = dom.x - 75 + 'px';
+  ta.style.left  = dom.x - domW / 2 + 'px';
   ta.style.top   = dom.y - 30 + 'px';
-  ta.style.width = '150px';
+  ta.style.width = domW + 'px';
   ta.classList.remove('hidden');
   autoResizeTextarea(ta);
   ta.focus();

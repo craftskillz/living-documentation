@@ -6,7 +6,7 @@ import { TOOL_BTN_MAP }       from './constants.js';
 import { showNodePanel, hideNodePanel, setNodeColor, changeNodeFontSize, setTextAlign, setTextValign, changeZOrder, activateStamp, cancelStamp, stepRotate, toggleNodeLock } from './node-panel.js';
 import { groupNodes, ungroupNodes } from './groups.js';
 import { showLinkPanel, hideLinkPanel } from './link-panel.js';
-import { hideEdgePanel, setEdgeArrow, setEdgeDashes, changeEdgeFontSize, stepEdgeLabelRotation, clearEdgePorts, setEdgeColor, changeEdgeWidth } from './edge-panel.js';
+import { hideEdgePanel, setEdgeArrow, setEdgeDashes, changeEdgeFontSize, stepEdgeLabelRotation, clearEdgePorts, setEdgeColor, changeEdgeWidth, toggleEdgeLock } from './edge-panel.js';
 import { startLabelEdit, startEdgeLabelEdit, hideLabelInput } from './label-editor.js';
 import { hideSelectionOverlay, toggleResizeMode } from './selection-overlay.js';
 import { togglePhysics, toggleGrid } from './grid.js';
@@ -48,6 +48,24 @@ function selectAll() {
 
 function deleteSelected() {
   if (!st.network) return;
+  // Exclude locked nodes from the deletion — re-select only unlocked ones.
+  const unlockedNodes = st.selectedNodeIds.filter((id) => {
+    const n = st.nodes && st.nodes.get(id);
+    return !(n && n.locked);
+  });
+  const unlockedEdges = st.selectedEdgeIds.filter((id) => {
+    const e = st.edges && st.edges.get(id);
+    if (!e) return true;
+    const fromN = st.nodes && st.nodes.get(e.from);
+    const toN   = st.nodes && st.nodes.get(e.to);
+    const isFreeArrow = fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor';
+    return isFreeArrow ? !(fromN.locked && toN.locked) : !e.edgeLocked;
+  });
+  if (unlockedNodes.length !== st.selectedNodeIds.length || unlockedEdges.length !== st.selectedEdgeIds.length) {
+    st.network.setSelection({ nodes: unlockedNodes, edges: unlockedEdges });
+    st.selectedNodeIds = unlockedNodes;
+    st.selectedEdgeIds = unlockedEdges;
+  }
   st.network.deleteSelected();
   hideNodePanel();
   hideEdgePanel();
@@ -160,6 +178,7 @@ document.getElementById('btnEdgeLabelEdit').addEventListener('click', startEdgeL
 document.getElementById('btnEdgeLabelRotateCCW').addEventListener('click', () => stepEdgeLabelRotation(-Math.PI / 12));
 document.getElementById('btnEdgeLabelRotateCW').addEventListener('click',  () => stepEdgeLabelRotation( Math.PI / 12));
 document.getElementById('btnEdgeClearPorts').addEventListener('click', clearEdgePorts);
+document.getElementById('btnEdgeLock').addEventListener('click', toggleEdgeLock);
 document.getElementById('btnEdgeWidthDecrease').addEventListener('click', () => changeEdgeWidth(-0.5));
 document.getElementById('btnEdgeWidthIncrease').addEventListener('click', () => changeEdgeWidth(0.5));
 document.getElementById('edgePanel').addEventListener('click', (e) => {

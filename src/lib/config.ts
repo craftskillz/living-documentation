@@ -9,6 +9,8 @@ export interface LivingDocConfig {
   port: number;
   extraFiles: string[];
   showDiagramDebug: boolean;
+  diagramNodePalette: string[] | null;
+  diagramEdgePalette: string[] | null;
 }
 
 const CONFIG_FILENAME = '.living-doc.json';
@@ -21,6 +23,8 @@ const DEFAULTS: LivingDocConfig = {
   port: 4321,
   extraFiles: [],
   showDiagramDebug: false,
+  diagramNodePalette: null,
+  diagramEdgePalette: null,
 };
 
 export function getConfigPath(docsPath: string): string {

@@ -4,6 +4,28 @@
 import { st, markDirty } from './state.js';
 import { SHAPE_DEFAULTS } from './node-rendering.js';
 
+// ── Last-used style persistence (per shape type) ──────────────────────────────
+// Saves colorKey/fontSize/textAlign/textValign per shapeType to localStorage so
+// the next shape of that type is created with the same style.
+
+function persistNodeStyle() {
+  st.selectedNodeIds.forEach((id) => {
+    const n = st.nodes && st.nodes.get(id);
+    if (!n || !n.shapeType || n.shapeType === 'anchor') return;
+    localStorage.setItem('ld-node-style-' + n.shapeType, JSON.stringify({
+      colorKey:   n.colorKey   || 'c-gray',
+      fontSize:   n.fontSize   || null,
+      textAlign:  n.textAlign  || null,
+      textValign: n.textValign || null,
+    }));
+  });
+}
+
+export function getLastNodeStyle(shapeType) {
+  try { return JSON.parse(localStorage.getItem('ld-node-style-' + shapeType)) || {}; }
+  catch { return {}; }
+}
+
 // All shapes are ctxRenderers — vis-network never re-reads the closure after
 // nodes.update(). Force refreshNeeded + redraw so the new colorKey/fontSize/
 // textAlign/textValign values are picked up on the next draw call via st.nodes.get(id).
@@ -35,7 +57,7 @@ export function toggleNodeLock() {
   const allLocked = st.selectedNodeIds.every((id) => { const n = st.nodes && st.nodes.get(id); return n && n.locked; });
   const nextLocked = !allLocked;
   st.selectedNodeIds.forEach((id) => {
-    st.nodes.update({ id, locked: nextLocked, fixed: nextLocked ? { x: true, y: true } : false });
+    st.nodes.update({ id, locked: nextLocked, fixed: nextLocked ? { x: true, y: true } : false, draggable: !nextLocked });
     const bn = st.network && st.network.body.nodes[id];
     if (bn) bn.refreshNeeded = true;
   });
@@ -51,6 +73,7 @@ export function setNodeColor(colorKey) {
     if (!n) return;
     st.nodes.update({ id, colorKey });
   });
+  persistNodeStyle();
   forceRedraw();
   markDirty();
 }
@@ -63,6 +86,7 @@ export function changeNodeFontSize(delta) {
     const newSize = Math.max(8, Math.min(48, (n.fontSize || 13) + delta));
     st.nodes.update({ id, fontSize: newSize });
   });
+  persistNodeStyle();
   forceRedraw();
   markDirty();
 }
@@ -74,6 +98,7 @@ export function setTextAlign(align) {
     if (!n) return;
     st.nodes.update({ id, textAlign: align });
   });
+  persistNodeStyle();
   forceRedraw();
   markDirty();
 }
@@ -85,6 +110,7 @@ export function setTextValign(valign) {
     if (!n) return;
     st.nodes.update({ id, textValign: valign });
   });
+  persistNodeStyle();
   forceRedraw();
   markDirty();
 }

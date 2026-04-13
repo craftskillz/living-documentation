@@ -7,6 +7,11 @@
 import { NODE_COLORS } from "./constants.js";
 import { st } from "./state.js";
 
+// Returns the color object for a key, checking runtime overrides first.
+function getNodeColor(colorKey) {
+  return st.nodeColorOverrides[colorKey] || NODE_COLORS[colorKey] || NODE_COLORS['c-gray'];
+}
+
 // ── Link indicator ────────────────────────────────────────────────────────────
 // Small chain icon drawn at bottom-right of any node that has a nodeLink.
 function drawLinkIndicator(ctx, id, W, H) {
@@ -92,19 +97,29 @@ function drawLabel(
     xPos = 0;
   }
 
-  let yOff = 0;
-  if (W && H) {
-    if (textValign === "top") yOff = -(H / 2 - fontSize / 2 - pad);
-    else if (textValign === "bottom") yOff = H / 2 - fontSize / 2 - pad;
-  }
-
-  // Auto-wrap: split each explicit \n line further if it overflows the shape width.
+  // Auto-wrap first — line count is needed to anchor the block correctly.
   const maxW = W ? W - pad * 2 : Infinity;
   const lines = String(label)
     .split("\n")
     .flatMap((l) => wrapWords(ctx, l, maxW));
   const lineH = fontSize * 1.3;
-  const startY = yOff - ((lines.length - 1) * lineH) / 2;
+
+  // startY = canvas-y of the CENTRE of the FIRST line.
+  // For 'top':    first line centre sits at the top + padding.
+  // For 'bottom': last  line centre sits at the bottom − padding.
+  // For 'middle': block is centred at 0.
+  let startY;
+  if (W && H) {
+    if (textValign === "top") {
+      startY = -(H / 2 - fontSize / 2 - pad);
+    } else if (textValign === "bottom") {
+      startY = H / 2 - fontSize / 2 - pad - (lines.length - 1) * lineH;
+    } else {
+      startY = -((lines.length - 1) * lineH) / 2;
+    }
+  } else {
+    startY = -((lines.length - 1) * lineH) / 2;
+  }
 
   // Apply independent label rotation around the label centre.
   if (labelRotation) ctx.rotate(labelRotation);
@@ -145,7 +160,7 @@ function nodeData(id, defaultW, defaultH, defaultColorKey) {
     textValign: (n && n.textValign) || "middle",
     fontSize: (n && n.fontSize) || 13,
     colorKey,
-    c: NODE_COLORS[colorKey] || NODE_COLORS["c-gray"],
+    c: getNodeColor(colorKey),
   };
 }
 
@@ -696,7 +711,7 @@ export function visNodeProps(
   textAlign,
   _textValign,
 ) {
-  const c = NODE_COLORS[colorKey] || NODE_COLORS["c-gray"];
+  const c = getNodeColor(colorKey);
   const size = fontSize || 13;
   const align = textAlign || "center";
 

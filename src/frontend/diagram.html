@@ -641,81 +641,7 @@
           >🔒</button>
           <div class="panel-sep"></div>
           <div id="nodePanelControls" class="contents">
-          <button
-            data-color="c-gray"
-            class="w-5 h-5 rounded-full border-2 border-stone-400 bg-stone-200 hover:scale-125 transition-transform"
-            title="Gris"
-          ></button>
-          <button
-            data-color="c-slate"
-            class="w-5 h-5 rounded-full border-2 border-slate-500 bg-slate-100 hover:scale-125 transition-transform"
-            title="Ardoise"
-          ></button>
-          <button
-            data-color="c-blue"
-            class="w-5 h-5 rounded-full border-2 border-blue-500 bg-blue-200 hover:scale-125 transition-transform"
-            title="Bleu"
-          ></button>
-          <button
-            data-color="c-sky"
-            class="w-5 h-5 rounded-full border-2 border-sky-500 bg-sky-200 hover:scale-125 transition-transform"
-            title="Ciel"
-          ></button>
-          <button
-            data-color="c-cyan"
-            class="w-5 h-5 rounded-full border-2 border-cyan-500 bg-cyan-200 hover:scale-125 transition-transform"
-            title="Cyan"
-          ></button>
-          <button
-            data-color="c-teal"
-            class="w-5 h-5 rounded-full border-2 border-teal-500 bg-teal-200 hover:scale-125 transition-transform"
-            title="Teal"
-          ></button>
-          <button
-            data-color="c-green"
-            class="w-5 h-5 rounded-full border-2 border-green-500 bg-green-200 hover:scale-125 transition-transform"
-            title="Vert"
-          ></button>
-          <button
-            data-color="c-lime"
-            class="w-5 h-5 rounded-full border-2 border-lime-500 bg-lime-200 hover:scale-125 transition-transform"
-            title="Citron"
-          ></button>
-          <button
-            data-color="c-amber"
-            class="w-5 h-5 rounded-full border-2 border-amber-500 bg-amber-200 hover:scale-125 transition-transform"
-            title="Ambre"
-          ></button>
-          <button
-            data-color="c-orange"
-            class="w-5 h-5 rounded-full border-2 border-orange-500 bg-orange-200 hover:scale-125 transition-transform"
-            title="Orange"
-          ></button>
-          <button
-            data-color="c-red"
-            class="w-5 h-5 rounded-full border-2 border-red-500 bg-red-200 hover:scale-125 transition-transform"
-            title="Rouge"
-          ></button>
-          <button
-            data-color="c-rose"
-            class="w-5 h-5 rounded-full border-2 border-rose-500 bg-rose-200 hover:scale-125 transition-transform"
-            title="Rose"
-          ></button>
-          <button
-            data-color="c-pink"
-            class="w-5 h-5 rounded-full border-2 border-pink-500 bg-pink-200 hover:scale-125 transition-transform"
-            title="Fuschia"
-          ></button>
-          <button
-            data-color="c-purple"
-            class="w-5 h-5 rounded-full border-2 border-purple-500 bg-purple-200 hover:scale-125 transition-transform"
-            title="Violet"
-          ></button>
-          <button
-            data-color="c-indigo"
-            class="w-5 h-5 rounded-full border-2 border-indigo-500 bg-indigo-200 hover:scale-125 transition-transform"
-            title="Indigo"
-          ></button>
+          <div id="nodePaletteContainer" class="contents"></div>
           <div class="panel-sep"></div>
           <button
             id="btnNodeLabelEdit"
@@ -1047,6 +973,13 @@
         <!-- Edge panel -->
         <div id="edgePanel" class="float-panel hidden">
           <button
+            id="btnEdgeLock"
+            class="tool-btn !w-6 !h-6 text-sm"
+            title="Verrouiller la flèche"
+          >🔒</button>
+          <div class="panel-sep"></div>
+          <div id="edgePanelControls" class="contents">
+          <button
             id="edgeBtnNone"
             class="tool-btn !w-7 !h-6 font-mono text-xs"
             title="Trait simple"
@@ -1147,14 +1080,7 @@
           <button id="btnEdgeWidthDecrease" class="tool-btn !w-7 !h-6" style="font-size:10px" title="Réduire l'épaisseur">W−</button>
           <button id="btnEdgeWidthIncrease" class="tool-btn !w-7 !h-6" style="font-size:10px" title="Augmenter l'épaisseur">W+</button>
           <div class="panel-sep"></div>
-          <button data-edge-color="#a8a29e" class="edge-color-btn w-4 h-4 rounded-full hover:scale-125 transition-transform" style="background:#a8a29e;border:2px solid #78716c" title="Gris"></button>
-          <button data-edge-color="#374151" class="edge-color-btn w-4 h-4 rounded-full hover:scale-125 transition-transform" style="background:#374151;border:2px solid #111827" title="Noir"></button>
-          <button data-edge-color="#3b82f6" class="edge-color-btn w-4 h-4 rounded-full hover:scale-125 transition-transform" style="background:#3b82f6;border:2px solid #1d4ed8" title="Bleu"></button>
-          <button data-edge-color="#14b8a6" class="edge-color-btn w-4 h-4 rounded-full hover:scale-125 transition-transform" style="background:#14b8a6;border:2px solid #0f766e" title="Teal"></button>
-          <button data-edge-color="#22c55e" class="edge-color-btn w-4 h-4 rounded-full hover:scale-125 transition-transform" style="background:#22c55e;border:2px solid #15803d" title="Vert"></button>
-          <button data-edge-color="#f97316" class="edge-color-btn w-4 h-4 rounded-full hover:scale-125 transition-transform" style="background:#f97316;border:2px solid #c2410c" title="Orange"></button>
-          <button data-edge-color="#ef4444" class="edge-color-btn w-4 h-4 rounded-full hover:scale-125 transition-transform" style="background:#ef4444;border:2px solid #b91c1c" title="Rouge"></button>
-          <button data-edge-color="#a855f7" class="edge-color-btn w-4 h-4 rounded-full hover:scale-125 transition-transform" style="background:#a855f7;border:2px solid #7e22ce" title="Violet"></button>
+          <div id="edgePaletteContainer" class="contents"></div>
           <div class="panel-sep"></div>
           <button
             id="btnEdgeClearPorts"
@@ -1163,6 +1089,7 @@
           >
             ⊗
           </button>
+          </div><!-- /edgePanelControls -->
         </div>
 
         <!-- Floating label textarea -->
@@ -1233,5 +1160,56 @@
     </div>
 
     <script type="module" src="/diagram/main.js"></script>
+    <script type="module">
+      import { NODE_COLORS, NODE_L_RATIOS, DEFAULT_NODE_PALETTE, DEFAULT_EDGE_PALETTE, deriveNodeColors } from '/diagram/constants.js';
+      import { st } from '/diagram/state.js';
+      (async () => {
+        // diagramNodePalette: array of 15 bg hex strings (positional, matching DEFAULT_NODE_PALETTE)
+        // diagramEdgePalette: array of hex strings
+        let nodeBgOverrides = null; // array of 15 hex | null
+        let edgePalette = DEFAULT_EDGE_PALETTE;
+        try {
+          const cfg = await fetch('/api/config').then((r) => r.json());
+          if (Array.isArray(cfg.diagramNodePalette) && cfg.diagramNodePalette.length) nodeBgOverrides = cfg.diagramNodePalette;
+          if (Array.isArray(cfg.diagramEdgePalette) && cfg.diagramEdgePalette.length) edgePalette = cfg.diagramEdgePalette;
+        } catch { /* config unavailable — use defaults */ }
+
+        // Apply node color overrides to shared state so renderers pick them up.
+        DEFAULT_NODE_PALETTE.forEach((key, i) => {
+          const customBg = nodeBgOverrides && nodeBgOverrides[i];
+          if (customBg && customBg !== NODE_COLORS[key]?.bg) {
+            st.nodeColorOverrides[key] = deriveNodeColors(customBg, NODE_L_RATIOS[key] || 0.60);
+          }
+        });
+
+        // Build node palette buttons.
+        const nc = document.getElementById('nodePaletteContainer');
+        DEFAULT_NODE_PALETTE.forEach((key, i) => {
+          if (!nc) return;
+          const customBg = nodeBgOverrides && nodeBgOverrides[i];
+          const c = (customBg ? deriveNodeColors(customBg, NODE_L_RATIOS[key] || 0.60) : null) || NODE_COLORS[key];
+          const btn = document.createElement('button');
+          btn.dataset.color = key;
+          btn.className = 'w-5 h-5 rounded-full border-2 hover:scale-125 transition-transform';
+          btn.style.background = c.bg;
+          btn.style.borderColor = c.border;
+          btn.title = key.replace('c-', '');
+          nc.appendChild(btn);
+        });
+
+        // Build edge palette buttons.
+        const ec = document.getElementById('edgePaletteContainer');
+        edgePalette.forEach((hex) => {
+          if (!ec) return;
+          const btn = document.createElement('button');
+          btn.dataset.edgeColor = hex;
+          btn.className = 'edge-color-btn w-4 h-4 rounded-full hover:scale-125 transition-transform';
+          btn.style.background = hex;
+          btn.style.border = '2px solid rgba(0,0,0,0.2)';
+          btn.title = hex;
+          ec.appendChild(btn);
+        });
+      })();
+    </script>
   </body>
 </html>
