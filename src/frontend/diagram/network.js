@@ -17,6 +17,7 @@ import { drawDebugOverlay }    from './debug.js';
 import { updateZoomDisplay }   from './zoom.js';
 import { expandSelectionToGroup, drawGroupOutlines } from './groups.js';
 import { navigateNodeLink, hideLinkPanel }           from './link-panel.js';
+import { getNearestPort, drawPortDots, drawPortEdge, distanceToPortEdge } from './ports.js';
 
 export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
   const container = document.getElementById('vis-canvas');
@@ -33,18 +34,26 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
     savedEdges.map((e) => {
       const toNode = savedNodes.find((n) => n.id === e.to);
       const isAnchor = toNode && toNode.shapeType === 'anchor';
-      return {
+      const edgeObj = {
         ...e,
         ...visEdgeProps(e.arrowDir ?? 'to', e.dashes ?? false),
         smooth: isAnchor ? { enabled: false } : edgeSmooth,
         ...(e.fontSize || e.labelRotation ? {
-        font: {
-          size: e.fontSize || 11,
-          align: 'middle',
-          color: (e.labelRotation && Math.abs(e.labelRotation) > 0.001) ? 'rgba(0,0,0,0)' : '#6b7280',
-        },
-      } : {}),
+          font: {
+            size: e.fontSize || 11,
+            align: 'middle',
+            color: (e.labelRotation && Math.abs(e.labelRotation) > 0.001) ? 'rgba(0,0,0,0)' : '#6b7280',
+          },
+        } : {}),
       };
+      // Port edges: hide vis-network's own rendering (line + arrowhead).
+      // drawPortEdge() handles all visual output; vis-network edge is a
+      // transparent ghost kept only for hit-detection (click selection).
+      if (e.fromPort || e.toPort) {
+        edgeObj.color  = { color: 'rgba(0,0,0,0)', highlight: 'rgba(0,0,0,0)', hover: 'rgba(0,0,0,0)' };
+        edgeObj.arrows = { to: { enabled: false }, from: { enabled: false } };
+      }
+      return edgeObj;
     })
   );
 
@@ -63,9 +72,20 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
         data.id       = 'e' + Date.now();
         data.arrowDir = 'to';
         data.dashes   = false;
+        // Attach captured port selections — skip for anchor nodes.
+        const fromIsAnchor = (st.nodes.get(data.from) || {}).shapeType === 'anchor';
+        const toIsAnchor   = (st.nodes.get(data.to)   || {}).shapeType === 'anchor';
+        if (!fromIsAnchor) data.fromPort = _addEdgeFromPort || null;
+        if (!toIsAnchor)   data.toPort   = _hoveredPortKey  || null;
         Object.assign(data, visEdgeProps('to', false));
+        // Port edges: make vis-network's ghost transparent so only drawPortEdge is visible.
+        if (data.fromPort || data.toPort) {
+          data.color  = { color: 'rgba(0,0,0,0)', highlight: 'rgba(0,0,0,0)', hover: 'rgba(0,0,0,0)' };
+          data.arrows = { to: { enabled: false }, from: { enabled: false } };
+        }
         callback(data);
         markDirty();
+        _addEdgeFromPort = null;
         setTimeout(() => st.network.addEdgeMode(), 0);
       },
     },
@@ -143,7 +163,17 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
       // Draw edges whose level is i, before drawing the node at level i.
       const edges = edgesByLevel.get(i);
       if (edges) {
-        edges.forEach((e) => e.draw(ctx));
+        edges.forEach((e) => {
+          // Always let vis-network draw first.
+          // – Non-port edges: fully rendered by vis-network (normal path).
+          // – Port edges: transparent ghost (invisible line + arrowhead);
+          //   drawPortEdge() overlays the actual bezier path on top.
+          e.draw(ctx);
+          const edgeData = st.edges.get(e.id);
+          if (edgeData && (edgeData.fromPort || edgeData.toPort)) {
+            drawPortEdge(ctx, edgeData);
+          }
+        });
         // Draw any anchor whose edge was just drawn, so the dot appears on top.
         for (const [anchorId, level] of anchorEdgeLevel) {
           if (level !== i) continue;
@@ -223,16 +253,42 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
   st.network.on('afterDrawing',  (ctx) => drawGroupOutlines(ctx));
   st.network.on('afterDrawing',  () => drawDebugOverlay());
   st.network.on('afterDrawing',  drawRotatedEdgeLabels);
+  st.network.on('afterDrawing',  (ctx) => {
+    if (st.currentTool === 'addEdge' && _hoveredPortNodeId) {
+      drawPortDots(ctx, _hoveredPortNodeId, _hoveredPortKey);
+    }
+  });
 
   // ── Free-floating edge: drop on empty canvas creates an anchor node ──────────
   // vis-network only fires addEdge callback when dropping on an existing node.
   // We intercept mousedown (capture source) + mouseup (detect empty-canvas drop).
-  let _addEdgeFromId = null;
+  let _addEdgeFromId   = null;
+  let _addEdgeFromPort = null;  // port key on the source node (null = no port)
+  let _hoveredPortNodeId = null; // node whose port dots are currently shown
+  let _hoveredPortKey    = null; // nearest port to cursor on that node
   const visCanvas = document.getElementById('vis-canvas');
+
+  // Track hovered node + nearest port while in addEdge mode.
+  visCanvas.addEventListener('mousemove', (e) => {
+    if (st.currentTool !== 'addEdge' || !st.network) return;
+    const pos    = { x: e.offsetX, y: e.offsetY };
+    const nodeId = st.network.getNodeAt(pos) || null;
+    const isAnchor = nodeId && (st.nodes.get(nodeId) || {}).shapeType === 'anchor';
+    const newPortNodeId = (nodeId && !isAnchor) ? nodeId : null;
+    const cp        = newPortNodeId ? st.network.DOMtoCanvas(pos) : null;
+    const newPortKey = (newPortNodeId && cp) ? getNearestPort(newPortNodeId, cp) : null;
+    if (newPortNodeId !== _hoveredPortNodeId || newPortKey !== _hoveredPortKey) {
+      _hoveredPortNodeId = newPortNodeId;
+      _hoveredPortKey    = newPortKey;
+      st.network.redraw();
+    }
+  });
 
   visCanvas.addEventListener('mousedown', (e) => {
     if (st.currentTool !== 'addEdge') return;
-    _addEdgeFromId = st.network.getNodeAt({ x: e.offsetX, y: e.offsetY }) || null;
+    const nodeId = st.network.getNodeAt({ x: e.offsetX, y: e.offsetY }) || null;
+    _addEdgeFromId   = nodeId;
+    _addEdgeFromPort = _hoveredPortKey; // already computed by mousemove
   });
 
   visCanvas.addEventListener('mouseup', (e) => {
@@ -271,6 +327,8 @@ function drawRotatedEdgeLabels(ctx) {
   if (!st.edges || !st.network) return;
   st.edges.get().forEach((e) => {
     if (!e.labelRotation || Math.abs(e.labelRotation) < 0.001 || !e.label) return;
+    // Port edges draw their own labels (including rotated) inside drawPortEdge.
+    if (e.fromPort || e.toPort) return;
     const positions = st.network.getPositions([e.from, e.to]);
     const fp = positions[e.from];
     const tp = positions[e.to];
@@ -426,6 +484,8 @@ function onClickNode(params) {
   if (params.nodes.length === 0 && params.edges.length === 0) {
     const cp        = params.pointer.canvas;
     const THRESHOLD = 8;
+
+    // ── Anchor node proximity check ────────────────────────────────────────
     const anchors   = st.nodes.get({ filter: (n) => n.shapeType === 'anchor' });
     const positions = st.network.getPositions(anchors.map((a) => a.id));
     for (const anchor of anchors) {
@@ -438,6 +498,24 @@ function onClickNode(params) {
         showNodePanel();
         return;
       }
+    }
+
+    // ── Port edge proximity check ──────────────────────────────────────────
+    // vis-network's hit detection uses the invisible centre-to-centre ghost,
+    // so port edges that diverge visually from that path are not selectable.
+    // We scan all port edges and pick the one whose bezier path is closest.
+    const portEdges = st.edges.get({ filter: (e) => e.fromPort || e.toPort });
+    let nearest = null, nearestDist = Infinity;
+    for (const edge of portEdges) {
+      const d = distanceToPortEdge(edge, cp);
+      if (d < nearestDist) { nearestDist = d; nearest = edge; }
+    }
+    if (nearest && nearestDist <= THRESHOLD) {
+      st.network.selectEdges([nearest.id]);
+      st.selectedEdgeIds = [nearest.id];
+      st.selectedNodeIds = [];
+      hideNodePanel();
+      showEdgePanel();
     }
   }
 }

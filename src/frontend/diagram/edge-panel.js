@@ -20,7 +20,29 @@ export function showEdgePanel() {
     document.getElementById(id).classList.remove('edge-btn-active'));
   document.getElementById(dashes ? 'edgeBtnDashed' : 'edgeBtnSolid').classList.add('edge-btn-active');
 
+  // Show/hide the clear-ports button based on whether this edge has ports.
+  const hasPorts = !!(e.fromPort || e.toPort);
+  document.getElementById('btnEdgeClearPorts').classList.toggle('edge-btn-active', hasPorts);
+
   document.getElementById('edgePanel').classList.remove('hidden');
+}
+
+export function clearEdgePorts() {
+  if (!st.selectedEdgeIds.length) return;
+  st.selectedEdgeIds.forEach((id) => {
+    const e = st.edges.get(id);
+    if (!e) return;
+    // Restore vis-network's default edge rendering (color + arrows).
+    st.edges.update({
+      id,
+      fromPort: null,
+      toPort: null,
+      color: { color: '#a8a29e', highlight: '#f97316', hover: '#f97316' },
+      ...visEdgeProps(e.arrowDir ?? 'to', e.dashes ?? false),
+    });
+  });
+  showEdgePanel();
+  markDirty();
 }
 
 export function hideEdgePanel() {
@@ -32,7 +54,10 @@ export function setEdgeArrow(dir) {
   st.selectedEdgeIds.forEach((id) => {
     const e = st.edges.get(id);
     if (!e) return;
-    st.edges.update({ id, arrowDir: dir, ...visEdgeProps(dir, e.dashes ?? false) });
+    const update = { id, arrowDir: dir };
+    // For port edges, vis-network arrows stay disabled; drawPortEdge handles them.
+    if (!(e.fromPort || e.toPort)) Object.assign(update, visEdgeProps(dir, e.dashes ?? false));
+    st.edges.update(update);
   });
   showEdgePanel();
   markDirty();
@@ -43,7 +68,10 @@ export function setEdgeDashes(dashes) {
   st.selectedEdgeIds.forEach((id) => {
     const e = st.edges.get(id);
     if (!e) return;
-    st.edges.update({ id, dashes, ...visEdgeProps(e.arrowDir ?? 'to', dashes) });
+    const update = { id, dashes };
+    // For port edges, vis-network arrows stay disabled; drawPortEdge handles them.
+    if (!(e.fromPort || e.toPort)) Object.assign(update, visEdgeProps(e.arrowDir ?? 'to', dashes));
+    st.edges.update(update);
   });
   showEdgePanel();
   markDirty();

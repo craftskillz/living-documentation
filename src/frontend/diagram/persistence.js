@@ -132,6 +132,7 @@ export async function saveDiagram() {
     label: e.label || '', arrowDir: e.arrowDir || 'to',
     dashes: e.dashes || false, fontSize: e.fontSize || null,
     labelRotation: e.labelRotation || 0,
+    fromPort: e.fromPort || null, toPort: e.toPort || null,
   }));
 
   const title = document.getElementById('diagramTitle').value || 'Sans titre';

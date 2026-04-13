@@ -12,7 +12,7 @@ Pour la réalisation de ces tutoriels je vous recommande également :
 | Tutoriels | Description |
 | --------- | --------- |
 | [Créez vos dossiers](?doc=1_tutorial%252F2026_04_11_13_25_%255BGeneral%255D_crer_vos_dossiers)         | Apprenez à créer et à structurer vos dossiers         |
-| [Ajouter un Document dans un dossier](?doc=1_tutorial%252F2026_04_11_18_58_%255BGeneral%255D_ajouter_un_document_dans_un_dossier)         | Comment ajouter un document à un dossier existant         |
+| [Créer un document dans un dossier](?doc=1_tutorial%252F2026_04_11_18_58_%255BGeneral%255D_creer_un_document_dans_un_dossier)         | Comment ajouter un document à un dossier existant         |
 
 ## Manuel d'utilisation
 

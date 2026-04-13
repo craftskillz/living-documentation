@@ -6,7 +6,7 @@ import { TOOL_BTN_MAP }       from './constants.js';
 import { showNodePanel, hideNodePanel, setNodeColor, changeNodeFontSize, setTextAlign, setTextValign, changeZOrder, activateStamp, cancelStamp, stepRotate } from './node-panel.js';
 import { groupNodes, ungroupNodes } from './groups.js';
 import { showLinkPanel, hideLinkPanel } from './link-panel.js';
-import { hideEdgePanel, setEdgeArrow, setEdgeDashes, changeEdgeFontSize, stepEdgeLabelRotation } from './edge-panel.js';
+import { hideEdgePanel, setEdgeArrow, setEdgeDashes, changeEdgeFontSize, stepEdgeLabelRotation, clearEdgePorts } from './edge-panel.js';
 import { startLabelEdit, startEdgeLabelEdit, hideLabelInput } from './label-editor.js';
 import { hideSelectionOverlay, toggleResizeMode } from './selection-overlay.js';
 import { togglePhysics, toggleGrid } from './grid.js';
@@ -158,6 +158,7 @@ document.getElementById('btnEdgeFontIncrease').addEventListener('click', () => c
 document.getElementById('btnEdgeLabelEdit').addEventListener('click', startEdgeLabelEdit);
 document.getElementById('btnEdgeLabelRotateCCW').addEventListener('click', () => stepEdgeLabelRotation(-Math.PI / 12));
 document.getElementById('btnEdgeLabelRotateCW').addEventListener('click',  () => stepEdgeLabelRotation( Math.PI / 12));
+document.getElementById('btnEdgeClearPorts').addEventListener('click', clearEdgePorts);
 
 // ── Keyboard shortcuts ────────────────────────────────────────────────────────
 

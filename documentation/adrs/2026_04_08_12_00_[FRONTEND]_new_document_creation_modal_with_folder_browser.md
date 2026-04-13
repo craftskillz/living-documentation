@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_08_12_00_[FRONTEND]_new_document_creation_modal_with_folder_browser.md`
 **date:** 2026-04-08
-**status:** Pending Validation
+**status:** SuperSeeded by 2026_04_12_[SIDEBAR]_creation_dossier_icones_font_awesome_et_dossiers_vides_dans_le_drawer
 **description:** Add a + button next to the document count in the sidebar that opens a modal for creating a new document, with title/category inputs, an inline folder browser scoped to docsFolder, new-folder creation, a live filename preview, and a POST /api/documents backend endpoint.
 **tags:** frontend, sidebar, modal, document-creation, folder-browser, api, documents, filename, pattern, browse
 ---
