@@ -3,10 +3,10 @@
 
 import { st, markDirty }      from './state.js';
 import { TOOL_BTN_MAP }       from './constants.js';
-import { showNodePanel, hideNodePanel, setNodeColor, changeNodeFontSize, setTextAlign, setTextValign, changeZOrder, activateStamp, cancelStamp, stepRotate } from './node-panel.js';
+import { showNodePanel, hideNodePanel, setNodeColor, changeNodeFontSize, setTextAlign, setTextValign, changeZOrder, activateStamp, cancelStamp, stepRotate, toggleNodeLock } from './node-panel.js';
 import { groupNodes, ungroupNodes } from './groups.js';
 import { showLinkPanel, hideLinkPanel } from './link-panel.js';
-import { hideEdgePanel, setEdgeArrow, setEdgeDashes, changeEdgeFontSize, stepEdgeLabelRotation, clearEdgePorts } from './edge-panel.js';
+import { hideEdgePanel, setEdgeArrow, setEdgeDashes, changeEdgeFontSize, stepEdgeLabelRotation, clearEdgePorts, setEdgeColor, changeEdgeWidth } from './edge-panel.js';
 import { startLabelEdit, startEdgeLabelEdit, hideLabelInput } from './label-editor.js';
 import { hideSelectionOverlay, toggleResizeMode } from './selection-overlay.js';
 import { togglePhysics, toggleGrid } from './grid.js';
@@ -112,6 +112,7 @@ document.getElementById('nodePanel').addEventListener('click', (e) => {
   const colorBtn = e.target.closest('[data-color]');
   if (colorBtn) setNodeColor(colorBtn.dataset.color);
 });
+document.getElementById('btnNodeLock').addEventListener('click', toggleNodeLock);
 document.getElementById('btnNodeLabelEdit').addEventListener('click', startLabelEdit);
 document.getElementById('btnNodeLink').addEventListener('click', () => {
   if (st.selectedNodeIds.length === 1) showLinkPanel(st.selectedNodeIds[0]);
@@ -159,6 +160,12 @@ document.getElementById('btnEdgeLabelEdit').addEventListener('click', startEdgeL
 document.getElementById('btnEdgeLabelRotateCCW').addEventListener('click', () => stepEdgeLabelRotation(-Math.PI / 12));
 document.getElementById('btnEdgeLabelRotateCW').addEventListener('click',  () => stepEdgeLabelRotation( Math.PI / 12));
 document.getElementById('btnEdgeClearPorts').addEventListener('click', clearEdgePorts);
+document.getElementById('btnEdgeWidthDecrease').addEventListener('click', () => changeEdgeWidth(-0.5));
+document.getElementById('btnEdgeWidthIncrease').addEventListener('click', () => changeEdgeWidth(0.5));
+document.getElementById('edgePanel').addEventListener('click', (e) => {
+  const colorBtn = e.target.closest('[data-edge-color]');
+  if (colorBtn) setEdgeColor(colorBtn.dataset.edgeColor);
+});
 
 // ── Keyboard shortcuts ────────────────────────────────────────────────────────
 

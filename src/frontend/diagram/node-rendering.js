@@ -636,10 +636,11 @@ export function computeVadjust() {
 }
 
 // ── Anchor renderer — small dot endpoint for free-floating edges ──────────────
-// nodeDimensions matches the visual radius so vis-network places the arrowhead
-// exactly at the dot's border ("planted" effect).
-// The dot is filled with the canvas background colour to mask the line that
-// vis-network draws from the arrowhead to the node centre.
+// nodeDimensions: 16×16 gives vis-network a proper hit area so anchors are
+// natively clickable and draggable without custom proximity hacks.
+// The visual dot (r=4) is only drawn on hover/select; the node is otherwise
+// invisible. The 8-px boundary offset on arrowheads is imperceptible at normal
+// zoom levels and is an acceptable trade-off for native drag support.
 function makeAnchorRenderer() {
   return ({ ctx, x, y, state: { selected, hover } }) => {
     const r = 4;
@@ -654,7 +655,7 @@ function makeAnchorRenderer() {
         ctx.fill();
         ctx.restore();
       },
-      nodeDimensions: { width: 0, height: 0 },
+      nodeDimensions: { width: 16, height: 16 },
     };
   };
 }

@@ -4,6 +4,8 @@
 import { st, markDirty } from './state.js';
 import { visEdgeProps } from './edge-rendering.js';
 
+const DEFAULT_EDGE_COLOR = '#a8a29e';
+
 export function showEdgePanel() {
   if (!st.selectedEdgeIds.length) return;
   const e = st.edges.get(st.selectedEdgeIds[0]);
@@ -20,6 +22,14 @@ export function showEdgePanel() {
     document.getElementById(id).classList.remove('edge-btn-active'));
   document.getElementById(dashes ? 'edgeBtnDashed' : 'edgeBtnSolid').classList.add('edge-btn-active');
 
+  // Highlight active color dot.
+  const activeColor = (e.edgeColor || DEFAULT_EDGE_COLOR).toLowerCase();
+  document.querySelectorAll('#edgePanel [data-edge-color]').forEach((btn) => {
+    const isActive = btn.dataset.edgeColor.toLowerCase() === activeColor;
+    btn.style.outline      = isActive ? '2px solid #f97316' : '';
+    btn.style.outlineOffset = isActive ? '2px' : '';
+  });
+
   // Show/hide the clear-ports button based on whether this edge has ports.
   const hasPorts = !!(e.fromPort || e.toPort);
   document.getElementById('btnEdgeClearPorts').classList.toggle('edge-btn-active', hasPorts);
@@ -32,16 +42,50 @@ export function clearEdgePorts() {
   st.selectedEdgeIds.forEach((id) => {
     const e = st.edges.get(id);
     if (!e) return;
-    // Restore vis-network's default edge rendering (color + arrows).
+    const color = e.edgeColor || DEFAULT_EDGE_COLOR;
+    // Restore vis-network's default edge rendering, preserving custom color/width.
     st.edges.update({
       id,
       fromPort: null,
       toPort: null,
-      color: { color: '#a8a29e', highlight: '#f97316', hover: '#f97316' },
+      color: { color, highlight: '#f97316', hover: '#f97316' },
+      width: e.edgeWidth || 1.5,
       ...visEdgeProps(e.arrowDir ?? 'to', e.dashes ?? false),
     });
   });
   showEdgePanel();
+  markDirty();
+}
+
+export function setEdgeColor(hex) {
+  if (!st.selectedEdgeIds.length) return;
+  st.selectedEdgeIds.forEach((id) => {
+    const e = st.edges.get(id);
+    if (!e) return;
+    const update = { id, edgeColor: hex };
+    // For non-port edges, also update vis-network's native color property.
+    if (!(e.fromPort || e.toPort)) {
+      update.color = { color: hex, highlight: '#f97316', hover: '#f97316' };
+    }
+    st.edges.update(update);
+  });
+  showEdgePanel();
+  markDirty();
+}
+
+export function changeEdgeWidth(delta) {
+  if (!st.selectedEdgeIds.length) return;
+  st.selectedEdgeIds.forEach((id) => {
+    const e = st.edges.get(id);
+    if (!e) return;
+    const newWidth = Math.max(1, Math.min(8, (e.edgeWidth || 1.5) + delta));
+    const update = { id, edgeWidth: newWidth };
+    // For non-port edges, also update vis-network's native width property.
+    if (!(e.fromPort || e.toPort)) {
+      update.width = newWidth;
+    }
+    st.edges.update(update);
+  });
   markDirty();
 }
 

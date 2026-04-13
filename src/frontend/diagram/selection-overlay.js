@@ -31,6 +31,9 @@ function nodeBounds(id) {
 // ── Overlay position ──────────────────────────────────────────────────────────
 export function updateSelectionOverlay() {
   if (!st.network || !st.selectedNodeIds.length) { hideSelectionOverlay(); return; }
+  // Anchor-only selections (free arrow drag) have no meaningful bounding box.
+  const hasNonAnchor = st.selectedNodeIds.some((id) => { const n = st.nodes && st.nodes.get(id); return !(n && n.shapeType === 'anchor'); });
+  if (!hasNonAnchor) { hideSelectionOverlay(); return; }
 
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   for (const id of st.selectedNodeIds) {
@@ -53,6 +56,12 @@ export function updateSelectionOverlay() {
   ov.style.width   = br.x - tl.x + PAD * 2 + 'px';
   ov.style.height  = br.y - tl.y + PAD * 2 + 'px';
 
+  // Hide resize/rotate handles when any selected node is locked.
+  const anyLocked = st.selectedNodeIds.some((id) => { const n = st.nodes && st.nodes.get(id); return n && n.locked; });
+  ['rh-tl','rh-tr','rh-bl','rh-br','rh-rotate','rh-label-rotate'].forEach((id) => {
+    document.getElementById(id).style.display = anyLocked ? 'none' : '';
+  });
+
   // Position rotation handle: top-centre of the overlay, 28px above it.
   const rh = document.getElementById('rh-rotate');
   rh.style.left = (br.x - tl.x) / 2 + PAD - 8 + 'px';
@@ -71,6 +80,8 @@ export function hideSelectionOverlay() {
 // ── Resize ────────────────────────────────────────────────────────────────────
 function onResizeStart(e, corner) {
   if (!st.selectedNodeIds.length || !st.network) return;
+  // Skip if any selected node is locked.
+  if (st.selectedNodeIds.some((id) => { const n = st.nodes && st.nodes.get(id); return n && n.locked; })) return;
   e.preventDefault();
   e.stopPropagation();
 
@@ -179,6 +190,8 @@ function onResizeEnd() {
 // ── Rotation ──────────────────────────────────────────────────────────────────
 function onRotateStart(e) {
   if (!st.selectedNodeIds.length || !st.network) return;
+  // Skip if any selected node is locked.
+  if (st.selectedNodeIds.some((id) => { const n = st.nodes && st.nodes.get(id); return n && n.locked; })) return;
   e.preventDefault();
   e.stopPropagation();
 

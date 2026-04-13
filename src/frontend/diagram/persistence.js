@@ -124,6 +124,7 @@ export async function saveDiagram() {
       imageSrc: n.imageSrc || null,
       groupId: n.groupId || null,
       nodeLink: n.nodeLink || null,
+      locked: n.locked || false,
       x: positions[n.id]?.x ?? n.x, y: positions[n.id]?.y ?? n.y,
     }));
 
@@ -133,6 +134,7 @@ export async function saveDiagram() {
     dashes: e.dashes || false, fontSize: e.fontSize || null,
     labelRotation: e.labelRotation || 0,
     fromPort: e.fromPort || null, toPort: e.toPort || null,
+    edgeColor: e.edgeColor || null, edgeWidth: e.edgeWidth || null,
   }));
 
   const title = document.getElementById('diagramTitle').value || 'Sans titre';

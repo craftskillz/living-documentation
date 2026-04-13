@@ -160,10 +160,11 @@ export function drawPortEdge(ctx, edgeData) {
 
   if (!fromPos || !toPos) return;
 
-  const selected = st.selectedEdgeIds && st.selectedEdgeIds.includes(edgeData.id);
-  const color    = selected ? '#f97316' : '#a8a29e';
-  const lw       = selected ? 2.5 : 1.5;
-  const arrSz    = lw * 5;
+  const selected  = st.selectedEdgeIds && st.selectedEdgeIds.includes(edgeData.id);
+  const baseColor = edgeData.edgeColor || '#a8a29e';
+  const color     = selected ? '#f97316' : baseColor;
+  const lw        = selected ? Math.max(2.5, (edgeData.edgeWidth || 1.5) + 1) : (edgeData.edgeWidth || 1.5);
+  const arrSz     = lw * 5;
 
   ctx.save();
   ctx.strokeStyle = color;

@@ -635,6 +635,13 @@
         <!-- Node panel -->
         <div id="nodePanel" class="float-panel hidden">
           <button
+            id="btnNodeLock"
+            class="tool-btn !w-6 !h-6 text-sm"
+            title="Verrouiller la forme"
+          >🔒</button>
+          <div class="panel-sep"></div>
+          <div id="nodePanelControls" class="contents">
+          <button
             data-color="c-gray"
             class="w-5 h-5 rounded-full border-2 border-stone-400 bg-stone-200 hover:scale-125 transition-transform"
             title="Gris"
@@ -995,6 +1002,7 @@
               <rect x="19" y="4.5" width="3" height="5" rx="1" fill="currentColor"/>
             </svg>
           </button>
+          </div><!-- /nodePanelControls -->
         </div>
 
         <!-- Link panel -->
@@ -1135,6 +1143,18 @@
           >
             ↻
           </button>
+          <div class="panel-sep"></div>
+          <button id="btnEdgeWidthDecrease" class="tool-btn !w-7 !h-6" style="font-size:10px" title="Réduire l'épaisseur">W−</button>
+          <button id="btnEdgeWidthIncrease" class="tool-btn !w-7 !h-6" style="font-size:10px" title="Augmenter l'épaisseur">W+</button>
+          <div class="panel-sep"></div>
+          <button data-edge-color="#a8a29e" class="edge-color-btn w-4 h-4 rounded-full hover:scale-125 transition-transform" style="background:#a8a29e;border:2px solid #78716c" title="Gris"></button>
+          <button data-edge-color="#374151" class="edge-color-btn w-4 h-4 rounded-full hover:scale-125 transition-transform" style="background:#374151;border:2px solid #111827" title="Noir"></button>
+          <button data-edge-color="#3b82f6" class="edge-color-btn w-4 h-4 rounded-full hover:scale-125 transition-transform" style="background:#3b82f6;border:2px solid #1d4ed8" title="Bleu"></button>
+          <button data-edge-color="#14b8a6" class="edge-color-btn w-4 h-4 rounded-full hover:scale-125 transition-transform" style="background:#14b8a6;border:2px solid #0f766e" title="Teal"></button>
+          <button data-edge-color="#22c55e" class="edge-color-btn w-4 h-4 rounded-full hover:scale-125 transition-transform" style="background:#22c55e;border:2px solid #15803d" title="Vert"></button>
+          <button data-edge-color="#f97316" class="edge-color-btn w-4 h-4 rounded-full hover:scale-125 transition-transform" style="background:#f97316;border:2px solid #c2410c" title="Orange"></button>
+          <button data-edge-color="#ef4444" class="edge-color-btn w-4 h-4 rounded-full hover:scale-125 transition-transform" style="background:#ef4444;border:2px solid #b91c1c" title="Rouge"></button>
+          <button data-edge-color="#a855f7" class="edge-color-btn w-4 h-4 rounded-full hover:scale-125 transition-transform" style="background:#a855f7;border:2px solid #7e22ce" title="Violet"></button>
           <div class="panel-sep"></div>
           <button
             id="btnEdgeClearPorts"

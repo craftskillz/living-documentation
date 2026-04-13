@@ -17,10 +17,31 @@ function forceRedraw() {
 
 export function showNodePanel() {
   document.getElementById('nodePanel').classList.remove('hidden');
+  // If ALL selected nodes are locked, hide the formatting controls and show lock button only.
+  const allLocked = st.selectedNodeIds.length > 0 &&
+    st.selectedNodeIds.every((id) => { const n = st.nodes && st.nodes.get(id); return n && n.locked; });
+  document.getElementById('nodePanelControls').classList.toggle('hidden', allLocked);
+  // Update lock button appearance
+  document.getElementById('btnNodeLock').classList.toggle('tool-active', allLocked);
 }
 
 export function hideNodePanel() {
   document.getElementById('nodePanel').classList.add('hidden');
+}
+
+export function toggleNodeLock() {
+  if (!st.selectedNodeIds.length) return;
+  // If all are locked → unlock; otherwise → lock all.
+  const allLocked = st.selectedNodeIds.every((id) => { const n = st.nodes && st.nodes.get(id); return n && n.locked; });
+  const nextLocked = !allLocked;
+  st.selectedNodeIds.forEach((id) => {
+    st.nodes.update({ id, locked: nextLocked, fixed: nextLocked ? { x: true, y: true } : false });
+    const bn = st.network && st.network.body.nodes[id];
+    if (bn) bn.refreshNeeded = true;
+  });
+  if (st.network) st.network.redraw();
+  showNodePanel();
+  markDirty();
 }
 
 export function setNodeColor(colorKey) {
