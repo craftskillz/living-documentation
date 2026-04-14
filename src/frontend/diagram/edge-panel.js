@@ -2,7 +2,8 @@
 // Floating formatting toolbar for selected edges (arrow type, line style, font size).
 
 import { st, markDirty } from './state.js';
-import { visEdgeProps } from './edge-rendering.js';
+import { visEdgeProps }  from './edge-rendering.js';
+import { pushSnapshot }  from './history.js';
 
 const DEFAULT_EDGE_COLOR = '#a8a29e';
 const FREE_ARROW_STYLE_KEY = 'ld-free-arrow-style';
@@ -85,6 +86,7 @@ export function showEdgePanel() {
 
 export function toggleEdgeLock() {
   if (!st.selectedEdgeIds.length) return;
+  pushSnapshot();
   const nextLocked = !areAllSelectedEdgesLocked();
   st.selectedEdgeIds.forEach((id) => {
     const e = st.edges.get(id);
@@ -110,6 +112,7 @@ export function toggleEdgeLock() {
 
 export function clearEdgePorts() {
   if (!st.selectedEdgeIds.length) return;
+  pushSnapshot();
   st.selectedEdgeIds.forEach((id) => {
     const e = st.edges.get(id);
     if (!e) return;
@@ -130,6 +133,7 @@ export function clearEdgePorts() {
 
 export function setEdgeColor(hex) {
   if (!st.selectedEdgeIds.length) return;
+  pushSnapshot();
   st.selectedEdgeIds.forEach((id) => {
     const e = st.edges.get(id);
     if (!e) return;
@@ -147,6 +151,7 @@ export function setEdgeColor(hex) {
 
 export function changeEdgeWidth(delta) {
   if (!st.selectedEdgeIds.length) return;
+  pushSnapshot();
   st.selectedEdgeIds.forEach((id) => {
     const e = st.edges.get(id);
     if (!e) return;
@@ -168,6 +173,7 @@ export function hideEdgePanel() {
 
 export function setEdgeArrow(dir) {
   if (!st.selectedEdgeIds.length) return;
+  pushSnapshot();
   st.selectedEdgeIds.forEach((id) => {
     const e = st.edges.get(id);
     if (!e) return;
@@ -183,6 +189,7 @@ export function setEdgeArrow(dir) {
 
 export function setEdgeDashes(dashes) {
   if (!st.selectedEdgeIds.length) return;
+  pushSnapshot();
   st.selectedEdgeIds.forEach((id) => {
     const e = st.edges.get(id);
     if (!e) return;
@@ -198,6 +205,7 @@ export function setEdgeDashes(dashes) {
 
 export function changeEdgeFontSize(delta) {
   if (!st.selectedEdgeIds.length) return;
+  pushSnapshot();
   st.selectedEdgeIds.forEach((id) => {
     const e = st.edges.get(id);
     if (!e) return;
@@ -210,6 +218,7 @@ export function changeEdgeFontSize(delta) {
 
 export function stepEdgeLabelRotation(delta) {
   if (!st.selectedEdgeIds.length) return;
+  pushSnapshot();
   st.selectedEdgeIds.forEach((id) => {
     const e = st.edges.get(id);
     if (!e) return;

@@ -1,6 +1,7 @@
 // ── Clipboard (copy / paste) ───────────────────────────────────────────────────
 
 import { st, markDirty } from './state.js';
+import { pushSnapshot }  from './history.js';
 import { visNodeProps, SHAPE_DEFAULTS }  from './node-rendering.js';
 import { visEdgeProps }  from './edge-rendering.js';
 import { showNodePanel } from './node-panel.js';
@@ -135,6 +136,7 @@ export function copySelected() {
 
 export function pasteClipboard() {
   if (!st.clipboard || !st.clipboard.nodes.length || !st.network) return;
+  pushSnapshot();
 
   const OFFSET = 40;
   const idMap  = {};

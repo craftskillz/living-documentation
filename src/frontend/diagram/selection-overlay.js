@@ -3,7 +3,8 @@
 
 import { st, markDirty } from './state.js';
 import { visNodeProps, SHAPE_DEFAULTS } from './node-rendering.js';
-import { t } from './t.js';
+import { t }             from './t.js';
+import { pushSnapshot }  from './history.js';
 
 // ── Bounding box helper (works for all shapes including ctxRenderer) ──────────
 function nodeBounds(id) {
@@ -83,6 +84,7 @@ function onResizeStart(e, corner) {
   if (!st.selectedNodeIds.length || !st.network) return;
   // Skip if any selected node is locked.
   if (st.selectedNodeIds.some((id) => { const n = st.nodes && st.nodes.get(id); return n && n.locked; })) return;
+  pushSnapshot();
   e.preventDefault();
   e.stopPropagation();
 
@@ -193,6 +195,7 @@ function onRotateStart(e) {
   if (!st.selectedNodeIds.length || !st.network) return;
   // Skip if any selected node is locked.
   if (st.selectedNodeIds.some((id) => { const n = st.nodes && st.nodes.get(id); return n && n.locked; })) return;
+  pushSnapshot();
   e.preventDefault();
   e.stopPropagation();
 
@@ -256,6 +259,7 @@ function onRotateEnd() {
 // ── Label rotation ────────────────────────────────────────────────────────────
 function onLabelRotateStart(e) {
   if (!st.selectedNodeIds.length || !st.network) return;
+  pushSnapshot();
   e.preventDefault();
   e.stopPropagation();
 

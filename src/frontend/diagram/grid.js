@@ -2,8 +2,9 @@
 // Grid rendering (beforeDrawing), snap-to-grid (dragEnd), physics toggle.
 
 import { st, markDirty } from './state.js';
-import { GRID_SIZE } from './constants.js';
-import { t } from './t.js';
+import { GRID_SIZE }     from './constants.js';
+import { t }             from './t.js';
+import { pushSnapshot }  from './history.js';
 
 
 export function togglePhysics() {
@@ -68,7 +69,9 @@ export function drawGrid(ctx) {
 
 // Called on network "dragEnd" — snaps dragged nodes to the grid.
 export function onDragEnd(params) {
-  if (st.gridEnabled && params.nodes && params.nodes.length > 0) {
+  if (!params.nodes || !params.nodes.length) return;
+  pushSnapshot();
+  if (st.gridEnabled) {
     params.nodes.forEach((id) => {
       const bodyNode = st.network.body.nodes[id];
       if (!bodyNode) return;

@@ -1,12 +1,14 @@
 // ── Group management ──────────────────────────────────────────────────────────
 
 import { st, markDirty } from './state.js';
+import { pushSnapshot }  from './history.js';
 import { SHAPE_DEFAULTS } from './node-rendering.js';
 
 // ── Create / destroy ──────────────────────────────────────────────────────────
 
 export function groupNodes() {
   if (st.selectedNodeIds.length < 2) return;
+  pushSnapshot();
   const groupId = 'g' + Date.now();
   st.selectedNodeIds.forEach((id) => st.nodes.update({ id, groupId }));
   markDirty();
@@ -14,6 +16,7 @@ export function groupNodes() {
 
 export function ungroupNodes() {
   if (!st.selectedNodeIds.length) return;
+  pushSnapshot();
   // Collect all members of any group touched by the selection
   const groupIds = new Set(
     st.selectedNodeIds.map((id) => { const n = st.nodes.get(id); return n && n.groupId; }).filter(Boolean)

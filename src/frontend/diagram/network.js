@@ -3,6 +3,7 @@
 // and wires all network-level events.
 
 import { st, markDirty } from './state.js';
+import { pushSnapshot }  from './history.js';
 import { visNodeProps, SHAPE_DEFAULTS }   from './node-rendering.js';
 import { uploadImageFile } from './image-upload.js';
 import { promptImageName } from './image-name-modal.js';
@@ -83,6 +84,7 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
           setTimeout(() => st.network.addEdgeMode(), 0);
           return;
         }
+        pushSnapshot();
         data.id       = 'e' + Date.now();
         data.arrowDir = 'to';
         data.dashes   = false;
@@ -318,6 +320,7 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
     const targetData = targetId && st.nodes.get(targetId);
     if (targetData && targetData.locked) { _addEdgeFromId = null; return; }
     if (!targetId) {
+      pushSnapshot();
       const cp       = st.network.DOMtoCanvas(pos);
       const anchorId = 'a' + Date.now();
       st.nodes.add({
@@ -387,6 +390,7 @@ function onDoubleClick(params) {
     startEdgeLabelEdit();
   } else if (st.currentTool === 'addEdge' && params.nodes.length === 0 && params.edges.length === 0) {
     // Double-click on empty canvas in addEdge mode → free-standing arrow between two anchors.
+    pushSnapshot();
     const cx = params.pointer.canvas.x;
     const cy = params.pointer.canvas.y;
     const t  = Date.now();
@@ -424,6 +428,7 @@ function onDoubleClick(params) {
     const canvasPos = params.pointer.canvas;
     pickAndCreateImageNode(canvasPos.x, canvasPos.y);
   } else if (st.currentTool === 'addNode') {
+    pushSnapshot();
     const id         = 'n' + Date.now();
     const defaults   = SHAPE_DEFAULTS[st.pendingShape] || [100, 40];
     const fallbackColor = st.pendingShape === 'post-it' ? 'c-amber' : 'c-gray';
@@ -478,6 +483,7 @@ export function createImageNode(imageSrc, canvasX, canvasY) {
   const captionId = id + 'c';
 
   const addNode = (nW, nH) => {
+    pushSnapshot();
     const filename   = imageSrc.split('/').pop() || '';
     const textDefs   = SHAPE_DEFAULTS['text-free'];
     const captionH   = textDefs[1];
@@ -526,6 +532,7 @@ export function createImageNode(imageSrc, canvasX, canvasY) {
 // ── Edge straight / curved toggle ────────────────────────────────────────────
 export function toggleEdgeStraight() {
   if (!st.network) return;
+  pushSnapshot();
   st.edgesStraight = !st.edgesStraight;
   const smooth = st.edgesStraight ? { enabled: false } : { type: 'continuous' };
   // Update global network option first (overrides per-edge inherited defaults).

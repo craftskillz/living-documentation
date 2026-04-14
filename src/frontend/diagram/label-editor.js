@@ -2,6 +2,7 @@
 // Floating textarea for in-place editing of node and edge labels.
 
 import { st, markDirty } from './state.js';
+import { pushSnapshot }  from './history.js';
 
 export function autoResizeTextarea(ta) {
   ta.style.height = 'auto';
@@ -64,11 +65,19 @@ export function startEdgeLabelEdit() {
 export function commitLabelEdit() {
   const ta = document.getElementById('labelInput');
   if (st.editingNodeId) {
-    st.nodes.update({ id: st.editingNodeId, label: ta.value });
-    markDirty();
+    const n = st.nodes.get(st.editingNodeId);
+    if (n && ta.value !== (n.label || '')) {
+      pushSnapshot();
+      st.nodes.update({ id: st.editingNodeId, label: ta.value });
+      markDirty();
+    }
   } else if (st.editingEdgeId) {
-    st.edges.update({ id: st.editingEdgeId, label: ta.value });
-    markDirty();
+    const e = st.edges.get(st.editingEdgeId);
+    if (e && ta.value !== (e.label || '')) {
+      pushSnapshot();
+      st.edges.update({ id: st.editingEdgeId, label: ta.value });
+      markDirty();
+    }
   }
   st.editingNodeId = null;
   st.editingEdgeId = null;

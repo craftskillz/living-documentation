@@ -3,6 +3,7 @@
 
 import { st, markDirty } from './state.js';
 import { SHAPE_DEFAULTS } from './node-rendering.js';
+import { pushSnapshot }   from './history.js';
 
 // ── Last-used style persistence (per shape type) ──────────────────────────────
 // Saves colorKey/fontSize/textAlign/textValign per shapeType to localStorage so
@@ -53,6 +54,7 @@ export function hideNodePanel() {
 
 export function toggleNodeLock() {
   if (!st.selectedNodeIds.length) return;
+  pushSnapshot();
   // If all are locked → unlock; otherwise → lock all.
   const allLocked = st.selectedNodeIds.every((id) => { const n = st.nodes && st.nodes.get(id); return n && n.locked; });
   const nextLocked = !allLocked;
@@ -68,6 +70,7 @@ export function toggleNodeLock() {
 
 export function setNodeColor(colorKey) {
   if (!st.selectedNodeIds.length) return;
+  pushSnapshot();
   st.selectedNodeIds.forEach((id) => {
     const n = st.nodes.get(id);
     if (!n) return;
@@ -80,6 +83,7 @@ export function setNodeColor(colorKey) {
 
 export function changeNodeFontSize(delta) {
   if (!st.selectedNodeIds.length) return;
+  pushSnapshot();
   st.selectedNodeIds.forEach((id) => {
     const n = st.nodes.get(id);
     if (!n) return;
@@ -93,6 +97,7 @@ export function changeNodeFontSize(delta) {
 
 export function setTextAlign(align) {
   if (!st.selectedNodeIds.length) return;
+  pushSnapshot();
   st.selectedNodeIds.forEach((id) => {
     const n = st.nodes.get(id);
     if (!n) return;
@@ -105,6 +110,7 @@ export function setTextAlign(align) {
 
 export function setTextValign(valign) {
   if (!st.selectedNodeIds.length) return;
+  pushSnapshot();
   st.selectedNodeIds.forEach((id) => {
     const n = st.nodes.get(id);
     if (!n) return;
@@ -147,6 +153,7 @@ function applyStamp(sourceId) {
   const type    = st.activeStamp;
   const targets = [...st.stampTargetIds]; // snapshot before cancelStamp clears the array
   cancelStamp();
+  pushSnapshot();
 
   targets.forEach((id) => {
     if (id === sourceId) return;
@@ -205,6 +212,7 @@ document.getElementById('stampOverlay').addEventListener('click', (e) => {
 
 export function stepRotate(degrees) {
   if (!st.selectedNodeIds.length) return;
+  pushSnapshot();
   const delta = degrees * (Math.PI / 180);
   st.selectedNodeIds.forEach((id) => {
     const n = st.nodes.get(id);
@@ -221,6 +229,7 @@ export function changeZOrder(direction) {
   // direction: +1 = bring to front (last in canonicalOrder = drawn on top)
   //            -1 = send to back   (first in canonicalOrder = drawn below)
   if (!st.selectedNodeIds.length) return;
+  pushSnapshot();
   st.selectedNodeIds.forEach((id) => {
     const idx = st.canonicalOrder.indexOf(id);
     if (idx === -1) return;

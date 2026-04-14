@@ -2,6 +2,7 @@
 // Lets the user attach a URL or diagram link to a node.
 
 import { st, markDirty } from './state.js';
+import { pushSnapshot }  from './history.js';
 import { openDiagram }   from './persistence.js';
 import { showToast }     from './toast.js';
 import { t }             from './t.js';
@@ -74,12 +75,14 @@ export function saveLinkPanel() {
 
   if (typeUrl) {
     const value = document.getElementById('linkUrlInput').value.trim();
+    pushSnapshot();
     st.nodes.update({ id: _panelNodeId, nodeLink: value ? { type: 'url', value } : null });
     markDirty();
     hideLinkPanel();
   } else if (typeDiagram) {
     const value = document.getElementById('linkDiagramSelect').value;
     if (!value) return;
+    pushSnapshot();
     st.nodes.update({ id: _panelNodeId, nodeLink: { type: 'diagram', value } });
     markDirty();
     hideLinkPanel();
@@ -99,6 +102,7 @@ async function _createAndLinkDiagram(title) {
   });
   const res   = await fetch('/api/diagrams');
   st.diagrams = await res.json();
+  pushSnapshot();
   st.nodes.update({ id: _panelNodeId, nodeLink: { type: 'diagram', value: id } });
   markDirty();
   hideLinkPanel();
@@ -107,6 +111,7 @@ async function _createAndLinkDiagram(title) {
 
 export function removeLinkPanel() {
   if (_panelNodeId === null) return;
+  pushSnapshot();
   st.nodes.update({ id: _panelNodeId, nodeLink: null });
   markDirty();
   hideLinkPanel();

@@ -14,6 +14,7 @@ import { toggleDebug }   from './debug.js';
 import { adjustZoom, resetZoom } from './zoom.js';
 import { loadDiagramList, newDiagram, saveDiagram } from './persistence.js';
 import { copySelected, pasteClipboard, copySelectionAsPng, saveSelectionAsPng } from './clipboard.js';
+import { pushSnapshot, undo, redo } from './history.js';
 import { createImageNode, toggleEdgeStraight } from './network.js';
 import { uploadImageBlob } from './image-upload.js';
 import { promptImageName } from './image-name-modal.js';
@@ -49,6 +50,7 @@ function selectAll() {
 
 function deleteSelected() {
   if (!st.network) return;
+  pushSnapshot();
   // Exclude locked nodes from the deletion — re-select only unlocked ones.
   const unlockedNodes = st.selectedNodeIds.filter((id) => {
     const n = st.nodes && st.nodes.get(id);
@@ -192,6 +194,8 @@ document.getElementById('edgePanel').addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   if (e.key === 'Delete' || e.key === 'Backspace')            { deleteSelected();           return; }
+  if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key === 'z') { e.preventDefault(); undo(); return; }
+  if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'z') { e.preventDefault(); redo(); return; }
   if ((e.metaKey || e.ctrlKey) && e.key === 'a')             { e.preventDefault(); selectAll();       return; }
   if ((e.metaKey || e.ctrlKey) && e.key === 'c' && e.shiftKey) { e.preventDefault(); _onCopyPng(); return; }
   if ((e.metaKey || e.ctrlKey) && e.key === 'c')               { e.preventDefault(); copySelected();       return; }

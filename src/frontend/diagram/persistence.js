@@ -3,6 +3,7 @@
 
 import { st, markDirty } from './state.js';
 import { initNetwork }   from './network.js';
+import { resetHistory }  from './history.js';
 import { t }             from './t.js';
 import { hideNodePanel } from './node-panel.js';
 import { hideEdgePanel } from './edge-panel.js';
@@ -69,6 +70,7 @@ export async function openDiagram(id) {
   document.getElementById('diagramTitle').value    = diagram.title || '';
   document.getElementById('btnEdgeStraight').classList.toggle('tool-active', st.edgesStraight);
   initNetwork(diagram.nodes || [], diagram.edges || [], st.edgesStraight);
+  resetHistory();
   renderDiagramList();
 }
 
