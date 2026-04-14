@@ -13,6 +13,8 @@ Pour la réalisation de ces tutoriels je vous recommande également :
 | --------- | --------- |
 | [Créez vos dossiers](?doc=1_tutorial%252F2026_04_11_13_25_%255BGeneral%255D_crer_vos_dossiers)         | Apprenez à créer et à structurer vos dossiers         |
 | [Créer un document dans un dossier](?doc=1_tutorial%252F2026_04_11_18_58_%255BGeneral%255D_creer_un_document_dans_un_dossier)         | Comment ajouter un document à un dossier existant         |
+| [Éditer et sauvegarder un document](?doc=1_tutorial%252F2026_04_12_09_00_%255BGeneral%255D_editer_et_sauvegarder)         | Modifier le contenu d'un document directement dans le navigateur         |
+| [Utiliser les snippets](?doc=1_tutorial%252F2026_04_12_10_00_%255BGeneral%255D_utiliser_les_snippets)         | Insérer des modèles Markdown prêts à l'emploi (tableaux, blocs, arbres…)         |
 
 ## Manuel d'utilisation
 
