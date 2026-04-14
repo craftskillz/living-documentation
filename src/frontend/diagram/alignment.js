@@ -2,23 +2,26 @@
 // Detects center-to-center horizontal/vertical alignment between nodes of the
 // same shapeType during drag and draws dashed guide lines on the canvas.
 
-import { st } from './state.js';
-import { t }  from './t.js';
+import { st, markDirty } from './state.js';
+import { t }             from './t.js';
 
 const THRESHOLD = 6; // world units — snap detection distance
 const EXT       = 40; // world units — line extension beyond both centers
 
 export let activeGuides = [];
 
-export function toggleAlignGuides() {
-  st.alignGuides = !st.alignGuides;
+export function applyAlignGuidesState(enabled) {
+  st.alignGuides = enabled;
   const btn = document.getElementById('btnAlign');
-  btn.classList.toggle('tool-active', st.alignGuides);
+  btn.classList.toggle('tool-active', enabled);
   btn.title = t('diagram.toolbar.align_guides');
-  if (!st.alignGuides) {
-    activeGuides = [];
-    if (st.network) st.network.redraw();
-  }
+  if (!enabled) activeGuides = [];
+}
+
+export function toggleAlignGuides() {
+  applyAlignGuidesState(!st.alignGuides);
+  markDirty();
+  if (!st.alignGuides && st.network) st.network.redraw();
 }
 
 // Called at dragEnd — snaps each dragged node onto the guide axis when active.

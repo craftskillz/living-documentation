@@ -9,6 +9,8 @@ import { hideNodePanel } from './node-panel.js';
 import { hideEdgePanel } from './edge-panel.js';
 import { hideLabelInput }       from './label-editor.js';
 import { hideSelectionOverlay } from './selection-overlay.js';
+import { applyGridState }        from './grid.js';
+import { applyAlignGuidesState } from './alignment.js';
 
 function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -69,6 +71,8 @@ export async function openDiagram(id) {
   document.getElementById('btnSave').disabled      = true;
   document.getElementById('diagramTitle').value    = diagram.title || '';
   document.getElementById('btnEdgeStraight').classList.toggle('tool-active', st.edgesStraight);
+  applyGridState(diagram.gridEnabled ?? true);
+  applyAlignGuidesState(diagram.alignGuides ?? true);
   initNetwork(diagram.nodes || [], diagram.edges || [], st.edgesStraight);
   resetHistory();
   renderDiagramList();
@@ -145,7 +149,7 @@ export async function saveDiagram() {
   await fetch(`/api/diagrams/${st.currentDiagramId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, nodes: nodeData, edges: edgeData, edgesStraight: st.edgesStraight }),
+    body: JSON.stringify({ title, nodes: nodeData, edges: edgeData, edgesStraight: st.edgesStraight, gridEnabled: st.gridEnabled, alignGuides: st.alignGuides }),
   });
   st.isDirty = false;
   document.getElementById('btnSave').disabled = true;

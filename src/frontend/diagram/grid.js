@@ -9,11 +9,16 @@ import { snapToAlignGuides } from './alignment.js';
 
 
 
-export function toggleGrid() {
-  st.gridEnabled = !st.gridEnabled;
+export function applyGridState(enabled) {
+  st.gridEnabled = enabled;
   const btn = document.getElementById('btnGrid');
-  btn.classList.toggle('tool-active', st.gridEnabled);
+  btn.classList.toggle('tool-active', enabled);
   btn.title = t('diagram.toolbar.grid');
+}
+
+export function toggleGrid() {
+  applyGridState(!st.gridEnabled);
+  markDirty();
   if (st.network) st.network.redraw();
 }
 
