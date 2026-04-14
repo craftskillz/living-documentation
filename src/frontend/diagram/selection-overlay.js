@@ -5,6 +5,7 @@ import { st, markDirty } from './state.js';
 import { visNodeProps, SHAPE_DEFAULTS } from './node-rendering.js';
 import { t }             from './t.js';
 import { pushSnapshot }  from './history.js';
+import { snapToGrid }    from './grid.js';
 
 // ── Bounding box helper (works for all shapes including ctxRenderer) ──────────
 function nodeBounds(id) {
@@ -186,6 +187,14 @@ function onResizeEnd() {
   document.getElementById('vis-canvas').style.pointerEvents = '';
   document.removeEventListener('mousemove', onResizeDrag);
   document.removeEventListener('mouseup',   onResizeEnd);
+  if (st.gridEnabled && st.network) {
+    st.selectedNodeIds.forEach((id) => {
+      const bn = st.network.body.nodes[id];
+      if (!bn) return;
+      const snapped = snapToGrid(bn.x, bn.y);
+      st.network.moveNode(id, snapped.x, snapped.y);
+    });
+  }
   st.resizeDrag = null;
   markDirty();
 }

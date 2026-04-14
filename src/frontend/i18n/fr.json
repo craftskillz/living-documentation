@@ -279,7 +279,7 @@
   "diagram.toolbar.image": "Image — double-clic sur le canvas pour choisir un fichier, ou coller (⌘V) depuis le presse-papier",
   "diagram.toolbar.arrow": "Flèche (F)",
   "diagram.toolbar.delete": "Supprimer (Suppr)",
-  "diagram.toolbar.physics": "Mise en page automatique active",
+  "diagram.toolbar.align_guides": "Guides d'alignement — indique l'alignement entre formes du même type",
   "diagram.toolbar.grid": "Grille / Magnétisme (G)",
   "diagram.toolbar.edge_style": "Basculer flèches courbes / droites",
   "diagram.toolbar.resize_corner": "Mode redimensionnement : coin fixe (cliquer pour centre fixe)",

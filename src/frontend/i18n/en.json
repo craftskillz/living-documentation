@@ -279,7 +279,7 @@
   "diagram.toolbar.image": "Image — double-click on canvas to select a file, or paste (⌘V) from clipboard",
   "diagram.toolbar.arrow": "Arrow (F)",
   "diagram.toolbar.delete": "Delete (Del)",
-  "diagram.toolbar.physics": "Auto-layout active",
+  "diagram.toolbar.align_guides": "Alignment guides — highlights same-type shape alignment",
   "diagram.toolbar.grid": "Grid / Snap to grid (G)",
   "diagram.toolbar.edge_style": "Toggle curved / straight arrows",
   "diagram.toolbar.resize_corner": "Resize mode: fixed corner (click for fixed centre)",

@@ -1,35 +1,13 @@
-// ── Grid & physics ────────────────────────────────────────────────────────────
-// Grid rendering (beforeDrawing), snap-to-grid (dragEnd), physics toggle.
+// ── Grid & snap ───────────────────────────────────────────────────────────────
+// Grid rendering (beforeDrawing), snap-to-grid (dragEnd).
 
-import { st, markDirty } from './state.js';
-import { GRID_SIZE }     from './constants.js';
-import { t }             from './t.js';
-import { pushSnapshot }  from './history.js';
+import { st, markDirty }    from './state.js';
+import { GRID_SIZE }         from './constants.js';
+import { t }                 from './t.js';
+import { pushSnapshot }      from './history.js';
+import { snapToAlignGuides } from './alignment.js';
 
 
-export function togglePhysics() {
-  st.physicsEnabled = !st.physicsEnabled;
-  const btn = document.getElementById('btnPhysics');
-  btn.classList.toggle('tool-active', st.physicsEnabled);
-  btn.title = t('diagram.toolbar.physics');
-
-  if (!st.network) return;
-
-  st.network.setOptions({
-    physics: {
-      enabled: st.physicsEnabled,
-      stabilization: { enabled: false }, // no auto-stop — stays on until user toggles off
-      barnesHut: {
-        gravitationalConstant: -800, // mild repulsion — only pushes overlapping nodes
-        centralGravity: 0,           // no pull toward centre — distant nodes stay put
-        springLength: 100,
-        springConstant: 0.01,
-        damping: 0.6,                // high damping — nodes settle fast, no oscillation
-        avoidOverlap: 1,             // vis-network built-in overlap avoidance
-      },
-    },
-  });
-}
 
 export function toggleGrid() {
   st.gridEnabled = !st.gridEnabled;
@@ -67,22 +45,28 @@ export function drawGrid(ctx) {
   ctx.restore();
 }
 
-// Called on network "dragEnd" — snaps dragged nodes to the grid.
+// Snap a canvas position to the nearest grid intersection.
+export function snapToGrid(x, y) {
+  return {
+    x: Math.round(x / GRID_SIZE) * GRID_SIZE,
+    y: Math.round(y / GRID_SIZE) * GRID_SIZE,
+  };
+}
+
+// Called on network "dragEnd" — alignment snap, then grid snap.
 export function onDragEnd(params) {
   if (!params.nodes || !params.nodes.length) return;
   pushSnapshot();
+  snapToAlignGuides(params);
   if (st.gridEnabled) {
     params.nodes.forEach((id) => {
       const bodyNode = st.network.body.nodes[id];
       if (!bodyNode) return;
-      // shape.width/height are set by resize() on each draw — exact visual size
-      const w = bodyNode.shape.width  || 0;
-      const h = bodyNode.shape.height || 0;
       const cx = bodyNode.x, cy = bodyNode.y;
-      // Snap the visual top-left corner to grid lines
-      const snappedLeft = Math.round((cx - w / 2) / GRID_SIZE) * GRID_SIZE;
-      const snappedTop  = Math.round((cy - h / 2) / GRID_SIZE) * GRID_SIZE;
-      st.network.moveNode(id, snappedLeft + w / 2, snappedTop + h / 2);
+      // Snap the center of the shape to grid intersections
+      const snappedX = Math.round(cx / GRID_SIZE) * GRID_SIZE;
+      const snappedY = Math.round(cy / GRID_SIZE) * GRID_SIZE;
+      st.network.moveNode(id, snappedX, snappedY);
     });
   }
   markDirty();

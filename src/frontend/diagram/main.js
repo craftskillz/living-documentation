@@ -9,7 +9,8 @@ import { showLinkPanel, hideLinkPanel } from './link-panel.js';
 import { hideEdgePanel, setEdgeArrow, setEdgeDashes, changeEdgeFontSize, stepEdgeLabelRotation, clearEdgePorts, setEdgeColor, changeEdgeWidth, toggleEdgeLock } from './edge-panel.js';
 import { startLabelEdit, startEdgeLabelEdit, hideLabelInput } from './label-editor.js';
 import { hideSelectionOverlay, toggleResizeMode } from './selection-overlay.js';
-import { togglePhysics, toggleGrid } from './grid.js';
+import { toggleGrid }          from './grid.js';
+import { toggleAlignGuides }  from './alignment.js';
 import { toggleDebug }   from './debug.js';
 import { adjustZoom, resetZoom } from './zoom.js';
 import { loadDiagramList, newDiagram, saveDiagram } from './persistence.js';
@@ -28,7 +29,7 @@ function setTool(tool, shape) {
   if (shape) st.pendingShape = shape;
 
   document.querySelectorAll('.tool-btn').forEach((b) => b.classList.remove('tool-active'));
-  if (st.physicsEnabled) document.getElementById('btnPhysics').classList.add('tool-active');
+  if (st.alignGuides) document.getElementById('btnAlign').classList.add('tool-active');
 
   const key = tool === 'addNode' ? `addNode:${shape || st.pendingShape}` : tool;
   const btn = document.getElementById(TOOL_BTN_MAP[key]);
@@ -110,7 +111,7 @@ document.getElementById('toolImage').addEventListener('click',    () => setTool(
 document.getElementById('toolArrow').addEventListener('click',    () => setTool('addEdge'));
 
 document.getElementById('btnDelete').addEventListener('click', deleteSelected);
-document.getElementById('btnPhysics').addEventListener('click', togglePhysics);
+document.getElementById('btnAlign').addEventListener('click', toggleAlignGuides);
 document.getElementById('btnGrid').addEventListener('click', toggleGrid);
 document.getElementById('btnEdgeStraight').addEventListener('click', toggleEdgeStraight);
 document.getElementById('btnResizeMode').addEventListener('click', toggleResizeMode);

@@ -443,9 +443,9 @@
       <div class="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-0.5"></div>
 
       <button
-        id="btnPhysics"
+        id="btnAlign"
         class="tool-btn"
-        data-i18n-title="diagram.toolbar.physics"
+        data-i18n-title="diagram.toolbar.align_guides"
       >
         <svg
           width="14"
@@ -455,10 +455,9 @@
           stroke="currentColor"
           stroke-width="1.4"
         >
-          <circle cx="7" cy="7" r="2" />
-          <path
-            d="M7 1.5v2M7 10.5v2M1.5 7h2M10.5 7h2M3.4 3.4l1.4 1.4M9.2 9.2l1.4 1.4M10.6 3.4l-1.4 1.4M4.8 9.2l-1.4 1.4"
-          />
+          <line x1="0.5" y1="7.5" x2="13.5" y2="7.5" />
+          <line x1="3.5" y1="0.5" x2="3.5" y2="13.5" stroke-dasharray="1.5 1.5" />
+          <line x1="10.5" y1="0.5" x2="10.5" y2="13.5" stroke-dasharray="1.5 1.5" />
         </svg>
       </button>
       <button

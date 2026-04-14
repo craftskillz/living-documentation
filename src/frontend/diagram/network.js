@@ -14,7 +14,8 @@ import { showNodePanel, hideNodePanel } from './node-panel.js';
 import { showEdgePanel, hideEdgePanel } from './edge-panel.js';
 import { startLabelEdit, startEdgeLabelEdit, commitLabelEdit, hideLabelInput } from './label-editor.js';
 import { updateSelectionOverlay, hideSelectionOverlay } from './selection-overlay.js';
-import { drawGrid, onDragEnd } from './grid.js';
+import { drawGrid, onDragEnd, snapToGrid }           from './grid.js';
+import { onDragging, drawAlignmentGuides, clearAlignGuides } from './alignment.js';
 import { drawDebugOverlay }    from './debug.js';
 import { updateZoomDisplay }   from './zoom.js';
 import { expandSelectionToGroup, drawGroupOutlines } from './groups.js';
@@ -65,11 +66,7 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
   );
 
   const options = {
-    physics: {
-      enabled: st.physicsEnabled,
-      stabilization: { enabled: false },
-      barnesHut: { gravitationalConstant: -3000, centralGravity: 0.3, springLength: 150, springConstant: 0.04, damping: 0.09 },
-    },
+    physics: { enabled: false },
     interaction: { hover: true, navigationButtons: false, keyboard: false, multiselect: true },
     nodes: { font: { size: 13, face: 'system-ui,-apple-system,sans-serif' }, borderWidth: 1.5, borderWidthSelected: 2.5, shadow: false, widthConstraint: { minimum: 60 }, heightConstraint: { minimum: 28 } },
     edges: { smooth: edgeSmooth, color: { color: '#a8a29e', highlight: '#f97316', hover: '#f97316' }, width: 1.5, selectionWidth: 2.5, font: { size: 11, align: 'middle', color: '#6b7280' } },
@@ -263,9 +260,11 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
   st.network.on('selectEdge',   onSelectEdge);
   st.network.on('deselectEdge', onDeselectAll);
   st.network.on('zoom',         updateZoomDisplay);
-  st.network.on('dragEnd',      onDragEnd);
+  st.network.on('dragging',      onDragging);
+  st.network.on('dragEnd',       (p) => { onDragEnd(p); clearAlignGuides(); });
   st.network.on('beforeDrawing', drawGrid);
   st.network.on('afterDrawing',  updateSelectionOverlay);
+  st.network.on('afterDrawing',  drawAlignmentGuides);
   st.network.on('afterDrawing',  (ctx) => drawGroupOutlines(ctx));
   st.network.on('afterDrawing',  () => drawDebugOverlay());
   st.network.on('afterDrawing',  drawRotatedEdgeLabels);
@@ -437,13 +436,15 @@ function onDoubleClick(params) {
     const fontSize   = lastStyle.fontSize  || null;
     const textAlign  = lastStyle.textAlign  || null;
     const textValign = lastStyle.textValign || null;
+    const rawPos     = params.pointer.canvas;
+    const pos        = st.gridEnabled ? snapToGrid(rawPos.x, rawPos.y) : rawPos;
     st.nodes.add({
       id, label: st.pendingShape === 'text-free' ? t('diagram.label_input.placeholder') : 'Node',
       shapeType: st.pendingShape, colorKey,
       nodeWidth: defaults[0], nodeHeight: defaults[1],
       fontSize, textAlign, textValign,
       rotation: 0, labelRotation: 0,
-      x: params.pointer.canvas.x, y: params.pointer.canvas.y,
+      x: pos.x, y: pos.y,
       ...visNodeProps(st.pendingShape, colorKey, defaults[0], defaults[1], fontSize, textAlign, textValign),
     });
     markDirty();

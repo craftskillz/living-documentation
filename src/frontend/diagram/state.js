@@ -11,7 +11,7 @@ export const st = {
   pendingShape: 'box',
   selectedNodeIds: [],
   selectedEdgeIds: [],
-  physicsEnabled: false,
+  alignGuides: false,
   gridEnabled: false,
   debugMode: false,
   isDirty: false,
