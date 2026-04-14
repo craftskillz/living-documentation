@@ -23,6 +23,7 @@ export function configRouter(docsPath: string): Router {
         'title',
         'filenamePattern',
         'theme',
+        'language',
         'showDiagramDebug',
         'diagramNodePalette',
         'diagramEdgePalette',
@@ -42,6 +43,10 @@ export function configRouter(docsPath: string): Router {
         if (matches.length > 1) {
           return res.status(400).json({ error: 'filenamePattern must contain [Category] exactly once' });
         }
+      }
+      // language: only 'en' or 'fr'
+      if ('language' in safe && !['en', 'fr'].includes(safe.language as string)) {
+        delete (safe as Record<string, unknown>).language;
       }
       // diagramNodePalette / diagramEdgePalette: null or array of strings
       if ('diagramNodePalette' in patch) {

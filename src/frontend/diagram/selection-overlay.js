@@ -3,6 +3,7 @@
 
 import { st, markDirty } from './state.js';
 import { visNodeProps, SHAPE_DEFAULTS } from './node-rendering.js';
+import { t } from './t.js';
 
 // ── Bounding box helper (works for all shapes including ctxRenderer) ──────────
 function nodeBounds(id) {
@@ -306,12 +307,12 @@ export function toggleResizeMode() {
   const iconCorner = document.getElementById('icon-resize-corner');
   const iconCenter = document.getElementById('icon-resize-center');
   if (st.resizeSymmetric) {
-    btn.title = 'Mode redimensionnement : Centre fixe (cliquer pour Coin fixe)';
+    btn.title = t('diagram.toolbar.resize_center');
     btn.classList.remove('active-tool');
     iconCorner.classList.add('hidden');
     iconCenter.classList.remove('hidden');
   } else {
-    btn.title = 'Mode redimensionnement : Coin fixe (cliquer pour Centre fixe)';
+    btn.title = t('diagram.toolbar.resize_corner');
     btn.classList.add('active-tool');
     iconCorner.classList.remove('hidden');
     iconCenter.classList.add('hidden');

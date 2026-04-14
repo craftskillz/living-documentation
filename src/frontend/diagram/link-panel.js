@@ -4,6 +4,7 @@
 import { st, markDirty } from './state.js';
 import { openDiagram }   from './persistence.js';
 import { showToast }     from './toast.js';
+import { t }             from './t.js';
 
 let _panelNodeId = null;
 
@@ -101,7 +102,7 @@ async function _createAndLinkDiagram(title) {
   st.nodes.update({ id: _panelNodeId, nodeLink: { type: 'diagram', value: id } });
   markDirty();
   hideLinkPanel();
-  showToast(`Diagramme "${title}" créé et lié`);
+  showToast(t('diagram.toast.diagram_linked').replace('{title}', title));
 }
 
 export function removeLinkPanel() {

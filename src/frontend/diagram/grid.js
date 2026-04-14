@@ -3,13 +3,14 @@
 
 import { st, markDirty } from './state.js';
 import { GRID_SIZE } from './constants.js';
+import { t } from './t.js';
 
 
 export function togglePhysics() {
   st.physicsEnabled = !st.physicsEnabled;
   const btn = document.getElementById('btnPhysics');
   btn.classList.toggle('tool-active', st.physicsEnabled);
-  btn.title = st.physicsEnabled ? 'Anti-chevauchement actif' : 'Anti-chevauchement (espace les nœuds qui se superposent)';
+  btn.title = t('diagram.toolbar.physics');
 
   if (!st.network) return;
 
@@ -33,7 +34,7 @@ export function toggleGrid() {
   st.gridEnabled = !st.gridEnabled;
   const btn = document.getElementById('btnGrid');
   btn.classList.toggle('tool-active', st.gridEnabled);
-  btn.title = st.gridEnabled ? 'Grille activée (snap on)' : 'Grille / Snap to grid (G)';
+  btn.title = t('diagram.toolbar.grid');
   if (st.network) st.network.redraw();
 }
 

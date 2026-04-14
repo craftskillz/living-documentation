@@ -5,6 +5,7 @@ import { visNodeProps, SHAPE_DEFAULTS }  from './node-rendering.js';
 import { visEdgeProps }  from './edge-rendering.js';
 import { showNodePanel } from './node-panel.js';
 import { showToast }     from './toast.js';
+import { t }             from './t.js';
 import { uploadImageBlob } from './image-upload.js';
 
 // ── Shared: render selection to a PNG blob ────────────────────────────────────
@@ -84,9 +85,9 @@ export async function copySelectionAsPng() {
   const { blob, savedNodeIds } = result;
   try {
     await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-    showToast('PNG copié dans le presse-papier');
+    showToast(t('diagram.toast.png_copied'));
   } catch {
-    showToast('Impossible de copier l\'image', 'error');
+    showToast(t('diagram.toast.png_copy_error'), 'error');
   } finally {
     st.network.selectNodes(savedNodeIds);
   }
@@ -101,9 +102,9 @@ export async function saveSelectionAsPng(filename) {
   try {
     const name = filename.replace(/\.[^.]+$/, ''); // strip extension
     await uploadImageBlob(blob, 'png', name);
-    showToast('Diagramme enregistré en tant qu\'image');
+    showToast(t('diagram.toast.diagram_saved_png'));
   } catch {
-    showToast('Impossible d\'enregistrer l\'image', 'error');
+    showToast(t('diagram.toast.diagram_save_png_error'), 'error');
   } finally {
     st.network.selectNodes(savedNodeIds);
   }

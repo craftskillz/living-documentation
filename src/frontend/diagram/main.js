@@ -18,6 +18,7 @@ import { createImageNode, toggleEdgeStraight } from './network.js';
 import { uploadImageBlob } from './image-upload.js';
 import { promptImageName } from './image-name-modal.js';
 import { showToast }       from './toast.js';
+import { t }               from './t.js';
 
 // ── Tool management ───────────────────────────────────────────────────────────
 
@@ -229,12 +230,12 @@ document.addEventListener('paste', async (e) => {
       const src = await uploadImageBlob(blob, ext, name);
       const center = st.network.getViewPosition();
       createImageNode(src, center.x, center.y);
-      showToast('Image ajoutée');
+      showToast(t('diagram.toast.image_added'));
       // Clear system clipboard so the next Cmd+V pastes shapes, not the image again
       // (our Cmd+C only writes to st.clipboard, not the system clipboard)
       navigator.clipboard.writeText('').catch(() => {});
     } catch {
-      showToast('Impossible d\'importer l\'image', 'error');
+      showToast(t('diagram.toast.image_import_error'), 'error');
     }
   } else {
     // No image — paste shapes from internal clipboard

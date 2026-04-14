@@ -6,6 +6,7 @@ export interface LivingDocConfig {
   filenamePattern: string;
   title: string;
   theme: "light" | "dark" | "system";
+  language: "en" | "fr";
   port: number;
   extraFiles: string[];
   showDiagramDebug: boolean;
@@ -52,6 +53,7 @@ const DEFAULTS: LivingDocConfig = {
   filenamePattern: "YYYY_MM_DD_HH_mm_[Category]_title",
   title: "Living Documentation",
   theme: "system",
+  language: "en",
   port: 4321,
   extraFiles: [],
   showDiagramDebug: false,

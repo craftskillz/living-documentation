@@ -7,6 +7,7 @@ import { visNodeProps, SHAPE_DEFAULTS }   from './node-rendering.js';
 import { uploadImageFile } from './image-upload.js';
 import { promptImageName } from './image-name-modal.js';
 import { showToast }       from './toast.js';
+import { t }               from './t.js';
 import { visEdgeProps }   from './edge-rendering.js';
 import { showNodePanel, hideNodePanel } from './node-panel.js';
 import { showEdgePanel, hideEdgePanel } from './edge-panel.js';
@@ -432,7 +433,7 @@ function onDoubleClick(params) {
     const textAlign  = lastStyle.textAlign  || null;
     const textValign = lastStyle.textValign || null;
     st.nodes.add({
-      id, label: st.pendingShape === 'text-free' ? 'Texte' : 'Node',
+      id, label: st.pendingShape === 'text-free' ? t('diagram.label_input.placeholder') : 'Node',
       shapeType: st.pendingShape, colorKey,
       nodeWidth: defaults[0], nodeHeight: defaults[1],
       fontSize, textAlign, textValign,
@@ -465,7 +466,7 @@ function pickAndCreateImageNode(canvasX, canvasY) {
       const src = await uploadImageFile(file, name);
       createImageNode(src, canvasX, canvasY);
     } catch {
-      showToast('Impossible d\'importer l\'image', 'error');
+      showToast(t('diagram.toast.image_import_error'), 'error');
     }
   };
   input.click();

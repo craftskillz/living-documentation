@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin — Living Documentation</title>
 
+    <script src="/i18n.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
@@ -25,13 +26,13 @@
           aria-hidden="true"
           >&#128218;</span
         >
-        <h1 class="text-base font-semibold tracking-tight">Admin Panel</h1>
+        <h1 class="text-base font-semibold tracking-tight" data-i18n="admin.title">Admin Panel</h1>
       </div>
 
       <div class="flex items-center gap-3">
         <button
           id="dark-toggle"
-          title="Toggle dark mode"
+          data-i18n-title="admin.toggle_dark"
           class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
         >
           <span id="dark-icon" class="text-lg leading-none">☾</span>
@@ -41,7 +42,7 @@
           href="/"
           class="text-blue-600 dark:text-blue-400 hover:underline text-sm"
         >
-          Back to docs &#8594;
+          <span data-i18n="admin.back_to_docs">Back to docs →</span>
         </a>
       </div>
     </header>
@@ -53,16 +54,11 @@
         <!-- Title + Save on same row -->
         <div class="flex items-center justify-between mb-8">
           <div>
-            <h2 class="text-xl font-bold text-gray-900 dark:text-gray-50">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-gray-50" data-i18n="admin.config.title">
               Configuration
             </h2>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Settings are saved to
-              <code
-                class="text-xs bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded"
-                >.living-doc.json</code
-              >
-              in your docs folder.
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400" data-i18n="admin.config.description">
+              Settings are saved to .living-doc.json in your docs folder.
             </p>
           </div>
           <div class="flex items-center gap-4 shrink-0">
@@ -71,7 +67,7 @@
               type="submit"
               class="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-950"
             >
-              Save changes
+              <span data-i18n="admin.config.save_btn">Save changes</span>
             </button>
           </div>
         </div>
@@ -86,14 +82,14 @@
               <h3
                 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4"
               >
-                Server Info
+                <span data-i18n="admin.server_info.title">Server Info</span>
               </h3>
               <dl class="grid grid-cols-[1fr_auto] gap-x-6 gap-y-3 text-sm">
                 <div>
                   <dt
                     class="text-xs text-gray-400 uppercase tracking-wide mb-0.5"
                   >
-                    Docs Folder
+                    <span data-i18n="admin.server_info.docs_folder">Docs Folder</span>
                   </dt>
                   <dd
                     id="info-folder"
@@ -106,7 +102,7 @@
                   <dt
                     class="text-xs text-gray-400 uppercase tracking-wide mb-0.5"
                   >
-                    Port
+                    <span data-i18n="admin.server_info.port">Port</span>
                   </dt>
                   <dd
                     id="info-port"
@@ -126,11 +122,10 @@
                 <h3
                   class="text-sm font-semibold text-gray-700 dark:text-gray-300"
                 >
-                  General — Extra Files
+                  <span data-i18n="admin.extra_files.title">General — Extra Files</span>
                 </h3>
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  Add Markdown files from outside the docs folder to the General
-                  section.
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400" data-i18n="admin.extra_files.description">
+                  Add Markdown files from outside the docs folder to the General section.
                 </p>
               </div>
 
@@ -146,7 +141,7 @@
                     onclick="browseUp()"
                     class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0"
                   >
-                    &#8593; Up
+                    <span data-i18n="common.up">↑ Up</span>
                   </button>
                   <span
                     id="browse-path"
@@ -168,7 +163,7 @@
                 </p>
                 <div id="extra-files-list" class="space-y-1"></div>
                 <p id="extra-files-empty" class="text-xs text-gray-400 italic">
-                  No extra files added yet.
+                  <span data-i18n="admin.extra_files.empty">No extra files added yet.</span>
                 </p>
               </div>
             </div>
@@ -191,7 +186,7 @@
                 <label
                   class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                   for="field-title"
-                  >Site Title</label
+                  data-i18n="admin.appearance.site_title_label">Site Title</label
                 >
                 <input
                   id="field-title"
@@ -200,7 +195,7 @@
                   class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Living Documentation"
                 />
-                <p class="text-xs text-gray-400 dark:text-gray-500">
+                <p class="text-xs text-gray-400 dark:text-gray-500" data-i18n="admin.appearance.site_title_hint">
                   Displayed in the browser tab and sidebar header.
                 </p>
               </div>
@@ -208,19 +203,36 @@
                 <label
                   class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                   for="field-theme"
-                  >Default Theme</label
+                  data-i18n="admin.appearance.theme_label">Default Theme</label
                 >
                 <select
                   id="field-theme"
                   name="theme"
                   class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="system">System (follow OS preference)</option>
-                  <option value="light">Light</option>
-                  <option value="dark">Dark</option>
+                  <option value="system" data-i18n="admin.appearance.theme_system">System (follow OS preference)</option>
+                  <option value="light" data-i18n="admin.appearance.theme_light">Light</option>
+                  <option value="dark" data-i18n="admin.appearance.theme_dark">Dark</option>
                 </select>
-                <p class="text-xs text-gray-400 dark:text-gray-500">
+                <p class="text-xs text-gray-400 dark:text-gray-500" data-i18n="admin.appearance.theme_hint">
                   Users can always override with the toggle button.
+                </p>
+              </div>
+              <div class="px-5 py-4 space-y-1.5">
+                <label
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  for="field-language"
+                  data-i18n="admin.appearance.language_label">Language</label>
+                <select
+                  id="field-language"
+                  name="language"
+                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="en" data-i18n="admin.appearance.language_en">English</option>
+                  <option value="fr" data-i18n="admin.appearance.language_fr">Français</option>
+                </select>
+                <p class="text-xs text-gray-400 dark:text-gray-500" data-i18n="admin.appearance.language_hint">
+                  Interface language for all pages.
                 </p>
               </div>
               <div class="px-5 py-4">
@@ -233,7 +245,7 @@
                   />
                   <span
                     class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                    >Show debug button in diagram editor</span
+                    data-i18n="admin.appearance.debug_label">Show debug button in diagram editor</span
                   >
                 </label>
                 <p class="mt-1 text-xs text-gray-400 dark:text-gray-500 ml-7">
@@ -245,7 +257,7 @@
                 <label
                   class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                   for="field-pattern"
-                  >Filename Pattern</label
+                  data-i18n="admin.pattern.label">Filename Pattern</label
                 >
                 <input
                   id="field-pattern"
@@ -400,11 +412,14 @@
       async function loadConfig() {
         try {
           const cfg = await fetch("/api/config").then((r) => r.json());
+          await window.initI18n(cfg.language || 'en');
+          window.applyI18n();
           document.getElementById("info-folder").textContent =
             cfg.docsFolder || "—";
           document.getElementById("info-port").textContent = cfg.port || "—";
           document.getElementById("field-title").value = cfg.title || "";
           document.getElementById("field-theme").value = cfg.theme || "system";
+          document.getElementById("field-language").value = cfg.language || "en";
           document.getElementById("field-pattern").value =
             cfg.filenamePattern || "";
           document.getElementById("field-debug").checked =
@@ -413,7 +428,7 @@
           initExtraFiles(cfg);
           initPalettes(cfg);
         } catch {
-          showMsg("Failed to load config.", "error");
+          showMsg(window.t('admin.msg.load_failed'), "error");
         }
       }
 
@@ -426,20 +441,18 @@
           const catCount = (filenamePattern.match(/\[Category\]/gi) || [])
             .length;
           if (catCount === 0) {
-            showMsg("Filename pattern must contain [Category]", "error");
+            showMsg(window.t('admin.msg.pattern_no_category'), "error");
             return;
           }
           if (catCount > 1) {
-            showMsg(
-              "Filename pattern must contain [Category] exactly once",
-              "error",
-            );
+            showMsg(window.t('admin.msg.pattern_one_category'), "error");
             return;
           }
         }
         const payload = {
           title: document.getElementById("field-title").value.trim(),
           theme: document.getElementById("field-theme").value,
+          language: document.getElementById("field-language").value,
           filenamePattern,
           showDiagramDebug: document.getElementById("field-debug").checked,
           diagramNodePalette: [...nodePalette],
@@ -453,9 +466,9 @@
             body: JSON.stringify(payload),
           });
           if (!res.ok) throw new Error(await res.text());
-          showMsg("Saved!", "ok");
+          showMsg(window.t('admin.msg.saved'), "ok");
         } catch (err) {
-          showMsg("Save failed: " + err.message, "error");
+          showMsg(window.t('admin.msg.save_failed') + err.message, "error");
         }
       }
 

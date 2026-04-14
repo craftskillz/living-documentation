@@ -3,6 +3,7 @@
 
 import { st, markDirty } from './state.js';
 import { initNetwork }   from './network.js';
+import { t }             from './t.js';
 import { hideNodePanel } from './node-panel.js';
 import { hideEdgePanel } from './edge-panel.js';
 import { hideLabelInput }       from './label-editor.js';
@@ -16,7 +17,7 @@ export function renderDiagramList() {
   const list = document.getElementById('diagramList');
   list.innerHTML = '';
   if (!st.diagrams.length) {
-    list.innerHTML = '<p class="text-xs text-gray-400 dark:text-gray-600 px-3 py-3">Aucun diagramme</p>';
+    list.innerHTML = `<p class="text-xs text-gray-400 dark:text-gray-600 px-3 py-3">${t('diagram.sidebar.empty')}</p>`;
     return;
   }
   st.diagrams.forEach((d) => {
@@ -33,7 +34,7 @@ export function renderDiagramList() {
     titleSpan.textContent = d.title;
 
     const deleteBtn = document.createElement('button');
-    deleteBtn.title     = 'Supprimer';
+    deleteBtn.title     = t('diagram.sidebar.delete_title');
     deleteBtn.className = 'hidden group-hover:flex items-center justify-center w-4 h-4 rounded text-gray-400 hover:text-red-500 shrink-0';
     deleteBtn.textContent = '✕';
     deleteBtn.addEventListener('click', async (e) => {
@@ -76,7 +77,7 @@ export async function newDiagram() {
   await fetch(`/api/diagrams/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title: 'Nouveau diagramme', nodes: [], edges: [] }),
+    body: JSON.stringify({ title: t('diagram.toast.new_diagram_title'), nodes: [], edges: [] }),
   });
   const res   = await fetch('/api/diagrams');
   st.diagrams = await res.json();
@@ -85,7 +86,7 @@ export async function newDiagram() {
 }
 
 export async function deleteDiagram(id) {
-  if (!confirm('Supprimer ce diagramme ?')) return;
+  if (!confirm(t('diagram.toast.confirm_delete'))) return;
   await fetch(`/api/diagrams/${id}`, { method: 'DELETE' });
   const res   = await fetch('/api/diagrams');
   st.diagrams = await res.json();
@@ -138,7 +139,7 @@ export async function saveDiagram() {
     edgeLocked: e.edgeLocked || false,
   }));
 
-  const title = document.getElementById('diagramTitle').value || 'Sans titre';
+  const title = document.getElementById('diagramTitle').value || t('diagram.toast.untitled');
   await fetch(`/api/diagrams/${st.currentDiagramId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
