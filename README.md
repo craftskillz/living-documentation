@@ -248,6 +248,72 @@ living-documentation/
 
 ---
 
+## MCP server (Model Context Protocol)
+
+Living Documentation exposes an **MCP server** over HTTP so that AI assistants (Claude Desktop, Claude Code, Cursor, etc.) can read and create documents and diagrams programmatically — without leaving your editor.
+
+The server starts automatically alongside the Express app; no extra process is needed.
+
+### Endpoint
+
+```
+POST http://localhost:4321/mcp
+```
+
+Transport: **Streamable HTTP** (stateless — one session per request).
+
+A `GET http://localhost:4321/mcp` returns a JSON summary of available tools for quick inspection.
+
+### Available tools
+
+| Tool | Description |
+|---|---|
+| `list_documents` | List all documents with their id, title, category and folder |
+| `read_document` | Read the raw Markdown content of a document by its id |
+| `create_document` | Create a new Markdown document (filename generated from the configured pattern) |
+| `list_diagrams` | List all saved diagrams with their id and title |
+| `create_diagram` | Create a diagram from nodes and edges (shapes, colors, labels) |
+
+### Installation — Claude Desktop
+
+Add the following to your `claude_desktop_config.json` (macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "living-documentation": {
+      "type": "http",
+      "url": "http://localhost:4321/mcp"
+    }
+  }
+}
+```
+
+Then restart Claude Desktop. Living Documentation must be running (`npx living-documentation ./docs`) before Claude Desktop connects.
+
+### Installation — Claude Code
+
+Add the MCP server to your project with:
+
+```bash
+claude mcp add --transport http living-documentation http://localhost:4321/mcp
+```
+
+Or add it manually to `.claude/settings.json` / `~/.claude/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "living-documentation": {
+      "type": "http",
+      "url": "http://localhost:4321/mcp"
+    }
+  }
+}
+```
+
+---
+
 ## Build
 
 ```bash

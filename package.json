@@ -29,6 +29,7 @@
     "url": "https://github.com/craftskillz/living-documentation.git"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "commander": "^12.1.0",
     "express": "^4.19.2",
     "marked": "^12.0.0"
