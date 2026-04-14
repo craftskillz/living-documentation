@@ -5,6 +5,8 @@
 > **Memory**: At the start of each session, read `memory/MEMORY.md` and load the relevant memory files listed there.
 > **Library docs**: Use the **context7 MCP** (installed globally) to fetch up-to-date library documentation instead of scraping/downloading raw bundles. Example: query context7 for `vis-network` to get accurate API docs without token-heavy file fetches.
 
+> **⚠️ Internationalization — mandatory rule**: Every user-visible string (button text, label, placeholder, tooltip/title, any text rendered in the UI) **must** be added to both `src/frontend/i18n/en.json` **and** `src/frontend/i18n/fr.json`. HTML elements must use the appropriate attribute: `data-i18n` (textContent), `data-i18n-title` (title), `data-i18n-placeholder` (placeholder), `data-i18n-html` (innerHTML). Dynamic strings built in JS must use `window.t('key')`. No hardcoded English string is acceptable in any of the three pages (index.html, admin.html, diagram.html).
+
 ## Project overview
 
 CLI tool (`living-documentation`) that serves a local Markdown documentation viewer via Express.
