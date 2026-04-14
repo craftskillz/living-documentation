@@ -205,11 +205,10 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
 
       const node = bodyNodes[id];
       if (!node) continue;
-      if (alwaysShow === true || node.isBoundingBoxOverlappingWith(viewableArea) === true) {
-        node.draw(ctx);
-      } else {
-        node.updateBoundingBox(ctx, node.selected);
-      }
+      // Always draw every node — no viewport culling.
+      // Culling would skip draw() for off-screen nodes, leaving shape.width/height
+      // at vis-network's default of 50, which breaks getNodeAt() hit-testing.
+      node.draw(ctx);
     }
     return { drawExternalLabels() {} };
   };
@@ -342,6 +341,20 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
 
   document.getElementById('emptyState').classList.add('hidden');
   updateZoomDisplay();
+
+  // vis-network initialises shape.width/height to 50 (not undefined), so
+  // needsRefresh() returns false and resize() never runs on the first render.
+  // Fix: reset shape.width/height to undefined so needsRefresh() returns true
+  // and vis-network's own render loop runs resize() with the correct context.
+  st.network.once('afterDrawing', () => {
+    for (const id of st.network.body.nodeIndices) {
+      const bn = st.network.body.nodes[id];
+      if (!bn || !bn.shape) continue;
+      bn.shape.width  = undefined;
+      bn.shape.height = undefined;
+    }
+    st.network.redraw();
+  });
 }
 
 // ── Rotated edge label rendering ─────────────────────────────────────────────
