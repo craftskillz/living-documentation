@@ -19,6 +19,7 @@
   "nav.search_placeholder": "Search docs…",
   "nav.search_mobile_placeholder": "Search…",
   "nav.toggle_dark": "Toggle dark mode",
+  "nav.export": "Export",
   "nav.export_html": "Export folders as HTML ZIP",
   "nav.export_all_pdf": "Export all documents as PDF",
   "nav.new_folder": "New folder",
@@ -175,6 +176,15 @@
   "modal.img_paste.saved_hint": "(saved in images/)",
   "modal.img_paste.paste_btn": "Paste",
 
+  "modal.export.title": "Export",
+  "modal.export.tab_markdown": "Markdown",
+  "modal.export.tab_html": "HTML",
+  "modal.export.tab_pdf": "PDF",
+  "modal.export.markdown_hint": "Export all documents and images as Markdown files, with internal links rewritten to relative paths.",
+  "modal.export.markdown_btn": "Export Markdown",
+  "modal.export.pdf_hint": "Export all documents as a single PDF with table of contents.",
+  "modal.export.pdf_btn": "Export all PDF",
+
   "modal.export_html.title": "Export folders as HTML",
   "modal.export_html.hint": "Select the folders to include in the ZIP archive.",
   "modal.export_html.notion_btn": "Export Notion",
@@ -265,6 +275,12 @@
   "admin.palette.arrows_hint": "Add or remove colors available for arrows. Click ✕ to remove.",
   "admin.palette.add_color_btn": "Add color",
   "admin.palette.delete_color_title": "Remove",
+
+  "admin.license.title": "MIT License — Open Source",
+  "admin.license.subtitle": "Free to use, fork, and build upon.",
+  "admin.license.body": "This open source project is gracefully provided to you by its conceptors <strong>Youssef MEDAGHRI-ALAOUI</strong> &amp; <strong>Claude Code</strong>.",
+  "admin.license.linkedin_btn": "Youssef on LinkedIn",
+  "admin.license.npm_btn": "living-documentation on npm",
 
   "admin.msg.saved": "Saved!",
   "admin.msg.save_failed": "Save failed: ",

@@ -19,6 +19,7 @@
   "nav.search_placeholder": "Rechercher dans les docs…",
   "nav.search_mobile_placeholder": "Rechercher…",
   "nav.toggle_dark": "Basculer le mode sombre",
+  "nav.export": "Exporter",
   "nav.export_html": "Exporter les dossiers en HTML (ZIP)",
   "nav.export_all_pdf": "Exporter tous les documents en PDF",
   "nav.new_folder": "Nouveau dossier",
@@ -175,6 +176,15 @@
   "modal.img_paste.saved_hint": "(enregistré dans images/)",
   "modal.img_paste.paste_btn": "Coller",
 
+  "modal.export.title": "Exporter",
+  "modal.export.tab_markdown": "Markdown",
+  "modal.export.tab_html": "HTML",
+  "modal.export.tab_pdf": "PDF",
+  "modal.export.markdown_hint": "Exporte tous les documents et images en fichiers Markdown, avec les liens internes réécrits en chemins relatifs.",
+  "modal.export.markdown_btn": "Exporter Markdown",
+  "modal.export.pdf_hint": "Exporte tous les documents en un seul PDF avec table des matières.",
+  "modal.export.pdf_btn": "Exporter tout en PDF",
+
   "modal.export_html.title": "Exporter les dossiers en HTML",
   "modal.export_html.hint": "Sélectionnez les dossiers à inclure dans l'archive ZIP.",
   "modal.export_html.notion_btn": "Exporter Notion",
@@ -265,6 +275,12 @@
   "admin.palette.arrows_hint": "Ajoutez ou supprimez des couleurs pour les flèches. Cliquez sur ✕ pour supprimer.",
   "admin.palette.add_color_btn": "Ajouter une couleur",
   "admin.palette.delete_color_title": "Supprimer",
+
+  "admin.license.title": "Licence MIT — Open Source",
+  "admin.license.subtitle": "Libre d'utilisation, de fork et d'extension.",
+  "admin.license.body": "Ce projet open source vous est gracieusement offert par ses concepteurs <strong>Youssef MEDAGHRI-ALAOUI</strong> &amp; <strong>Claude Code</strong>.",
+  "admin.license.linkedin_btn": "Youssef sur LinkedIn",
+  "admin.license.npm_btn": "living-documentation sur npm",
 
   "admin.msg.saved": "Enregistré !",
   "admin.msg.save_failed": "Échec de l'enregistrement : ",

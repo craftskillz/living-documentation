@@ -288,21 +288,12 @@
               ></p>
               <div class="flex items-center gap-2">
                 <button
-                  onclick="openExportHtmlModal()"
-                  data-i18n-title="nav.export_html"
-                  title="Export folders as HTML"
-                  class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors text-xs leading-none"
+                  onclick="openExportModal()"
+                  data-i18n-title="nav.export"
+                  title="Export"
+                  class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors leading-none"
                 >
-                  &#128196; HTML
-                </button>
-                <button
-                  id="export-all-pdf-btn"
-                  onclick="exportAllPDF()"
-                  data-i18n-title="nav.export_all_pdf"
-                  title="Export all documents as PDF"
-                  class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors text-xs leading-none"
-                >
-                  &#128196; PDF
+                  <i class="fa-solid fa-file-export"></i>
                 </button>
                 <button
                   onclick="openNewFolderModal()"
@@ -4963,17 +4954,38 @@
         if (id) openDocument(id, true);
       });
 
-      // ── Export HTML modal ───────────────────────────────────────────────────
+      // ── Export modal (Markdown / HTML / PDF) ────────────────────────────────
 
-      async function openExportHtmlModal() {
-        const modal = document.getElementById('export-html-modal');
-        const list  = document.getElementById('export-html-folder-list');
-        list.innerHTML = `<p class="text-sm text-gray-400 py-2" data-i18n="common.loading">${window.t('common.loading')}</p>`;
-        modal.classList.remove('hidden');
+      let _exportCurrentTab = 'markdown';
 
+      function switchExportTab(tab) {
+        _exportCurrentTab = tab;
+        ['markdown', 'html', 'pdf'].forEach((t) => {
+          const tabBtn = document.getElementById(`export-tab-${t}`);
+          const content = document.getElementById(`export-content-${t}`);
+          const isActive = t === tab;
+          tabBtn.classList.toggle('border-b-2', isActive);
+          tabBtn.classList.toggle('border-blue-500', isActive);
+          tabBtn.classList.toggle('text-blue-600', isActive);
+          tabBtn.classList.toggle('dark:text-blue-400', isActive);
+          tabBtn.classList.toggle('font-semibold', isActive);
+          tabBtn.classList.toggle('text-gray-500', !isActive);
+          tabBtn.classList.toggle('dark:text-gray-400', !isActive);
+          content.classList.toggle('hidden', !isActive);
+        });
+        // Folder list: visible for html only (lazy-loaded on first switch)
+        document.getElementById('export-folder-section').classList.toggle('hidden', tab !== 'html');
+        if (tab === 'html') loadExportFolders();
+      }
+
+      let _exportFoldersLoaded = false;
+
+      async function loadExportFolders() {
+        if (_exportFoldersLoaded) return;
+        const list = document.getElementById('export-folder-list');
+        list.innerHTML = `<p class="text-sm text-gray-400 py-2">${window.t('common.loading')}</p>`;
         try {
           const docs = await fetch('/api/documents').then((r) => r.json());
-          // Derive first-level group names (same logic as the route).
           const groups = new Set();
           docs.forEach((doc) => groups.add(doc.folder?.[0] ?? doc.category ?? 'General'));
           const sorted = [...groups].sort((a, b) => {
@@ -4981,28 +4993,63 @@
             if (b === 'General') return 1;
             return a.localeCompare(b);
           });
-
           list.innerHTML = sorted.map((g) => `
             <label class="flex items-center gap-3 px-1 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer">
               <input type="checkbox" value="${g}"
                 class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500">
               <span class="text-sm text-gray-700 dark:text-gray-300">${g}</span>
             </label>`).join('');
+          _exportFoldersLoaded = true;
         } catch {
           list.innerHTML = `<p class="text-sm text-red-500">${window.t('common.error_prefix')}failed to load folders</p>`;
         }
       }
 
-      function closeExportHtmlModal() {
-        document.getElementById('export-html-modal').classList.add('hidden');
+      function openExportModal() {
+        document.getElementById('export-modal').classList.remove('hidden');
+        switchExportTab('markdown');
+      }
+
+      function closeExportModal() {
+        document.getElementById('export-modal').classList.add('hidden');
+        _exportFoldersLoaded = false;
+      }
+
+      async function exportMarkdown() {
+        const btn  = document.getElementById('export-md-btn');
+        const orig = btn.innerHTML;
+        btn.innerHTML = '⏳';
+        btn.disabled  = true;
+
+        try {
+          const res = await fetch('/api/export/markdown', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: '{}',
+          });
+          if (!res.ok) throw new Error(await res.text());
+          const blob = await res.blob();
+          const url  = URL.createObjectURL(blob);
+          const a    = document.createElement('a');
+          a.href     = url;
+          a.download = 'export-markdown.zip';
+          a.click();
+          URL.revokeObjectURL(url);
+          closeExportModal();
+        } catch (err) {
+          alert(window.t('common.error_prefix') + err.message);
+        } finally {
+          btn.innerHTML = orig;
+          btn.disabled  = false;
+        }
       }
 
       async function exportHtml(mode) {
-        const checked = [...document.querySelectorAll('#export-html-folder-list input:checked')];
+        const checked = [...document.querySelectorAll('#export-folder-list input:checked')];
         const folders = checked.map((cb) => cb.value);
         if (!folders.length) return;
 
-        const btnId = mode === 'confluence' ? 'export-html-confluence-btn' : 'export-html-notion-btn';
+        const btnId = mode === 'confluence' ? 'export-confluence-btn' : 'export-notion-btn';
         const btn   = document.getElementById(btnId);
         const orig  = btn.innerHTML;
         btn.innerHTML = '⏳';
@@ -5022,7 +5069,7 @@
           a.download = `export-${mode}.zip`;
           a.click();
           URL.revokeObjectURL(url);
-          closeExportHtmlModal();
+          closeExportModal();
         } catch (err) {
           alert(window.t('common.error_prefix') + err.message);
         } finally {
@@ -5030,45 +5077,119 @@
           btn.disabled  = false;
         }
       }
+
+      async function exportAllPdfFromModal() {
+        closeExportModal();
+        exportAllPDF();
+      }
     </script>
 
-    <!-- ── Export HTML modal ──────────────────────────────────────────────── -->
+    <!-- ── Export modal (Markdown / HTML / PDF) ────────────────────────────── -->
     <div
-      id="export-html-modal"
+      id="export-modal"
       class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
     >
       <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-sm mx-4 p-6 space-y-4">
+        <!-- Title -->
         <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">
-          &#128196; <span data-i18n="modal.export_html.title">Export folders as HTML</span>
+          <i class="fa-solid fa-file-export mr-2 text-blue-500"></i>
+          <span data-i18n="modal.export.title">Export</span>
         </h3>
 
-        <p class="text-xs text-gray-500 dark:text-gray-400" data-i18n="modal.export_html.hint">
-          Select the folders to include in the ZIP archive.
-        </p>
+        <!-- Tabs -->
+        <div class="flex gap-0 border-b border-gray-200 dark:border-gray-700">
+          <button
+            id="export-tab-markdown"
+            onclick="switchExportTab('markdown')"
+            data-i18n="modal.export.tab_markdown"
+            class="px-4 py-2 text-sm border-b-2 border-blue-500 text-blue-600 dark:text-blue-400 font-semibold transition-colors"
+          >Markdown</button>
+          <button
+            id="export-tab-html"
+            onclick="switchExportTab('html')"
+            data-i18n="modal.export.tab_html"
+            class="px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+          >HTML</button>
+          <button
+            id="export-tab-pdf"
+            onclick="switchExportTab('pdf')"
+            data-i18n="modal.export.tab_pdf"
+            class="px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+          >PDF</button>
+        </div>
 
-        <div
-          id="export-html-folder-list"
-          class="max-h-60 overflow-y-auto space-y-0.5 border border-gray-200 dark:border-gray-700 rounded-lg p-2"
-        ></div>
+        <!-- Folder list (html tab only) -->
+        <div id="export-folder-section" class="hidden">
+          <div
+            id="export-folder-list"
+            class="max-h-48 overflow-y-auto space-y-0.5 border border-gray-200 dark:border-gray-700 rounded-lg p-2"
+          ></div>
+        </div>
 
-        <div class="flex justify-end gap-3 pt-1">
-          <button
-            onclick="closeExportHtmlModal()"
-            data-i18n="common.cancel"
-            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-          >Cancel</button>
-          <button
-            id="export-html-notion-btn"
-            onclick="exportHtml('notion')"
-            data-i18n="modal.export_html.notion_btn"
-            class="text-sm px-4 py-2 rounded-lg border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-semibold transition-colors"
-          >Export Notion</button>
-          <button
-            id="export-html-confluence-btn"
-            onclick="exportHtml('confluence')"
-            data-i18n="modal.export_html.confluence_btn"
-            class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
-          >Export Confluence</button>
+        <!-- Markdown tab content -->
+        <div id="export-content-markdown">
+          <p class="text-xs text-gray-500 dark:text-gray-400" data-i18n="modal.export.markdown_hint">
+            Export all documents and images as Markdown files, with internal links rewritten to relative paths.
+          </p>
+          <div class="flex justify-end gap-3 pt-2">
+            <button
+              onclick="closeExportModal()"
+              data-i18n="common.cancel"
+              class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            >Cancel</button>
+            <button
+              id="export-md-btn"
+              onclick="exportMarkdown()"
+              data-i18n="modal.export.markdown_btn"
+              class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+            >Export Markdown</button>
+          </div>
+        </div>
+
+        <!-- HTML tab content -->
+        <div id="export-content-html" class="hidden">
+          <p class="text-xs text-gray-500 dark:text-gray-400" data-i18n="modal.export_html.hint">
+            Select the folders to include in the ZIP archive.
+          </p>
+          <div class="flex justify-end gap-3 pt-2">
+            <button
+              onclick="closeExportModal()"
+              data-i18n="common.cancel"
+              class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            >Cancel</button>
+            <button
+              id="export-notion-btn"
+              onclick="exportHtml('notion')"
+              data-i18n="modal.export_html.notion_btn"
+              class="text-sm px-4 py-2 rounded-lg border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-semibold transition-colors"
+            >Export Notion</button>
+            <button
+              id="export-confluence-btn"
+              onclick="exportHtml('confluence')"
+              data-i18n="modal.export_html.confluence_btn"
+              class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+            >Export Confluence</button>
+          </div>
+        </div>
+
+        <!-- PDF tab content -->
+        <div id="export-content-pdf" class="hidden">
+          <p class="text-xs text-gray-500 dark:text-gray-400" data-i18n="modal.export.pdf_hint">
+            Export all documents as a single PDF with table of contents.
+          </p>
+          <div class="flex justify-end gap-3 pt-2">
+            <button
+              onclick="closeExportModal()"
+              data-i18n="common.cancel"
+              class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            >Cancel</button>
+            <button
+              id="export-pdf-btn"
+              onclick="exportAllPdfFromModal()"
+              data-i18n="modal.export.pdf_btn"
+              class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+            >Export all PDF</button>
+          </div>
         </div>
       </div>
     </div>

@@ -101,6 +101,85 @@ function processHtml(html: string, mediaSubfolder?: string): { html: string; ima
   return { html, images };
 }
 
+/**
+ * Rewrite internal `?doc=VALUE` links to relative `.md` file links.
+ *
+ * The VALUE in the URL is double-encoded (e.g. `%252F` = `/`, `%255B` = `[`).
+ * After double-decoding we get the doc id, e.g. `4_reference/2026_..._[CATEGORY]_title`.
+ * We split on the first `/` to get the target group, then sanitize the basename the same
+ * way the export does, and compute a relative path from currentGroup.
+ */
+function rewriteDocLinks(md: string, currentGroup: string): string {
+  return md.replace(
+    /\[([^\]]*)\]\(\?doc=([^)]+)\)/g,
+    (_match, text, encoded) => {
+      try {
+        // Try double-decode first (standard for URLs built by the app).
+        let docId: string;
+        try {
+          docId = decodeURIComponent(decodeURIComponent(encoded));
+        } catch {
+          docId = decodeURIComponent(encoded);
+        }
+        const slashIdx = docId.indexOf('/');
+        const targetGroup = slashIdx === -1 ? 'General' : docId.slice(0, slashIdx);
+        const rawName     = slashIdx === -1 ? docId : docId.slice(slashIdx + 1);
+        const sanitized   = sanitizeFilename(path.basename(rawName)) + '.md';
+        const rel = targetGroup === currentGroup
+          ? `./${sanitized}`
+          : `../${targetGroup}/${sanitized}`;
+        return `[${text}](${rel})`;
+      } catch {
+        return _match; // leave untouched if decoding fails
+      }
+    },
+  );
+}
+
+/**
+ * Process raw Markdown for export:
+ *  1. Rewrite ?doc= internal links to relative .md file links.
+ *  2. Rewrite markdown image syntax from ./images/xxx or /images/xxx to ./xxx.
+ *  3. Rewrite HTML <img src="./images/xxx"> to <img src="./xxx">.
+ *  4. Collect referenced image basenames.
+ */
+function processMarkdown(md: string, currentGroup: string): { md: string; images: Set<string> } {
+  const images = new Set<string>();
+
+  // Rewrite ?doc= internal navigation links to relative file links.
+  md = rewriteDocLinks(md, currentGroup);
+
+  // Rewrite markdown image syntax: ![alt](./images/name.png "title") → ![alt](./name.png "title")
+  md = md.replace(
+    /!\[([^\]]*)\]\(((?:\.\/|\/)?images\/([^)"'\s#?]+))([^)]*)\)/g,
+    (_match, alt, _fullSrc, filename, rest) => {
+      const basename = path.basename(filename);
+      images.add(basename);
+      return `![${alt}](./${basename}${rest})`;
+    },
+  );
+
+  // Rewrite HTML img tags embedded in markdown — two patterns (with/without preceding attributes).
+  md = md.replace(
+    /(<img\b[^>]*?\s)src=["']((?:\.\/|\/)?images\/([^"'?#\s]+))["']/gi,
+    (_match, before, _fullSrc, filename) => {
+      const basename = path.basename(filename);
+      images.add(basename);
+      return `${before}src="./${basename}"`;
+    },
+  );
+  md = md.replace(
+    /(<img\b)(\s+)src=["']((?:\.\/|\/)?images\/([^"'?#\s]+))["']/gi,
+    (_match, tag, space, _fullSrc, filename) => {
+      const basename = path.basename(filename);
+      images.add(basename);
+      return `${tag}${space}src="./${basename}"`;
+    },
+  );
+
+  return { md, images };
+}
+
 // ── Route ─────────────────────────────────────────────────────────────────────
 
 export function exportRouter(docsPath: string): Router {
@@ -172,6 +251,64 @@ export function exportRouter(docsPath: string): Router {
       for (const imageName of images) {
         const imageDir = isConfluence ? `${group}/${baseName}` : group;
         const key = `${imageDir}/${imageName}`;
+        if (addedImages.has(key)) continue;
+        addedImages.add(key);
+        const imagePath = path.join(docsPath, 'images', imageName);
+        if (fs.existsSync(imagePath)) {
+          archive.file(imagePath, { name: key });
+        }
+      }
+    }
+
+    await archive.finalize();
+  });
+
+  /**
+   * POST /api/export/markdown
+   * Body: {} (no filter — exports all documents)
+   *
+   * ZIP structure: group/page.md  +  group/image.png  (images at same level as MD files)
+   * Internal ?doc= links are rewritten to relative .md paths.
+   */
+  router.post('/markdown', async (req: Request, res: Response) => {
+    const { extraFiles = [], filenamePattern } = readConfig(docsPath);
+    const docs = listDocs(docsPath, extraFiles, filenamePattern);
+    if (!docs.length) {
+      return res.status(404).json({ error: 'No documents found' });
+    }
+
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', 'attachment; filename="export-markdown.zip"');
+
+    const archive = archiver('zip', { zlib: { level: 6 } });
+    archive.on('error', (err) => {
+      console.error('[export] archive error:', err);
+    });
+    archive.pipe(res);
+
+    const addedImages = new Set<string>();
+
+    for (const doc of docs) {
+      const group = docGroup(doc);
+
+      let filePath: string | null;
+      const id = decodeURIComponent(doc.id);
+      if (path.isAbsolute(id)) {
+        const abs = id + '.md';
+        filePath = extraFiles.includes(abs) ? abs : null;
+      } else {
+        filePath = safeFilePath(docsPath, doc.filename);
+      }
+      if (!filePath || !fs.existsSync(filePath)) continue;
+
+      const raw = fs.readFileSync(filePath, 'utf-8');
+      const { md: processedMd, images } = processMarkdown(raw, group);
+      const baseName = sanitizeFilename(path.basename(doc.filename, '.md'));
+
+      archive.append(processedMd, { name: `${group}/${baseName}.md` });
+
+      for (const imageName of images) {
+        const key = `${group}/${imageName}`;
         if (addedImages.has(key)) continue;
         addedImages.add(key);
         const imagePath = path.join(docsPath, 'images', imageName);
