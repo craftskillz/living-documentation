@@ -1,6 +1,6 @@
 // ── Alignment guides ───────────────────────────────────────────────────────────
-// Detects center-to-center horizontal/vertical alignment between nodes of the
-// same shapeType during drag and draws dashed guide lines on the canvas.
+// Detects center-to-center horizontal/vertical alignment during drag.
+// Priority: same shapeType. Fallback: any shapeType if no same-type match found on that axis.
 
 import { st, markDirty } from './state.js';
 import { t }             from './t.js';
@@ -24,6 +24,59 @@ export function toggleAlignGuides() {
   if (!st.alignGuides && st.network) st.network.redraw();
 }
 
+// Among candidates on the same axis, pick the closest to the dragged center.
+// Tiebreak: for H axis (same Y) prefer rightmost (largest ox);
+//           for V axis (same X) prefer lowest   (largest oy).
+function pickBest(candidates, dx, dy, axis) {
+  if (!candidates.length) return null;
+  return candidates.reduce((best, curr) => {
+    const dBest = axis === 'h' ? Math.abs(dx - best.ox) : Math.abs(dy - best.oy);
+    const dCurr = axis === 'h' ? Math.abs(dx - curr.ox) : Math.abs(dy - curr.oy);
+    if (dCurr < dBest) return curr;
+    if (dCurr === dBest)
+      return axis === 'h' ? (curr.ox > best.ox ? curr : best)
+                          : (curr.oy > best.oy ? curr : best);
+    return best;
+  });
+}
+
+// Collects all candidates per axis, separated by same-type / any-type.
+function collectCandidates(draggedBody, draggedType, draggedIds) {
+  const dx = draggedBody.x, dy = draggedBody.y;
+  const sameH = [], sameV = [], anyH = [], anyV = [];
+
+  for (const otherId of st.nodes.getIds()) {
+    if (draggedIds.has(otherId)) continue;
+    const other = st.nodes.get(otherId);
+    if (!other) continue;
+    const otherBody = st.network.body.nodes[otherId];
+    if (!otherBody) continue;
+    const ox = otherBody.x, oy = otherBody.y;
+    const sameType = other.shapeType === draggedType;
+    const c = { ox, oy };
+
+    if (Math.abs(dy - oy) <= THRESHOLD) (sameType ? sameH : anyH).push(c);
+    if (Math.abs(dx - ox) <= THRESHOLD) (sameType ? sameV : anyV).push(c);
+  }
+
+  return { sameH, sameV, anyH, anyV };
+}
+
+// Returns the best snap target Y (H axis) and X (V axis) for a dragged node.
+// Same-type nodes take priority; any-type is used as fallback if no same-type match found.
+function findSnapAxes(draggedBody, draggedType, draggedIds) {
+  const dx = draggedBody.x, dy = draggedBody.y;
+  const { sameH, sameV, anyH, anyV } = collectCandidates(draggedBody, draggedType, draggedIds);
+
+  const hMatch = pickBest(sameH.length ? sameH : anyH, dx, dy, 'h');
+  const vMatch = pickBest(sameV.length ? sameV : anyV, dx, dy, 'v');
+
+  return {
+    snapX: vMatch ? vMatch.ox : dx,
+    snapY: hMatch ? hMatch.oy : dy,
+  };
+}
+
 // Called at dragEnd — snaps each dragged node onto the guide axis when active.
 export function snapToAlignGuides(params) {
   if (!st.alignGuides || !params.nodes || !params.nodes.length || !st.network) return;
@@ -33,33 +86,10 @@ export function snapToAlignGuides(params) {
   for (const draggedId of params.nodes) {
     const draggedNode = st.nodes.get(draggedId);
     if (!draggedNode) continue;
-    const draggedType = draggedNode.shapeType;
     const draggedBody = st.network.body.nodes[draggedId];
     if (!draggedBody) continue;
 
-    let snapX = draggedBody.x;
-    let snapY = draggedBody.y;
-    let snappedH = false;
-    let snappedV = false;
-
-    for (const otherId of st.nodes.getIds()) {
-      if (draggedIds.has(otherId)) continue;
-      const other = st.nodes.get(otherId);
-      if (!other || other.shapeType !== draggedType) continue;
-      const otherBody = st.network.body.nodes[otherId];
-      if (!otherBody) continue;
-
-      if (!snappedH && Math.abs(draggedBody.y - otherBody.y) <= THRESHOLD) {
-        snapY = otherBody.y;
-        snappedH = true;
-      }
-      if (!snappedV && Math.abs(draggedBody.x - otherBody.x) <= THRESHOLD) {
-        snapX = otherBody.x;
-        snappedV = true;
-      }
-      if (snappedH && snappedV) break;
-    }
-
+    const { snapX, snapY } = findSnapAxes(draggedBody, draggedNode.shapeType, draggedIds);
     if (snapX !== draggedBody.x || snapY !== draggedBody.y) {
       st.network.moveNode(draggedId, snapX, snapY);
     }
@@ -91,36 +121,13 @@ export function onDragging(params) {
     const dx = draggedBody.x;
     const dy = draggedBody.y;
 
-    for (const otherId of st.nodes.getIds()) {
-      if (draggedIds.has(otherId)) continue;
-      const other = st.nodes.get(otherId);
-      if (!other || other.shapeType !== draggedType) continue;
-      const otherBody = st.network.body.nodes[otherId];
-      if (!otherBody) continue;
-      const ox = otherBody.x;
-      const oy = otherBody.y;
+    const { sameH, sameV, anyH, anyV } = collectCandidates(draggedBody, draggedType, draggedIds);
 
-      // Horizontal alignment: centers share the same Y
-      if (Math.abs(dy - oy) <= THRESHOLD) {
-        const avgY = (dy + oy) / 2;
-        newGuides.push({
-          type: 'h',
-          y:  avgY,
-          x1: Math.min(dx, ox) - EXT,
-          x2: Math.max(dx, ox) + EXT,
-        });
-      }
-      // Vertical alignment: centers share the same X
-      if (Math.abs(dx - ox) <= THRESHOLD) {
-        const avgX = (dx + ox) / 2;
-        newGuides.push({
-          type: 'v',
-          x:  avgX,
-          y1: Math.min(dy, oy) - EXT,
-          y2: Math.max(dy, oy) + EXT,
-        });
-      }
-    }
+    const hMatch = pickBest(sameH.length ? sameH : anyH, dx, dy, 'h');
+    const vMatch = pickBest(sameV.length ? sameV : anyV, dx, dy, 'v');
+
+    if (hMatch) newGuides.push({ type: 'h', y: (dy + hMatch.oy) / 2, x1: Math.min(dx, hMatch.ox) - EXT, x2: Math.max(dx, hMatch.ox) + EXT });
+    if (vMatch) newGuides.push({ type: 'v', x: (dx + vMatch.ox) / 2, y1: Math.min(dy, vMatch.oy) - EXT, y2: Math.max(dy, vMatch.oy) + EXT });
   }
 
   activeGuides = newGuides;

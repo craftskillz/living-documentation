@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_15_[DIAGRAM]_alignment_guides_center_snap_hitbox_fix_and_state_persistence.md`
 **date:** 2026-04-15
-**status:** Pending Validation
+**status:** Partially SuperSeeded by 2026_04_15_[DIAGRAM]_finer_grid_and_alignment_guides_closest_node_with_tiebreak.md (alignment guide candidate selection logic replaced)
 **description:** Replace auto-layout with alignment guides (dashed lines + snap on release for same-type nodes), change snap-to-grid to target shape centers instead of top-left corners, fix F5 hit-testing bug by resetting shape.width/height to undefined after first draw, and persist gridEnabled/alignGuides per diagram in .diagrams.json.
 **tags:** diagram, alignment-guides, snap-to-grid, snap-center, hit-testing, shape-width, shape-height, refreshNeeded, needsRefresh, vis-network, persistence, gridEnabled, alignGuides, diagrams-json, toolbar-state, F5, click, getNodeAt
 ---
