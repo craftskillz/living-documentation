@@ -1,7 +1,7 @@
 // ── Constants ─────────────────────────────────────────────────────────────────
 // Pure compile-time values shared across all diagram modules.
 
-export const GRID_SIZE = 40;
+export const GRID_SIZE = 20;
 
 export const TOOL_BTN_MAP = {
   select: 'toolSelect',

@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_03_11_20_[DIAGRAM]_snap_to_grid.md`
 **date:** 2026-04-03
-**status:** Accepted
+**status:** SuperSeeded by 2026_04_15_[DIAGRAM]_alignment_guides_center_snap_hitbox_fix_and_state_persistence.md
 **description:** Fix snap-to-grid using shape.width/height for visual edge alignment, and fix grid DPR mismatch on Retina displays by multiplying vis.js CSS-pixel coordinates by devicePixelRatio.
 **tags:** diagram, snap-to-grid, grid, DPR, retina, vis-network, rendering, bounding-box, shape
 ---
