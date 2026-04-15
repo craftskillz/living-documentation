@@ -46,13 +46,15 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
         smooth: isAnchor ? { enabled: false } : edgeSmooth,
         ...(e.edgeColor ? { color: { color: e.edgeColor, highlight: '#f97316', hover: '#f97316' } } : {}),
         ...(e.edgeWidth ? { width: e.edgeWidth } : {}),
-        ...(e.fontSize || e.labelRotation ? {
-          font: {
-            size: e.fontSize || 11,
-            align: 'middle',
-            color: (e.labelRotation && Math.abs(e.labelRotation) > 0.001) ? 'rgba(0,0,0,0)' : '#6b7280',
-          },
-        } : {}),
+        // Edge labels are always drawn by drawEdgeLabels() in afterDrawing
+        // (gives us positioning + rotation control). Hide vis-network's native
+        // label text entirely so it never appears alongside ours.
+        ...(e.label
+          ? { font: { size: e.fontSize || 11, align: 'middle', color: 'rgba(0,0,0,0)' } }
+          : e.fontSize
+            ? { font: { size: e.fontSize,      align: 'middle', color: '#6b7280' } }
+            : {}
+        ),
       };
       // Port edges: hide vis-network's own rendering (line + arrowhead).
       // drawPortEdge() handles all visual output; vis-network edge is a
@@ -266,7 +268,7 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
   st.network.on('afterDrawing',  drawAlignmentGuides);
   st.network.on('afterDrawing',  (ctx) => drawGroupOutlines(ctx));
   st.network.on('afterDrawing',  () => drawDebugOverlay());
-  st.network.on('afterDrawing',  drawRotatedEdgeLabels);
+  st.network.on('afterDrawing',  drawEdgeLabels);
   st.network.on('afterDrawing',  (ctx) => {
     if (st.currentTool === 'addEdge' && _hoveredPortNodeId) {
       drawPortDots(ctx, _hoveredPortNodeId, _hoveredPortKey);
@@ -357,25 +359,58 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
   });
 }
 
-// ── Rotated edge label rendering ─────────────────────────────────────────────
-// vis-network has no native label rotation for edges. When labelRotation != 0,
-// the edge font color is set to transparent and we draw the label ourselves
-// in afterDrawing, rotated around the visual midpoint of the edge.
-function drawRotatedEdgeLabels(ctx) {
+// ── Edge label rendering ──────────────────────────────────────────────────────
+// All edge labels (with or without rotation) are drawn here in afterDrawing.
+// vis-network's native edge label is always made transparent so only this
+// renderer is visible — eliminating the dual-rendering issue that caused
+// labels to appear twice at different positions.
+function drawEdgeLabels(ctx) {
+  try {
   if (!st.edges || !st.network) return;
+
+  const m   = ctx.getTransform();
+  const dpr = window.devicePixelRatio || 1;
+  const canvasEl      = ctx.canvas;
+  const container     = document.getElementById('vis-canvas').parentElement;
+  const canvasRect    = canvasEl.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
+  const offsetX = canvasRect.left - containerRect.left;
+  const offsetY = canvasRect.top  - containerRect.top;
+
   st.edges.get().forEach((e) => {
-    if (!e.labelRotation || Math.abs(e.labelRotation) < 0.001 || !e.label) return;
-    // Port edges draw their own labels (including rotated) inside drawPortEdge.
+    // Port edges draw their own labels inside drawPortEdge — skip here.
     if (e.fromPort || e.toPort) return;
-    const positions = st.network.getPositions([e.from, e.to]);
-    const fp = positions[e.from];
-    const tp = positions[e.to];
-    if (!fp || !tp) return;
-    const mx = (fp.x + tp.x) / 2;
-    const my = (fp.y + tp.y) / 2;
+
+    // Compute bezier midpoint in layout space for every edge (labeled or not)
+    // so the label editor always has an accurate DOM position to open at.
+    const bodyEdge = st.network.body.edges[e.id];
+    let mx, my;
+    if (bodyEdge && bodyEdge.edgeType && typeof bodyEdge.edgeType.getPoint === 'function') {
+      const pt = bodyEdge.edgeType.getPoint(0.5);
+      mx = pt.x;
+      my = pt.y;
+    } else {
+      const positions = st.network.getPositions([e.from, e.to]);
+      const fp = positions[e.from];
+      const tp = positions[e.to];
+      if (!fp || !tp) return;
+      mx = (fp.x + tp.x) / 2;
+      my = (fp.y + tp.y) / 2;
+    }
+
+    st.edgeLabelCanvasPos[e.id] = {
+      x: (m.a * mx + m.e) / dpr + offsetX,
+      y: (m.d * my + m.f) / dpr + offsetY,
+    };
+
+    // Only draw the label text for edges that have one.
+    if (!e.label) return;
+
     ctx.save();
     ctx.translate(mx, my);
-    ctx.rotate(e.labelRotation);
+    if (e.labelRotation && Math.abs(e.labelRotation) > 0.001) {
+      ctx.rotate(e.labelRotation);
+    }
     ctx.font = `${e.fontSize || 11}px system-ui,-apple-system,sans-serif`;
     ctx.fillStyle = '#6b7280';
     ctx.textAlign = 'center';
@@ -383,6 +418,7 @@ function drawRotatedEdgeLabels(ctx) {
     ctx.fillText(e.label, 0, 0);
     ctx.restore();
   });
+  } catch(err) { console.error('[draw] EXCEPTION:', err); }
 }
 
 // ── Network event handlers ────────────────────────────────────────────────────

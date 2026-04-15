@@ -227,11 +227,28 @@ export function drawPortEdge(ctx, edgeData) {
     drawArrowhead(ctx, fromPos.x, fromPos.y, a, arrSz);
   }
 
+  // ── Label midpoint — always compute so the label editor can open here ────────
+  const mid = (cp1 && cp2)
+    ? bezierAt(fromPos, cp1, cp2, toPos, 0.5)
+    : { x: (fromPos.x + toPos.x) / 2, y: (fromPos.y + toPos.y) / 2 };
+
+  // Store the DOM position using the canvas transform — same matrix used to
+  // draw the label, so it's pixel-perfect for the textarea positioning.
+  {
+    const m   = ctx.getTransform();
+    const dpr = window.devicePixelRatio || 1;
+    const canvasEl      = ctx.canvas;
+    const container     = document.getElementById('vis-canvas').parentElement;
+    const canvasRect    = canvasEl.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    st.edgeLabelCanvasPos[edgeData.id] = {
+      x: (m.a * mid.x + m.e) / dpr + (canvasRect.left - containerRect.left),
+      y: (m.d * mid.y + m.f) / dpr + (canvasRect.top  - containerRect.top),
+    };
+  }
+
   // ── Label ─────────────────────────────────────────────────────────────────
   if (edgeData.label) {
-    const mid = (cp1 && cp2)
-      ? bezierAt(fromPos, cp1, cp2, toPos, 0.5)
-      : { x: (fromPos.x + toPos.x) / 2, y: (fromPos.y + toPos.y) / 2 };
     ctx.save();
     ctx.translate(mid.x, mid.y);
     if (edgeData.labelRotation && Math.abs(edgeData.labelRotation) > 0.001) {

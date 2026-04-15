@@ -28,6 +28,7 @@ export const st = {
   edgesStraight: false,  // when true, all edges use smooth: disabled (straight lines)
   resizeSymmetric: false, // when true, center is fixed during resize; when false, opposite corner is fixed
   nodeColorOverrides: {}, // colorKey → {bg, border, font, hbg, hborder} — set from config at boot
+  edgeLabelCanvasPos: {}, // edgeId → {x, y} canvas coords of last drawn label, used by label editor
 };
 
 export function markDirty() {

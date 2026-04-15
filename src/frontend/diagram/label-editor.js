@@ -46,10 +46,16 @@ export function startEdgeLabelEdit() {
   st.editingEdgeId = edgeId;
   st.editingNodeId = null;
 
-  const positions = st.network.getPositions([e.from, e.to]);
-  const fp  = positions[e.from] || { x: 0, y: 0 };
-  const tp  = positions[e.to]   || { x: 0, y: 0 };
-  const mid = st.network.canvasToDOM({ x: (fp.x + tp.x) / 2, y: (fp.y + tp.y) / 2 });
+  const recorded = st.edgeLabelCanvasPos && st.edgeLabelCanvasPos[edgeId];
+  let mid;
+  if (recorded) {
+    mid = recorded;
+  } else {
+    const positions = st.network.getPositions([e.from, e.to]);
+    const fp = positions[e.from] || { x: 0, y: 0 };
+    const tp = positions[e.to]   || { x: 0, y: 0 };
+    mid = st.network.canvasToDOM({ x: (fp.x + tp.x) / 2, y: (fp.y + tp.y) / 2 });
+  }
 
   const ta  = document.getElementById('labelInput');
   ta.value       = e.label || '';
@@ -75,7 +81,11 @@ export function commitLabelEdit() {
     const e = st.edges.get(st.editingEdgeId);
     if (e && ta.value !== (e.label || '')) {
       pushSnapshot();
-      st.edges.update({ id: st.editingEdgeId, label: ta.value });
+      const update = { id: st.editingEdgeId, label: ta.value };
+      // Always hide vis-network's native edge label; drawEdgeLabels() in
+      // afterDrawing is the single rendering path for edge labels.
+      update.font = { size: e.fontSize || 11, align: 'middle', color: 'rgba(0,0,0,0)' };
+      st.edges.update(update);
       markDirty();
     }
   }

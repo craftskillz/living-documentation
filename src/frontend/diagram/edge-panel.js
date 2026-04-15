@@ -210,8 +210,8 @@ export function changeEdgeFontSize(delta) {
     const e = st.edges.get(id);
     if (!e) return;
     const newSize = Math.max(8, Math.min(48, (e.fontSize || 11) + delta));
-    const isRotated = Math.abs(e.labelRotation || 0) > 0.001;
-    st.edges.update({ id, fontSize: newSize, font: { size: newSize, align: 'middle', color: isRotated ? 'rgba(0,0,0,0)' : '#6b7280' } });
+    // Keep native label transparent — drawEdgeLabels() is the single render path.
+    st.edges.update({ id, fontSize: newSize, font: { size: newSize, align: 'middle', color: 'rgba(0,0,0,0)' } });
   });
   markDirty();
 }
@@ -223,11 +223,11 @@ export function stepEdgeLabelRotation(delta) {
     const e = st.edges.get(id);
     if (!e) return;
     const newRotation = (e.labelRotation || 0) + delta;
-    const isRotated = Math.abs(newRotation) > 0.001;
+    // Keep native label transparent — drawEdgeLabels() is the single render path.
     st.edges.update({
       id,
       labelRotation: newRotation,
-      font: { size: e.fontSize || 11, align: 'middle', color: isRotated ? 'rgba(0,0,0,0)' : '#6b7280' },
+      font: { size: e.fontSize || 11, align: 'middle', color: 'rgba(0,0,0,0)' },
     });
   });
   markDirty();
