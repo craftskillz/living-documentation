@@ -311,6 +311,7 @@
   "diagram.node_panel.bring_front": "Amener au premier plan",
   "diagram.node_panel.stamp_color": "Tampon couleur — sélectionner les cibles, cliquer ici, puis cliquer la source",
   "diagram.node_panel.stamp_font": "Tampon taille police — sélectionner les cibles, cliquer ici, puis cliquer la source",
+  "diagram.node_panel.stamp_size": "Tampon taille forme — sélectionner les cibles, cliquer ici, puis cliquer la source",
   "diagram.node_panel.rotate_ccw": "Rotation anti-horaire 10°",
   "diagram.node_panel.rotate_cw": "Rotation horaire 10°",
   "diagram.node_panel.copy_png": "Copier la sélection en PNG (⌘⇧C)",

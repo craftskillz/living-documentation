@@ -126,7 +126,7 @@ export function setTextValign(valign) {
 // during stamp mode. This bypasses vis-network's event system entirely, avoiding
 // the deselectNode/click ordering problems that make st.activeStamp unreliable.
 
-const STAMP_BTNS = { color: 'btnStampColor', fontSize: 'btnStampFontSize' };
+const STAMP_BTNS = { color: 'btnStampColor', fontSize: 'btnStampFontSize', size: 'btnStampSize' };
 
 export function activateStamp(type) {
   if (!st.stampTargetIds.length) return; // targets were saved on mousedown
@@ -162,6 +162,7 @@ function applyStamp(sourceId) {
     if (type === 'color')    st.nodes.update({ id, colorKey: source.colorKey || 'c-gray' });
     if (type === 'rotation') st.nodes.update({ id, rotation: source.rotation || 0 });
     if (type === 'fontSize') st.nodes.update({ id, fontSize: source.fontSize || 13 });
+    if (type === 'size')     st.nodes.update({ id, nodeWidth: source.nodeWidth || null, nodeHeight: source.nodeHeight || null });
     const bn = st.network && st.network.body.nodes[id];
     if (bn) bn.refreshNeeded = true;
   });

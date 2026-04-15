@@ -153,7 +153,7 @@ document.getElementById('btnRotateCW').addEventListener('click',    () => stepRo
 document.getElementById('btnRotateCCW').addEventListener('click',   () => stepRotate(-10));
 // Stamp buttons: capture targets on mousedown (before vis-network can fire
 // deselectNode), then activate the stamp mode on click.
-['btnStampColor', 'btnStampFontSize'].forEach((id) => {
+['btnStampColor', 'btnStampFontSize', 'btnStampSize'].forEach((id) => {
   document.getElementById(id).addEventListener('mousedown', (e) => {
     e.preventDefault(); // prevent canvas focus loss
     st.stampTargetIds = [...st.selectedNodeIds]; // save before any deselect fires
@@ -161,6 +161,7 @@ document.getElementById('btnRotateCCW').addEventListener('click',   () => stepRo
 });
 document.getElementById('btnStampColor').addEventListener('click',    () => activateStamp('color'));
 document.getElementById('btnStampFontSize').addEventListener('click', () => activateStamp('fontSize'));
+document.getElementById('btnStampSize').addEventListener('click',     () => activateStamp('size'));
 const _autoSaveImg = new URLSearchParams(window.location.search).get('img');
 const _onCopyPng = _autoSaveImg
   ? () => saveSelectionAsPng(_autoSaveImg)

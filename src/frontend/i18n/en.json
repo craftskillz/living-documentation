@@ -311,6 +311,7 @@
   "diagram.node_panel.bring_front": "Bring to front",
   "diagram.node_panel.stamp_color": "Color stamp — select targets, click here, then click source",
   "diagram.node_panel.stamp_font": "Font size stamp — select targets, click here, then click source",
+  "diagram.node_panel.stamp_size": "Size stamp — select targets, click here, then click source",
   "diagram.node_panel.rotate_ccw": "Rotate counter-clockwise 10°",
   "diagram.node_panel.rotate_cw": "Rotate clockwise 10°",
   "diagram.node_panel.copy_png": "Copy selection as PNG (⌘⇧C)",
