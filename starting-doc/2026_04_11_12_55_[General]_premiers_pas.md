@@ -104,7 +104,7 @@ La documentation non structurée accumule du contenu hétérogène qui finit par
 ```
                     APPRENTISSAGE
                          │
-         Tutoriel         │         Explication
+         Tutoriel        │          Explication
     (pratique+apprendre) │     (théorique+apprendre)
                          │
 PRATIQUE ────────────────┼──────────────── THÉORIQUE

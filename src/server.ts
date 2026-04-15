@@ -8,6 +8,7 @@ import { imagesRouter } from './routes/images';
 import { diagramsRouter } from './routes/diagrams';
 import { wordcloudRouter } from './routes/wordcloud';
 import { annotationsRouter } from './routes/annotations';
+import { exportRouter } from './routes/export';
 import { mcpRouter } from './mcp/server';
 import { writeConfig } from './lib/config';
 
@@ -37,6 +38,7 @@ export async function startServer({
   app.use('/api/diagrams', diagramsRouter(docsPath));
   app.use('/api/wordcloud', wordcloudRouter());
   app.use('/api/annotations', annotationsRouter(docsPath));
+  app.use('/api/export', exportRouter(docsPath));
   app.use('/mcp', mcpRouter(docsPath));
 
   // Static frontend assets

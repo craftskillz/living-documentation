@@ -288,6 +288,14 @@
               ></p>
               <div class="flex items-center gap-2">
                 <button
+                  onclick="openExportHtmlModal()"
+                  data-i18n-title="nav.export_html"
+                  title="Export folders as HTML"
+                  class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors text-xs leading-none"
+                >
+                  &#128196; HTML
+                </button>
+                <button
                   id="export-all-pdf-btn"
                   onclick="exportAllPDF()"
                   data-i18n-title="nav.export_all_pdf"
@@ -4954,6 +4962,115 @@
           e.state?.docId || new URLSearchParams(location.search).get("doc");
         if (id) openDocument(id, true);
       });
+
+      // ── Export HTML modal ───────────────────────────────────────────────────
+
+      async function openExportHtmlModal() {
+        const modal = document.getElementById('export-html-modal');
+        const list  = document.getElementById('export-html-folder-list');
+        list.innerHTML = `<p class="text-sm text-gray-400 py-2" data-i18n="common.loading">${window.t('common.loading')}</p>`;
+        modal.classList.remove('hidden');
+
+        try {
+          const docs = await fetch('/api/documents').then((r) => r.json());
+          // Derive first-level group names (same logic as the route).
+          const groups = new Set();
+          docs.forEach((doc) => groups.add(doc.folder?.[0] ?? doc.category ?? 'General'));
+          const sorted = [...groups].sort((a, b) => {
+            if (a === 'General') return -1;
+            if (b === 'General') return 1;
+            return a.localeCompare(b);
+          });
+
+          list.innerHTML = sorted.map((g) => `
+            <label class="flex items-center gap-3 px-1 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer">
+              <input type="checkbox" value="${g}"
+                class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500">
+              <span class="text-sm text-gray-700 dark:text-gray-300">${g}</span>
+            </label>`).join('');
+        } catch {
+          list.innerHTML = `<p class="text-sm text-red-500">${window.t('common.error_prefix')}failed to load folders</p>`;
+        }
+      }
+
+      function closeExportHtmlModal() {
+        document.getElementById('export-html-modal').classList.add('hidden');
+      }
+
+      async function exportHtml(mode) {
+        const checked = [...document.querySelectorAll('#export-html-folder-list input:checked')];
+        const folders = checked.map((cb) => cb.value);
+        if (!folders.length) return;
+
+        const btnId = mode === 'confluence' ? 'export-html-confluence-btn' : 'export-html-notion-btn';
+        const btn   = document.getElementById(btnId);
+        const orig  = btn.innerHTML;
+        btn.innerHTML = '⏳';
+        btn.disabled  = true;
+
+        try {
+          const res = await fetch('/api/export/html', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ folders, mode }),
+          });
+          if (!res.ok) throw new Error(await res.text());
+          const blob = await res.blob();
+          const url  = URL.createObjectURL(blob);
+          const a    = document.createElement('a');
+          a.href     = url;
+          a.download = `export-${mode}.zip`;
+          a.click();
+          URL.revokeObjectURL(url);
+          closeExportHtmlModal();
+        } catch (err) {
+          alert(window.t('common.error_prefix') + err.message);
+        } finally {
+          btn.innerHTML = orig;
+          btn.disabled  = false;
+        }
+      }
     </script>
+
+    <!-- ── Export HTML modal ──────────────────────────────────────────────── -->
+    <div
+      id="export-html-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    >
+      <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-sm mx-4 p-6 space-y-4">
+        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+          &#128196; <span data-i18n="modal.export_html.title">Export folders as HTML</span>
+        </h3>
+
+        <p class="text-xs text-gray-500 dark:text-gray-400" data-i18n="modal.export_html.hint">
+          Select the folders to include in the ZIP archive.
+        </p>
+
+        <div
+          id="export-html-folder-list"
+          class="max-h-60 overflow-y-auto space-y-0.5 border border-gray-200 dark:border-gray-700 rounded-lg p-2"
+        ></div>
+
+        <div class="flex justify-end gap-3 pt-1">
+          <button
+            onclick="closeExportHtmlModal()"
+            data-i18n="common.cancel"
+            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >Cancel</button>
+          <button
+            id="export-html-notion-btn"
+            onclick="exportHtml('notion')"
+            data-i18n="modal.export_html.notion_btn"
+            class="text-sm px-4 py-2 rounded-lg border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-semibold transition-colors"
+          >Export Notion</button>
+          <button
+            id="export-html-confluence-btn"
+            onclick="exportHtml('confluence')"
+            data-i18n="modal.export_html.confluence_btn"
+            class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+          >Export Confluence</button>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

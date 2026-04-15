@@ -19,6 +19,7 @@
   "nav.search_placeholder": "Search docs…",
   "nav.search_mobile_placeholder": "Search…",
   "nav.toggle_dark": "Toggle dark mode",
+  "nav.export_html": "Export folders as HTML ZIP",
   "nav.export_all_pdf": "Export all documents as PDF",
   "nav.new_folder": "New folder",
   "nav.new_document": "New document",
@@ -173,6 +174,11 @@
   "modal.img_paste.filename_label": "Filename",
   "modal.img_paste.saved_hint": "(saved in images/)",
   "modal.img_paste.paste_btn": "Paste",
+
+  "modal.export_html.title": "Export folders as HTML",
+  "modal.export_html.hint": "Select the folders to include in the ZIP archive.",
+  "modal.export_html.notion_btn": "Export Notion",
+  "modal.export_html.confluence_btn": "Export Confluence",
 
   "annotation.title": "Annotation",
   "annotation.placeholder": "Your comment or suggestion…",

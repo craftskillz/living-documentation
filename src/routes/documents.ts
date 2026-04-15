@@ -5,7 +5,7 @@ import { marked } from "marked";
 import { parseFilename, DocMetadata } from "../lib/parser";
 import { readConfig } from "../lib/config";
 
-function collectMdFiles(dir: string, baseDir: string): string[] {
+export function collectMdFiles(dir: string, baseDir: string): string[] {
   const results: string[] = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     if (entry.name.startsWith(".")) continue;
@@ -19,7 +19,7 @@ function collectMdFiles(dir: string, baseDir: string): string[] {
   return results;
 }
 
-function listDocs(
+export function listDocs(
   docsPath: string,
   extraFiles: string[] = [],
   filenamePattern?: string,
@@ -78,7 +78,7 @@ function buildFilename(filenamePattern: string, title: string, category: string,
     .replace(/(?<![a-z0-9])(?:title_words|title)(?![a-z0-9])/i, titleSlug) + '.md';
 }
 
-function safeFilePath(docsPath: string, filename: string): string | null {
+export function safeFilePath(docsPath: string, filename: string): string | null {
   const resolved = path.resolve(docsPath, filename);
   if (!resolved.startsWith(path.resolve(docsPath) + path.sep)) return null;
   return resolved;
@@ -97,7 +97,7 @@ function resolveDocPath(
   return safeFilePath(docsPath, doc.filename);
 }
 
-function stripFrontmatter(content: string): string {
+export function stripFrontmatter(content: string): string {
   if (!content.startsWith("---")) return content;
   const end = content.indexOf("\n---", 3);
   if (end === -1) return content;
