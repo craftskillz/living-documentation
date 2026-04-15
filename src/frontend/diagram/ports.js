@@ -28,6 +28,16 @@ const PORT_OFFSETS_CIRC = {
   W:  [-1,             0          ], NW: [-SQRT2_INV,  -SQRT2_INV ],
 };
 
+// Database / cylinder: diagonal ports sit at the cylinder wall (x=±1) at the
+// junction between the side body and the elliptic cap (y ≈ ±0.76, derived from
+// cap ry = H×0.12 → body_top_frac = 1 − 2×0.12 = 0.76).
+const PORT_OFFSETS_DATABASE = {
+  N:  [ 0,     -1    ], NE: [ 1,     -0.76 ],
+  E:  [ 1,      0    ], SE: [ 1,      0.76 ],
+  S:  [ 0,      1    ], SW: [-1,      0.76 ],
+  W:  [-1,      0    ], NW: [-1,     -0.76 ],
+};
+
 // Outward-pointing unit normals used to compute bezier control points.
 const PORT_NORMALS = {
   N:  [ 0,            -1          ], NE: [ SQRT2_INV,  -SQRT2_INV ],
@@ -36,6 +46,7 @@ const PORT_NORMALS = {
   W:  [-1,             0          ], NW: [-SQRT2_INV,  -SQRT2_INV ],
 };
 
+// Shapes whose ports follow an elliptical boundary (no sharp corners).
 const CIRCULAR_SHAPES = new Set(['circle', 'ellipse']);
 
 // ── Geometry helpers ──────────────────────────────────────────────────────────
@@ -48,7 +59,8 @@ function nodeGeometry(nodeId) {
   const shapeType = n.shapeType || 'box';
   const defaults  = SHAPE_DEFAULTS[shapeType] || [100, 40];
   const W = n.nodeWidth  || defaults[0];
-  const H = CIRCULAR_SHAPES.has(shapeType) ? W : (n.nodeHeight || defaults[1]);
+  // 'circle' is always square (H = W); 'ellipse' uses its own height.
+  const H = shapeType === 'circle' ? W : (n.nodeHeight || defaults[1]);
   return { cx: pos.x, cy: pos.y, W, H, rotation: n.rotation || 0, shapeType };
 }
 
@@ -57,7 +69,9 @@ export function getPortPosition(nodeId, portKey) {
   const geo = nodeGeometry(nodeId);
   if (!geo) return null;
   const { cx, cy, W, H, rotation, shapeType } = geo;
-  const offsets = CIRCULAR_SHAPES.has(shapeType) ? PORT_OFFSETS_CIRC : PORT_OFFSETS_RECT;
+  const offsets = shapeType === 'database'      ? PORT_OFFSETS_DATABASE
+               : CIRCULAR_SHAPES.has(shapeType) ? PORT_OFFSETS_CIRC
+               : PORT_OFFSETS_RECT;
   const [ox, oy] = offsets[portKey] || [0, 0];
   let dx = ox * W / 2;
   let dy = oy * H / 2;
