@@ -23,6 +23,7 @@ import { navigateNodeLink, hideLinkPanel }           from './link-panel.js';
 import { getNearestPort, getPortPosition, drawPortDots, drawPortEdge, distanceToPortEdge, wrapText } from './ports.js';
 import { getLastFreeArrowStyle } from './edge-panel.js';
 import { getLastNodeStyle } from './node-panel.js';
+import { installUnlockHold } from './unlock-hold.js';
 
 // Module-level port-hover state — shared between initNetwork event handlers and
 // module-level helpers (_onAnchorSnapConnect).
@@ -127,6 +128,11 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
 
   if (st.network) st.network.destroy();
   st.network = new vis.Network(container, { nodes: st.nodes, edges: st.edges }, options);
+
+  // ── Lock interception ───────────────────────────────────────────────────────
+  // Must be registered BEFORE any other capture-phase mousedown listeners on
+  // the container so it can stopImmediatePropagation for locked targets.
+  installUnlockHold(container);
 
   // ── Z-order patch ──────────────────────────────────────────────────────────
   // vis.js renders in 3 passes (normal → selected → hovered), which breaks
@@ -1303,28 +1309,49 @@ function onSelectNode(params) {
   if (_expandingGroup || _addingEdgesToSelection) return;
   // Filter out anchor nodes — they have no formatting panel.
   const nonAnchors = params.nodes.filter((id) => { const n = st.nodes.get(id); return !(n && n.shapeType === 'anchor'); });
-  if (!nonAnchors.length) {
-    // Only anchors selected (individual endpoint drag) — keep selection but no panel.
-    st.selectedNodeIds = params.nodes;
+  // Drop locked nodes: they are non-interactive until unlocked via long-press.
+  const usable = nonAnchors.filter((id) => { const n = st.nodes.get(id); return n && !n.locked; });
+  if (usable.length !== nonAnchors.length) {
+    _addingEdgesToSelection = true;
+    const anchorIds = params.nodes.filter((id) => { const n = st.nodes.get(id); return n && n.shapeType === 'anchor'; });
+    st.network.setSelection({ nodes: [...usable, ...anchorIds], edges: st.network.getSelectedEdges() });
+    _addingEdgesToSelection = false;
+  }
+  if (!usable.length) {
+    const anchorIds = params.nodes.filter((id) => { const n = st.nodes.get(id); return n && n.shapeType === 'anchor'; });
+    if (anchorIds.length) {
+      // Only anchors selected (individual endpoint drag) — keep selection but no panel.
+      st.selectedNodeIds = anchorIds;
+      st.selectedEdgeIds = [];
+      hideEdgePanel();
+      return;
+    }
+    st.selectedNodeIds = [];
     st.selectedEdgeIds = [];
+    hideNodePanel();
     hideEdgePanel();
     return;
   }
-  const expanded = expandSelectionToGroup(nonAnchors);
-  if (expanded.length > nonAnchors.length) {
+  const expanded = expandSelectionToGroup(usable).filter((id) => { const n = st.nodes.get(id); return n && !n.locked; });
+  if (expanded.length > usable.length) {
     _expandingGroup = true;
     st.network.selectNodes(expanded);
     _expandingGroup = false;
     st.selectedNodeIds = expanded;
   } else {
-    st.selectedNodeIds = nonAnchors;
+    st.selectedNodeIds = usable;
   }
   // Include all edges (regular or free-arrow) whose both endpoints are in the selection.
   // This makes rubber-band select and multi-select automatically include connected edges.
-  const selectedSet = new Set(params.nodes);
-  st.selectedEdgeIds = st.edges.get().filter(e =>
-    selectedSet.has(e.from) && selectedSet.has(e.to)
-  ).map(e => e.id);
+  // Exclude locked edges — they are non-interactive.
+  const selectedSet = new Set(st.selectedNodeIds);
+  st.selectedEdgeIds = st.edges.get().filter((e) => {
+    if (!selectedSet.has(e.from) || !selectedSet.has(e.to)) return false;
+    const fromN = st.nodes.get(e.from);
+    const toN   = st.nodes.get(e.to);
+    const isFreeArrow = fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor';
+    return isFreeArrow ? !(fromN.locked && toN.locked) : !e.edgeLocked;
+  }).map((e) => e.id);
   // Tell vis-network to visually highlight the free-arrow edges.
   // Use a guard to prevent the resulting selectNode event from re-entering.
   if (st.selectedEdgeIds.length > 0) {
@@ -1338,16 +1365,34 @@ function onSelectNode(params) {
 
 function onSelectEdge(params) {
   if (st.selectedNodeIds.length > 0) return; // node takes priority
-  st.selectedEdgeIds = params.edges;
+
+  // Drop locked edges (edgeLocked or free-arrow with both anchors locked).
+  const usable = params.edges.filter((id) => {
+    const e = st.edges.get(id);
+    if (!e) return false;
+    const fromN = st.nodes.get(e.from);
+    const toN   = st.nodes.get(e.to);
+    const isFreeArrow = fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor';
+    return isFreeArrow ? !(fromN.locked && toN.locked) : !e.edgeLocked;
+  });
+  if (usable.length !== params.edges.length) {
+    st.network.setSelection({ nodes: st.network.getSelectedNodes(), edges: usable });
+  }
+  if (!usable.length) {
+    st.selectedEdgeIds = [];
+    hideEdgePanel();
+    return;
+  }
+  st.selectedEdgeIds = usable;
   // Activate rehook mode for any edge with at least one non-anchor endpoint.
-  const singleEdge = params.edges.length === 1 ? st.edges.get(params.edges[0]) : null;
+  const singleEdge = usable.length === 1 ? st.edges.get(usable[0]) : null;
   _rehookEdgeId = isRehookable(singleEdge) ? singleEdge.id : null;
   _rehookHoveredNodeId = _rehookHoveredPortKey = null;
 
   // For free arrows (anchor→anchor edges), also select both endpoint anchors
   // so the user can drag the whole arrow as a unit via multi-node drag.
   const freeAnchors = [];
-  for (const edgeId of params.edges) {
+  for (const edgeId of usable) {
     const e = st.edges.get(edgeId);
     if (!e) continue;
     const fromN = st.nodes.get(e.from);
@@ -1357,7 +1402,7 @@ function onSelectEdge(params) {
     }
   }
   if (freeAnchors.length) {
-    st.network.setSelection({ nodes: freeAnchors, edges: params.edges });
+    st.network.setSelection({ nodes: freeAnchors, edges: usable });
     st.selectedNodeIds = freeAnchors; // kept for drag; no panel (all anchors)
   } else {
     st.selectedNodeIds = [];

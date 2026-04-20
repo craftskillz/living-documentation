@@ -56,23 +56,30 @@ function estimateNodeSize(label: string, shapeType: string): { nodeWidth: number
   return { nodeWidth, nodeHeight };
 }
 
-// Maps semantic type names → vis-network shape properties
+// Maps semantic type names → vis-network shape properties.
+// All shapes are rendered via the frontend's ctxRenderer (shape: 'custom'),
+// but we keep `shape` here for backward compatibility with older stored diagrams.
 const SHAPE_MAP: Record<string, { shape: string; shapeType: string }> = {
-  box:       { shape: 'box',    shapeType: 'box'      },
-  rectangle: { shape: 'box',    shapeType: 'box'      },
-  system:    { shape: 'box',    shapeType: 'box'      },
-  container: { shape: 'box',    shapeType: 'box'      },
-  component: { shape: 'box',    shapeType: 'box'      },
-  actor:     { shape: 'custom', shapeType: 'actor'    },
-  person:    { shape: 'custom', shapeType: 'actor'    },
-  user:      { shape: 'custom', shapeType: 'actor'    },
-  database:  { shape: 'database', shapeType: 'database' },
-  db:        { shape: 'database', shapeType: 'database' },
-  datastore: { shape: 'database', shapeType: 'database' },
-  ellipse:   { shape: 'ellipse', shapeType: 'ellipse' },
-  circle:    { shape: 'circle', shapeType: 'circle'   },
-  'post-it': { shape: 'custom', shapeType: 'post-it'  },
-  note:      { shape: 'custom', shapeType: 'post-it'  },
+  box:         { shape: 'box',      shapeType: 'box'       },
+  rectangle:   { shape: 'box',      shapeType: 'box'       },
+  system:      { shape: 'box',      shapeType: 'box'       },
+  container:   { shape: 'box',      shapeType: 'box'       },
+  component:   { shape: 'box',      shapeType: 'box'       },
+  actor:       { shape: 'custom',   shapeType: 'actor'     },
+  person:      { shape: 'custom',   shapeType: 'actor'     },
+  user:        { shape: 'custom',   shapeType: 'actor'     },
+  database:    { shape: 'database', shapeType: 'database'  },
+  db:          { shape: 'database', shapeType: 'database'  },
+  datastore:   { shape: 'database', shapeType: 'database'  },
+  ellipse:     { shape: 'ellipse',  shapeType: 'ellipse'   },
+  circle:      { shape: 'circle',   shapeType: 'circle'    },
+  'post-it':   { shape: 'custom',   shapeType: 'post-it'   },
+  postit:      { shape: 'custom',   shapeType: 'post-it'   },
+  note:        { shape: 'custom',   shapeType: 'post-it'   },
+  'text-free': { shape: 'custom',   shapeType: 'text-free' },
+  text:        { shape: 'custom',   shapeType: 'text-free' },
+  image:       { shape: 'custom',   shapeType: 'image'     },
+  screenshot:  { shape: 'custom',   shapeType: 'image'     },
 };
 
 // Maps short color names → colorKey values from constants.js
@@ -150,12 +157,39 @@ export function toolReadDiagram(docsPath: string, args: { id: string }) {
   };
 }
 
+const VALID_DIAGRAM_TYPES = new Set(['context', 'container', 'component', 'uml', 'flow', 'erd', 'screen-guide', 'other']);
+const EXPLICIT_ONLY_TYPES = new Set(['container', 'component', 'uml', 'screen-guide']);
+const CONTEXT_NODE_SOFT_LIMIT = 10;
+
 export function toolCreateDiagram(docsPath: string, args: {
   id?: string;
   title: string;
-  nodes: Array<{ name: string; type: string; color?: string; x?: number; y?: number; linkedDiagramId?: string }>;
+  diagramType?: string;
+  userRequestedExplicitly?: boolean;
+  nodes: Array<{ name: string; type: string; color?: string; x?: number; y?: number; linkedDiagramId?: string; imageSrc?: string }>;
   edges: Array<{ from: string; to: string; label?: string }>;
 }) {
+  const diagramType = (args.diagramType ?? '').toLowerCase();
+  if (!diagramType) {
+    throw new Error(
+      'diagramType is required. Use "context" for the default big-picture diagram; ' +
+      '"container", "component", or "uml" only when the user explicitly asked for that type ' +
+      '(and pass userRequestedExplicitly: true). Other values: "flow", "erd", "other".',
+    );
+  }
+  if (!VALID_DIAGRAM_TYPES.has(diagramType)) {
+    throw new Error(
+      `Unknown diagramType "${args.diagramType}". Allowed: ${Array.from(VALID_DIAGRAM_TYPES).join(', ')}.`,
+    );
+  }
+  if (EXPLICIT_ONLY_TYPES.has(diagramType) && !args.userRequestedExplicitly) {
+    throw new Error(
+      `diagramType "${diagramType}" requires explicit user request. ` +
+      `Only set userRequestedExplicitly: true if the user asked for a "${diagramType} diagram" by name. ` +
+      `If the request was generic ("a diagram", "the big picture", "documentation"), use diagramType: "context" instead.`,
+    );
+  }
+
   const id = args.id ?? `d${Date.now()}`;
 
   // Build name→id map for edge resolution
@@ -165,6 +199,12 @@ export function toolCreateDiagram(docsPath: string, args: {
     const nodeId = `n${i + 1}`;
     nameToId[n.name] = nodeId;
     const shapeInfo = SHAPE_MAP[n.type.toLowerCase()] ?? { shape: 'box', shapeType: 'box' };
+    if (shapeInfo.shapeType === 'image' && !n.imageSrc) {
+      throw new Error(
+        `Node "${n.name || `#${i + 1}`}" uses type "image" but is missing \`imageSrc\`. ` +
+        `Upload the image via POST /api/images/upload and pass the returned URL (e.g. "/images/foo.png").`,
+      );
+    }
     const { nodeWidth, nodeHeight } = estimateNodeSize(n.name, shapeInfo.shapeType);
     const node: StoredNode = {
       id: nodeId,
@@ -178,6 +218,7 @@ export function toolCreateDiagram(docsPath: string, args: {
     if (n.x !== undefined) node.x = n.x;
     if (n.y !== undefined) node.y = n.y;
     if (n.linkedDiagramId) node.nodeLink = { type: 'diagram', value: n.linkedDiagramId };
+    if (n.imageSrc) node.imageSrc = n.imageSrc;
     return node;
   });
 
@@ -204,6 +245,23 @@ export function toolCreateDiagram(docsPath: string, args: {
   }
   saveDiagrams(docsPath, all);
 
+  const warnings: string[] = [];
+  if (diagramType !== 'screen-guide') {
+    const unlabeledEdges = args.edges.filter(e => !e.label || !e.label.trim()).length;
+    if (unlabeledEdges > 0) {
+      warnings.push(
+        `${unlabeledEdges} edge(s) have no label. Every edge should describe the interaction as a verb phrase ` +
+        `("authenticates", "publishes events to", "reads from").`,
+      );
+    }
+  }
+  if (diagramType === 'context' && nodes.length > CONTEXT_NODE_SOFT_LIMIT) {
+    warnings.push(
+      `Context diagram has ${nodes.length} nodes — keep it ≤ ${CONTEXT_NODE_SOFT_LIMIT} for readability. ` +
+      `If the system is too large, create a container diagram for the detailed view instead.`,
+    );
+  }
+
   return {
     content: [{
       type: 'text' as const,
@@ -211,9 +269,11 @@ export function toolCreateDiagram(docsPath: string, args: {
         success: true,
         id,
         title: args.title,
+        diagramType,
         nodeCount: nodes.length,
         edgeCount: edges.length,
         editorUrl: `/diagram?id=${id}`,
+        ...(warnings.length ? { warnings } : {}),
       }, null, 2),
     }],
   };

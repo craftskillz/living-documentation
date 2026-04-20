@@ -33,53 +33,37 @@ export function getLastFreeArrowStyle() {
   catch { return {}; }
 }
 
-// Returns true if all selected edges are locked (for free arrows: both anchors locked;
-// for regular edges: edgeLocked flag set).
-function areAllSelectedEdgesLocked() {
-  return st.selectedEdgeIds.length > 0 && st.selectedEdgeIds.every((id) => {
-    const e = st.edges.get(id);
-    if (!e) return false;
-    const fromN = st.nodes && st.nodes.get(e.from);
-    const toN   = st.nodes && st.nodes.get(e.to);
-    const isFreeArrow = fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor';
-    return isFreeArrow ? (fromN.locked && toN.locked) : !!e.edgeLocked;
-  });
-}
-
 export function showEdgePanel() {
   if (!st.selectedEdgeIds.length) return;
   const e = st.edges.get(st.selectedEdgeIds[0]);
   if (!e) return;
 
-  const locked = areAllSelectedEdgesLocked();
-  document.getElementById('btnEdgeLock').classList.toggle('tool-active', locked);
-  document.getElementById('edgePanelControls').classList.toggle('hidden', locked);
+  document.getElementById('btnEdgeLock').classList.remove('tool-active');
+  document.getElementById('edgePanelControls').classList.remove('hidden');
 
-  if (!locked) {
-    const dir    = e.arrowDir ?? 'to';
-    const dashes = e.dashes   ?? false;
+  const dir    = e.arrowDir ?? 'to';
+  const dashes = e.dashes   ?? false;
 
-    ['edgeBtnNone', 'edgeBtnTo', 'edgeBtnBoth'].forEach((id) =>
-      document.getElementById(id).classList.remove('edge-btn-active'));
-    document.getElementById({ none: 'edgeBtnNone', to: 'edgeBtnTo', both: 'edgeBtnBoth' }[dir] || 'edgeBtnTo')
-      .classList.add('edge-btn-active');
+  ['edgeBtnNone', 'edgeBtnTo', 'edgeBtnBoth'].forEach((id) =>
+    document.getElementById(id).classList.remove('edge-btn-active'));
+  document.getElementById({ none: 'edgeBtnNone', to: 'edgeBtnTo', both: 'edgeBtnBoth' }[dir] || 'edgeBtnTo')
+    .classList.add('edge-btn-active');
 
-    ['edgeBtnSolid', 'edgeBtnDashed'].forEach((id) =>
-      document.getElementById(id).classList.remove('edge-btn-active'));
-    document.getElementById(dashes ? 'edgeBtnDashed' : 'edgeBtnSolid').classList.add('edge-btn-active');
+  ['edgeBtnSolid', 'edgeBtnDashed'].forEach((id) =>
+    document.getElementById(id).classList.remove('edge-btn-active'));
+  document.getElementById(dashes ? 'edgeBtnDashed' : 'edgeBtnSolid').classList.add('edge-btn-active');
 
-    // Highlight active color dot.
-    const activeColor = (e.edgeColor || DEFAULT_EDGE_COLOR).toLowerCase();
-    document.querySelectorAll('#edgePanel [data-edge-color]').forEach((btn) => {
-      const isActive = btn.dataset.edgeColor.toLowerCase() === activeColor;
-      btn.style.outline       = isActive ? '2px solid #f97316' : '';
-      btn.style.outlineOffset = isActive ? '2px' : '';
-    });
+  // Highlight active color dot.
+  const activeColor = (e.edgeColor || DEFAULT_EDGE_COLOR).toLowerCase();
+  document.querySelectorAll('#edgePanel [data-edge-color]').forEach((btn) => {
+    const isActive = btn.dataset.edgeColor.toLowerCase() === activeColor;
+    btn.style.outline       = isActive ? '2px solid #f97316' : '';
+    btn.style.outlineOffset = isActive ? '2px' : '';
+  });
 
-    // Show/hide the clear-ports button based on whether this edge has ports.
-    const hasPorts = !!(e.fromPort || e.toPort);
-    document.getElementById('btnEdgeClearPorts').classList.toggle('edge-btn-active', hasPorts);
-  }
+  // Show/hide the clear-ports button based on whether this edge has ports.
+  const hasPorts = !!(e.fromPort || e.toPort);
+  document.getElementById('btnEdgeClearPorts').classList.toggle('edge-btn-active', hasPorts);
 
   document.getElementById('edgePanel').classList.remove('hidden');
 }
@@ -87,7 +71,8 @@ export function showEdgePanel() {
 export function toggleEdgeLock() {
   if (!st.selectedEdgeIds.length) return;
   pushSnapshot();
-  const nextLocked = !areAllSelectedEdgesLocked();
+  // Locking is a one-way UI action — once locked, the only way back is the
+  // 3-second long-press on the shape itself (see unlock-hold.js).
   st.selectedEdgeIds.forEach((id) => {
     const e = st.edges.get(id);
     if (!e) return;
@@ -95,18 +80,22 @@ export function toggleEdgeLock() {
     const toN   = st.nodes && st.nodes.get(e.to);
     const isFreeArrow = fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor';
     if (isFreeArrow) {
-      // Lock/unlock via the anchor nodes.
       [e.from, e.to].forEach((nodeId) => {
-        st.nodes.update({ id: nodeId, locked: nextLocked, fixed: nextLocked ? { x: true, y: true } : false, draggable: !nextLocked });
+        st.nodes.update({ id: nodeId, locked: true, fixed: { x: true, y: true }, draggable: false });
         const bn = st.network && st.network.body.nodes[nodeId];
         if (bn) bn.refreshNeeded = true;
       });
     } else {
-      st.edges.update({ id, edgeLocked: nextLocked });
+      st.edges.update({ id, edgeLocked: true });
     }
   });
-  if (st.network) st.network.redraw();
-  showEdgePanel();
+  if (st.network) {
+    st.network.unselectAll();
+    st.network.redraw();
+  }
+  st.selectedNodeIds = [];
+  st.selectedEdgeIds = [];
+  hideEdgePanel();
   markDirty();
 }
 

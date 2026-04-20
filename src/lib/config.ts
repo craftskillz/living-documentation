@@ -12,6 +12,7 @@ export interface LivingDocConfig {
   showDiagramDebug: boolean;
   diagramNodePalette: string[] | null;
   diagramEdgePalette: string[] | null;
+  sourceRoot: string | null;
 }
 
 const CONFIG_FILENAME = ".living-doc.json";
@@ -59,6 +60,7 @@ const DEFAULTS: LivingDocConfig = {
   showDiagramDebug: false,
   diagramNodePalette: DEFAULT_DIAGRAM_NODE_PALETTE,
   diagramEdgePalette: DEFAULT_DIAGRAM_EDGE_PALETTE,
+  sourceRoot: null,
 };
 
 export function getConfigPath(docsPath: string): string {

@@ -27,6 +27,7 @@ export function configRouter(docsPath: string): Router {
         'showDiagramDebug',
         'diagramNodePalette',
         'diagramEdgePalette',
+        'sourceRoot',
       ];
       const safe: Partial<LivingDocConfig> = {};
       for (const key of allowed) {
@@ -59,6 +60,17 @@ export function configRouter(docsPath: string): Router {
         const v = patch.diagramEdgePalette;
         if (v === null || (Array.isArray(v) && v.every((s) => typeof s === 'string'))) {
           safe.diagramEdgePalette = v as string[] | null;
+        }
+      }
+      // sourceRoot: null or absolute directory path that exists
+      if ('sourceRoot' in patch) {
+        const v = patch.sourceRoot;
+        if (v === null || v === '') {
+          safe.sourceRoot = null;
+        } else if (typeof v === 'string' && path.isAbsolute(v)) {
+          safe.sourceRoot = v;
+        } else {
+          return res.status(400).json({ error: 'sourceRoot must be an absolute path or null' });
         }
       }
       // extraFiles: only absolute .md paths

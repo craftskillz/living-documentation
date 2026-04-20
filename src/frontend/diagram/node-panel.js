@@ -40,12 +40,8 @@ function forceRedraw() {
 
 export function showNodePanel() {
   document.getElementById('nodePanel').classList.remove('hidden');
-  // If ALL selected nodes are locked, hide the formatting controls and show lock button only.
-  const allLocked = st.selectedNodeIds.length > 0 &&
-    st.selectedNodeIds.every((id) => { const n = st.nodes && st.nodes.get(id); return n && n.locked; });
-  document.getElementById('nodePanelControls').classList.toggle('hidden', allLocked);
-  // Update lock button appearance
-  document.getElementById('btnNodeLock').classList.toggle('tool-active', allLocked);
+  document.getElementById('nodePanelControls').classList.remove('hidden');
+  document.getElementById('btnNodeLock').classList.remove('tool-active');
 }
 
 export function hideNodePanel() {
@@ -55,16 +51,20 @@ export function hideNodePanel() {
 export function toggleNodeLock() {
   if (!st.selectedNodeIds.length) return;
   pushSnapshot();
-  // If all are locked → unlock; otherwise → lock all.
-  const allLocked = st.selectedNodeIds.every((id) => { const n = st.nodes && st.nodes.get(id); return n && n.locked; });
-  const nextLocked = !allLocked;
+  // Locking is a one-way UI action — once locked, the only way back is the
+  // 3-second long-press on the shape itself (see unlock-hold.js).
   st.selectedNodeIds.forEach((id) => {
-    st.nodes.update({ id, locked: nextLocked, fixed: nextLocked ? { x: true, y: true } : false, draggable: !nextLocked });
+    st.nodes.update({ id, locked: true, fixed: { x: true, y: true }, draggable: false });
     const bn = st.network && st.network.body.nodes[id];
     if (bn) bn.refreshNeeded = true;
   });
-  if (st.network) st.network.redraw();
-  showNodePanel();
+  if (st.network) {
+    st.network.unselectAll();
+    st.network.redraw();
+  }
+  st.selectedNodeIds = [];
+  st.selectedEdgeIds = [];
+  hideNodePanel();
   markDirty();
 }
 
