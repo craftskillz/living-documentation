@@ -296,6 +296,18 @@ export function drawPortEdge(ctx, edgeData) {
       rotation: edgeData.labelRotation || 0,
     };
 
+    const totalH   = lines.length * lineHeight;
+    const TEXT_PAD = 3; // tight padding behind text only (not the full resize box)
+    const isDark   = document.documentElement.classList.contains('dark');
+    const bgFill   = isDark ? 'rgba(3,7,18,0.82)' : 'rgba(249,250,251,0.82)';
+
+    // Opaque background tight around the text — makes the arrow appear to pass behind.
+    ctx.save();
+    ctx.fillStyle = bgFill;
+    ctx.fillRect(-textW / 2 - TEXT_PAD, -totalH / 2 - TEXT_PAD,
+                  textW + TEXT_PAD * 2,   totalH + TEXT_PAD * 2);
+    ctx.restore();
+
     // Dashed border box — only when the edge is selected
     if (st.selectedEdgeIds && st.selectedEdgeIds.includes(edgeData.id)) {
       ctx.save();
@@ -310,7 +322,6 @@ export function drawPortEdge(ctx, edgeData) {
     ctx.fillStyle    = '#6b7280';
     ctx.textAlign    = 'center';
     ctx.textBaseline = 'middle';
-    const totalH = lines.length * lineHeight;
     lines.forEach((line, i) => {
       const y = -totalH / 2 + i * lineHeight + lineHeight / 2;
       ctx.fillText(line, 0, y);
