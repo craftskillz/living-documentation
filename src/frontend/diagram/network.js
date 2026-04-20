@@ -748,6 +748,25 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
       bn.shape.width  = undefined;
       bn.shape.height = undefined;
     }
+    // Patch CustomShape.distanceToBorder so anchor nodes report 0: arrow tips
+    // land at the anchor centre instead of 8 canvas units away (half the 16×16
+    // hit-box). Without this, short free arrows render with reversed or
+    // overlapping arrowheads because the 8+8 boundary offset exceeds the
+    // segment length, and the visible dot sits far from the arrow tip.
+    for (const id of st.network.body.nodeIndices) {
+      const bn = st.network.body.nodes[id];
+      if (!bn || !bn.shape) continue;
+      const proto = Object.getPrototypeOf(bn.shape);
+      if (proto.__ldAnchorDistancePatched) break;
+      const orig = proto.distanceToBorder;
+      proto.distanceToBorder = function (ctx, angle) {
+        const data = st.nodes && st.nodes.get(this.options && this.options.id);
+        if (data && data.shapeType === 'anchor') return 0;
+        return orig.call(this, ctx, angle);
+      };
+      proto.__ldAnchorDistancePatched = true;
+      break;
+    }
     st.network.redraw();
   });
 }
