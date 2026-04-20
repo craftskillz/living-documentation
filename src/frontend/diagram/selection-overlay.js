@@ -135,7 +135,7 @@ function onResizeDrag(e) {
     if (c === 'bl') { nW = initW - cdx; nH = initH + cdy; }
     if (c === 'tr') { nW = initW + cdx; nH = initH - cdy; }
     if (c === 'tl') { nW = initW - cdx; nH = initH - cdy; }
-    if (e.shiftKey && initW > 0 && initH > 0) {
+    if ((e.shiftKey || node.shapeType === 'actor') && initW > 0 && initH > 0) {
       const s = Math.max(nW / initW, nH / initH);
       nW = initW * s;
       nH = initH * s;
@@ -168,8 +168,11 @@ function onResizeDrag(e) {
     const pivotY = (c === 'br' || c === 'bl') ? bbMinY : bbMaxY;
 
     for (const { id, node, initW, initH, initX, initY } of st.resizeDrag.startBBs) {
-      const nW = Math.max(MIN, Math.round(initW * sx));
-      const nH = Math.max(MIN, Math.round(initH * sy));
+      const actorLock = node.shapeType === 'actor';
+      const esx = actorLock ? Math.max(sx, sy) : sx;
+      const esy = actorLock ? Math.max(sx, sy) : sy;
+      const nW = Math.max(MIN, Math.round(initW * esx));
+      const nH = Math.max(MIN, Math.round(initH * esy));
       st.nodes.update({ id, nodeWidth: nW, nodeHeight: nH, ...visNodeProps(node.shapeType || 'box', node.colorKey || 'c-gray', nW, nH, node.fontSize, node.textAlign, node.textValign) });
       st.network.moveNode(id, pivotX + (initX - pivotX) * sx, pivotY + (initY - pivotY) * sy);
       updatedIds.push(id);

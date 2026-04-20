@@ -38,14 +38,28 @@ function setTool(tool, shape) {
   document.getElementById('vis-canvas').classList.toggle('cursor-crosshair', tool === 'addNode' || tool === 'addEdge');
 
   if (tool === 'addEdge' && st.network) st.network.addEdgeMode();
-  else if (st.network) st.network.disableEditMode();
+  else {
+    st.freeArrowFirstPoint = null; // cancel any pending two-click free-arrow origin
+    if (st.network) st.network.disableEditMode();
+  }
 }
 
 function selectAll() {
-  if (!st.network || !st.nodes) return;
+  if (!st.network || !st.nodes || !st.edges) return;
   const ids = st.nodes.getIds();
-  st.network.selectNodes(ids);
-  st.selectedNodeIds = ids;
+  const idSet = new Set(ids);
+  // Include free-arrow edges (anchor→anchor) so they are visually highlighted.
+  const freeEdgeIds = st.edges.get().filter(e => {
+    const fromN = st.nodes.get(e.from);
+    const toN   = st.nodes.get(e.to);
+    return fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor'
+        && idSet.has(e.from) && idSet.has(e.to);
+  }).map(e => e.id);
+  st.network.setSelection({ nodes: ids, edges: freeEdgeIds });
+  // getSelectedEdges() captures both the explicitly passed free-arrow edges and
+  // any regular edges that vis-network auto-selected because all their endpoints are selected.
+  st.selectedNodeIds = ids.filter(id => { const n = st.nodes.get(id); return !(n && n.shapeType === 'anchor'); });
+  st.selectedEdgeIds = st.network.getSelectedEdges();
   showNodePanel();
 }
 

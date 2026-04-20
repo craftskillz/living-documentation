@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "mcp__living-documentation__read_document",
+      "mcp__living-documentation__create_diagram"
     ]
   }
 }

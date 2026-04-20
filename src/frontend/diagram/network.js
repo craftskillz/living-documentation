@@ -24,6 +24,12 @@ import { getNearestPort, drawPortDots, drawPortEdge, distanceToPortEdge } from '
 import { getLastFreeArrowStyle } from './edge-panel.js';
 import { getLastNodeStyle } from './node-panel.js';
 
+// Module-level port-hover state — shared between initNetwork event handlers and
+// module-level helpers (_onAnchorSnapConnect).
+let _hoveredPortNodeId = null;
+let _hoveredPortKey    = null;
+let _draggingAnchorIds = new Set();
+
 export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
   const container = document.getElementById('vis-canvas');
 
@@ -71,16 +77,16 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
     physics: { enabled: false },
     interaction: { hover: true, navigationButtons: false, keyboard: false, multiselect: true },
     nodes: { font: { size: 13, face: 'system-ui,-apple-system,sans-serif' }, borderWidth: 1.5, borderWidthSelected: 2.5, shadow: false, widthConstraint: { minimum: 60 }, heightConstraint: { minimum: 28 } },
-    edges: { smooth: edgeSmooth, color: { color: '#a8a29e', highlight: '#f97316', hover: '#f97316' }, width: 1.5, selectionWidth: 2.5, font: { size: 11, align: 'middle', color: '#6b7280' } },
+    edges: { smooth: edgeSmooth, color: { color: '#a8a29e', highlight: '#f97316', hover: '#f97316' }, width: 1.5, selectionWidth: 2.5, font: { size: 11, align: 'middle', color: 'rgba(0,0,0,0)', strokeColor: 'rgba(0,0,0,0)', background: 'rgba(0,0,0,0)' } },
     manipulation: {
       enabled: false,
       addEdge(data, callback) {
-        // Block edges from/to locked nodes.
+        // Block edges from/to locked nodes or anchors (free-arrow endpoints).
         const fromNode = st.nodes.get(data.from) || {};
         const toNode   = st.nodes.get(data.to)   || {};
-        if (fromNode.locked || toNode.locked) {
+        if (fromNode.locked || toNode.locked || fromNode.shapeType === 'anchor' || toNode.shapeType === 'anchor') {
           _addEdgeFromPort = null;
-          setTimeout(() => st.network.addEdgeMode(), 0);
+          setTimeout(() => { if (st.currentTool === 'addEdge') st.network.addEdgeMode(); }, 0);
           return;
         }
         pushSnapshot();
@@ -101,7 +107,7 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
         callback(data);
         markDirty();
         _addEdgeFromPort = null;
-        setTimeout(() => st.network.addEdgeMode(), 0);
+        setTimeout(() => { if (st.currentTool === 'addEdge') st.network.addEdgeMode(); }, 0);
       },
     },
   };
@@ -262,7 +268,7 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
   st.network.on('deselectEdge', onDeselectAll);
   st.network.on('zoom',         updateZoomDisplay);
   st.network.on('dragging',      onDragging);
-  st.network.on('dragEnd',       (p) => { onDragEnd(p); clearAlignGuides(); });
+  st.network.on('dragEnd',       (p) => { _draggingAnchorIds.clear(); _hoveredPortNodeId = null; _hoveredPortKey = null; _onAnchorSnapConnect(p); onDragEnd(p); clearAlignGuides(); });
   st.network.on('beforeDrawing', drawGrid);
   st.network.on('afterDrawing',  updateSelectionOverlay);
   st.network.on('afterDrawing',  drawAlignmentGuides);
@@ -270,31 +276,133 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
   st.network.on('afterDrawing',  () => drawDebugOverlay());
   st.network.on('afterDrawing',  drawEdgeLabels);
   st.network.on('afterDrawing',  (ctx) => {
-    if (st.currentTool === 'addEdge' && _hoveredPortNodeId) {
+    if (_hoveredPortNodeId && (st.currentTool === 'addEdge' || _draggingAnchorIds.size > 0)) {
       drawPortDots(ctx, _hoveredPortNodeId, _hoveredPortKey);
     }
   });
+  // Two-click free-arrow: draw an orange dot at the pending first-click origin.
+  st.network.on('afterDrawing', (ctx) => {
+    if (st.currentTool !== 'addEdge' || !st.freeArrowFirstPoint) return;
+    const { x, y } = st.freeArrowFirstPoint;
+    ctx.beginPath();
+    ctx.arc(x, y, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#f97316';
+    ctx.fill();
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  });
 
-  // ── Free-floating edge: drop on empty canvas creates an anchor node ──────────
-  // vis-network only fires addEdge callback when dropping on an existing node.
-  // We intercept mousedown (capture source) + mouseup (detect empty-canvas drop).
+  // ── Free-arrow body drag ──────────────────────────────────────────────────────
+  // Dragging the body of a free arrow (anchor-anchor edge) should move the whole
+  // arrow. vis-network pans the canvas instead (no node at the body position).
+  // Fix: capture mousedown on the edge body, disable dragView, move anchors manually.
+  {
+    let _fad = null; // free-arrow drag state
+    container.addEventListener('mousedown', (e) => {
+      if (e.button !== 0 || !st.network) return;
+      const domPos = { x: e.offsetX, y: e.offsetY };
+      // If the click landed on a node (including an anchor endpoint), don't intercept:
+      // the user wants to move only that endpoint (pivot), not the whole arrow.
+      if (st.network.getNodeAt(domPos)) return;
+      const edgeId = st.network.getEdgeAt(domPos);
+      if (!edgeId) return;
+      const edge  = st.edges.get(edgeId);
+      if (!edge)  return;
+      const fromN = st.nodes.get(edge.from);
+      const toN   = st.nodes.get(edge.to);
+      if (!(fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor')) return;
+      const startPos = st.network.getPositions([edge.from, edge.to]);
+      _fad = { edgeId, fromId: edge.from, toId: edge.to,
+               startMouse: { x: e.clientX, y: e.clientY }, startPos, dragging: false };
+    }, { capture: true });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!_fad || !st.network) return;
+      const dx = e.clientX - _fad.startMouse.x;
+      const dy = e.clientY - _fad.startMouse.y;
+      if (!_fad.dragging) {
+        if (Math.hypot(dx, dy) < 4) return;
+        _fad.dragging = true;
+        pushSnapshot();
+        st.network.setOptions({ interaction: { dragView: false } });
+      }
+      const scale = st.network.getScale();
+      const fp = _fad.startPos[_fad.fromId];
+      const tp = _fad.startPos[_fad.toId];
+      const snap = (x, y) => st.gridEnabled ? snapToGrid(x, y) : { x, y };
+      if (fp) { const p = snap(fp.x + dx / scale, fp.y + dy / scale); st.network.moveNode(_fad.fromId, p.x, p.y); }
+      if (tp) { const p = snap(tp.x + dx / scale, tp.y + dy / scale); st.network.moveNode(_fad.toId,   p.x, p.y); }
+      st.network.redraw();
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (!_fad) return;
+      if (_fad.dragging) {
+        st.network.setOptions({ interaction: { dragView: true } });
+        markDirty();
+      }
+      _fad = null;
+    });
+  }
+
+  // ── Free-floating edge: two interaction paths ─────────────────────────────────
+  // Path A — drag from a real node to empty canvas → node→anchor endpoint.
+  //          Intercepted via raw DOM mousedown/mouseup (vis-network's addEdge
+  //          callback only fires when releasing ON an existing node).
+  // Path B — two successive CLICKS on empty canvas → free-standing anchor→anchor.
+  //          Uses vis-network's own 'click' event: Hammer.js fires 'click' only
+  //          for taps, NOT for drags, so Path A drags never bleed into Path B.
   let _addEdgeFromId   = null;
   let _addEdgeFromPort = null;  // port key on the source node (null = no port)
-  let _hoveredPortNodeId = null; // node whose port dots are currently shown
-  let _hoveredPortKey    = null; // nearest port to cursor on that node
+  // _hoveredPortNodeId, _hoveredPortKey, _draggingAnchorIds are module-level.
   const visCanvas = document.getElementById('vis-canvas');
 
-  // Track hovered node + nearest port while in addEdge mode.
+  // Track hovered node + nearest port while in addEdge mode OR while dragging an anchor.
   visCanvas.addEventListener('mousemove', (e) => {
-    if (st.currentTool !== 'addEdge' || !st.network) return;
-    const pos    = { x: e.offsetX, y: e.offsetY };
-    const nodeId = st.network.getNodeAt(pos) || null;
-    const nodeData = nodeId && st.nodes.get(nodeId);
-    const isAnchor = nodeData && nodeData.shapeType === 'anchor';
-    const isLocked = nodeData && nodeData.locked;
-    const newPortNodeId = (nodeId && !isAnchor && !isLocked) ? nodeId : null;
-    const cp        = newPortNodeId ? st.network.DOMtoCanvas(pos) : null;
-    const newPortKey = (newPortNodeId && cp) ? getNearestPort(newPortNodeId, cp) : null;
+    const inAddEdge    = st.currentTool === 'addEdge';
+    const anchorDragging = _draggingAnchorIds.size > 0;
+    if ((!inAddEdge && !anchorDragging) || !st.network) return;
+
+    const pos = { x: e.offsetX, y: e.offsetY };
+    const cp  = st.network.DOMtoCanvas(pos);
+
+    let newPortNodeId = null;
+
+    if (inAddEdge) {
+      // addEdge mode: use getNodeAt as before
+      const nodeId   = st.network.getNodeAt(pos) || null;
+      const nodeData = nodeId && st.nodes.get(nodeId);
+      const isAnchor = nodeData && nodeData.shapeType === 'anchor';
+      const isLocked = nodeData && nodeData.locked;
+      newPortNodeId  = (nodeId && !isAnchor && !isLocked) ? nodeId : null;
+    } else {
+      // Anchor drag: getNodeAt returns the dragged anchor itself — do a canvas-space
+      // bounding-box search for any non-anchor node that contains the cursor.
+      const SNAP_THRESHOLD = 30;
+      let bestId   = null;
+      let bestDist = Infinity;
+      for (const [candidateId, candidatePos] of Object.entries(st.network.getPositions())) {
+        if (_draggingAnchorIds.has(candidateId)) continue;
+        const candidate = st.nodes.get(candidateId);
+        if (!candidate || candidate.shapeType === 'anchor') continue;
+        const bodyNode = st.network.body.nodes[candidateId];
+        if (!bodyNode) continue;
+        const w = (bodyNode.shape && bodyNode.shape.width)  || SHAPE_DEFAULTS[candidate.shapeType]?.width  || 120;
+        const h = (bodyNode.shape && bodyNode.shape.height) || SHAPE_DEFAULTS[candidate.shapeType]?.height || 60;
+        const inBox = cp.x >= candidatePos.x - w / 2 - SNAP_THRESHOLD &&
+                      cp.x <= candidatePos.x + w / 2 + SNAP_THRESHOLD &&
+                      cp.y >= candidatePos.y - h / 2 - SNAP_THRESHOLD &&
+                      cp.y <= candidatePos.y + h / 2 + SNAP_THRESHOLD;
+        if (inBox) {
+          const dist = Math.hypot(candidatePos.x - cp.x, candidatePos.y - cp.y);
+          if (dist < bestDist) { bestDist = dist; bestId = candidateId; }
+        }
+      }
+      newPortNodeId = bestId;
+    }
+
+    const newPortKey = newPortNodeId ? getNearestPort(newPortNodeId, cp) : null;
     if (newPortNodeId !== _hoveredPortNodeId || newPortKey !== _hoveredPortKey) {
       _hoveredPortNodeId = newPortNodeId;
       _hoveredPortKey    = newPortKey;
@@ -302,21 +410,24 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
     }
   });
 
+  // Path A – capture source node on mousedown.
   visCanvas.addEventListener('mousedown', (e) => {
     if (st.currentTool !== 'addEdge') return;
-    const nodeId = st.network.getNodeAt({ x: e.offsetX, y: e.offsetY }) || null;
-    // Block starting an edge from a locked node.
+    const nodeId   = st.network.getNodeAt({ x: e.offsetX, y: e.offsetY }) || null;
     const nodeData = nodeId && st.nodes.get(nodeId);
-    if (nodeData && nodeData.locked) { _addEdgeFromId = null; return; }
+    // Block starting an edge from a locked node or an anchor (free-arrow endpoint).
+    if (nodeData && (nodeData.locked || nodeData.shapeType === 'anchor')) { _addEdgeFromId = null; return; }
+    // Dragging from a real node cancels any pending two-click origin.
+    if (nodeId) st.freeArrowFirstPoint = null;
     _addEdgeFromId   = nodeId;
-    _addEdgeFromPort = _hoveredPortKey; // already computed by mousemove
+    _addEdgeFromPort = _hoveredPortKey;
   });
 
+  // Path A – release on empty canvas creates the anchor endpoint.
   visCanvas.addEventListener('mouseup', (e) => {
     if (st.currentTool !== 'addEdge' || !_addEdgeFromId) { _addEdgeFromId = null; return; }
-    const pos = { x: e.offsetX, y: e.offsetY };
-    // Block dropping onto a locked node.
-    const targetId = st.network.getNodeAt(pos);
+    const pos        = { x: e.offsetX, y: e.offsetY };
+    const targetId   = st.network.getNodeAt(pos);
     const targetData = targetId && st.nodes.get(targetId);
     if (targetData && targetData.locked) { _addEdgeFromId = null; return; }
     if (!targetId) {
@@ -336,9 +447,59 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
         ...visEdgeProps('to', false),
       });
       markDirty();
-      setTimeout(() => st.network.addEdgeMode(), 0);
+      st.freeArrowFirstPoint = null;
+      setTimeout(() => { if (st.currentTool === 'addEdge') st.network.addEdgeMode(); }, 0);
     }
     _addEdgeFromId = null;
+  });
+
+  // Path B – two successive clicks on empty canvas → free-standing anchor→anchor arrow.
+  // vis-network's 'click' event (via Hammer.js) only fires for taps, never for drags,
+  // so Path A drag gestures cannot accidentally trigger Path B.
+  st.network.on('click', (params) => {
+    if (st.currentTool !== 'addEdge') return;
+    // Only handle clicks that landed on empty canvas (no node, no edge).
+    if (params.nodes.length > 0 || params.edges.length > 0) return;
+    const cp = params.pointer.canvas;
+    if (!st.freeArrowFirstPoint) {
+      // First click: record the origin and show the orange indicator dot.
+      st.freeArrowFirstPoint = { x: cp.x, y: cp.y };
+      st.network.redraw();
+    } else {
+      // Second click: create the free-standing anchor→anchor arrow.
+      pushSnapshot();
+      const t           = Date.now();
+      const fromId      = 'a' + t;
+      const toId        = 'a' + (t + 1);
+      const anchorProps = visNodeProps('anchor', 'c-gray', 8, 8, null, null, null);
+      st.nodes.add([
+        { id: fromId, label: '', shapeType: 'anchor', colorKey: 'c-gray', nodeWidth: 8, nodeHeight: 8, fontSize: null, rotation: 0, labelRotation: 0, x: st.freeArrowFirstPoint.x, y: st.freeArrowFirstPoint.y, ...anchorProps },
+        { id: toId,   label: '', shapeType: 'anchor', colorKey: 'c-gray', nodeWidth: 8, nodeHeight: 8, fontSize: null, rotation: 0, labelRotation: 0, x: cp.x, y: cp.y, ...anchorProps },
+      ]);
+      const edgeId    = 'e' + t;
+      const lastStyle = getLastFreeArrowStyle();
+      const arrowDir  = lastStyle.arrowDir  || 'to';
+      const dashes    = lastStyle.dashes    || false;
+      st.edges.add({
+        id: edgeId, from: fromId, to: toId,
+        arrowDir, dashes,
+        edgeColor: lastStyle.edgeColor || null,
+        edgeWidth: lastStyle.edgeWidth || null,
+        smooth: { enabled: false },
+        ...visEdgeProps(arrowDir, dashes),
+        ...(lastStyle.edgeColor ? { color: { color: lastStyle.edgeColor, highlight: '#f97316', hover: '#f97316' } } : {}),
+        ...(lastStyle.edgeWidth ? { width: lastStyle.edgeWidth } : {}),
+      });
+      st.freeArrowFirstPoint = null;
+      markDirty();
+      setTimeout(() => {
+        st.network.setSelection({ nodes: [fromId, toId], edges: [edgeId] });
+        st.selectedNodeIds = [fromId, toId];
+        st.selectedEdgeIds = [edgeId];
+        showEdgePanel();
+        st.network.addEdgeMode();
+      }, 0);
+    }
   });
 
   document.getElementById('emptyState').classList.add('hidden');
@@ -357,6 +518,120 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
     }
     st.network.redraw();
   });
+}
+
+// ── Anchor snap-to-connect ────────────────────────────────────────────────────
+// When a free-arrow anchor endpoint is dropped near/onto another node or anchor,
+// reconnect the edge to that target and remove the orphaned anchor.
+function _onAnchorSnapConnect(params) {
+  if (!params.nodes || params.nodes.length === 0) return;
+  if (!st.network || !st.nodes || !st.edges) return;
+
+  const SNAP_THRESHOLD = 30; // canvas units
+
+  let snapped = false;
+
+  for (const anchorId of params.nodes) {
+    const anchor = st.nodes.get(anchorId);
+    if (!anchor || anchor.shapeType !== 'anchor') continue;
+
+    // Find the edge this anchor belongs to (as from or to)
+    const connectedEdges = st.edges.get().filter(e => e.from === anchorId || e.to === anchorId);
+    if (connectedEdges.length === 0) continue;
+
+    // Current position of dragged anchor
+    const pos = st.network.getPositions([anchorId])[anchorId];
+    if (!pos) continue;
+
+    // Find best snap target: any node except this anchor itself and the other
+    // endpoint of the same edge (avoid self-loop on anchor→anchor)
+    const siblingIds = new Set();
+    for (const e of connectedEdges) {
+      siblingIds.add(e.from);
+      siblingIds.add(e.to);
+    }
+    siblingIds.delete(anchorId); // keep sibling (other endpoint) in set to block self-loop
+
+    let bestId   = null;
+    let bestDist = Infinity;
+
+    for (const [candidateId, candidatePos] of Object.entries(st.network.getPositions())) {
+      if (candidateId === anchorId) continue;
+      if (siblingIds.has(candidateId)) continue; // would create a self-loop
+
+      const candidate = st.nodes.get(candidateId);
+      if (!candidate) continue;
+
+      const dist = Math.hypot(candidatePos.x - pos.x, candidatePos.y - pos.y);
+
+      if (candidate.shapeType === 'anchor') {
+        // Snap to another anchor if within threshold
+        if (dist < SNAP_THRESHOLD && dist < bestDist) {
+          bestId   = candidateId;
+          bestDist = dist;
+        }
+      } else {
+        // Snap to a regular node if anchor falls within its bounding box (padded by threshold)
+        const bodyNode = st.network.body.nodes[candidateId];
+        if (!bodyNode) continue;
+        const w = (bodyNode.shape && bodyNode.shape.width)  || SHAPE_DEFAULTS[candidate.shapeType]?.width  || 120;
+        const h = (bodyNode.shape && bodyNode.shape.height) || SHAPE_DEFAULTS[candidate.shapeType]?.height || 60;
+        const cx = candidatePos.x;
+        const cy = candidatePos.y;
+        const inBox = pos.x >= cx - w / 2 - SNAP_THRESHOLD &&
+                      pos.x <= cx + w / 2 + SNAP_THRESHOLD &&
+                      pos.y >= cy - h / 2 - SNAP_THRESHOLD &&
+                      pos.y <= cy + h / 2 + SNAP_THRESHOLD;
+        if (inBox && dist < bestDist) {
+          bestId   = candidateId;
+          bestDist = dist;
+        }
+      }
+    }
+
+    if (!bestId) continue;
+
+    if (!snapped) { pushSnapshot(); snapped = true; }
+
+    // Determine which port to attach to on the target node (non-anchor targets only).
+    const targetNode = st.nodes.get(bestId);
+    const isAnchorTarget = targetNode && targetNode.shapeType === 'anchor';
+    // Use the hovered port (computed by mousemove) when available; fall back to nearest port.
+    let portKey = null;
+    if (!isAnchorTarget) {
+      portKey = (_hoveredPortNodeId === bestId && _hoveredPortKey)
+        ? _hoveredPortKey
+        : getNearestPort(bestId, pos);
+    }
+
+    // Reconnect every edge that uses this anchor as an endpoint
+    for (const e of connectedEdges) {
+      if (e.from === anchorId) {
+        const update = { id: e.id, from: bestId };
+        if (portKey) update.fromPort = portKey;
+        // Port edges must be transparent ghosts so only drawPortEdge is visible.
+        if (portKey || e.toPort) {
+          update.color  = { color: 'rgba(0,0,0,0)', highlight: 'rgba(0,0,0,0)', hover: 'rgba(0,0,0,0)' };
+          update.arrows = { to: { enabled: false }, from: { enabled: false } };
+        }
+        st.edges.update(update);
+      }
+      if (e.to === anchorId) {
+        const update = { id: e.id, to: bestId };
+        if (portKey) update.toPort = portKey;
+        // Port edges must be transparent ghosts so only drawPortEdge is visible.
+        if (portKey || e.fromPort) {
+          update.color  = { color: 'rgba(0,0,0,0)', highlight: 'rgba(0,0,0,0)', hover: 'rgba(0,0,0,0)' };
+          update.arrows = { to: { enabled: false }, from: { enabled: false } };
+        }
+        st.edges.update(update);
+      }
+    }
+
+    // Remove the orphaned anchor
+    st.nodes.remove(anchorId);
+    markDirty();
+  }
 }
 
 // ── Edge label rendering ──────────────────────────────────────────────────────
@@ -423,55 +698,60 @@ function drawEdgeLabels(ctx) {
 
 // ── Network event handlers ────────────────────────────────────────────────────
 
+// Distance from point (px,py) to segment (ax,ay)-(bx,by) in canvas space.
+function _distToSegment(px, py, ax, ay, bx, by) {
+  const dx = bx - ax, dy = by - ay;
+  const lenSq = dx * dx + dy * dy;
+  if (lenSq === 0) return Math.hypot(px - ax, py - ay);
+  const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / lenSq));
+  return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+}
+
+
+// Returns the topmost (highest z-order) node whose bounding box contains canvasPos.
+// Ignores anchor nodes and respects st.canonicalOrder.
+function topmostNodeAt(canvasPos) {
+  let topmost = null;
+  let topmostIdx = -1;
+  for (const id of st.canonicalOrder) {
+    const n  = st.nodes.get(id);
+    const bn = st.network && st.network.body.nodes[id];
+    if (!n || !bn || n.shapeType === 'anchor') continue;
+    const defaults = SHAPE_DEFAULTS[n.shapeType || 'box'] || [60, 28];
+    const W  = n.nodeWidth  || defaults[0];
+    const H  = n.nodeHeight || defaults[1];
+    const cx = bn.x, cy = bn.y;
+    if (canvasPos.x >= cx - W / 2 && canvasPos.x <= cx + W / 2 &&
+        canvasPos.y >= cy - H / 2 && canvasPos.y <= cy + H / 2) {
+      const idx = st.canonicalOrder.indexOf(id);
+      if (idx > topmostIdx) { topmostIdx = idx; topmost = id; }
+    }
+  }
+  return topmost;
+}
+
 function onDoubleClick(params) {
-  if (params.nodes.length > 0) {
-    st.selectedNodeIds = params.nodes;
+  // Locked nodes never intercept double-click — filter them out first.
+  const unlockedNodes = params.nodes.filter(id => { const n = st.nodes.get(id); return n && !n.locked; });
+
+  // When nodes and edges both match the click position, honour z-order:
+  // only give the click to a node if it is truly the topmost element there.
+  // Otherwise fall through to edge handling.
+  let effectiveNodes = unlockedNodes;
+  if (unlockedNodes.length > 0 && params.edges.length > 0) {
+    const top = topmostNodeAt(params.pointer.canvas);
+    effectiveNodes = (top && unlockedNodes.includes(top)) ? [top] : [];
+  }
+
+  if (effectiveNodes.length > 0) {
+    st.selectedNodeIds = effectiveNodes;
     st.network.selectNodes(st.selectedNodeIds);
     showNodePanel();
-    // Skip label edit for locked nodes.
-    const isLocked = st.selectedNodeIds.some((id) => { const n = st.nodes.get(id); return n && n.locked; });
-    if (isLocked) return;
     startLabelEdit();
-  } else if (params.edges.length > 0 && params.nodes.length === 0) {
+  } else if (params.edges.length > 0) {
     st.selectedEdgeIds = [params.edges[0]];
     showEdgePanel();
     startEdgeLabelEdit();
-  } else if (st.currentTool === 'addEdge' && params.nodes.length === 0 && params.edges.length === 0) {
-    // Double-click on empty canvas in addEdge mode → free-standing arrow between two anchors.
-    pushSnapshot();
-    const cx = params.pointer.canvas.x;
-    const cy = params.pointer.canvas.y;
-    const t  = Date.now();
-    const fromId = 'a' + t;
-    const toId   = 'a' + (t + 1);
-    const anchorProps = visNodeProps('anchor', 'c-gray', 8, 8, null, null, null);
-    st.nodes.add([
-      { id: fromId, label: '', shapeType: 'anchor', colorKey: 'c-gray', nodeWidth: 8, nodeHeight: 8, fontSize: null, rotation: 0, labelRotation: 0, x: cx, y: cy - 30, ...anchorProps },
-      { id: toId,   label: '', shapeType: 'anchor', colorKey: 'c-gray', nodeWidth: 8, nodeHeight: 8, fontSize: null, rotation: 0, labelRotation: 0, x: cx, y: cy + 30, ...anchorProps },
-    ]);
-    const edgeId   = 'e' + t;
-    const lastStyle = getLastFreeArrowStyle();
-    const arrowDir  = lastStyle.arrowDir  || 'to';
-    const dashes    = lastStyle.dashes    || false;
-    st.edges.add({
-      id: edgeId, from: fromId, to: toId,
-      arrowDir,
-      dashes,
-      edgeColor: lastStyle.edgeColor || null,
-      edgeWidth: lastStyle.edgeWidth || null,
-      smooth: { enabled: false },
-      ...visEdgeProps(arrowDir, dashes),
-      ...(lastStyle.edgeColor ? { color: { color: lastStyle.edgeColor, highlight: '#f97316', hover: '#f97316' } } : {}),
-      ...(lastStyle.edgeWidth ? { width: lastStyle.edgeWidth } : {}),
-    });
-    markDirty();
-    setTimeout(() => {
-      st.network.setSelection({ nodes: [fromId, toId], edges: [edgeId] });
-      st.selectedNodeIds = [fromId, toId];
-      st.selectedEdgeIds = [edgeId];
-      showEdgePanel();
-      st.network.addEdgeMode();
-    }, 0);
   } else if (st.currentTool === 'addNode' && st.pendingShape === 'image') {
     const canvasPos = params.pointer.canvas;
     pickAndCreateImageNode(canvasPos.x, canvasPos.y);
@@ -603,6 +883,57 @@ function onClickNode(params) {
     navigateNodeLink(params.nodes[0]);
     return;
   }
+
+  // When a node is reported, params.edges is always empty — vis-network short-circuits
+  // edge detection once a node is found. Fix: call getEdgeAt() directly with CLIENT
+  // coordinates. params.pointer.DOM is already offset-relative to the container, so
+  // passing it to getEdgeAt() causes a double-subtraction of the container rect and
+  // returns null. Passing clientX/Y lets vis-network do its own pixel-perfect detection.
+  if (params.nodes.length > 0) {
+    const clientPos = { x: params.event.srcEvent.clientX, y: params.event.srcEvent.clientY };
+    const edgeId = st.network.getEdgeAt(clientPos);
+    if (edgeId) {
+      const edge  = st.edges.get(edgeId);
+      const fromN = edge && st.nodes.get(edge.from);
+      const toN   = edge && st.nodes.get(edge.to);
+      const isFreeArrow = fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor';
+      // If the user clicked directly on an anchor node (not the edge body), keep only
+      // that single anchor selected so dragging pivots the arrow instead of moving it whole.
+      const clickedAnAnchor = params.nodes.some(id => { const n = st.nodes.get(id); return n && n.shapeType === 'anchor'; });
+      if (isFreeArrow && clickedAnAnchor) return;
+      setTimeout(() => {
+        const sel = isFreeArrow
+          ? { nodes: [edge.from, edge.to], edges: [edgeId] }
+          : { nodes: [], edges: [edgeId] };
+        st.network.setSelection(sel);
+        st.selectedNodeIds = sel.nodes;
+        st.selectedEdgeIds = [edgeId];
+        hideNodePanel();
+        showEdgePanel();
+      }, 0);
+      return;
+    }
+    // No edge at click position — apply z-order correction for the topmost node.
+    const top = topmostNodeAt(params.pointer.canvas);
+    const clickable = params.nodes.filter(id => {
+      const n = st.nodes.get(id);
+      return n && !n.locked && n.shapeType !== 'anchor';
+    });
+    if (!top || !clickable.includes(top)) {
+      const fallbackEdgeId = params.edges.length > 0 ? params.edges[0] : null;
+      if (fallbackEdgeId) {
+        setTimeout(() => {
+          st.network.setSelection({ nodes: [], edges: [fallbackEdgeId] });
+          st.selectedNodeIds = [];
+          st.selectedEdgeIds = [fallbackEdgeId];
+          hideNodePanel();
+          showEdgePanel();
+        }, 0);
+        return;
+      }
+    }
+  }
+
   // Port edges have a transparent ghost path so vis-network's hit detection
   // misses them when they diverge from the centre-to-centre line.
   // Also check the canvas for port-edge proximity when nothing was hit.
@@ -634,6 +965,12 @@ function onClickNode(params) {
 // dragStart fires before the move, unlike selectNode which fires after mouseup.
 function onDragStart(params) {
   if (!params.nodes.length) return;
+  // Track dragged anchors so the port-dot overlay activates during the drag.
+  _draggingAnchorIds.clear();
+  for (const id of params.nodes) {
+    const n = st.nodes && st.nodes.get(id);
+    if (n && n.shapeType === 'anchor') _draggingAnchorIds.add(id);
+  }
   const expanded = expandSelectionToGroup(params.nodes);
   if (expanded.length > params.nodes.length) {
     st.network.selectNodes(expanded);
@@ -642,8 +979,9 @@ function onDragStart(params) {
 }
 
 let _expandingGroup = false;
+let _addingEdgesToSelection = false;
 function onSelectNode(params) {
-  if (_expandingGroup) return;
+  if (_expandingGroup || _addingEdgesToSelection) return;
   // Filter out anchor nodes — they have no formatting panel.
   const nonAnchors = params.nodes.filter((id) => { const n = st.nodes.get(id); return !(n && n.shapeType === 'anchor'); });
   if (!nonAnchors.length) {
@@ -662,7 +1000,19 @@ function onSelectNode(params) {
   } else {
     st.selectedNodeIds = nonAnchors;
   }
-  st.selectedEdgeIds = [];
+  // Include all edges (regular or free-arrow) whose both endpoints are in the selection.
+  // This makes rubber-band select and multi-select automatically include connected edges.
+  const selectedSet = new Set(params.nodes);
+  st.selectedEdgeIds = st.edges.get().filter(e =>
+    selectedSet.has(e.from) && selectedSet.has(e.to)
+  ).map(e => e.id);
+  // Tell vis-network to visually highlight the free-arrow edges.
+  // Use a guard to prevent the resulting selectNode event from re-entering.
+  if (st.selectedEdgeIds.length > 0) {
+    _addingEdgesToSelection = true;
+    st.network.setSelection({ nodes: st.network.getSelectedNodes(), edges: st.selectedEdgeIds });
+    _addingEdgesToSelection = false;
+  }
   hideEdgePanel();
   showNodePanel();
 }

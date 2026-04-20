@@ -26,6 +26,32 @@ interface StoredDiagram {
   edgesStraight?: boolean;
 }
 
+// Estimates node dimensions from label content (font ~13px, lineH ~17px, pad 16px).
+// Used to size MCP-created nodes so multiline labels are not clipped.
+function estimateNodeSize(label: string, shapeType: string): { nodeWidth: number; nodeHeight: number } {
+  const FONT_PX = 13;
+  const LINE_H  = Math.round(FONT_PX * 1.3);  // ~17
+  const H_PAD   = 24;  // top + bottom padding
+  const W_PAD   = 24;  // left + right padding
+  const CHAR_W  = 7.5; // approximate px per character at 13px system-ui
+
+  // Actor shape has a fixed aspect ratio — never resize it.
+  if (shapeType === 'actor') return { nodeWidth: 30, nodeHeight: 52 };
+
+  const lines      = label.split('\n');
+  const lineCount  = lines.length;
+  const maxChars   = Math.max(...lines.map(l => l.length));
+
+  const rawW = Math.max(120, Math.round(maxChars * CHAR_W) + W_PAD);
+  const rawH = Math.max(40,  lineCount * LINE_H + H_PAD);
+
+  // Round to nearest 8px for a tidier look
+  const nodeWidth  = Math.round(rawW / 8) * 8;
+  const nodeHeight = Math.round(rawH / 8) * 8;
+
+  return { nodeWidth, nodeHeight };
+}
+
 // Maps semantic type names → vis-network shape properties
 const SHAPE_MAP: Record<string, { shape: string; shapeType: string }> = {
   box:       { shape: 'box',    shapeType: 'box'      },
@@ -91,7 +117,7 @@ export function toolListDiagrams(docsPath: string) {
 
 export function toolCreateDiagram(docsPath: string, args: {
   title: string;
-  nodes: Array<{ name: string; type: string; color?: string }>;
+  nodes: Array<{ name: string; type: string; color?: string; x?: number; y?: number }>;
   edges: Array<{ from: string; to: string; label?: string }>;
 }) {
   const id = `d${Date.now()}`;
@@ -103,13 +129,19 @@ export function toolCreateDiagram(docsPath: string, args: {
     const nodeId = `n${i + 1}`;
     nameToId[n.name] = nodeId;
     const shapeInfo = SHAPE_MAP[n.type.toLowerCase()] ?? { shape: 'box', shapeType: 'box' };
-    return {
+    const { nodeWidth, nodeHeight } = estimateNodeSize(n.name, shapeInfo.shapeType);
+    const node: StoredNode = {
       id: nodeId,
       label: n.name,
       shape: shapeInfo.shape,
       shapeType: shapeInfo.shapeType,
       colorKey: resolveColor(n.color),
+      nodeWidth,
+      nodeHeight,
     };
+    if (n.x !== undefined) node.x = n.x;
+    if (n.y !== undefined) node.y = n.y;
+    return node;
   });
 
   const edges: StoredEdge[] = args.edges.map((e, i) => {

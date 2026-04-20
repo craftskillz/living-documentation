@@ -29,6 +29,7 @@ export const st = {
   resizeSymmetric: false, // when true, center is fixed during resize; when false, opposite corner is fixed
   nodeColorOverrides: {}, // colorKey → {bg, border, font, hbg, hborder} — set from config at boot
   edgeLabelCanvasPos: {}, // edgeId → {x, y} canvas coords of last drawn label, used by label editor
+  freeArrowFirstPoint: null, // addEdge two-click flow: {x, y} canvas coords of first click, or null
 };
 
 export function markDirty() {
