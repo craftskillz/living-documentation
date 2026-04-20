@@ -23,6 +23,7 @@ function captureState() {
     shapeType: n.shapeType || 'box', colorKey: n.colorKey || 'c-gray',
     nodeWidth: n.nodeWidth || null, nodeHeight: n.nodeHeight || null,
     fontSize: n.fontSize || null, textAlign: n.textAlign || null, textValign: n.textValign || null,
+    bgOpacity: n.bgOpacity ?? null,
     rotation: n.rotation || 0, labelRotation: n.labelRotation || 0,
     imageSrc: n.imageSrc || null, groupId: n.groupId || null,
     nodeLink: n.nodeLink || null, locked: n.locked || false,

@@ -12,6 +12,17 @@ function getNodeColor(colorKey) {
   return st.nodeColorOverrides[colorKey] || NODE_COLORS[colorKey] || NODE_COLORS['c-gray'];
 }
 
+// Convert a "#rrggbb" hex string into an "rgba(r,g,b,a)" string.
+// Used by renderers to apply a per-node background opacity without touching
+// border/text colors (which stay fully opaque for readability).
+export function hexToRgba(hex, alpha) {
+  if (typeof hex !== 'string' || hex.charAt(0) !== '#' || hex.length !== 7) return hex;
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
 // ── Link indicator ────────────────────────────────────────────────────────────
 // Small chain icon drawn at bottom-right of any node that has a nodeLink.
 function drawLinkIndicator(ctx, id, W, H) {
@@ -151,6 +162,12 @@ function roundRect(ctx, x, y, w, h, r) {
 function nodeData(id, defaultW, defaultH, defaultColorKey) {
   const n = st.nodes && st.nodes.get(id);
   const colorKey = (n && n.colorKey) || defaultColorKey || "c-gray";
+  const rawOp = n && n.bgOpacity;
+  const bgOpacity = typeof rawOp === "number" ? Math.max(0, Math.min(1, rawOp)) : 1;
+  const baseColors = getNodeColor(colorKey);
+  const c = bgOpacity < 1
+    ? { ...baseColors, bg: hexToRgba(baseColors.bg, bgOpacity), hbg: hexToRgba(baseColors.hbg, bgOpacity) }
+    : baseColors;
   return {
     W: (n && n.nodeWidth) || defaultW,
     H: (n && n.nodeHeight) || defaultH,
@@ -159,8 +176,9 @@ function nodeData(id, defaultW, defaultH, defaultColorKey) {
     textAlign: (n && n.textAlign) || "center",
     textValign: (n && n.textValign) || "middle",
     fontSize: (n && n.fontSize) || 13,
+    bgOpacity,
     colorKey,
-    c: getNodeColor(colorKey),
+    c,
   };
 }
 

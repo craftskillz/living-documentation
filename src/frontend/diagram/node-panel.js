@@ -42,6 +42,14 @@ export function showNodePanel() {
   document.getElementById('nodePanel').classList.remove('hidden');
   document.getElementById('nodePanelControls').classList.remove('hidden');
   document.getElementById('btnNodeLock').classList.remove('tool-active');
+  // Sync the opacity slider with the first selected node's current value so the
+  // slider reflects the live state rather than whatever position it was left at.
+  const slider = document.getElementById('nodeBgOpacity');
+  if (slider && st.selectedNodeIds.length) {
+    const first = st.nodes.get(st.selectedNodeIds[0]);
+    const op = first && typeof first.bgOpacity === 'number' ? first.bgOpacity : 1;
+    slider.value = String(Math.round(op * 100));
+  }
 }
 
 export function hideNodePanel() {
@@ -52,7 +60,7 @@ export function toggleNodeLock() {
   if (!st.selectedNodeIds.length) return;
   pushSnapshot();
   // Locking is a one-way UI action — once locked, the only way back is the
-  // 3-second long-press on the shape itself (see unlock-hold.js).
+  // long-press on the shape itself (see unlock-hold.js).
   st.selectedNodeIds.forEach((id) => {
     st.nodes.update({ id, locked: true, fixed: { x: true, y: true }, draggable: false });
     const bn = st.network && st.network.body.nodes[id];
@@ -77,6 +85,21 @@ export function setNodeColor(colorKey) {
     st.nodes.update({ id, colorKey });
   });
   persistNodeStyle();
+  forceRedraw();
+  markDirty();
+}
+
+// The slider fires `input` on every step during a drag. The caller is expected
+// to push a single snapshot on pointerdown (gesture start) so the whole drag
+// collapses into one undoable action instead of one per step.
+export function setNodeBgOpacity(opacity) {
+  if (!st.selectedNodeIds.length) return;
+  const clamped = Math.max(0, Math.min(1, opacity));
+  st.selectedNodeIds.forEach((id) => {
+    const n = st.nodes.get(id);
+    if (!n) return;
+    st.nodes.update({ id, bgOpacity: clamped });
+  });
   forceRedraw();
   markDirty();
 }

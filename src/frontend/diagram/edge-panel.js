@@ -72,7 +72,7 @@ export function toggleEdgeLock() {
   if (!st.selectedEdgeIds.length) return;
   pushSnapshot();
   // Locking is a one-way UI action — once locked, the only way back is the
-  // 3-second long-press on the shape itself (see unlock-hold.js).
+  // long-press on the shape itself (see unlock-hold.js).
   st.selectedEdgeIds.forEach((id) => {
     const e = st.edges.get(id);
     if (!e) return;

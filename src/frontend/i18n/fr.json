@@ -321,6 +321,7 @@
   "diagram.node_panel.lock": "Verrouiller la forme",
   "diagram.node_panel.edit_label": "Modifier le texte (double-clic)",
   "diagram.node_panel.edit_link": "Ajouter / modifier un lien",
+  "diagram.node_panel.bg_opacity": "Opacité du fond",
   "diagram.node_panel.font_decrease": "Réduire la police",
   "diagram.node_panel.font_increase": "Agrandir la police",
   "diagram.node_panel.align_left": "Aligner à gauche",

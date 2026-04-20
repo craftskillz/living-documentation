@@ -62,21 +62,46 @@ documents.
   activity, use-case …).
 
 ### Screen-guide diagram (explicit request only)
-- Annotated UI screenshot. One \`image\` node as the background + \`post-it\` nodes
-  naming each first-level feature, with arrows (edges) from each post-it to the
-  image.
-- The **source code is the reference** for this type, not the Markdown docs.
-  Use \`read_source_file\` / \`search_source\` to identify features.
-- **First-level feature** = visible without interaction + changes behavior
-  significantly when used. Typical count: 4–10. The LLM decides the list.
-- Post-it labels are short names (2–5 words, title-cased). No multi-line
-  description; no full sentence.
-- Palette: rotate \`c-lime, c-amber, c-sky, c-rose, c-teal, c-green\`. Never
-  reuse the same color on adjacent post-its.
-- Image node must set \`imageSrc\` (URL returned by \`POST /api/images/upload\`)
-  and \`name: "screenshot"\` (used as edge anchor; not displayed).
-- Edge labels are empty on this type (the arrow speaks). Warnings about
-  missing edge labels are disabled for screen-guide.
+An annotated screenshot built in **three layers**. Source code is the reference
+(not the Markdown docs) — use \`read_source_file\` / \`search_source\`.
+
+**1. Background image** — one \`image\` node with the screenshot.
+- \`name: "screenshot"\` (used as edge anchor; not displayed).
+- \`imageSrc\`: URL returned by \`POST /api/images/upload\`.
+- \`width\` / \`height\` = natural screenshot pixels. \`locked: true\`.
+
+**2. Zone overlays** — one translucent \`box\` per major layout region
+(left/right sidebar, top bar, main content, footer …).
+- \`bgOpacity: 0.15–0.20\`, \`locked: true\`, empty label.
+- \`width\` / \`height\` / \`x\` / \`y\` cover the zone on the screenshot.
+- One distinct \`color\` per zone (e.g. c-red = left drawer, c-amber = top bar,
+  c-cyan = main area). Typical count: **2–5 zones**.
+- Each zone gets a **zone-label post-it** of the **same color**, placed inside
+  or at the edge of the zone (1–3 words: "Top Bar", "Collapsible Drawer",
+  "Main Page").
+
+**3. Feature callouts** — one \`post-it\` per first-level feature, placed
+**outside the screenshot** and linked to the UI element by a free-end arrow.
+- First-level feature = visible without interaction + changes behavior
+  significantly when used. Typical count: **4–10**.
+- Label: 2–5 words, title-cased; multi-line allowed via \`\\n\`.
+- Color depends on kind:
+  - **Interactive** (button, link, input, toggle) → \`c-amber\` or
+    \`c-orange\` (yellow family). **Default.**
+  - **Differentiating** (product-distinguishing feature) → a distinct
+    non-yellow color (\`c-purple\`, \`c-rose\`, \`c-red\`, \`c-sky\`,
+    \`c-teal\`, \`c-green\`). Reserve for the 1–3 hero features.
+
+#### Free-end arrows — never anchor on the image node
+Anchoring on the image makes every arrow converge to its centre. Use one of:
+- **\`anchor\` node** (8×8, invisible at rest, visible on hover) placed on the
+  target pixel inside the screenshot, with edge
+  \`{ from: "<post-it>", to: "<anchor name>" }\`. **Preferred.**
+- **Edge with \`from\` only (no \`to\`)** — renders a floating arrow
+  endpoint the user can drag onto the target.
+
+Edge labels stay empty on this diagram type — the arrow alone speaks. Missing-
+label warnings are disabled for screen-guide.
 
 ### Edges
 - Every edge MUST have a \`label\` describing the interaction as a verb phrase
@@ -98,6 +123,8 @@ Keep descriptions to 1–2 short lines.
 - \`x\` and \`y\` are **optional**: omit them to let the editor auto-lay out
   nodes. Only provide coordinates when you want a fixed layout (e.g., following
   a C4 convention).
+- **Screen-guide exception**: positions align to screenshot pixels (and
+  anchors to target pixels), not to the 40-unit grid.
 
 ## Source code access (fallback only)
 Three tools expose read-only access to the project source under \`sourceRoot\`
@@ -128,7 +155,7 @@ Three tools expose read-only access to the project source under \`sourceRoot\`
 
 // ── Tool definitions ──────────────────────────────────────────────────────────
 
-const SHAPE_LIST  = 'box, actor (person), database, ellipse, circle, post-it, text-free, image';
+const SHAPE_LIST  = 'box, actor (person), database, ellipse, circle, post-it, text-free, image, anchor (invisible endpoint for free-end arrows — screen-guide only)';
 const COLOR_LIST  = 'c-blue, c-green, c-gray, c-teal, c-amber, c-orange, c-rose, c-purple, c-cyan, c-indigo, c-pink, c-lime, c-red, c-sky, c-slate (short aliases like "blue", "teal" also work)';
 const GUIDE_HINT  = 'If unsure of the workflow, call `get_server_guide` first.';
 
@@ -279,11 +306,15 @@ const TOOLS = [
           items: {
             type: 'object',
             properties: {
-              name:            { type: 'string', description: 'Node label shown in the diagram. Use \\n for line breaks. C4 format: "Name\\n[Type]\\nDescription".' },
+              name:            { type: 'string', description: 'Node label shown in the diagram. Use \\n for line breaks. C4 format: "Name\\n[Type]\\nDescription". Empty string allowed for zone overlays, anchors, and the image background.' },
               type:            { type: 'string', description: `Shape type: ${SHAPE_LIST}.` },
               color:           { type: 'string', description: `Color key, e.g. c-blue or "blue". Available: ${COLOR_LIST}.` },
-              x:               { type: 'number', description: 'Optional canvas X (0 = center). Omit to auto-lay out. When provided, use multiples of 40.' },
-              y:               { type: 'number', description: 'Optional canvas Y (0 = center, positive = down). Omit to auto-lay out. When provided, use multiples of 40.' },
+              x:               { type: 'number', description: 'Optional canvas X (0 = center). Omit to auto-lay out. When provided, use multiples of 40 (screen-guide exception: pixel-aligned).' },
+              y:               { type: 'number', description: 'Optional canvas Y (0 = center, positive = down). Omit to auto-lay out. When provided, use multiples of 40 (screen-guide exception: pixel-aligned).' },
+              width:           { type: 'number', description: 'Optional explicit node width in pixels. Required for image backgrounds and zone overlays in screen-guide diagrams. Otherwise estimated from the label.' },
+              height:          { type: 'number', description: 'Optional explicit node height in pixels. Required for image backgrounds and zone overlays in screen-guide diagrams. Otherwise estimated from the label.' },
+              bgOpacity:       { type: 'number', description: 'Optional background opacity (0–1). Use 0.15–0.20 for translucent zone-overlay boxes in screen-guide diagrams.' },
+              locked:          { type: 'boolean', description: 'Optional: lock the node so it cannot be moved or resized by accident. Recommended for screen-guide backgrounds and zone overlays.' },
               linkedDiagramId: { type: 'string', description: 'Optional: id of another diagram to navigate to when clicking this node (C4 drill-down).' },
               imageSrc:        { type: 'string', description: 'Required when `type` is "image". URL path returned by POST /api/images/upload (e.g. "/images/foo.png").' },
             },
@@ -292,15 +323,15 @@ const TOOLS = [
         },
         edges: {
           type: 'array',
-          description: 'List of directed edges between nodes. Every edge should have a `label` describing the interaction (verb phrase).',
+          description: 'List of directed edges between nodes. Every edge should have a `label` describing the interaction (verb phrase). Exception: screen-guide edges have empty labels.',
           items: {
             type: 'object',
             properties: {
-              from:  { type: 'string', description: 'Name of the source node (must match a node `name` exactly)' },
-              to:    { type: 'string', description: 'Name of the target node (must match a node `name` exactly)' },
-              label: { type: 'string', description: 'Edge label — verb phrase describing the interaction. Strongly recommended; missing labels produce warnings.' },
+              from:  { type: 'string', description: 'Name of the source node (must match a node `name` exactly).' },
+              to:    { type: 'string', description: 'Name of the target node (must match a node `name` exactly). Optional for screen-guide diagrams — omit to render a free-end arrow the user can drag.' },
+              label: { type: 'string', description: 'Edge label — verb phrase describing the interaction. Strongly recommended; missing labels produce warnings (except for screen-guide).' },
             },
-            required: ['from', 'to'],
+            required: ['from'],
           },
         },
       },
@@ -705,7 +736,14 @@ You are about to create an **Entity-Relationship Diagram**.
       return `
 ## Screen-guide diagram — source code IS the reference
 
-A screen guide documents a concrete UI screen with post-it annotations overlaid on a screenshot. **The source code is the authoritative reference**, not the Markdown documentation. No ADR describes every button.
+A screen guide is an annotated screenshot built in **three layers**:
+1. the screenshot image as background,
+2. translucent \`box\` overlays covering each major layout region (zones),
+3. \`post-it\` callouts for each first-level feature, linked to the UI by
+   free-end arrows.
+
+**The source code is the authoritative reference**, not the Markdown docs.
+No ADR describes every button.
 
 ## ⚠️ Explicit-request check
 Only proceed if the user explicitly asked for a *screen guide*, *UI guide*, or *annotated screenshot*.
@@ -716,9 +754,24 @@ ${screenFile
   ? `The user specified \`${screenFile}\`. Call \`read_source_file\` with \`path: "${screenFile}"\`.`
   : `Ask the user which screen to document (e.g. \`src/frontend/index.html\`). Then call \`read_source_file\` on it.`}
 
-If the screen pulls in components or partials, use \`search_source\` + \`read_source_file\` to follow them. Cap at ~5 files total — you only need enough to identify first-level features, not to trace every dependency.
+If the screen pulls in components or partials, use \`search_source\` + \`read_source_file\` to follow them. Cap at ~5 files total — enough to identify zones and first-level features, not to trace every dependency.
 
-## Step 2 — Detect first-level features (YOU decide the list, do not ask the user)
+## Step 2 — Identify layout zones (YOU decide, do not ask)
+
+Scan the screen structure for **major visual regions** that partition the layout. Typical zones:
+- Left / right sidebar or drawer
+- Top bar / header
+- Main content area
+- Footer
+- Right panel
+
+Pick **2–5 zones**. For each zone, capture:
+- \`name\` — 1–3 words ("Top Bar", "Collapsible Drawer", "Main Page").
+- \`color\` — one distinct color per zone. Suggested rotation: \`c-red, c-amber, c-cyan, c-sky, c-lime, c-teal\`. Never reuse a color between two zones.
+
+You will need the zone's bounding box on the screenshot (left/top/width/height in pixels) — you'll compute that once the user provides the screenshot.
+
+## Step 3 — Identify first-level features (YOU decide, do not ask)
 
 A **first-level feature** is:
 - **Visible on screen** without any interaction (a button, toggle, input, primary navigation element, filter).
@@ -733,61 +786,100 @@ NOT a first-level feature:
 Typical count: **4–10** features. Do not pad with minor buttons; do not omit obvious ones.
 
 For each feature, capture:
-- \`name\` — short label, **2–5 words**, title-cased ("Collapsible Drawer", "Dark / Light Mode", "Text Search in all documents"). No multi-line description.
-- \`targets\` — a quick note of which UI element it points to (used later for placement).
+- \`name\` — 2–5 words, title-cased ("Collapsible Drawer", "Dark / Light Mode", "Text Search in all documents"). Multi-line via \`\\n\` allowed when needed.
+- \`kind\`:
+  - \`interactive\` — standard button, link, input, toggle. **Default.**
+  - \`differentiating\` — a feature that distinguishes the product from alternatives ("Professional Diagram Editor", "Word Cloud Generator"). Reserve for the 1–3 truly distinguishing features.
+- \`target\` — which UI element / zone it points to (used to place the anchor and the post-it).
 
-## Step 3 — Request the screenshot and WAIT
+**Color assignment for feature callouts:**
+- \`interactive\` → \`c-amber\` or \`c-orange\` (yellow family). Default.
+- \`differentiating\` → a distinct non-yellow color (\`c-purple\`, \`c-rose\`, \`c-red\`, \`c-sky\`, \`c-teal\`, \`c-green\`). Never yellow.
 
-Once you have the feature list, tell the user:
+## Step 4 — Request the screenshot and WAIT
 
-> I identified N first-level features in \`<file>\`: [comma-separated names].
+Tell the user:
+
+> I identified N zones and M first-level features in \`<file>\`:
+> - Zones: [comma-separated names]
+> - Features: [comma-separated names, annotated with "(diff)" for the differentiating ones]
 > I now need a screenshot of this screen. Two options:
 > (a) Save the PNG into \`./documentation/images/<name>.png\` inside your docs folder.
-> (b) Paste or drop the image into any existing diagram in the editor — it uploads automatically and gives you a URL like \`/images/xxx.png\`.
-> Reply with the resulting URL.
+> (b) Paste or drop the image into any existing diagram in the editor — it uploads automatically and returns a URL like \`/images/xxx.png\`.
+> Please reply with (1) the URL, and (2) the natural pixel width × height of the image.
 
-**Then stop.** Do not call \`create_diagram\` yet. Wait for the user to reply with the URL.
+**Then stop.** Do not call \`create_diagram\` yet.
 
 ${screenshotUrl
-  ? `(The user already provided \`${screenshotUrl}\` as an argument — you can skip the wait and use that URL directly.)`
+  ? `(The user already provided \`${screenshotUrl}\` — you still need the pixel dimensions to place zones correctly.)`
   : ''}
 
-## Step 4 — Build the diagram
+## Step 5 — Build the diagram
+
+Coordinate system: screen-guide positions align to **screenshot pixels** (canvas centre is origin), NOT to the 40-unit grid. Use the pixel dimensions the user provided.
 
 ### Nodes
 
-**1. One image node**, serving as the background:
-- \`type: "image"\`
-- \`name: "screenshot"\` (used as edge anchor; not displayed — the image renderer ignores the label)
-- \`imageSrc: "<URL provided by the user>"\`
-- \`x: 0\`, \`y: 0\`
-- Size: match or exceed the natural screenshot size (e.g. 900×600 or larger). Bigger is fine — arrows will still read correctly.
+**A. Background image** (one node, \`locked\`):
+\`\`\`json
+{ "type": "image", "name": "screenshot", "imageSrc": "<URL>",
+  "width": <imgW>, "height": <imgH>, "x": 0, "y": 0, "locked": true }
+\`\`\`
 
-**2. One post-it node per first-level feature** from Step 2:
-- \`type: "post-it"\`
-- \`name\`: the 2–5 word feature name from Step 2 (no description, no line breaks)
-- \`color\`: rotate through \`c-lime, c-amber, c-sky, c-rose, c-teal, c-green\`. Never give two adjacent post-its the same color.
-- **Placement**: around the image, roughly aligned with the target UI element on the screenshot so the arrow reads naturally:
-  - Features in the top area of the screen → post-its above the image (\`y ≈ -320\` to \`-400\`)
-  - Features in the bottom area → below (\`y ≈ 320\` to \`400\`)
-  - Left sidebar features → left column (\`x ≈ -560\`, spread on y)
-  - Right-side features → right column (\`x ≈ 560\`, spread on y)
-- Spread x positions by \`240\` steps, y positions by \`160\` steps. All positions are multiples of 40.
+**B. Zone overlays** (one per zone, \`locked\`, translucent):
+\`\`\`json
+{ "type": "box", "name": "", "color": "<zone color>",
+  "bgOpacity": 0.18, "locked": true,
+  "width": <zoneW>, "height": <zoneH>,
+  "x": <zoneCenterX>, "y": <zoneCenterY> }
+\`\`\`
+
+**C. Zone labels** (one post-it per zone, **same color as the zone**):
+\`\`\`json
+{ "type": "post-it", "name": "<zone name>", "color": "<zone color>",
+  "x": <inside zone>, "y": <inside zone>, "locked": true }
+\`\`\`
+
+**D. Feature callouts** (one post-it per feature, placed **outside** the screenshot):
+\`\`\`json
+{ "type": "post-it", "name": "<feature name>",
+  "color": "<c-amber for interactive, distinct non-yellow for differentiating>",
+  "x": <outside screenshot>, "y": <outside screenshot> }
+\`\`\`
+Spread them in horizontal bands above/below the image and/or vertical columns left/right of it. Keep callouts close to their target so the arrow reads naturally.
+
+**E. Anchors** (one per feature callout, placed on the target pixel — 8×8, invisible at rest):
+\`\`\`json
+{ "type": "anchor", "name": "a1", "color": "c-gray",
+  "x": <target pixel x>, "y": <target pixel y> }
+\`\`\`
+Use short unique names (\`a1\`, \`a2\`, …) — anchors are invisible so the label does not matter.
 
 ### Edges
 
-- One directed edge **per post-it**, \`from: "<post-it name>"\` → \`to: "screenshot"\`.
-- \`label\`: leave empty. The arrow alone points to the UI element. Screen-guide edges are exempt from the "must have label" warning.
+For each feature callout, emit one directed edge from the post-it to its anchor, with an **empty** label:
+\`\`\`json
+{ "from": "<post-it name>", "to": "a1", "label": "" }
+\`\`\`
 
-## Step 5 — Call \`create_diagram\`
+If you do not know exact target coordinates, you may omit the anchor and the \`to\` field — the edge renders a free-end arrow the user can drag:
+\`\`\`json
+{ "from": "<post-it name>", "label": "" }
+\`\`\`
+
+**Prefer anchors.** The free-end fallback is a shortcut when pixel targets are unknown.
+
+**Never** point edges at the image node itself — every arrow would converge on the image centre.
+
+## Step 6 — Call \`create_diagram\`
 
 \`\`\`json
 {
   "diagramType": "screen-guide",
   "userRequestedExplicitly": true,
   "title": "Screen guide — <screen name>",
-  "nodes": [ /* image + post-its */ ],
-  "edges": [ /* one post-it → screenshot per feature */ ]
+  "nodes": [ /* image + zone boxes + zone labels + feature callouts + anchors */ ],
+  "edges": [ /* one edge per feature callout → its anchor */ ]
 }
 \`\`\`
 `.trim();

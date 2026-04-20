@@ -321,6 +321,7 @@
   "diagram.node_panel.lock": "Lock shape",
   "diagram.node_panel.edit_label": "Edit text (double-click)",
   "diagram.node_panel.edit_link": "Add / edit link",
+  "diagram.node_panel.bg_opacity": "Background opacity",
   "diagram.node_panel.font_decrease": "Decrease font size",
   "diagram.node_panel.font_increase": "Increase font size",
   "diagram.node_panel.align_left": "Align left",

@@ -3,7 +3,7 @@
 
 import { st, markDirty }      from './state.js';
 import { TOOL_BTN_MAP }       from './constants.js';
-import { showNodePanel, hideNodePanel, setNodeColor, changeNodeFontSize, setTextAlign, setTextValign, changeZOrder, activateStamp, cancelStamp, stepRotate, toggleNodeLock } from './node-panel.js';
+import { showNodePanel, hideNodePanel, setNodeColor, setNodeBgOpacity, changeNodeFontSize, setTextAlign, setTextValign, changeZOrder, activateStamp, cancelStamp, stepRotate, toggleNodeLock } from './node-panel.js';
 import { groupNodes, ungroupNodes } from './groups.js';
 import { showLinkPanel, hideLinkPanel } from './link-panel.js';
 import { hideEdgePanel, setEdgeArrow, setEdgeDashes, changeEdgeFontSize, stepEdgeLabelRotation, clearEdgePorts, setEdgeColor, changeEdgeWidth, toggleEdgeLock, resetEdgeLabelWidth, stepEdgeLabelOffset, resetEdgeLabelOffset } from './edge-panel.js';
@@ -155,6 +155,12 @@ document.getElementById('btnNodeLink').addEventListener('click', () => {
 });
 document.getElementById('btnNodeFontDecrease').addEventListener('click', () => changeNodeFontSize(-1));
 document.getElementById('btnNodeFontIncrease').addEventListener('click', () => changeNodeFontSize(1));
+{
+  const opSlider = document.getElementById('nodeBgOpacity');
+  // Snapshot once at gesture start so the whole drag is one undoable step.
+  opSlider.addEventListener('pointerdown', () => { if (st.selectedNodeIds.length) pushSnapshot(); });
+  opSlider.addEventListener('input', (e) => setNodeBgOpacity(Number(e.target.value) / 100));
+}
 document.getElementById('btnAlignLeft').addEventListener('click',   () => setTextAlign('left'));
 document.getElementById('btnAlignCenter').addEventListener('click', () => setTextAlign('center'));
 document.getElementById('btnAlignRight').addEventListener('click',  () => setTextAlign('right'));

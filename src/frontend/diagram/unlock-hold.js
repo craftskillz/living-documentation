@@ -8,7 +8,7 @@
 import { st, markDirty } from './state.js';
 import { pushSnapshot }  from './history.js';
 
-const UNLOCK_HOLD_MS       = 3000;
+const UNLOCK_HOLD_MS       = 2000;
 const UNLOCK_MOVE_TOLERANCE = 8; // px
 
 let _hold = null;
@@ -150,7 +150,7 @@ function onUp() {
 }
 
 // Attaches the capture-phase mousedown handler that intercepts clicks on
-// locked targets and starts the 3-second unlock hold.
+// locked targets and starts the long-press unlock hold.
 export function installUnlockHold(container) {
   container.addEventListener('mousedown', (e) => {
     if (e.button !== 0) return;

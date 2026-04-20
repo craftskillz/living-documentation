@@ -13,7 +13,7 @@ interface StoredNode {
 interface StoredEdge {
   id: string;
   from: string;
-  to: string;
+  to?: string;
   label?: string;
   [key: string]: unknown;
 }
@@ -80,6 +80,7 @@ const SHAPE_MAP: Record<string, { shape: string; shapeType: string }> = {
   text:        { shape: 'custom',   shapeType: 'text-free' },
   image:       { shape: 'custom',   shapeType: 'image'     },
   screenshot:  { shape: 'custom',   shapeType: 'image'     },
+  anchor:      { shape: 'custom',   shapeType: 'anchor'    },
 };
 
 // Maps short color names → colorKey values from constants.js
@@ -144,8 +145,8 @@ export function toolReadDiagram(docsPath: string, args: { id: string }) {
   }));
 
   const edges = diagram.edges.map(e => ({
-    from:  idToLabel[e.from] ?? e.from,
-    to:    idToLabel[e.to]   ?? e.to,
+    from: idToLabel[e.from] ?? e.from,
+    ...(e.to !== undefined ? { to: idToLabel[e.to] ?? e.to } : {}),
     ...(e.label ? { label: e.label } : {}),
   }));
 
@@ -166,8 +167,20 @@ export function toolCreateDiagram(docsPath: string, args: {
   title: string;
   diagramType?: string;
   userRequestedExplicitly?: boolean;
-  nodes: Array<{ name: string; type: string; color?: string; x?: number; y?: number; linkedDiagramId?: string; imageSrc?: string }>;
-  edges: Array<{ from: string; to: string; label?: string }>;
+  nodes: Array<{
+    name: string;
+    type: string;
+    color?: string;
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
+    bgOpacity?: number;
+    locked?: boolean;
+    linkedDiagramId?: string;
+    imageSrc?: string;
+  }>;
+  edges: Array<{ from: string; to?: string; label?: string }>;
 }) {
   const diagramType = (args.diagramType ?? '').toLowerCase();
   if (!diagramType) {
@@ -205,7 +218,9 @@ export function toolCreateDiagram(docsPath: string, args: {
         `Upload the image via POST /api/images/upload and pass the returned URL (e.g. "/images/foo.png").`,
       );
     }
-    const { nodeWidth, nodeHeight } = estimateNodeSize(n.name, shapeInfo.shapeType);
+    const estimated = estimateNodeSize(n.name, shapeInfo.shapeType);
+    const nodeWidth  = n.width  ?? estimated.nodeWidth;
+    const nodeHeight = n.height ?? estimated.nodeHeight;
     const node: StoredNode = {
       id: nodeId,
       label: n.name,
@@ -217,6 +232,8 @@ export function toolCreateDiagram(docsPath: string, args: {
     };
     if (n.x !== undefined) node.x = n.x;
     if (n.y !== undefined) node.y = n.y;
+    if (n.bgOpacity !== undefined) node.bgOpacity = n.bgOpacity;
+    if (n.locked !== undefined) node.locked = n.locked;
     if (n.linkedDiagramId) node.nodeLink = { type: 'diagram', value: n.linkedDiagramId };
     if (n.imageSrc) node.imageSrc = n.imageSrc;
     return node;
@@ -224,10 +241,15 @@ export function toolCreateDiagram(docsPath: string, args: {
 
   const edges: StoredEdge[] = args.edges.map((e, i) => {
     const fromId = nameToId[e.from];
-    const toId = nameToId[e.to];
     if (!fromId) throw new Error(`Edge references unknown node: "${e.from}"`);
-    if (!toId) throw new Error(`Edge references unknown node: "${e.to}"`);
-    const edge: StoredEdge = { id: `e${i + 1}`, from: fromId, to: toId };
+    const edge: StoredEdge = { id: `e${i + 1}`, from: fromId, to: '' };
+    if (e.to !== undefined && e.to !== '') {
+      const toId = nameToId[e.to];
+      if (!toId) throw new Error(`Edge references unknown node: "${e.to}"`);
+      edge.to = toId;
+    } else {
+      delete (edge as Partial<StoredEdge>).to;
+    }
     if (e.label) {
       edge.label = e.label;
       edge.edgeLabelWidth = 80;
