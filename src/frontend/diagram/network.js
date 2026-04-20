@@ -96,9 +96,14 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
       enabled: false,
       addEdge(data, callback) {
         // Block edges from/to locked nodes or anchors (free-arrow endpoints).
+        // Also block when the target sits below the source in z-order — the
+        // mouseup handler turns that case into a free-arrow endpoint instead.
         const fromNode = st.nodes.get(data.from) || {};
         const toNode   = st.nodes.get(data.to)   || {};
-        if (fromNode.locked || toNode.locked || fromNode.shapeType === 'anchor' || toNode.shapeType === 'anchor') {
+        const fromZ    = st.canonicalOrder.indexOf(data.from);
+        const toZ      = st.canonicalOrder.indexOf(data.to);
+        const toBelow  = fromZ !== -1 && toZ !== -1 && toZ < fromZ;
+        if (fromNode.locked || toNode.locked || fromNode.shapeType === 'anchor' || toNode.shapeType === 'anchor' || toBelow) {
           _addEdgeFromPort = null;
           setTimeout(() => { if (st.currentTool === 'addEdge') st.network.addEdgeMode(); }, 0);
           return;
@@ -161,17 +166,30 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
       // above any intermediate nodes between the two endpoints.
       // Anchor nodes are floating endpoints that must not raise the edge above the
       // real source: for anchor edges, use the non-anchor endpoint's level.
+      // Temp edges (e.g. the ghost drawn by vis-network's addEdgeMode) have one
+      // endpoint that's not in our DataSet (a temp controlNode). Use the real
+      // endpoint's level so the source node still draws on top of the ghost's
+      // centre origin — otherwise the ghost line is visible from the node's
+      // centre instead of appearing to start at its boundary/port.
       const fromData = st.nodes.get(edge.fromId);
       const toData   = st.nodes.get(edge.toId);
       const fromIsAnchor = fromData && fromData.shapeType === 'anchor';
       const toIsAnchor   = toData   && toData.shapeType   === 'anchor';
+      const fromLevel = orderMap.get(edge.fromId);
+      const toLevel   = orderMap.get(edge.toId);
       let level;
-      if (toIsAnchor && !fromIsAnchor) {
-        level = orderMap.get(edge.fromId) ?? 0;
+      if (fromLevel === undefined && toLevel === undefined) {
+        level = 0;
+      } else if (fromLevel === undefined) {
+        level = toLevel;
+      } else if (toLevel === undefined) {
+        level = fromLevel;
+      } else if (toIsAnchor && !fromIsAnchor) {
+        level = fromLevel;
       } else if (fromIsAnchor && !toIsAnchor) {
-        level = orderMap.get(edge.toId) ?? 0;
+        level = toLevel;
       } else {
-        level = Math.min(orderMap.get(edge.fromId) ?? 0, orderMap.get(edge.toId) ?? 0);
+        level = Math.min(fromLevel, toLevel);
       }
       if (!edgesByLevel.has(level)) edgesByLevel.set(level, []);
       edgesByLevel.get(level).push(edge);
@@ -661,8 +679,17 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
     const pos        = { x: e.offsetX, y: e.offsetY };
     const targetId   = st.network.getNodeAt(pos);
     const targetData = targetId && st.nodes.get(targetId);
-    if (targetData && targetData.locked) { _addEdgeFromId = null; return; }
-    if (!targetId) {
+    // Locked targets are non-interactive: treat them exactly like empty canvas
+    // so a free-arrow endpoint is created at the release point — matches the
+    // behaviour of free arrows drawn over a locked shape (Path B).
+    // Also: if the target sits BELOW the source in z-order (e.g. a post-it on
+    // top of a background image), don't bind to it — the user is aiming at a
+    // point on top of the source's layer, not at the underlying shape.
+    const targetLocked = !!(targetData && targetData.locked);
+    const sourceZ      = st.canonicalOrder.indexOf(_addEdgeFromId);
+    const targetZ      = targetId ? st.canonicalOrder.indexOf(targetId) : -1;
+    const targetBelow  = targetId && sourceZ !== -1 && targetZ !== -1 && targetZ < sourceZ;
+    if (!targetId || targetLocked || targetBelow) {
       pushSnapshot();
       const cp       = st.network.DOMtoCanvas(pos);
       const anchorId = 'a' + Date.now();
