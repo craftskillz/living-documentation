@@ -5,7 +5,8 @@
       "mcp__living-documentation__read_document",
       "mcp__living-documentation__create_diagram",
       "Bash(ls /Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/adrs/*.md)",
-      "Bash(xargs -I{} sh -c 'echo \"=== {} ===\" && head -6 {}')"
+      "Bash(xargs -I{} sh -c 'echo \"=== {} ===\" && head -6 {}')",
+      "mcp__living-documentation__list_documents"
     ]
   }
 }

@@ -71,11 +71,12 @@ const TOOLS = [
           items: {
             type: 'object',
             properties: {
-              name:  { type: 'string', description: 'Node label shown in the diagram' },
-              type:  { type: 'string', description: 'Shape type: box | actor | database | ellipse | circle | post-it' },
-              color: { type: 'string', description: 'Color key, e.g. c-blue or just "blue"' },
-              x:     { type: 'number', description: 'Canvas X position (0 = center). Use multiples of 40 for grid alignment.' },
-              y:     { type: 'number', description: 'Canvas Y position (0 = center, positive = down). Use multiples of 40.' },
+              name:            { type: 'string', description: 'Node label shown in the diagram' },
+              type:            { type: 'string', description: 'Shape type: box | actor | database | ellipse | circle | post-it' },
+              color:           { type: 'string', description: 'Color key, e.g. c-blue or just "blue"' },
+              x:               { type: 'number', description: 'Canvas X position (0 = center). Use multiples of 40 for grid alignment.' },
+              y:               { type: 'number', description: 'Canvas Y position (0 = center, positive = down). Use multiples of 40.' },
+              linkedDiagramId: { type: 'string', description: 'Optional: id of another diagram to navigate to when clicking this node.' },
             },
             required: ['name', 'type'],
           },
@@ -153,6 +154,23 @@ Examples:
 
 Types to use: \`[Person]\`, \`[Software System]\`, \`[External System]\`, \`[Database]\`, \`[Device]\`
 Keep descriptions short — 1 to 2 lines maximum.
+
+## Linked diagrams — C4 drill-down
+
+Any node can link to another diagram so the user can navigate from a high-level view into a more detailed one (e.g. Context → Container → Component).
+
+**Workflow:**
+1. Call \`list_diagrams\` — the child diagram may already exist.
+2. If it does not exist, create the child diagram first (e.g. a Container diagram for a system) and note its returned \`id\`.
+3. In the parent diagram, add \`linkedDiagramId: "<child-id>"\` on the corresponding node.
+
+Clicking the node in the editor will then navigate directly to the linked diagram.
+
+**Typical C4 drill-down chain:**
+- Context diagram → click \`[Software System]\` → Container diagram
+- Container diagram → click \`[Container]\` → Component diagram
+
+Only add \`linkedDiagramId\` when a meaningful child diagram exists or has just been created.
 `.trim();
 
 const PROMPT_TEMPLATES: Record<PromptName, string> = {
@@ -333,7 +351,7 @@ function createMcpServer(docsPath: string): Server {
         case 'create_diagram':
           return toolCreateDiagram(docsPath, args as {
             title: string;
-            nodes: Array<{ name: string; type: string; color?: string }>;
+            nodes: Array<{ name: string; type: string; color?: string; x?: number; y?: number; linkedDiagramId?: string }>;
             edges: Array<{ from: string; to: string; label?: string }>;
           });
         default:

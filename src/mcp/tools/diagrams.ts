@@ -46,8 +46,12 @@ function estimateNodeSize(label: string, shapeType: string): { nodeWidth: number
   const rawH = Math.max(40,  lineCount * LINE_H + H_PAD);
 
   // Round to nearest 8px for a tidier look
-  const nodeWidth  = Math.round(rawW / 8) * 8;
-  const nodeHeight = Math.round(rawH / 8) * 8;
+  const nodeWidth = Math.round(rawW / 8) * 8;
+
+  // Database caps consume ≈ H×0.12 at each end (ry = max(H×0.12, 6) in node-rendering.js).
+  // Divide by 0.76 so the body area fits the required text height.
+  const rawHFinal = shapeType === 'database' ? rawH / (1 - 0.24) : rawH;
+  const nodeHeight = Math.round(rawHFinal / 8) * 8;
 
   return { nodeWidth, nodeHeight };
 }
@@ -117,7 +121,7 @@ export function toolListDiagrams(docsPath: string) {
 
 export function toolCreateDiagram(docsPath: string, args: {
   title: string;
-  nodes: Array<{ name: string; type: string; color?: string; x?: number; y?: number }>;
+  nodes: Array<{ name: string; type: string; color?: string; x?: number; y?: number; linkedDiagramId?: string }>;
   edges: Array<{ from: string; to: string; label?: string }>;
 }) {
   const id = `d${Date.now()}`;
@@ -141,6 +145,7 @@ export function toolCreateDiagram(docsPath: string, args: {
     };
     if (n.x !== undefined) node.x = n.x;
     if (n.y !== undefined) node.y = n.y;
+    if (n.linkedDiagramId) node.nodeLink = { type: 'diagram', value: n.linkedDiagramId };
     return node;
   });
 
@@ -150,7 +155,10 @@ export function toolCreateDiagram(docsPath: string, args: {
     if (!fromId) throw new Error(`Edge references unknown node: "${e.from}"`);
     if (!toId) throw new Error(`Edge references unknown node: "${e.to}"`);
     const edge: StoredEdge = { id: `e${i + 1}`, from: fromId, to: toId };
-    if (e.label) edge.label = e.label;
+    if (e.label) {
+      edge.label = e.label;
+      edge.edgeLabelWidth = 80;
+    }
     return edge;
   });
 

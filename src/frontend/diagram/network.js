@@ -20,7 +20,7 @@ import { drawDebugOverlay }    from './debug.js';
 import { updateZoomDisplay }   from './zoom.js';
 import { expandSelectionToGroup, drawGroupOutlines } from './groups.js';
 import { navigateNodeLink, hideLinkPanel }           from './link-panel.js';
-import { getNearestPort, drawPortDots, drawPortEdge, distanceToPortEdge, wrapText } from './ports.js';
+import { getNearestPort, getPortPosition, drawPortDots, drawPortEdge, distanceToPortEdge, wrapText } from './ports.js';
 import { getLastFreeArrowStyle } from './edge-panel.js';
 import { getLastNodeStyle } from './node-panel.js';
 
@@ -29,6 +29,19 @@ import { getLastNodeStyle } from './node-panel.js';
 let _hoveredPortNodeId = null;
 let _hoveredPortKey    = null;
 let _draggingAnchorIds = new Set();
+// Rehook state: tracks which port is hovered while a port edge is selected.
+let _rehookEdgeId      = null;
+let _rehookHoveredNodeId  = null;
+let _rehookHoveredPortKey = null;
+
+// Returns true when an edge can enter rehook mode (at least one non-anchor endpoint).
+// Works for both port edges and native vis-network edges.
+function isRehookable(edgeData) {
+  if (!edgeData) return false;
+  const fromNode = st.nodes.get(edgeData.from);
+  const toNode   = st.nodes.get(edgeData.to);
+  return !!(fromNode && fromNode.shapeType !== 'anchor') || !!(toNode && toNode.shapeType !== 'anchor');
+}
 
 export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
   const container = document.getElementById('vis-canvas');
@@ -279,6 +292,21 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
     if (_hoveredPortNodeId && (st.currentTool === 'addEdge' || _draggingAnchorIds.size > 0)) {
       drawPortDots(ctx, _hoveredPortNodeId, _hoveredPortKey);
     }
+    // Rehook: show port dots on both endpoints of the selected port edge so
+    // the user can click a different port to reconnect that end of the arrow.
+    if (_rehookEdgeId && st.currentTool !== 'addEdge' && _draggingAnchorIds.size === 0) {
+      const edgeData = st.edges.get(_rehookEdgeId);
+      if (isRehookable(edgeData)) {
+        const fromNode = st.nodes.get(edgeData.from);
+        if (fromNode && fromNode.shapeType !== 'anchor') {
+          drawPortDots(ctx, edgeData.from, _rehookHoveredNodeId === edgeData.from ? _rehookHoveredPortKey : null);
+        }
+        const toNode = st.nodes.get(edgeData.to);
+        if (toNode && toNode.shapeType !== 'anchor') {
+          drawPortDots(ctx, edgeData.to, _rehookHoveredNodeId === edgeData.to ? _rehookHoveredPortKey : null);
+        }
+      }
+    }
   });
   // Two-click free-arrow: draw an orange dot at the pending first-click origin.
   st.network.on('afterDrawing', (ctx) => {
@@ -510,6 +538,46 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
     if (newPortNodeId !== _hoveredPortNodeId || newPortKey !== _hoveredPortKey) {
       _hoveredPortNodeId = newPortNodeId;
       _hoveredPortKey    = newPortKey;
+      st.network.redraw();
+    }
+  });
+
+  // Rehook hover: track the nearest port on the from/to nodes of the selected port edge.
+  visCanvas.addEventListener('mousemove', (e) => {
+    if (!st.network || st.currentTool === 'addEdge' || _draggingAnchorIds.size > 0) return;
+    const selectedEdge = st.selectedEdgeIds.length === 1 ? st.edges.get(st.selectedEdgeIds[0]) : null;
+    if (!isRehookable(selectedEdge)) {
+      if (_rehookEdgeId !== null) {
+        _rehookEdgeId = _rehookHoveredNodeId = _rehookHoveredPortKey = null;
+        st.network.redraw();
+      }
+      return;
+    }
+
+    _rehookEdgeId = selectedEdge.id;
+    const cp = st.network.DOMtoCanvas({ x: e.offsetX, y: e.offsetY });
+    const REHOOK_THRESHOLD = 15; // world units
+    let newNodeId   = null;
+    let newPortKey  = null;
+    let closestDist = Infinity;
+
+    for (const nodeId of [selectedEdge.from, selectedEdge.to]) {
+      const nodeData = st.nodes.get(nodeId);
+      if (!nodeData || nodeData.shapeType === 'anchor') continue;
+      const portKey = getNearestPort(nodeId, cp);
+      const portPos = getPortPosition(nodeId, portKey);
+      if (!portPos) continue;
+      const dist = Math.hypot(cp.x - portPos.x, cp.y - portPos.y);
+      if (dist <= REHOOK_THRESHOLD && dist < closestDist) {
+        closestDist = dist;
+        newNodeId  = nodeId;
+        newPortKey = portKey;
+      }
+    }
+
+    if (newNodeId !== _rehookHoveredNodeId || newPortKey !== _rehookHoveredPortKey) {
+      _rehookHoveredNodeId  = newNodeId;
+      _rehookHoveredPortKey = newPortKey;
       st.network.redraw();
     }
   });
@@ -1034,6 +1102,37 @@ function onClickNode(params) {
     return;
   }
 
+  // ── Edge rehook ──────────────────────────────────────────────────────────────
+  // When a port edge is selected and the user clicks a port dot on one of its
+  // endpoint nodes, reconnect that end to the new port without losing selection.
+  if (_rehookEdgeId && _rehookHoveredNodeId && _rehookHoveredPortKey) {
+    const edgeData = st.edges.get(_rehookEdgeId);
+    if (edgeData && (edgeData.from === _rehookHoveredNodeId || edgeData.to === _rehookHoveredNodeId)) {
+      const wasPortEdge = !!(edgeData.fromPort || edgeData.toPort);
+      const update = { id: edgeData.id };
+      if (edgeData.from === _rehookHoveredNodeId) update.fromPort = _rehookHoveredPortKey;
+      else                                         update.toPort   = _rehookHoveredPortKey;
+      // First port assigned on a native edge: hide vis-network's rendering so
+      // drawPortEdge() takes over without double-rendering.
+      if (!wasPortEdge) {
+        update.color  = { color: 'rgba(0,0,0,0)', highlight: 'rgba(0,0,0,0)', hover: 'rgba(0,0,0,0)' };
+        update.arrows = { to: { enabled: false }, from: { enabled: false } };
+      }
+      st.edges.update(update);
+      pushSnapshot();
+      markDirty();
+      const edgeId = edgeData.id;
+      _rehookHoveredNodeId = _rehookHoveredPortKey = null;
+      setTimeout(() => {
+        st.network.setSelection({ nodes: [], edges: [edgeId] });
+        st.selectedEdgeIds = [edgeId];
+        st.selectedNodeIds = [];
+        showEdgePanel();
+      }, 0);
+      return;
+    }
+  }
+
   // When a node is reported, params.edges is always empty — vis-network short-circuits
   // edge detection once a node is found. Fix: call getEdgeAt() directly with CLIENT
   // coordinates. params.pointer.DOM is already offset-relative to the container, so
@@ -1058,6 +1157,9 @@ function onClickNode(params) {
         st.network.setSelection(sel);
         st.selectedNodeIds = sel.nodes;
         st.selectedEdgeIds = [edgeId];
+        const e2 = st.edges.get(edgeId);
+        _rehookEdgeId = isRehookable(e2) ? edgeId : null;
+        _rehookHoveredNodeId = _rehookHoveredPortKey = null;
         hideNodePanel();
         showEdgePanel();
       }, 0);
@@ -1076,6 +1178,9 @@ function onClickNode(params) {
           st.network.setSelection({ nodes: [], edges: [fallbackEdgeId] });
           st.selectedNodeIds = [];
           st.selectedEdgeIds = [fallbackEdgeId];
+          const fe = st.edges.get(fallbackEdgeId);
+          _rehookEdgeId = isRehookable(fe) ? fallbackEdgeId : null;
+          _rehookHoveredNodeId = _rehookHoveredPortKey = null;
           hideNodePanel();
           showEdgePanel();
         }, 0);
@@ -1105,10 +1210,15 @@ function onClickNode(params) {
       st.network.selectEdges([nearest.id]);
       st.selectedEdgeIds = [nearest.id];
       st.selectedNodeIds = [];
+      _rehookEdgeId = nearest.id;
+      _rehookHoveredNodeId = _rehookHoveredPortKey = null;
       hideNodePanel();
       showEdgePanel();
+      return;
     }
   }
+  // Click landed on empty space (no node, no edge, no rehook) — clear stale rehook state.
+  _rehookEdgeId = _rehookHoveredNodeId = _rehookHoveredPortKey = null;
 }
 
 // Expand group selection at dragStart so vis-network moves all members together.
@@ -1170,6 +1280,10 @@ function onSelectNode(params) {
 function onSelectEdge(params) {
   if (st.selectedNodeIds.length > 0) return; // node takes priority
   st.selectedEdgeIds = params.edges;
+  // Activate rehook mode for any edge with at least one non-anchor endpoint.
+  const singleEdge = params.edges.length === 1 ? st.edges.get(params.edges[0]) : null;
+  _rehookEdgeId = isRehookable(singleEdge) ? singleEdge.id : null;
+  _rehookHoveredNodeId = _rehookHoveredPortKey = null;
 
   // For free arrows (anchor→anchor edges), also select both endpoint anchors
   // so the user can drag the whole arrow as a unit via multi-node drag.
@@ -1197,6 +1311,10 @@ function onDeselectAll() {
   hideLinkPanel();
   st.selectedNodeIds = [];
   st.selectedEdgeIds = [];
+  // Rehook state is intentionally NOT cleared here: vis-network fires deselectEdge
+  // before the click event when the user clicks a port dot on a node, so clearing
+  // here would destroy the state that onClickNode needs to process the rehook.
+  // The mousemove handler clears it naturally once the edge is no longer selected.
   hideNodePanel();
   hideEdgePanel();
   commitLabelEdit();
