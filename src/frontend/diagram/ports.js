@@ -254,6 +254,11 @@ export function drawPortEdge(ctx, edgeData) {
     ? bezierAt(fromPos, cp1, cp2, toPos, 0.5)
     : { x: (fromPos.x + toPos.x) / 2, y: (fromPos.y + toPos.y) / 2 };
 
+  const ox = edgeData.edgeLabelOffsetX || 0;
+  const oy = edgeData.edgeLabelOffsetY || 0;
+  const lx = mid.x + ox;
+  const ly = mid.y + oy;
+
   // Store the DOM position using the canvas transform — same matrix used to
   // draw the label, so it's pixel-perfect for the textarea positioning.
   {
@@ -264,8 +269,8 @@ export function drawPortEdge(ctx, edgeData) {
     const canvasRect    = canvasEl.getBoundingClientRect();
     const containerRect = container.getBoundingClientRect();
     st.edgeLabelCanvasPos[edgeData.id] = {
-      x: (m.a * mid.x + m.e) / dpr + (canvasRect.left - containerRect.left),
-      y: (m.d * mid.y + m.f) / dpr + (canvasRect.top  - containerRect.top),
+      x: (m.a * lx + m.e) / dpr + (canvasRect.left - containerRect.left),
+      y: (m.d * ly + m.f) / dpr + (canvasRect.top  - containerRect.top),
     };
   }
 
@@ -276,7 +281,7 @@ export function drawPortEdge(ctx, edgeData) {
     const PAD_X = 6, PAD_Y = 4;
 
     ctx.save();
-    ctx.translate(mid.x, mid.y);
+    ctx.translate(lx, ly);
     if (edgeData.labelRotation && Math.abs(edgeData.labelRotation) > 0.001) {
       ctx.rotate(edgeData.labelRotation);
     }
@@ -291,7 +296,7 @@ export function drawPortEdge(ctx, edgeData) {
 
     // Always store bbox (needed for resize handles, even when not selected)
     st.edgeLabelBBox[edgeData.id] = {
-      cx: mid.x, cy: mid.y,
+      cx: lx, cy: ly,
       w: boxW, h: boxH,
       rotation: edgeData.labelRotation || 0,
     };

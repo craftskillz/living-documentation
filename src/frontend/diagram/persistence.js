@@ -140,6 +140,7 @@ export async function saveDiagram() {
     label: e.label || '', arrowDir: e.arrowDir || 'to',
     dashes: e.dashes || false, fontSize: e.fontSize || null,
     labelRotation: e.labelRotation || 0,
+    edgeLabelOffsetX: e.edgeLabelOffsetX || 0, edgeLabelOffsetY: e.edgeLabelOffsetY || 0,
     fromPort: e.fromPort || null, toPort: e.toPort || null,
     edgeColor: e.edgeColor || null, edgeWidth: e.edgeWidth || null,
     edgeLocked: e.edgeLocked || false, edgeLabelWidth: e.edgeLabelWidth || null,

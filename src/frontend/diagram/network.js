@@ -845,9 +845,14 @@ function drawEdgeLabels(ctx) {
       my = (fp.y + tp.y) / 2;
     }
 
+    const ox = e.edgeLabelOffsetX || 0;
+    const oy = e.edgeLabelOffsetY || 0;
+    const lx = mx + ox;
+    const ly = my + oy;
+
     st.edgeLabelCanvasPos[e.id] = {
-      x: (m.a * mx + m.e) / dpr + offsetX,
-      y: (m.d * my + m.f) / dpr + offsetY,
+      x: (m.a * lx + m.e) / dpr + offsetX,
+      y: (m.d * ly + m.f) / dpr + offsetY,
     };
 
     // Only draw the label text for edges that have one.
@@ -858,7 +863,7 @@ function drawEdgeLabels(ctx) {
     const PAD_X = 6, PAD_Y = 4;
 
     ctx.save();
-    ctx.translate(mx, my);
+    ctx.translate(lx, ly);
     if (e.labelRotation && Math.abs(e.labelRotation) > 0.001) {
       ctx.rotate(e.labelRotation);
     }
@@ -873,7 +878,7 @@ function drawEdgeLabels(ctx) {
 
     // Always store bbox (needed for resize handles, even when not selected)
     st.edgeLabelBBox[e.id] = {
-      cx: mx, cy: my,
+      cx: lx, cy: ly,
       w: boxW, h: boxH,
       rotation: e.labelRotation || 0,
     };

@@ -241,3 +241,31 @@ export function stepEdgeLabelRotation(delta) {
   });
   markDirty();
 }
+
+const LABEL_OFFSET_STEP = 5;
+
+export function stepEdgeLabelOffset(dx, dy) {
+  if (!st.selectedEdgeIds.length) return;
+  pushSnapshot();
+  st.selectedEdgeIds.forEach((id) => {
+    const e = st.edges.get(id);
+    if (!e) return;
+    st.edges.update({
+      id,
+      edgeLabelOffsetX: (e.edgeLabelOffsetX || 0) + dx * LABEL_OFFSET_STEP,
+      edgeLabelOffsetY: (e.edgeLabelOffsetY || 0) + dy * LABEL_OFFSET_STEP,
+    });
+  });
+  if (st.network) st.network.redraw();
+  markDirty();
+}
+
+export function resetEdgeLabelOffset() {
+  if (!st.selectedEdgeIds.length) return;
+  pushSnapshot();
+  st.selectedEdgeIds.forEach((id) => {
+    st.edges.update({ id, edgeLabelOffsetX: 0, edgeLabelOffsetY: 0 });
+  });
+  if (st.network) st.network.redraw();
+  markDirty();
+}
