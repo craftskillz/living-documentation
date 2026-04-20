@@ -332,8 +332,10 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
   // hit-detection — this avoids a race with vis-network's capture-phase handlers
   // which may run first and alter selection state before our mousedown fires.
   {
-    let _lr          = null; // active resize: { edgeId, bboxCx, bboxCy, rotation }
-    let _hoverHandle = null; // { edgeId, bboxCx, bboxCy, rotation } | null
+    let _lr             = null; // active resize: { edgeId, bboxCx, bboxCy, rotation }
+    let _hoverHandle    = null; // { edgeId, bboxCx, bboxCy, rotation } | null
+    let _ld             = null; // active label drag: { edgeId, startMouse, startOffsetX, startOffsetY, dragging }
+    let _hoverLabelDrag = null; // { edgeId } | null
 
     // Draw handles for the selected edge label.
     st.network.on('afterDrawing', (ctx) => {
@@ -359,12 +361,13 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
       ctx.restore();
     });
 
-    // Track handle hover during mousemove — computed before any mousedown fires.
+    // Track hover during mousemove — computed before any mousedown fires.
     container.addEventListener('mousemove', (e) => {
       if (!st.network || !st.edgeLabelBBox) return;
-      const cp    = st.network.DOMtoCanvas({ x: e.offsetX, y: e.offsetY });
-      const hr    = 8 / st.network.getScale();
+      const cp = st.network.DOMtoCanvas({ x: e.offsetX, y: e.offsetY });
+      const hr = 8 / st.network.getScale();
 
+      // ── Resize handle detection ──────────────────────────────────────────────
       let found = null;
       for (const edgeId of (st.selectedEdgeIds || [])) {
         const edge = st.edges && st.edges.get(edgeId);
@@ -382,46 +385,97 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
           break;
         }
       }
-
       if (Boolean(found) !== Boolean(_hoverHandle)) {
-        container.style.cursor = found ? 'ew-resize' : '';
+        container.style.cursor = found ? 'ew-resize' : (_hoverLabelDrag ? 'grab' : '');
       }
       _hoverHandle = found;
+
+      // ── Label box hover detection (drag) — only when no handle hovered ───────
+      let labelFound = null;
+      if (!found && st.selectedEdgeIds && st.selectedEdgeIds.length === 1) {
+        const edgeId = st.selectedEdgeIds[0];
+        const edge = st.edges && st.edges.get(edgeId);
+        if (edge && edge.label) {
+          const bbox = st.edgeLabelBBox && st.edgeLabelBBox[edgeId];
+          if (bbox) {
+            const r  = -(bbox.rotation || 0);
+            const dx = cp.x - bbox.cx, dy = cp.y - bbox.cy;
+            const lx = dx * Math.cos(r) - dy * Math.sin(r);
+            const ly = dx * Math.sin(r) + dy * Math.cos(r);
+            if (Math.abs(lx) <= bbox.w / 2 && Math.abs(ly) <= bbox.h / 2) {
+              labelFound = { edgeId };
+            }
+          }
+        }
+      }
+      if (Boolean(labelFound) !== Boolean(_hoverLabelDrag)) {
+        if (!found) container.style.cursor = labelFound ? 'grab' : '';
+      }
+      _hoverLabelDrag = labelFound;
     });
 
-    // Mousedown: start resize if a handle is hovered.
-    // Do NOT stopPropagation — vis-network has capture handlers registered before ours.
-    // Instead, disable dragView immediately (panning only starts on mousemove, so
-    // setting it here prevents any canvas movement before the first mousemove fires).
+    // Mousedown: start resize (handles take priority) or label drag.
     container.addEventListener('mousedown', (e) => {
-      if (e.button !== 0 || !_hoverHandle) return;
-      _lr = { ..._hoverHandle, dragging: false };
-      st.network.setOptions({ interaction: { dragView: false } });
+      if (e.button !== 0) return;
+      if (_hoverHandle) {
+        _lr = { ..._hoverHandle, dragging: false };
+        st.network.setOptions({ interaction: { dragView: false } });
+      } else if (_hoverLabelDrag) {
+        const edge = st.edges && st.edges.get(_hoverLabelDrag.edgeId);
+        if (!edge) return;
+        _ld = {
+          edgeId: _hoverLabelDrag.edgeId,
+          startMouse: { x: e.clientX, y: e.clientY },
+          startOffsetX: edge.edgeLabelOffsetX || 0,
+          startOffsetY: edge.edgeLabelOffsetY || 0,
+          dragging: false,
+        };
+        st.network.setOptions({ interaction: { dragView: false } });
+      }
     }, { capture: true });
 
-    // Update width while dragging.
+    // Update width (resize) or offset (label drag) while dragging.
     document.addEventListener('mousemove', (e) => {
-      if (!_lr || !st.network) return;
-      if (!_lr.dragging) {
-        _lr.dragging = true;
-        pushSnapshot();
+      if (!st.network) return;
+      if (_lr) {
+        if (!_lr.dragging) { _lr.dragging = true; pushSnapshot(); }
+        const rect = container.getBoundingClientRect();
+        const cp   = st.network.DOMtoCanvas({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+        const r    = -_lr.rotation;
+        const dx   = cp.x - _lr.bboxCx, dy = cp.y - _lr.bboxCy;
+        const lx   = dx * Math.cos(r) - dy * Math.sin(r);
+        st.edges.update({ id: _lr.edgeId, edgeLabelWidth: Math.max(40, Math.abs(lx) * 2) });
+        st.network.redraw();
       }
-      const rect = container.getBoundingClientRect();
-      const cp   = st.network.DOMtoCanvas({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-      const r    = -_lr.rotation;
-      const dx   = cp.x - _lr.bboxCx, dy = cp.y - _lr.bboxCy;
-      const lx   = dx * Math.cos(r) - dy * Math.sin(r);
-      st.edges.update({ id: _lr.edgeId, edgeLabelWidth: Math.max(40, Math.abs(lx) * 2) });
-      st.network.redraw();
+      if (_ld) {
+        if (!_ld.dragging) {
+          if (Math.hypot(e.clientX - _ld.startMouse.x, e.clientY - _ld.startMouse.y) < 4) return;
+          _ld.dragging = true;
+          pushSnapshot();
+        }
+        const scale = st.network.getScale();
+        st.edges.update({
+          id: _ld.edgeId,
+          edgeLabelOffsetX: _ld.startOffsetX + (e.clientX - _ld.startMouse.x) / scale,
+          edgeLabelOffsetY: _ld.startOffsetY + (e.clientY - _ld.startMouse.y) / scale,
+        });
+        st.network.redraw();
+      }
     });
 
     // Commit on mouseup.
     document.addEventListener('mouseup', () => {
-      if (!_lr) return;
-      st.network.setOptions({ interaction: { dragView: true } });
-      if (_lr.dragging) markDirty();
-      _lr = null;
-      container.style.cursor = _hoverHandle ? 'ew-resize' : '';
+      if (_lr) {
+        st.network.setOptions({ interaction: { dragView: true } });
+        if (_lr.dragging) markDirty();
+        _lr = null;
+      }
+      if (_ld) {
+        st.network.setOptions({ interaction: { dragView: true } });
+        if (_ld.dragging) markDirty();
+        _ld = null;
+      }
+      container.style.cursor = _hoverHandle ? 'ew-resize' : (_hoverLabelDrag ? 'grab' : '');
     });
   }
 
