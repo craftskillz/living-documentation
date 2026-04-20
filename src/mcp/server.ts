@@ -8,7 +8,7 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { Router, Request, Response } from 'express';
 import { toolListDocuments, toolReadDocument, toolCreateDocument } from './tools/documents';
-import { toolListDiagrams, toolCreateDiagram } from './tools/diagrams';
+import { toolListDiagrams, toolReadDiagram, toolCreateDiagram } from './tools/diagrams';
 
 const TOOLS = [
   {
@@ -51,6 +51,17 @@ const TOOLS = [
     inputSchema: { type: 'object', properties: {} },
   },
   {
+    name: 'read_diagram',
+    description: 'Read the nodes and edges of an existing diagram by its id. Returns the diagram in the same format accepted by create_diagram, ready to be modified and passed back.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'Diagram id as returned by list_diagrams' },
+      },
+      required: ['id'],
+    },
+  },
+  {
     name: 'create_diagram',
     description: [
       'Create a new diagram from a high-level description.',
@@ -64,6 +75,7 @@ const TOOLS = [
     inputSchema: {
       type: 'object',
       properties: {
+        id: { type: 'string', description: 'Optional: existing diagram id to overwrite. If omitted, a new diagram is created.' },
         title: { type: 'string', description: 'Diagram title' },
         nodes: {
           type: 'array',
@@ -122,6 +134,10 @@ const PROMPTS = [
     name: 'erd',
     description: 'Entity-Relationship Diagram — entities as boxes, relationships as labeled edges.',
   },
+  {
+    name: 'update-diagrams',
+    description: 'Scan all existing diagrams, compare with current docs, and update outdated ones in place.',
+  },
 ] as const;
 
 type PromptName = typeof PROMPTS[number]['name'];
@@ -155,22 +171,33 @@ Examples:
 Types to use: \`[Person]\`, \`[Software System]\`, \`[External System]\`, \`[Database]\`, \`[Device]\`
 Keep descriptions short — 1 to 2 lines maximum.
 
+## C4 progression — mandatory ordering
+
+C4 diagrams must be created in strict order:
+
+1. **Context first** — the entry point when scanning a project's docs for the first time.
+   It answers: what is the system, who uses it, what external systems does it integrate with?
+2. **Container after** — a drill-down created only when a Context diagram already exists
+   **and** the reader explicitly asks to go deeper into a specific system.
+3. **Component after that** — same rule, only after a Container exists.
+
+**When reading docs for the first time, always create the Context diagram.**
+Never jump to Container or Component as the first diagram for a system.
+
 ## Linked diagrams — C4 drill-down
 
-Any node can link to another diagram so the user can navigate from a high-level view into a more detailed one (e.g. Context → Container → Component).
+Any node can link to an **already-existing** diagram for navigation (e.g. Context → Container → Component).
 
 **Workflow:**
-1. Call \`list_diagrams\` — the child diagram may already exist.
-2. If it does not exist, create the child diagram first (e.g. a Container diagram for a system) and note its returned \`id\`.
-3. In the parent diagram, add \`linkedDiagramId: "<child-id>"\` on the corresponding node.
+1. Call \`list_diagrams\`.
+2. If a relevant child diagram already exists, add \`linkedDiagramId: "<id>"\` on the matching node.
+3. If no child diagram exists, leave \`linkedDiagramId\` unset.
 
-Clicking the node in the editor will then navigate directly to the linked diagram.
+**RULE — never create child diagrams automatically.**
+Container and Component diagrams are only created on explicit user request for a specific scope.
+Do not create them as a side effect of creating a Context diagram.
 
-**Typical C4 drill-down chain:**
-- Context diagram → click \`[Software System]\` → Container diagram
-- Container diagram → click \`[Container]\` → Component diagram
-
-Only add \`linkedDiagramId\` when a meaningful child diagram exists or has just been created.
+Clicking a linked node in the editor navigates directly to the child diagram.
 `.trim();
 
 const PROMPT_TEMPLATES: Record<PromptName, string> = {
@@ -219,6 +246,15 @@ ${PREAMBLE}
 ---
 
 You are about to create a **C4 Container Diagram** following Simon Brown's C4 model.
+
+## ⚠️ Pre-flight check — mandatory before anything else
+
+1. Call \`list_diagrams\`.
+2. If **no C4 Context diagram exists** for the target system → **stop here**.
+   - Inform the user that a Context diagram must be created first.
+   - Create the Context diagram using the \`c4-context\` prompt rules.
+   - Do not create the Container diagram in this session.
+3. Only proceed to the Container diagram if a Context diagram already exists.
 
 ## Step 1 — Answer these questions first (ask the user only if not found in docs)
 
@@ -312,6 +348,71 @@ You are about to create an **Entity-Relationship Diagram**.
 
 ## Step 3 — Call \`create_diagram\` with the result.
 `.trim(),
+
+  'update-diagrams': `
+${PREAMBLE}
+
+---
+
+You are about to **update all existing diagrams** to reflect the current state of the documentation.
+
+## Step 1 — Inventory existing diagrams
+
+1. Call \`list_diagrams\` to get all diagrams with their id and title.
+2. For each diagram, call \`read_diagram\` to load its current nodes and edges.
+
+## Step 2 — Gather current architecture knowledge
+
+1. Call \`list_documents\` to get all documents.
+2. Read the documents that are architecturally significant (ADRs, README, guides with integration or architecture tags).
+3. Ignore any document whose frontmatter contains \`status: SuperSeeded\`.
+
+## Step 3 — Compare and update
+
+For each existing diagram:
+
+1. **Identify the diagram type** from its title and content (Context, Container, Flow, ERD…).
+2. **Compare** its nodes and edges against the current documentation:
+   - Are there new containers, systems, or actors mentioned in the docs that are missing?
+   - Are there nodes that no longer exist or have been renamed?
+   - Are edge labels still accurate?
+3. **If the diagram is up to date** → skip it, report "no changes needed".
+4. **If the diagram needs changes** → call \`create_diagram\` with:
+   - The **same \`id\`** as the existing diagram (this overwrites it in place).
+   - The same title unless a rename is warranted.
+   - The updated nodes and edges, preserving x/y positions of unchanged nodes.
+   - Apply the layout rules of the original diagram type (see below).
+
+## Layout rules by diagram type
+
+### C4 Context
+- Main system: x: 0, y: 0. Type: box. Color: c-blue.
+- Human actors: x: -320, y: 0, spread vertically ±160. Type: actor. Color: c-gray.
+- External systems: x: 320, y: 0, spread vertically ±160. Type: box. Color: c-slate.
+- Datastores: x: 0, y: 240. Type: database. Color: c-teal.
+
+### C4 Container
+- Frontend / Browser: x: -320, y: 0. Type: box. Color: c-sky.
+- API / Backend: x: 0, y: 0. Type: box. Color: c-blue.
+- Database: x: 320, y: 80. Type: database. Color: c-teal.
+- Cache / Queue: x: 320, y: -80. Type: database. Color: c-amber.
+- External actor: x: -560, y: 0. Type: actor. Color: c-gray.
+- External system: x: 0, y: 240. Type: box. Color: c-slate.
+
+### Flow
+- Steps left to right, x spacing 240. All at y: 0 unless branching (y: ±160).
+
+### ERD
+- Entities as boxes in a grid, related entities close together.
+
+All positions must be multiples of 40.
+
+## Step 4 — Report
+
+After processing all diagrams, summarize:
+- Which diagrams were updated and what changed.
+- Which diagrams were skipped (already up to date).
+`.trim(),
 };
 
 function createMcpServer(docsPath: string): Server {
@@ -348,8 +449,11 @@ function createMcpServer(docsPath: string): Server {
           });
         case 'list_diagrams':
           return toolListDiagrams(docsPath);
+        case 'read_diagram':
+          return toolReadDiagram(docsPath, args as { id: string });
         case 'create_diagram':
           return toolCreateDiagram(docsPath, args as {
+            id?: string;
             title: string;
             nodes: Array<{ name: string; type: string; color?: string; x?: number; y?: number; linkedDiagramId?: string }>;
             edges: Array<{ from: string; to: string; label?: string }>;

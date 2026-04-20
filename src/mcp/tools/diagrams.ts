@@ -119,12 +119,44 @@ export function toolListDiagrams(docsPath: string) {
   return { content: [{ type: 'text' as const, text: JSON.stringify(list, null, 2) }] };
 }
 
+export function toolReadDiagram(docsPath: string, args: { id: string }) {
+  const all = loadDiagrams(docsPath);
+  const diagram = all.find(d => d.id === args.id);
+  if (!diagram) throw new Error(`Diagram not found: "${args.id}"`);
+
+  // Build id→label map for edge resolution
+  const idToLabel: Record<string, string> = {};
+  for (const n of diagram.nodes) idToLabel[n.id] = n.label;
+
+  const nodes = diagram.nodes.map(n => ({
+    name:  n.label,
+    type:  n.shapeType,
+    color: n.colorKey,
+    ...(n.x !== undefined ? { x: n.x } : {}),
+    ...(n.y !== undefined ? { y: n.y } : {}),
+  }));
+
+  const edges = diagram.edges.map(e => ({
+    from:  idToLabel[e.from] ?? e.from,
+    to:    idToLabel[e.to]   ?? e.to,
+    ...(e.label ? { label: e.label } : {}),
+  }));
+
+  return {
+    content: [{
+      type: 'text' as const,
+      text: JSON.stringify({ id: diagram.id, title: diagram.title, nodes, edges }, null, 2),
+    }],
+  };
+}
+
 export function toolCreateDiagram(docsPath: string, args: {
+  id?: string;
   title: string;
   nodes: Array<{ name: string; type: string; color?: string; x?: number; y?: number; linkedDiagramId?: string }>;
   edges: Array<{ from: string; to: string; label?: string }>;
 }) {
-  const id = `d${Date.now()}`;
+  const id = args.id ?? `d${Date.now()}`;
 
   // Build name→id map for edge resolution
   const nameToId: Record<string, string> = {};
@@ -164,7 +196,12 @@ export function toolCreateDiagram(docsPath: string, args: {
 
   const diagram: StoredDiagram = { id, title: args.title, nodes, edges };
   const all = loadDiagrams(docsPath);
-  all.push(diagram);
+  const existingIndex = all.findIndex(d => d.id === id);
+  if (existingIndex !== -1) {
+    all[existingIndex] = diagram;
+  } else {
+    all.push(diagram);
+  }
   saveDiagrams(docsPath, all);
 
   return {
