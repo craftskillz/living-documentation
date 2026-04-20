@@ -110,6 +110,15 @@ export function toggleEdgeLock() {
   markDirty();
 }
 
+export function resetEdgeLabelWidth() {
+  if (!st.selectedEdgeIds.length) return;
+  pushSnapshot();
+  st.selectedEdgeIds.forEach((id) => {
+    st.edges.update({ id, edgeLabelWidth: null });
+  });
+  markDirty();
+}
+
 export function clearEdgePorts() {
   if (!st.selectedEdgeIds.length) return;
   pushSnapshot();

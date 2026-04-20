@@ -358,6 +358,7 @@
   "diagram.edge_panel.font_decrease": "Réduire la police",
   "diagram.edge_panel.font_increase": "Agrandir la police",
   "diagram.edge_panel.edit_label": "Modifier le libellé de la flèche",
+  "diagram.edge_panel.reset_label_width": "Réinitialiser la largeur du libellé (auto)",
   "diagram.edge_panel.rotate_label_ccw": "Rotation libellé sens antihoraire (−15°)",
   "diagram.edge_panel.rotate_label_cw": "Rotation libellé sens horaire (+15°)",
   "diagram.edge_panel.width_decrease": "Réduire l'épaisseur",

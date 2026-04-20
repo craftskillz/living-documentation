@@ -142,7 +142,7 @@ export async function saveDiagram() {
     labelRotation: e.labelRotation || 0,
     fromPort: e.fromPort || null, toPort: e.toPort || null,
     edgeColor: e.edgeColor || null, edgeWidth: e.edgeWidth || null,
-    edgeLocked: e.edgeLocked || false,
+    edgeLocked: e.edgeLocked || false, edgeLabelWidth: e.edgeLabelWidth || null,
   }));
 
   const title = document.getElementById('diagramTitle').value || t('diagram.toast.untitled');

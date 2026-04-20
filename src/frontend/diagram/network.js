@@ -20,7 +20,7 @@ import { drawDebugOverlay }    from './debug.js';
 import { updateZoomDisplay }   from './zoom.js';
 import { expandSelectionToGroup, drawGroupOutlines } from './groups.js';
 import { navigateNodeLink, hideLinkPanel }           from './link-panel.js';
-import { getNearestPort, drawPortDots, drawPortEdge, distanceToPortEdge } from './ports.js';
+import { getNearestPort, drawPortDots, drawPortEdge, distanceToPortEdge, wrapText } from './ports.js';
 import { getLastFreeArrowStyle } from './edge-panel.js';
 import { getLastNodeStyle } from './node-panel.js';
 
@@ -292,6 +292,110 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
     ctx.lineWidth = 2;
     ctx.stroke();
   });
+
+  // ── Edge label resize ─────────────────────────────────────────────────────────
+  // When a single edge is selected and has a label, draw two orange resize handles
+  // at the left and right sides of the dashed label box.  Dragging either handle
+  // resizes the box symmetrically (centre fixed).  On release the edge's
+  // edgeLabelWidth is committed and the text wraps accordingly.
+  //
+  // Key design: _hoverHandle is computed during mousemove (before any mousedown).
+  // The mousedown handler reads this pre-computed state rather than doing its own
+  // hit-detection — this avoids a race with vis-network's capture-phase handlers
+  // which may run first and alter selection state before our mousedown fires.
+  {
+    let _lr          = null; // active resize: { edgeId, bboxCx, bboxCy, rotation }
+    let _hoverHandle = null; // { edgeId, bboxCx, bboxCy, rotation } | null
+
+    // Draw handles for the selected edge label.
+    st.network.on('afterDrawing', (ctx) => {
+      if (!st.selectedEdgeIds || st.selectedEdgeIds.length !== 1) return;
+      const edgeId = st.selectedEdgeIds[0];
+      const e = st.edges.get(edgeId);
+      if (!e || !e.label) return;
+      const bbox = st.edgeLabelBBox && st.edgeLabelBBox[edgeId];
+      if (!bbox) return;
+
+      ctx.save();
+      ctx.translate(bbox.cx, bbox.cy);
+      if (bbox.rotation) ctx.rotate(bbox.rotation);
+      for (const hx of [-bbox.w / 2, bbox.w / 2]) {
+        ctx.beginPath();
+        ctx.arc(hx, 0, 5, 0, Math.PI * 2);
+        ctx.fillStyle   = '#f97316';
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth   = 1.5;
+        ctx.fill();
+        ctx.stroke();
+      }
+      ctx.restore();
+    });
+
+    // Track handle hover during mousemove — computed before any mousedown fires.
+    container.addEventListener('mousemove', (e) => {
+      if (!st.network || !st.edgeLabelBBox) return;
+      const cp    = st.network.DOMtoCanvas({ x: e.offsetX, y: e.offsetY });
+      const hr    = 8 / st.network.getScale();
+
+      let found = null;
+      for (const edgeId of (st.selectedEdgeIds || [])) {
+        const edge = st.edges && st.edges.get(edgeId);
+        if (!edge || !edge.label) continue;
+        const bbox = st.edgeLabelBBox[edgeId];
+        if (!bbox) continue;
+
+        const r  = -(bbox.rotation || 0);
+        const dx = cp.x - bbox.cx, dy = cp.y - bbox.cy;
+        const lx = dx * Math.cos(r) - dy * Math.sin(r);
+        const ly = dx * Math.sin(r) + dy * Math.cos(r);
+
+        if (Math.hypot(lx - (-bbox.w / 2), ly) < hr || Math.hypot(lx - (bbox.w / 2), ly) < hr) {
+          found = { edgeId, bboxCx: bbox.cx, bboxCy: bbox.cy, rotation: bbox.rotation || 0 };
+          break;
+        }
+      }
+
+      if (Boolean(found) !== Boolean(_hoverHandle)) {
+        container.style.cursor = found ? 'ew-resize' : '';
+      }
+      _hoverHandle = found;
+    });
+
+    // Mousedown: start resize if a handle is hovered.
+    // Do NOT stopPropagation — vis-network has capture handlers registered before ours.
+    // Instead, disable dragView immediately (panning only starts on mousemove, so
+    // setting it here prevents any canvas movement before the first mousemove fires).
+    container.addEventListener('mousedown', (e) => {
+      if (e.button !== 0 || !_hoverHandle) return;
+      _lr = { ..._hoverHandle, dragging: false };
+      st.network.setOptions({ interaction: { dragView: false } });
+    }, { capture: true });
+
+    // Update width while dragging.
+    document.addEventListener('mousemove', (e) => {
+      if (!_lr || !st.network) return;
+      if (!_lr.dragging) {
+        _lr.dragging = true;
+        pushSnapshot();
+      }
+      const rect = container.getBoundingClientRect();
+      const cp   = st.network.DOMtoCanvas({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+      const r    = -_lr.rotation;
+      const dx   = cp.x - _lr.bboxCx, dy = cp.y - _lr.bboxCy;
+      const lx   = dx * Math.cos(r) - dy * Math.sin(r);
+      st.edges.update({ id: _lr.edgeId, edgeLabelWidth: Math.max(40, Math.abs(lx) * 2) });
+      st.network.redraw();
+    });
+
+    // Commit on mouseup.
+    document.addEventListener('mouseup', () => {
+      if (!_lr) return;
+      st.network.setOptions({ interaction: { dragView: true } });
+      if (_lr.dragging) markDirty();
+      _lr = null;
+      container.style.cursor = _hoverHandle ? 'ew-resize' : '';
+    });
+  }
 
   // ── Free-arrow body drag ──────────────────────────────────────────────────────
   // Dragging the body of a free arrow (anchor-anchor edge) should move the whole
@@ -681,16 +785,51 @@ function drawEdgeLabels(ctx) {
     // Only draw the label text for edges that have one.
     if (!e.label) return;
 
+    const fontSize   = e.fontSize || 11;
+    const lineHeight = fontSize * 1.5;
+    const PAD_X = 6, PAD_Y = 4;
+
     ctx.save();
     ctx.translate(mx, my);
     if (e.labelRotation && Math.abs(e.labelRotation) > 0.001) {
       ctx.rotate(e.labelRotation);
     }
-    ctx.font = `${e.fontSize || 11}px system-ui,-apple-system,sans-serif`;
-    ctx.fillStyle = '#6b7280';
-    ctx.textAlign = 'center';
+    ctx.font = `${fontSize}px system-ui,-apple-system,sans-serif`;
+
+    const fixedW = e.edgeLabelWidth || null;
+    const innerW = fixedW ? fixedW - PAD_X * 2 : null;
+    const lines  = fixedW ? wrapText(ctx, e.label, innerW) : [e.label];
+    const textW  = fixedW ? innerW : ctx.measureText(e.label).width;
+    const boxW   = textW + PAD_X * 2;
+    const boxH   = lines.length * lineHeight + PAD_Y * 2;
+
+    // Always store bbox (needed for resize handles, even when not selected)
+    st.edgeLabelBBox[e.id] = {
+      cx: mx, cy: my,
+      w: boxW, h: boxH,
+      rotation: e.labelRotation || 0,
+    };
+
+    // Dashed border box — only when the edge is selected
+    if (st.selectedEdgeIds && st.selectedEdgeIds.includes(e.id)) {
+      ctx.save();
+      ctx.strokeStyle = '#9ca3af';
+      ctx.lineWidth   = 0.8;
+      ctx.setLineDash([3, 3]);
+      ctx.strokeRect(-boxW / 2, -boxH / 2, boxW, boxH);
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+
+    ctx.fillStyle    = '#6b7280';
+    ctx.textAlign    = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(e.label, 0, 0);
+    const totalH = lines.length * lineHeight;
+    lines.forEach((line, i) => {
+      const y = -totalH / 2 + i * lineHeight + lineHeight / 2;
+      ctx.fillText(line, 0, y);
+    });
+
     ctx.restore();
   });
   } catch(err) { console.error('[draw] EXCEPTION:', err); }

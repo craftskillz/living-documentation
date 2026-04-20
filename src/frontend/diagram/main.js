@@ -6,7 +6,7 @@ import { TOOL_BTN_MAP }       from './constants.js';
 import { showNodePanel, hideNodePanel, setNodeColor, changeNodeFontSize, setTextAlign, setTextValign, changeZOrder, activateStamp, cancelStamp, stepRotate, toggleNodeLock } from './node-panel.js';
 import { groupNodes, ungroupNodes } from './groups.js';
 import { showLinkPanel, hideLinkPanel } from './link-panel.js';
-import { hideEdgePanel, setEdgeArrow, setEdgeDashes, changeEdgeFontSize, stepEdgeLabelRotation, clearEdgePorts, setEdgeColor, changeEdgeWidth, toggleEdgeLock } from './edge-panel.js';
+import { hideEdgePanel, setEdgeArrow, setEdgeDashes, changeEdgeFontSize, stepEdgeLabelRotation, clearEdgePorts, setEdgeColor, changeEdgeWidth, toggleEdgeLock, resetEdgeLabelWidth } from './edge-panel.js';
 import { startLabelEdit, startEdgeLabelEdit, hideLabelInput } from './label-editor.js';
 import { hideSelectionOverlay, toggleResizeMode } from './selection-overlay.js';
 import { toggleGrid }          from './grid.js';
@@ -197,6 +197,7 @@ document.getElementById('btnEdgeLabelEdit').addEventListener('click', startEdgeL
 document.getElementById('btnEdgeLabelRotateCCW').addEventListener('click', () => stepEdgeLabelRotation(-Math.PI / 12));
 document.getElementById('btnEdgeLabelRotateCW').addEventListener('click',  () => stepEdgeLabelRotation( Math.PI / 12));
 document.getElementById('btnEdgeClearPorts').addEventListener('click', clearEdgePorts);
+document.getElementById('btnEdgeLabelWidthReset').addEventListener('click', resetEdgeLabelWidth);
 document.getElementById('btnEdgeLock').addEventListener('click', toggleEdgeLock);
 document.getElementById('btnEdgeWidthDecrease').addEventListener('click', () => changeEdgeWidth(-0.5));
 document.getElementById('btnEdgeWidthIncrease').addEventListener('click', () => changeEdgeWidth(0.5));

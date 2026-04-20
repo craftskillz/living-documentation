@@ -358,6 +358,7 @@
   "diagram.edge_panel.font_decrease": "Decrease font size",
   "diagram.edge_panel.font_increase": "Increase font size",
   "diagram.edge_panel.edit_label": "Edit arrow label",
+  "diagram.edge_panel.reset_label_width": "Reset label width (auto)",
   "diagram.edge_panel.rotate_label_ccw": "Rotate label counter-clockwise (−15°)",
   "diagram.edge_panel.rotate_label_cw": "Rotate label clockwise (+15°)",
   "diagram.edge_panel.width_decrease": "Decrease width",

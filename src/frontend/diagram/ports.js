@@ -9,6 +9,28 @@
 import { st } from './state.js';
 import { SHAPE_DEFAULTS } from './node-rendering.js';
 
+/**
+ * Splits `text` into lines that each fit within `maxWidth` canvas units.
+ * Requires ctx.font to be set before calling.
+ */
+export function wrapText(ctx, text, maxWidth) {
+  if (!maxWidth || !text) return [text || ''];
+  const words = text.split(/\s+/);
+  const lines = [];
+  let line = '';
+  for (const word of words) {
+    const test = line ? line + ' ' + word : word;
+    if (line && ctx.measureText(test).width > maxWidth) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  }
+  if (line) lines.push(line);
+  return lines.length ? lines : [text];
+}
+
 export const PORT_KEYS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 
 const SQRT2_INV = 1 / Math.sqrt(2);
@@ -249,16 +271,51 @@ export function drawPortEdge(ctx, edgeData) {
 
   // ── Label ─────────────────────────────────────────────────────────────────
   if (edgeData.label) {
+    const fontSize   = edgeData.fontSize || 11;
+    const lineHeight = fontSize * 1.5;
+    const PAD_X = 6, PAD_Y = 4;
+
     ctx.save();
     ctx.translate(mid.x, mid.y);
     if (edgeData.labelRotation && Math.abs(edgeData.labelRotation) > 0.001) {
       ctx.rotate(edgeData.labelRotation);
     }
-    ctx.font         = `${edgeData.fontSize || 11}px system-ui,-apple-system,sans-serif`;
+    ctx.font = `${fontSize}px system-ui,-apple-system,sans-serif`;
+
+    const fixedW = edgeData.edgeLabelWidth || null;
+    const innerW = fixedW ? fixedW - PAD_X * 2 : null;
+    const lines  = fixedW ? wrapText(ctx, edgeData.label, innerW) : [edgeData.label];
+    const textW  = fixedW ? innerW : ctx.measureText(edgeData.label).width;
+    const boxW   = textW + PAD_X * 2;
+    const boxH   = lines.length * lineHeight + PAD_Y * 2;
+
+    // Always store bbox (needed for resize handles, even when not selected)
+    st.edgeLabelBBox[edgeData.id] = {
+      cx: mid.x, cy: mid.y,
+      w: boxW, h: boxH,
+      rotation: edgeData.labelRotation || 0,
+    };
+
+    // Dashed border box — only when the edge is selected
+    if (st.selectedEdgeIds && st.selectedEdgeIds.includes(edgeData.id)) {
+      ctx.save();
+      ctx.strokeStyle = '#9ca3af';
+      ctx.lineWidth   = 0.8;
+      ctx.setLineDash([3, 3]);
+      ctx.strokeRect(-boxW / 2, -boxH / 2, boxW, boxH);
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+
     ctx.fillStyle    = '#6b7280';
     ctx.textAlign    = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(edgeData.label, 0, 0);
+    const totalH = lines.length * lineHeight;
+    lines.forEach((line, i) => {
+      const y = -totalH / 2 + i * lineHeight + lineHeight / 2;
+      ctx.fillText(line, 0, y);
+    });
+
     ctx.restore();
   }
 
