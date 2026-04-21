@@ -17,7 +17,9 @@
       "Read(//tmp/**)",
       "Read(//private/tmp/**)",
       "Bash(awk 'NR==2466{print \"      // ── Marker annotations → /annotations.js ──────────────\";skip=1;next} skip && /^      \\\\/\\\\/ ── Image lightbox/{skip=0} !skip' /Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/src/frontend/index.html)",
-      "Bash(awk ' *)"
+      "Bash(awk ' *)",
+      "Bash(curl -sL https://www.gnu.org/licenses/gpl-3.0.txt -o /Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/LICENSE)",
+      "Bash(curl -sL https://www.gnu.org/licenses/agpl-3.0.txt -o /Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/LICENSE)"
     ],
     "additionalDirectories": [
       "/private/tmp"

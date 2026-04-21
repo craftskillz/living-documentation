@@ -285,8 +285,8 @@
   "admin.palette.add_color_btn": "Ajouter une couleur",
   "admin.palette.delete_color_title": "Supprimer",
 
-  "admin.license.title": "Licence MIT — Open Source",
-  "admin.license.subtitle": "Libre d'utilisation, de fork et d'extension.",
+  "admin.license.title": "Licence AGPL-3.0 — Open Source",
+  "admin.license.subtitle": "Libre d'utilisation, de fork et d'extension — les dérivés et services hébergés doivent rester sous AGPL (copyleft + clause SaaS).",
   "admin.license.body": "Ce projet open source vous est gracieusement offert par ses concepteurs <strong>Youssef MEDAGHRI-ALAOUI</strong> &amp; <strong>Claude Code</strong>.",
   "admin.license.linkedin_btn": "Youssef sur LinkedIn",
   "admin.license.npm_btn": "living-documentation sur npm",

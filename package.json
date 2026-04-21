@@ -23,7 +23,7 @@
     "cli"
   ],
   "author": "Youssef MEDAGHRI-ALAOUI",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/craftskillz/living-documentation.git"
