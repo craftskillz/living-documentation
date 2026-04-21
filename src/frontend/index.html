@@ -2185,6 +2185,7 @@
       let currentDocId = null;
       let currentDocContent = "";
       let searchQuery = "";
+      let searchResults = null;
       let navHistory = []; // stack of { id, title } visited via in-doc links
       let expandedCategories = new Set();
       let expandedFolders = new Set();
@@ -2297,6 +2298,21 @@
         }
       }
 
+      function filteredDocs() {
+        if (!searchQuery) return allDocs;
+        if (Array.isArray(searchResults)) return searchResults;
+        const q = searchQuery.toLowerCase();
+        return allDocs.filter(
+          (d) =>
+            d.title.toLowerCase().includes(q) ||
+            d.category.toLowerCase().includes(q),
+        );
+      }
+
+      function refreshSidebar() {
+        renderSidebar(filteredDocs());
+      }
+
       function renderSidebar(docs) {
         const tree = document.getElementById("category-tree");
         const countEl = document.getElementById("doc-count");
@@ -2330,7 +2346,8 @@
             node.categories[doc.category] = [];
           node.categories[doc.category].push(doc);
         }
-        // Ensure empty folders appear in the tree
+        // Ensure empty folders appear in the tree (only when no active filter)
+        if (searchQuery) return root;
         for (const folderPath of allFolderPaths) {
           const segments = folderPath.split("/").filter(Boolean);
           let node = root;
@@ -2586,7 +2603,7 @@
           }
           // Expand the category at this folder level
           expandedCategories.add([...folder, doc.category].join("|"));
-          renderSidebar(allDocs);
+          refreshSidebar();
         }
 
         // Update active state in sidebar
@@ -2729,6 +2746,7 @@
             clearTimeout(searchTimer);
             if (!q) {
               searchQuery = "";
+              searchResults = null;
               renderSidebar(allDocs);
               return;
             }
@@ -2739,6 +2757,7 @@
                 d.title.toLowerCase().includes(q.toLowerCase()) ||
                 d.category.toLowerCase().includes(q.toLowerCase()),
             );
+            searchResults = local;
             renderSidebar(local);
             // Then full-text search from server
             searchTimer = setTimeout(() => doSearch(q), 350);
@@ -2751,6 +2770,8 @@
           const results = await fetch(
             "/api/documents/search?q=" + encodeURIComponent(q),
           ).then((r) => r.json());
+          if (q !== searchQuery) return;
+          searchResults = results;
           renderSidebar(results);
         } catch {
           /* ignore */
@@ -2817,6 +2838,9 @@
 
         // Drop from local state
         allDocs = allDocs.filter((d) => d.id !== deletedId);
+        if (Array.isArray(searchResults)) {
+          searchResults = searchResults.filter((d) => d.id !== deletedId);
+        }
         delete annotationCounts[deletedId];
         try {
           delete annotationCounts[decodeURIComponent(deletedId)];
@@ -2828,7 +2852,7 @@
         document.getElementById("welcome").classList.remove("hidden");
         history.pushState({}, "", window.location.pathname);
 
-        renderSidebar(allDocs);
+        refreshSidebar();
       }
 
       // State for the image paste confirmation flow
@@ -4277,7 +4301,7 @@
           applyAnnotationHighlights();
           renderElevator();
           annotationCounts[currentDocId] = (annotationCounts[currentDocId] || 0) + 1;
-          renderSidebar(allDocs);
+          refreshSidebar();
         } catch {
           /* ignore */
         }
@@ -4390,7 +4414,7 @@
             const next = (annotationCounts[currentDocId] || 0) - 1;
             if (next <= 0) delete annotationCounts[currentDocId];
             else annotationCounts[currentDocId] = next;
-            renderSidebar(allDocs);
+            refreshSidebar();
           }
         } catch {
           /* ignore */
