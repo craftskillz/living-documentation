@@ -736,21 +736,15 @@
               <button
                 id="new-folder-browse-up"
                 onclick="newFolderBrowseUp()"
-                class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 disabled:opacity-30"
+                data-i18n="common.up"
+                class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0"
               >
-                ↑
+                ↑ Up
               </button>
               <span
                 id="new-folder-browse-path"
                 class="text-xs text-gray-500 dark:text-gray-400 font-mono truncate flex-1"
               ></span>
-              <button
-                onclick="newFolderSelectCurrentLocation()"
-                data-i18n="modal.new_folder.select_btn"
-                class="text-xs text-blue-600 dark:text-blue-400 hover:underline shrink-0"
-              >
-                Select this folder
-              </button>
             </div>
             <div
               id="new-folder-browse-list"
@@ -874,6 +868,7 @@
               <button
                 id="new-doc-browse-up"
                 onclick="newDocBrowseUp()"
+                data-i18n="common.up"
                 class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0"
               >
                 &#8593; Up

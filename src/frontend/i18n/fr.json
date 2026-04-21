@@ -71,8 +71,6 @@
   "modal.new_folder.location_label": "Emplacement",
   "modal.new_folder.root": "/ (racine)",
   "modal.new_folder.browse_btn": "Parcourir…",
-  "modal.new_folder.select_btn": "Sélectionner ce dossier",
-  "modal.new_folder.browse_select_btn": "Sélectionner",
   "modal.new_folder.enter_name": "(saisir un nom)",
   "modal.new_folder.will_be_created": "Sera créé à",
   "modal.new_folder.create_btn": "Créer",
@@ -93,7 +91,6 @@
   "modal.new_doc.create_folder_btn": "+ Créer",
   "modal.new_doc.error_empty_title": "Veuillez saisir un titre.",
   "modal.new_doc.no_subfolders": "Aucun sous-dossier",
-  "modal.new_doc.use_folder_btn": "✓ Utiliser ce dossier",
 
   "modal.diag_link.title": "◇ Lier un diagramme",
   "modal.diag_link.existing_radio": "Diagramme existant",

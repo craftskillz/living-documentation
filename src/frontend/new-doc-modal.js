@@ -78,35 +78,28 @@ async function newDocLoadBrowse(dirPath) {
     ).then((r) => r.json());
     _newDocBrowseCurrent = data.current;
     _newDocBrowseParent = data.parent;
+    _newDocSelectedFolder = _newDocAbsToRel(data.current);
+
     document.getElementById("new-doc-browse-path").textContent =
       data.current;
     const atRoot = data.current === _newDocDocsFolder;
     document.getElementById("new-doc-browse-up").disabled = atRoot;
+    document.getElementById("new-doc-folder-display").textContent =
+      _newDocSelectedFolder ? "/" + _newDocSelectedFolder : "/ (root)";
+    newDocUpdatePreview();
 
-    const rows = data.dirs.map(
-      (dir) =>
-        `<div class="flex items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+    list.innerHTML = data.dirs.length
+      ? data.dirs
+          .map(
+            (dir) => `
           <button data-path="${esc(dir.path)}" onclick="newDocLoadBrowse(this.dataset.path)"
-            class="flex-1 flex items-center gap-2 px-3 py-2 text-sm text-left">
+            class="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
             <span class="text-gray-400 shrink-0">&#128193;</span>
             <span class="text-gray-700 dark:text-gray-300 truncate">${esc(dir.name)}</span>
-          </button>
-          <button data-path="${esc(dir.path)}" onclick="newDocSelectFolder(this.dataset.path)"
-            title="${window.t('modal.new_doc.use_folder_btn')}"
-            class="shrink-0 text-blue-400 hover:text-blue-600 px-3 py-2 text-sm transition-colors">&#10003;</button>
-        </div>`,
-    );
-
-    const selectBtn = `<button onclick="newDocSelectCurrentFolder()"
-      class="w-full px-3 py-2 text-xs text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 text-left font-medium border-t border-gray-100 dark:border-gray-800">
-      ${window.t('modal.new_doc.use_folder_btn')}
-    </button>`;
-
-    list.innerHTML =
-      (rows.length
-        ? rows.join("")
-        : `<p class="px-3 py-3 text-xs text-gray-400 text-center">${window.t('modal.new_doc.no_subfolders')}</p>`) +
-      selectBtn;
+          </button>`,
+          )
+          .join("")
+      : `<p class="px-3 py-3 text-xs text-gray-400 text-center">${window.t('modal.new_doc.no_subfolders')}</p>`;
   } catch {
     list.innerHTML =
       `<p class="px-3 py-4 text-xs text-red-400 text-center">${window.t('common.cannot_read_dir')}</p>`;
@@ -127,19 +120,6 @@ function _newDocAbsToRel(absPath) {
   return absPath;
 }
 
-function newDocSelectFolder(absPath) {
-  _newDocSelectedFolder = _newDocAbsToRel(absPath);
-  _newDocBrowseCurrent = absPath;
-  document.getElementById("new-doc-folder-display").textContent =
-    _newDocSelectedFolder ? "/" + _newDocSelectedFolder : "/ (root)";
-  document.getElementById("new-doc-browser").classList.add("hidden");
-  newDocUpdatePreview();
-}
-
-function newDocSelectCurrentFolder() {
-  newDocSelectFolder(_newDocBrowseCurrent || _newDocDocsFolder);
-}
-
 function newDocCreateFolder() {
   const name = document
     .getElementById("new-doc-new-folder-name")
@@ -152,7 +132,6 @@ function newDocCreateFolder() {
   document.getElementById("new-doc-folder-display").textContent =
     "/" + newRelPath;
   document.getElementById("new-doc-new-folder-name").value = "";
-  document.getElementById("new-doc-browser").classList.add("hidden");
   newDocUpdatePreview();
 }
 

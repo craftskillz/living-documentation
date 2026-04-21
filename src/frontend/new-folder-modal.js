@@ -69,24 +69,32 @@ async function newFolderLoadBrowse(dirPath) {
     ).then((r) => r.json());
     _newFolderBrowseCurrent = data.current;
     _newFolderBrowseParent = data.parent;
+    _newFolderSelectedPath = data.current;
+
     document.getElementById("new-folder-browse-path").textContent =
       data.current;
     const atRoot = data.current === _newFolderDocsFolder;
     document.getElementById("new-folder-browse-up").disabled = atRoot;
 
+    const rel = data.current.startsWith(_newFolderDocsFolder + "/")
+      ? data.current.slice(_newFolderDocsFolder.length)
+      : data.current === _newFolderDocsFolder
+        ? ""
+        : data.current;
+    document.getElementById("new-folder-location-display").textContent = rel
+      ? rel
+      : "/ (root)";
+    newFolderUpdatePreview();
+
     list.innerHTML = data.dirs.length
       ? data.dirs
           .map(
             (dir) => `
-          <div class="flex items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-            <button data-path="${esc(dir.path)}" onclick="newFolderLoadBrowse(this.dataset.path)"
-              class="flex-1 flex items-center gap-2 px-3 py-2 text-sm text-left">
-              <span class="text-gray-400 shrink-0">&#128193;</span>
-              <span class="truncate text-gray-700 dark:text-gray-300">${esc(dir.name)}</span>
-            </button>
-            <button data-path="${esc(dir.path)}" onclick="newFolderSelectFolder(this.dataset.path)"
-              class="px-3 py-2 text-xs text-blue-600 dark:text-blue-400 hover:underline shrink-0">${window.t('modal.new_folder.browse_select_btn')}</button>
-          </div>`,
+          <button data-path="${esc(dir.path)}" onclick="newFolderLoadBrowse(this.dataset.path)"
+            class="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+            <span class="text-gray-400 shrink-0">&#128193;</span>
+            <span class="truncate text-gray-700 dark:text-gray-300">${esc(dir.name)}</span>
+          </button>`,
           )
           .join("")
       : `<p class="px-3 py-3 text-xs text-gray-400 text-center">${window.t('modal.new_folder.no_subfolders')}</p>`;
@@ -98,25 +106,6 @@ async function newFolderLoadBrowse(dirPath) {
 
 function newFolderBrowseUp() {
   if (_newFolderBrowseParent) newFolderLoadBrowse(_newFolderBrowseParent);
-}
-
-function newFolderSelectCurrentLocation() {
-  newFolderSelectFolder(_newFolderBrowseCurrent || _newFolderDocsFolder);
-}
-
-function newFolderSelectFolder(absPath) {
-  _newFolderSelectedPath = absPath;
-  _newFolderBrowseCurrent = absPath;
-  const rel = absPath.startsWith(_newFolderDocsFolder + "/")
-    ? absPath.slice(_newFolderDocsFolder.length)
-    : absPath === _newFolderDocsFolder
-      ? ""
-      : absPath;
-  document.getElementById("new-folder-location-display").textContent = rel
-    ? rel
-    : "/ (root)";
-  document.getElementById("new-folder-browser").classList.add("hidden");
-  newFolderUpdatePreview();
 }
 
 function newFolderUpdatePreview() {
