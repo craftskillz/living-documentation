@@ -17,17 +17,54 @@ Ships pre-compiled; users run it with `npx living-documentation ./path/to/docs`.
 ```
 bin/cli.ts                  → CLI entry (Commander), validates args, calls startServer()
 src/server.ts               → Express app, mounts API routes + serves static frontend
-src/routes/documents.ts     → /api/documents  (list, search, read, write)
-src/routes/config.ts        → /api/config     (read, write)
-src/routes/browse.ts        → /api/browse     (filesystem navigator, dirs + .md files)
-src/routes/images.ts        → /api/images     (image upload from clipboard paste)
-src/routes/wordcloud.ts     → /api/wordcloud  (recursive file reader, returns raw text)
+src/routes/documents.ts     → /api/documents    (list, search, read, write, create, delete)
+src/routes/config.ts        → /api/config       (read, write)
+src/routes/browse.ts        → /api/browse       (filesystem navigator, dirs + .md files, mkdir)
+src/routes/images.ts        → /api/images       (image upload from clipboard paste)
+src/routes/wordcloud.ts     → /api/wordcloud    (recursive file reader, returns raw text)
+src/routes/diagrams.ts      → /api/diagrams     (CRUD of vis-network diagrams as JSON)
+src/routes/annotations.ts   → /api/annotations  (per-doc highlight markers)
+src/routes/export.ts        → /api/export       (HTML export, Notion + Confluence zip modes)
+src/mcp/server.ts           → /mcp              (Model Context Protocol, Streamable HTTP)
+src/mcp/tools/documents.ts  → MCP tools: list_documents, read_document, create_document
+src/mcp/tools/diagrams.ts   → MCP tools: list_diagrams, read_diagram, create_diagram
+src/mcp/tools/source.ts     → MCP tools: list_source_files, read_source_file, search_source
 src/lib/parser.ts           → filename parsing logic (dynamic, driven by filenamePattern)
 src/lib/config.ts           → .living-doc.json read/write with defaults
-src/frontend/index.html     → single-page viewer (Tailwind CDN, hljs CDN, vanilla JS)
-src/frontend/wordcloud.js   → word cloud logic: stop words, browser, rendering (loaded by index.html)
+src/frontend/index.html     → viewer shell (Tailwind CDN, hljs CDN) — logic in sibling .js modules
 src/frontend/admin.html     → admin panel (config editor + extra files browser)
-scripts/copy-assets.ts      → copies src/frontend/ → dist/src/frontend/ after tsc
+src/frontend/diagram.html   → diagram editor shell — logic in src/frontend/diagram/*.js
+src/frontend/i18n.js        → IIFE loader for /i18n/{en,fr}.json; exposes window.t / data-i18n
+src/frontend/i18n/{en,fr}.json → translation catalogs (mandatory for every user-visible string)
+src/frontend/vendor/wordcloud2.js → vendored wordcloud2.js (no CDN)
+src/frontend/wordcloud.js   → word cloud logic: stop words, browser, rendering
+scripts/copy-assets.ts      → copies src/frontend/ + starting-doc/ → dist/ after tsc
+starting-doc/               → sample docs bundled in the npm package (copied to dist/)
+```
+
+### Viewer frontend modules (loaded by `index.html` via `defer` script tags)
+
+```
+utils.js                    → shared helpers (slug, escape, etc.)
+state.js                    → shared mutable state (current doc, edit mode flags)
+sidebar-helpers.js          → sidebar DOM builders (folder/category groups)
+sidebar.js                  → sidebar rendering + collapse/expand
+config.js                   → fetch/update /api/config from the UI
+dark-mode.js                → `ld-dark` localStorage toggle
+search.js                   → instant client filter + debounced server-side search
+documents.js                → load/render/save document content
+image-paste.js              → Cmd/Ctrl+V image upload in the editor
+annotations.js              → highlight-marker creation, persistence, DOM anchor traversal
+export.js                   → PDF print + HTML/Notion/Confluence export dialog
+snippets.js                 → snippet inserter panel (entry point)
+snippet-detect.js           → detect an existing snippet under the caret
+snippet-table.js            → table-editor snippet (dynamic rows/columns)
+snippet-tree.js             → tree-editor snippet (ASCII connectors)
+new-doc-modal.js            → "New document" modal with folder browser
+new-folder-modal.js         → "New folder" modal
+diagram-link-modal.js       → link-to-diagram snippet picker
+misc.js                     → small UI glue (welcome screen, etc.)
+boot.js                     → entry point: wires modules, initial fetch, URL deep-link
 ```
 
 ## Build
@@ -37,7 +74,7 @@ npm run build   # tsc + copy HTML assets to dist/ + chmod +x dist/bin/cli.js
 ```
 
 TypeScript compiles to `dist/` with the same sub-tree (`dist/bin/`, `dist/src/`).
-HTML files are **not** compiled by tsc — `scripts/copy-assets.js` copies them.
+Non-TypeScript assets (HTML, plain `.js` frontend modules, `i18n/*.json`, `vendor/`) are **not** compiled by tsc — `scripts/copy-assets.ts` recursively copies `src/frontend/` → `dist/src/frontend/` and `starting-doc/` → `dist/starting-doc/`.
 The server looks for frontend files at `path.join(__dirname, 'frontend')`, i.e. `dist/src/frontend/`.
 
 ## Filename pattern
@@ -62,8 +99,10 @@ Documents are sorted by **full filename** (ascending `localeCompare`) within eac
 ## Config
 
 Persisted as `.living-doc.json` inside the docs folder.
-Editable fields via `PUT /api/config`: `title`, `theme`, `filenamePattern`, `extraFiles`, `showDiagramDebug`.
+Editable fields via `PUT /api/config`: `title`, `theme`, `filenamePattern`, `extraFiles`, `showDiagramDebug`, `sourceRoot`.
 `docsFolder` and `port` are write-once from CLI and are informational only in the API.
+
+`sourceRoot` (string|null, default: parent directory of `docsFolder`, auto-filled on first run) — absolute path used by the MCP source tools (`list_source_files`, `read_source_file`, `search_source`). Keeps the MCP server able to read the project source when the docs folder sits inside a larger repo.
 
 `showDiagramDebug` (bool, default `false`) — when `true`, a "dbg" button appears in the diagram editor top bar that toggles a DOM debug overlay showing each node's position and dimensions. Toggled from the Admin panel.
 
@@ -125,20 +164,30 @@ The **← Back** button calls `history.back()` — returns to the referring page
 JavaScript extracted into ES modules under `src/frontend/diagram/` (copied to `dist/` by `copy-assets.ts`):
 
 ```
-diagram/constants.js        → NODE_COLORS, TOOL_BTN_MAP, GRID_SIZE
+diagram/constants.js        → NODE_COLORS, NODE_L_RATIOS, TOOL_BTN_MAP, GRID_SIZE, color palettes
 diagram/state.js            → shared mutable state object `st` + markDirty()
 diagram/node-rendering.js   → actor renderer, visNodeProps, computeVadjust, getActualNodeHeight
 diagram/edge-rendering.js   → visEdgeProps
 diagram/label-editor.js     → floating textarea for node/edge label editing
 diagram/selection-overlay.js → selection box + corner resize handles
-diagram/node-panel.js       → node formatting panel (color, font, alignment, z-order)
-diagram/edge-panel.js       → edge formatting panel (arrow, dashes, font)
+diagram/node-panel.js       → node formatting panel (color, font, alignment, z-order, lock, stamp)
+diagram/edge-panel.js       → edge formatting panel (arrow, dashes, font, color, width, lock)
+diagram/link-panel.js       → linked-diagram picker for node drill-down
 diagram/grid.js             → grid drawing (DPR), snap-to-grid, physics toggle
+diagram/alignment.js        → alignment guides + center-snap against closest node
+diagram/ports.js            → port-anchored edge endpoints on node sides
+diagram/groups.js           → group / ungroup selection
 diagram/debug.js            → debug overlay (node coords/dimensions)
 diagram/zoom.js             → zoom controls
-diagram/network.js          → initNetwork, _drawNodes patch, all vis.js event handlers
+diagram/network.js          → initNetwork, _drawNodes patch, image nodes, all vis.js event handlers
 diagram/persistence.js      → CRUD /api/diagrams, diagram list rendering
-diagram/clipboard.js        → copy/paste with ID remapping
+diagram/clipboard.js        → copy/paste with ID remapping, copy/save selection as PNG
+diagram/history.js          → snapshot-based undo/redo
+diagram/image-upload.js     → POST /api/images/upload wrapper
+diagram/image-name-modal.js → modal to name an uploaded image before insertion
+diagram/unlock-hold.js      → hold-to-unlock gesture on locked nodes
+diagram/toast.js            → in-editor toast notifications
+diagram/t.js                → i18n shortcut bound to window.t for diagram strings
 diagram/main.js             → entry point: toolbar wiring, keyboard shortcuts, app init
 ```
 
@@ -184,17 +233,31 @@ Do **not** use `network.getBoundingBox()` for snap: it inflates `box` shapes by 
 
 Toggled by the `showDiagramDebug` config flag (Admin panel checkbox). Renders DOM `div` elements (selectable text) positioned with `network.canvasToDOM()`, showing `cx`, `cy`, `w`, `h`, `L = cx-w/2`, `T = cy-h/2` for each node. Updated on every `afterDrawing` event.
 
+## MCP server
+
+`src/mcp/server.ts` exposes the project over the Model Context Protocol at `POST /mcp` (Streamable HTTP, stateless — one `Server`+`Transport` per request). `GET /mcp` returns a JSON summary for quick inspection.
+
+Tools (see `src/mcp/tools/`):
+- `list_documents`, `read_document`, `create_document` — documents are the source of truth.
+- `list_diagrams`, `read_diagram`, `create_diagram` — diagrams are derived views; `create_diagram` enforces `diagramType` + `userRequestedExplicitly` guardrails for non-context types.
+- `list_source_files`, `read_source_file`, `search_source` — read-only source code access rooted at `config.sourceRoot`; fallback only when docs don't carry the needed detail (e.g., screen-guide diagrams).
+- `get_server_guide` — returns the `SERVER_GUIDE` (also sent as `instructions` on initialize).
+
+Prompts (`generate-context-diagram`, `generate-container-diagram`, `generate-uml-diagram`, `update-diagram-from-docs`, `generate-screen-guide`, `flow`, `erd`) build diagram-creation templates client-side — zero tokens consumed by the server.
+
 ## Security notes
 
 - Path traversal guard in `documents.ts`: resolved path must start with `path.resolve(docsPath)`.
 - Extra files bypass the docsPath guard but are validated against the `extraFiles` whitelist in config.
-- `GET /api/browse` is read-only and returns only directories and `.md` filenames — no file contents.
+- `GET /api/browse` is read-only and returns only directories and `.md` filenames — no file contents. `POST /api/browse/mkdir` is restricted under `docsPath`.
 - Config `PUT` only allows a whitelist of safe fields; `extraFiles` entries are validated individually.
-- `PUT /api/documents/:id` applies the same path traversal guard as the GET. Extra files require whitelist match.
+- `PUT /api/documents/:id` and `DELETE /api/documents/:id` apply the same path traversal guard as the GET. Extra files require whitelist match.
+- `POST /api/documents` creates files only under `docsPath` (optionally in a sub-folder under it).
 - `POST /api/images/upload` saves only to `DOCS_FOLDER/images/` — no path parameter accepted.
 - Image filenames are server-generated (timestamp + random suffix) — client cannot control the path.
 - Express body limit raised to `20mb` to accommodate base64-encoded image uploads.
 - `GET /api/wordcloud` reads arbitrary paths on disk — intentionally unrestricted since the server is local-only.
+- MCP source tools (`read_source_file`, `search_source`, `list_source_files`) are rooted at `config.sourceRoot` and reject paths that escape it; common heavy folders (`node_modules`, `dist`, `.git`, `build`, `target`) are skipped.
 
 ## Key commands
 

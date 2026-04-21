@@ -211,22 +211,41 @@ Use the Admin panel's **General — Extra Files** section to browse the filesyst
 ```
 living-documentation/
 ├── bin/
-│   └── cli.ts              CLI entry point
+│   └── cli.ts                  CLI entry point (Commander)
 ├── src/
-│   ├── server.ts            Express app
+│   ├── server.ts                Express app (mounts routes + static frontend)
 │   ├── routes/
-│   │   ├── documents.ts     Documents API (list, search, read, write)
-│   │   ├── config.ts        Config API
-│   │   ├── browse.ts        Filesystem browser API
-│   │   └── images.ts        Image upload API
+│   │   ├── documents.ts         Documents API (list, search, read, write, create, delete)
+│   │   ├── config.ts            Config API
+│   │   ├── browse.ts            Filesystem browser API (+ mkdir)
+│   │   ├── images.ts            Image upload API
+│   │   ├── wordcloud.ts         Word cloud raw text reader
+│   │   ├── diagrams.ts          Diagrams CRUD API (vis-network JSON)
+│   │   ├── annotations.ts       Per-document highlight markers API
+│   │   └── export.ts            HTML export (PDF, Notion, Confluence zip)
+│   ├── mcp/
+│   │   ├── server.ts            Model Context Protocol server (Streamable HTTP)
+│   │   └── tools/
+│   │       ├── documents.ts     MCP tools: list/read/create document
+│   │       ├── diagrams.ts      MCP tools: list/read/create diagram
+│   │       └── source.ts        MCP tools: list/read/search source files
 │   ├── lib/
-│   │   ├── parser.ts        Filename parser
-│   │   └── config.ts        Config management
+│   │   ├── parser.ts            Filename parser
+│   │   └── config.ts            Config management (.living-doc.json)
 │   └── frontend/
-│       ├── index.html       Main viewer
-│       └── admin.html       Admin panel
+│       ├── index.html           Main viewer shell
+│       ├── admin.html           Admin panel
+│       ├── diagram.html         Diagram editor shell
+│       ├── i18n.js              i18n loader (window.t + data-i18n binding)
+│       ├── i18n/{en,fr}.json    Translation catalogs
+│       ├── wordcloud.js         Word cloud logic
+│       ├── vendor/              Vendored browser libraries (wordcloud2.js)
+│       ├── *.js                 Viewer modules (state, sidebar, search, documents, …)
+│       └── diagram/*.js         Diagram editor modules (network, panels, history, …)
 ├── scripts/
-│   └── copy-assets.js       Build helper (copies HTML to dist/)
+│   └── copy-assets.ts           Build helper (copies frontend + starting-doc to dist/)
+├── starting-doc/                Sample docs shipped with the npm package
+├── documentation/adrs/          Architecture Decision Records for this project
 ├── package.json
 └── tsconfig.json
 ```
@@ -235,16 +254,33 @@ living-documentation/
 
 ## API reference
 
-| Method | Endpoint                   | Description                                                        |
-| ------ | -------------------------- | ------------------------------------------------------------------ |
-| `GET`  | `/api/documents`           | List all documents with metadata (includes extra files)            |
-| `GET`  | `/api/documents/:id`       | Get document content + rendered HTML                               |
-| `PUT`  | `/api/documents/:id`       | Save document content to disk                                      |
-| `GET`  | `/api/documents/search?q=` | Full-text search                                                   |
-| `GET`  | `/api/config`              | Read config                                                        |
-| `PUT`  | `/api/config`              | Update config (`title`, `theme`, `filenamePattern`, `extraFiles`)  |
-| `GET`  | `/api/browse?path=`        | List directories and `.md` files at a given filesystem path        |
-| `POST` | `/api/images/upload`       | Upload a base64 image; saved to `DOCS_FOLDER/images/`             |
+| Method   | Endpoint                       | Description                                                        |
+| -------- | ------------------------------ | ------------------------------------------------------------------ |
+| `GET`    | `/api/documents`               | List all documents with metadata (includes extra files)            |
+| `GET`    | `/api/documents/:id`           | Get document content + rendered HTML                               |
+| `POST`   | `/api/documents`               | Create a new document from `{ title, category, folder?, content? }` |
+| `PUT`    | `/api/documents/:id`           | Save document content to disk                                      |
+| `DELETE` | `/api/documents/:id`           | Delete a document                                                  |
+| `GET`    | `/api/documents/search?q=`     | Full-text search                                                   |
+| `GET`    | `/api/config`                  | Read config                                                        |
+| `PUT`    | `/api/config`                  | Update config (`title`, `theme`, `filenamePattern`, `extraFiles`, `showDiagramDebug`, `sourceRoot`) |
+| `GET`    | `/api/browse?path=`            | List directories and `.md` files at a given filesystem path        |
+| `GET`    | `/api/browse/alldirs?path=`    | List directories recursively (for the folder picker)               |
+| `POST`   | `/api/browse/mkdir`            | Create a new folder under the docs root                            |
+| `POST`   | `/api/images/upload`           | Upload a base64 image; saved to `DOCS_FOLDER/images/`              |
+| `GET`    | `/api/diagrams`                | List saved diagrams                                                |
+| `GET`    | `/api/diagrams/:id`            | Read a single diagram (nodes + edges)                              |
+| `PUT`    | `/api/diagrams/:id`            | Create or update a diagram                                         |
+| `DELETE` | `/api/diagrams/:id`            | Delete a diagram                                                   |
+| `GET`    | `/api/annotations`             | List annotations for all documents                                 |
+| `GET`    | `/api/annotations/:docId`      | List annotations for one document                                  |
+| `POST`   | `/api/annotations/:docId`      | Add an annotation                                                  |
+| `DELETE` | `/api/annotations/:docId/:id`  | Delete one annotation                                              |
+| `POST`   | `/api/export/html`             | Export a document (or a zip bundle) as HTML — Notion / Confluence modes |
+| `POST`   | `/api/export/markdown`         | Export documents as a Markdown bundle                              |
+| `GET`    | `/api/wordcloud?path=&ext=`    | Recursively concatenate matching files as raw text                 |
+| `POST`   | `/mcp`                         | Model Context Protocol endpoint (Streamable HTTP)                  |
+| `GET`    | `/mcp`                         | Summary of available MCP tools and prompts                         |
 
 ---
 
@@ -268,11 +304,18 @@ A `GET http://localhost:4321/mcp` returns a JSON summary of available tools for 
 
 | Tool | Description |
 |---|---|
+| `get_server_guide` | Return the server guide (purpose, workflow, diagram conventions, coordinate system) |
 | `list_documents` | List all documents with their id, title, category and folder |
 | `read_document` | Read the raw Markdown content of a document by its id |
 | `create_document` | Create a new Markdown document (filename generated from the configured pattern) |
 | `list_diagrams` | List all saved diagrams with their id and title |
-| `create_diagram` | Create a diagram from nodes and edges (shapes, colors, labels) |
+| `read_diagram` | Read the nodes and edges of a diagram (same shape as `create_diagram` input) |
+| `create_diagram` | Create or overwrite a diagram from nodes and edges (shapes, colors, labels) |
+| `list_source_files` | List project source files under `sourceRoot` (fallback only) |
+| `read_source_file` | Read a source file under `sourceRoot` (fallback only) |
+| `search_source` | Grep-like text search across files under `sourceRoot` |
+
+Prompts (`generate-context-diagram`, `generate-container-diagram`, `generate-uml-diagram`, `update-diagram-from-docs`, `generate-screen-guide`, `flow`, `erd`) are exposed alongside the tools for clients that surface MCP prompts to the user.
 
 ### Installation — Claude Desktop
 
