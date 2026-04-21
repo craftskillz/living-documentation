@@ -196,6 +196,7 @@
   "annotation.delete_btn": "🗑 Supprimer",
   "annotation.confirm_delete": "Supprimer cette annotation ?",
   "annotation.confirm_btn": "Supprimer",
+  "annotation.orphan": "⚠ Texte annoté introuvable — l'extrait a été modifié ou supprimé.",
 
   "wc.title": "☁ Nuage de mots",
   "wc.close_btn": "✕ Fermer",

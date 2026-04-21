@@ -196,6 +196,7 @@
   "annotation.delete_btn": "🗑 Delete",
   "annotation.confirm_delete": "Delete this annotation?",
   "annotation.confirm_btn": "Delete",
+  "annotation.orphan": "⚠ Annotated text not found — the excerpt has been edited or removed.",
 
   "wc.title": "☁ Word Cloud",
   "wc.close_btn": "✕ Close",
