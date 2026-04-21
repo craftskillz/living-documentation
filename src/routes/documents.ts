@@ -256,6 +256,56 @@ export function documentsRouter(docsPath: string): Router {
     }
   });
 
+  // DELETE /api/documents/:id — delete a document permanently
+  router.delete("/:id", (req: Request, res: Response) => {
+    const id = decodeURIComponent(req.params.id);
+    const { extraFiles = [] } = readConfig(docsPath);
+
+    if (path.isAbsolute(id)) {
+      const filePath = id + ".md";
+      if (!extraFiles.includes(filePath)) {
+        return res.status(403).json({ error: "Access denied" });
+      }
+      if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: "Document not found" });
+      }
+      try {
+        fs.unlinkSync(filePath);
+        return res.json({ ok: true });
+      } catch {
+        return res.status(500).json({ error: "Failed to delete document" });
+      }
+    }
+
+    const filename = id + ".md";
+    const filePath = safeFilePath(docsPath, filename);
+    if (!filePath) return res.status(403).json({ error: "Access denied" });
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: "Document not found" });
+    }
+
+    try {
+      fs.unlinkSync(filePath);
+
+      // Also drop its annotations, if any
+      const annPath = path.join(docsPath, ".annotations.json");
+      if (fs.existsSync(annPath)) {
+        try {
+          const store = JSON.parse(fs.readFileSync(annPath, "utf-8"));
+          if (store && typeof store === "object" && store[id]) {
+            delete store[id];
+            fs.writeFileSync(annPath, JSON.stringify(store, null, 2), "utf-8");
+          }
+        } catch {
+          /* non-fatal */
+        }
+      }
+      return res.json({ ok: true });
+    } catch {
+      return res.status(500).json({ error: "Failed to delete document" });
+    }
+  });
+
   // POST /api/documents — create a new document
   router.post('/', (req: Request, res: Response) => {
     const { title, category = 'General', folder = '' } = req.body as {
