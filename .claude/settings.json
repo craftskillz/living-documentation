@@ -8,7 +8,8 @@
       "Bash(xargs -I{} sh -c 'echo \"=== {} ===\" && head -6 {}')",
       "mcp__living-documentation__list_documents",
       "mcp__living-documentation__list_diagrams",
-      "mcp__living-documentation__read_diagram"
+      "mcp__living-documentation__read_diagram",
+      "Bash(git log *)"
     ]
   }
 }

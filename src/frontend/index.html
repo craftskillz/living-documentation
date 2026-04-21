@@ -3914,77 +3914,88 @@
       }
 
       function highlightAnnotation(contentEl, ann) {
-        const selText = ann.selectedText.replace(/\s+/g, " ").trim();
-        const ctxBefore = ann.contextBefore.replace(/\s+/g, " ").trim();
-        const ctxAfter = ann.contextAfter.replace(/\s+/g, " ").trim();
+        const selText = (ann.selectedText || "").replace(/\s+/g, " ").trim();
+        const ctxBefore = (ann.contextBefore || "")
+          .replace(/\s+/g, " ")
+          .trim();
+        const ctxAfter = (ann.contextAfter || "").replace(/\s+/g, " ").trim();
         if (!selText) return;
 
-        const html = contentEl.innerHTML;
-        function escRe(s) {
-          return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        }
+        const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        // Build a pattern that allows any whitespace between words
+        const toPat = (s) =>
+          s
+            .split(/\s+/)
+            .filter(Boolean)
+            .map(escRe)
+            .join("\\s+");
 
-        // Between adjacent chars allow any inline tags; between words also allow block markup/whitespace
-        const INLINE_GAP = "(?:<[^>]*>)*";
-        const WORD_GAP = "(?:\\s*(?:<[^>]*>\\s*)*)";
-
-        function textToPattern(text) {
-          const words = text.split(/\s+/).filter(Boolean);
-          return words
-            .map((w) => w.split("").map(escRe).join(INLINE_GAP))
-            .join(WORD_GAP);
-        }
-
-        const selPat = textToPattern(selText);
-        let re, match;
+        const text = contentEl.textContent;
+        const selPat = toPat(selText);
+        let match;
 
         // Try with context first for disambiguation
         if (ctxBefore || ctxAfter) {
           const fullPat =
-            (ctxBefore ? textToPattern(ctxBefore) + WORD_GAP : "") +
-            `(${selPat})` +
-            (ctxAfter ? WORD_GAP + textToPattern(ctxAfter) : "");
+            (ctxBefore ? toPat(ctxBefore) + "\\s*" : "") +
+            "(" + selPat + ")" +
+            (ctxAfter ? "\\s*" + toPat(ctxAfter) : "");
           try {
-            re = new RegExp(fullPat, "id");
-            match = re.exec(html);
+            match = new RegExp(fullPat, "d").exec(text);
           } catch {
             /* fall through */
           }
         }
-
-        // Fallback: without context
         if (!match) {
           try {
-            re = new RegExp(`(${selPat})`, "id");
-            match = re.exec(html);
+            match = new RegExp("(" + selPat + ")", "d").exec(text);
           } catch {
             return;
           }
         }
-
         if (!match || !match.indices || !match.indices[1]) return;
 
-        const [htmlStart, htmlEnd] = match.indices[1];
-        const capturedHtml = html.slice(htmlStart, htmlEnd);
+        const [startOff, endOff] = match.indices[1];
 
-        // Wrap in mark, splitting at closing block tags to avoid invalid HTML nesting
+        // Locate the text-node slices that cover [startOff, endOff)
+        const walker = document.createTreeWalker(
+          contentEl,
+          NodeFilter.SHOW_TEXT,
+        );
+        const slices = [];
+        let pos = 0;
+        while (walker.nextNode()) {
+          const node = walker.currentNode;
+          const len = node.nodeValue.length;
+          const nStart = pos;
+          const nEnd = pos + len;
+          pos = nEnd;
+          if (nEnd <= startOff) continue;
+          if (nStart >= endOff) break;
+          const sStart = Math.max(0, startOff - nStart);
+          const sEnd = Math.min(len, endOff - nStart);
+          if (sStart < sEnd) slices.push({ node, start: sStart, end: sEnd });
+        }
+
+        // Wrap each slice in its own <mark> within its current parent block.
+        // This produces valid DOM regardless of table/code/list/heading boundaries.
         const markStyle =
           "background:rgba(250,204,21,0.5);border-radius:2px;cursor:pointer;padding:0 1px;";
-        const markId = ann.id;
-        const openMark = `<mark data-annotation-id="${markId}" style="${markStyle}">`;
-        const closeMark = "</mark>";
-
-        const wrapped = capturedHtml.replace(
-          /(<\/(?:p|div|h[1-6]|li|td|th|blockquote|pre|section|article|ul|ol|table|tr)\s*>)/gi,
-          `${closeMark}$1${openMark}`,
-        );
-
-        contentEl.innerHTML =
-          html.slice(0, htmlStart) +
-          openMark +
-          wrapped +
-          closeMark +
-          html.slice(htmlEnd);
+        for (const { node, start, end } of slices) {
+          let target = node;
+          if (start > 0 && start < target.nodeValue.length) {
+            target = target.splitText(start);
+          }
+          const wantLen = end - start;
+          if (wantLen > 0 && wantLen < target.nodeValue.length) {
+            target.splitText(wantLen);
+          }
+          const mark = document.createElement("mark");
+          mark.setAttribute("data-annotation-id", ann.id);
+          mark.setAttribute("style", markStyle);
+          target.parentNode.insertBefore(mark, target);
+          mark.appendChild(target);
+        }
       }
 
       // ── Selection capture ──
@@ -4002,22 +4013,29 @@
         const contentEl = document.getElementById("doc-content");
         if (!contentEl || !contentEl.contains(sel.anchorNode)) return;
 
-        // Normalize: collapse newlines and multiple spaces to single space
-        // (textContent of DOM has no newlines between block elements)
-        const selectedText = sel.toString().trim().replace(/\s+/g, " ");
         const range = sel.getRangeAt(0);
         stabiloPendingRange = range.cloneRange();
 
-        // Extract context (30 chars before/after)
+        // Compute the *actual* offset of the selection in contentEl.textContent,
+        // not via indexOf (which would match the first occurrence anywhere).
+        const preRange = document.createRange();
+        preRange.selectNodeContents(contentEl);
+        preRange.setEnd(range.startContainer, range.startOffset);
+        const rawStart = preRange.toString().length;
+        const rawSelected = range.toString();
         const fullText = contentEl.textContent;
-        const selStart = fullText.indexOf(selectedText);
-        const ctxBefore =
-          selStart > 0
-            ? fullText.slice(Math.max(0, selStart - 30), selStart)
-            : "";
-        const ctxAfter = fullText.slice(
-          selStart + selectedText.length,
-          selStart + selectedText.length + 30,
+
+        // Extract context (30 chars before/after) then normalize whitespace
+        const normalize = (s) => s.replace(/\s+/g, " ").trim();
+        const selectedText = normalize(rawSelected);
+        const ctxBefore = normalize(
+          fullText.slice(Math.max(0, rawStart - 30), rawStart),
+        );
+        const ctxAfter = normalize(
+          fullText.slice(
+            rawStart + rawSelected.length,
+            rawStart + rawSelected.length + 30,
+          ),
         );
 
         stabiloPendingRange._selectedText = selectedText;
