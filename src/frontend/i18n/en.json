@@ -34,6 +34,8 @@
 
   "sidebar.failed_to_load": "Failed to load documents.",
   "sidebar.no_docs": "No documents found.",
+  "sidebar.annotation_badge": "annotation",
+  "sidebar.annotated_docs_badge": "document with annotations",
 
   "doc.marker_mode": "Marker mode — highlight to annotate",
   "doc.marker_btn": "Marker",

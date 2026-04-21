@@ -35,6 +35,16 @@ function writeAnnotations(docsPath: string, store: AnnotationsStore): void {
 export function annotationsRouter(docsPath: string): Router {
   const router = Router();
 
+  // GET /api/annotations  → { [docId]: count }
+  router.get("/", (_req: Request, res: Response) => {
+    const store = readAnnotations(docsPath);
+    const counts: Record<string, number> = {};
+    for (const [docId, arr] of Object.entries(store)) {
+      if (Array.isArray(arr) && arr.length > 0) counts[docId] = arr.length;
+    }
+    res.json(counts);
+  });
+
   // GET /api/annotations/:docId
   router.get("/:docId", (req: Request, res: Response) => {
     const docId = decodeURIComponent(req.params.docId);

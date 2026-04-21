@@ -2140,6 +2140,7 @@
       // ── State ──────────────────────────────────────────────────
       let allDocs = [];
       let allFolderPaths = [];
+      let annotationCounts = {};
       let currentDocId = null;
       let currentDocContent = "";
       let searchQuery = "";
@@ -2247,6 +2248,7 @@
           } catch {
             allFolderPaths = [];
           }
+          await refreshAnnotationCounts();
           renderSidebar(allDocs);
         } catch {
           document.getElementById("category-tree").innerHTML =
@@ -2310,6 +2312,65 @@
         return n;
       }
 
+      async function refreshAnnotationCounts() {
+        try {
+          const raw = await fetch("/api/annotations").then((r) => r.json());
+          annotationCounts = {};
+          for (const [docId, n] of Object.entries(raw || {})) {
+            annotationCounts[docId] = n;
+            try {
+              annotationCounts[encodeURIComponent(docId)] = n;
+            } catch {}
+          }
+        } catch {
+          annotationCounts = {};
+        }
+      }
+
+      function countTreeAnnotations(node) {
+        let n = 0;
+        for (const arr of Object.values(node.categories)) {
+          for (const doc of arr) n += annotationCounts[doc.id] || 0;
+        }
+        for (const child of Object.values(node.children))
+          n += countTreeAnnotations(child);
+        return n;
+      }
+
+      function countTreeAnnotatedDocs(node) {
+        let n = 0;
+        for (const arr of Object.values(node.categories)) {
+          for (const doc of arr) if (annotationCounts[doc.id] > 0) n += 1;
+        }
+        for (const child of Object.values(node.children))
+          n += countTreeAnnotatedDocs(child);
+        return n;
+      }
+
+      function annotationBadge(count) {
+        if (!count) return "";
+        const label = window.t
+          ? window.t("sidebar.annotation_badge")
+          : "annotation";
+        return `<span title="${count} ${esc(label)}${count > 1 ? "s" : ""}"
+                       class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5
+                              rounded-full bg-yellow-300 dark:bg-yellow-400
+                              text-[10px] font-bold text-yellow-900
+                              border border-yellow-500 shadow-sm">${count}</span>`;
+      }
+
+      function annotatedDocsBadge(count) {
+        if (!count) return "";
+        const label = window.t
+          ? window.t("sidebar.annotated_docs_badge")
+          : "document with annotations";
+        return `<span title="${count} ${esc(label)}${count > 1 ? "s" : ""}"
+                       class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5
+                              rounded-full bg-orange-400 dark:bg-orange-500
+                              text-[10px] font-bold text-white
+                              border border-orange-600 shadow-sm">${count}</span>`;
+      }
+
       // Render a tree node at a given folder path (array of segment strings)
       function renderTreeNode(node, folderPath) {
         let html = "";
@@ -2321,13 +2382,20 @@
             "cat-" +
             [...folderPath, cat].map((s) => s.replace(/\W/g, "-")).join("-");
           const isExpanded = expandedCategories.has(catPathKey);
+          const catAnnotatedDocs = node.categories[cat].reduce(
+            (s, d) => s + (annotationCounts[d.id] > 0 ? 1 : 0),
+            0,
+          );
           return `
       <div class="mb-0.5">
         <button onclick="toggleCategory('${esc(catPathKey)}')"
                 class="w-full flex items-center justify-between px-3 py-1.5 text-xs font-semibold
                        text-gray-500 dark:text-gray-400 uppercase tracking-wider
                        hover:bg-gray-50 dark:hover:bg-gray-800/60 rounded-md transition-colors">
-          <span>${esc(cat)}</span>
+          <span class="flex items-center gap-2">
+            <span>${esc(cat)}</span>
+            ${annotatedDocsBadge(catAnnotatedDocs)}
+          </span>
           <span class="flex items-center gap-1.5">
             <span class="font-normal normal-case text-gray-400">${node.categories[cat].length}</span>
             <span class="transition-transform duration-200 ${isExpanded ? "rotate-90" : ""}" id="arrow-${catNodeId}">&#9656;</span>
@@ -2353,13 +2421,17 @@
             "folder-" + childPath.map((s) => s.replace(/\W/g, "-")).join("-");
           const isExpanded = expandedFolders.has(pathKey);
           const docCount = countTreeDocs(node.children[key]);
+          const folderAnnotatedDocs = countTreeAnnotatedDocs(node.children[key]);
           html += `
       <div class="mb-1">
         <button onclick="toggleFolder('${esc(pathKey)}')"
                 class="w-full flex items-center justify-between px-3 py-1.5 text-xs font-semibold
                        text-violet-600 dark:text-violet-400 uppercase tracking-wider
                        hover:bg-gray-50 dark:hover:bg-gray-800/60 rounded-md transition-colors">
-          <span title="${esc(key)}">&#128193; ${esc(folderLabel(key))}</span>
+          <span class="flex items-center gap-2 min-w-0">
+            <span title="${esc(key)}" class="truncate">&#128193; ${esc(folderLabel(key))}</span>
+            ${annotatedDocsBadge(folderAnnotatedDocs)}
+          </span>
           <span class="flex items-center gap-1.5">
             <span class="font-normal normal-case text-gray-400">${docCount}</span>
             <span class="transition-transform duration-200 ${isExpanded ? "rotate-90" : ""}" id="arrow-${nodeId}">&#9656;</span>
@@ -2382,13 +2454,17 @@
 
       function renderDocItem(doc) {
         const isActive = doc.id === currentDocId;
+        const annCount = annotationCounts[doc.id] || 0;
         return `
     <button onclick="openDocument('${esc(doc.id)}')"
             id="item-${esc(doc.id)}"
             class="doc-item w-full text-left px-3 py-1.5 rounded-md text-sm transition-colors
                    text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/60
                    ${isActive ? "active" : ""}">
-      <div class="leading-snug">${esc(doc.title)}</div>
+      <div class="leading-snug flex items-center justify-between gap-2">
+        <span class="truncate">${esc(doc.title)}</span>
+        ${annotationBadge(annCount)}
+      </div>
       ${doc.formattedDate ? `<div class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">${esc(doc.formattedDate)}</div>` : ""}
     </button>`;
       }
@@ -4111,6 +4187,8 @@
           closeMarkerPopup();
           applyAnnotationHighlights();
           renderElevator();
+          annotationCounts[currentDocId] = (annotationCounts[currentDocId] || 0) + 1;
+          renderSidebar(allDocs);
         } catch {
           /* ignore */
         }
@@ -4219,6 +4297,12 @@
             .classList.add("hidden");
           applyAnnotationHighlights();
           renderElevator();
+          if (currentDocId) {
+            const next = (annotationCounts[currentDocId] || 0) - 1;
+            if (next <= 0) delete annotationCounts[currentDocId];
+            else annotationCounts[currentDocId] = next;
+            renderSidebar(allDocs);
+          }
         } catch {
           /* ignore */
         }

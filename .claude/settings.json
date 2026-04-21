@@ -9,7 +9,10 @@
       "mcp__living-documentation__list_documents",
       "mcp__living-documentation__list_diagrams",
       "mcp__living-documentation__read_diagram",
-      "Bash(git log *)"
+      "Bash(git log *)",
+      "Bash(curl -s http://localhost:4321/api/annotations)",
+      "Bash(curl -s http://localhost:4321/api/documents)",
+      "Bash(python3 -c \"import json,sys;d=json.load\\(sys.stdin\\);print\\([doc['id'] for doc in d[:5]]\\)\")"
     ]
   }
 }
