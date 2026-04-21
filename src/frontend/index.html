@@ -2545,6 +2545,16 @@
             });
           });
 
+          // Intercept pure-anchor links (#foo) to offset for the sticky header
+          contentEl.querySelectorAll('a[href^="#"]').forEach((a) => {
+            const href = a.getAttribute("href");
+            if (!href || href.length < 2) return;
+            a.addEventListener("click", (e) => {
+              e.preventDefault();
+              scrollToAnchor(href.slice(1));
+            });
+          });
+
           // Make tables responsive
           contentEl.querySelectorAll("table").forEach((t) => {
             const wrapper = document.createElement("div");
@@ -2567,13 +2577,10 @@
 
           // Scroll to anchor if present in URL
           const hash = window.location.hash;
-          if (hash) {
-            const target = contentEl.querySelector(hash);
-            if (target) {
-              target.scrollIntoView({ behavior: "smooth", block: "start" });
-            }
+          if (hash && hash.length > 1) {
+            scrollToAnchor(hash.slice(1));
           } else {
-            docView.scrollTop = 0;
+            document.getElementById("content-area").scrollTop = 0;
           }
         } catch (err) {
           document.getElementById("doc-content").innerHTML =
@@ -2764,6 +2771,43 @@
           contentEl
             .querySelectorAll("pre code")
             .forEach((block) => hljs.highlightElement(block));
+
+          contentEl.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach((h) => {
+            if (!h.id) {
+              h.id = h.textContent
+                .toLowerCase()
+                .replace(/[^\w\s-]/g, "")
+                .trim()
+                .replace(/\s+/g, "-");
+            }
+          });
+
+          contentEl.querySelectorAll("a[href]").forEach((a) => {
+            const href = a.getAttribute("href");
+            const m = href && href.match(/[?&]doc=([^&#]+)/);
+            if (!m) return;
+            a.addEventListener("click", (e) => {
+              e.preventDefault();
+              openDocument(decodeURIComponent(m[1]), false, true);
+            });
+          });
+
+          contentEl.querySelectorAll('a[href^="#"]').forEach((a) => {
+            const href = a.getAttribute("href");
+            if (!href || href.length < 2) return;
+            a.addEventListener("click", (e) => {
+              e.preventDefault();
+              scrollToAnchor(href.slice(1));
+            });
+          });
+
+          contentEl.querySelectorAll("table").forEach((t) => {
+            if (t.parentNode.classList.contains("overflow-x-auto")) return;
+            const wrapper = document.createElement("div");
+            wrapper.className = "overflow-x-auto";
+            t.parentNode.insertBefore(wrapper, t);
+            wrapper.appendChild(t);
+          });
 
           exitEditMode();
         } catch (err) {
@@ -4343,6 +4387,19 @@
           </li>`,
           )
           .join("");
+      }
+
+      function scrollToAnchor(anchorId) {
+        const container = document.getElementById("content-area");
+        const target = document.getElementById(anchorId);
+        if (!container || !target) return;
+        const stickyHeader = document.querySelector("#doc-view header");
+        const headerHeight = stickyHeader
+          ? stickyHeader.getBoundingClientRect().height
+          : 0;
+        const targetTop = target.getBoundingClientRect().top;
+        const containerTop = container.getBoundingClientRect().top;
+        container.scrollTop += targetTop - containerTop - headerHeight - 8;
       }
 
       function scrollToMatch(id) {
