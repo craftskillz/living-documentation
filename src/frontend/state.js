@@ -1,0 +1,28 @@
+// ── Shared module state ──────────────────────────────────────────────────────
+// Loaded first (defer, before all other modules). All symbols are globals.
+
+let allDocs = [];
+let allFolderPaths = [];
+let annotationCounts = {};
+let currentDocId = null;
+let currentDocContent = "";
+let searchQuery = "";
+let searchResults = null;
+let navHistory = []; // stack of { id, title } visited via in-doc links
+let expandedCategories = new Set();
+let expandedFolders = new Set();
+
+function filteredDocs() {
+  if (!searchQuery) return allDocs;
+  if (Array.isArray(searchResults)) return searchResults;
+  const q = searchQuery.toLowerCase();
+  return allDocs.filter(
+    (d) =>
+      d.title.toLowerCase().includes(q) ||
+      d.category.toLowerCase().includes(q),
+  );
+}
+
+function refreshSidebar() {
+  renderSidebar(filteredDocs());
+}
