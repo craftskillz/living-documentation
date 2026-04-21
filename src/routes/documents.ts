@@ -340,10 +340,16 @@ export function documentsRouter(docsPath: string): Router {
 
     const { filenamePattern } = readConfig(docsPath);
     const today = new Date().toISOString().slice(0, 10);
+    const normalizedCategory =
+      (category || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toUpperCase()
+        .replace(/[^A-Z0-9_-]/g, '') || 'GENERAL';
     const filename = buildFilename(
       filenamePattern || 'YYYY_MM_DD_HH_mm_[Category]_title',
       title.trim(),
-      (category.trim() || 'General'),
+      normalizedCategory,
       today,
     );
 

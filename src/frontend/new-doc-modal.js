@@ -8,6 +8,35 @@ let _newDocSelectedFolder = "";
 let _newDocDocsFolder = "";
 let _newDocPattern = "YYYY_MM_DD_HH_mm_[Category]_title";
 
+function newDocNormalizeCategory(raw) {
+  return (raw || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toUpperCase()
+    .replace(/[^A-Z0-9_-]/g, "");
+}
+
+function newDocSanitizeCategoryInput() {
+  const input = document.getElementById("new-doc-category");
+  const normalized = newDocNormalizeCategory(input.value);
+  if (input.value !== normalized) input.value = normalized;
+  newDocUpdatePreview();
+}
+
+function newDocPopulateCategoryOptions() {
+  const list = document.getElementById("new-doc-category-options");
+  if (!list) return;
+  const seen = new Set();
+  (allDocs || []).forEach((d) => {
+    const cat = newDocNormalizeCategory(d.category || "");
+    if (cat) seen.add(cat);
+  });
+  const sorted = Array.from(seen).sort((a, b) => a.localeCompare(b));
+  list.innerHTML = sorted
+    .map((cat) => `<option value="${esc(cat)}"></option>`)
+    .join("");
+}
+
 async function openNewDocModal() {
   try {
     const cfg = await fetch("/api/config").then((r) => r.json());
@@ -22,7 +51,9 @@ async function openNewDocModal() {
   const currentDoc =
     currentDocId && allDocs.find((d) => d.id === currentDocId);
   const prefillCategory =
-    (currentDoc && currentDoc.category) || "General";
+    newDocNormalizeCategory(
+      (currentDoc && currentDoc.category) || "General",
+    ) || "GENERAL";
   // Derive folder from currentDocId (encoded relative path, e.g. "1_tutorial%2Fsome_file")
   // For extra files (absolute paths), skip.
   let prefillFolder = "";
@@ -42,6 +73,7 @@ async function openNewDocModal() {
   _newDocSelectedFolder = prefillFolder;
   _newDocBrowseCurrent = prefillFolderAbs || null;
   _newDocBrowseParent = null;
+  newDocPopulateCategoryOptions();
   document.getElementById("new-doc-title").value = "";
   document.getElementById("new-doc-category").value = prefillCategory;
   document.getElementById("new-doc-folder-display").textContent =
@@ -138,7 +170,9 @@ function newDocCreateFolder() {
 function newDocUpdatePreview() {
   const title = document.getElementById("new-doc-title").value.trim();
   const category =
-    document.getElementById("new-doc-category").value.trim() || "General";
+    newDocNormalizeCategory(
+      document.getElementById("new-doc-category").value,
+    ) || "GENERAL";
   const previewEl = document.getElementById("new-doc-filename-preview");
 
   if (!title) {
@@ -181,7 +215,9 @@ function newDocUpdatePreview() {
 async function createNewDocument() {
   const title = document.getElementById("new-doc-title").value.trim();
   const category =
-    document.getElementById("new-doc-category").value.trim() || "General";
+    newDocNormalizeCategory(
+      document.getElementById("new-doc-category").value,
+    ) || "GENERAL";
   const errorEl = document.getElementById("new-doc-error");
   const btn = document.getElementById("new-doc-create-btn");
 
