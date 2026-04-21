@@ -236,6 +236,8 @@
   "admin.server_info.title": "Server Info",
   "admin.server_info.docs_folder": "Docs Folder",
   "admin.server_info.port": "Port",
+  "admin.server_info.source_root": "Source Root",
+  "admin.server_info.source_root_hint": "Absolute path used by MCP source tools. Defaults to the parent of Docs Folder when empty.",
 
   "admin.config.title": "Configuration",
   "admin.config.description": "Settings are saved to .living-doc.json in your docs folder.",

@@ -10,7 +10,7 @@ import { wordcloudRouter } from './routes/wordcloud';
 import { annotationsRouter } from './routes/annotations';
 import { exportRouter } from './routes/export';
 import { mcpRouter } from './mcp/server';
-import { writeConfig } from './lib/config';
+import { readConfig, writeConfig } from './lib/config';
 
 export interface ServerOptions {
   docsPath: string;
@@ -28,7 +28,12 @@ export async function startServer({
   app.use(express.json({ limit: '20mb' }));
 
   // Persist initial state to .living-doc.json
-  writeConfig(docsPath, { docsFolder: docsPath, port });
+  const existing = readConfig(docsPath);
+  const initPatch: Parameters<typeof writeConfig>[1] = { docsFolder: docsPath, port };
+  if (!existing.sourceRoot) {
+    initPatch.sourceRoot = path.resolve(path.dirname(path.resolve(docsPath)));
+  }
+  writeConfig(docsPath, initPatch);
 
   // API
   app.use('/api/documents', documentsRouter(docsPath));

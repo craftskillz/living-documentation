@@ -27,17 +27,19 @@ const MAX_FILE_BYTES             = 512 * 1024; // 512 KB
 
 function resolveSourceRoot(docsPath: string): string {
   const { sourceRoot } = readConfig(docsPath);
-  if (sourceRoot && path.isAbsolute(sourceRoot)) {
-    if (!fs.existsSync(sourceRoot)) {
-      throw new Error(
-        `sourceRoot "${sourceRoot}" does not exist. ` +
-        `Update it in .living-doc.json or via PUT /api/config.`,
-      );
-    }
-    return path.resolve(sourceRoot);
+  // sourceRoot is initialised at server startup to the parent of docsPath
+  // when absent; users can override it via the admin panel / PUT /api/config.
+  const resolved =
+    sourceRoot && path.isAbsolute(sourceRoot)
+      ? sourceRoot
+      : path.dirname(path.resolve(docsPath));
+  if (!fs.existsSync(resolved)) {
+    throw new Error(
+      `sourceRoot "${resolved}" does not exist. ` +
+      `Update it in .living-doc.json or via PUT /api/config.`,
+    );
   }
-  // Default: parent of docsPath
-  return path.resolve(path.dirname(path.resolve(docsPath)));
+  return path.resolve(resolved);
 }
 
 function safeResolve(root: string, rel: string): string {

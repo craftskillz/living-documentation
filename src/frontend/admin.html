@@ -111,6 +111,27 @@
                     —
                   </dd>
                 </div>
+                <div class="col-span-2 space-y-1.5">
+                  <label
+                    class="block text-xs text-gray-400 uppercase tracking-wide mb-0.5"
+                    for="field-source-root"
+                    data-i18n="admin.server_info.source_root"
+                    >Source Root</label
+                  >
+                  <input
+                    id="field-source-root"
+                    name="sourceRoot"
+                    type="text"
+                    class="w-full px-3 py-2 font-mono text-xs rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 break-all"
+                    placeholder="/absolute/path"
+                  />
+                  <p
+                    class="text-xs text-gray-400 dark:text-gray-500"
+                    data-i18n="admin.server_info.source_root_hint"
+                  >
+                    Absolute path used by MCP source tools. Defaults to the parent of Docs Folder when empty.
+                  </p>
+                </div>
               </dl>
             </div>
 
@@ -467,6 +488,8 @@
           document.getElementById("info-folder").textContent =
             cfg.docsFolder || "—";
           document.getElementById("info-port").textContent = cfg.port || "—";
+          document.getElementById("field-source-root").value =
+            cfg.sourceRoot || "";
           document.getElementById("field-title").value = cfg.title || "";
           document.getElementById("field-theme").value = cfg.theme || "system";
           document.getElementById("field-language").value = cfg.language || "en";
@@ -499,6 +522,9 @@
             return;
           }
         }
+        const sourceRootRaw = document
+          .getElementById("field-source-root")
+          .value.trim();
         const payload = {
           title: document.getElementById("field-title").value.trim(),
           theme: document.getElementById("field-theme").value,
@@ -507,6 +533,7 @@
           showDiagramDebug: document.getElementById("field-debug").checked,
           diagramNodePalette: [...nodePalette],
           diagramEdgePalette: [...edgePalette],
+          sourceRoot: sourceRootRaw === "" ? null : sourceRootRaw,
         };
 
         try {

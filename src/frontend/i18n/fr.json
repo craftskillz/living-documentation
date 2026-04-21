@@ -236,6 +236,8 @@
   "admin.server_info.title": "Informations serveur",
   "admin.server_info.docs_folder": "Dossier docs",
   "admin.server_info.port": "Port",
+  "admin.server_info.source_root": "Racine des sources",
+  "admin.server_info.source_root_hint": "Chemin absolu utilisé par les outils MCP de lecture du code source. Par défaut, le dossier parent du dossier docs si vide.",
 
   "admin.config.title": "Configuration",
   "admin.config.description": "Les paramètres sont sauvegardés dans .living-doc.json dans votre dossier docs.",
