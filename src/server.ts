@@ -5,6 +5,7 @@ import { documentsRouter } from './routes/documents';
 import { configRouter } from './routes/config';
 import { browseRouter } from './routes/browse';
 import { imagesRouter } from './routes/images';
+import { filesRouter } from './routes/files';
 import { diagramsRouter } from './routes/diagrams';
 import { wordcloudRouter } from './routes/wordcloud';
 import { annotationsRouter } from './routes/annotations';
@@ -40,6 +41,7 @@ export async function startServer({
   app.use('/api/config', configRouter(docsPath));
   app.use('/api/browse', browseRouter());
   app.use('/api/images', imagesRouter(docsPath));
+  app.use('/api/files', filesRouter(docsPath));
   app.use('/api/diagrams', diagramsRouter(docsPath));
   app.use('/api/wordcloud', wordcloudRouter());
   app.use('/api/annotations', annotationsRouter(docsPath));
@@ -52,6 +54,7 @@ export async function startServer({
 
   // Static assets from docs folder (images, etc.)
   app.use('/images', express.static(path.join(docsPath, 'images')));
+  app.use('/files', express.static(path.join(docsPath, 'files')));
 
   app.get('/', (_req, res) =>
     res.sendFile(path.join(frontendPath, 'index.html')),

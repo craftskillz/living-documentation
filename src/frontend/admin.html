@@ -316,6 +316,35 @@
           </div>
         </div>
 
+        <!-- ── File Attachments (full width) ── -->
+        <div
+          class="mt-8 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 space-y-3"
+        >
+          <div>
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+              <span data-i18n="admin.files.title">File Attachments</span>
+            </h3>
+            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400" data-i18n="admin.files.description">
+              Extensions that are rejected by the <code>/api/files/upload</code> endpoint. One extension per line (or comma/space separated), without the leading dot.
+            </p>
+          </div>
+          <label
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            for="field-blocked-extensions"
+            data-i18n="admin.files.blocked_label"
+          >Blocked extensions</label>
+          <textarea
+            id="field-blocked-extensions"
+            name="blockedFileExtensions"
+            rows="3"
+            class="w-full px-3 py-2 font-mono text-xs rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="exe sh bat cmd com scr ps1 msi"
+          ></textarea>
+          <p class="text-xs text-gray-400 dark:text-gray-500" data-i18n="admin.files.hint">
+            Defaults to common executable formats. Max upload size is 19 MB per file.
+          </p>
+        </div>
+
         <!-- ── Diagram Palettes (full width) ── -->
         <div
           class="mt-8 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 divide-y divide-gray-100 dark:divide-gray-800"
@@ -497,6 +526,8 @@
             cfg.filenamePattern || "";
           document.getElementById("field-debug").checked =
             !!cfg.showDiagramDebug;
+          document.getElementById("field-blocked-extensions").value =
+            (cfg.blockedFileExtensions || []).join(" ");
           updatePreview(cfg.filenamePattern);
           initExtraFiles(cfg);
           initPalettes(cfg);
@@ -525,6 +556,12 @@
         const sourceRootRaw = document
           .getElementById("field-source-root")
           .value.trim();
+        const blockedExtensions = document
+          .getElementById("field-blocked-extensions")
+          .value
+          .split(/[\s,]+/)
+          .map((e) => e.trim().replace(/^\.+/, "").toLowerCase())
+          .filter((e) => /^[a-z0-9]+$/.test(e));
         const payload = {
           title: document.getElementById("field-title").value.trim(),
           theme: document.getElementById("field-theme").value,
@@ -534,6 +571,7 @@
           diagramNodePalette: [...nodePalette],
           diagramEdgePalette: [...edgePalette],
           sourceRoot: sourceRootRaw === "" ? null : sourceRootRaw,
+          blockedFileExtensions: blockedExtensions,
         };
 
         try {

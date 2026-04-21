@@ -31,6 +31,7 @@ ExtraFiles (added in the admin section) are always first, always expanded in a `
 
 - **Inline editing** — edit any document directly in the browser, saves to disk instantly
 - **Image paste** — paste an image from clipboard in the editor; auto-uploaded and inserted as Markdown
+- **File attachments** — drag & drop, paste or pick any non-image file (PDF, archives, office docs…) in the editor; uploaded under `DOCS_FOLDER/files/` and inserted as a paperclip link. Blocked extensions and size limits are configurable from the Admin panel.
 - **Snippet inserter** — click **🧩 Snippets** while editing to insert pre-built Markdown constructs at the cursor position:
   - *Simple snippets*: collapsible block (`<details>`), link, link to another document, anchor link, anchor link in another document, numbered list (3 levels), bullet list (3 levels), code block, blockquote, horizontal separator, image
   - *Complex snippets*: **table editor** (dynamic rows/columns grid, generates aligned Markdown table) and **tree editor** (indentation-based ASCII tree, generates a `text` code block with `├──` / `└──` connectors)
@@ -219,6 +220,7 @@ living-documentation/
 │   │   ├── config.ts            Config API
 │   │   ├── browse.ts            Filesystem browser API (+ mkdir)
 │   │   ├── images.ts            Image upload API
+│   │   ├── files.ts             File attachment upload API (paperclip)
 │   │   ├── wordcloud.ts         Word cloud raw text reader
 │   │   ├── diagrams.ts          Diagrams CRUD API (vis-network JSON)
 │   │   ├── annotations.ts       Per-document highlight markers API
@@ -263,11 +265,12 @@ living-documentation/
 | `DELETE` | `/api/documents/:id`           | Delete a document                                                  |
 | `GET`    | `/api/documents/search?q=`     | Full-text search                                                   |
 | `GET`    | `/api/config`                  | Read config                                                        |
-| `PUT`    | `/api/config`                  | Update config (`title`, `theme`, `filenamePattern`, `extraFiles`, `showDiagramDebug`, `sourceRoot`) |
+| `PUT`    | `/api/config`                  | Update config (`title`, `theme`, `filenamePattern`, `extraFiles`, `showDiagramDebug`, `sourceRoot`, `blockedFileExtensions`) |
 | `GET`    | `/api/browse?path=`            | List directories and `.md` files at a given filesystem path        |
 | `GET`    | `/api/browse/alldirs?path=`    | List directories recursively (for the folder picker)               |
 | `POST`   | `/api/browse/mkdir`            | Create a new folder under the docs root                            |
 | `POST`   | `/api/images/upload`           | Upload a base64 image; saved to `DOCS_FOLDER/images/`              |
+| `POST`   | `/api/files/upload`            | Upload a base64 file attachment; saved to `DOCS_FOLDER/files/`     |
 | `GET`    | `/api/diagrams`                | List saved diagrams                                                |
 | `GET`    | `/api/diagrams/:id`            | Read a single diagram (nodes + edges)                              |
 | `PUT`    | `/api/diagrams/:id`            | Create or update a diagram                                         |

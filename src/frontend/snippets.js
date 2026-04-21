@@ -19,6 +19,7 @@ const _SNIPPET_PANELS = [
   "diagram",
   "colored-section",
   "colored-text",
+  "attachment",
 ];
 
 const _COLOR_SWATCHES = {
@@ -127,10 +128,15 @@ function snippetTypeChanged() {
     const panel = document.getElementById("snip-panel-" + p);
     if (panel) panel.classList.toggle("hidden", p !== type);
   });
+  const previewWrap = document.getElementById("snippet-preview")?.parentElement;
+  if (previewWrap) previewWrap.classList.toggle("hidden", type === "attachment");
+
   if (type === "table") tableInit();
   else if (type === "tree") treeInit();
   else if (type === "diagram") snippetDiagInit();
-  else snippetUpdatePreview();
+  else if (type === "attachment") {
+    /* no preview — file picker opens on Insert */
+  } else snippetUpdatePreview();
 }
 
 async function snippetDiagInit() {
@@ -326,6 +332,11 @@ function insertSnippet() {
   const type = document.getElementById("snippet-type").value;
   if (type === "diagram") {
     insertDiagramSnippet();
+    return;
+  }
+  if (type === "attachment") {
+    closeSnippetsModal();
+    if (typeof openFilePicker === "function") openFilePicker();
     return;
   }
   const text = buildSnippetMarkdown();

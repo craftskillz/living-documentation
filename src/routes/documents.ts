@@ -104,6 +104,28 @@ export function stripFrontmatter(content: string): string {
   return content.slice(end + 4).replace(/^\n/, "");
 }
 
+// Decorate <a> tags pointing to the /files/ folder with a paperclip icon and
+// target="_blank" so attachments open in a new tab.
+export function decorateFileLinks(html: string): string {
+  return html.replace(
+    /<a\s+([^>]*?)href="(\.?\/files\/[^"]+)"([^>]*)>([\s\S]*?)<\/a>/gi,
+    (_m, pre: string, href: string, post: string, label: string) => {
+      const attrs = `${pre} ${post}`.trim();
+      const hasClass = /\bclass\s*=/.test(attrs);
+      const classFragment = hasClass
+        ? attrs.replace(/class\s*=\s*"([^"]*)"/i, (_x, c) => `class="${c} ld-file-attachment"`)
+        : `${attrs} class="ld-file-attachment"`;
+      const withTarget = / target\s*=/.test(classFragment)
+        ? classFragment
+        : `${classFragment} target="_blank" rel="noopener"`;
+      const iconPrefix = /fa-paperclip|📎/.test(label)
+        ? ""
+        : '<i class="fa-solid fa-paperclip ld-file-icon"></i> ';
+      return `<a ${withTarget} href="${href}">${iconPrefix}${label}</a>`;
+    },
+  );
+}
+
 export function documentsRouter(docsPath: string): Router {
   const router = Router();
 
@@ -174,7 +196,7 @@ export function documentsRouter(docsPath: string): Router {
       try {
         const content = fs.readFileSync(filePath, "utf-8");
         const meta = parseFilename(path.basename(filePath), filenamePattern);
-        const html = marked.parse(stripFrontmatter(content)) as string;
+        const html = decorateFileLinks(marked.parse(stripFrontmatter(content)) as string);
         res.json({
           ...meta,
           id: req.params.id,

@@ -35,5 +35,15 @@
     "#ef4444",
     "#a855f7"
   ],
-  "sourceRoot": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation"
+  "sourceRoot": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation",
+  "blockedFileExtensions": [
+    "exe",
+    "sh",
+    "bat",
+    "cmd",
+    "com",
+    "scr",
+    "ps1",
+    "msi"
+  ]
 }

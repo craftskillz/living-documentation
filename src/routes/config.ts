@@ -28,6 +28,7 @@ export function configRouter(docsPath: string): Router {
         'diagramNodePalette',
         'diagramEdgePalette',
         'sourceRoot',
+        'blockedFileExtensions',
       ];
       const safe: Partial<LivingDocConfig> = {};
       for (const key of allowed) {
@@ -71,6 +72,18 @@ export function configRouter(docsPath: string): Router {
           safe.sourceRoot = v;
         } else {
           return res.status(400).json({ error: 'sourceRoot must be an absolute path or null' });
+        }
+      }
+      // blockedFileExtensions: array of extension strings (without leading dot), lowercase
+      if ('blockedFileExtensions' in patch) {
+        const v = patch.blockedFileExtensions;
+        if (Array.isArray(v)) {
+          safe.blockedFileExtensions = (v as unknown[])
+            .filter((e): e is string => typeof e === 'string')
+            .map((e) => e.trim().replace(/^\.+/, '').toLowerCase())
+            .filter((e) => /^[a-z0-9]+$/.test(e));
+        } else {
+          return res.status(400).json({ error: 'blockedFileExtensions must be an array of strings' });
         }
       }
       // extraFiles: only absolute .md paths

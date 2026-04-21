@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupDarkToggle();
   setupSearch();
   wcRestorePrefs();
+  if (typeof initFileAttach === "function") initFileAttach();
   await loadConfig();
   await loadDocuments();
 

@@ -21,6 +21,7 @@ src/routes/documents.ts     → /api/documents    (list, search, read, write, cr
 src/routes/config.ts        → /api/config       (read, write)
 src/routes/browse.ts        → /api/browse       (filesystem navigator, dirs + .md files, mkdir)
 src/routes/images.ts        → /api/images       (image upload from clipboard paste)
+src/routes/files.ts         → /api/files        (arbitrary file upload, blocked-extension filter)
 src/routes/wordcloud.ts     → /api/wordcloud    (recursive file reader, returns raw text)
 src/routes/diagrams.ts      → /api/diagrams     (CRUD of vis-network diagrams as JSON)
 src/routes/annotations.ts   → /api/annotations  (per-doc highlight markers)
@@ -54,6 +55,7 @@ dark-mode.js                → `ld-dark` localStorage toggle
 search.js                   → instant client filter + debounced server-side search
 documents.js                → load/render/save document content
 image-paste.js              → Cmd/Ctrl+V image upload in the editor
+file-attach.js              → paperclip attachments: drag-drop, paste, file picker (non-image)
 annotations.js              → highlight-marker creation, persistence, DOM anchor traversal
 export.js                   → PDF print + HTML/Notion/Confluence export dialog
 snippets.js                 → snippet inserter panel (entry point)
@@ -99,7 +101,7 @@ Documents are sorted by **full filename** (ascending `localeCompare`) within eac
 ## Config
 
 Persisted as `.living-doc.json` inside the docs folder.
-Editable fields via `PUT /api/config`: `title`, `theme`, `filenamePattern`, `extraFiles`, `showDiagramDebug`, `sourceRoot`.
+Editable fields via `PUT /api/config`: `title`, `theme`, `filenamePattern`, `extraFiles`, `showDiagramDebug`, `sourceRoot`, `blockedFileExtensions`.
 `docsFolder` and `port` are write-once from CLI and are informational only in the API.
 
 `sourceRoot` (string|null, default: parent directory of `docsFolder`, auto-filled on first run) — absolute path used by the MCP source tools (`list_source_files`, `read_source_file`, `search_source`). Keeps the MCP server able to read the project source when the docs folder sits inside a larger repo.
@@ -152,6 +154,22 @@ Accessible via the **☁ Word Cloud** button in the header. Opens a full-screen 
 - Server saves it to `DOCS_FOLDER/images/` (directory created if absent) with a timestamped filename.
 - Placeholder is replaced by `![image](./images/<filename>)`.
 - Images are served statically by Express at `/images/*` → `DOCS_FOLDER/images/`.
+
+### File attachments (paperclip)
+
+Non-image files are handled by `file-attach.js` alongside image paste. Three entry points in the editor:
+- Drag & drop any non-image file onto the `#doc-editor` textarea.
+- `Cmd/Ctrl+V` on the textarea when the clipboard holds a non-image file (via `clipboardData.files`).
+- **Snippets → 📎 File attachment** → **Insert** opens the OS file picker.
+
+Pipeline:
+- A placeholder `[📎 uploading…](…)` is inserted at cursor position.
+- Payload: base64 JSON → `POST /api/files/upload` (no multer dependency; shares the 20 MB body limit with images, server caps at 19 MB with an explicit `File too large` error).
+- Server saves under `DOCS_FOLDER/files/` with a slugified `<timestamp>_<random>_<base>.<ext>` filename. Client cannot choose the path — prevents traversal.
+- Extensions listed in `blockedFileExtensions` are rejected server-side (default: `exe sh bat cmd com scr ps1 msi`, editable in Admin).
+- Placeholder is replaced by `[📎 <originalName>](./files/<filename>)`.
+- Files are served statically by Express at `/files/*` → `DOCS_FOLDER/files/`.
+- `documents.ts` post-processes rendered HTML: every `<a href="./files/...">` is decorated with `class="ld-file-attachment"`, `target="_blank"`, `rel="noopener"`, and a prepended `<i class="fa-solid fa-paperclip ld-file-icon"></i>` when the label does not already contain a paperclip glyph — produces the purple pill look in the reader.
 
 ## Diagram editor
 
@@ -255,7 +273,8 @@ Prompts (`generate-context-diagram`, `generate-container-diagram`, `generate-uml
 - `POST /api/documents` creates files only under `docsPath` (optionally in a sub-folder under it).
 - `POST /api/images/upload` saves only to `DOCS_FOLDER/images/` — no path parameter accepted.
 - Image filenames are server-generated (timestamp + random suffix) — client cannot control the path.
-- Express body limit raised to `20mb` to accommodate base64-encoded image uploads.
+- `POST /api/files/upload` saves only to `DOCS_FOLDER/files/` — server-generated filenames; extensions in `blockedFileExtensions` are rejected; 19 MB payload cap enforced before the Express 20 MB body limit kicks in.
+- Express body limit raised to `20mb` to accommodate base64-encoded image and file uploads.
 - `GET /api/wordcloud` reads arbitrary paths on disk — intentionally unrestricted since the server is local-only.
 - MCP source tools (`read_source_file`, `search_source`, `list_source_files`) are rooted at `config.sourceRoot` and reject paths that escape it; common heavy folders (`node_modules`, `dist`, `.git`, `build`, `target`) are skipped.
 

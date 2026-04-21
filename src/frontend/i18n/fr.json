@@ -58,6 +58,9 @@
   "doc.save": "Enregistrer le document",
   "doc.uploading_image": "Téléversement de l'image…",
   "doc.image_upload_failed": "Échec du téléversement : ",
+  "doc.uploading_file": "Téléversement du fichier…",
+  "doc.file_upload_failed": "Échec du téléversement du fichier : ",
+  "doc.file_too_large": "Fichier trop volumineux",
   "doc.saving": "Enregistrement…",
   "doc.failed_to_load": "Impossible de charger le document : ",
   "doc.copied": "✓ Copié !",
@@ -176,6 +179,9 @@
   "snippet.saving_btn": "Enregistrement…",
   "snippet.detected_msg": "✓ Type détecté : {type}. Les champs ont été pré-remplis — modifiez puis cliquez sur Insérer pour remplacer la sélection.",
   "snippet.unknown_type_msg": "⚠ Le texte sélectionné ne correspond à aucun type de snippet reconnu. Choisissez un type ci-dessous — le snippet remplacera quand même la sélection.",
+  "snippet.attachment": "📎 Pièce jointe",
+  "snippet.attachment_help": "Cliquez sur <strong>Insérer</strong> pour choisir un fichier. Il sera téléversé dans le dossier <code>files/</code> et inséré sous forme de lien <i class=\"fa-solid fa-paperclip\"></i> dans votre document.",
+  "snippet.attachment_alt": "Astuce : vous pouvez aussi glisser-déposer un fichier sur l'éditeur ou le coller depuis le presse-papiers.",
 
   "modal.img_paste.title": "Coller l'image du presse-papiers ?",
   "modal.img_paste.filename_label": "Nom du fichier",
@@ -274,6 +280,11 @@
   "admin.extra_files.add_btn": "+ Ajouter",
   "admin.extra_files.added_label": "Ajouté",
   "admin.extra_files.loading": "Chargement…",
+
+  "admin.files.title": "Pièces jointes",
+  "admin.files.description": "Extensions refusées par le endpoint <code>/api/files/upload</code>. Une extension par ligne (ou séparées par des virgules ou des espaces), sans le point.",
+  "admin.files.blocked_label": "Extensions bloquées",
+  "admin.files.hint": "Par défaut, les formats exécutables courants. Taille maximale : 19 Mo par fichier.",
 
   "admin.palette.title": "Palettes de couleurs des diagrammes",
   "admin.palette.description": "Personnalisez les couleurs disponibles dans l'éditeur de diagrammes. Les modifications prennent effet après enregistrement.",

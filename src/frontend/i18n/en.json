@@ -58,6 +58,9 @@
   "doc.save": "Save document",
   "doc.uploading_image": "Uploading image…",
   "doc.image_upload_failed": "Image upload failed: ",
+  "doc.uploading_file": "Uploading file…",
+  "doc.file_upload_failed": "File upload failed: ",
+  "doc.file_too_large": "File too large",
   "doc.saving": "Saving…",
   "doc.failed_to_load": "Failed to load document: ",
   "doc.copied": "✓ Copied!",
@@ -176,6 +179,9 @@
   "snippet.saving_btn": "Saving…",
   "snippet.detected_msg": "✓ Detected type: {type}. Fields pre-filled — edit then click Insert to replace selection.",
   "snippet.unknown_type_msg": "⚠ Selected text doesn't match any known snippet type. Choose a type below — the snippet will still replace the selection.",
+  "snippet.attachment": "📎 File attachment",
+  "snippet.attachment_help": "Click <strong>Insert</strong> to choose a file. It will be uploaded under the <code>files/</code> folder and inserted as a <i class=\"fa-solid fa-paperclip\"></i> link in your document.",
+  "snippet.attachment_alt": "Tip: you can also drag &amp; drop a file onto the editor, or paste it from the clipboard.",
 
   "modal.img_paste.title": "Paste clipboard image?",
   "modal.img_paste.filename_label": "Filename",
@@ -274,6 +280,11 @@
   "admin.extra_files.add_btn": "+ Add",
   "admin.extra_files.added_label": "Added",
   "admin.extra_files.loading": "Loading…",
+
+  "admin.files.title": "File Attachments",
+  "admin.files.description": "Extensions that are rejected by the <code>/api/files/upload</code> endpoint. One extension per line (or comma/space separated), without the leading dot.",
+  "admin.files.blocked_label": "Blocked extensions",
+  "admin.files.hint": "Defaults to common executable formats. Max upload size is 19 MB per file.",
 
   "admin.palette.title": "Diagram Color Palettes",
   "admin.palette.description": "Customize the colors available in the diagram editor. Changes take effect after saving.",
