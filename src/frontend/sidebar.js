@@ -53,6 +53,48 @@ function buildFolderTree(docs) {
 function renderTreeNode(node, folderPath) {
   let html = "";
 
+  // Flat mode: categories are hidden — merge all docs in this node and sort by filename
+  if (hideCategories) {
+    const flatDocs = Object.values(node.categories)
+      .flat()
+      .sort((a, b) => (a.filename || "").localeCompare(b.filename || ""));
+    html += flatDocs.map((doc) => renderDocItem(doc)).join("");
+
+    // Subfolders (recursive) — folders are still shown
+    const childKeys = Object.keys(node.children).sort((a, b) =>
+      a.localeCompare(b),
+    );
+    for (const key of childKeys) {
+      const childPath = [...folderPath, key];
+      const pathKey = childPath.join("|");
+      const nodeId =
+        "folder-" + childPath.map((s) => s.replace(/\W/g, "-")).join("-");
+      const isExpanded = expandedFolders.has(pathKey);
+      const docCount = countTreeDocs(node.children[key]);
+      const folderAnnotatedDocs = countTreeAnnotatedDocs(node.children[key]);
+      html += `
+<div class="mb-1">
+  <button onclick="toggleFolder('${esc(pathKey)}')"
+          class="w-full flex items-center justify-between px-3 py-1.5 text-xs font-semibold
+                 text-violet-600 dark:text-violet-400 uppercase tracking-wider
+                 hover:bg-gray-50 dark:hover:bg-gray-800/60 rounded-md transition-colors">
+    <span class="flex items-center gap-2 min-w-0">
+      <span title="${esc(key)}" class="truncate">&#128193; ${esc(folderLabel(key))}</span>
+      ${annotatedDocsBadge(folderAnnotatedDocs)}
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="font-normal normal-case text-gray-400">${docCount}</span>
+      <span class="transition-transform duration-200 ${isExpanded ? "rotate-90" : ""}" id="arrow-${nodeId}">&#9656;</span>
+    </span>
+  </button>
+  <div id="${nodeId}" class="category-docs pl-3 ${isExpanded ? "expanded" : "collapsed"}">
+    ${renderTreeNode(node.children[key], childPath)}
+  </div>
+</div>`;
+    }
+    return html;
+  }
+
   // Helper to render one category group
   const renderCat = (cat) => {
     const catPathKey = [...folderPath, cat].join("|");
@@ -179,4 +221,24 @@ function toggleFolder(pathKey) {
 
 function toggleSidebar() {
   document.getElementById("sidebar").classList.toggle("hidden");
+}
+
+function toggleHideCategories() {
+  hideCategories = !hideCategories;
+  try {
+    localStorage.setItem("ld-hide-categories", hideCategories ? "1" : "0");
+  } catch {
+    /* ignore */
+  }
+  applyHideCategoriesButtonState();
+  refreshSidebar();
+}
+
+function applyHideCategoriesButtonState() {
+  const btn = document.getElementById("toggle-categories-btn");
+  if (!btn) return;
+  btn.classList.toggle("text-blue-500", hideCategories);
+  btn.classList.toggle("dark:text-blue-400", hideCategories);
+  btn.classList.toggle("text-gray-400", !hideCategories);
+  btn.classList.toggle("dark:text-gray-500", !hideCategories);
 }

@@ -20,6 +20,7 @@
   "nav.search_mobile_placeholder": "Search…",
   "nav.toggle_dark": "Toggle dark mode",
   "nav.export": "Export",
+  "nav.toggle_categories": "Show/hide category grouping",
   "nav.export_html": "Export folders as HTML ZIP",
   "nav.export_all_pdf": "Export all documents as PDF",
   "nav.new_folder": "New folder",

@@ -11,6 +11,13 @@ let searchResults = null;
 let navHistory = []; // stack of { id, title } visited via in-doc links
 let expandedCategories = new Set();
 let expandedFolders = new Set();
+let hideCategories = (() => {
+  try {
+    return localStorage.getItem("ld-hide-categories") === "1";
+  } catch {
+    return false;
+  }
+})();
 
 function filteredDocs() {
   if (!searchQuery) return allDocs;

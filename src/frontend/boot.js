@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (typeof initFileAttach === "function") initFileAttach();
   await loadConfig();
   await loadDocuments();
+  applyHideCategoriesButtonState();
 
   // Deep-link via ?doc=id, otherwise open first General doc
   const params = new URLSearchParams(location.search);
