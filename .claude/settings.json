@@ -12,7 +12,15 @@
       "Bash(git log *)",
       "Bash(curl -s http://localhost:4321/api/annotations)",
       "Bash(curl -s http://localhost:4321/api/documents)",
-      "Bash(python3 -c \"import json,sys;d=json.load\\(sys.stdin\\);print\\([doc['id'] for doc in d[:5]]\\)\")"
+      "Bash(python3 -c \"import json,sys;d=json.load\\(sys.stdin\\);print\\([doc['id'] for doc in d[:5]]\\)\")",
+      "Bash(awk 'NR==2251{print;print \"      // → /snippets.js\";skip=1;next} skip && /^      \\\\/\\\\/ ── Helpers/{skip=0} !skip' /Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/src/frontend/index.html)",
+      "Read(//tmp/**)",
+      "Read(//private/tmp/**)",
+      "Bash(awk 'NR==2466{print \"      // ── Marker annotations → /annotations.js ──────────────\";skip=1;next} skip && /^      \\\\/\\\\/ ── Image lightbox/{skip=0} !skip' /Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/src/frontend/index.html)",
+      "Bash(awk ' *)"
+    ],
+    "additionalDirectories": [
+      "/private/tmp"
     ]
   }
 }
