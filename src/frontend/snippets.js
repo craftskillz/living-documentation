@@ -58,6 +58,96 @@ function colorTextPickSwatch(btn) {
   snippetUpdatePreview();
 }
 
+function _stripMdInline(s) {
+  return s
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/__([^_]+)__/g, "$1")
+    .replace(/(^|[^*])\*([^*]+)\*(?!\*)/g, "$1$2")
+    .replace(/(^|[^_])_([^_]+)_(?!_)/g, "$1$2")
+    .trim();
+}
+
+function _slugifyHeading(text) {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-");
+}
+
+function _extractHeadingsFromMarkdown(content) {
+  const out = [];
+  const lines = (content || "").split("\n");
+  let inFence = false;
+  for (const line of lines) {
+    if (/^```/.test(line)) {
+      inFence = !inFence;
+      continue;
+    }
+    if (inFence) continue;
+    const m = line.match(/^(#{1,6})\s+(.+?)\s*#*\s*$/);
+    if (!m) continue;
+    const text = _stripMdInline(m[2]);
+    const slug = _slugifyHeading(text);
+    if (slug) out.push({ level: m[1].length, text, slug });
+  }
+  return out;
+}
+
+function _collectEditorHeadings() {
+  const editor = document.getElementById("doc-editor");
+  return _extractHeadingsFromMarkdown(editor ? editor.value : "");
+}
+
+function _renderAnchorOptions(sel, headings, emptyKey) {
+  if (!sel) return;
+  if (headings.length === 0) {
+    sel.innerHTML = `<option value="" disabled selected>${window.t(emptyKey)}</option>`;
+    return;
+  }
+  sel.innerHTML = headings
+    .map((h) => {
+      const indent = "· ".repeat(Math.max(0, h.level - 1));
+      return `<option value="${esc(h.slug)}">${esc(indent + h.text)}</option>`;
+    })
+    .join("");
+}
+
+function _populateAnchorSelect() {
+  _renderAnchorOptions(
+    document.getElementById("snip-anchor-id"),
+    _collectEditorHeadings(),
+    'snippet.link_anchor_no_headings',
+  );
+}
+
+async function snippetAnchorDocChanged() {
+  const docSel = document.getElementById("snip-anchor-doc-select");
+  const anchorSel = document.getElementById("snip-anchor-doc-id");
+  if (!docSel || !anchorSel) return;
+  const docId = docSel.value;
+  if (!docId) {
+    _renderAnchorOptions(anchorSel, [], 'snippet.link_anchor_no_headings');
+    snippetUpdatePreview();
+    return;
+  }
+  anchorSel.innerHTML = `<option value="" disabled selected>${window.t('common.loading')}</option>`;
+  try {
+    const doc = await fetch("/api/documents/" + encodeURIComponent(docId))
+      .then((r) => {
+        if (!r.ok) throw new Error(r.statusText);
+        return r.json();
+      });
+    const headings = _extractHeadingsFromMarkdown(doc.content || "");
+    _renderAnchorOptions(anchorSel, headings, 'snippet.link_anchor_no_headings');
+  } catch {
+    _renderAnchorOptions(anchorSel, [], 'snippet.link_anchor_no_headings');
+  }
+  snippetUpdatePreview();
+}
+
 function openSnippetsModal() {
   const editor = document.getElementById("doc-editor");
   _snippetSelStart = editor.selectionStart;
@@ -68,6 +158,8 @@ function openSnippetsModal() {
     .join("");
   document.getElementById("snip-doc-select").innerHTML = docOpts;
   document.getElementById("snip-anchor-doc-select").innerHTML = docOpts;
+  _populateAnchorSelect();
+  snippetAnchorDocChanged();
 
   const msgEl = document.getElementById("snippet-detect-msg");
   const selectedText = editor.value.slice(
@@ -443,7 +535,18 @@ function parseAndFillSnippet(text, type) {
       const m = t.match(/^\[([\s\S]*?)\]\(#([\s\S]*?)\)$/);
       if (m) {
         document.getElementById("snip-anchor-text").value = m[1];
-        document.getElementById("snip-anchor-id").value = m[2];
+        const sel = document.getElementById("snip-anchor-id");
+        const wanted = m[2];
+        const hasOpt = Array.from(sel.options).some(
+          (o) => o.value === wanted,
+        );
+        if (!hasOpt) {
+          const opt = document.createElement("option");
+          opt.value = wanted;
+          opt.textContent = wanted;
+          sel.insertBefore(opt, sel.firstChild);
+        }
+        sel.value = wanted;
       }
       break;
     }
@@ -460,7 +563,22 @@ function parseAndFillSnippet(text, type) {
           }
         }
         document.getElementById("snip-anchor-doc-text").value = m[1];
-        document.getElementById("snip-anchor-doc-id").value = m[3];
+        const wanted = m[3];
+        snippetAnchorDocChanged().then(() => {
+          const anchorSel = document.getElementById("snip-anchor-doc-id");
+          if (!anchorSel) return;
+          const hasOpt = Array.from(anchorSel.options).some(
+            (o) => o.value === wanted,
+          );
+          if (!hasOpt) {
+            const opt = document.createElement("option");
+            opt.value = wanted;
+            opt.textContent = wanted;
+            anchorSel.insertBefore(opt, anchorSel.firstChild);
+          }
+          anchorSel.value = wanted;
+          snippetUpdatePreview();
+        });
       }
       break;
     }

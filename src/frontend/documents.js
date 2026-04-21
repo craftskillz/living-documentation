@@ -43,17 +43,23 @@ async function refreshAnnotationCounts() {
   }
 }
 
-async function openDocument(id, skipHistory = false, fromLink = false) {
+async function openDocument(id, skipHistory = false, fromLink = false, anchor = null) {
   // Track navigation history for breadcrumb trail
   // fromLink===true  : forward navigation via in-doc link → push current to stack
+  //                   (unless target is already in the stack → rewind instead of loop)
   // fromLink==="restore" : back navigation via history breadcrumb → stack already trimmed, don't touch
   // fromLink===false : sidebar/direct navigation → reset stack
   if (fromLink === true && currentDocId && currentDocId !== id) {
-    const prev = allDocs && allDocs.find((d) => d.id === currentDocId);
-    navHistory.push({
-      id: currentDocId,
-      title: prev ? prev.title : currentDocId,
-    });
+    const existingIdx = navHistory.findIndex((e) => e.id === id);
+    if (existingIdx !== -1) {
+      navHistory = navHistory.slice(0, existingIdx);
+    } else {
+      const prev = allDocs && allDocs.find((d) => d.id === currentDocId);
+      navHistory.push({
+        id: currentDocId,
+        title: prev ? prev.title : currentDocId,
+      });
+    }
   } else if (!fromLink) {
     navHistory = [];
   }
@@ -105,7 +111,8 @@ async function openDocument(id, skipHistory = false, fromLink = false) {
   if (!skipHistory) {
     const url = new URL(location.href);
     url.searchParams.set("doc", id);
-    history.pushState({ docId: id }, "", url);
+    url.hash = anchor ? `#${anchor}` : "";
+    history.pushState({ docId: id, anchor: anchor || null }, "", url);
   }
 
   document.getElementById("welcome").classList.add("hidden");
@@ -158,14 +165,16 @@ async function openDocument(id, skipHistory = false, fromLink = false) {
       hljs.highlightElement(block);
     });
 
-    // Intercept inter-doc links (?doc=X) to stay in SPA and track origin
+    // Intercept inter-doc links (?doc=X[#anchor]) to stay in SPA and track origin
     contentEl.querySelectorAll("a[href]").forEach((a) => {
       const href = a.getAttribute("href");
       const m = href && href.match(/[?&]doc=([^&#]+)/);
       if (!m) return;
+      const hashIdx = href.indexOf("#");
+      const anchor = hashIdx !== -1 ? href.slice(hashIdx + 1) : null;
       a.addEventListener("click", (e) => {
         e.preventDefault();
-        openDocument(decodeURIComponent(m[1]), false, true);
+        openDocument(decodeURIComponent(m[1]), false, true, anchor);
       });
     });
 
@@ -199,10 +208,11 @@ async function openDocument(id, skipHistory = false, fromLink = false) {
 
     document.title = doc.title;
 
-    // Scroll to anchor if present in URL
-    const hash = window.location.hash;
-    if (hash && hash.length > 1) {
-      scrollToAnchor(hash.slice(1));
+    // Scroll to anchor if present (explicit param wins over URL hash)
+    const targetAnchor =
+      anchor || (window.location.hash ? window.location.hash.slice(1) : "");
+    if (targetAnchor) {
+      scrollToAnchor(targetAnchor);
     } else {
       document.getElementById("content-area").scrollTop = 0;
     }
@@ -331,9 +341,11 @@ async function saveDocument() {
       const href = a.getAttribute("href");
       const m = href && href.match(/[?&]doc=([^&#]+)/);
       if (!m) return;
+      const hashIdx = href.indexOf("#");
+      const anchor = hashIdx !== -1 ? href.slice(hashIdx + 1) : null;
       a.addEventListener("click", (e) => {
         e.preventDefault();
-        openDocument(decodeURIComponent(m[1]), false, true);
+        openDocument(decodeURIComponent(m[1]), false, true, anchor);
       });
     });
 

@@ -152,6 +152,8 @@
   "snippet.link_anchor_label": "Ancre",
   "snippet.link_anchor_placeholder": "mon-titre",
   "snippet.link_anchor_hint": "(sans #, ex : mon-titre)",
+  "snippet.link_anchor_select_hint": "(choisissez un titre du document)",
+  "snippet.link_anchor_no_headings": "Aucun titre détecté dans ce document",
   "snippet.link_target_doc_label": "Document cible",
   "snippet.code_lang_label": "Langage",
   "snippet.code_lang_hint": "(ex : javascript, python, bash…)",

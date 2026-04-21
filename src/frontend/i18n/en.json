@@ -152,6 +152,8 @@
   "snippet.link_anchor_label": "Anchor",
   "snippet.link_anchor_placeholder": "my-heading",
   "snippet.link_anchor_hint": "(without #, e.g. my-heading)",
+  "snippet.link_anchor_select_hint": "(pick a heading from the document)",
+  "snippet.link_anchor_no_headings": "No headings detected in this document",
   "snippet.link_target_doc_label": "Target document",
   "snippet.code_lang_label": "Language",
   "snippet.code_lang_hint": "(e.g. javascript, python, bash…)",

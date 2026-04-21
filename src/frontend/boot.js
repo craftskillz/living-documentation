@@ -87,5 +87,10 @@ document
 window.addEventListener("popstate", (e) => {
   const id =
     e.state?.docId || new URLSearchParams(location.search).get("doc");
-  if (id) openDocument(id, true);
+  const anchor =
+    e.state?.anchor ||
+    (location.hash && location.hash.length > 1
+      ? location.hash.slice(1)
+      : null);
+  if (id) openDocument(id, true, false, anchor);
 });
