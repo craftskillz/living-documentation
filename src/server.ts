@@ -39,7 +39,7 @@ export async function startServer({
   // API
   app.use('/api/documents', documentsRouter(docsPath));
   app.use('/api/config', configRouter(docsPath));
-  app.use('/api/browse', browseRouter());
+  app.use('/api/browse', browseRouter(docsPath));
   app.use('/api/images', imagesRouter(docsPath));
   app.use('/api/files', filesRouter(docsPath));
   app.use('/api/diagrams', diagramsRouter(docsPath));

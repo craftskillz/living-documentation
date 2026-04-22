@@ -20,7 +20,10 @@ async function loadDocuments() {
     } catch {
       allFolderPaths = [];
     }
-    await refreshAnnotationCounts();
+    await Promise.all([
+      refreshAnnotationCounts(),
+      refreshFileAttachmentCounts(),
+    ]);
     renderSidebar(allDocs);
   } catch {
     document.getElementById("category-tree").innerHTML =
@@ -40,6 +43,18 @@ async function refreshAnnotationCounts() {
     }
   } catch {
     annotationCounts = {};
+  }
+}
+
+async function refreshFileAttachmentCounts() {
+  try {
+    const raw = await fetch("/api/documents/file-counts").then((r) => r.json());
+    fileAttachmentCounts = {};
+    for (const [docId, n] of Object.entries(raw || {})) {
+      fileAttachmentCounts[docId] = n;
+    }
+  } catch {
+    fileAttachmentCounts = {};
   }
 }
 
@@ -289,6 +304,7 @@ async function confirmDeleteDocument() {
   try {
     delete annotationCounts[decodeURIComponent(deletedId)];
   } catch {}
+  delete fileAttachmentCounts[deletedId];
   currentDocId = null;
 
   // Return to welcome screen
@@ -368,6 +384,12 @@ async function saveDocument() {
 
     applyAnnotationHighlights();
     renderElevator();
+
+    const fileLinkMatches = content.match(/\]\(\s*\.?\/files\/[^)\s]+/g);
+    const fileLinkCount = fileLinkMatches ? fileLinkMatches.length : 0;
+    if (fileLinkCount > 0) fileAttachmentCounts[currentDocId] = fileLinkCount;
+    else delete fileAttachmentCounts[currentDocId];
+    refreshSidebar();
 
     exitEditMode();
   } catch (err) {

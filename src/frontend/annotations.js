@@ -10,21 +10,25 @@ let stabiloDeleteTargetId = null;
 let stabiloReadPopupAnnotationId = null;
 let stabiloReadHideTimer = null;
 
-// Cycles: normal → active → hidden → normal
-function toggleMarker() {
+function applyMarkerVisualState() {
   const btn = document.getElementById("stabilo-btn");
+  if (!btn) return;
   const fills = btn.querySelectorAll("rect, polygon");
   const crossEl = document.getElementById("stabilo-cross");
 
-  if (!stabiloActive && !stabiloHidden) {
-    // normal → active
-    stabiloActive = true;
-    btn.classList.remove(
-      "border-gray-200",
-      "dark:border-gray-700",
-      "text-gray-600",
-      "dark:text-gray-400",
-    );
+  btn.classList.remove(
+    "border-gray-200",
+    "dark:border-gray-700",
+    "text-gray-600",
+    "dark:text-gray-400",
+    "border-yellow-400",
+    "bg-yellow-100",
+    "dark:bg-yellow-900/40",
+    "text-yellow-700",
+    "dark:text-yellow-300",
+  );
+
+  if (stabiloActive) {
     btn.classList.add(
       "border-yellow-400",
       "bg-yellow-100",
@@ -39,17 +43,7 @@ function toggleMarker() {
       ),
     );
     crossEl.style.display = "none";
-  } else if (stabiloActive) {
-    // active → hidden
-    stabiloActive = false;
-    stabiloHidden = true;
-    btn.classList.remove(
-      "border-yellow-400",
-      "bg-yellow-100",
-      "dark:bg-yellow-900/40",
-      "text-yellow-700",
-      "dark:text-yellow-300",
-    );
+  } else {
     btn.classList.add(
       "border-gray-200",
       "dark:border-gray-700",
@@ -66,14 +60,53 @@ function toggleMarker() {
             : "#bfdbfe",
       ),
     );
-    crossEl.style.display = "block";
+    crossEl.style.display = stabiloHidden ? "block" : "none";
+  }
+}
+
+function persistMarkerState() {
+  const state = stabiloActive ? "active" : stabiloHidden ? "hidden" : "normal";
+  try {
+    localStorage.setItem("ld-marker-state", state);
+  } catch {
+    /* ignore */
+  }
+}
+
+function initMarkerState() {
+  let saved = "normal";
+  try {
+    saved = localStorage.getItem("ld-marker-state") || "normal";
+  } catch {
+    /* ignore */
+  }
+  stabiloActive = saved === "active";
+  stabiloHidden = saved === "hidden";
+  applyMarkerVisualState();
+  if (stabiloHidden) setHighlightsVisible(false);
+}
+
+// Cycles: normal → active → hidden → normal
+function toggleMarker() {
+  const wasHidden = stabiloHidden;
+
+  if (!stabiloActive && !stabiloHidden) {
+    stabiloActive = true;
+  } else if (stabiloActive) {
+    stabiloActive = false;
+    stabiloHidden = true;
+  } else {
+    stabiloHidden = false;
+  }
+
+  applyMarkerVisualState();
+  persistMarkerState();
+
+  if (!wasHidden && stabiloHidden) {
     closeMarkerPopup();
     setHighlightsVisible(false);
     refreshSidebar();
-  } else {
-    // hidden → normal
-    stabiloHidden = false;
-    crossEl.style.display = "none";
+  } else if (wasHidden && !stabiloHidden) {
     setHighlightsVisible(true);
     refreshSidebar();
   }
@@ -131,6 +164,8 @@ function applyAnnotationHighlights() {
     .forEach((mark) => {
       if (!mark.textContent.trim()) mark.remove();
     });
+
+  if (stabiloHidden) setHighlightsVisible(false);
 }
 
 function highlightAnnotation(contentEl, ann) {
@@ -545,4 +580,6 @@ function renderElevator() {
 
     elevator.appendChild(pill);
   }
+
+  if (stabiloHidden) elevator.style.visibility = "hidden";
 }

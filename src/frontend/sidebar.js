@@ -72,6 +72,7 @@ function renderTreeNode(node, folderPath) {
       const isExpanded = expandedFolders.has(pathKey);
       const docCount = countTreeDocs(node.children[key]);
       const folderAnnotatedDocs = countTreeAnnotatedDocs(node.children[key]);
+      const folderFileDocs = countTreeFileAttachedDocs(node.children[key]);
       html += `
 <div class="mb-1">
   <button onclick="toggleFolder('${esc(pathKey)}')"
@@ -81,6 +82,7 @@ function renderTreeNode(node, folderPath) {
     <span class="flex items-center gap-2 min-w-0">
       <span title="${esc(key)}" class="truncate">&#128193; ${esc(folderLabel(key))}</span>
       ${annotatedDocsBadge(folderAnnotatedDocs)}
+      ${fileAttachedDocsBadge(folderFileDocs)}
     </span>
     <span class="flex items-center gap-1.5">
       <span class="font-normal normal-case text-gray-400">${docCount}</span>
@@ -106,6 +108,10 @@ function renderTreeNode(node, folderPath) {
       (s, d) => s + (annotationCounts[d.id] > 0 ? 1 : 0),
       0,
     );
+    const catFileDocs = node.categories[cat].reduce(
+      (s, d) => s + (fileAttachmentCounts[d.id] > 0 ? 1 : 0),
+      0,
+    );
     return `
 <div class="mb-0.5">
   <button onclick="toggleCategory('${esc(catPathKey)}')"
@@ -115,6 +121,7 @@ function renderTreeNode(node, folderPath) {
     <span class="flex items-center gap-2">
       <span>${esc(cat)}</span>
       ${annotatedDocsBadge(catAnnotatedDocs)}
+      ${fileAttachedDocsBadge(catFileDocs)}
     </span>
     <span class="flex items-center gap-1.5">
       <span class="font-normal normal-case text-gray-400">${node.categories[cat].length}</span>
@@ -142,6 +149,7 @@ function renderTreeNode(node, folderPath) {
     const isExpanded = expandedFolders.has(pathKey);
     const docCount = countTreeDocs(node.children[key]);
     const folderAnnotatedDocs = countTreeAnnotatedDocs(node.children[key]);
+    const folderFileDocs = countTreeFileAttachedDocs(node.children[key]);
     html += `
 <div class="mb-1">
   <button onclick="toggleFolder('${esc(pathKey)}')"
@@ -151,6 +159,7 @@ function renderTreeNode(node, folderPath) {
     <span class="flex items-center gap-2 min-w-0">
       <span title="${esc(key)}" class="truncate">&#128193; ${esc(folderLabel(key))}</span>
       ${annotatedDocsBadge(folderAnnotatedDocs)}
+      ${fileAttachedDocsBadge(folderFileDocs)}
     </span>
     <span class="flex items-center gap-1.5">
       <span class="font-normal normal-case text-gray-400">${docCount}</span>
@@ -175,6 +184,7 @@ function renderTreeNode(node, folderPath) {
 function renderDocItem(doc) {
   const isActive = doc.id === currentDocId;
   const annCount = annotationCounts[doc.id] || 0;
+  const fileCount = fileAttachmentCounts[doc.id] || 0;
   return `
 <button onclick="openDocument('${esc(doc.id)}')"
         id="item-${esc(doc.id)}"
@@ -183,7 +193,10 @@ function renderDocItem(doc) {
                ${isActive ? "active" : ""}">
   <div class="leading-snug flex items-center justify-between gap-2">
     <span class="truncate">${esc(doc.title)}</span>
-    ${annotationBadge(annCount)}
+    <span class="flex items-center gap-1 shrink-0">
+      ${annotationBadge(annCount)}
+      ${fileAttachmentBadge(fileCount)}
+    </span>
   </div>
   ${doc.formattedDate ? `<div class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">${esc(doc.formattedDate)}</div>` : ""}
 </button>`;
@@ -241,4 +254,24 @@ function applyHideCategoriesButtonState() {
   btn.classList.toggle("dark:text-blue-400", hideCategories);
   btn.classList.toggle("text-gray-400", !hideCategories);
   btn.classList.toggle("dark:text-gray-500", !hideCategories);
+}
+
+function toggleHideAttachments() {
+  hideAttachments = !hideAttachments;
+  try {
+    localStorage.setItem("ld-hide-attachments", hideAttachments ? "1" : "0");
+  } catch {
+    /* ignore */
+  }
+  applyHideAttachmentsButtonState();
+  refreshSidebar();
+}
+
+function applyHideAttachmentsButtonState() {
+  const btn = document.getElementById("toggle-attachments-btn");
+  if (!btn) return;
+  btn.classList.toggle("text-blue-500", hideAttachments);
+  btn.classList.toggle("dark:text-blue-400", hideAttachments);
+  btn.classList.toggle("text-gray-400", !hideAttachments);
+  btn.classList.toggle("dark:text-gray-500", !hideAttachments);
 }

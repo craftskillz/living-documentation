@@ -2,7 +2,20 @@ import { Router, Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
 
-export function browseRouter(): Router {
+const RESERVED_SUBFOLDERS = new Set(['files', 'images']);
+
+function isReservedAtDocsRoot(
+  parentDir: string,
+  name: string,
+  docsPath: string,
+): boolean {
+  return (
+    path.resolve(parentDir) === path.resolve(docsPath) &&
+    RESERVED_SUBFOLDERS.has(name)
+  );
+}
+
+export function browseRouter(docsPath: string): Router {
   const router = Router();
 
   // GET /api/browse?path=... — list dirs and .md files at a given path
@@ -14,7 +27,12 @@ export function browseRouter(): Router {
       const entries = fs.readdirSync(current, { withFileTypes: true });
 
       const dirs = entries
-        .filter((e) => e.isDirectory() && !e.name.startsWith('.'))
+        .filter(
+          (e) =>
+            e.isDirectory() &&
+            !e.name.startsWith('.') &&
+            !isReservedAtDocsRoot(current, e.name, docsPath),
+        )
         .map((e) => ({ name: e.name, path: path.join(current, e.name) }))
         .sort((a, b) => a.name.localeCompare(b.name));
 
@@ -44,7 +62,11 @@ export function browseRouter(): Router {
       try {
         const entries = fs.readdirSync(dir, { withFileTypes: true });
         for (const e of entries) {
-          if (e.isDirectory() && !e.name.startsWith('.')) {
+          if (
+            e.isDirectory() &&
+            !e.name.startsWith('.') &&
+            !isReservedAtDocsRoot(dir, e.name, docsPath)
+          ) {
             const full = path.join(dir, e.name);
             results.push(path.relative(base, full));
             collect(full);
@@ -63,6 +85,13 @@ export function browseRouter(): Router {
       return res.status(400).json({ error: 'path is required' });
     }
     const resolved = path.resolve(dirPath);
+    const parent = path.dirname(resolved);
+    const name = path.basename(resolved);
+    if (isReservedAtDocsRoot(parent, name, docsPath)) {
+      return res.status(400).json({
+        error: `"${name}" is a reserved folder name at the docs root`,
+      });
+    }
     try {
       fs.mkdirSync(resolved, { recursive: true });
       res.json({ created: resolved });

@@ -13,8 +13,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   wcRestorePrefs();
   if (typeof initFileAttach === "function") initFileAttach();
   await loadConfig();
+  if (typeof initMarkerState === "function") initMarkerState();
+  if (typeof initFullWidthState === "function") initFullWidthState();
   await loadDocuments();
   applyHideCategoriesButtonState();
+  applyHideAttachmentsButtonState();
 
   // Deep-link via ?doc=id, otherwise open first General doc
   const params = new URLSearchParams(location.search);

@@ -158,6 +158,16 @@ function newDocCreateFolder() {
     .value.trim();
   if (!name) return;
   const parent = _newDocBrowseCurrent || _newDocDocsFolder;
+  const atDocsRoot = parent === _newDocDocsFolder;
+  const errEl = document.getElementById("new-doc-error");
+  if (atDocsRoot && (name === "files" || name === "images")) {
+    if (errEl) {
+      errEl.textContent = window.t("modal.new_folder.error_reserved");
+      errEl.classList.remove("hidden");
+    }
+    return;
+  }
+  if (errEl) errEl.classList.add("hidden");
   const newRelPath =
     (_newDocAbsToRel(parent) ? _newDocAbsToRel(parent) + "/" : "") + name;
   _newDocSelectedFolder = newRelPath;

@@ -348,6 +348,15 @@
               ></p>
               <div class="flex items-center gap-2">
                 <button
+                  id="toggle-attachments-btn"
+                  onclick="toggleHideAttachments()"
+                  data-i18n-title="nav.toggle_attachments"
+                  title="Toggle attachments"
+                  class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors leading-none"
+                >
+                  <i class="fa-solid fa-paperclip"></i>
+                </button>
+                <button
                   id="toggle-categories-btn"
                   onclick="toggleHideCategories()"
                   data-i18n-title="nav.toggle_categories"

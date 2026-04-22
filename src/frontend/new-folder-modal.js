@@ -139,6 +139,12 @@ async function createNewFolder() {
   }
 
   const base = _newFolderSelectedPath || _newFolderDocsFolder;
+  const atDocsRoot = base === _newFolderDocsFolder;
+  if (atDocsRoot && (name === "files" || name === "images")) {
+    errEl.textContent = window.t('modal.new_folder.error_reserved');
+    errEl.classList.remove("hidden");
+    return;
+  }
   const fullPath = base.endsWith("/") ? base + name : base + "/" + name;
 
   const btn = document.getElementById("new-folder-create-btn");

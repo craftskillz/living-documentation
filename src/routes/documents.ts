@@ -5,10 +5,14 @@ import { marked } from "marked";
 import { parseFilename, DocMetadata } from "../lib/parser";
 import { readConfig } from "../lib/config";
 
+const RESERVED_DOCS_SUBFOLDERS = new Set(["files", "images"]);
+
 export function collectMdFiles(dir: string, baseDir: string): string[] {
   const results: string[] = [];
+  const atDocsRoot = path.resolve(dir) === path.resolve(baseDir);
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     if (entry.name.startsWith(".")) continue;
+    if (atDocsRoot && RESERVED_DOCS_SUBFOLDERS.has(entry.name)) continue;
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       results.push(...collectMdFiles(fullPath, baseDir));
@@ -176,6 +180,26 @@ export function documentsRouter(docsPath: string): Router {
       res.json(results);
     } catch {
       res.status(500).json({ error: "Search failed" });
+    }
+  });
+
+  // GET /api/documents/file-counts → { [docId]: attachmentCount }
+  router.get("/file-counts", (_req: Request, res: Response) => {
+    try {
+      const { extraFiles = [], filenamePattern } = readConfig(docsPath);
+      const docs = listDocs(docsPath, extraFiles, filenamePattern);
+      const counts: Record<string, number> = {};
+      const linkRe = /\]\(\s*\.?\/files\/[^)\s]+/g;
+      for (const doc of docs) {
+        const filePath = resolveDocPath(docsPath, doc, extraFiles);
+        if (!filePath || !fs.existsSync(filePath)) continue;
+        const content = fs.readFileSync(filePath, "utf-8");
+        const matches = content.match(linkRe);
+        if (matches && matches.length > 0) counts[doc.id] = matches.length;
+      }
+      res.json(counts);
+    } catch {
+      res.status(500).json({ error: "Failed to compute file counts" });
     }
   });
 
@@ -359,6 +383,12 @@ export function documentsRouter(docsPath: string): Router {
       const resolved = path.resolve(docsPath, folder.trim());
       if (!resolved.startsWith(path.resolve(docsPath) + path.sep) && resolved !== path.resolve(docsPath)) {
         return res.status(403).json({ error: 'Access denied' });
+      }
+      const firstSegment = folder.trim().replace(/^\/+/, '').split('/')[0];
+      if (RESERVED_DOCS_SUBFOLDERS.has(firstSegment)) {
+        return res.status(400).json({
+          error: `"${firstSegment}" is a reserved folder name at the docs root`,
+        });
       }
       targetDir = resolved;
     }

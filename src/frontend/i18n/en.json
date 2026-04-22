@@ -21,6 +21,7 @@
   "nav.toggle_dark": "Toggle dark mode",
   "nav.export": "Export",
   "nav.toggle_categories": "Show/hide category grouping",
+  "nav.toggle_attachments": "Show/hide attachments",
   "nav.export_html": "Export folders as HTML ZIP",
   "nav.export_all_pdf": "Export all documents as PDF",
   "nav.new_folder": "New folder",
@@ -37,6 +38,8 @@
   "sidebar.no_docs": "No documents found.",
   "sidebar.annotation_badge": "annotation",
   "sidebar.annotated_docs_badge": "document with annotations",
+  "sidebar.file_attachment_badge": "attachment",
+  "sidebar.file_attached_docs_badge": "document with attachments",
 
   "doc.marker_mode": "Marker mode — highlight to annotate",
   "doc.marker_btn": "Marker",
@@ -78,6 +81,7 @@
   "modal.new_folder.creating_btn": "Creating…",
   "modal.new_folder.error_empty": "Please enter a folder name.",
   "modal.new_folder.error_invalid_chars": "Invalid characters in folder name.",
+  "modal.new_folder.error_reserved": "\"files\" and \"images\" are reserved folder names at the docs root.",
   "modal.new_folder.no_subfolders": "No subfolders",
   "modal.new_folder.error_loading": "Error loading",
 

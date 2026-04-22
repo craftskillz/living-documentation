@@ -21,6 +21,7 @@
   "nav.toggle_dark": "Basculer le mode sombre",
   "nav.export": "Exporter",
   "nav.toggle_categories": "Afficher/masquer le regroupement par catégorie",
+  "nav.toggle_attachments": "Afficher/masquer les pièces jointes",
   "nav.export_html": "Exporter les dossiers en HTML (ZIP)",
   "nav.export_all_pdf": "Exporter tous les documents en PDF",
   "nav.new_folder": "Nouveau dossier",
@@ -37,6 +38,8 @@
   "sidebar.no_docs": "Aucun document trouvé.",
   "sidebar.annotation_badge": "annotation",
   "sidebar.annotated_docs_badge": "document contenant des annotations",
+  "sidebar.file_attachment_badge": "pièce jointe",
+  "sidebar.file_attached_docs_badge": "document contenant des pièces jointes",
 
   "doc.marker_mode": "Mode Marqueur — surligner pour annoter",
   "doc.marker_btn": "Marqueur",
@@ -78,6 +81,7 @@
   "modal.new_folder.creating_btn": "Création…",
   "modal.new_folder.error_empty": "Veuillez saisir un nom de dossier.",
   "modal.new_folder.error_invalid_chars": "Caractères non autorisés dans le nom du dossier.",
+  "modal.new_folder.error_reserved": "\"files\" et \"images\" sont des noms de dossiers réservés à la racine des documents.",
   "modal.new_folder.no_subfolders": "Aucun sous-dossier",
   "modal.new_folder.error_loading": "Erreur de chargement",
 

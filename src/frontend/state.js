@@ -4,6 +4,7 @@
 let allDocs = [];
 let allFolderPaths = [];
 let annotationCounts = {};
+let fileAttachmentCounts = {};
 let currentDocId = null;
 let currentDocContent = "";
 let searchQuery = "";
@@ -14,6 +15,13 @@ let expandedFolders = new Set();
 let hideCategories = (() => {
   try {
     return localStorage.getItem("ld-hide-categories") === "1";
+  } catch {
+    return false;
+  }
+})();
+let hideAttachments = (() => {
+  try {
+    return localStorage.getItem("ld-hide-attachments") === "1";
   } catch {
     return false;
   }
