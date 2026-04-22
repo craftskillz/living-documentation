@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupSearch();
   wcRestorePrefs();
   if (typeof initFileAttach === "function") initFileAttach();
+  if (typeof initSidebarResize === "function") initSidebarResize();
   await loadConfig();
   if (typeof initMarkerState === "function") initMarkerState();
   if (typeof initFullWidthState === "function") initFullWidthState();
