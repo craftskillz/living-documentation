@@ -250,10 +250,10 @@ function toggleHideCategories() {
 function applyHideCategoriesButtonState() {
   const btn = document.getElementById("toggle-categories-btn");
   if (!btn) return;
-  btn.classList.toggle("text-blue-500", hideCategories);
-  btn.classList.toggle("dark:text-blue-400", hideCategories);
-  btn.classList.toggle("text-gray-400", !hideCategories);
-  btn.classList.toggle("dark:text-gray-500", !hideCategories);
+  btn.classList.toggle("text-blue-500", !hideCategories);
+  btn.classList.toggle("dark:text-blue-400", !hideCategories);
+  btn.classList.toggle("text-gray-400", hideCategories);
+  btn.classList.toggle("dark:text-gray-500", hideCategories);
 }
 
 function toggleHideAttachments() {
@@ -270,8 +270,8 @@ function toggleHideAttachments() {
 function applyHideAttachmentsButtonState() {
   const btn = document.getElementById("toggle-attachments-btn");
   if (!btn) return;
-  btn.classList.toggle("text-blue-500", hideAttachments);
-  btn.classList.toggle("dark:text-blue-400", hideAttachments);
-  btn.classList.toggle("text-gray-400", !hideAttachments);
-  btn.classList.toggle("dark:text-gray-500", !hideAttachments);
+  btn.classList.toggle("text-blue-500", !hideAttachments);
+  btn.classList.toggle("dark:text-blue-400", !hideAttachments);
+  btn.classList.toggle("text-gray-400", hideAttachments);
+  btn.classList.toggle("dark:text-gray-500", hideAttachments);
 }
