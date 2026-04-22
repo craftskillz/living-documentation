@@ -47,6 +47,8 @@
     <script defer src="/misc.js"></script>
     <script defer src="/snippets.js"></script>
     <script defer src="/annotations.js"></script>
+    <script defer src="/metadata.js"></script>
+    <script defer src="/accuracy-gauge.js"></script>
     <script defer src="/export.js"></script>
     <script defer src="/diagram-link-modal.js"></script>
     <script defer src="/new-folder-modal.js"></script>
@@ -574,6 +576,15 @@
                       <i class="fa-solid fa-link"></i> <span data-i18n="doc.copy_link_btn">Copy link</span>
                     </button>
                     <button
+                      onclick="openMetadataModal()"
+                      id="metadata-btn"
+                      data-i18n-title="metadata.button_title"
+                      title="Manage source-file metadata"
+                      class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      <i class="fa-solid fa-code-compare"></i> <span data-i18n="metadata.button">Metadata</span>
+                    </button>
+                    <button
                       onclick="enterEditMode()"
                       data-i18n-title="doc.edit"
                       title="Edit document"
@@ -620,6 +631,33 @@
                   </div>
                 </div>
               </div>
+              <!-- Accuracy gauge (shown when the current doc has metadata entries) -->
+              <div
+                id="accuracy-gauge"
+                onclick="openMetadataModal()"
+                class="hidden no-print mt-3 flex items-center gap-3 ml-auto w-full sm:w-80 cursor-pointer select-none"
+              >
+                <span
+                  id="accuracy-gauge-label"
+                  data-i18n="accuracy.label"
+                  class="text-xs text-gray-500 dark:text-gray-400 shrink-0"
+                >Accuracy</span>
+                <div
+                  class="flex-1 h-2 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden"
+                >
+                  <div
+                    id="accuracy-gauge-bar"
+                    class="h-full transition-all"
+                    style="width: 0%; background-color: #9ca3af"
+                  ></div>
+                </div>
+                <span
+                  id="accuracy-gauge-value"
+                  class="text-xs font-semibold shrink-0 tabular-nums"
+                  style="color: #9ca3af"
+                >0%</span>
+              </div>
+
               <!-- Navigation history back-links -->
               <div
                 id="doc-back"
@@ -659,6 +697,116 @@
       <!-- end body row -->
     </div>
     <!-- end root -->
+
+    <!-- ── Metadata modal ── -->
+    <div
+      id="metadata-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    >
+      <div
+        class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl mx-4 p-6 space-y-4"
+      >
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+              <i class="fa-solid fa-code-compare mr-1"></i>
+              <span data-i18n="metadata.title">Source metadata</span>
+            </h3>
+            <p
+              data-i18n="metadata.subtitle"
+              class="text-xs text-gray-500 dark:text-gray-400 mt-1"
+            >
+              Attach source files to track whether this document is still accurate.
+            </p>
+          </div>
+          <button
+            onclick="closeMetadataModal()"
+            data-i18n-title="common.close"
+            title="Close"
+            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+          >
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <!-- Summary -->
+        <div
+          id="metadata-summary"
+          class="text-xs text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2"
+        ></div>
+
+        <!-- List -->
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <div
+            id="metadata-list"
+            class="max-h-64 overflow-y-auto"
+          ></div>
+          <div
+            id="metadata-empty"
+            data-i18n="metadata.empty"
+            class="hidden px-3 py-4 text-center text-xs text-gray-400"
+          >
+            No metadata yet — add a source file to start tracking accuracy.
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-2 flex-wrap">
+          <button
+            onclick="metadataToggleBrowser()"
+            class="text-sm px-3 py-1.5 rounded-lg border border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
+          >
+            <i class="fa-solid fa-plus"></i> <span data-i18n="metadata.add">Add source file</span>
+          </button>
+          <button
+            onclick="metadataRefresh()"
+            id="metadata-refresh-btn"
+            class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
+            <i class="fa-solid fa-arrows-rotate"></i> <span data-i18n="metadata.refresh">Refresh hashes</span>
+          </button>
+        </div>
+
+        <!-- Source browser -->
+        <div
+          id="metadata-browser"
+          class="hidden border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden text-sm"
+        >
+          <div
+            class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"
+          >
+            <button
+              id="metadata-browse-up"
+              onclick="metadataBrowseUp()"
+              data-i18n="common.up"
+              class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0"
+            >
+              ↑ Up
+            </button>
+            <span
+              id="metadata-browse-path"
+              class="text-xs text-gray-500 dark:text-gray-400 font-mono truncate flex-1"
+            ></span>
+          </div>
+          <div
+            id="metadata-browse-list"
+            class="max-h-56 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800"
+          ></div>
+        </div>
+
+        <p id="metadata-error" class="hidden text-xs text-red-500"></p>
+
+        <div class="flex justify-end">
+          <button
+            onclick="closeMetadataModal()"
+            data-i18n="common.close"
+            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- ── New Folder modal ── -->
     <div

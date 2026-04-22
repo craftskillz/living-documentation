@@ -25,13 +25,18 @@ src/routes/files.ts         → /api/files        (arbitrary file upload, blocke
 src/routes/wordcloud.ts     → /api/wordcloud    (recursive file reader, returns raw text)
 src/routes/diagrams.ts      → /api/diagrams     (CRUD of vis-network diagrams as JSON)
 src/routes/annotations.ts   → /api/annotations  (per-doc highlight markers)
+src/routes/metadata.ts      → /api/metadata     (per-doc source-file bindings + accuracy)
+src/routes/browse-source.ts → /api/browse-source (navigate sourceRoot tree for metadata picker)
 src/routes/export.ts        → /api/export       (HTML export, Notion + Confluence zip modes)
 src/mcp/server.ts           → /mcp              (Model Context Protocol, Streamable HTTP)
 src/mcp/tools/documents.ts  → MCP tools: list_documents, read_document, create_document
 src/mcp/tools/diagrams.ts   → MCP tools: list_diagrams, read_diagram, create_diagram
 src/mcp/tools/source.ts     → MCP tools: list_source_files, read_source_file, search_source
+src/mcp/tools/metadata.ts   → MCP tools: list_metadata, get_accuracy, add_metadata, refresh_metadata
 src/lib/parser.ts           → filename parsing logic (dynamic, driven by filenamePattern)
 src/lib/config.ts           → .living-doc.json read/write with defaults
+src/lib/metadata.ts         → .metadata.json store + accuracy report (weighted: missing 3×)
+src/lib/hash.ts             → sha256File helper
 src/frontend/index.html     → viewer shell (Tailwind CDN, hljs CDN) — logic in sibling .js modules
 src/frontend/admin.html     → admin panel (config editor + extra files browser)
 src/frontend/diagram.html   → diagram editor shell — logic in src/frontend/diagram/*.js
@@ -57,6 +62,8 @@ documents.js                → load/render/save document content
 image-paste.js              → Cmd/Ctrl+V image upload in the editor
 file-attach.js              → paperclip attachments: drag-drop, paste, file picker (non-image)
 annotations.js              → highlight-marker creation, persistence, DOM anchor traversal
+metadata.js                 → source-file metadata modal + sourceRoot browser (add/remove/refresh)
+accuracy-gauge.js           → coloured accuracy bar in the doc header (hidden when doc has no entries)
 export.js                   → PDF print + HTML/Notion/Confluence export dialog
 snippets.js                 → snippet inserter panel (entry point)
 snippet-detect.js           → detect an existing snippet under the caret
@@ -171,6 +178,17 @@ Pipeline:
 - Files are served statically by Express at `/files/*` → `DOCS_FOLDER/files/`.
 - `documents.ts` post-processes rendered HTML: every `<a href="./files/...">` is decorated with `class="ld-file-attachment"`, `target="_blank"`, `rel="noopener"`, and a prepended `<i class="fa-solid fa-paperclip ld-file-icon"></i>` when the label does not already contain a paperclip glyph — produces the purple pill look in the reader.
 
+### Source-file metadata & accuracy gauge
+
+Documents can be bound to the source files they describe. Each binding stores the file's SHA-256 hash so drift between docs and code is detectable.
+
+- **Storage**: single `.metadata.json` file at the docs folder root, shape `{ [docId]: MetadataEntry[] }`. `MetadataEntry = { path: string; hash: string }` where `path` is relative to `sourceRoot`.
+- **Accuracy weighting**: `unchanged = 0`, `modified = 1`, `missing = 3`. `accuracy = 1 − weight/(3·total)`, in `[0, 1]`. Empty doc = `1`.
+- **REST** (`src/routes/metadata.ts`): `GET /api/metadata/:docId` (report), `POST /api/metadata/:docId` (add/replace entry), `DELETE /api/metadata/:docId` (remove), `POST /api/metadata/:docId/refresh` (re-hash all → re-baseline). All operations validate paths are under `sourceRoot`.
+- **Source browser** (`src/routes/browse-source.ts`): `GET /api/browse-source?path=<rel>` returns `dirs + files` under `sourceRoot`, skipping heavy folders (`node_modules`, `dist`, `.git`, `build`, `target`, `.venv`, …) and dotfiles except `.github`.
+- **Frontend**: `metadata-btn` in the doc header opens a modal (`metadata.js`) with add/remove/refresh actions and an inline `sourceRoot` file picker. `accuracy-gauge.js` renders a coloured bar in the sticky header (green >80 %, yellow ≥60 %, orange ≥40 %, red <40 %), hidden when the doc has zero entries. Clicking the gauge opens the modal.
+- **MCP tools** (`src/mcp/tools/metadata.ts`): `list_metadata`, `get_accuracy`, `add_metadata`, `refresh_metadata`. Intended workflow for an MCP client: `get_accuracy` to detect drift → `read_document` + `read_source_file` on modified entries → `create_document` to overwrite → `refresh_metadata` to re-baseline.
+
 ## Diagram editor
 
 `src/frontend/diagram.html` — standalone vis-network 9.1.9 canvas editor, served at `/diagram`.
@@ -259,6 +277,7 @@ Tools (see `src/mcp/tools/`):
 - `list_documents`, `read_document`, `create_document` — documents are the source of truth.
 - `list_diagrams`, `read_diagram`, `create_diagram` — diagrams are derived views; `create_diagram` enforces `diagramType` + `userRequestedExplicitly` guardrails for non-context types.
 - `list_source_files`, `read_source_file`, `search_source` — read-only source code access rooted at `config.sourceRoot`; fallback only when docs don't carry the needed detail (e.g., screen-guide diagrams).
+- `list_metadata`, `get_accuracy`, `add_metadata`, `refresh_metadata` — bind source files to a doc and measure drift via SHA-256 hashes. `get_accuracy` returns a weighted accuracy in `[0, 1]`; `refresh_metadata` re-baselines after the doc has been updated.
 - `get_server_guide` — returns the `SERVER_GUIDE` (also sent as `instructions` on initialize).
 
 Prompts (`generate-context-diagram`, `generate-container-diagram`, `generate-uml-diagram`, `update-diagram-from-docs`, `generate-screen-guide`, `flow`, `erd`) build diagram-creation templates client-side — zero tokens consumed by the server.
@@ -277,6 +296,7 @@ Prompts (`generate-context-diagram`, `generate-container-diagram`, `generate-uml
 - Express body limit raised to `20mb` to accommodate base64-encoded image and file uploads.
 - `GET /api/wordcloud` reads arbitrary paths on disk — intentionally unrestricted since the server is local-only.
 - MCP source tools (`read_source_file`, `search_source`, `list_source_files`) are rooted at `config.sourceRoot` and reject paths that escape it; common heavy folders (`node_modules`, `dist`, `.git`, `build`, `target`) are skipped.
+- `/api/metadata/*` and `/api/browse-source` resolve every user-supplied path against `config.sourceRoot` via `assertUnderSourceRoot` and reject any path that escapes it. `browse-source` additionally filters heavy folders (`node_modules`, `dist`, `build`, `target`, `.venv`, …) and dotfiles.
 
 ## Key commands
 

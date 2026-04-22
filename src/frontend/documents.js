@@ -164,6 +164,11 @@ async function openDocument(id, skipHistory = false, fromLink = false, anchor = 
     // Load annotations for this document
     loadAnnotations(id);
 
+    // Load source-file metadata report (drives the accuracy gauge)
+    if (typeof loadMetadataReport === "function") {
+      loadMetadataReport(id);
+    }
+
     // Add IDs to headings for anchor navigation
     contentEl.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach((h) => {
       if (!h.id) {

@@ -10,6 +10,7 @@ import { Router, Request, Response } from 'express';
 import { toolListDocuments, toolReadDocument, toolCreateDocument } from './tools/documents';
 import { toolListDiagrams, toolReadDiagram, toolCreateDiagram } from './tools/diagrams';
 import { toolListSourceFiles, toolReadSourceFile, toolSearchSource } from './tools/source';
+import { toolListMetadata, toolGetAccuracy, toolRefreshMetadata, toolAddMetadata } from './tools/metadata';
 
 // ── Server guide ──────────────────────────────────────────────────────────────
 // Shared by the `instructions` field (sent on MCP initialize) and the
@@ -151,6 +152,27 @@ Three tools expose read-only access to the project source under \`sourceRoot\`
 - \`image\` nodes without \`imageSrc\` are rejected.
 - A response \`warnings\` array flags missing edge labels (except for
   screen-guide) or oversized context diagrams.
+
+## Source-file metadata & accuracy
+Documents can be bound to the source files they describe. Each binding stores
+the file's SHA-256 hash so the system can detect drift between docs and code.
+
+Tools:
+- \`list_metadata(docId)\` — returns the source files attached to a doc.
+- \`get_accuracy(docId)\` — classifies each entry (\`unchanged\` / \`modified\` /
+  \`missing\`) and returns a weighted \`accuracy\` in [0, 1] (missing weighs 3×
+  a simple modification).
+- \`add_metadata(docId, path)\` — attach a source file (path under
+  \`sourceRoot\`) and record its current hash.
+- \`refresh_metadata(docId)\` — re-hash every attached file. Call **after**
+  the doc has been updated to re-align it with the current source state.
+
+Recommended workflow to keep docs accurate:
+1. \`list_documents\` → pick a doc.
+2. \`get_accuracy\` → if accuracy < 1, the doc is drifting.
+3. \`read_document\` and \`read_source_file\` on the \`modified\` entries.
+4. Update the doc with \`create_document\` (overwrites by id).
+5. \`refresh_metadata\` to re-baseline the hashes.
 `;
 
 // ── Tool definitions ──────────────────────────────────────────────────────────
@@ -370,6 +392,69 @@ const TOOLS = [
         path: { type: 'string', description: 'Path relative to `sourceRoot`, e.g. `src/frontend/index.html`.' },
       },
       required: ['path'],
+    },
+  },
+  {
+    name: 'list_metadata',
+    description: [
+      'List the source-file metadata entries attached to a document. Each entry is a source file (path relative to `sourceRoot`) bound to the document with the SHA-256 hash that was stored when it was attached.',
+      '',
+      'Use together with `get_accuracy` to decide whether a doc needs to be reviewed because one of its source-file dependencies has changed.',
+    ].join('\n'),
+    inputSchema: {
+      type: 'object',
+      properties: {
+        docId: { type: 'string', description: 'Document id as returned by list_documents' },
+      },
+      required: ['docId'],
+    },
+  },
+  {
+    name: 'get_accuracy',
+    description: [
+      'Compute a document\'s accuracy: compares the SHA-256 hashes stored with each metadata entry against the hashes of the source files on disk today.',
+      '',
+      'Returns each item with status `unchanged` / `modified` / `missing`, counts, and a weighted `accuracy` in [0, 1] (missing weighs 3× a simple modification).',
+      '',
+      'A value close to 1 means the doc is still aligned with its source files. A value close to 0 means significant drift: read the doc and the modified source files, then update the doc.',
+    ].join('\n'),
+    inputSchema: {
+      type: 'object',
+      properties: {
+        docId: { type: 'string', description: 'Document id' },
+      },
+      required: ['docId'],
+    },
+  },
+  {
+    name: 'refresh_metadata',
+    description: [
+      'Re-hash every source file attached to a document and overwrite the stored hashes with the current values. Call this AFTER the document has been updated to reflect the current state of its source files — it validates the doc as accurate again.',
+      '',
+      'Missing files keep their stored hash and remain flagged as missing.',
+    ].join('\n'),
+    inputSchema: {
+      type: 'object',
+      properties: {
+        docId: { type: 'string', description: 'Document id' },
+      },
+      required: ['docId'],
+    },
+  },
+  {
+    name: 'add_metadata',
+    description: [
+      'Attach a source file to a document as a metadata dependency. The file path must be under the configured `sourceRoot`. The current SHA-256 hash of the file is recorded.',
+      '',
+      'If the document already has an entry for that path, its hash is updated.',
+    ].join('\n'),
+    inputSchema: {
+      type: 'object',
+      properties: {
+        docId: { type: 'string', description: 'Document id' },
+        path:  { type: 'string', description: 'Path to the source file, relative to sourceRoot or absolute but under sourceRoot.' },
+      },
+      required: ['docId', 'path'],
     },
   },
   {
@@ -982,6 +1067,14 @@ function createMcpServer(docsPath: string): Server {
           return toolSearchSource(docsPath, args as {
             query: string; pattern?: string; maxResults?: number; caseSensitive?: boolean;
           });
+        case 'list_metadata':
+          return toolListMetadata(docsPath, args as { docId: string });
+        case 'get_accuracy':
+          return toolGetAccuracy(docsPath, args as { docId: string });
+        case 'refresh_metadata':
+          return toolRefreshMetadata(docsPath, args as { docId: string });
+        case 'add_metadata':
+          return toolAddMetadata(docsPath, args as { docId: string; path: string });
         default:
           throw new Error(`Unknown tool: ${name}`);
       }

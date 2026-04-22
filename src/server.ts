@@ -9,6 +9,8 @@ import { filesRouter } from './routes/files';
 import { diagramsRouter } from './routes/diagrams';
 import { wordcloudRouter } from './routes/wordcloud';
 import { annotationsRouter } from './routes/annotations';
+import { metadataRouter } from './routes/metadata';
+import { browseSourceRouter } from './routes/browse-source';
 import { exportRouter } from './routes/export';
 import { mcpRouter } from './mcp/server';
 import { readConfig, writeConfig } from './lib/config';
@@ -45,6 +47,8 @@ export async function startServer({
   app.use('/api/diagrams', diagramsRouter(docsPath));
   app.use('/api/wordcloud', wordcloudRouter());
   app.use('/api/annotations', annotationsRouter(docsPath));
+  app.use('/api/metadata', metadataRouter(docsPath));
+  app.use('/api/browse-source', browseSourceRouter(docsPath));
   app.use('/api/export', exportRouter(docsPath));
   app.use('/mcp', mcpRouter(docsPath));
 
