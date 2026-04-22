@@ -35,21 +35,23 @@ function safeResolve(docsPath: string, rel: string): string | null {
   return resolved.startsWith(base) ? resolved : null;
 }
 
-export function toolListDocuments(docsPath: string) {
+export interface DocSummary {
+  id: string;
+  title: string;
+  category: string;
+  folder: string | null;
+}
+
+export function listAllDocuments(docsPath: string): DocSummary[] {
   const { filenamePattern, extraFiles = [] } = readConfig(docsPath);
+  const docs: DocSummary[] = [];
 
-  const docs: Array<{
-    id: string; title: string; category: string; folder: string | null;
-  }> = [];
-
-  // Extra files
   for (const fp of extraFiles) {
     if (!fp.endsWith('.md') || !fs.existsSync(fp)) continue;
     const meta = parseFilename(path.basename(fp), filenamePattern);
     docs.push({ id: encodeURIComponent(fp.slice(0, -3)), title: meta.title, category: 'General', folder: null });
   }
 
-  // Regular docs (recursive)
   function scan(dir: string) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       if (entry.name.startsWith('.')) continue;
@@ -70,11 +72,29 @@ export function toolListDocuments(docsPath: string) {
     }
   }
   scan(docsPath);
+  return docs;
+}
 
+export function resolveDocFilePath(docsPath: string, doc: DocSummary): string | null {
+  const { extraFiles = [] } = readConfig(docsPath);
+  const decoded = decodeURIComponent(doc.id);
+  if (path.isAbsolute(decoded)) {
+    const fp = decoded + '.md';
+    return extraFiles.includes(fp) && fs.existsSync(fp) ? fp : null;
+  }
+  const resolved = safeResolve(docsPath, decoded + '.md');
+  return resolved && fs.existsSync(resolved) ? resolved : null;
+}
+
+export function toolListDocuments(docsPath: string) {
+  const docs = listAllDocuments(docsPath);
   return { content: [{ type: 'text' as const, text: JSON.stringify(docs, null, 2) }] };
 }
 
 export function toolReadDocument(docsPath: string, args: { id: string }) {
+  if (!args || typeof args.id !== 'string' || !args.id) {
+    throw new Error("Missing required parameter 'id'");
+  }
   const { extraFiles = [] } = readConfig(docsPath);
   const decoded = decodeURIComponent(args.id);
 

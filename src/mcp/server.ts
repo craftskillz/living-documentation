@@ -10,7 +10,7 @@ import { Router, Request, Response } from 'express';
 import { toolListDocuments, toolReadDocument, toolCreateDocument } from './tools/documents';
 import { toolListDiagrams, toolReadDiagram, toolCreateDiagram } from './tools/diagrams';
 import { toolListSourceFiles, toolReadSourceFile, toolSearchSource } from './tools/source';
-import { toolListMetadata, toolGetAccuracy, toolRefreshMetadata, toolAddMetadata } from './tools/metadata';
+import { toolListMetadata, toolGetAccuracy, toolRefreshMetadata, toolAddMetadata, toolRemoveMetadata, toolListDocumentsBelowAccuracy } from './tools/metadata';
 
 // ── Server guide ──────────────────────────────────────────────────────────────
 // Shared by the `instructions` field (sent on MCP initialize) and the
@@ -158,14 +158,23 @@ Documents can be bound to the source files they describe. Each binding stores
 the file's SHA-256 hash so the system can detect drift between docs and code.
 
 Tools:
-- \`list_metadata(docId)\` — returns the source files attached to a doc.
-- \`get_accuracy(docId)\` — classifies each entry (\`unchanged\` / \`modified\` /
+- \`list_metadata(id)\` — returns the source files attached to a doc.
+- \`get_accuracy(id)\` — classifies each entry (\`unchanged\` / \`modified\` /
   \`missing\`) and returns a weighted \`accuracy\` in [0, 1] (missing weighs 3×
   a simple modification).
-- \`add_metadata(docId, path)\` — attach a source file (path under
+- \`add_metadata(id, path)\` — attach a source file (path under
   \`sourceRoot\`) and record its current hash.
-- \`refresh_metadata(docId)\` — re-hash every attached file. Call **after**
+- \`remove_metadata(id, path)\` — detach an entry. Idempotent (no-op
+  if the path is not attached). Use this to clean up orphans or to
+  handle renames (\`add_metadata\` new path, then
+  \`remove_metadata\` old path).
+- \`refresh_metadata(id)\` — re-hash every attached file. Call **after**
   the doc has been updated to re-align it with the current source state.
+- \`list_documents_below_accuracy()\` — audit: returns up to 10 documents
+  whose accuracy < 80%, sorted most-degraded first, plus a
+  \`totalBelowThreshold\` counter. SuperSeeded docs and docs without
+  metadata are excluded. Use this instead of looping
+  \`list_documents\` + \`get_accuracy\`.
 
 Recommended workflow to keep docs accurate:
 1. \`list_documents\` → pick a doc.
@@ -173,6 +182,13 @@ Recommended workflow to keep docs accurate:
 3. \`read_document\` and \`read_source_file\` on the \`modified\` entries.
 4. Update the doc with \`create_document\` (overwrites by id).
 5. \`refresh_metadata\` to re-baseline the hashes.
+
+Bulk audit workflow:
+1. \`list_documents_below_accuracy\` → batch of up to 10 most-degraded docs.
+2. For each item: \`read_document\` + \`read_source_file\` on modified
+   entries → update with \`create_document\` → \`refresh_metadata\`.
+3. Re-call \`list_documents_below_accuracy\` until \`totalBelowThreshold\`
+   reaches 0 or the remaining items are intentionally drifting.
 `;
 
 // ── Tool definitions ──────────────────────────────────────────────────────────
@@ -404,9 +420,9 @@ const TOOLS = [
     inputSchema: {
       type: 'object',
       properties: {
-        docId: { type: 'string', description: 'Document id as returned by list_documents' },
+        id: { type: 'string', description: 'Document id as returned by list_documents' },
       },
-      required: ['docId'],
+      required: ['id'],
     },
   },
   {
@@ -421,9 +437,9 @@ const TOOLS = [
     inputSchema: {
       type: 'object',
       properties: {
-        docId: { type: 'string', description: 'Document id' },
+        id: { type: 'string', description: 'Document id' },
       },
-      required: ['docId'],
+      required: ['id'],
     },
   },
   {
@@ -436,9 +452,9 @@ const TOOLS = [
     inputSchema: {
       type: 'object',
       properties: {
-        docId: { type: 'string', description: 'Document id' },
+        id: { type: 'string', description: 'Document id' },
       },
-      required: ['docId'],
+      required: ['id'],
     },
   },
   {
@@ -447,15 +463,34 @@ const TOOLS = [
       'Attach a source file to a document as a metadata dependency. The file path must be under the configured `sourceRoot`. The current SHA-256 hash of the file is recorded.',
       '',
       'If the document already has an entry for that path, its hash is updated.',
+      '',
+      'Returns only the added entry and aggregate totals. Use `list_metadata` to retrieve the full list.',
     ].join('\n'),
     inputSchema: {
       type: 'object',
       properties: {
-        docId: { type: 'string', description: 'Document id' },
-        path:  { type: 'string', description: 'Path to the source file, relative to sourceRoot or absolute but under sourceRoot.' },
+        id:   { type: 'string', description: 'Document id' },
+        path: { type: 'string', description: 'Path to the source file, relative to sourceRoot or absolute but under sourceRoot.' },
       },
-      required: ['docId', 'path'],
+      required: ['id', 'path'],
     },
+  },
+  {
+    name: 'remove_metadata',
+    description: 'Remove a source-file metadata entry from a document. Use this to clean up orphan entries when a source file has been deleted or renamed (rename = add the new path then remove the old one). Idempotent: returns removed: null if the path is not currently attached. Does not touch the source file on disk — only updates the metadata.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id:   { type: 'string', description: 'Document id' },
+        path: { type: 'string', description: 'Path to the source file, relative to sourceRoot or absolute but under sourceRoot.' },
+      },
+      required: ['id', 'path'],
+    },
+  },
+  {
+    name: 'list_documents_below_accuracy',
+    description: 'List documents whose accuracy has dropped below 80%, sorted from most degraded first. Returns up to 10 documents per call along with the total count of documents below the threshold. Documents without any metadata (total = 0) and SuperSeeded documents are excluded. Use this to audit which documents need review after recent code changes.',
+    inputSchema: { type: 'object', properties: {} },
   },
   {
     name: 'search_source',
@@ -1009,7 +1044,7 @@ function umlTypeGuidance(umlType: string): string {
 
 function createMcpServer(docsPath: string): Server {
   const server = new Server(
-    { name: 'living-documentation', version: '1.0.0' },
+    { name: 'living-documentation', version: '1.2.0' },
     {
       capabilities: { tools: {}, prompts: {} },
       instructions: SERVER_GUIDE,
@@ -1068,13 +1103,17 @@ function createMcpServer(docsPath: string): Server {
             query: string; pattern?: string; maxResults?: number; caseSensitive?: boolean;
           });
         case 'list_metadata':
-          return toolListMetadata(docsPath, args as { docId: string });
+          return toolListMetadata(docsPath, args as { id: string });
         case 'get_accuracy':
-          return toolGetAccuracy(docsPath, args as { docId: string });
+          return toolGetAccuracy(docsPath, args as { id: string });
         case 'refresh_metadata':
-          return toolRefreshMetadata(docsPath, args as { docId: string });
+          return toolRefreshMetadata(docsPath, args as { id: string });
         case 'add_metadata':
-          return toolAddMetadata(docsPath, args as { docId: string; path: string });
+          return toolAddMetadata(docsPath, args as { id: string; path: string });
+        case 'remove_metadata':
+          return toolRemoveMetadata(docsPath, args as { id: string; path: string });
+        case 'list_documents_below_accuracy':
+          return toolListDocumentsBelowAccuracy(docsPath);
         default:
           throw new Error(`Unknown tool: ${name}`);
       }
@@ -1108,7 +1147,7 @@ export function mcpRouter(docsPath: string): Router {
   router.get('/', (_req: Request, res: Response) => {
     res.json({
       mcp: 'living-documentation',
-      version: '1.0.0',
+      version: '1.2.0',
       transport: 'streamable-http',
       endpoint: 'POST /mcp',
       tools: TOOLS.map(t => t.name),

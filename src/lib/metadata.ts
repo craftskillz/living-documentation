@@ -141,3 +141,33 @@ export function setDocEntries(
   else store[docId] = entries;
   writeMetadataStore(docsPath, store);
 }
+
+// Reads a frontmatter field from a Markdown document. Supports the two
+// conventions used in this project: YAML block (`---\nkey: value\n---`) and
+// ADR-style inline (`**key:** value` in the opening lines). Returns null when
+// not found. Case-insensitive on the key.
+export function getFrontmatterField(
+  content: string,
+  key: string,
+): string | null {
+  const k = key.toLowerCase();
+  const head = content.slice(0, 4096);
+
+  if (head.startsWith("---")) {
+    const end = head.indexOf("\n---", 3);
+    if (end !== -1) {
+      const block = head.slice(3, end);
+      for (const line of block.split("\n")) {
+        const m = /^\s*([A-Za-z0-9_-]+)\s*:\s*(.+?)\s*$/.exec(line);
+        if (m && m[1].toLowerCase() === k) return m[2];
+      }
+    }
+  }
+
+  for (const line of head.split("\n", 30)) {
+    const m = /^\s*\*\*([A-Za-z0-9_-]+)\s*:\s*\*\*\s*(.+?)\s*$/.exec(line);
+    if (m && m[1].toLowerCase() === k) return m[2];
+  }
+
+  return null;
+}
