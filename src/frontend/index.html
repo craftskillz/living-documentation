@@ -1283,6 +1283,7 @@
             <option data-i18n="snippet.tree" value="tree">Tree</option>
             <option data-i18n="snippet.colored_section" value="colored-section">Colored section</option>
             <option data-i18n="snippet.colored_text" value="colored-text">Colored text</option>
+            <option data-i18n="snippet.emojis" value="emojis">😀 Emojis</option>
             <option data-i18n="snippet.attachment" value="attachment">📎 File attachment</option>
           </select>
         </div>
@@ -1806,13 +1807,52 @@
           </div>
         </div>
 
+        <!-- Panel: emojis -->
+        <div id="snip-panel-emojis" class="hidden space-y-3">
+          <div class="space-y-1.5">
+            <label
+              data-i18n="snippet.emoji_selected_label"
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Selected emojis</label
+            >
+            <div class="flex gap-1">
+              <input
+                id="snip-emoji-string"
+                type="text"
+                oninput="snippetUpdatePreview()"
+                class="flex-1 px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="button"
+                id="snip-emoji-clear"
+                onclick="emojiClear()"
+                data-i18n="snippet.emoji_clear_btn"
+                class="px-3 py-2 text-xs rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >Clear</button>
+            </div>
+          </div>
+          <div class="space-y-1.5">
+            <input
+              id="snip-emoji-search"
+              type="text"
+              data-i18n-placeholder="snippet.emoji_search_placeholder"
+              placeholder="Search emojis… (e.g. heart, star, rocket)"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div
+            id="snip-emoji-grid"
+            class="space-y-2 max-h-64 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg p-2 bg-white dark:bg-gray-900"
+          ></div>
+        </div>
+
         <!-- Panel: file attachment -->
         <div id="snip-panel-attachment" class="hidden space-y-3">
           <div class="rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 px-3 py-3 text-sm text-blue-900 dark:text-blue-100 space-y-2">
-            <p data-i18n="snippet.attachment_help">
+            <p data-i18n-html="snippet.attachment_help">
               Click <strong>Insert</strong> to choose a file. It will be uploaded under the <code>files/</code> folder and inserted as a <i class="fa-solid fa-paperclip"></i> link in your document.
             </p>
-            <p data-i18n="snippet.attachment_alt" class="text-xs text-blue-700 dark:text-blue-300">
+            <p data-i18n-html="snippet.attachment_alt" class="text-xs text-blue-700 dark:text-blue-300">
               Tip: you can also drag &amp; drop a file onto the editor, or paste it from the clipboard.
             </p>
           </div>

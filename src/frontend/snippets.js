@@ -19,8 +19,486 @@ const _SNIPPET_PANELS = [
   "diagram",
   "colored-section",
   "colored-text",
+  "emojis",
   "attachment",
 ];
+
+// Each emoji has search tags (bilingual FR/EN, space-separated, lowercase).
+// Filter matches a 2+ char query against any tag prefix or substring.
+const _EMOJI_CATEGORIES = [
+  { label: 'snippet.emoji_cat_smileys', emojis: [
+    { e: '😀', t: 'grin grinning smile sourire happy heureux' },
+    { e: '😃', t: 'smiley joy joie sourire happy' },
+    { e: '😄', t: 'smile sourire happy heureux joie' },
+    { e: '😁', t: 'beaming grin sourire dents' },
+    { e: '😆', t: 'laugh rire lol' },
+    { e: '😅', t: 'sweat transpire rire nerveux' },
+    { e: '🤣', t: 'rofl lol mdr rire' },
+    { e: '😂', t: 'joy larmes tears rire lol' },
+    { e: '🙂', t: 'slight smile sourire' },
+    { e: '🙃', t: 'upside renverse inverse' },
+    { e: '😉', t: 'wink clin oeil' },
+    { e: '😊', t: 'blush rougir sourire' },
+    { e: '😇', t: 'angel ange halo innocent' },
+    { e: '🥰', t: 'love amour coeur heart smile' },
+    { e: '😍', t: 'heart eyes amoureux love amour' },
+    { e: '🤩', t: 'star stars etoile wow' },
+    { e: '😘', t: 'kiss bisou' },
+    { e: '😋', t: 'yum miam savoureux langue' },
+    { e: '😛', t: 'tongue langue' },
+    { e: '😜', t: 'wink tongue langue clin' },
+    { e: '🤪', t: 'crazy fou zany' },
+    { e: '😝', t: 'tongue langue squinting' },
+    { e: '🤗', t: 'hug calin embrasser' },
+    { e: '🤔', t: 'think reflexion reflechir pense' },
+    { e: '🤨', t: 'raised brow sourcil suspicious' },
+    { e: '😐', t: 'neutral neutre' },
+    { e: '😑', t: 'expressionless impassible' },
+    { e: '😒', t: 'unamused decu blase' },
+    { e: '🙄', t: 'roll eyes yeux ciel' },
+    { e: '😬', t: 'grimace' },
+    { e: '😌', t: 'relieved soulage' },
+    { e: '😔', t: 'pensive pensif triste sad' },
+    { e: '😪', t: 'sleepy sommeil fatigue' },
+    { e: '😴', t: 'sleep dormir zzz' },
+    { e: '🤤', t: 'drool bave' },
+    { e: '😷', t: 'mask masque malade' },
+    { e: '🤒', t: 'sick malade fever fievre' },
+    { e: '🤕', t: 'hurt blesse bandage' },
+    { e: '🤢', t: 'nausea nausee' },
+    { e: '🤮', t: 'vomit vomir malade' },
+    { e: '🤧', t: 'sneeze eternue rhume' },
+    { e: '🥵', t: 'hot chaud transpire' },
+    { e: '🥶', t: 'cold froid gele' },
+    { e: '🥴', t: 'woozy ivre' },
+    { e: '😵', t: 'dizzy dead mort vertige' },
+    { e: '🤯', t: 'explode tete mind blown' },
+    { e: '🤠', t: 'cowboy chapeau' },
+    { e: '🥳', t: 'party fete anniversaire birthday' },
+    { e: '😎', t: 'cool sunglasses lunettes' },
+    { e: '🤓', t: 'nerd geek' },
+    { e: '🧐', t: 'monocle curious' },
+    { e: '😕', t: 'confused confus' },
+    { e: '😟', t: 'worried inquiet' },
+    { e: '🙁', t: 'frown triste' },
+    { e: '☹️', t: 'sad triste frown' },
+    { e: '😮', t: 'surprised surpris open mouth' },
+    { e: '😯', t: 'hushed' },
+    { e: '😲', t: 'astonished etonne' },
+    { e: '😳', t: 'flushed gene rougeur' },
+    { e: '🥺', t: 'pleading supplier chien' },
+    { e: '😦', t: 'frown open mouth' },
+    { e: '😧', t: 'anguish angoisse' },
+    { e: '😨', t: 'fear peur' },
+    { e: '😰', t: 'anxious anxieux stress' },
+    { e: '😥', t: 'sad disappointed decu' },
+    { e: '😢', t: 'cry pleurer larme' },
+    { e: '😭', t: 'cry pleurer loud bawling' },
+    { e: '😱', t: 'scream cri peur horror' },
+    { e: '😖', t: 'confounded' },
+    { e: '😣', t: 'persevere effort' },
+    { e: '😞', t: 'disappointed decu' },
+    { e: '😓', t: 'sweat transpire fatigue' },
+    { e: '😩', t: 'weary fatigue las' },
+    { e: '😫', t: 'tired fatigue' },
+    { e: '🥱', t: 'yawn baille' },
+    { e: '😤', t: 'triumph huff vapeur nez' },
+    { e: '😠', t: 'angry colere fache' },
+    { e: '😡', t: 'rage colere rouge' },
+    { e: '🤬', t: 'curse insulte jure' },
+    { e: '😈', t: 'devil diable smiling' },
+    { e: '👿', t: 'imp diable' },
+    { e: '💀', t: 'skull mort death crane' },
+    { e: '☠️', t: 'crossbones pirate mort death' },
+    { e: '💩', t: 'poop caca merde' },
+    { e: '🤡', t: 'clown' },
+    { e: '👻', t: 'ghost fantome' },
+    { e: '👽', t: 'alien extraterrestre' },
+    { e: '🤖', t: 'robot ia ai' },
+    { e: '🎃', t: 'pumpkin halloween citrouille' },
+    { e: '😺', t: 'cat chat' },
+    { e: '😸', t: 'cat chat grin' },
+    { e: '😹', t: 'cat chat joy' },
+    { e: '😻', t: 'cat chat love amour heart' },
+    { e: '😼', t: 'cat chat wry' },
+    { e: '😽', t: 'cat chat kiss' },
+    { e: '🙀', t: 'cat chat fear peur' },
+    { e: '😿', t: 'cat chat cry pleurer' },
+    { e: '😾', t: 'cat chat angry colere' },
+  ]},
+  { label: 'snippet.emoji_cat_gestures', emojis: [
+    { e: '👍', t: 'thumbs up pouce ok bien like' },
+    { e: '👎', t: 'thumbs down pouce bas dislike' },
+    { e: '👌', t: 'ok parfait' },
+    { e: '✌️', t: 'victory victoire peace paix' },
+    { e: '🤞', t: 'fingers crossed doigts croises' },
+    { e: '🤟', t: 'love you' },
+    { e: '🤘', t: 'rock horns metal cornes' },
+    { e: '🤙', t: 'call appelle hang loose' },
+    { e: '👈', t: 'left gauche pointing' },
+    { e: '👉', t: 'right droite pointing' },
+    { e: '👆', t: 'up haut pointing' },
+    { e: '👇', t: 'down bas pointing' },
+    { e: '☝️', t: 'one index up haut' },
+    { e: '✋', t: 'stop hand main raised' },
+    { e: '🤚', t: 'back hand main' },
+    { e: '🖐️', t: 'hand main splayed' },
+    { e: '🖖', t: 'vulcan spock star trek' },
+    { e: '👋', t: 'wave bonjour hello salut goodbye' },
+    { e: '🤝', t: 'handshake accord deal poignee' },
+    { e: '🙏', t: 'pray priere merci thanks please' },
+    { e: '💪', t: 'muscle fort biceps strong' },
+    { e: '🦾', t: 'mechanical arm bras prothese' },
+    { e: '👏', t: 'clap applaud bravo applaudir' },
+    { e: '🙌', t: 'raise hands hourra celebrate' },
+    { e: '👐', t: 'open hands' },
+    { e: '🤲', t: 'palms up paumes' },
+    { e: '🤜', t: 'fist poing right' },
+    { e: '🤛', t: 'fist poing left' },
+    { e: '✊', t: 'fist poing leve' },
+    { e: '👊', t: 'fist punch poing frapper' },
+    { e: '🤏', t: 'pinch petit small' },
+    { e: '🤌', t: 'italian pinched' },
+    { e: '🖕', t: 'middle finger doigt honneur' },
+    { e: '✍️', t: 'write ecrire hand main' },
+    { e: '🦶', t: 'foot pied' },
+    { e: '🦵', t: 'leg jambe' },
+    { e: '👂', t: 'ear oreille' },
+    { e: '🦻', t: 'ear hearing appareil auditif' },
+    { e: '👃', t: 'nose nez' },
+    { e: '🧠', t: 'brain cerveau mind' },
+    { e: '👀', t: 'eyes yeux regarder' },
+    { e: '👁️', t: 'eye oeil' },
+    { e: '👄', t: 'mouth bouche' },
+    { e: '👅', t: 'tongue langue' },
+    { e: '🦷', t: 'tooth dent' },
+    { e: '🫀', t: 'heart anatomic coeur organe' },
+    { e: '🫁', t: 'lungs poumons' },
+  ]},
+  { label: 'snippet.emoji_cat_hearts', emojis: [
+    { e: '❤️', t: 'heart coeur red rouge love amour' },
+    { e: '🧡', t: 'orange heart coeur' },
+    { e: '💛', t: 'yellow heart coeur jaune' },
+    { e: '💚', t: 'green heart coeur vert' },
+    { e: '💙', t: 'blue heart coeur bleu' },
+    { e: '💜', t: 'purple heart coeur violet' },
+    { e: '🖤', t: 'black heart coeur noir' },
+    { e: '🤍', t: 'white heart coeur blanc' },
+    { e: '🤎', t: 'brown heart coeur marron' },
+    { e: '💔', t: 'broken heart coeur brise rupture' },
+    { e: '❤️‍🔥', t: 'heart fire feu passion' },
+    { e: '❤️‍🩹', t: 'heart mending coeur reparation' },
+    { e: '💖', t: 'sparkling heart coeur brillant' },
+    { e: '💕', t: 'two hearts coeurs' },
+    { e: '💘', t: 'arrow heart cupid cupidon' },
+    { e: '💝', t: 'ribbon heart cadeau' },
+    { e: '💞', t: 'revolving hearts coeurs' },
+    { e: '💟', t: 'heart decoration' },
+    { e: '💌', t: 'love letter lettre enveloppe' },
+    { e: '💋', t: 'kiss mark bisou levres' },
+    { e: '❣️', t: 'heart exclamation' },
+    { e: '💯', t: 'hundred 100 cent perfect parfait' },
+    { e: '✨', t: 'sparkles etincelles magic magique brillant' },
+    { e: '⭐', t: 'star etoile' },
+    { e: '🌟', t: 'glowing star etoile' },
+    { e: '💫', t: 'dizzy star vertige etoile' },
+    { e: '🔥', t: 'fire feu hot flamme' },
+    { e: '💥', t: 'boom explosion collision' },
+    { e: '⚡', t: 'lightning eclair thunder tonnerre fast' },
+    { e: '💢', t: 'anger colere symbol' },
+    { e: '💨', t: 'dash vent wind fast vitesse' },
+    { e: '💦', t: 'drops gouttes sweat eau' },
+    { e: '💤', t: 'zzz sleep dormir sommeil' },
+    { e: '🕳️', t: 'hole trou' },
+    { e: '💭', t: 'thought pensee bulle' },
+    { e: '🗯️', t: 'right anger bubble' },
+    { e: '💬', t: 'speech bulle dialogue chat' },
+  ]},
+  { label: 'snippet.emoji_cat_objects', emojis: [
+    { e: '💻', t: 'laptop ordinateur computer portable' },
+    { e: '🖥️', t: 'desktop computer ordinateur bureau' },
+    { e: '⌨️', t: 'keyboard clavier' },
+    { e: '🖱️', t: 'mouse souris' },
+    { e: '💾', t: 'floppy disquette save sauvegarder' },
+    { e: '💿', t: 'disk cd optical' },
+    { e: '📀', t: 'dvd' },
+    { e: '📱', t: 'phone mobile telephone smartphone' },
+    { e: '📲', t: 'phone call mobile incoming' },
+    { e: '☎️', t: 'telephone vintage' },
+    { e: '📞', t: 'receiver combine phone' },
+    { e: '📟', t: 'pager' },
+    { e: '📠', t: 'fax' },
+    { e: '🔋', t: 'battery batterie pile' },
+    { e: '🔌', t: 'plug prise electrique' },
+    { e: '💡', t: 'bulb idee idea light lumiere ampoule' },
+    { e: '🔦', t: 'flashlight torche lampe' },
+    { e: '🕯️', t: 'candle bougie' },
+    { e: '📷', t: 'camera appareil photo' },
+    { e: '📸', t: 'camera flash photo' },
+    { e: '📹', t: 'video camera' },
+    { e: '🎥', t: 'movie film cinema camera' },
+    { e: '🎞️', t: 'film reel pellicule' },
+    { e: '📽️', t: 'projector projecteur' },
+    { e: '⏰', t: 'alarm reveil clock horloge' },
+    { e: '⏱️', t: 'stopwatch chrono chronometre' },
+    { e: '⏲️', t: 'timer minuteur' },
+    { e: '🕰️', t: 'mantel clock horloge' },
+    { e: '⌛', t: 'hourglass sablier done' },
+    { e: '⏳', t: 'hourglass sablier flow running' },
+    { e: '📡', t: 'satellite antenne' },
+    { e: '🔭', t: 'telescope astronomie' },
+    { e: '🔬', t: 'microscope science' },
+    { e: '💊', t: 'pill pilule medicine medicament' },
+    { e: '💉', t: 'syringe seringue injection vaccin' },
+    { e: '🩹', t: 'bandage pansement' },
+    { e: '🩺', t: 'stethoscope medecin' },
+    { e: '🧪', t: 'tube eprouvette chimie chemistry' },
+    { e: '🧬', t: 'dna adn gene' },
+    { e: '🔍', t: 'search magnify loupe rechercher find left' },
+    { e: '🔎', t: 'search magnify loupe rechercher find right' },
+    { e: '🗝️', t: 'key cle old' },
+    { e: '🔑', t: 'key cle' },
+    { e: '🔐', t: 'lock key cle cadenas' },
+    { e: '🔒', t: 'lock cadenas verrouille secure' },
+    { e: '🔓', t: 'unlock cadenas ouvert' },
+    { e: '🛡️', t: 'shield bouclier protection' },
+    { e: '🔨', t: 'hammer marteau' },
+    { e: '⚒️', t: 'tools outils hammer pick' },
+    { e: '🛠️', t: 'tools outils hammer wrench' },
+    { e: '🔧', t: 'wrench cle anglaise' },
+    { e: '🔩', t: 'nut bolt ecrou' },
+    { e: '⚙️', t: 'gear settings parametres engrenage config' },
+    { e: '🪛', t: 'screwdriver tournevis' },
+    { e: '🪝', t: 'hook crochet' },
+    { e: '🧰', t: 'toolbox caisse outils' },
+    { e: '🧲', t: 'magnet aimant' },
+    { e: '🧱', t: 'brick brique' },
+    { e: '⛏️', t: 'pick pioche' },
+    { e: '🪓', t: 'axe hache' },
+  ]},
+  { label: 'snippet.emoji_cat_office', emojis: [
+    { e: '📝', t: 'memo note ecrire write' },
+    { e: '✏️', t: 'pencil crayon' },
+    { e: '🖊️', t: 'pen stylo bille' },
+    { e: '🖋️', t: 'fountain pen stylo plume' },
+    { e: '🖌️', t: 'paintbrush pinceau' },
+    { e: '🖍️', t: 'crayon feutre' },
+    { e: '📐', t: 'triangle ruler equerre' },
+    { e: '📏', t: 'ruler regle' },
+    { e: '📎', t: 'paperclip trombone attach' },
+    { e: '🖇️', t: 'linked paperclips trombones' },
+    { e: '📌', t: 'pushpin punaise' },
+    { e: '📍', t: 'pin location lieu' },
+    { e: '✂️', t: 'scissors ciseaux cut couper' },
+    { e: '🗂️', t: 'card index dividers onglets' },
+    { e: '📁', t: 'folder dossier' },
+    { e: '📂', t: 'open folder dossier ouvert' },
+    { e: '🗃️', t: 'card box boite fiches' },
+    { e: '🗄️', t: 'file cabinet archive armoire' },
+    { e: '📋', t: 'clipboard presse papier' },
+    { e: '📃', t: 'page curl document' },
+    { e: '📄', t: 'document page' },
+    { e: '📜', t: 'scroll parchemin' },
+    { e: '📰', t: 'newspaper journal presse' },
+    { e: '🗞️', t: 'rolled newspaper journal' },
+    { e: '📓', t: 'notebook carnet cahier' },
+    { e: '📔', t: 'notebook decorated carnet' },
+    { e: '📒', t: 'ledger registre' },
+    { e: '📕', t: 'book rouge red ferme' },
+    { e: '📗', t: 'book vert green' },
+    { e: '📘', t: 'book bleu blue' },
+    { e: '📙', t: 'book orange' },
+    { e: '📚', t: 'books livres bibliotheque' },
+    { e: '📖', t: 'open book livre ouvert' },
+    { e: '🔖', t: 'bookmark marque page signet' },
+    { e: '🏷️', t: 'label tag etiquette' },
+    { e: '💼', t: 'briefcase mallette attache case business' },
+    { e: '🗒️', t: 'spiral note notepad' },
+    { e: '🗓️', t: 'spiral calendar calendrier' },
+    { e: '📅', t: 'calendar calendrier date' },
+    { e: '📆', t: 'tear off calendar calendrier' },
+    { e: '🗑️', t: 'trash poubelle delete supprimer can' },
+    { e: '🪣', t: 'bucket seau' },
+    { e: '📦', t: 'package colis box boite' },
+    { e: '📫', t: 'mailbox boite lettres closed flag up' },
+    { e: '📪', t: 'mailbox boite lettres closed flag down' },
+    { e: '📬', t: 'mailbox open boite lettres flag up' },
+    { e: '📭', t: 'mailbox open boite lettres flag down' },
+    { e: '📮', t: 'postbox boite aux lettres' },
+    { e: '✉️', t: 'envelope enveloppe' },
+    { e: '📧', t: 'email courriel mail at' },
+    { e: '📨', t: 'email incoming recu' },
+    { e: '📩', t: 'email arrow envoi' },
+    { e: '📤', t: 'outbox envoyer sent' },
+    { e: '📥', t: 'inbox recevoir' },
+    { e: '📊', t: 'bar chart graphique barres histogramme' },
+    { e: '📈', t: 'chart up tendance hausse croissance' },
+    { e: '📉', t: 'chart down baisse decroissance' },
+  ]},
+  { label: 'snippet.emoji_cat_symbols', emojis: [
+    { e: '🆕', t: 'new nouveau nouvelle brand fresh neuf' },
+    { e: '♻️', t: 'existing existant existante recycle recycler reuse reutiliser' },
+    { e: '✅', t: 'check ok valide coche green' },
+    { e: '☑️', t: 'check ballot case' },
+    { e: '✔️', t: 'check coche mark' },
+    { e: '❌', t: 'cross error erreur red rouge croix ko' },
+    { e: '✖️', t: 'multiply multiplier cross' },
+    { e: '❎', t: 'cross square button' },
+    { e: '⚠️', t: 'warning attention danger' },
+    { e: 'ℹ️', t: 'info information' },
+    { e: '❓', t: 'question red interrogation' },
+    { e: '❔', t: 'question white interrogation' },
+    { e: '❗', t: 'exclamation important red' },
+    { e: '❕', t: 'exclamation white' },
+    { e: '‼️', t: 'double exclamation' },
+    { e: '⁉️', t: 'exclamation question' },
+    { e: '🚀', t: 'rocket fusee launch lancer' },
+    { e: '🎉', t: 'party popper tada fete celebration' },
+    { e: '🎊', t: 'confetti ball fete' },
+    { e: '🏆', t: 'trophy trophee winner' },
+    { e: '🥇', t: 'gold medal medaille or first' },
+    { e: '🥈', t: 'silver medal medaille argent second' },
+    { e: '🥉', t: 'bronze medal medaille third' },
+    { e: '🏅', t: 'medal medaille sports' },
+    { e: '🎖️', t: 'military medal medaille' },
+    { e: '🎯', t: 'target cible dart' },
+    { e: '🎁', t: 'gift cadeau present' },
+    { e: '🔔', t: 'bell cloche notify notification' },
+    { e: '🔕', t: 'bell off muted silence' },
+    { e: '📢', t: 'loudspeaker annonce public' },
+    { e: '📣', t: 'megaphone porte voix' },
+    { e: '📯', t: 'postal horn cor' },
+    { e: '➕', t: 'plus add heavy' },
+    { e: '➖', t: 'minus moins heavy' },
+    { e: '➗', t: 'divide division' },
+    { e: '♾️', t: 'infinity infini' },
+    { e: '💲', t: 'dollar sign dollars money argent' },
+    { e: '💱', t: 'currency exchange change devise' },
+    { e: '©️', t: 'copyright' },
+    { e: '®️', t: 'registered' },
+    { e: '™️', t: 'trademark marque' },
+    { e: '↔️', t: 'left right arrow fleche horizontal' },
+    { e: '↕️', t: 'up down arrow fleche vertical' },
+    { e: '↖️', t: 'up left arrow fleche' },
+    { e: '↗️', t: 'up right arrow fleche' },
+    { e: '↘️', t: 'down right arrow fleche' },
+    { e: '↙️', t: 'down left arrow fleche' },
+    { e: '⬅️', t: 'left arrow fleche gauche' },
+    { e: '➡️', t: 'right arrow fleche droite' },
+    { e: '⬆️', t: 'up arrow fleche haut' },
+    { e: '⬇️', t: 'down arrow fleche bas' },
+    { e: '🔃', t: 'clockwise vertical arrows' },
+    { e: '🔄', t: 'counterclockwise arrows reload refresh recharger' },
+    { e: '🔁', t: 'repeat loop boucle' },
+    { e: '🔂', t: 'repeat single once' },
+    { e: '🔀', t: 'shuffle melange random' },
+    { e: '🔼', t: 'up button triangle' },
+    { e: '🔽', t: 'down button triangle' },
+    { e: '⏫', t: 'fast up double triangle' },
+    { e: '⏬', t: 'fast down double triangle' },
+    { e: '⏪', t: 'rewind back' },
+    { e: '⏩', t: 'fast forward avance' },
+    { e: '⏭️', t: 'next track suivant' },
+    { e: '⏮️', t: 'previous track precedent' },
+    { e: '⏯️', t: 'play pause' },
+    { e: '▶️', t: 'play lecture' },
+    { e: '⏸️', t: 'pause' },
+    { e: '⏹️', t: 'stop' },
+    { e: '⏺️', t: 'record enregistrer' },
+    { e: '⏏️', t: 'eject ejecter' },
+    { e: '🎵', t: 'music note musique' },
+    { e: '🎶', t: 'music notes musique' },
+    { e: '🔈', t: 'speaker low bas' },
+    { e: '🔉', t: 'speaker medium moyen' },
+    { e: '🔊', t: 'speaker loud fort haut son sound' },
+    { e: '🔇', t: 'muted mute silence' },
+    { e: '📶', t: 'signal antenne bars' },
+    { e: '🛜', t: 'wireless wifi' },
+    { e: '🔗', t: 'link lien chain' },
+    { e: '⛓️', t: 'chains chaine' },
+    { e: '🏁', t: 'finish flag checkered fin arrivee' },
+    { e: '🚩', t: 'flag drapeau triangular' },
+    { e: '🏳️', t: 'white flag drapeau blanc' },
+    { e: '🏴', t: 'black flag drapeau noir' },
+    { e: '🏳️‍🌈', t: 'rainbow lgbt pride drapeau arc en ciel' },
+    { e: '🏳️‍⚧️', t: 'trans drapeau transgender' },
+    { e: '🏴‍☠️', t: 'pirate drapeau jolly roger' },
+  ]},
+];
+
+let _emojiGridWired = false;
+
+function _emojiBtnHtml(item) {
+  return `<button type="button" data-emoji="${item.e}" title="${item.t.split(' ').slice(0, 3).join(', ')}" class="emoji-btn w-7 h-7 text-lg rounded hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center">${item.e}</button>`;
+}
+
+function _renderEmojiCategories() {
+  return _EMOJI_CATEGORIES.map((cat) => `
+    <div>
+      <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 px-1">${window.t(cat.label)}</div>
+      <div class="flex flex-wrap gap-1">
+        ${cat.emojis.map(_emojiBtnHtml).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function _renderEmojiSearch(query) {
+  const q = query.toLowerCase().trim();
+  const matches = [];
+  for (const cat of _EMOJI_CATEGORIES) {
+    for (const item of cat.emojis) {
+      if (item.t.includes(q) || item.e === query) matches.push(item);
+    }
+  }
+  if (matches.length === 0) {
+    return `<div class="text-xs text-gray-400 dark:text-gray-600 px-1 py-2">${window.t('snippet.emoji_no_results')}</div>`;
+  }
+  return `<div class="flex flex-wrap gap-1">${matches.map(_emojiBtnHtml).join('')}</div>`;
+}
+
+function emojiInit() {
+  const grid = document.getElementById('snip-emoji-grid');
+  if (!grid) return;
+  grid.innerHTML = _renderEmojiCategories();
+
+  if (!_emojiGridWired) {
+    grid.addEventListener('click', (e) => {
+      const btn = e.target.closest('.emoji-btn');
+      if (btn && btn.dataset.emoji) emojiAppend(btn.dataset.emoji);
+    });
+    const searchInput = document.getElementById('snip-emoji-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => emojiFilter(e.target.value));
+    }
+    _emojiGridWired = true;
+  }
+
+  const searchInput = document.getElementById('snip-emoji-search');
+  if (searchInput) searchInput.value = '';
+  snippetUpdatePreview();
+}
+
+function emojiFilter(query) {
+  const grid = document.getElementById('snip-emoji-grid');
+  if (!grid) return;
+  const q = (query || '').trim();
+  grid.innerHTML = q.length < 2 ? _renderEmojiCategories() : _renderEmojiSearch(q);
+}
+
+function emojiAppend(emoji) {
+  const input = document.getElementById('snip-emoji-string');
+  if (!input) return;
+  input.value += emoji;
+  snippetUpdatePreview();
+}
+
+function emojiClear() {
+  const input = document.getElementById('snip-emoji-string');
+  if (!input) return;
+  input.value = '';
+  snippetUpdatePreview();
+}
 
 const _COLOR_SWATCHES = {
   info:    { bg: "#eff6ff", border: "#3b82f6", text: "#1e3a5f" },
@@ -226,6 +704,7 @@ function snippetTypeChanged() {
   if (type === "table") tableInit();
   else if (type === "tree") treeInit();
   else if (type === "diagram") snippetDiagInit();
+  else if (type === "emojis") emojiInit();
   else if (type === "attachment") {
     /* no preview — file picker opens on Insert */
   } else snippetUpdatePreview();
@@ -410,6 +889,8 @@ function buildSnippetMarkdown() {
       const content = document.getElementById("snip-colored-content").value || window.t('snippet.colored_section_content_placeholder');
       return `<div style="background:${c.bg};border-left:4px solid ${c.border};color:${c.text};padding:1rem 1.25rem;border-radius:0.375rem;margin:1rem 0;">\n\n${content}\n\n</div>`;
     }
+    case "emojis":
+      return document.getElementById("snip-emoji-string").value;
     default:
       return "";
   }

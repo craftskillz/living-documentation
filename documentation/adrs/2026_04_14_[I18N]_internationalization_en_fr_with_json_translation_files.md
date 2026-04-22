@@ -2,8 +2,8 @@
 `🗄️ ADR : 2026_04_14_[I18N]_internationalization_en_fr_with_json_translation_files.md`
 **date:** 2026-04-14
 **status:** Pending Validation
-**description:** Add full internationalization support to all three pages (index.html, admin.html, diagram.html) via a shared i18n.js loader, two JSON translation files (en.json, fr.json), and four data attributes (data-i18n, data-i18n-title, data-i18n-placeholder, data-i18n-html). Language is persisted in config as "en" | "fr" and selected from the Admin panel.
-**tags:** i18n, internationalization, language, translation, en, fr, json, data-i18n, i18n.js, config, admin, frontend, index, diagram, window.t, applyI18n, initI18n
+**description:** Add full internationalization support to all three pages (index.html, admin.html, diagram.html) via a shared i18n.js loader, two JSON translation files (en.json, fr.json), and four data attributes (data-i18n, data-i18n-title, data-i18n-placeholder, data-i18n-html). Language is persisted in config as "en" | "fr" and selected from the Admin panel. Updated 2026-04-22: dynamically rendered content must await initI18n before its first render to avoid raw keys being displayed (diagram sidebar bootstrap fix).
+**tags:** i18n, internationalization, language, translation, en, fr, json, data-i18n, i18n.js, config, admin, frontend, index, diagram, window.t, applyI18n, initI18n, bootstrap, loadDiagramList, dynamic-rendering
 ---
 
 ## Context
@@ -66,6 +66,24 @@ window.applyI18n();
 
 With a fallback to `'en'` if the config fetch fails.
 
+### Update 2026-04-22 — dynamic renderers must await initI18n
+
+`applyI18n()` handles static DOM nodes, but JS-rendered content calls `window.t()` inline. If that render runs **before** `initI18n()` resolves, the dictionary is still empty and `t(key)` returns the raw key (e.g. `diagram.sidebar.empty` shown literally in the diagram sidebar).
+
+Rule: any dynamic renderer that depends on `window.t()` for its first paint must be invoked from the same IIFE that awaits `initI18n()`, **after** `applyI18n()`. In `diagram.html`, `loadDiagramList()` was moved out of `diagram/main.js` (where it ran at module-load time, racing `initI18n`) into the inline bootstrap IIFE, after `window.applyI18n()`.
+
+Pattern for future pages:
+
+```js
+(async () => {
+  const cfg = await fetch('/api/config').then(r => r.json());
+  await window.initI18n(cfg.language || 'en');
+  window.applyI18n();
+  // Dynamic renderers that call window.t() go here:
+  loadDiagramList();
+})();
+```
+
 ## Consequences
 
 ### PROS
@@ -80,4 +98,5 @@ With a fallback to `'en'` if the config fetch fails.
 
 - `applyI18n()` runs after the DOM is painted — there is a brief moment where the English fallback text is visible before translations are applied (no true SSR).
 - Dynamically rendered HTML (e.g. sidebar items built by JS) must call `window.t()` inline at render time; `applyI18n()` only applies to elements present in the DOM at call time.
+- Dynamic renderers must be invoked after `initI18n()` resolves, otherwise `t(key)` returns the raw key — race condition fixed on 2026-04-22 for the diagram sidebar.
 - All strings added to the codebase must be manually added to both JSON files — there is no compile-time check for missing keys.

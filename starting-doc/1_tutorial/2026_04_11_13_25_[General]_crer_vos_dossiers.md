@@ -13,4 +13,4 @@ Pour en savoir plus sur les façons d'architecturer votre documentation, [suivez
 
 2. Créer un second dossier **2_GUIDE** puis **3_CONCEPT** et enfin **4_REFERENCE**<br/>
 💡 Vos dossier apparaissent ordonnée car ils utilisent un **préfix** "1_", "2_", "3_", ..., mais ce dernier est invisible en affichage
-   ![image](./images/quatre-dossiers-crees.png)
+   ![image](./images/quatre-dossiers-crees.png)💚
