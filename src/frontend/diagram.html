@@ -1225,6 +1225,7 @@
     <script type="module">
       import { NODE_COLORS, NODE_L_RATIOS, DEFAULT_NODE_PALETTE, DEFAULT_EDGE_PALETTE, deriveNodeColors } from '/diagram/constants.js';
       import { st } from '/diagram/state.js';
+      import { loadDiagramList } from '/diagram/persistence.js';
       (async () => {
         // diagramNodePalette: array of 15 bg hex strings (positional, matching DEFAULT_NODE_PALETTE)
         // diagramEdgePalette: array of hex strings
@@ -1273,6 +1274,7 @@
           ec.appendChild(btn);
         });
         window.applyI18n();
+        loadDiagramList();
       })();
     </script>
   </body>

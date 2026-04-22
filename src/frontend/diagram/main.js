@@ -295,5 +295,5 @@ document.getElementById('darkIcon').textContent =
 })();
 
 // ── Bootstrap ─────────────────────────────────────────────────────────────────
-
-loadDiagramList();
+// loadDiagramList() is invoked from the inline IIFE in diagram.html after
+// window.initI18n() resolves, so t() returns localised strings (not raw keys).
