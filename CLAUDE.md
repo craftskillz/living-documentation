@@ -25,7 +25,7 @@ src/routes/files.ts         → /api/files        (arbitrary file upload, blocke
 src/routes/wordcloud.ts     → /api/wordcloud    (recursive file reader, returns raw text)
 src/routes/diagrams.ts      → /api/diagrams     (CRUD of vis-network diagrams as JSON)
 src/routes/annotations.ts   → /api/annotations  (per-doc highlight markers)
-src/routes/metadata.ts      → /api/metadata     (per-doc source-file bindings + accuracy)
+src/routes/metadata.ts      → /api/metadata     (per-doc source-file bindings + reliability report)
 src/routes/browse-source.ts → /api/browse-source (navigate sourceRoot tree for metadata picker)
 src/routes/export.ts        → /api/export       (HTML export, Notion + Confluence zip modes)
 src/mcp/server.ts           → /mcp              (Model Context Protocol, Streamable HTTP)
@@ -35,7 +35,7 @@ src/mcp/tools/source.ts     → MCP tools: list_source_files, read_source_file, 
 src/mcp/tools/metadata.ts   → MCP tools: list_metadata, get_accuracy, add_metadata, refresh_metadata
 src/lib/parser.ts           → filename parsing logic (dynamic, driven by filenamePattern)
 src/lib/config.ts           → .living-doc.json read/write with defaults
-src/lib/metadata.ts         → .metadata.json store + accuracy report (unchanged / total)
+src/lib/metadata.ts         → .metadata.json store + reliability report (unchanged / total)
 src/lib/hash.ts             → sha256File helper
 src/frontend/index.html     → viewer shell (Tailwind CDN, hljs CDN) — logic in sibling .js modules
 src/frontend/admin.html     → admin panel (config editor + extra files browser)
@@ -63,7 +63,7 @@ image-paste.js              → Cmd/Ctrl+V image upload in the editor
 file-attach.js              → paperclip attachments: drag-drop, paste, file picker (non-image)
 annotations.js              → highlight-marker creation, persistence, DOM anchor traversal
 metadata.js                 → source-file metadata modal + sourceRoot browser (add/remove/refresh)
-accuracy-gauge.js           → coloured accuracy bar in the doc header (hidden when doc has no entries)
+accuracy-gauge.js           → red→green gradient reliability bar in the doc header (hidden when doc has no entries)
 export.js                   → PDF print + HTML/Notion/Confluence export dialog
 snippets.js                 → snippet inserter panel (entry point)
 snippet-detect.js           → detect an existing snippet under the caret
@@ -71,6 +71,8 @@ snippet-table.js            → table-editor snippet (dynamic rows/columns)
 snippet-tree.js             → tree-editor snippet (ASCII connectors)
 new-doc-modal.js            → "New document" modal with folder browser
 new-folder-modal.js         → "New folder" modal
+files-modal.js              → "Metadata Files" popup (list/replace/delete DOCS_FOLDER/files/)
+confirm-modal.js            → Generic showConfirm() Promise-based confirmation modal (z-[60])
 diagram-link-modal.js       → link-to-diagram snippet picker
 misc.js                     → small UI glue (welcome screen, etc.)
 boot.js                     → entry point: wires modules, initial fetch, URL deep-link
@@ -178,16 +180,22 @@ Pipeline:
 - Files are served statically by Express at `/files/*` → `DOCS_FOLDER/files/`.
 - `documents.ts` post-processes rendered HTML: every `<a href="./files/...">` is decorated with `class="ld-file-attachment"`, `target="_blank"`, `rel="noopener"`, and a prepended `<i class="fa-solid fa-paperclip ld-file-icon"></i>` when the label does not already contain a paperclip glyph — produces the purple pill look in the reader.
 
-### Source-file metadata & accuracy gauge
+### Source-file metadata & reliability gauge
 
-Documents can be bound to the source files they describe. Each binding stores the file's SHA-256 hash so drift between docs and code is detectable.
+**This is a cornerstone feature of Living Documentation.** A doc without a way to detect drift from the code it describes is just a stale text file. Every document can be bound to the source files it covers; each binding stores the file's SHA-256 hash so drift is visible at a glance.
 
 - **Storage**: single `.metadata.json` file at the docs folder root, shape `{ [docId]: MetadataEntry[] }`. `MetadataEntry = { path: string; hash: string }` where `path` is relative to `sourceRoot`.
-- **Accuracy formula**: `accuracy = unchanged / total`, in `[0, 1]`. Empty doc = `1`. Every entry is an assertion "this doc is in sync with this source file" — `modified` and `missing` both break the assertion and count the same in the numerator. The per-status counts are still exposed so the UI can distinguish severity visually.
+- **Reliability formula** (UI label: "Reliability" / "Fiabilité", historical key name `accuracy.*`): `reliability = unchanged / total`, in `[0, 1]`. Empty doc = `1`. Every entry is an assertion "this doc is in sync with this source file" — `modified` and `missing` both break the assertion and count the same in the numerator. The per-status counts are still exposed so the UI can distinguish severity visually.
 - **REST** (`src/routes/metadata.ts`): `GET /api/metadata/:docId` (report), `POST /api/metadata/:docId` (add/replace entry), `DELETE /api/metadata/:docId` (remove), `POST /api/metadata/:docId/refresh` (re-hash all → re-baseline). All operations validate paths are under `sourceRoot`.
 - **Source browser** (`src/routes/browse-source.ts`): `GET /api/browse-source?path=<rel>` returns `dirs + files` under `sourceRoot`, skipping heavy folders (`node_modules`, `dist`, `.git`, `build`, `target`, `.venv`, …) and dotfiles except `.github`.
-- **Frontend**: `metadata-btn` in the doc header opens a modal (`metadata.js`) with add/remove/refresh actions and an inline `sourceRoot` file picker. `accuracy-gauge.js` renders a coloured bar in the sticky header (green >80 %, yellow ≥60 %, orange ≥40 %, red <40 %), hidden when the doc has zero entries. Clicking the gauge opens the modal.
+- **Frontend**: `metadata-btn` in the doc header opens a modal (`metadata.js`) with add/remove/refresh actions and an inline `sourceRoot` file picker. `accuracy-gauge.js` renders a **red→orange→yellow→green gradient bar** in the sticky header — the bar's width reflects the reliability ratio, and only the left portion of the full-track gradient is visible (so a 30 % doc shows red/orange, a 100 % doc shows the whole gradient). The numeric `%` beside the bar uses threshold colours (green >80 %, yellow ≥60 %, orange ≥40 %, red <40 %). Hidden when the doc has zero entries. Clicking the gauge opens the metadata modal.
+- **Metadata Files popup** (top bar `📁 Metadata Files` / `📁 Fichiers Métadonnées` before Admin): lists every file under `DOCS_FOLDER/files/` (`files-modal.js`), sorted chronologically via their `YYYYMMDDHHmmss_<rand4>_<slug>.<ext>` prefix. Actions **Replace** (`PUT /api/files/:filename`, overwrites in place, no history) and **Delete** (`DELETE /api/files/:filename`). After either op the popup closes and `window.runSearchImmediate('metadata://<filename>')` pre-fills the search to surface affected docs.
+- **`metadata://` search prefix**: `GET /api/documents/search?q=metadata://<basename>` reads `.metadata.json` and returns docs whose entries' `path.basename()` matches. Critical subtlety: parser-produced doc IDs are URL-encoded, metadata store keys are decoded — use `decodeURIComponent(d.id)` on the filter side. Frontend (`search.js`) detects the prefix, skips the local title/category filter, and the in-doc search notice banner is hidden for metadata queries (not useful there).
 - **MCP tools** (`src/mcp/tools/metadata.ts`): `list_metadata`, `get_accuracy`, `add_metadata`, `refresh_metadata`. Intended workflow for an MCP client: `get_accuracy` to detect drift → `read_document` + `read_source_file` on modified entries → `create_document` to overwrite → `refresh_metadata` to re-baseline.
+
+### Reusable confirmation modal
+
+`src/frontend/confirm-modal.js` exposes `window.showConfirm({ title, message, detail, confirmLabel, cancelLabel, danger })` → `Promise<boolean>`. Replaces native `window.confirm()` for consistent Tailwind styling. Keyboard: `Escape` = false, `Enter` = true; backdrop click = cancel; auto-focuses the OK button. `danger: true` gives the OK button red styling; otherwise blue. The modal sits at `z-[60]` so it stacks above application modals at `z-50`. Use it for any destructive confirmation rather than rolling a new dialog.
 
 ## Diagram editor
 

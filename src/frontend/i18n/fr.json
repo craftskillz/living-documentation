@@ -104,7 +104,7 @@
   "metadata.status.unchanged": "Inchangé",
   "metadata.status.modified": "Modifié",
   "metadata.status.missing": "Manquant",
-  "accuracy.label": "Justesse",
+  "accuracy.label": "Fiabilité",
   "accuracy.tooltip": "Inchangés : {unchanged} · Modifiés : {modified} · Manquants : {missing} · Total : {total}",
 
   "modal.new_folder.title": "Nouveau dossier",

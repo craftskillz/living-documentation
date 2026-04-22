@@ -10,6 +10,18 @@ No cloud, no database, no build step — just point it at a folder where you add
 
 ## Features
 
+### Reliability gauge — keep your docs honest
+
+Living Documentation's flagship feature: each document can be **bound to the source files it describes**, so you can see at a glance whether it has drifted from the code.
+
+- **Bind source files** to any doc via the `🗂 Metadata` button in the doc header — pick any file under `sourceRoot` (your project root, configurable in Admin). Each binding stores the file's SHA-256 hash.
+- **Reliability gauge** in the sticky doc header — a red → orange → yellow → green gradient bar that fills up as `reliability = unchanged / total`. If every bound file still matches its hash, the bar is full and green; as soon as one file is modified or deleted, the gauge drops and the colour shifts. Hidden when the doc has no bindings. Click it to open the metadata modal.
+- **Metadata Files popup** (top bar `📁 Metadata Files`) — central place to list, **replace** or **delete** every file uploaded under `DOCS_FOLDER/files/` (PDFs, specs, mockups attached to docs). After a replace/delete, the popup closes and the search bar is auto-filled with `metadata://<filename>` so you immediately see which documents still reference it.
+- **`metadata://<filename>` search prefix** — reverse-lookup documents by the source files they're bound to. Useful to answer "which docs am I supposed to update now that I've changed this PDF/class/module?".
+- **MCP tools** (`list_metadata`, `get_accuracy`, `add_metadata`, `refresh_metadata`) — AI agents can detect drift, read the source & the doc, rewrite the doc and re-baseline the hashes autonomously.
+
+### Other features
+
 - **Sidebar** grouped by folder → category, sorted alphabetically; **General** always first
 [![README Diagrams](./images/readme-sidebar.png)](/diagram?id=d1775399110713)
 
@@ -224,16 +236,21 @@ living-documentation/
 │   │   ├── wordcloud.ts         Word cloud raw text reader
 │   │   ├── diagrams.ts          Diagrams CRUD API (vis-network JSON)
 │   │   ├── annotations.ts       Per-document highlight markers API
+│   │   ├── metadata.ts          Source-file bindings + reliability report
+│   │   ├── browse-source.ts     Source tree navigator (rooted at sourceRoot)
 │   │   └── export.ts            HTML export (PDF, Notion, Confluence zip)
 │   ├── mcp/
 │   │   ├── server.ts            Model Context Protocol server (Streamable HTTP)
 │   │   └── tools/
 │   │       ├── documents.ts     MCP tools: list/read/create document
 │   │       ├── diagrams.ts      MCP tools: list/read/create diagram
-│   │       └── source.ts        MCP tools: list/read/search source files
+│   │       ├── source.ts        MCP tools: list/read/search source files
+│   │       └── metadata.ts      MCP tools: list_metadata, get_accuracy, add_metadata, refresh_metadata
 │   ├── lib/
 │   │   ├── parser.ts            Filename parser
-│   │   └── config.ts            Config management (.living-doc.json)
+│   │   ├── config.ts            Config management (.living-doc.json)
+│   │   ├── metadata.ts          .metadata.json store + reliability formula
+│   │   └── hash.ts              sha256File helper
 │   └── frontend/
 │       ├── index.html           Main viewer shell
 │       ├── admin.html           Admin panel
@@ -271,6 +288,14 @@ living-documentation/
 | `POST`   | `/api/browse/mkdir`            | Create a new folder under the docs root                            |
 | `POST`   | `/api/images/upload`           | Upload a base64 image; saved to `DOCS_FOLDER/images/`              |
 | `POST`   | `/api/files/upload`            | Upload a base64 file attachment; saved to `DOCS_FOLDER/files/`     |
+| `GET`    | `/api/files`                   | List every file under `DOCS_FOLDER/files/` (chronological)         |
+| `PUT`    | `/api/files/:filename`         | Replace an existing attachment with a new base64 payload           |
+| `DELETE` | `/api/files/:filename`         | Delete an attachment                                               |
+| `GET`    | `/api/metadata/:docId`         | Reliability report for one doc (per-entry status + score)          |
+| `POST`   | `/api/metadata/:docId`         | Add or replace a source-file binding for a doc                     |
+| `DELETE` | `/api/metadata/:docId`         | Remove a binding                                                   |
+| `POST`   | `/api/metadata/:docId/refresh` | Re-hash all bindings (re-baseline after the doc has been updated)  |
+| `GET`    | `/api/browse-source?path=`     | Navigate the source tree rooted at `sourceRoot`                    |
 | `GET`    | `/api/diagrams`                | List saved diagrams                                                |
 | `GET`    | `/api/diagrams/:id`            | Read a single diagram (nodes + edges)                              |
 | `PUT`    | `/api/diagrams/:id`            | Create or update a diagram                                         |
@@ -317,6 +342,10 @@ A `GET http://localhost:4321/mcp` returns a JSON summary of available tools for 
 | `list_source_files` | List project source files under `sourceRoot` (fallback only) |
 | `read_source_file` | Read a source file under `sourceRoot` (fallback only) |
 | `search_source` | Grep-like text search across files under `sourceRoot` |
+| `list_metadata` | List the source-file bindings of every doc |
+| `get_accuracy` | Get the reliability report of a doc (per-entry status + ratio) — detect drift |
+| `add_metadata` | Bind a source file to a doc (stores the SHA-256 hash) |
+| `refresh_metadata` | Re-hash all bindings for a doc — re-baseline after the doc has been rewritten |
 
 Prompts (`generate-context-diagram`, `generate-container-diagram`, `generate-uml-diagram`, `update-diagram-from-docs`, `generate-screen-guide`, `flow`, `erd`) are exposed alongside the tools for clients that surface MCP prompts to the user.
 

@@ -100,11 +100,11 @@
   "metadata.add": "Add source file",
   "metadata.refresh": "Refresh hashes",
   "metadata.remove": "Remove",
-  "metadata.empty": "No metadata yet — add a source file to start tracking accuracy.",
+  "metadata.empty": "No metadata yet — add a source file to start tracking reliability.",
   "metadata.status.unchanged": "Unchanged",
   "metadata.status.modified": "Modified",
   "metadata.status.missing": "Missing",
-  "accuracy.label": "Accuracy",
+  "accuracy.label": "Reliability",
   "accuracy.tooltip": "Unchanged: {unchanged} · Modified: {modified} · Missing: {missing} · Total: {total}",
 
   "modal.new_folder.title": "New folder",

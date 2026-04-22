@@ -29,7 +29,10 @@ function renderAccuracyGauge(report) {
   if (label) label.textContent = window.t("accuracy.label");
   if (bar) {
     bar.style.width = pct + "%";
-    bar.style.backgroundColor = color;
+    // The gradient spans the full track width, so we stretch the background
+    // to (100/pct)× the bar width — this way the bar only shows the left
+    // portion of the red→green gradient corresponding to its percentage.
+    bar.style.backgroundSize = pct > 0 ? `${10000 / pct}% 100%` : "100% 100%";
   }
   if (value) {
     value.textContent = pct + "%";
