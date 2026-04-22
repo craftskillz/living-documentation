@@ -69,11 +69,13 @@ function toggleMarker() {
     crossEl.style.display = "block";
     closeMarkerPopup();
     setHighlightsVisible(false);
+    refreshSidebar();
   } else {
     // hidden → normal
     stabiloHidden = false;
     crossEl.style.display = "none";
     setHighlightsVisible(true);
+    refreshSidebar();
   }
 }
 

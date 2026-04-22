@@ -35,6 +35,7 @@ function countTreeAnnotatedDocs(node) {
 
 function annotationBadge(count) {
   if (!count) return "";
+  if (typeof stabiloHidden !== "undefined" && stabiloHidden) return "";
   const label = window.t
     ? window.t("sidebar.annotation_badge")
     : "annotation";
@@ -47,6 +48,7 @@ function annotationBadge(count) {
 
 function annotatedDocsBadge(count) {
   if (!count) return "";
+  if (typeof stabiloHidden !== "undefined" && stabiloHidden) return "";
   const label = window.t
     ? window.t("sidebar.annotated_docs_badge")
     : "document with annotations";
