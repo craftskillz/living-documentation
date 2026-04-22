@@ -1,6 +1,11 @@
 // ── Search + result highlighting ─────────────────────────────────────────────
 
 let searchTimer = null;
+const METADATA_SEARCH_PREFIX = "metadata://";
+
+function _isMetadataQuery(q) {
+  return typeof q === "string" && q.toLowerCase().startsWith(METADATA_SEARCH_PREFIX);
+}
 
 function setupSearch() {
   ["header-search", "sidebar-search"].forEach((id) => {
@@ -20,22 +25,54 @@ function setupSearch() {
         searchQuery = "";
         searchResults = null;
         renderSidebar(allDocs);
+        if (window.refreshSearchInCurrentDoc) window.refreshSearchInCurrentDoc();
         return;
       }
       searchQuery = q;
-      // Immediate client-side filter for snappy UX
-      const local = allDocs.filter(
-        (d) =>
-          d.title.toLowerCase().includes(q.toLowerCase()) ||
-          d.category.toLowerCase().includes(q.toLowerCase()),
-      );
-      searchResults = local;
-      renderSidebar(local);
+      if (_isMetadataQuery(q)) {
+        // Title/category can't match a metadata:// query — skip the local
+        // filter and wait for the server response.
+        searchResults = [];
+        renderSidebar([]);
+      } else {
+        // Immediate client-side filter for snappy UX
+        const local = allDocs.filter(
+          (d) =>
+            d.title.toLowerCase().includes(q.toLowerCase()) ||
+            d.category.toLowerCase().includes(q.toLowerCase()),
+        );
+        searchResults = local;
+        renderSidebar(local);
+      }
+      // Refresh highlights inside the currently open doc
+      if (window.refreshSearchInCurrentDoc) window.refreshSearchInCurrentDoc();
       // Then full-text search from server
       searchTimer = setTimeout(() => doSearch(q), 350);
     });
   });
 }
+
+// Programmatic trigger used by the Files modal after a replace/delete.
+// Fills both search inputs and runs the server search immediately (no debounce).
+function runSearchImmediate(q) {
+  const trimmed = (q || "").trim();
+  ["header-search", "sidebar-search"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.value = trimmed;
+  });
+  clearTimeout(searchTimer);
+  if (!trimmed) {
+    searchQuery = "";
+    searchResults = null;
+    renderSidebar(allDocs);
+    return;
+  }
+  searchQuery = trimmed;
+  searchResults = [];
+  renderSidebar([]);
+  doSearch(trimmed);
+}
+window.runSearchImmediate = runSearchImmediate;
 
 async function doSearch(q) {
   try {

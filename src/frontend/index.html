@@ -54,6 +54,8 @@
     <script defer src="/diagram-link-modal.js"></script>
     <script defer src="/new-folder-modal.js"></script>
     <script defer src="/new-doc-modal.js"></script>
+    <script defer src="/confirm-modal.js"></script>
+    <script defer src="/files-modal.js"></script>
     <script defer src="/boot.js"></script>
 
     <script>
@@ -308,6 +310,15 @@
           >
             &#9671; Diagram
           </a>
+
+          <!-- Files -->
+          <button
+            onclick="openFilesModal()"
+            data-i18n="nav.files"
+            class="text-sm px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+          >
+            &#128193; Files
+          </button>
 
           <!-- Admin link -->
           <a
@@ -2556,6 +2567,63 @@
               class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
             >Export all PDF</button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Generic confirmation modal (used by showConfirm) ── -->
+    <div
+      id="confirm-modal"
+      class="hidden fixed inset-0 z-[60] bg-black/50 flex items-center justify-center p-4"
+      onclick="_confirmModalBackdrop(event)"
+    >
+      <div
+        class="w-full max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl p-5 flex flex-col gap-3"
+        onclick="event.stopPropagation()"
+      >
+        <h3 id="confirm-modal-title" class="font-semibold text-gray-900 dark:text-gray-100"></h3>
+        <p id="confirm-modal-message" class="text-sm text-gray-700 dark:text-gray-200"></p>
+        <p id="confirm-modal-detail" class="text-xs text-gray-500 dark:text-gray-400 italic break-all"></p>
+        <div class="flex justify-end gap-2 mt-2">
+          <button
+            id="confirm-modal-cancel"
+            type="button"
+            class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          ></button>
+          <button
+            id="confirm-modal-ok"
+            type="button"
+            class="text-sm px-4 py-1.5 rounded-lg text-white font-semibold transition-colors"
+          ></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Files modal ── -->
+    <div
+      id="files-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+      onclick="if(event.target===this)closeFilesModal()"
+    >
+      <div
+        class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-[min(720px,92vw)] max-h-[85vh] flex flex-col border border-gray-200 dark:border-gray-800"
+      >
+        <div
+          class="flex items-center justify-between px-5 py-3 border-b border-gray-200 dark:border-gray-800 shrink-0"
+        >
+          <h2 data-i18n="files.title" class="font-semibold text-base text-gray-900 dark:text-gray-100">
+            &#128193; Files
+          </h2>
+          <button
+            onclick="closeFilesModal()"
+            data-i18n-title="common.close"
+            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xl leading-none px-2"
+          >
+            &times;
+          </button>
+        </div>
+        <div id="files-modal-body" class="flex-1 overflow-y-auto p-5">
+          <p class="text-sm text-gray-400" data-i18n="common.loading">Loading…</p>
         </div>
       </div>
     </div>

@@ -35,7 +35,7 @@ src/mcp/tools/source.ts     → MCP tools: list_source_files, read_source_file, 
 src/mcp/tools/metadata.ts   → MCP tools: list_metadata, get_accuracy, add_metadata, refresh_metadata
 src/lib/parser.ts           → filename parsing logic (dynamic, driven by filenamePattern)
 src/lib/config.ts           → .living-doc.json read/write with defaults
-src/lib/metadata.ts         → .metadata.json store + accuracy report (weighted: missing 3×)
+src/lib/metadata.ts         → .metadata.json store + accuracy report (unchanged / total)
 src/lib/hash.ts             → sha256File helper
 src/frontend/index.html     → viewer shell (Tailwind CDN, hljs CDN) — logic in sibling .js modules
 src/frontend/admin.html     → admin panel (config editor + extra files browser)
@@ -183,7 +183,7 @@ Pipeline:
 Documents can be bound to the source files they describe. Each binding stores the file's SHA-256 hash so drift between docs and code is detectable.
 
 - **Storage**: single `.metadata.json` file at the docs folder root, shape `{ [docId]: MetadataEntry[] }`. `MetadataEntry = { path: string; hash: string }` where `path` is relative to `sourceRoot`.
-- **Accuracy weighting**: `unchanged = 0`, `modified = 1`, `missing = 3`. `accuracy = 1 − weight/(3·total)`, in `[0, 1]`. Empty doc = `1`.
+- **Accuracy formula**: `accuracy = unchanged / total`, in `[0, 1]`. Empty doc = `1`. Every entry is an assertion "this doc is in sync with this source file" — `modified` and `missing` both break the assertion and count the same in the numerator. The per-status counts are still exposed so the UI can distinguish severity visually.
 - **REST** (`src/routes/metadata.ts`): `GET /api/metadata/:docId` (report), `POST /api/metadata/:docId` (add/replace entry), `DELETE /api/metadata/:docId` (remove), `POST /api/metadata/:docId/refresh` (re-hash all → re-baseline). All operations validate paths are under `sourceRoot`.
 - **Source browser** (`src/routes/browse-source.ts`): `GET /api/browse-source?path=<rel>` returns `dirs + files` under `sourceRoot`, skipping heavy folders (`node_modules`, `dist`, `.git`, `build`, `target`, `.venv`, …) and dotfiles except `.github`.
 - **Frontend**: `metadata-btn` in the doc header opens a modal (`metadata.js`) with add/remove/refresh actions and an inline `sourceRoot` file picker. `accuracy-gauge.js` renders a coloured bar in the sticky header (green >80 %, yellow ≥60 %, orange ≥40 %, red <40 %), hidden when the doc has zero entries. Clicking the gauge opens the modal.

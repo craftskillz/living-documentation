@@ -3,6 +3,88 @@
 // annotations (loadAnnotations, applyAnnotationHighlights, renderElevator),
 // and image-paste.js (handleEditorPaste).
 
+// Cache of the last rendered doc HTML so search input changes can re-wire
+// the content without a round-trip to the server.
+let _lastDocHtml = null;
+let _lastDocIdRendered = null;
+
+function _wireDocContent(html) {
+  const contentEl = document.getElementById("doc-content");
+  if (!contentEl) return;
+  contentEl.innerHTML = html;
+
+  contentEl.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach((h) => {
+    if (!h.id) {
+      h.id = h.textContent
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, "")
+        .trim()
+        .replace(/\s+/g, "-");
+    }
+  });
+
+  contentEl.querySelectorAll("pre code").forEach((block) => {
+    hljs.highlightElement(block);
+  });
+
+  contentEl.querySelectorAll("a[href]").forEach((a) => {
+    const href = a.getAttribute("href");
+    const m = href && href.match(/[?&]doc=([^&#]+)/);
+    if (!m) return;
+    const hashIdx = href.indexOf("#");
+    const anchorTarget = hashIdx !== -1 ? href.slice(hashIdx + 1) : null;
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      openDocument(decodeURIComponent(m[1]), false, true, anchorTarget);
+    });
+  });
+
+  contentEl.querySelectorAll('a[href^="#"]').forEach((a) => {
+    const href = a.getAttribute("href");
+    if (!href || href.length < 2) return;
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      scrollToAnchor(href.slice(1));
+    });
+  });
+
+  contentEl.querySelectorAll("table").forEach((t) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "overflow-x-auto";
+    t.parentNode.insertBefore(wrapper, t);
+    wrapper.appendChild(t);
+  });
+
+  const notice = document.getElementById("search-notice");
+  const isMetaQuery =
+    typeof searchQuery === "string" &&
+    searchQuery.toLowerCase().startsWith("metadata://");
+  if (searchQuery && !isMetaQuery) {
+    const matches = highlightMatches(contentEl, searchQuery);
+    buildSearchNotice(matches, searchQuery);
+    notice.classList.remove("hidden");
+  } else {
+    notice.classList.add("hidden");
+  }
+}
+
+function refreshSearchInCurrentDoc() {
+  if (
+    !currentDocId ||
+    _lastDocHtml === null ||
+    currentDocId !== _lastDocIdRendered
+  ) {
+    return;
+  }
+  const contentArea = document.getElementById("content-area");
+  const scrollTop = contentArea ? contentArea.scrollTop : 0;
+  _wireDocContent(_lastDocHtml);
+  if (typeof loadAnnotations === "function") loadAnnotations(currentDocId);
+  if (contentArea) contentArea.scrollTop = scrollTop;
+}
+
+window.refreshSearchInCurrentDoc = refreshSearchInCurrentDoc;
+
 async function loadDocuments() {
   try {
     [allDocs] = await Promise.all([
@@ -158,8 +240,9 @@ async function openDocument(id, skipHistory = false, fromLink = false, anchor = 
     document.getElementById("doc-date").textContent =
       doc.formattedDate || "";
 
-    const contentEl = document.getElementById("doc-content");
-    contentEl.innerHTML = doc.html;
+    _lastDocHtml = doc.html;
+    _lastDocIdRendered = id;
+    _wireDocContent(doc.html);
 
     // Load annotations for this document
     loadAnnotations(id);
@@ -167,63 +250,6 @@ async function openDocument(id, skipHistory = false, fromLink = false, anchor = 
     // Load source-file metadata report (drives the accuracy gauge)
     if (typeof loadMetadataReport === "function") {
       loadMetadataReport(id);
-    }
-
-    // Add IDs to headings for anchor navigation
-    contentEl.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach((h) => {
-      if (!h.id) {
-        h.id = h.textContent
-          .toLowerCase()
-          .replace(/[^\w\s-]/g, "")
-          .trim()
-          .replace(/\s+/g, "-");
-      }
-    });
-
-    // Syntax highlighting
-    contentEl.querySelectorAll("pre code").forEach((block) => {
-      hljs.highlightElement(block);
-    });
-
-    // Intercept inter-doc links (?doc=X[#anchor]) to stay in SPA and track origin
-    contentEl.querySelectorAll("a[href]").forEach((a) => {
-      const href = a.getAttribute("href");
-      const m = href && href.match(/[?&]doc=([^&#]+)/);
-      if (!m) return;
-      const hashIdx = href.indexOf("#");
-      const anchor = hashIdx !== -1 ? href.slice(hashIdx + 1) : null;
-      a.addEventListener("click", (e) => {
-        e.preventDefault();
-        openDocument(decodeURIComponent(m[1]), false, true, anchor);
-      });
-    });
-
-    // Intercept pure-anchor links (#foo) to offset for the sticky header
-    contentEl.querySelectorAll('a[href^="#"]').forEach((a) => {
-      const href = a.getAttribute("href");
-      if (!href || href.length < 2) return;
-      a.addEventListener("click", (e) => {
-        e.preventDefault();
-        scrollToAnchor(href.slice(1));
-      });
-    });
-
-    // Make tables responsive
-    contentEl.querySelectorAll("table").forEach((t) => {
-      const wrapper = document.createElement("div");
-      wrapper.className = "overflow-x-auto";
-      t.parentNode.insertBefore(wrapper, t);
-      wrapper.appendChild(t);
-    });
-
-    // Highlight search matches in content
-    const notice = document.getElementById("search-notice");
-    if (searchQuery) {
-      const matches = highlightMatches(contentEl, searchQuery);
-      buildSearchNotice(matches, searchQuery);
-      notice.classList.remove("hidden");
-    } else {
-      notice.classList.add("hidden");
     }
 
     document.title = doc.title;
@@ -342,50 +368,9 @@ async function saveDocument() {
     const doc = await fetch("/api/documents/" + currentDocId).then((r) =>
       r.json(),
     );
-    const contentEl = document.getElementById("doc-content");
-    contentEl.innerHTML = doc.html;
-    contentEl
-      .querySelectorAll("pre code")
-      .forEach((block) => hljs.highlightElement(block));
-
-    contentEl.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach((h) => {
-      if (!h.id) {
-        h.id = h.textContent
-          .toLowerCase()
-          .replace(/[^\w\s-]/g, "")
-          .trim()
-          .replace(/\s+/g, "-");
-      }
-    });
-
-    contentEl.querySelectorAll("a[href]").forEach((a) => {
-      const href = a.getAttribute("href");
-      const m = href && href.match(/[?&]doc=([^&#]+)/);
-      if (!m) return;
-      const hashIdx = href.indexOf("#");
-      const anchor = hashIdx !== -1 ? href.slice(hashIdx + 1) : null;
-      a.addEventListener("click", (e) => {
-        e.preventDefault();
-        openDocument(decodeURIComponent(m[1]), false, true, anchor);
-      });
-    });
-
-    contentEl.querySelectorAll('a[href^="#"]').forEach((a) => {
-      const href = a.getAttribute("href");
-      if (!href || href.length < 2) return;
-      a.addEventListener("click", (e) => {
-        e.preventDefault();
-        scrollToAnchor(href.slice(1));
-      });
-    });
-
-    contentEl.querySelectorAll("table").forEach((t) => {
-      if (t.parentNode.classList.contains("overflow-x-auto")) return;
-      const wrapper = document.createElement("div");
-      wrapper.className = "overflow-x-auto";
-      t.parentNode.insertBefore(wrapper, t);
-      wrapper.appendChild(t);
-    });
+    _lastDocHtml = doc.html;
+    _lastDocIdRendered = currentDocId;
+    _wireDocContent(doc.html);
 
     applyAnnotationHighlights();
     renderElevator();

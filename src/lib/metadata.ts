@@ -103,7 +103,8 @@ export function classifyEntry(
   };
 }
 
-// Weighted ratio: missing = 3, modified = 1, unchanged = 0. accuracy = 1 - sum/(3*total)
+// accuracy = unchanged / total. Each entry is an assertion that the doc is in
+// sync with a source file; modified or missing both break that assertion.
 export function buildReport(
   entries: MetadataEntry[],
   sourceRoot: string,
@@ -113,18 +114,12 @@ export function buildReport(
   let unchanged = 0;
   let modified = 0;
   let missing = 0;
-  let weight = 0;
   for (const it of items) {
     if (it.status === "unchanged") unchanged++;
-    else if (it.status === "modified") {
-      modified++;
-      weight += 1;
-    } else {
-      missing++;
-      weight += 3;
-    }
+    else if (it.status === "modified") modified++;
+    else missing++;
   }
-  const accuracy = total === 0 ? 1 : 1 - weight / (total * 3);
+  const accuracy = total === 0 ? 1 : unchanged / total;
   return { items, total, unchanged, modified, missing, accuracy };
 }
 

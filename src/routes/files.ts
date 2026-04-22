@@ -15,8 +15,121 @@ function slugify(name: string): string {
     .slice(0, 80);
 }
 
+function isSafeFilename(filename: string): boolean {
+  return typeof filename === 'string'
+    && filename.length > 0
+    && !/[\\\/]/.test(filename)
+    && !filename.startsWith('.')
+    && filename !== '..';
+}
+
+function resolveFilePathSafe(filesDir: string, filename: string): string | null {
+  if (!isSafeFilename(filename)) return null;
+  const resolvedDir = path.resolve(filesDir);
+  const resolved = path.resolve(filesDir, filename);
+  if (resolved !== path.join(resolvedDir, filename)) return null;
+  return resolved;
+}
+
 export function filesRouter(docsPath: string): Router {
   const router = Router();
+
+  // GET /api/files — list files in DOCS_FOLDER/files/ (sorted lex = chronological
+  // because filenames start with YYYYMMDDHHmmss).
+  router.get('/', (_req: Request, res: Response) => {
+    const filesDir = path.join(docsPath, 'files');
+    if (!fs.existsSync(filesDir)) {
+      return res.json({ files: [] });
+    }
+    const entries = fs
+      .readdirSync(filesDir, { withFileTypes: true })
+      .filter((e) => e.isFile())
+      .map((e) => e.name)
+      .sort((a, b) => a.localeCompare(b));
+
+    const files = entries.map((filename) => {
+      const stat = fs.statSync(path.join(filesDir, filename));
+      const match = filename.match(/^(\d{14})_[a-z0-9]{4}_(.+)$/);
+      let uploadedAt: string | null = null;
+      let displayName = filename;
+      if (match) {
+        const ts = match[1];
+        const d = new Date(
+          parseInt(ts.slice(0, 4), 10),
+          parseInt(ts.slice(4, 6), 10) - 1,
+          parseInt(ts.slice(6, 8), 10),
+          parseInt(ts.slice(8, 10), 10),
+          parseInt(ts.slice(10, 12), 10),
+          parseInt(ts.slice(12, 14), 10),
+        );
+        uploadedAt = isNaN(d.getTime()) ? null : d.toISOString();
+        displayName = match[2];
+      }
+      return {
+        filename,
+        displayName,
+        uploadedAt,
+        size: stat.size,
+        url: `/files/${filename}`,
+      };
+    });
+
+    res.json({ files });
+  });
+
+  // PUT /api/files/:filename — overwrite existing file (same filename, no history).
+  router.put('/:filename', (req: Request, res: Response) => {
+    const { filename } = req.params;
+    const { data } = req.body as { data?: string };
+
+    const filesDir = path.join(docsPath, 'files');
+    const filePath = resolveFilePathSafe(filesDir, filename);
+    if (!filePath) {
+      return res.status(400).json({ error: 'Invalid filename' });
+    }
+    if (typeof data !== 'string' || !data) {
+      return res.status(400).json({ error: 'data is required' });
+    }
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: 'File not found' });
+    }
+
+    const base64 = data.replace(/^data:[^;]+;base64,/, '');
+    const buffer = Buffer.from(base64, 'base64');
+    if (buffer.length > MAX_FILE_BYTES) {
+      return res.status(413).json({
+        error: `File too large (${(buffer.length / 1024 / 1024).toFixed(1)} MB). Maximum is ${(MAX_FILE_BYTES / 1024 / 1024).toFixed(0)} MB.`,
+        maxBytes: MAX_FILE_BYTES,
+      });
+    }
+
+    try {
+      fs.writeFileSync(filePath, buffer);
+      const stat = fs.statSync(filePath);
+      res.json({ filename, size: stat.size, url: `/files/${filename}` });
+    } catch {
+      res.status(500).json({ error: 'Failed to replace file' });
+    }
+  });
+
+  // DELETE /api/files/:filename — remove a file from DOCS_FOLDER/files/.
+  router.delete('/:filename', (req: Request, res: Response) => {
+    const { filename } = req.params;
+    const filesDir = path.join(docsPath, 'files');
+    const filePath = resolveFilePathSafe(filesDir, filename);
+    if (!filePath) {
+      return res.status(400).json({ error: 'Invalid filename' });
+    }
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: 'File not found' });
+    }
+    try {
+      fs.unlinkSync(filePath);
+      res.json({ ok: true });
+    } catch {
+      res.status(500).json({ error: 'Failed to delete file' });
+    }
+  });
 
   // POST /api/files/upload — base64-encoded arbitrary file saved to DOCS_FOLDER/files/
   router.post('/upload', (req: Request, res: Response) => {

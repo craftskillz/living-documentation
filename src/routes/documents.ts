@@ -4,6 +4,9 @@ import path from "path";
 import { marked } from "marked";
 import { parseFilename, DocMetadata } from "../lib/parser";
 import { readConfig } from "../lib/config";
+import { readMetadataStore } from "../lib/metadata";
+
+const METADATA_SEARCH_PREFIX = "metadata://";
 
 const RESERVED_DOCS_SUBFOLDERS = new Set(["files", "images"]);
 
@@ -143,10 +146,39 @@ export function documentsRouter(docsPath: string): Router {
     }
   });
 
-  // GET /api/documents/search?q=query — full-text search
+  // GET /api/documents/search?q=query — full-text search. When the query
+  // starts with `metadata://<basename>`, return docs whose metadata references
+  // a source file with that basename (e.g. a file in DOCS_FOLDER/files/).
   router.get("/search", (req: Request, res: Response) => {
-    const query = ((req.query.q as string) ?? "").toLowerCase().trim();
-    if (!query) return res.json([]);
+    const rawQuery = ((req.query.q as string) ?? "").trim();
+    if (!rawQuery) return res.json([]);
+
+    if (rawQuery.toLowerCase().startsWith(METADATA_SEARCH_PREFIX)) {
+      const needle = rawQuery.slice(METADATA_SEARCH_PREFIX.length).trim();
+      if (!needle) return res.json([]);
+      try {
+        const { extraFiles = [], filenamePattern } = readConfig(docsPath);
+        const docs = listDocs(docsPath, extraFiles, filenamePattern);
+        const store = readMetadataStore(docsPath);
+        const matchingIds = new Set<string>();
+        for (const [docId, entries] of Object.entries(store)) {
+          for (const entry of entries) {
+            if (path.basename(entry.path) === needle) {
+              matchingIds.add(docId);
+              break;
+            }
+          }
+        }
+        const results = docs
+          .filter((d) => matchingIds.has(decodeURIComponent(d.id)))
+          .map((d) => ({ ...d, excerpt: `↳ ${needle}` }));
+        return res.json(results);
+      } catch {
+        return res.status(500).json({ error: "Metadata search failed" });
+      }
+    }
+
+    const query = rawQuery.toLowerCase();
 
     try {
       const { extraFiles = [], filenamePattern } = readConfig(docsPath);
