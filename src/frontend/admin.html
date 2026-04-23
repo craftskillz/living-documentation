@@ -18,7 +18,7 @@
   >
     <!-- ── Header ── -->
     <header
-      class="flex items-center justify-between px-4 h-14 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm"
+      class="sticky top-0 z-40 flex items-center justify-between px-4 h-14 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm"
     >
       <div class="flex items-center gap-3">
         <span
@@ -48,48 +48,180 @@
     </header>
 
     <!-- ── Page ── -->
-    <main class="max-w-6xl mx-auto px-6 py-10">
-      <!-- ── Two-column layout ── -->
+    <main class="pb-10">
       <form id="config-form" novalidate>
-        <!-- Title + Save on same row -->
-        <div class="flex items-center justify-between mb-8">
-          <div>
-            <h2 class="text-xl font-bold text-gray-900 dark:text-gray-50" data-i18n="admin.config.title">
-              Configuration
-            </h2>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400" data-i18n="admin.config.description">
-              Settings are saved to .living-doc.json in your docs folder.
-            </p>
-          </div>
-          <div class="flex items-center gap-4 shrink-0">
-            <div id="save-msg" class="text-sm"></div>
-            <button
-              type="submit"
-              class="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-950"
-            >
-              <span data-i18n="admin.config.save_btn">Save changes</span>
-            </button>
+        <!-- Sticky sub-header: Configuration title + Save button -->
+        <div
+          class="sticky top-14 z-30 border-b border-gray-200 dark:border-gray-800 bg-gray-50/90 dark:bg-gray-950/90 backdrop-blur"
+        >
+          <div
+            class="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between gap-4"
+          >
+            <div class="min-w-0">
+              <h2
+                class="text-lg font-bold text-gray-900 dark:text-gray-50 truncate"
+                data-i18n="admin.config.title"
+              >
+                Configuration
+              </h2>
+              <p
+                class="mt-0.5 text-xs text-gray-500 dark:text-gray-400 truncate"
+                data-i18n="admin.config.description"
+              >
+                Settings are saved to .living-doc.json in your docs folder.
+              </p>
+            </div>
+            <div class="flex items-center gap-4 shrink-0">
+              <div id="save-msg" class="text-sm"></div>
+              <button
+                type="submit"
+                class="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-950"
+              >
+                <span data-i18n="admin.config.save_btn">Save changes</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-8 items-start">
-          <!-- ── Left column ── -->
-          <div class="space-y-6">
-            <!-- Server Info -->
-            <div
-              class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5"
+        <div class="max-w-3xl mx-auto px-6 pt-8 space-y-8">
+
+          <!-- ── 🌐 General ── -->
+          <section
+            class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm overflow-hidden"
+          >
+            <header
+              class="px-6 py-4 border-b border-gray-100 dark:border-gray-800"
             >
               <h3
-                class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4"
+                class="text-base font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2"
               >
-                <span data-i18n="admin.server_info.title">Server Info</span>
+                <span class="text-xl" aria-hidden="true">🌐</span>
+                <span data-i18n="admin.section.general.title">General</span>
               </h3>
-              <dl class="grid grid-cols-[1fr_auto] gap-x-6 gap-y-3 text-sm">
+              <p
+                class="mt-1 text-xs text-gray-500 dark:text-gray-400 ml-8"
+                data-i18n="admin.section.general.desc"
+              >
+                Site identity, theme, and interface language.
+              </p>
+            </header>
+            <div class="divide-y divide-gray-100 dark:divide-gray-800">
+              <div class="px-6 py-4 space-y-1.5">
+                <label
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  for="field-title"
+                  data-i18n="admin.appearance.site_title_label"
+                  >Site Title</label
+                >
+                <input
+                  id="field-title"
+                  name="title"
+                  type="text"
+                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Living Documentation"
+                />
+                <p
+                  class="text-xs text-gray-400 dark:text-gray-500"
+                  data-i18n="admin.appearance.site_title_hint"
+                >
+                  Displayed in the browser tab and sidebar header.
+                </p>
+              </div>
+              <div class="px-6 py-4 space-y-1.5">
+                <label
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  for="field-theme"
+                  data-i18n="admin.appearance.theme_label"
+                  >Default Theme</label
+                >
+                <select
+                  id="field-theme"
+                  name="theme"
+                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option
+                    value="system"
+                    data-i18n="admin.appearance.theme_system"
+                  >
+                    System (follow OS preference)
+                  </option>
+                  <option
+                    value="light"
+                    data-i18n="admin.appearance.theme_light"
+                  >
+                    Light
+                  </option>
+                  <option value="dark" data-i18n="admin.appearance.theme_dark">
+                    Dark
+                  </option>
+                </select>
+                <p
+                  class="text-xs text-gray-400 dark:text-gray-500"
+                  data-i18n="admin.appearance.theme_hint"
+                >
+                  Users can always override with the toggle button.
+                </p>
+              </div>
+              <div class="px-6 py-4 space-y-1.5">
+                <label
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  for="field-language"
+                  data-i18n="admin.appearance.language_label"
+                  >Language</label
+                >
+                <select
+                  id="field-language"
+                  name="language"
+                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="en" data-i18n="admin.appearance.language_en">
+                    English
+                  </option>
+                  <option value="fr" data-i18n="admin.appearance.language_fr">
+                    Français
+                  </option>
+                </select>
+                <p
+                  class="text-xs text-gray-400 dark:text-gray-500"
+                  data-i18n="admin.appearance.language_hint"
+                >
+                  Interface language for all pages.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <!-- ── 📝 Filename convention ── -->
+          <section
+            class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm overflow-hidden"
+          >
+            <header
+              class="px-6 py-4 border-b border-gray-100 dark:border-gray-800"
+            >
+              <h3
+                class="text-base font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2"
+              >
+                <span class="text-xl" aria-hidden="true">📝</span>
+                <span data-i18n="admin.section.filename.title"
+                  >Filename convention</span
+                >
+              </h3>
+              <p
+                class="mt-1 text-xs text-gray-500 dark:text-gray-400 ml-8"
+                data-i18n="admin.section.filename.desc"
+              >
+                How new documents are named, and how the viewer parses them.
+              </p>
+            </header>
+            <div class="divide-y divide-gray-100 dark:divide-gray-800">
+              <div class="px-6 py-4 grid grid-cols-[1fr_auto] gap-x-6 gap-y-2">
                 <div>
                   <dt
                     class="text-xs text-gray-400 uppercase tracking-wide mb-0.5"
                   >
-                    <span data-i18n="admin.server_info.docs_folder">Docs Folder</span>
+                    <span data-i18n="admin.server_info.docs_folder"
+                      >Docs Folder</span
+                    >
                   </dt>
                   <dd
                     id="info-folder"
@@ -111,170 +243,182 @@
                     —
                   </dd>
                 </div>
-                <div class="col-span-2 space-y-1.5">
-                  <label
-                    class="block text-xs text-gray-400 uppercase tracking-wide mb-0.5"
-                    for="field-source-root"
-                    data-i18n="admin.server_info.source_root"
-                    >Source Root</label
-                  >
-                  <input
-                    id="field-source-root"
-                    name="sourceRoot"
-                    type="text"
-                    class="w-full px-3 py-2 font-mono text-xs rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 break-all"
-                    placeholder="/absolute/path"
-                  />
-                  <p
-                    class="text-xs text-gray-400 dark:text-gray-500"
-                    data-i18n="admin.server_info.source_root_hint"
-                  >
-                    Absolute path used by MCP source tools. Defaults to the parent of Docs Folder when empty.
-                  </p>
-                </div>
-              </dl>
-            </div>
-
-            <!-- Extra Files -->
-            <div
-              class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 space-y-4"
-            >
-              <div>
-                <h3
-                  class="text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >
-                  <span data-i18n="admin.extra_files.title">General — Extra Files</span>
-                </h3>
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400" data-i18n="admin.extra_files.description">
-                  Add Markdown files from outside the docs folder to the General section.
-                </p>
               </div>
-
-              <!-- File browser -->
-              <div
-                class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
-              >
-                <div
-                  class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"
-                >
-                  <button
-                    id="browse-up"
-                    onclick="browseUp()"
-                    class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0"
-                  >
-                    <span data-i18n="common.up">↑ Up</span>
-                  </button>
-                  <span
-                    id="browse-path"
-                    class="font-mono text-xs text-gray-400 dark:text-gray-500 truncate flex-1 text-right"
-                  ></span>
-                </div>
-                <div
-                  id="browse-list"
-                  class="divide-y divide-gray-100 dark:divide-gray-800 max-h-52 overflow-y-auto"
-                ></div>
-              </div>
-
-              <!-- Added files -->
-              <div>
-                <p
-                  class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2"
-                >
-                  Added files
-                </p>
-                <div id="extra-files-list" class="space-y-1"></div>
-                <p id="extra-files-empty" class="text-xs text-gray-400 italic">
-                  <span data-i18n="admin.extra_files.empty">No extra files added yet.</span>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <!-- ── Right column ── -->
-          <div class="space-y-6">
-            <!-- Appearance & Metadata -->
-            <div
-              class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 divide-y divide-gray-100 dark:divide-gray-800"
-            >
-              <div class="px-5 py-4">
-                <h3
-                  class="text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >
-                  Appearance & Metadata
-                </h3>
-              </div>
-              <div class="px-5 py-4 space-y-1.5">
+              <div class="px-6 py-4 space-y-1.5">
                 <label
                   class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  for="field-title"
-                  data-i18n="admin.appearance.site_title_label">Site Title</label
+                  for="field-pattern"
+                  data-i18n="admin.pattern.label"
+                  >Filename Pattern</label
                 >
                 <input
-                  id="field-title"
-                  name="title"
+                  id="field-pattern"
+                  name="filenamePattern"
                   type="text"
                   class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Living Documentation"
+                  placeholder="YYYY_MM_DD_HH_mm_[Category]_title"
+                  data-i18n-placeholder="admin.pattern.placeholder"
                 />
-                <p class="text-xs text-gray-400 dark:text-gray-500" data-i18n="admin.appearance.site_title_hint">
-                  Displayed in the browser tab and sidebar header.
-                </p>
-              </div>
-              <div class="px-5 py-4 space-y-1.5">
-                <label
-                  class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  for="field-theme"
-                  data-i18n="admin.appearance.theme_label">Default Theme</label
-                >
-                <select
-                  id="field-theme"
-                  name="theme"
-                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="system" data-i18n="admin.appearance.theme_system">System (follow OS preference)</option>
-                  <option value="light" data-i18n="admin.appearance.theme_light">Light</option>
-                  <option value="dark" data-i18n="admin.appearance.theme_dark">Dark</option>
-                </select>
-                <p class="text-xs text-gray-400 dark:text-gray-500" data-i18n="admin.appearance.theme_hint">
-                  Users can always override with the toggle button.
-                </p>
-              </div>
-              <div class="px-5 py-4 space-y-1.5">
-                <label
-                  class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  for="field-language"
-                  data-i18n="admin.appearance.language_label">Language</label>
-                <select
-                  id="field-language"
-                  name="language"
-                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="en" data-i18n="admin.appearance.language_en">English</option>
-                  <option value="fr" data-i18n="admin.appearance.language_fr">Français</option>
-                </select>
-                <p class="text-xs text-gray-400 dark:text-gray-500" data-i18n="admin.appearance.language_hint">
-                  Interface language for all pages.
-                </p>
-              </div>
-              <div class="px-5 py-4">
-                <label class="flex items-center gap-3 cursor-pointer">
-                  <input
-                    id="field-debug"
-                    name="showDiagramDebug"
-                    type="checkbox"
-                    class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span
-                    class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                    data-i18n="admin.appearance.debug_label">Show debug button in diagram editor</span
+                <p class="text-xs text-gray-400 dark:text-gray-500">
+                  <span data-i18n="admin.pattern.hint"
+                    >Parsed for date, category, and title.</span
                   >
-                </label>
-                <p class="mt-1 text-xs text-gray-400 dark:text-gray-500 ml-7">
-                  Displays a Debug button that overlays raw position and size
-                  info on each node — useful for diagnosing snap-to-grid issues.
+                  <span
+                    id="pattern-desc-example"
+                    class="font-mono bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-1 rounded"
+                    >YYYY_MM_DD_HH_mm_[Category]_title.md</span
+                  >
                 </p>
               </div>
-              <div class="px-5 py-4">
+              <div id="pattern-preview" class="px-6 py-4">
+                <h4
+                  class="text-xs font-semibold text-blue-700 dark:text-blue-400 mb-2 uppercase tracking-wide"
+                >
+                  <span data-i18n="admin.pattern.preview_title"
+                    >Pattern Preview</span
+                  >
+                </h4>
+                <p
+                  class="text-xs text-gray-500 dark:text-gray-400 mb-3"
+                  data-i18n="admin.pattern.preview_desc"
+                >
+                  How your pattern parses example filenames:
+                </p>
+                <div id="preview-rows" class="space-y-2 text-sm"></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ── 📂 Source & extra files ── -->
+          <section
+            class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm overflow-hidden"
+          >
+            <header
+              class="px-6 py-4 border-b border-gray-100 dark:border-gray-800"
+            >
+              <h3
+                class="text-base font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2"
+              >
+                <span class="text-xl" aria-hidden="true">📂</span>
+                <span data-i18n="admin.section.source.title"
+                  >Source &amp; extra files</span
+                >
+              </h3>
+              <p
+                class="mt-1 text-xs text-gray-500 dark:text-gray-400 ml-8"
+                data-i18n="admin.section.source.desc"
+              >
+                Code source root (for MCP tools) and Markdown files pulled from
+                outside the docs folder.
+              </p>
+            </header>
+            <div class="divide-y divide-gray-100 dark:divide-gray-800">
+              <div class="px-6 py-4 space-y-1.5">
+                <label
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  for="field-source-root"
+                  data-i18n="admin.server_info.source_root"
+                  >Source Root</label
+                >
+                <input
+                  id="field-source-root"
+                  name="sourceRoot"
+                  type="text"
+                  class="w-full px-3 py-2 font-mono text-xs rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 break-all"
+                  placeholder="/absolute/path"
+                />
+                <p
+                  class="text-xs text-gray-400 dark:text-gray-500"
+                  data-i18n="admin.server_info.source_root_hint"
+                >
+                  Absolute path used by MCP source tools. Defaults to the parent
+                  of Docs Folder when empty.
+                </p>
+              </div>
+              <div class="px-6 py-4 space-y-4">
+                <div>
+                  <p
+                    class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                    data-i18n="admin.extra_files.title"
+                  >
+                    General — Extra Files
+                  </p>
+                  <p
+                    class="mt-0.5 text-xs text-gray-500 dark:text-gray-400"
+                    data-i18n="admin.extra_files.description"
+                  >
+                    Add Markdown files from outside the docs folder to the
+                    General section.
+                  </p>
+                </div>
+                <div
+                  class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
+                >
+                  <div
+                    class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"
+                  >
+                    <button
+                      id="browse-up"
+                      onclick="browseUp()"
+                      class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0"
+                    >
+                      <span data-i18n="common.up">↑ Up</span>
+                    </button>
+                    <span
+                      id="browse-path"
+                      class="font-mono text-xs text-gray-400 dark:text-gray-500 truncate flex-1 text-right"
+                    ></span>
+                  </div>
+                  <div
+                    id="browse-list"
+                    class="divide-y divide-gray-100 dark:divide-gray-800 max-h-52 overflow-y-auto"
+                  ></div>
+                </div>
+                <div>
+                  <p
+                    class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2"
+                    data-i18n="admin.section.added_files_label"
+                  >
+                    Added files
+                  </p>
+                  <div id="extra-files-list" class="space-y-1"></div>
+                  <p
+                    id="extra-files-empty"
+                    class="text-xs text-gray-400 italic"
+                  >
+                    <span data-i18n="admin.extra_files.empty"
+                      >No extra files added yet.</span
+                    >
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ── 🌳 Sidebar behaviour ── -->
+          <section
+            class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm overflow-hidden"
+          >
+            <header
+              class="px-6 py-4 border-b border-gray-100 dark:border-gray-800"
+            >
+              <h3
+                class="text-base font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2"
+              >
+                <span class="text-xl" aria-hidden="true">🗂️</span>
+                <span data-i18n="admin.section.sidebar.title"
+                  >Sidebar behaviour</span
+                >
+              </h3>
+              <p
+                class="mt-1 text-xs text-gray-500 dark:text-gray-400 ml-8"
+                data-i18n="admin.section.sidebar.desc"
+              >
+                How folders and categories expand in the left drawer.
+              </p>
+            </header>
+            <div class="divide-y divide-gray-100 dark:divide-gray-800">
+              <div class="px-6 py-4">
                 <label class="flex items-center gap-3 cursor-pointer">
                   <input
                     id="field-exclusive-folder"
@@ -284,7 +428,8 @@
                   />
                   <span
                     class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                    data-i18n="admin.appearance.exclusive_folder_label">Exclusive folder expansion in sidebar</span
+                    data-i18n="admin.appearance.exclusive_folder_label"
+                    >Exclusive folder expansion in sidebar</span
                   >
                 </label>
                 <p
@@ -296,7 +441,7 @@
                   children).
                 </p>
               </div>
-              <div class="px-5 py-4">
+              <div class="px-6 py-4">
                 <label class="flex items-center gap-3 cursor-pointer">
                   <input
                     id="field-exclusive-category"
@@ -306,7 +451,8 @@
                   />
                   <span
                     class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                    data-i18n="admin.appearance.exclusive_category_label">Exclusive category expansion in sidebar</span
+                    data-i18n="admin.appearance.exclusive_category_label"
+                    >Exclusive category expansion in sidebar</span
                   >
                 </label>
                 <p
@@ -317,7 +463,33 @@
                   other open category under the same parent folder.
                 </p>
               </div>
-              <div class="px-5 py-4 space-y-1.5">
+            </div>
+          </section>
+
+          <!-- ── ✍️ Markdown rendering ── -->
+          <section
+            class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm overflow-hidden"
+          >
+            <header
+              class="px-6 py-4 border-b border-gray-100 dark:border-gray-800"
+            >
+              <h3
+                class="text-base font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2"
+              >
+                <span class="text-xl" aria-hidden="true">✍️</span>
+                <span data-i18n="admin.section.markdown.title"
+                  >Markdown rendering</span
+                >
+              </h3>
+              <p
+                class="mt-1 text-xs text-gray-500 dark:text-gray-400 ml-8"
+                data-i18n="admin.section.markdown.desc"
+              >
+                How the viewer renders newlines and long code blocks.
+              </p>
+            </header>
+            <div class="divide-y divide-gray-100 dark:divide-gray-800">
+              <div class="px-6 py-4 space-y-1.5">
                 <label
                   class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                   for="field-code-max-height"
@@ -338,10 +510,11 @@
                   class="text-xs text-gray-400 dark:text-gray-500"
                   data-i18n="admin.appearance.code_max_height_hint"
                 >
-                  Longer code blocks get a collapse/expand button. Set to 0 to disable.
+                  Longer code blocks get a collapse/expand button. Set to 0 to
+                  disable.
                 </p>
               </div>
-              <div class="px-5 py-4">
+              <div class="px-6 py-4">
                 <label class="flex items-center gap-3 cursor-pointer">
                   <input
                     id="field-soft-breaks"
@@ -359,164 +532,213 @@
                   class="mt-1 text-xs text-gray-400 dark:text-gray-500 ml-7"
                   data-i18n-html="admin.appearance.soft_breaks_hint"
                 >
-                  <strong>Unchecked (CommonMark, default):</strong> a single newline in the source is rendered as a space — two adjacent lines merge into one paragraph. To force a line break without leaving a blank line, end the previous line with <code>two spaces</code> then newline, or use <code>&lt;br/&gt;</code>.<br/>
-                  <strong>Checked (GitHub-flavoured):</strong> every single newline becomes a real line break in the rendered output. Convenient for chat-style writing, but you can no longer hard-wrap long paragraphs in the source file without visible breaks.
-                </p>
-              </div>
-              <div class="px-5 py-4 space-y-1.5">
-                <label
-                  class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  for="field-pattern"
-                  data-i18n="admin.pattern.label">Filename Pattern</label
-                >
-                <input
-                  id="field-pattern"
-                  name="filenamePattern"
-                  type="text"
-                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="YYYY_MM_DD_HH_mm_[Category]_title"
-                />
-                <p class="text-xs text-gray-400 dark:text-gray-500">
-                  Parsed for date, category, and title.
-                  <span
-                    id="pattern-desc-example"
-                    class="font-mono bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-1 rounded"
-                    >YYYY_MM_DD_HH_mm_[Category]_title.md</span
-                  >
+                  <strong>Unchecked (CommonMark, default):</strong> a single
+                  newline in the source is rendered as a space — two adjacent
+                  lines merge into one paragraph. To force a line break without
+                  leaving a blank line, end the previous line with
+                  <code>two spaces</code> then newline, or use
+                  <code>&lt;br/&gt;</code>.<br />
+                  <strong>Checked (GitHub-flavoured):</strong> every single
+                  newline becomes a real line break in the rendered output.
+                  Convenient for chat-style writing, but you can no longer
+                  hard-wrap long paragraphs in the source file without visible
+                  breaks.
                 </p>
               </div>
             </div>
+          </section>
 
-            <!-- Pattern Preview -->
-            <div
-              id="pattern-preview"
-              class="rounded-xl border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 p-5"
+          <!-- ── 📎 File attachments ── -->
+          <section
+            class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm overflow-hidden"
+          >
+            <header
+              class="px-6 py-4 border-b border-gray-100 dark:border-gray-800"
             >
               <h3
-                class="text-sm font-semibold text-blue-700 dark:text-blue-400 mb-3"
+                class="text-base font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2"
               >
-                Pattern Preview
+                <span class="text-xl" aria-hidden="true">📎</span>
+                <span data-i18n="admin.section.files.title"
+                  >File attachments</span
+                >
               </h3>
-              <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
-                How your pattern parses example filenames:
+              <p
+                class="mt-1 text-xs text-gray-500 dark:text-gray-400 ml-8"
+                data-i18n-html="admin.files.description"
+              >
+                Extensions that are rejected by the
+                <code>/api/files/upload</code> endpoint. One extension per line
+                (or comma/space separated), without the leading dot.
               </p>
-              <div id="preview-rows" class="space-y-2 text-sm"></div>
+            </header>
+            <div class="px-6 py-4 space-y-1.5">
+              <label
+                class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+                for="field-blocked-extensions"
+                data-i18n="admin.files.blocked_label"
+                >Blocked extensions</label
+              >
+              <textarea
+                id="field-blocked-extensions"
+                name="blockedFileExtensions"
+                rows="3"
+                class="w-full px-3 py-2 font-mono text-xs rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="exe sh bat cmd com scr ps1 msi"
+              ></textarea>
+              <p
+                class="text-xs text-gray-400 dark:text-gray-500"
+                data-i18n="admin.files.hint"
+              >
+                Defaults to common executable formats. Max upload size is 19 MB
+                per file.
+              </p>
             </div>
-          </div>
-        </div>
+          </section>
 
-        <!-- ── File Attachments (full width) ── -->
-        <div
-          class="mt-8 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 space-y-3"
-        >
-          <div>
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">
-              <span data-i18n="admin.files.title">File Attachments</span>
-            </h3>
-            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400" data-i18n="admin.files.description">
-              Extensions that are rejected by the <code>/api/files/upload</code> endpoint. One extension per line (or comma/space separated), without the leading dot.
-            </p>
-          </div>
-          <label
-            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
-            for="field-blocked-extensions"
-            data-i18n="admin.files.blocked_label"
-          >Blocked extensions</label>
-          <textarea
-            id="field-blocked-extensions"
-            name="blockedFileExtensions"
-            rows="3"
-            class="w-full px-3 py-2 font-mono text-xs rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="exe sh bat cmd com scr ps1 msi"
-          ></textarea>
-          <p class="text-xs text-gray-400 dark:text-gray-500" data-i18n="admin.files.hint">
-            Defaults to common executable formats. Max upload size is 19 MB per file.
-          </p>
-        </div>
-
-        <!-- ── Diagram Palettes (full width) ── -->
-        <div
-          class="mt-8 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 divide-y divide-gray-100 dark:divide-gray-800"
-        >
-          <div class="px-5 py-4">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">
-              Diagram Color Palettes
-            </h3>
-            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              Customize the colors available in the diagram editor. Changes take
-              effect immediately.
-            </p>
-          </div>
-          <div
-            class="grid grid-cols-2 divide-x divide-gray-100 dark:divide-gray-800"
+          <!-- ── 🎨 Diagram palettes ── -->
+          <section
+            class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm overflow-hidden"
           >
-            <!-- Node palette -->
-            <div class="px-5 py-4 space-y-3">
-              <div class="flex items-center justify-between">
-                <h4
-                  class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide"
+            <header
+              class="px-6 py-4 border-b border-gray-100 dark:border-gray-800"
+            >
+              <h3
+                class="text-base font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2"
+              >
+                <span class="text-xl" aria-hidden="true">🎨</span>
+                <span data-i18n="admin.section.diagram.title"
+                  >Diagram palettes</span
                 >
-                  Shape colors
-                </h4>
-                <button
-                  type="button"
-                  onclick="resetNodePalette()"
-                  class="text-xs text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  Reset
-                </button>
-              </div>
-              <p class="text-xs text-gray-400 dark:text-gray-500">
-                Click a color to show or hide it in the node panel. Dimmed =
-                hidden.
+              </h3>
+              <p
+                class="mt-1 text-xs text-gray-500 dark:text-gray-400 ml-8"
+                data-i18n="admin.section.diagram.desc"
+              >
+                Customize the colors available in the diagram editor.
               </p>
-              <div id="nodeSwatches" class="flex flex-wrap gap-2"></div>
+            </header>
+            <div class="divide-y divide-gray-100 dark:divide-gray-800">
+              <div class="px-6 py-4 space-y-3">
+                <div class="flex items-center justify-between">
+                  <h4
+                    class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide"
+                    data-i18n="admin.palette.shapes_title"
+                  >
+                    Shape colors
+                  </h4>
+                  <button
+                    type="button"
+                    onclick="resetNodePalette()"
+                    class="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                    data-i18n="common.reset"
+                  >
+                    Reset
+                  </button>
+                </div>
+                <p
+                  class="text-xs text-gray-400 dark:text-gray-500"
+                  data-i18n="admin.palette.shapes_hint"
+                >
+                  Click a color to show or hide it in the node panel. Dimmed =
+                  hidden.
+                </p>
+                <div id="nodeSwatches" class="flex flex-wrap gap-2"></div>
+              </div>
+              <div class="px-6 py-4 space-y-3">
+                <div class="flex items-center justify-between">
+                  <h4
+                    class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide"
+                    data-i18n="admin.palette.arrows_title"
+                  >
+                    Arrow colors
+                  </h4>
+                  <button
+                    type="button"
+                    onclick="resetEdgePalette()"
+                    class="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                    data-i18n="common.reset"
+                  >
+                    Reset
+                  </button>
+                </div>
+                <p
+                  class="text-xs text-gray-400 dark:text-gray-500"
+                  data-i18n="admin.palette.arrows_hint"
+                >
+                  Add or remove colors available for arrows. Click ✕ to remove.
+                </p>
+                <div
+                  id="edgeSwatches"
+                  class="flex flex-wrap gap-3 items-end"
+                ></div>
+                <div class="flex items-center gap-2 pt-1">
+                  <input
+                    type="color"
+                    id="newEdgeColor"
+                    value="#3b82f6"
+                    class="w-8 h-8 rounded cursor-pointer border border-gray-300 dark:border-gray-600 bg-transparent"
+                  />
+                  <button
+                    type="button"
+                    onclick="addEdgeColor()"
+                    class="px-3 py-1.5 text-xs rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors"
+                    data-i18n="admin.palette.add_color_btn"
+                  >
+                    Add color
+                  </button>
+                </div>
+              </div>
             </div>
+          </section>
 
-            <!-- Edge palette -->
-            <div class="px-5 py-4 space-y-3">
-              <div class="flex items-center justify-between">
-                <h4
-                  class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide"
+          <!-- ── 🛠️ Developer ── -->
+          <section
+            class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm overflow-hidden"
+          >
+            <header
+              class="px-6 py-4 border-b border-gray-100 dark:border-gray-800"
+            >
+              <h3
+                class="text-base font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2"
+              >
+                <span class="text-xl" aria-hidden="true">🛠️</span>
+                <span data-i18n="admin.section.developer.title"
+                  >Developer</span
                 >
-                  Arrow colors
-                </h4>
-                <button
-                  type="button"
-                  onclick="resetEdgePalette()"
-                  class="text-xs text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  Reset
-                </button>
-              </div>
-              <p class="text-xs text-gray-400 dark:text-gray-500">
-                Add or remove colors available for arrows. Click ✕ to remove.
+              </h3>
+              <p
+                class="mt-1 text-xs text-gray-500 dark:text-gray-400 ml-8"
+                data-i18n="admin.section.developer.desc"
+              >
+                Advanced options for power users.
               </p>
-              <div
-                id="edgeSwatches"
-                class="flex flex-wrap gap-3 items-end"
-              ></div>
-              <div class="flex items-center gap-2 pt-1">
+            </header>
+            <div class="px-6 py-4">
+              <label class="flex items-center gap-3 cursor-pointer">
                 <input
-                  type="color"
-                  id="newEdgeColor"
-                  value="#3b82f6"
-                  class="w-8 h-8 rounded cursor-pointer border border-gray-300 dark:border-gray-600 bg-transparent"
+                  id="field-debug"
+                  name="showDiagramDebug"
+                  type="checkbox"
+                  class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
                 />
-                <button
-                  type="button"
-                  onclick="addEdgeColor()"
-                  class="px-3 py-1.5 text-xs rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors"
+                <span
+                  class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  data-i18n="admin.appearance.debug_label"
+                  >Show debug button in diagram editor</span
                 >
-                  Add color
-                </button>
-              </div>
+              </label>
+              <p class="mt-1 text-xs text-gray-400 dark:text-gray-500 ml-7">
+                Displays a Debug button that overlays raw position and size info
+                on each node — useful for diagnosing snap-to-grid issues.
+              </p>
             </div>
-          </div>
+          </section>
         </div>
       </form>
 
       <!-- ── AGPL-3.0 License ── -->
+      <div class="max-w-3xl mx-auto px-6">
       <div class="mt-12 rounded-2xl overflow-hidden border border-blue-100 dark:border-blue-900/40 shadow-sm">
         <!-- Gradient banner -->
         <div class="bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-500 px-6 py-5 flex items-center gap-4">
@@ -565,6 +787,7 @@
           </div>
         </div>
       </div>
+      </div>
     </main>
 
     <script>
@@ -603,6 +826,7 @@
           const cfg = await fetch("/api/config").then((r) => r.json());
           await window.initI18n(cfg.language || 'en');
           window.applyI18n();
+          window._ldCurrentLanguage = cfg.language || 'en';
           document.getElementById("info-folder").textContent =
             cfg.docsFolder || "—";
           document.getElementById("info-port").textContent = cfg.port || "—";
@@ -697,6 +921,12 @@
             body: JSON.stringify(payload),
           });
           if (!res.ok) throw new Error(await res.text());
+          if (payload.language && payload.language !== window._ldCurrentLanguage) {
+            await window.initI18n(payload.language);
+            window.applyI18n();
+            window._ldCurrentLanguage = payload.language;
+            updatePreview();
+          }
           showMsg(window.t('admin.msg.saved'), "ok");
         } catch (err) {
           showMsg(window.t('admin.msg.save_failed') + err.message, "error");
@@ -819,6 +1049,12 @@
           (patternVal || "YYYY_MM_DD_HH_mm_[Category]_title") + ".md";
         const patterns = buildPatternsFromFormat(patternVal);
         const rows = document.getElementById("preview-rows");
+        const tr = (k, fb) =>
+          (typeof window.t === "function" && window.t(k)) || fb;
+        const labelDate = tr("admin.pattern.col_date", "Date");
+        const labelCat = tr("admin.pattern.col_category", "Category");
+        const labelTitle = tr("admin.pattern.col_title", "Title");
+        const labelNone = tr("admin.pattern.col_none", "none");
         rows.innerHTML = EXAMPLES.map((f) => {
           const p = parsePreview(f, patterns);
           return `
@@ -826,15 +1062,15 @@
         <p class="font-mono text-xs text-gray-500 dark:text-gray-400 mb-2 break-all">${esc(f)}</p>
         <div class="grid grid-cols-3 gap-2 text-xs">
           <div>
-            <span class="text-gray-400 block mb-0.5">Date</span>
-            <span class="${p.date ? "text-green-600 dark:text-green-400" : "text-gray-400"}">${p.date || "none"}</span>
+            <span class="text-gray-400 block mb-0.5">${labelDate}</span>
+            <span class="${p.date ? "text-green-600 dark:text-green-400" : "text-gray-400"}">${p.date || labelNone}</span>
           </div>
           <div>
-            <span class="text-gray-400 block mb-0.5">Category</span>
+            <span class="text-gray-400 block mb-0.5">${labelCat}</span>
             <span class="text-blue-600 dark:text-blue-400">${esc(p.category)}</span>
           </div>
           <div>
-            <span class="text-gray-400 block mb-0.5">Title</span>
+            <span class="text-gray-400 block mb-0.5">${labelTitle}</span>
             <span class="text-gray-700 dark:text-gray-300 truncate block">${esc(p.title)}</span>
           </div>
         </div>
