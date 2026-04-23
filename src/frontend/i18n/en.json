@@ -92,6 +92,10 @@
   "doc.saving": "Saving…",
   "doc.failed_to_load": "Failed to load document: ",
   "doc.copied": "✓ Copied!",
+  "doc.code_show_more": "▾ Show more",
+  "doc.code_show_less": "▴ Show less",
+  "doc.code_copy": "Copy",
+  "doc.code_copied": "Copied!",
 
   "metadata.button": "Metadata",
   "metadata.button_title": "Manage source-file metadata",
@@ -320,6 +324,8 @@
   "admin.appearance.exclusive_folder_hint": "When enabled, opening a folder in the sidebar automatically closes any other open folder at the same level (and its children).",
   "admin.appearance.exclusive_category_label": "Exclusive category expansion in sidebar",
   "admin.appearance.exclusive_category_hint": "When enabled, opening a category automatically closes any other open category under the same parent folder.",
+  "admin.appearance.code_max_height_label": "Code block max height (px)",
+  "admin.appearance.code_max_height_hint": "Longer code blocks get a collapse/expand button. Set to 0 to disable.",
 
   "admin.pattern.label": "Filename Pattern",
   "admin.pattern.hint": "Parsed for date, category, and title.",

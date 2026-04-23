@@ -92,6 +92,10 @@
   "doc.saving": "Enregistrement…",
   "doc.failed_to_load": "Impossible de charger le document : ",
   "doc.copied": "✓ Copié !",
+  "doc.code_show_more": "▾ Afficher plus",
+  "doc.code_show_less": "▴ Réduire",
+  "doc.code_copy": "Copier",
+  "doc.code_copied": "Copié !",
 
   "metadata.button": "Métadonnées",
   "metadata.button_title": "Gérer les métadonnées des fichiers source",
@@ -320,6 +324,8 @@
   "admin.appearance.exclusive_folder_hint": "Si activé, l'ouverture d'un dossier dans la barre latérale referme automatiquement tout autre dossier ouvert au même niveau (ainsi que ses enfants).",
   "admin.appearance.exclusive_category_label": "Ouverture exclusive des catégories dans la barre latérale",
   "admin.appearance.exclusive_category_hint": "Si activé, l'ouverture d'une catégorie referme automatiquement toute autre catégorie ouverte sous le même dossier parent.",
+  "admin.appearance.code_max_height_label": "Hauteur max des blocs de code (px)",
+  "admin.appearance.code_max_height_hint": "Les blocs plus longs reçoivent un bouton « Afficher plus / Réduire ». Mettre 0 pour désactiver.",
 
   "admin.pattern.label": "Modèle de nom de fichier",
   "admin.pattern.hint": "Analysé pour extraire la date, la catégorie et le titre.",

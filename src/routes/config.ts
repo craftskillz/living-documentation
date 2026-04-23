@@ -31,6 +31,7 @@ export function configRouter(docsPath: string): Router {
         'blockedFileExtensions',
         'exclusiveFolderExpansion',
         'exclusiveCategoryExpansion',
+        'codeBlockMaxHeight',
       ];
       const safe: Partial<LivingDocConfig> = {};
       for (const key of allowed) {
@@ -86,6 +87,15 @@ export function configRouter(docsPath: string): Router {
             .filter((e) => /^[a-z0-9]+$/.test(e));
         } else {
           return res.status(400).json({ error: 'blockedFileExtensions must be an array of strings' });
+        }
+      }
+      // codeBlockMaxHeight: non-negative integer pixels (0 disables); clamped to [0, 5000]
+      if ('codeBlockMaxHeight' in patch) {
+        const v = patch.codeBlockMaxHeight;
+        if (typeof v === 'number' && Number.isFinite(v) && v >= 0) {
+          safe.codeBlockMaxHeight = Math.min(5000, Math.round(v));
+        } else {
+          return res.status(400).json({ error: 'codeBlockMaxHeight must be a non-negative number' });
         }
       }
       // extraFiles: only absolute .md paths

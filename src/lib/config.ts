@@ -16,6 +16,7 @@ export interface LivingDocConfig {
   blockedFileExtensions: string[];
   exclusiveFolderExpansion: boolean;
   exclusiveCategoryExpansion: boolean;
+  codeBlockMaxHeight: number;
 }
 
 const CONFIG_FILENAME = ".living-doc.json";
@@ -78,6 +79,7 @@ const DEFAULTS: LivingDocConfig = {
   blockedFileExtensions: DEFAULT_BLOCKED_FILE_EXTENSIONS,
   exclusiveFolderExpansion: false,
   exclusiveCategoryExpansion: false,
+  codeBlockMaxHeight: 400,
 };
 
 export function getConfigPath(docsPath: string): string {

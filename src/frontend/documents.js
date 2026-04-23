@@ -27,6 +27,9 @@ function _wireDocContent(html) {
     hljs.highlightElement(block);
   });
 
+  _decorateCodeBlocksWithCopy(contentEl);
+  _decorateCollapsibleCodeBlocks(contentEl);
+
   contentEl.querySelectorAll("a[href]").forEach((a) => {
     const href = a.getAttribute("href");
     const m = href && href.match(/[?&]doc=([^&#]+)/);
@@ -84,6 +87,79 @@ function refreshSearchInCurrentDoc() {
 }
 
 window.refreshSearchInCurrentDoc = refreshSearchInCurrentDoc;
+
+function _decorateCodeBlocksWithCopy(contentEl) {
+  const copyLabel =
+    (typeof window.t === "function" && window.t("doc.code_copy")) || "Copy";
+  const copiedLabel =
+    (typeof window.t === "function" && window.t("doc.code_copied")) ||
+    "Copied!";
+  contentEl.querySelectorAll("pre").forEach((pre) => {
+    const code = pre.querySelector("code");
+    if (!code) return;
+    if (pre.querySelector(".ld-code-copy")) return;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "ld-code-copy";
+    btn.title = copyLabel;
+    btn.setAttribute("aria-label", copyLabel);
+    btn.innerHTML =
+      '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="8" height="9" rx="1.5"/><path d="M3 11V3a1 1 0 0 1 1-1h7"/></svg>';
+    btn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const text = code.innerText;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand("copy");
+        } catch {
+          /* ignore */
+        }
+        document.body.removeChild(ta);
+      }
+      btn.classList.add("ld-copied");
+      btn.title = copiedLabel;
+      btn.innerHTML =
+        '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"/></svg>';
+      setTimeout(() => {
+        btn.classList.remove("ld-copied");
+        btn.title = copyLabel;
+        btn.innerHTML =
+          '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="8" height="9" rx="1.5"/><path d="M3 11V3a1 1 0 0 1 1-1h7"/></svg>';
+      }, 1500);
+    });
+    pre.appendChild(btn);
+  });
+}
+
+function _decorateCollapsibleCodeBlocks(contentEl) {
+  if (typeof codeBlockMaxHeight !== "number" || codeBlockMaxHeight <= 0) return;
+  const more = (typeof window.t === "function" && window.t("doc.code_show_more")) || "▾ Show more";
+  const less = (typeof window.t === "function" && window.t("doc.code_show_less")) || "▴ Show less";
+  contentEl.querySelectorAll("pre").forEach((pre) => {
+    if (!pre.querySelector("code")) return;
+    if (pre.scrollHeight <= codeBlockMaxHeight + 8) return;
+    pre.classList.add("ld-collapsible");
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "ld-code-toggle";
+    btn.textContent = more;
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const expanded = pre.classList.toggle("ld-expanded");
+      btn.textContent = expanded ? less : more;
+    });
+    pre.appendChild(btn);
+  });
+}
 
 async function loadDocuments() {
   try {

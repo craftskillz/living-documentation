@@ -28,6 +28,7 @@ let hideAttachments = (() => {
 })();
 let exclusiveFolderExpansion = false;
 let exclusiveCategoryExpansion = false;
+let codeBlockMaxHeight = 400;
 
 function filteredDocs() {
   if (!searchQuery) return allDocs;
