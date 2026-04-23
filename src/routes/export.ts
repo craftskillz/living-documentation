@@ -198,7 +198,8 @@ export function exportRouter(docsPath: string): Router {
       return res.status(400).json({ error: 'No folders selected' });
     }
 
-    const { extraFiles = [], filenamePattern } = readConfig(docsPath);
+    const { extraFiles = [], filenamePattern, markdownSoftBreaks } = readConfig(docsPath);
+    const markedOpts = { breaks: !!markdownSoftBreaks };
     const docs = listDocs(docsPath, extraFiles, filenamePattern);
 
     // Filter to selected groups.
@@ -234,7 +235,7 @@ export function exportRouter(docsPath: string): Router {
       if (!filePath || !fs.existsSync(filePath)) continue;
 
       const raw = fs.readFileSync(filePath, 'utf-8');
-      const bodyHtml = marked.parse(stripFrontmatter(raw)) as string;
+      const bodyHtml = marked.parse(stripFrontmatter(raw), markedOpts) as string;
 
       const baseName    = sanitizeFilename(path.basename(doc.filename, '.md'));
       const htmlFilename = baseName + '.html';

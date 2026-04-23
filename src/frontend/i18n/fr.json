@@ -326,6 +326,8 @@
   "admin.appearance.exclusive_category_hint": "Si activé, l'ouverture d'une catégorie referme automatiquement toute autre catégorie ouverte sous le même dossier parent.",
   "admin.appearance.code_max_height_label": "Hauteur max des blocs de code (px)",
   "admin.appearance.code_max_height_hint": "Les blocs plus longs reçoivent un bouton « Afficher plus / Réduire ». Mettre 0 pour désactiver.",
+  "admin.appearance.soft_breaks_label": "Traiter chaque retour à la ligne comme un saut de ligne",
+  "admin.appearance.soft_breaks_hint": "<strong>Décoché (CommonMark, défaut) :</strong> un seul retour à la ligne dans la source est rendu comme un espace — deux lignes adjacentes fusionnent dans un même paragraphe. Pour forcer un saut de ligne sans ligne vide, terminer la ligne précédente par <code>deux espaces</code> puis retour à la ligne, ou utiliser <code>&lt;br/&gt;</code>.<br/><strong>Coché (GitHub-flavoured) :</strong> chaque retour à la ligne devient un vrai saut de ligne dans le rendu. Pratique pour un style d'écriture « chat », mais vous ne pourrez plus couper un long paragraphe sur plusieurs lignes dans la source sans voir le saut apparaître.",
 
   "admin.pattern.label": "Modèle de nom de fichier",
   "admin.pattern.hint": "Analysé pour extraire la date, la catégorie et le titre.",

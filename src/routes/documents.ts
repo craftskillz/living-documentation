@@ -238,7 +238,8 @@ export function documentsRouter(docsPath: string): Router {
   // GET /api/documents/:id — get a single document (content + rendered HTML)
   router.get("/:id", async (req: Request, res: Response) => {
     const id = decodeURIComponent(req.params.id);
-    const { extraFiles = [], filenamePattern } = readConfig(docsPath);
+    const { extraFiles = [], filenamePattern, markdownSoftBreaks } = readConfig(docsPath);
+    const markedOpts = { breaks: !!markdownSoftBreaks };
 
     // Extra file: id is an absolute path without .md
     if (path.isAbsolute(id)) {
@@ -252,7 +253,7 @@ export function documentsRouter(docsPath: string): Router {
       try {
         const content = fs.readFileSync(filePath, "utf-8");
         const meta = parseFilename(path.basename(filePath), filenamePattern);
-        const html = decorateFileLinks(marked.parse(stripFrontmatter(content)) as string);
+        const html = decorateFileLinks(marked.parse(stripFrontmatter(content), markedOpts) as string);
         res.json({
           ...meta,
           id: req.params.id,
@@ -286,7 +287,7 @@ export function documentsRouter(docsPath: string): Router {
         subdir !== "."
           ? subdir.split("/")
           : null;
-      const html = marked.parse(stripFrontmatter(content)) as string;
+      const html = marked.parse(stripFrontmatter(content), markedOpts) as string;
       res.json({ ...metadata, folder, content, html });
     } catch {
       res.status(500).json({ error: "Failed to read document" });

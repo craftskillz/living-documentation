@@ -32,6 +32,7 @@ export function configRouter(docsPath: string): Router {
         'exclusiveFolderExpansion',
         'exclusiveCategoryExpansion',
         'codeBlockMaxHeight',
+        'markdownSoftBreaks',
       ];
       const safe: Partial<LivingDocConfig> = {};
       for (const key of allowed) {

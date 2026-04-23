@@ -17,6 +17,7 @@ export interface LivingDocConfig {
   exclusiveFolderExpansion: boolean;
   exclusiveCategoryExpansion: boolean;
   codeBlockMaxHeight: number;
+  markdownSoftBreaks: boolean;
 }
 
 const CONFIG_FILENAME = ".living-doc.json";
@@ -80,6 +81,7 @@ const DEFAULTS: LivingDocConfig = {
   exclusiveFolderExpansion: false,
   exclusiveCategoryExpansion: false,
   codeBlockMaxHeight: 400,
+  markdownSoftBreaks: false,
 };
 
 export function getConfigPath(docsPath: string): string {

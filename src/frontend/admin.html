@@ -341,6 +341,28 @@
                   Longer code blocks get a collapse/expand button. Set to 0 to disable.
                 </p>
               </div>
+              <div class="px-5 py-4">
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input
+                    id="field-soft-breaks"
+                    name="markdownSoftBreaks"
+                    type="checkbox"
+                    class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span
+                    class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                    data-i18n="admin.appearance.soft_breaks_label"
+                    >Treat every newline as a line break</span
+                  >
+                </label>
+                <p
+                  class="mt-1 text-xs text-gray-400 dark:text-gray-500 ml-7"
+                  data-i18n-html="admin.appearance.soft_breaks_hint"
+                >
+                  <strong>Unchecked (CommonMark, default):</strong> a single newline in the source is rendered as a space — two adjacent lines merge into one paragraph. To force a line break without leaving a blank line, end the previous line with <code>two spaces</code> then newline, or use <code>&lt;br/&gt;</code>.<br/>
+                  <strong>Checked (GitHub-flavoured):</strong> every single newline becomes a real line break in the rendered output. Convenient for chat-style writing, but you can no longer hard-wrap long paragraphs in the source file without visible breaks.
+                </p>
+              </div>
               <div class="px-5 py-4 space-y-1.5">
                 <label
                   class="block text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -601,6 +623,8 @@
             typeof cfg.codeBlockMaxHeight === "number"
               ? cfg.codeBlockMaxHeight
               : 400;
+          document.getElementById("field-soft-breaks").checked =
+            !!cfg.markdownSoftBreaks;
           document.getElementById("field-blocked-extensions").value =
             (cfg.blockedFileExtensions || []).join(" ");
           updatePreview(cfg.filenamePattern);
@@ -659,6 +683,7 @@
               ) || 0,
             ),
           ),
+          markdownSoftBreaks: document.getElementById("field-soft-breaks").checked,
           diagramNodePalette: [...nodePalette],
           diagramEdgePalette: [...edgePalette],
           sourceRoot: sourceRootRaw === "" ? null : sourceRootRaw,
