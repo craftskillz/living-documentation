@@ -30,6 +30,8 @@ function _wireDocContent(html) {
   _decorateCodeBlocksWithCopy(contentEl);
   _decorateCollapsibleCodeBlocks(contentEl);
 
+  if (typeof initLocalSearch === "function") initLocalSearch(contentEl);
+
   contentEl.querySelectorAll("a[href]").forEach((a) => {
     const href = a.getAttribute("href");
     const m = href && href.match(/[?&]doc=([^&#]+)/);

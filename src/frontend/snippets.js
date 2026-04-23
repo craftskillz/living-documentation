@@ -891,6 +891,8 @@ function buildSnippetMarkdown() {
     }
     case "emojis":
       return document.getElementById("snip-emoji-string").value;
+    case "local-search":
+      return `<div data-ld-local-search></div>`;
     default:
       return "";
   }

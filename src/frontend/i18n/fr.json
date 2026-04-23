@@ -237,6 +237,12 @@
   "snippet.emoji_search_placeholder": "Rechercher un émoji… (ex : coeur, etoile, fusee)",
   "snippet.emoji_no_results": "Aucun émoji ne correspond à cette recherche.",
   "snippet.attachment": "📎 Pièce jointe",
+  "snippet.local_search": "🔎 Recherche locale",
+  "local_search.placeholder": "Rechercher dans ce document…",
+  "local_search.clear": "Effacer",
+  "local_search.no_results": "Aucun résultat.",
+  "local_search.count_singular": "{count} occurrence",
+  "local_search.count_plural": "{count} occurrences",
   "snippet.attachment_help": "Cliquez sur <strong>Insérer</strong> pour choisir un fichier. Il sera téléversé dans le dossier <code>files/</code> et inséré sous forme de lien <i class=\"fa-solid fa-paperclip\"></i> dans votre document.",
   "snippet.attachment_alt": "Astuce : vous pouvez aussi glisser-déposer un fichier sur l'éditeur ou le coller depuis le presse-papiers.",
 

@@ -237,6 +237,12 @@
   "snippet.emoji_search_placeholder": "Search emojis… (e.g. heart, star, rocket)",
   "snippet.emoji_no_results": "No emoji matches this search.",
   "snippet.attachment": "📎 File attachment",
+  "snippet.local_search": "🔎 Local search",
+  "local_search.placeholder": "Search in this document…",
+  "local_search.clear": "Clear",
+  "local_search.no_results": "No matches found.",
+  "local_search.count_singular": "{count} match",
+  "local_search.count_plural": "{count} matches",
   "snippet.attachment_help": "Click <strong>Insert</strong> to choose a file. It will be uploaded under the <code>files/</code> folder and inserted as a <i class=\"fa-solid fa-paperclip\"></i> link in your document.",
   "snippet.attachment_alt": "Tip: you can also drag &amp; drop a file onto the editor, or paste it from the clipboard.",
 

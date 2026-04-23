@@ -42,6 +42,7 @@
     <script defer src="/sidebar.js"></script>
     <script defer src="/sidebar-resize.js"></script>
     <script defer src="/search.js"></script>
+    <script defer src="/local-search.js"></script>
     <script defer src="/image-paste.js"></script>
     <script defer src="/file-attach.js"></script>
     <script defer src="/documents.js"></script>
@@ -245,6 +246,29 @@
         margin-top: 2em;
         margin-bottom: 2em;
         border-color: #d1d5db;
+      }
+
+      /* Local search highlight — distinct from the global yellow search */
+      mark.ld-local-mark {
+        background: #bae6fd;
+        color: inherit;
+        padding: 0 1px;
+        border-radius: 2px;
+      }
+      mark.ld-local-mark.ld-local-active {
+        background: #0284c7;
+        color: #fff;
+      }
+      .dark mark.ld-local-mark {
+        background: #075985;
+        color: #e0f2fe;
+      }
+      .dark mark.ld-local-mark.ld-local-active {
+        background: #0ea5e9;
+        color: #082f49;
+      }
+      .ld-local-item-active {
+        background: rgba(14, 165, 233, 0.12);
       }
 
       /* File attachment pills — links pointing to /files/ */
@@ -795,6 +819,8 @@
                   class="max-h-40 overflow-y-auto divide-y divide-yellow-100 dark:divide-yellow-900/40 list-none m-0 p-0"
                 ></ol>
               </div>
+              <!-- Local search widget mount point (populated by local-search.js) -->
+              <div id="local-search-mount" class="hidden no-print"></div>
             </header>
 
             <!-- Rendered markdown -->
@@ -1402,6 +1428,7 @@
             <option data-i18n="snippet.colored_text" value="colored-text">Colored text</option>
             <option data-i18n="snippet.emojis" value="emojis">😀 Emojis</option>
             <option data-i18n="snippet.attachment" value="attachment">📎 File attachment</option>
+            <option data-i18n="snippet.local_search" value="local-search">🔎 Local search</option>
           </select>
         </div>
 
