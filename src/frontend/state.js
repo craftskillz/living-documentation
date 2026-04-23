@@ -26,6 +26,8 @@ let hideAttachments = (() => {
     return false;
   }
 })();
+let exclusiveFolderExpansion = false;
+let exclusiveCategoryExpansion = false;
 
 function filteredDocs() {
   if (!searchQuery) return allDocs;

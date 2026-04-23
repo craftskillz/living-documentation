@@ -29,6 +29,8 @@ export function configRouter(docsPath: string): Router {
         'diagramEdgePalette',
         'sourceRoot',
         'blockedFileExtensions',
+        'exclusiveFolderExpansion',
+        'exclusiveCategoryExpansion',
       ];
       const safe: Partial<LivingDocConfig> = {};
       for (const key of allowed) {

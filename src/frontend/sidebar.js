@@ -202,6 +202,57 @@ function renderDocItem(doc) {
 </button>`;
 }
 
+function setInstantCollapse(el) {
+  el.classList.add("no-transition");
+  el.classList.add("collapsed");
+  el.classList.remove("expanded");
+  // Force reflow so the collapsed state is committed while transitions are off
+  void el.offsetHeight;
+  requestAnimationFrame(() => el.classList.remove("no-transition"));
+}
+
+function collapseCategoryByKey(key, instant = false) {
+  const parts = key.split("|");
+  const catNodeId =
+    "cat-" + parts.map((p) => p.replace(/\W/g, "-")).join("-");
+  const el = document.getElementById(catNodeId);
+  const arrow = document.getElementById("arrow-" + catNodeId);
+  if (el) {
+    if (instant) setInstantCollapse(el);
+    else {
+      el.classList.add("collapsed");
+      el.classList.remove("expanded");
+    }
+  }
+  if (arrow) arrow.style.transform = "";
+  expandedCategories.delete(key);
+}
+
+function collapseFolderAndDescendants(pathKey, instant = false) {
+  const parts = pathKey.split("|");
+  const nodeId =
+    "folder-" + parts.map((p) => p.replace(/\W/g, "-")).join("-");
+  const el = document.getElementById(nodeId);
+  const arrow = document.getElementById("arrow-" + nodeId);
+  if (el) {
+    if (instant) setInstantCollapse(el);
+    else {
+      el.classList.add("collapsed");
+      el.classList.remove("expanded");
+    }
+  }
+  if (arrow) arrow.style.transform = "";
+  expandedFolders.delete(pathKey);
+
+  const prefix = pathKey + "|";
+  for (const key of [...expandedFolders]) {
+    if (key.startsWith(prefix)) collapseFolderAndDescendants(key, instant);
+  }
+  for (const key of [...expandedCategories]) {
+    if (key.startsWith(prefix)) collapseCategoryByKey(key, instant);
+  }
+}
+
 function toggleCategory(key) {
   const parts = key.split("|");
   const catNodeId =
@@ -210,6 +261,17 @@ function toggleCategory(key) {
   const arrow = document.getElementById("arrow-" + catNodeId);
   if (!el) return;
   const expanding = el.classList.contains("collapsed");
+
+  if (expanding && exclusiveCategoryExpansion) {
+    const parentPath = parts.slice(0, -1).join("|");
+    for (const otherKey of [...expandedCategories]) {
+      if (otherKey === key) continue;
+      const otherParts = otherKey.split("|");
+      const otherParent = otherParts.slice(0, -1).join("|");
+      if (otherParent === parentPath) collapseCategoryByKey(otherKey, true);
+    }
+  }
+
   el.classList.toggle("collapsed", !expanding);
   el.classList.toggle("expanded", expanding);
   if (arrow) arrow.style.transform = expanding ? "rotate(90deg)" : "";
@@ -225,6 +287,18 @@ function toggleFolder(pathKey) {
   const arrow = document.getElementById("arrow-" + nodeId);
   if (!el) return;
   const expanding = el.classList.contains("collapsed");
+
+  if (expanding && exclusiveFolderExpansion) {
+    const parentPath = parts.slice(0, -1).join("|");
+    for (const otherKey of [...expandedFolders]) {
+      if (otherKey === pathKey) continue;
+      const otherParts = otherKey.split("|");
+      const otherParent = otherParts.slice(0, -1).join("|");
+      if (otherParent === parentPath)
+        collapseFolderAndDescendants(otherKey, true);
+    }
+  }
+
   el.classList.toggle("collapsed", !expanding);
   el.classList.toggle("expanded", expanding);
   if (arrow) arrow.style.transform = expanding ? "rotate(90deg)" : "";

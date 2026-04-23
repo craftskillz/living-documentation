@@ -14,6 +14,8 @@ export interface LivingDocConfig {
   diagramEdgePalette: string[] | null;
   sourceRoot: string | null;
   blockedFileExtensions: string[];
+  exclusiveFolderExpansion: boolean;
+  exclusiveCategoryExpansion: boolean;
 }
 
 const CONFIG_FILENAME = ".living-doc.json";
@@ -74,6 +76,8 @@ const DEFAULTS: LivingDocConfig = {
   diagramEdgePalette: DEFAULT_DIAGRAM_EDGE_PALETTE,
   sourceRoot: null,
   blockedFileExtensions: DEFAULT_BLOCKED_FILE_EXTENSIONS,
+  exclusiveFolderExpansion: false,
+  exclusiveCategoryExpansion: false,
 };
 
 export function getConfigPath(docsPath: string): string {

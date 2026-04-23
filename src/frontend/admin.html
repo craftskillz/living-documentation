@@ -274,6 +274,49 @@
                   info on each node — useful for diagnosing snap-to-grid issues.
                 </p>
               </div>
+              <div class="px-5 py-4">
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input
+                    id="field-exclusive-folder"
+                    name="exclusiveFolderExpansion"
+                    type="checkbox"
+                    class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span
+                    class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                    data-i18n="admin.appearance.exclusive_folder_label">Exclusive folder expansion in sidebar</span
+                  >
+                </label>
+                <p
+                  class="mt-1 text-xs text-gray-400 dark:text-gray-500 ml-7"
+                  data-i18n="admin.appearance.exclusive_folder_hint"
+                >
+                  When enabled, opening a folder in the sidebar automatically
+                  closes any other open folder at the same level (and its
+                  children).
+                </p>
+              </div>
+              <div class="px-5 py-4">
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input
+                    id="field-exclusive-category"
+                    name="exclusiveCategoryExpansion"
+                    type="checkbox"
+                    class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span
+                    class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                    data-i18n="admin.appearance.exclusive_category_label">Exclusive category expansion in sidebar</span
+                  >
+                </label>
+                <p
+                  class="mt-1 text-xs text-gray-400 dark:text-gray-500 ml-7"
+                  data-i18n="admin.appearance.exclusive_category_hint"
+                >
+                  When enabled, opening a category automatically closes any
+                  other open category under the same parent folder.
+                </p>
+              </div>
               <div class="px-5 py-4 space-y-1.5">
                 <label
                   class="block text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -526,6 +569,10 @@
             cfg.filenamePattern || "";
           document.getElementById("field-debug").checked =
             !!cfg.showDiagramDebug;
+          document.getElementById("field-exclusive-folder").checked =
+            !!cfg.exclusiveFolderExpansion;
+          document.getElementById("field-exclusive-category").checked =
+            !!cfg.exclusiveCategoryExpansion;
           document.getElementById("field-blocked-extensions").value =
             (cfg.blockedFileExtensions || []).join(" ");
           updatePreview(cfg.filenamePattern);
@@ -568,6 +615,12 @@
           language: document.getElementById("field-language").value,
           filenamePattern,
           showDiagramDebug: document.getElementById("field-debug").checked,
+          exclusiveFolderExpansion: document.getElementById(
+            "field-exclusive-folder",
+          ).checked,
+          exclusiveCategoryExpansion: document.getElementById(
+            "field-exclusive-category",
+          ).checked,
           diagramNodePalette: [...nodePalette],
           diagramEdgePalette: [...edgePalette],
           sourceRoot: sourceRootRaw === "" ? null : sourceRootRaw,

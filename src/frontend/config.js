@@ -12,6 +12,8 @@ async function loadConfig() {
       document.getElementById("welcome-pattern").textContent =
         cfg.filenamePattern + ".md";
     }
+    exclusiveFolderExpansion = !!cfg.exclusiveFolderExpansion;
+    exclusiveCategoryExpansion = !!cfg.exclusiveCategoryExpansion;
   } catch {
     await window.initI18n('en');
     /* non-fatal */

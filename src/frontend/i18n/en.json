@@ -316,6 +316,10 @@
   "admin.appearance.language_hint": "Interface language for all pages.",
   "admin.appearance.debug_label": "Show debug button in diagram editor",
   "admin.appearance.debug_hint": "Displays a Debug button that overlays raw position and size info on each node — useful for diagnosing snap-to-grid issues.",
+  "admin.appearance.exclusive_folder_label": "Exclusive folder expansion in sidebar",
+  "admin.appearance.exclusive_folder_hint": "When enabled, opening a folder in the sidebar automatically closes any other open folder at the same level (and its children).",
+  "admin.appearance.exclusive_category_label": "Exclusive category expansion in sidebar",
+  "admin.appearance.exclusive_category_hint": "When enabled, opening a category automatically closes any other open category under the same parent folder.",
 
   "admin.pattern.label": "Filename Pattern",
   "admin.pattern.hint": "Parsed for date, category, and title.",

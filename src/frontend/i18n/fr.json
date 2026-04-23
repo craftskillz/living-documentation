@@ -316,6 +316,10 @@
   "admin.appearance.language_hint": "Langue de l'interface pour toutes les pages.",
   "admin.appearance.debug_label": "Afficher le bouton debug dans l'éditeur de diagrammes",
   "admin.appearance.debug_hint": "Affiche un bouton Debug qui superpose les informations brutes de position et de taille sur chaque nœud — utile pour diagnostiquer les problèmes de grille.",
+  "admin.appearance.exclusive_folder_label": "Ouverture exclusive des dossiers dans la barre latérale",
+  "admin.appearance.exclusive_folder_hint": "Si activé, l'ouverture d'un dossier dans la barre latérale referme automatiquement tout autre dossier ouvert au même niveau (ainsi que ses enfants).",
+  "admin.appearance.exclusive_category_label": "Ouverture exclusive des catégories dans la barre latérale",
+  "admin.appearance.exclusive_category_hint": "Si activé, l'ouverture d'une catégorie referme automatiquement toute autre catégorie ouverte sous le même dossier parent.",
 
   "admin.pattern.label": "Modèle de nom de fichier",
   "admin.pattern.hint": "Analysé pour extraire la date, la catégorie et le titre.",
