@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_23_[FRONTEND]_code_block_collapsible_with_configurable_max_height_and_copy_button.md`
 **date:** 2026-04-23
-**status:** Pending Validation
+**status:** Validated
 **description:** Make rendered markdown `<pre>` blocks friendlier to long snippets — add a per-project `codeBlockMaxHeight` option (in pixels, default 400, `0` disables) editable from the Admin page that caps long blocks with a bottom-fade gradient and a "Show more / Show less" toggle, and always render a hover-revealed copy-to-clipboard icon in the top-right corner of every code block with visual confirmation on success.
 **tags:** frontend, code-block, pre, markdown, copy, clipboard, collapsible, max-height, admin, configuration, ux, hljs, highlight.js, i18n, gradient, toggle
 ---
@@ -16,6 +16,7 @@ Two real-life problems emerged:
 2. **Copying code out of the viewer was awkward** — triple-click or select-by-hand, especially painful for multi-line blocks, and easy to accidentally copy adjacent text or miss a trailing line.
 
 The user wanted:
+
 - A **default max-height** configurable from the Admin page (not hardcoded), shared by every client of the same documentation via `.living-doc.json`.
 - The **option to disable** the whole feature (one knob, not a boolean + a number).
 - A per-block **Show more / Show less toggle** only when the block actually exceeds the cap.
@@ -30,30 +31,43 @@ Added to `LivingDocConfig` (`src/lib/config.ts`), default `400`. Whitelisted in 
 
 ### 2. Admin UI
 
-A numeric input in the *Appearance & Metadata* card of `src/frontend/admin.html`, placed just below the two "exclusive expansion" checkboxes. `type="number"`, `min="0"`, `max="5000"`, `step="10"`, placeholder `400`. Loaded in `loadConfig()`, written in `saveConfig()` with a client-side clamp mirroring the server-side validation. Labels + hints added to `en.json` and `fr.json` as `admin.appearance.code_max_height_label` / `..._hint`.
+A numeric input in the _Appearance & Metadata_ card of `src/frontend/admin.html`, placed just below the two "exclusive expansion" checkboxes. `type="number"`, `min="0"`, `max="5000"`, `step="10"`, placeholder `400`. Loaded in `loadConfig()`, written in `saveConfig()` with a client-side clamp mirroring the server-side validation. Labels + hints added to `en.json` and `fr.json` as `admin.appearance.code_max_height_label` / `..._hint`.
 
 ### 3. Frontend plumbing — CSS variable + globals
 
 `state.js` declares `codeBlockMaxHeight` (default `400`). `config.js`, after fetching `/api/config`, sets the value and — when `> 0` — posts it to the document root as a CSS custom property:
+
 ```js
 document.documentElement.style.setProperty("--ld-code-max-h", value + "px");
 ```
+
 This lets the CSS rule consume the value with a fallback:
+
 ```css
-pre.ld-collapsible { max-height: var(--ld-code-max-h, 400px); overflow: hidden; position: relative; }
-pre.ld-collapsible.ld-expanded { max-height: none; overflow: auto; }
+pre.ld-collapsible {
+  max-height: var(--ld-code-max-h, 400px);
+  overflow: hidden;
+  position: relative;
+}
+pre.ld-collapsible.ld-expanded {
+  max-height: none;
+  overflow: auto;
+}
 ```
+
 A `::after` gradient is injected only while `:not(.ld-expanded)`, giving a visual "there is more below" hint.
 
 ### 4. Collapse toggle — `_decorateCollapsibleCodeBlocks(contentEl)`
 
-Called from `_wireDocContent` after `hljs.highlightElement`. Skipped entirely when `codeBlockMaxHeight <= 0`. For each `<pre>` whose measured `scrollHeight` exceeds `codeBlockMaxHeight + 8` (8 px tolerance to avoid flickering the button on blocks that are *almost* at the cap), the block gains:
+Called from `_wireDocContent` after `hljs.highlightElement`. Skipped entirely when `codeBlockMaxHeight <= 0`. For each `<pre>` whose measured `scrollHeight` exceeds `codeBlockMaxHeight + 8` (8 px tolerance to avoid flickering the button on blocks that are _almost_ at the cap), the block gains:
+
 - Class `ld-collapsible` (enables the max-height + gradient).
 - A bottom-right `button.ld-code-toggle` whose textContent toggles between `doc.code_show_more` / `doc.code_show_less` and which flips the `ld-expanded` class on the `<pre>`.
 
 ### 5. Copy button — `_decorateCodeBlocksWithCopy(contentEl)`
 
 Called before the collapse decorator, so the two buttons co-exist on opposite corners. For every `<pre>` containing a `<code>` (and not already decorated), a `button.ld-code-copy` is appended with:
+
 - Inline SVG (clipboard icon), switched to a check-mark SVG on copy success.
 - Position `absolute; top: 0.4rem; right: 0.5rem` — hence excluded from the layout flow so `scrollHeight` (used by the collapse decorator) is not inflated.
 - `opacity: 0` by default, revealed on `.prose pre:hover` or keyboard `:focus-visible`, and held visible while the success state (`.ld-copied`) is active.
@@ -89,4 +103,4 @@ Called before the collapse decorator, so the two buttons co-exist on opposite co
 - **Gradient tuned for dark hljs theme** — `rgba(40, 44, 52, ...)` matches the `github-dark` theme enforced by the earlier ADR; if we ever swap the hljs theme, the fade color has to be re-tuned or made CSS-variable driven.
 - **No "copied" toast** — confirmation relies purely on the button's color + icon swap. Users whose eyes were on another part of the doc might miss the feedback. A 1500 ms cue felt adequate for the first iteration; we can upgrade to a centred toast later if needed.
 - **Export not aware of the toggle** — the HTML/Notion/Confluence exports run a different rendering path; collapsed blocks export fully expanded (the collapse is a viewer-only convenience). Consistent with the "markdown stays authoritative" principle, but users might expect parity.
-- **Scroll-height heuristic needs hljs to have run** — the decorator must be called *after* `hljs.highlightElement`, because highlighting can alter line wrapping and therefore the measured height. The order is explicit in `_wireDocContent` but fragile to future refactors.
+- **Scroll-height heuristic needs hljs to have run** — the decorator must be called _after_ `hljs.highlightElement`, because highlighting can alter line wrapping and therefore the measured height. The order is explicit in `_wireDocContent` but fragile to future refactors.

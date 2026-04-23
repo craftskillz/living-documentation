@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_20_[DIAGRAM]_edge_anchor_rehook_on_selection.md`
 **date:** 2026-04-20
-**status:** Pending Validation
+**status:** Validated
 **description:** Allow users to change the attachment port of an existing port edge by clicking the edge to select it, then clicking a different port dot on either the source or target node to reconnect that end of the arrow.
 **tags:** diagram, ports, attachment-points, rehook, edge-reconnect, port-dots, afterDrawing, mousemove, onClickNode, _rehookEdgeId, onSelectEdge, onDeselectAll, vis-network, event-order
 ---
@@ -17,6 +17,7 @@ The desired UX: click an existing arrow → port dots appear on both endpoint sh
 Three changes to `network.js`:
 
 **1. `_rehookEdgeId` state** — three module-level variables track the rehook context:
+
 - `_rehookEdgeId`: ID of the selected port edge (set on edge selection, cleared on empty-space click).
 - `_rehookHoveredNodeId` / `_rehookHoveredPortKey`: the node and port currently highlighted under the cursor.
 
@@ -26,7 +27,7 @@ Three changes to `network.js`:
 
 **4. `onClickNode` intercept** — first handler in `onClickNode`. If `_rehookEdgeId`, `_rehookHoveredNodeId`, and `_rehookHoveredPortKey` are all set, it updates `fromPort` or `toPort` on the edge, pushes a snapshot, and restores the edge selection via `setTimeout`.
 
-**Event-order fix** — vis-network fires `deselectEdge` → `onDeselectAll` *before* the `click` event when the user clicks a port dot that lies on a node. Clearing rehook state in `onDeselectAll` would destroy the context needed by the click handler. The fix: `onDeselectAll` no longer clears rehook variables; the `mousemove` listener clears them naturally once the edge is no longer selected, and `onClickNode` clears them explicitly after an empty-space click.
+**Event-order fix** — vis-network fires `deselectEdge` → `onDeselectAll` _before_ the `click` event when the user clicks a port dot that lies on a node. Clearing rehook state in `onDeselectAll` would destroy the context needed by the click handler. The fix: `onDeselectAll` no longer clears rehook variables; the `mousemove` listener clears them naturally once the edge is no longer selected, and `onClickNode` clears them explicitly after an empty-space click.
 
 **`onSelectEdge` update** — `_rehookEdgeId` is also set here (and in the three manual-selection paths in `onClickNode`) so port dots appear immediately on click without requiring a mouse move.
 

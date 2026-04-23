@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_12_[SIDEBAR]_creation_dossier_icones_font_awesome_et_dossiers_vides_dans_le_drawer.md`
 **date:** 2026-04-12
-**status:** Pending Validation
+**status:** Validated
 **description:** Remplacer le bouton + unique du drawer par deux icônes Font Awesome (nouveau document / nouveau dossier) ; ajouter une modale dédiée à la création de dossier avec browser ; afficher les dossiers vides dans la sidebar via GET /api/browse/alldirs ; pré-remplir catégorie et location dans la modale New Document depuis le document courant ; refactorer le layout du header article.
 **tags:** sidebar, folder, modal, browse, api, font-awesome, cdn, icons, empty-folders, alldirs, mkdir, new-document, prefill, header, layout, frontend
 ---
@@ -29,12 +29,14 @@ Ajout de Font Awesome 6.7.2 dans le `<head>` via cdnjs, cohérent avec la strat�
 ### 2. Deux icônes dans le drawer
 
 Le bouton `+` unique est remplacé par deux boutons SVG inline :
+
 - **+ dossier** (`openNewFolderModal()`) — icône dossier avec croix
 - **+ document** (`openNewDocModal()`) — icône page avec croix
 
 ### 3. Modale New Folder dédiée
 
 Nouvelle modale `#new-folder-modal` avec :
+
 - Champ nom du dossier (validation : `[a-zA-Z0-9_\-. ]+`)
 - Sélection de l'emplacement via browser inline (réutilise `GET /api/browse`)
 - Aperçu du chemin relatif final

@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_14_[DIAGRAM]_Undo_Redo_History_Snapshot_Based.md`
 **date:** 2026-04-14
-**status:** Pending Validation
+**status:** Validated
 **description:** Add in-session undo/redo (Cmd+Z / Cmd+Shift+Z) to the diagram editor via a snapshot-based history module (history.js) that captures semantic node/edge state before every mutating action, with a max stack of 50 entries reset on diagram switch.
 **tags:** diagram, undo, redo, history, snapshot, history.js, pushSnapshot, resetHistory, Cmd+Z, Cmd+Shift+Z, keyboard, state, vis-network, DataSet
 ---
@@ -18,12 +18,12 @@ A **snapshot-based** approach was chosen over a command-based one. Given the lar
 
 **`history.js`** exports four public functions:
 
-| Function | Role |
-|---|---|
+| Function         | Role                                                                                    |
+| ---------------- | --------------------------------------------------------------------------------------- |
 | `pushSnapshot()` | Capture current state **before** the mutation, push to `_undoStack`, clear `_redoStack` |
-| `undo()` | Pop `_undoStack`, push current state to `_redoStack`, restore |
-| `redo()` | Pop `_redoStack`, push current state to `_undoStack`, restore |
-| `resetHistory()` | Clear both stacks — called in `openDiagram()` on every diagram switch |
+| `undo()`         | Pop `_undoStack`, push current state to `_redoStack`, restore                           |
+| `redo()`         | Pop `_redoStack`, push current state to `_undoStack`, restore                           |
+| `resetHistory()` | Clear both stacks — called in `openDiagram()` on every diagram switch                   |
 
 **Stack limit:** 50 entries (`MAX_HISTORY`). Oldest entry is shifted out when exceeded.
 
@@ -57,6 +57,7 @@ Same semantic fields as `saveDiagram` (not the vis-network DataSet internals):
 ### Keyboard shortcuts
 
 Added in `main.js` keydown handler:
+
 - **Cmd+Z / Ctrl+Z** → `undo()`
 - **Cmd+Shift+Z / Ctrl+Shift+Z** → `redo()`
 
@@ -66,18 +67,18 @@ Both are no-ops when the respective stack is empty.
 
 `pushSnapshot()` is called **before** the mutation in every action that modifies diagram data:
 
-| Module | Actions covered |
-|---|---|
-| `main.js` | `deleteSelected()` |
-| `network.js` | `addEdge` callback, `onDoubleClick` (add node, free arrow, anchor), mouseup anchor creation, `toggleEdgeStraight()`, `createImageNode()` |
-| `node-panel.js` | `toggleNodeLock`, `setNodeColor`, `changeNodeFontSize`, `setTextAlign`, `setTextValign`, `applyStamp`, `stepRotate`, `changeZOrder` |
-| `edge-panel.js` | `toggleEdgeLock`, `clearEdgePorts`, `setEdgeColor`, `changeEdgeWidth`, `setEdgeArrow`, `setEdgeDashes`, `changeEdgeFontSize`, `stepEdgeLabelRotation` |
-| `label-editor.js` | `commitLabelEdit()` — only when label value actually changed |
-| `clipboard.js` | `pasteClipboard()` |
-| `groups.js` | `groupNodes()`, `ungroupNodes()` |
-| `selection-overlay.js` | `onResizeStart`, `onRotateStart`, `onLabelRotateStart` (before drag begins) |
-| `grid.js` | `onDragEnd()` — only when `params.nodes` is non-empty |
-| `link-panel.js` | `saveLinkPanel()` (url/diagram branches), `_createAndLinkDiagram()`, `removeLinkPanel()` |
+| Module                 | Actions covered                                                                                                                                       |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `main.js`              | `deleteSelected()`                                                                                                                                    |
+| `network.js`           | `addEdge` callback, `onDoubleClick` (add node, free arrow, anchor), mouseup anchor creation, `toggleEdgeStraight()`, `createImageNode()`              |
+| `node-panel.js`        | `toggleNodeLock`, `setNodeColor`, `changeNodeFontSize`, `setTextAlign`, `setTextValign`, `applyStamp`, `stepRotate`, `changeZOrder`                   |
+| `edge-panel.js`        | `toggleEdgeLock`, `clearEdgePorts`, `setEdgeColor`, `changeEdgeWidth`, `setEdgeArrow`, `setEdgeDashes`, `changeEdgeFontSize`, `stepEdgeLabelRotation` |
+| `label-editor.js`      | `commitLabelEdit()` — only when label value actually changed                                                                                          |
+| `clipboard.js`         | `pasteClipboard()`                                                                                                                                    |
+| `groups.js`            | `groupNodes()`, `ungroupNodes()`                                                                                                                      |
+| `selection-overlay.js` | `onResizeStart`, `onRotateStart`, `onLabelRotateStart` (before drag begins)                                                                           |
+| `grid.js`              | `onDragEnd()` — only when `params.nodes` is non-empty                                                                                                 |
+| `link-panel.js`        | `saveLinkPanel()` (url/diagram branches), `_createAndLinkDiagram()`, `removeLinkPanel()`                                                              |
 
 ### Scope
 

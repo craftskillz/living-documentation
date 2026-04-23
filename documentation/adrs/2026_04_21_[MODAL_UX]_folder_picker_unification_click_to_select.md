@@ -1,7 +1,7 @@
 ---
 🗄️ ADR : 2026_04_21_[MODAL_UX]_folder_picker_unification_click_to_select.md
 **date:** 2026-04-21
-**status:** Pending Validation
+**status:** Validated
 **description:** Unify the folder-picker UX of the New Folder and New Document modals by making folder clicks both navigate and select, removing redundant explicit "select" links, and aligning the ↑ Up button styling and i18n.
 **tags:** modal, ux, new-folder, new-document, folder-picker, browse, click-to-select, ↑-up-button, styling-consistency, i18n, common.up, frontend
 ---
@@ -38,7 +38,8 @@ The folder the user ends up "on" is, by construction, the folder that will be us
 `#new-folder-browse-up` was re-styled in [src/frontend/index.html](src/frontend/index.html) to match `#new-doc-browse-up`:
 
 ```html
-class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0"
+class="text-xs text-blue-600 dark:text-blue-400 hover:underline
+disabled:opacity-30 disabled:pointer-events-none shrink-0"
 ```
 
 Label unified to `↑ Up`.

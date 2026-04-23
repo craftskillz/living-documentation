@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_13_[DIAGRAM]_port_anchored_edges_free_arrows_and_edge_styling.md`
 **date:** 2026-04-13
-**status:** Pending Validation
+**status:** Validated
 **description:** Add 8 attachment ports per shape (N/NE/E/SE/S/SW/W/NW) with bezier routing guided by port normals, transparent ghost edges to prevent double-rendering, manual proximity hit detection for port edges, free-standing arrows via double-click on empty canvas, improved anchor node drag (16×16 hit area), and edge color/width customization with a palette of 8 colors.
 **tags:** diagram, ports, attachment-points, bezier, edge-routing, anchor, free-arrow, ghost-edge, hit-detection, drawPortEdge, ports.js, edge-color, edge-width, edge-styling, edge-panel, persistence
 ---
@@ -15,6 +15,7 @@ Les flèches du diagramme partaient et arrivaient toujours au centre des formes.
 ### Points d'attache (ports)
 
 Chaque forme expose 8 ports : N, NE, E, SE, S, SW, W, NW. Les positions sont calculées dans `ports.js` :
+
 - Formes rectangulaires : coins et milieux de côtés (`PORT_OFFSETS_RECT`)
 - Formes circulaires/elliptiques : points sur la circonférence (`PORT_OFFSETS_CIRC`)
 
@@ -23,6 +24,7 @@ En mode `addEdge`, un `mousemove` calcule le port le plus proche du curseur (`ge
 ### Rendu bezier et ghost edge
 
 Les edges avec ports utilisent un rendu custom (`drawPortEdge` dans `ports.js`) avec des courbes de Bézier cubiques dont les points de contrôle suivent les normales sortantes des ports :
+
 ```
 tension = max(60, dist × 0.4)
 cp1 = fromPos + fromNormal × tension
@@ -42,6 +44,7 @@ Double-clic sur canvas vide en mode `addEdge` crée deux anchor nodes espacés d
 ### Couleur et épaisseur des flèches
 
 Le panel edge reçoit :
+
 - 8 pastilles de couleur (`data-edge-color`) : gris, noir, bleu, teal, vert, orange, rouge, violet
 - Boutons `W−` / `W+` (pas de 0.5px, plage 1–8px)
 

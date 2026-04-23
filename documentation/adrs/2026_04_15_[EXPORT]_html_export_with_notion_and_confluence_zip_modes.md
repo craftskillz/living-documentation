@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_15_[EXPORT]_html_export_with_notion_and_confluence_zip_modes.md`
 **date:** 2026-04-15
-**status:** Pending Validation
+**status:** Validated
 **description:** Add a server-side HTML export feature that converts selected first-level folders to a downloadable ZIP containing standalone HTML pages and their referenced images, with two modes: Notion (flat per group) and Confluence (HTML at group root, media in per-page subfolders).
 **tags:** export, html, zip, notion, confluence, archiver, marked, frontmatter, images, modal, i18n, express, router, processHtml, sanitizeFilename, docGroup, wrapHtml
 ---
@@ -19,6 +19,7 @@ A new Express router is mounted at `POST /api/export/html`. It accepts `{ folder
 **Document grouping** (`docGroup`): uses `doc.folder?.[0] ?? doc.category ?? 'General'` to place each document in the correct group folder.
 
 **HTML generation pipeline per document:**
+
 1. Read raw markdown from disk.
 2. Strip frontmatter (`stripFrontmatter`, re-used from `documents.ts`).
 3. Convert to HTML with `marked`.
@@ -30,9 +31,9 @@ A new Express router is mounted at `POST /api/export/html`. It accepts `{ folder
 
 **ZIP structure:**
 
-| Mode | HTML path | Image path |
-|------|-----------|------------|
-| Notion | `group/page.html` | `group/image.png` |
+| Mode       | HTML path         | Image path             |
+| ---------- | ----------------- | ---------------------- |
+| Notion     | `group/page.html` | `group/image.png`      |
 | Confluence | `group/page.html` | `group/page/image.png` |
 
 Confluence follows the official import specification: the HTML filename becomes the Confluence page name, and supplemental media must live in a folder with the same name as the page (without `.html`).

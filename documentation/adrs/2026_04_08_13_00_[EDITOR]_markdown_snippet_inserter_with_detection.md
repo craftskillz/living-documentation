@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_08_13_00_[EDITOR]_markdown_snippet_inserter_with_detection.md`
 **date:** 2026-04-08
-**status:** Pending Validation
+**status:** Validated
 **description:** Add a 🧩 Snippets button in edit mode that opens a modal for inserting pre-built Markdown constructs at cursor position, with automatic detection and pre-filling when an existing snippet is selected in the editor.
 **tags:** editor, snippet, modal, markdown, table, tree, detection, frontend, inline-editing, clipboard
 ---
@@ -23,10 +23,11 @@ A **🧩 Snippets** button is added between the Cancel and Save buttons in edit 
 - An **Insert** button that splices the generated text at the saved cursor position, replacing any selection
 
 **Detection mode**: if text is selected in the editor before opening the modal, `detectSnippetType()` runs a series of regex tests to identify the type. On success:
+
 - The `<select>` is set to the detected type
 - `parseAndFillSnippet()` extracts values from the raw Markdown and pre-fills all fields
 - A green info banner confirms the detection
-On failure (unrecognised selection), an orange warning is shown and the modal defaults to "collapsible"; the snippet will still replace the selection on Insert.
+  On failure (unrecognised selection), an orange warning is shown and the modal defaults to "collapsible"; the snippet will still replace the selection on Insert.
 
 The cursor position (`selectionStart` / `selectionEnd`) is saved at modal open time so the insertion is deterministic regardless of focus changes inside the modal.
 

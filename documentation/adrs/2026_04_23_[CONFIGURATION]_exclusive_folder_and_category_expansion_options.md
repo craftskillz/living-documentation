@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_23_[CONFIGURATION]_exclusive_folder_and_category_expansion_options.md`
 **date:** 2026-04-23
-**status:** Pending Validation
+**status:** Validated
 **description:** Add two admin-configurable options (exclusiveFolderExpansion, exclusiveCategoryExpansion, both off by default) that make the index sidebar behave as an "accordion" — opening a folder or category auto-collapses its siblings (and, for folders, their entire subtree) ; sibling collapse is rendered instantly (transition disabled) so the new panel's open animation does not visually fight with the old panel's close animation.
 **tags:** configuration, sidebar, drawer, folder, category, accordion, exclusive, expansion, collapse, admin, ux, animation, transition, frontend, i18n
 ---
@@ -15,9 +15,9 @@ For users with wide documentation trees, this independence becomes noisy: as the
 Two distinct needs:
 
 - **Categories** are single-level inside a folder. Exclusivity is straightforward: only one category open per parent folder.
-- **Folders** are multi-level (folders contain folders). Exclusivity must close the sibling folder *and* recursively all of its expanded descendants — otherwise the user-invisible descendants would re-appear the next time the ancestor is reopened.
+- **Folders** are multi-level (folders contain folders). Exclusivity must close the sibling folder _and_ recursively all of its expanded descendants — otherwise the user-invisible descendants would re-appear the next time the ancestor is reopened.
 
-A first implementation worked functionally but felt visually "slow": closing the previous sibling went through the standard `max-height 0.2s + opacity 0.2s` transition, while the newly-clicked panel was simultaneously running its *opening* animation. The two overlapping animations produced a noticeably wobbly effect.
+A first implementation worked functionally but felt visually "slow": closing the previous sibling went through the standard `max-height 0.2s + opacity 0.2s` transition, while the newly-clicked panel was simultaneously running its _opening_ animation. The two overlapping animations produced a noticeably wobbly effect.
 
 ## Decision
 
@@ -30,7 +30,7 @@ Added to `LivingDocConfig` (in `src/lib/config.ts`) with `false` defaults, and w
 
 ### 2. Admin UI
 
-Two checkboxes in the Admin panel (`src/frontend/admin.html`), placed in the *Appearance & Metadata* card right under the diagram debug option. Loaded in `loadConfig()`, sent in `saveConfig()` via the existing PUT payload. Labels and hints added to `en.json` and `fr.json`.
+Two checkboxes in the Admin panel (`src/frontend/admin.html`), placed in the _Appearance & Metadata_ card right under the diagram debug option. Loaded in `loadConfig()`, sent in `saveConfig()` via the existing PUT payload. Labels and hints added to `en.json` and `fr.json`.
 
 ### 3. Frontend wiring
 
@@ -39,10 +39,12 @@ Two globals declared in `state.js` (`exclusiveFolderExpansion`, `exclusiveCatego
 ### 4. Exclusive-expansion logic (`sidebar.js`)
 
 `toggleCategory(key)` — when expanding and `exclusiveCategoryExpansion === true`:
+
 - Parent path = all segments except the last.
 - Iterate over `[...expandedCategories]`; for each sibling whose parent path matches and whose key differs, call `collapseCategoryByKey(siblingKey, /* instant */ true)`.
 
 `toggleFolder(pathKey)` — when expanding and `exclusiveFolderExpansion === true`:
+
 - Same parent-path comparison.
 - For each sibling, call `collapseFolderAndDescendants(siblingKey, /* instant */ true)`, which recursively closes the folder, every descendant folder, and every descendant category (all sharing the `pathKey + "|"` prefix).
 
@@ -53,6 +55,7 @@ No "last-opened" Map was introduced. Scanning the `expandedFolders` / `expandedC
 Added CSS class `.category-docs.no-transition { transition: none !important; }` in `index.html`.
 
 Added helper `setInstantCollapse(el)` in `sidebar.js`:
+
 1. Add `no-transition` + `collapsed`, remove `expanded`.
 2. Force a reflow via `void el.offsetHeight` so the collapsed state is committed while transitions are disabled.
 3. `requestAnimationFrame(() => el.classList.remove("no-transition"))` — next frame, transitions are re-enabled so any future manual toggle of that same panel animates normally.
@@ -65,7 +68,7 @@ Only sibling collapses triggered by the exclusive-mode branches pass `instant = 
 
 - **Accordion behaviour when desired** — users with noisy sidebars get a single-path view ; users who liked the free-form behaviour are untouched (flags default to off).
 - **Scoped exclusivity** — siblings are closed per-parent, not globally, so expanding a deep folder does not collapse unrelated branches.
-- **Multi-level handled correctly** — `collapseFolderAndDescendants` cleans up `expandedFolders` *and* `expandedCategories` below the closed sibling, avoiding ghost-expanded state on the next reopen.
+- **Multi-level handled correctly** — `collapseFolderAndDescendants` cleans up `expandedFolders` _and_ `expandedCategories` below the closed sibling, avoiding ghost-expanded state on the next reopen.
 - **No animation overlap** — instant collapse on siblings keeps the UX snappy while the newly-opened panel still gets its smooth open animation.
 - **Per-project configuration** — flags live in `.living-doc.json`, so all clients of the same documentation share the setup (good for shared/team docs).
 - **Minimal code impact** — ~100 LoC across state/config/sidebar/admin, no new data structures (reuses existing `expandedFolders` / `expandedCategories` Sets).

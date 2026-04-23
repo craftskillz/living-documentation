@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_22_[SNIPPET]_emojis_picker_with_bilingual_tag_search.md`
 **date:** 2026-04-22
-**status:** Pending Validation
+**status:** Validated
 **description:** Add an "Emojis" snippet type to the editor's snippet inserter. Presents ~300 common emojis grouped in 6 categories (smileys, gestures, hearts, objects, office, symbols) with a search field that activates at 2+ characters and filters by bilingual FR/EN tags embedded in a static data structure. Users click emojis to append them to a selection input; Insert drops the concatenated string at the cursor. Also prefixes every option in the snippet type dropdown with an inline Unicode icon so the list is scannable at a glance.
 **tags:** snippet, emoji, emojis, picker, search, filter, tags, bilingual, i18n, editor, markdown, unicode, dropdown-icons, snippet-type-list, frontend, index.html, snippets.js
 ---
@@ -11,6 +11,7 @@
 The snippet inserter (modal opened from the 🧩 Snippets button in the editor) already supported diagrams, tables, links, code blocks, colored sections, file attachments, etc. Users who wanted to insert an emoji had to either copy-paste from the system emoji picker (OS-dependent, disrupts flow) or type Unicode directly — awkward for a documentation tool where emojis are frequently used for visual cues (✅ ❌ ⚠️ 🚀 🎯).
 
 Two complementary needs emerged:
+
 1. A dedicated snippet to browse and insert emojis without leaving the editor.
 2. Searchability — with ~300 candidate emojis, a flat grid is unusable; the user must be able to type "heart" / "coeur" / "rocket" / "fusee" and see only matching emojis.
 3. Better scannability of the snippet type dropdown itself — 17 options of plain text are hard to parse; a leading glyph per option speeds recognition.
@@ -27,7 +28,7 @@ Two complementary needs emerged:
   - A scrollable grid `#snip-emoji-grid` with a `max-h-64 overflow-y-auto` constraint.
 - Clicking an emoji button appends it to `#snip-emoji-string` and refreshes the preview.
 - `buildSnippetMarkdown()` returns the raw contents of `#snip-emoji-string` for the `emojis` case — no markdown transformation.
-- `insertSnippet()` reuses the existing flow: the string replaces the editor selection at `_snippetSelStart`.._snippetSelEnd`.
+- `insertSnippet()` reuses the existing flow: the string replaces the editor selection at `_snippetSelStart`..\_snippetSelEnd`.
 
 ### 2. Tag-based search (bilingual, static)
 
@@ -64,6 +65,7 @@ const _EMOJI_CATEGORIES = [
 ### 5. i18n
 
 New keys added to both `en.json` and `fr.json`:
+
 - `snippet.emojis` (option label with leading 😀)
 - `snippet.emoji_selected_label`, `snippet.emoji_clear_btn`
 - `snippet.emoji_cat_{smileys,gestures,hearts,objects,office,symbols}`

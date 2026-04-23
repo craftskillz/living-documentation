@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_15_[DIAGRAM]_finer_grid_and_alignment_guides_closest_node_with_tiebreak.md`
 **date:** 2026-04-15
-**status:** Pending Validation
+**status:** Validated
 **description:** Halve the grid cell size (GRID_SIZE 40 → 20) for finer positioning, and refine alignment guides detection: same-type nodes take priority per axis, any-type nodes serve as fallback, and when multiple candidates share an axis the closest one wins (tiebreak: rightmost for H, lowest for V).
 **tags:** diagram, alignment-guides, snap-to-grid, grid-size, GRID_SIZE, closest-node, tiebreak, shapeType, fallback, alignment, onDragging, snapToAlignGuides, collectCandidates, pickBest
 ---
@@ -35,33 +35,47 @@ Two new private helpers replace the inline loop logic in both `onDragging` and `
 
 **`collectCandidates(draggedBody, draggedType, draggedIds)`**
 Iterates all non-dragged nodes and fills four buckets:
+
 - `sameH` / `sameV` — same `shapeType`, within `THRESHOLD` on H / V axis
-- `anyH`  / `anyV`  — any `shapeType`, within `THRESHOLD` on H / V axis (fallback)
+- `anyH` / `anyV` — any `shapeType`, within `THRESHOLD` on H / V axis (fallback)
 
 **`pickBest(candidates, dx, dy, axis)`**
 Among a bucket's candidates, selects the one with the smallest perpendicular distance to the dragged center:
+
 - H axis: smallest `|dx - ox|` → tiebreak: largest `ox` (rightmost)
 - V axis: smallest `|dy - oy|` → tiebreak: largest `oy` (lowest)
 
 ```js
 function pickBest(candidates, dx, dy, axis) {
   return candidates.reduce((best, curr) => {
-    const dBest = axis === 'h' ? Math.abs(dx - best.ox) : Math.abs(dy - best.oy);
-    const dCurr = axis === 'h' ? Math.abs(dx - curr.ox) : Math.abs(dy - curr.oy);
+    const dBest =
+      axis === "h" ? Math.abs(dx - best.ox) : Math.abs(dy - best.oy);
+    const dCurr =
+      axis === "h" ? Math.abs(dx - curr.ox) : Math.abs(dy - curr.oy);
     if (dCurr < dBest) return curr;
     if (dCurr === dBest)
-      return axis === 'h' ? (curr.ox > best.ox ? curr : best)
-                          : (curr.oy > best.oy ? curr : best);
+      return axis === "h"
+        ? curr.ox > best.ox
+          ? curr
+          : best
+        : curr.oy > best.oy
+          ? curr
+          : best;
     return best;
   });
 }
 ```
 
 Both `onDragging` and `snapToAlignGuides` now call:
+
 ```js
-const { sameH, sameV, anyH, anyV } = collectCandidates(draggedBody, draggedType, draggedIds);
-const hMatch = pickBest(sameH.length ? sameH : anyH, dx, dy, 'h');
-const vMatch = pickBest(sameV.length ? sameV : anyV, dx, dy, 'v');
+const { sameH, sameV, anyH, anyV } = collectCandidates(
+  draggedBody,
+  draggedType,
+  draggedIds,
+);
+const hMatch = pickBest(sameH.length ? sameH : anyH, dx, dy, "h");
+const vMatch = pickBest(sameV.length ? sameV : anyV, dx, dy, "v");
 ```
 
 The two axes are evaluated independently — same-type priority can apply on H while fallback applies on V.

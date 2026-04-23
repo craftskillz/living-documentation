@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_10_[ANNOTATION]_marker_highlight_with_anchor_spans_and_dom_traversal.md`
 **date:** 2026-04-10
-**status:** Pending Validation
+**status:** Validated
 **description:** Add a Marker (Stabilo) annotation feature with persistent post-its; highlight text using two single-char anchor spans placed via innerHTML regex, then wrap intermediate text nodes in <mark> elements via DOM TreeWalker — avoiding all block-boundary HTML validity issues.
 **tags:** annotation, marker, highlight, stabilo, post-it, elevator, innerHTML, dom, treewalker, range, text-node, block-boundary, anchor-span, regex, persistence, api, json
 ---
@@ -11,6 +11,7 @@
 La feature Marker permet de surligner du texte dans un document Markdown rendu et d'y associer une note (post-it). Les annotations sont persistées dans `.annotations.json` dans le dossier docs.
 
 Les difficultés techniques du surlignage HTML :
+
 - Une sélection utilisateur peut traverser plusieurs éléments de bloc (`<p>`, `<h2>`, etc.)
 - Insérer un `<mark>` qui englobe du contenu cross-bloc produit du HTML invalide
 - Le parser HTML du navigateur corrige le HTML invalide de manière imprévisible (un `<mark>` ouvert avant un `<p>` finit par englober tout le contenu jusqu'à la fin du `</div>`)

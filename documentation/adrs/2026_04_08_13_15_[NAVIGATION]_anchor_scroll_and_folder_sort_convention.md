@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_08_13_15_[NAVIGATION]_anchor_scroll_and_folder_sort_convention.md`
 **date:** 2026-04-08
-**status:** Pending Validation
+**status:** Validated
 **description:** Auto-generate heading IDs after async document render to enable in-page anchor scroll; introduce a numeric prefix convention (1_NAME) for controlling folder sort order in the sidebar while hiding the prefix in the UI.
 **tags:** navigation, anchor, heading, scroll, sidebar, folder, sort, convention, prefix, frontend, marked, breadcrumbs
 ---
@@ -35,10 +35,13 @@ After this pass, if `window.location.hash` is set, the matching element is scrol
 Directories can be prefixed with a number and underscore (`1_TUTORIAL`, `2_REFERENCE`) to control their alphabetical sort position. The `folderLabel(seg)` helper strips the prefix for display:
 
 ```js
-function folderLabel(seg) { return seg.replace(/^\d+_/, ""); }
+function folderLabel(seg) {
+  return seg.replace(/^\d+_/, "");
+}
 ```
 
 `folderLabel` is applied in two places:
+
 - The sidebar folder button label (`📁 TUTORIAL`)
 - The violet breadcrumb pills in the article header
 

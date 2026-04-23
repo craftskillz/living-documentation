@@ -1,6 +1,6 @@
 ---
 date: 2026-04-21
-status: Pending Validation
+status: Validated
 description: Add a file attachment feature to the Markdown editor (non-image files) — base64 upload, drag-drop / paste / file-picker entry points, paperclip decoration at render time, configurable blocked extensions and 19 MB cap.
 tags: files, attachments, upload, paperclip, drag-drop, paste, base64, blocked-extensions, admin-config, security, documents, rendering, i18n
 ---
@@ -32,7 +32,7 @@ Constraints expressed by the user:
   1. Drag & drop of any non-image file.
   2. `Cmd/Ctrl+V` when `clipboardData.files` contains a non-image file (images continue to flow through `image-paste.js`).
   3. `openFilePicker()` invoked from the 📎 snippet — opens the OS file picker.
-  The module inserts a `[📎 uploading…](…)` placeholder at the caret, uploads via `POST /api/files/upload`, then replaces the placeholder by `[📎 <originalName>](./files/<filename>)`. Size guard mirrors the server (19 MB).
+     The module inserts a `[📎 uploading…](…)` placeholder at the caret, uploads via `POST /api/files/upload`, then replaces the placeholder by `[📎 <originalName>](./files/<filename>)`. Size guard mirrors the server (19 MB).
 - **Snippet integration** in `snippets.js` + `index.html`: a new `attachment` option in the snippet picker with a help panel; clicking **Insert** calls `openFilePicker()` and closes the modal (no preview needed).
 - **Admin panel** (`admin.html`): a new "File Attachments" section with a `#field-blocked-extensions` textarea (space / comma / newline separated, leading dots stripped, `/^[a-z0-9]+$/` validated before `PUT /api/config`).
 - **CSS** for `.ld-file-attachment` (purple pill, hover state, dark-mode variant) in `index.html`.

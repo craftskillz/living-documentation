@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_15_[DIAGRAM]_port_ellipse_database_fix_stamp_bug_and_size_stamp.md`
 **date:** 2026-04-15
-**status:** Pending Validation
+**status:** Validated
 **description:** Fix port positions for ellipse (H forced to W only for circle) and database (dedicated PORT_OFFSETS_DATABASE with diagonals at wall edge), fix stamp crash caused by missing btnStampRotation element, and add a third size stamp to copy nodeWidth/nodeHeight between shapes.
 **tags:** diagram, ports, ellipse, database, cylinder, port-offsets, CIRCULAR_SHAPES, stamp, color-stamp, font-stamp, size-stamp, btnStampRotation, btnStampSize, applyStamp, STAMP_BTNS, getNodeAtDOMPoint, nodeWidth, nodeHeight
 ---
@@ -11,14 +11,17 @@
 Three independent bugs/improvements discovered in the diagram editor:
 
 ### 1. Port positions wrong for ellipse
+
 `nodeGeometry()` in `ports.js` forced `H = W` for all `CIRCULAR_SHAPES` (which included both `circle` and `ellipse`). This made the ellipse behave like a circle for port calculations: all 8 attachment points were placed on a circle of radius `W/2` instead of the actual ellipse boundary. Arrows visually ended up detached from the shape.
 
 ### 2. Port positions wrong for database (cylinder)
+
 The database shape used `PORT_OFFSETS_RECT` (rectangular corners), placing the NE/NW/SE/SW ports at the bounding box corners which extend outside the cylinder's visual silhouette. Arrowheads at diagonal ports were hidden inside the shape or visually detached.
 
 Adding `database` to `CIRCULAR_SHAPES` was tried but produced diagonal ports too deep inside the cylinder (CIRC offsets at `SQRT2_INV ≈ 0.707` place them on an ellipse rather than at the cylinder wall).
 
 ### 3. Stamp crash + missing size stamp
+
 The color and font-size stamps (`btnStampColor`, `btnStampFontSize`) never worked: `STAMP_BTNS` referenced `rotation: 'btnStampRotation'` which no longer existed in the HTML. `document.getElementById('btnStampRotation')` returned `null`, and `null.classList` crashed both `activateStamp` and `cancelStamp` silently — the stamp appeared to activate (cursor became crosshair) but the apply always failed. Additionally, no stamp existed for shape dimensions.
 
 ## Decision
@@ -29,10 +32,10 @@ The color and font-size stamps (`btnStampColor`, `btnStampFontSize`) never worke
 
 ```js
 // Before (buggy):
-const H = CIRCULAR_SHAPES.has(shapeType) ? W : (n.nodeHeight || defaults[1]);
+const H = CIRCULAR_SHAPES.has(shapeType) ? W : n.nodeHeight || defaults[1];
 
 // After:
-const H = shapeType === 'circle' ? W : (n.nodeHeight || defaults[1]);
+const H = shapeType === "circle" ? W : n.nodeHeight || defaults[1];
 ```
 
 ### Database port offsets (`ports.js`)
@@ -42,18 +45,26 @@ const H = shapeType === 'circle' ? W : (n.nodeHeight || defaults[1]);
 ```js
 // ry = H × 0.12 → body_top_frac = 1 − 2×0.12 = 0.76
 const PORT_OFFSETS_DATABASE = {
-  N:  [ 0,     -1    ], NE: [ 1,     -0.76 ],
-  E:  [ 1,      0    ], SE: [ 1,      0.76 ],
-  S:  [ 0,      1    ], SW: [-1,      0.76 ],
-  W:  [-1,      0    ], NW: [-1,     -0.76 ],
+  N: [0, -1],
+  NE: [1, -0.76],
+  E: [1, 0],
+  SE: [1, 0.76],
+  S: [0, 1],
+  SW: [-1, 0.76],
+  W: [-1, 0],
+  NW: [-1, -0.76],
 };
 ```
 
 `getPortPosition` selects offsets via:
+
 ```js
-const offsets = shapeType === 'database'      ? PORT_OFFSETS_DATABASE
-             : CIRCULAR_SHAPES.has(shapeType) ? PORT_OFFSETS_CIRC
-             : PORT_OFFSETS_RECT;
+const offsets =
+  shapeType === "database"
+    ? PORT_OFFSETS_DATABASE
+    : CIRCULAR_SHAPES.has(shapeType)
+      ? PORT_OFFSETS_CIRC
+      : PORT_OFFSETS_RECT;
 ```
 
 ### Stamp crash fix + size stamp (`node-panel.js`, `main.js`, `diagram.html`, i18n)

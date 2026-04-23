@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_20_[TUTORIAL]_interroger_le_mcp_server_avec_curl.md`
 **date:** 2026-04-20
-**status:** Pending Validation
+**status:** Validated
 **description:** Guide opérationnel pour inspecter le serveur MCP de Living Documentation avec curl — liste des tools, des prompts et lecture du contenu d'un prompt tel qu'un LLM le reçoit.
 **tags:** mcp, curl, debug, tutorial, streamable-http, sse, tools, prompts, json-rpc
 ---
@@ -16,24 +16,27 @@ Le serveur MCP de Living Documentation est exposé via le transport **Streamable
 ## Decision
 
 Pour interroger le MCP avec curl, il faut :
+
 - Ajouter `-H "Accept: application/json, text/event-stream"`
 - Extraire la ligne `data:` avec `grep` + `sed` avant de passer à `jq`
 
 ### Résumé des endpoints
 
-| Méthode | URL | Rôle |
-|---|---|---|
-| `GET /mcp` | — | Résumé JSON custom (tools + prompts) |
-| `POST /mcp` | JSON-RPC 2.0 | Protocole MCP complet |
+| Méthode     | URL          | Rôle                                 |
+| ----------- | ------------ | ------------------------------------ |
+| `GET /mcp`  | —            | Résumé JSON custom (tools + prompts) |
+| `POST /mcp` | JSON-RPC 2.0 | Protocole MCP complet                |
 
 ### Commandes curl
 
 **Résumé rapide (GET custom) :**
+
 ```bash
 curl -s http://localhost:4321/mcp | jq
 ```
 
 **Lister les tools :**
+
 ```bash
 curl -s -X POST http://localhost:4321/mcp \
   -H "Content-Type: application/json" \
@@ -43,6 +46,7 @@ curl -s -X POST http://localhost:4321/mcp \
 ```
 
 **Lister les prompts :**
+
 ```bash
 curl -s -X POST http://localhost:4321/mcp \
   -H "Content-Type: application/json" \
@@ -52,6 +56,7 @@ curl -s -X POST http://localhost:4321/mcp \
 ```
 
 **Lire le contenu d'un prompt (ce que le LLM reçoit) :**
+
 ```bash
 curl -s -X POST http://localhost:4321/mcp \
   -H "Content-Type: application/json" \
@@ -63,6 +68,7 @@ curl -s -X POST http://localhost:4321/mcp \
 Prompts disponibles : `c4-context`, `c4-container`, `flow`, `erd`.
 
 **Appeler un tool :**
+
 ```bash
 curl -s -X POST http://localhost:4321/mcp \
   -H "Content-Type: application/json" \

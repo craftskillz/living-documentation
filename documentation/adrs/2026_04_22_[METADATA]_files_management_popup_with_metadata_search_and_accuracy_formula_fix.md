@@ -1,6 +1,6 @@
 ---
 date: 2026-04-22
-status: Pending Validation
+status: Validated
 description: Add a "Metadata Files" top-bar popup to list/replace/delete files under DOCS_FOLDER/files, fix the accuracy formula to unchanged/total, introduce a metadata:// search prefix to locate documents referencing a file, refresh the in-doc search banner live, and add a reusable showConfirm() modal replacing window.confirm().
 tags: metadata, files, accuracy, unchanged-over-total, search-prefix, metadata-search, confirm-modal, ux, modal, i18n, rest, put, delete, supersedes-accuracy-formula
 ---
@@ -60,6 +60,7 @@ Les compteurs par statut (`unchanged`, `modified`, `missing`) restent exposés p
 ### 4. Rafraîchissement live du bandeau de recherche
 
 Dans `src/frontend/documents.js` :
+
 - State module-level : `_lastDocHtml`, `_lastDocIdRendered`.
 - Extraction de la logique de rendu dans `_wireDocContent(html)` (innerHTML + heading IDs + hljs + interception liens + tables + bandeau de recherche).
 - Nouveau `refreshSearchInCurrentDoc()` : sauvegarde `scrollTop`, ré-exécute `_wireDocContent(_lastDocHtml)`, recharge les annotations, restaure `scrollTop`. Exposé sur `window`.
@@ -71,8 +72,11 @@ Nouveau fichier `src/frontend/confirm-modal.js` :
 
 ```js
 const ok = await showConfirm({
-  title, message, detail,
-  confirmLabel, cancelLabel,
+  title,
+  message,
+  detail,
+  confirmLabel,
+  cancelLabel,
   danger: true,
 });
 ```

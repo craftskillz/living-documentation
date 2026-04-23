@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_08_[DIAGRAM]_edge_label_rotation_stamp_overlay_png_group_fix.md`
 **date:** 2026-04-08
-**status:** Pending Validation
+**status:** Validated
 **description:** Add edge label rotation with persistence; fix stamp overlay z-index blocking clicks; fix group outline appearing in PNG export; fix inline code rendered as bold in article view.
 **tags:** diagram, edge, label, rotation, afterDrawing, stamp, overlay, z-index, png, export, group, outline, clipboard, prose, inline-code, style, persistence, edge-panel
 ---
@@ -26,9 +26,15 @@ Quatre anomalies ou fonctionnalités manquantes ont été identifiées et trait�
 
 ```html
 <!-- avant -->
-<div id="stampOverlay" style="position:absolute;inset:0;display:none;z-index:9;"></div>
+<div
+  id="stampOverlay"
+  style="position:absolute;inset:0;display:none;z-index:9;"
+></div>
 <!-- après -->
-<div id="stampOverlay" style="position:absolute;inset:0;display:none;z-index:11;cursor:crosshair;"></div>
+<div
+  id="stampOverlay"
+  style="position:absolute;inset:0;display:none;z-index:11;cursor:crosshair;"
+></div>
 ```
 
 ### 2. Rotation du libellé d'arête
@@ -57,15 +63,15 @@ Ajout d'une règle CSS pour le mode clair et normalisation du `font-weight` dans
 
 ```css
 .prose code:not(pre code) {
-  background: #e5e7eb;  /* gray-200 */
+  background: #e5e7eb; /* gray-200 */
   color: #111827;
   padding: 0.1em 0.35em;
   border-radius: 0.25em;
   font-size: 0.875em;
-  font-weight: 400;     /* annule le 600 de Tailwind Typography */
+  font-weight: 400; /* annule le 600 de Tailwind Typography */
 }
 .dark .prose code:not(pre code) {
-  background: #4b5563;  /* gray-600 */
+  background: #4b5563; /* gray-600 */
   color: #f87171;
   font-weight: 400;
 }

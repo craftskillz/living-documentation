@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_15_[DIAGRAM]_edge_label_editor_position_fix_for_port_edges.md`
 **date:** 2026-04-15
-**status:** Pending Validation
+**status:** Validated
 **description:** Fix the edge label editor textarea appearing at the wrong position when double-clicking port edges: root cause was that drawPortEdge never stored the bezier midpoint in st.edgeLabelCanvasPos, so startEdgeLabelEdit always fell back to the geometric midpoint which is wrong for curved bezier edges.
 **tags:** diagram, edge, label, label-editor, port-edge, drawPortEdge, edgeLabelCanvasPos, bezier, midpoint, canvas-transform, textarea, ports.js, afterDrawing, fromPort, toPort, startEdgeLabelEdit
 ---
@@ -11,6 +11,7 @@
 The diagram editor allows double-clicking an edge to open a floating textarea for in-place label editing. The textarea is positioned at the visual midpoint of the edge using coordinates stored in `st.edgeLabelCanvasPos` — populated at render time (when the canvas transform is known) so that world-space coordinates can be accurately converted to DOM CSS pixels.
 
 There are two rendering paths for edges:
+
 - **Non-port edges** (no `fromPort`/`toPort`): rendered by vis-network natively; custom labels drawn by `drawEdgeLabels` in the `afterDrawing` event.
 - **Port edges** (`fromPort`/`toPort` defined): rendered entirely by `drawPortEdge` in `ports.js`, called from within the `_drawNodes` canvas patch.
 
@@ -23,15 +24,18 @@ This bug only manifested when the user's diagram consisted exclusively of port e
 Modify `drawPortEdge` in `ports.js` to always compute the bezier midpoint — for every port edge, whether it carries a label or not — and store the resulting DOM position in `st.edgeLabelCanvasPos[edgeData.id]`.
 
 The midpoint in world space:
+
 ```js
-const mid = (cp1 && cp2)
-  ? bezierAt(fromPos, cp1, cp2, toPos, 0.5)
-  : { x: (fromPos.x + toPos.x) / 2, y: (fromPos.y + toPos.y) / 2 };
+const mid =
+  cp1 && cp2
+    ? bezierAt(fromPos, cp1, cp2, toPos, 0.5)
+    : { x: (fromPos.x + toPos.x) / 2, y: (fromPos.y + toPos.y) / 2 };
 ```
 
 Conversion to DOM CSS pixels via the canvas transform matrix (identical to the approach used in `drawEdgeLabels` for non-port edges):
+
 ```js
-const m   = ctx.getTransform();          // physical-pixel matrix
+const m = ctx.getTransform(); // physical-pixel matrix
 const dpr = window.devicePixelRatio || 1;
 const offsetX = canvasRect.left - containerRect.left; // canvas vs #labelInput container
 st.edgeLabelCanvasPos[edgeData.id] = {

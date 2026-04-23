@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_13_[DIAGRAM]_palette_couleurs_admin_et_corrections_editeur.md`
 **date:** 2026-04-13
-**status:** Pending Validation
+**status:** Validated
 **description:** Add admin panel configuration for diagram color palettes (15 node slots + edge palette) with HSL-based border derivation using per-slot lightness ratios; default palettes persisted in config; plus editor bug fixes for free arrow copy/paste, locked node drag, textarea width, and multiline textValign.
 **tags:** diagram, palette, admin, color, hsl, border-derivation, NODE_L_RATIOS, deriveNodeColors, config, diagramNodePalette, diagramEdgePalette, node-rendering, lock, drag, draggable, textarea, label-editor, textValign, multiline, copy-paste, free-arrow, anchor, clipboard
 ---
@@ -20,6 +20,7 @@ The diagram editor uses a fixed palette of 15 node colors and 8 edge colors. Use
 ### Admin palette configuration
 
 A "Diagram Color Palettes" section was added to `admin.html` with:
+
 - **15 fixed node slots** — each rendered as a colored circle swatch with an overlaid `<input type="color">` (opacity: 0). Clicking the swatch opens the native color picker.
 - **Edge palette** — swatches with a × remove button, a color picker for adding new colors, and a Reset button.
 - All palette changes (picker, add, remove, reset) update **local state only** — no API call is made. Palettes are persisted only when the user clicks **Save** on the main admin form, alongside title/theme/pattern.
@@ -27,6 +28,7 @@ A "Diagram Color Palettes" section was added to `admin.html` with:
 ### HSL-based border derivation
 
 The previous `deriveNodeColors` used simple RGB multiplication (`r * 0.65`) which produced wrong hues. The new implementation:
+
 1. Converts the bg hex to HSL.
 2. Scales `L` by a per-slot lightness ratio (`NODE_L_RATIOS`) computed from the original Tailwind bg→border pairs (e.g. `border_L / bg_L` for `c-gray` = 0.667).
 3. Converts back to hex, preserving hue and saturation.

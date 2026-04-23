@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_13_[DIAGRAM]_node_locking.md`
 **date:** 2026-04-13
-**status:** Pending Validation
+**status:** Validated
 **description:** Add a per-node and per-edge lock/unlock toggle that prevents all interactions (drag, resize, rotate, label edit, edge creation, deletion) on locked shapes/edges while preserving zoom and selection.
 **tags:** diagram, lock, node, edge, interaction, fixed, vis-network, node-panel, edge-panel, selection-overlay, persistence, delete, deletion, free-arrow, anchor
 ---
@@ -18,16 +18,16 @@ Un bouton `🔒` (`btnNodeLock`) est ajouté en tête du node panel, en dehors d
 
 ### Blocages d'interaction
 
-| Interaction | Mécanisme de blocage |
-|---|---|
-| Drag | `vis-network fixed: { x: true, y: true }` appliqué via `nodes.update()` |
-| Resize | Guard en tête de `onResizeStart` dans `selection-overlay.js` |
-| Rotate | Guard en tête de `onRotateStart` dans `selection-overlay.js` |
-| Handles visuels | `display: none` sur tous les handles quand un node locké est sélectionné |
-| Label edit (double-clic) | Check `n.locked` dans `onDoubleClick` avant `startLabelEdit()` |
-| Création d'edge depuis | Guard dans `mousedown` canvas : annule `_addEdgeFromId` si locked |
-| Création d'edge vers | Guard dans `mouseup` canvas + callback `addEdge` vis-network |
-| Port dots | `mousemove` ignore les nodes lockés (`isLocked` check) |
+| Interaction                   | Mécanisme de blocage                                                                                                                                     |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Drag                          | `vis-network fixed: { x: true, y: true }` appliqué via `nodes.update()`                                                                                  |
+| Resize                        | Guard en tête de `onResizeStart` dans `selection-overlay.js`                                                                                             |
+| Rotate                        | Guard en tête de `onRotateStart` dans `selection-overlay.js`                                                                                             |
+| Handles visuels               | `display: none` sur tous les handles quand un node locké est sélectionné                                                                                 |
+| Label edit (double-clic)      | Check `n.locked` dans `onDoubleClick` avant `startLabelEdit()`                                                                                           |
+| Création d'edge depuis        | Guard dans `mousedown` canvas : annule `_addEdgeFromId` si locked                                                                                        |
+| Création d'edge vers          | Guard dans `mouseup` canvas + callback `addEdge` vis-network                                                                                             |
+| Port dots                     | `mousemove` ignore les nodes lockés (`isLocked` check)                                                                                                   |
 | Suppression (Delete / bouton) | `deleteSelected()` filtre les nodes lockés hors de la sélection vis-network avant d'appeler `network.deleteSelected()` ; les edges restent suppressibles |
 
 ### Verrouillage des arêtes (edge locking)
@@ -36,10 +36,10 @@ Un bouton `🔒` (`btnEdgeLock`) est ajouté en tête du edge panel, en dehors d
 
 Deux types d'arêtes, deux mécanismes de verrouillage :
 
-| Type d'arête | Mécanisme de verrouillage |
-|---|---|
-| Flèche libre (anchor→anchor) | Verrouillée via les deux nœuds anchor (`locked: true`, `fixed: { x, y }`) — cohérent avec le node locking |
-| Arête régulière (forme→forme) | Flag `edgeLocked: true` sur l'arête elle-même dans le DataSet vis-network |
+| Type d'arête                  | Mécanisme de verrouillage                                                                                 |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Flèche libre (anchor→anchor)  | Verrouillée via les deux nœuds anchor (`locked: true`, `fixed: { x, y }`) — cohérent avec le node locking |
+| Arête régulière (forme→forme) | Flag `edgeLocked: true` sur l'arête elle-même dans le DataSet vis-network                                 |
 
 `areAllSelectedEdgesLocked()` détecte le type de chaque arête pour choisir le bon mécanisme de vérification. `toggleEdgeLock()` applique le mécanisme approprié selon le type.
 

@@ -8,6 +8,31 @@ let _imgPasteExt = "png";
 let _imgPasteCursorStart = 0;
 let _imgPasteCursorEnd = 0;
 
+// Strip diacritics (é → e, à → a, ç → c), lowercase, then replace anything
+// that isn't [a-z0-9] by "_". Length is preserved so the input caret stays put.
+const _LD_DIACRITICS_RE = new RegExp("[\\u0300-\\u036f]", "g");
+function _sanitizeImageName(s) {
+  return (s || "")
+    .normalize("NFD")
+    .replace(_LD_DIACRITICS_RE, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "_");
+}
+
+function _wireImageNameSanitizer() {
+  const input = document.getElementById("img-paste-name");
+  if (!input || input.dataset.ldSanitizerWired === "1") return;
+  input.dataset.ldSanitizerWired = "1";
+  input.addEventListener("input", () => {
+    const pos = input.selectionStart;
+    const cleaned = _sanitizeImageName(input.value);
+    if (cleaned !== input.value) {
+      input.value = cleaned;
+      input.setSelectionRange(pos, pos);
+    }
+  });
+}
+
 async function handleEditorPaste(e) {
   const items = Array.from(e.clipboardData?.items ?? []);
   const imageItem = items.find((item) => item.type.startsWith("image/"));
@@ -23,8 +48,8 @@ async function handleEditorPaste(e) {
   _imgPasteBlob = imageItem.getAsFile();
   if (!_imgPasteBlob) return;
 
-  // Propose a default name: timestamp in ms
-  const defaultName = Date.now().toString();
+  // Propose a default name: timestamp in ms (already [0-9]+, so sanitization-safe)
+  const defaultName = _sanitizeImageName(Date.now().toString());
   document.getElementById("img-paste-name").value = defaultName;
   document.getElementById("img-paste-ext").textContent =
     "." + _imgPasteExt;
@@ -32,6 +57,7 @@ async function handleEditorPaste(e) {
 
   // Focus the name input and select all for quick renaming
   const nameInput = document.getElementById("img-paste-name");
+  _wireImageNameSanitizer();
   nameInput.focus();
   nameInput.select();
 }
@@ -42,9 +68,8 @@ function imgPasteCancel() {
 }
 
 async function imgPasteConfirm() {
-  const name =
-    document.getElementById("img-paste-name").value.trim() ||
-    Date.now().toString();
+  const raw = document.getElementById("img-paste-name").value.trim();
+  const name = _sanitizeImageName(raw) || Date.now().toString();
   document.getElementById("img-paste-modal").classList.add("hidden");
 
   const editor = document.getElementById("doc-editor");
