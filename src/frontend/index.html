@@ -227,6 +227,26 @@
         color: #9ca3af;
       }
 
+      /* Image margins — inline images (in lists, after <br>, mixed with text)
+         collapse to zero vertical margin; only images that sit alone in their
+         own paragraph keep a visual breathing room. */
+      .prose img {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+      .prose p > img:only-child,
+      .prose p > a:only-child > img {
+        margin-top: 1em;
+        margin-bottom: 1em;
+      }
+
+      /* Horizontal rules — tame Tailwind Typography's 3em default + bump contrast */
+      .prose hr {
+        margin-top: 2em;
+        margin-bottom: 2em;
+        border-color: #d1d5db;
+      }
+
       /* File attachment pills — links pointing to /files/ */
       .prose a.ld-file-attachment,
       a.ld-file-attachment {
