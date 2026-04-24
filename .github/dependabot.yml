@@ -15,9 +15,16 @@ updates:
       prefix: deps
       prefix-development: deps-dev
       include: scope
+    # Block automatic major bumps across the board. Majors often coincide with
+    # ownership changes or deep refactors — the riskiest vector for a compromised
+    # package to be installed silently. Review and bump them manually when you feel like it.
+    # Security-update PRs (CVE fixes) are NOT affected by this filter and still come through.
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       # Patch and minor bumps are low-risk — bundle them into a single PR per ecosystem
-      # to keep reviewing noise low. Majors are kept out so each one gets its own PR.
+      # to keep reviewing noise low.
       minor-and-patch:
         applies-to: version-updates
         update-types:
