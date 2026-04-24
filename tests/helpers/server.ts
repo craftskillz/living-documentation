@@ -1,6 +1,7 @@
 import { spawn, ChildProcess } from 'child_process';
 import { createServer } from 'net';
 import path from 'path';
+import { coverageEnv } from './coverage';
 
 export async function pickFreePort(): Promise<number> {
   return new Promise((resolve, reject) => {
@@ -28,7 +29,7 @@ export async function spawnLD(opts: SpawnOptions): Promise<ChildProcess> {
   const proc = spawn('node', [cliPath, opts.docsArg, '--port', String(opts.port)], {
     cwd: opts.cwd,
     stdio: ['ignore', 'pipe', 'pipe'],
-    env: { ...process.env, NODE_ENV: 'test' },
+    env: coverageEnv({ NODE_ENV: 'test' }),
   });
 
   let stderr = '';

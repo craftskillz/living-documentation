@@ -1,0 +1,12 @@
+{
+  "2026_01_01_10_00_[General]_intro": [
+    {
+      "id": "ann-fixture-1",
+      "selectedText": "Welcome",
+      "contextBefore": "",
+      "contextAfter": " to the annotated",
+      "note": "Greeting",
+      "createdAt": "2026-01-01T10:00:00.000Z"
+    }
+  ]
+}

@@ -407,6 +407,70 @@ The compiled package is self-contained inside `dist/`. Only `dist/` is included 
 
 ---
 
+## Tests
+
+End-to-end tests use **[Playwright](https://playwright.dev)**. Each test spawns a real CLI child process against a fresh copy of a fixture directory on a random free port, so tests run in parallel without leaking state.
+
+### Running tests
+
+```bash
+npm run test:e2e          # full suite, headless Chromium (~11 s, ≈ 86 tests)
+npm run test:e2e:ui       # interactive UI mode — step through actions, inspect DOM, replay
+```
+
+Useful filters:
+
+```bash
+npx playwright test tests/api/documents.spec.ts        # a single file
+npx playwright test -g "rejects an absolute"           # by test-name regex
+npx playwright test --headed --slow-mo=500             # watch the browser
+npx playwright test --last-failed                      # rerun only failing tests
+npx playwright show-report                             # open the HTML report after a run
+```
+
+### Coverage
+
+Server-side code coverage via **[c8](https://github.com/bcoe/c8)** (V8 native). Each spawned Node process writes a coverage JSON that `c8 report` aggregates.
+
+```bash
+npm run test:coverage
+open coverage/index.html     # macOS — browse line-by-line coverage
+```
+
+Current baseline: **~72%** overall, with `src/routes/*` at **83%** and `src/lib/*` at **83%**. Frontend code (`src/frontend/*`) is excluded.
+
+### CI
+
+`.github/workflows/e2e.yml` runs the suite on every PR and push to `main` (Chromium, cached browsers, `playwright-report/` uploaded on failure).
+
+### Writing new tests
+
+Reuse a fixture directory under `tests/fixtures/<name>/` (copied into `os.tmpdir()` at setup):
+
+- `minimal/` — three flat docs, no extras
+- `with-metadata/` — docs + source file + `.metadata.json`
+- `with-diagrams/` — `.diagrams.json` pre-populated
+- `with-annotations/` — `.annotations.json` pre-populated
+- `with-subfolders/` — nested folder tree
+- `legacy-abs-paths/` — pre-7.25 config for migration tests
+
+Select a fixture per describe block:
+
+```ts
+import { test, expect } from '../helpers/ld-fixture';
+
+test.describe('my feature', () => {
+  test.use({ fixtureName: 'with-diagrams' });
+
+  test('does the thing', async ({ request, ld }) => {
+    const res = await request.get(`${ld.baseURL}/api/diagrams`);
+    expect(res.ok()).toBe(true);
+  });
+});
+```
+
+---
+
 ## License
 
 AGPL-3.0

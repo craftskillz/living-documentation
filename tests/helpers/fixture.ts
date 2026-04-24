@@ -56,7 +56,10 @@ export async function setupFixture(name: string): Promise<FixtureContext> {
   if (!fs.existsSync(fixtureSrc)) {
     throw new Error(`Fixture not found: ${fixtureSrc}`);
   }
-  const parent = fs.mkdtempSync(path.join(os.tmpdir(), 'ld-test-'));
+  // mkdtemp may return a symlinked path (e.g. /var/folders/... on macOS) while the
+  // child process's cwd resolves to /private/var/folders/.... Canonicalise with realpath
+  // so test assertions comparing paths match what the server sees.
+  const parent = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ld-test-')));
   copyRecursive(fixtureSrc, parent);
   const docsArg = './testdocs';
   const docsAbs = path.join(parent, 'testdocs');

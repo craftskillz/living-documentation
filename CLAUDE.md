@@ -318,8 +318,9 @@ npm run dev              # nodemon + ts-node (auto-restarts on .ts/.html changes
 npm run build            # compile + copy assets
 node dist/bin/cli.js ./docs --port 4321 --open
 npx living-documentation ./docs
-npm run test:e2e         # build + Playwright E2E tests
-npm run test:e2e:ui      # Playwright UI mode (interactive runner)
+npm run test:e2e         # build + Playwright E2E tests (headless chromium)
+npm run test:e2e:ui      # Playwright UI mode (interactive runner, traces, replay)
+npm run test:coverage    # full suite + c8 report (text, HTML at coverage/index.html, lcov)
 ```
 
 ---
@@ -331,8 +332,15 @@ End-to-end suite lives under `tests/`. Each test spawns a **real CLI child proce
 - `tests/helpers/fixture.ts` — copies a fixture to a temp dir; `__FRESH__` in `.metadata.json` triggers on-the-fly SHA-256 re-baselining against the current source file so metadata tests don't depend on build artefacts.
 - `tests/helpers/server.ts` — spawns `node dist/bin/cli.js ./testdocs --port <free>`, waits for the boot banner, returns a killable `ChildProcess`.
 - `tests/helpers/ld-fixture.ts` — Playwright `test.extend` that wires fixture + server + teardown. Override the fixture per describe with `test.use({ fixtureName: 'with-metadata' })`.
+- `tests/helpers/coverage.ts` — injects `NODE_V8_COVERAGE=coverage/tmp` into spawned processes when `COVERAGE=1`. Gated so normal runs don't pay any cost.
 - **CLI tests** (`tests/api/cli.spec.ts`) don't spawn a server — they invoke the CLI directly with `spawnSync` to assert rejection of absolute paths and help output.
 - CI runs the suite on PRs via `.github/workflows/e2e.yml` (Chromium only, cached browsers, report uploaded on failure).
+
+### Coverage (c8)
+
+`npm run test:coverage` runs the full suite with `COVERAGE=1` set. Each spawned Node process (server + CLI tests) writes V8 coverage JSON to `coverage/tmp/` via the `NODE_V8_COVERAGE` env var; `c8 report` aggregates them into `coverage/` (text + HTML + lcov). Config in `.c8rc.json` covers `dist/src/**` and `dist/bin/**`, excluding `dist/src/frontend/**` and `.d.ts`.
+
+**Critical**: `bin/cli.ts` installs a `process.once("SIGTERM", () => process.exit(0))` handler so V8 flushes coverage on graceful shutdown when the test fixture kills the server (without it, V8 drops the coverage JSON and numbers are wildly under-reported).
 
 When adding tests that need a specific pre-state, create a new folder under `tests/fixtures/` rather than mutating an existing one — fixtures are meant to be reusable across multiple tests.
 

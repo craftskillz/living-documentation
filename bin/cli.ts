@@ -5,6 +5,11 @@ import path from "path";
 import fs from "fs";
 import { startServer } from "../src/server";
 
+// Handle SIGTERM gracefully so V8 flushes NODE_V8_COVERAGE (used by c8 in tests).
+// Also good hygiene — without this, process exits with code 143 and Express sockets
+// may be dropped mid-flight. process.exit(0) runs pending exit handlers.
+process.once("SIGTERM", () => process.exit(0));
+
 const program = new Command();
 
 function copyDir(src: string, dest: string): void {

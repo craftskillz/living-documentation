@@ -7,3 +7,6 @@ test-results/
 playwright-report/
 blob-report/
 .playwright/
+
+# c8 coverage
+coverage/
