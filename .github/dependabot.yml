@@ -1,0 +1,37 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "08:00"
+      timezone: Europe/Paris
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    commit-message:
+      prefix: deps
+      prefix-development: deps-dev
+      include: scope
+    groups:
+      # Patch and minor bumps are low-risk — bundle them into a single PR per ecosystem
+      # to keep reviewing noise low. Majors are kept out so each one gets its own PR.
+      minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - github-actions
+    commit-message:
+      prefix: ci
+      include: scope
