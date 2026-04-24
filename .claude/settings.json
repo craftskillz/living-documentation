@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "mcp__living-documentation__read_document",
+      "mcp__living-documentation__create_diagram",
+      "Bash(ls /Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/adrs/*.md)",
+      "Bash(xargs -I{} sh -c 'echo \"=== {} ===\" && head -6 {}')",
+      "mcp__living-documentation__list_documents",
+      "mcp__living-documentation__list_diagrams",
+      "mcp__living-documentation__read_diagram",
+      "Bash(git log *)",
+      "Bash(curl -s http://localhost:4321/api/annotations)",
+      "Bash(curl -s http://localhost:4321/api/documents)",
+      "Bash(python3 -c \"import json,sys;d=json.load\\(sys.stdin\\);print\\([doc['id'] for doc in d[:5]]\\)\")",
+      "Bash(awk 'NR==2251{print;print \"      // → /snippets.js\";skip=1;next} skip && /^      \\\\/\\\\/ ── Helpers/{skip=0} !skip' /Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/src/frontend/index.html)",
+      "Read(//tmp/**)",
+      "Read(//private/tmp/**)",
+      "Bash(awk 'NR==2466{print \"      // ── Marker annotations → /annotations.js ──────────────\";skip=1;next} skip && /^      \\\\/\\\\/ ── Image lightbox/{skip=0} !skip' /Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/src/frontend/index.html)",
+      "Bash(awk ' *)",
+      "Bash(curl -sL https://www.gnu.org/licenses/gpl-3.0.txt -o /Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/LICENSE)",
+      "Bash(curl -sL https://www.gnu.org/licenses/agpl-3.0.txt -o /Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/LICENSE)",
+      "Bash(node /Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/dist/bin/cli.js /tmp/ld-test-docs --port 4388)",
+      "Bash(echo \"pid=$!\" sleep 1 curl -s http://localhost:4388/api/files)",
+      "Bash(curl -s -X PUT http://localhost:4388/api/files/20260422120000_abcd_hello_world.txt -H 'Content-Type: application/json' -d '{\"data\":\"data:text/plain;base64,bmV3IGNvbnRlbnQ=\"}')",
+      "Bash(curl -s -X DELETE \"http://localhost:4388/api/files/..%2F..%2Fetc%2Fpasswd\")",
+      "Bash(curl -s -X DELETE http://localhost:4388/api/files/20260422120100_efgh_another.md)",
+      "Bash(curl -s http://localhost:4388/api/files)"
+    ],
+    "additionalDirectories": [
+      "/private/tmp"
+    ]
+  }
+}

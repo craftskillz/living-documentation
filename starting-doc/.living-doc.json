@@ -1,0 +1,53 @@
+{
+  "docsFolder": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starting-doc",
+  "filenamePattern": "YYYY_MM_DD_HH_mm_[Category]_title",
+  "title": "Living Documentation",
+  "theme": "system",
+  "language": "fr",
+  "port": 4321,
+  "extraFiles": [],
+  "showDiagramDebug": false,
+  "diagramNodePalette": [
+    "#ffffff",
+    "#f5f5f4",
+    "#f1f5f9",
+    "#dbeafe",
+    "#e0f2fe",
+    "#cffafe",
+    "#ccfbf1",
+    "#dcfce7",
+    "#ecfccb",
+    "#fef9c3",
+    "#ffedd5",
+    "#fee2e2",
+    "#ffe4e6",
+    "#fce7f3",
+    "#ede9fe"
+  ],
+  "diagramEdgePalette": [
+    "#ffffff",
+    "#a8a29e",
+    "#374151",
+    "#3b82f6",
+    "#14b8a6",
+    "#22c55e",
+    "#f97316",
+    "#ef4444",
+    "#a855f7"
+  ],
+  "sourceRoot": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation",
+  "blockedFileExtensions": [
+    "exe",
+    "sh",
+    "bat",
+    "cmd",
+    "com",
+    "scr",
+    "ps1",
+    "msi"
+  ],
+  "exclusiveFolderExpansion": true,
+  "exclusiveCategoryExpansion": true,
+  "codeBlockMaxHeight": 400,
+  "markdownSoftBreaks": true
+}

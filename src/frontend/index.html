@@ -1,0 +1,2764 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Living Documentation</title>
+
+    <!-- i18n -->
+    <script src="/i18n.js"></script>
+
+    <!-- Tailwind CSS + Typography plugin via CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+
+    <!-- Highlight.js — syntax highlighting (always dark) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <!-- Font Awesome — icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+
+    <!-- WordCloud2.js — vendored from npm, no CDN dependency -->
+    <script src="/vendor/wordcloud2.js"></script>
+    <!-- Word Cloud logic — stop words, browser, rendering -->
+    <script src="/wordcloud.js"></script>
+
+    <!-- Extracted modules (classic scripts, global symbols).
+         Use `defer` so they execute in order AFTER the DOM is parsed. -->
+    <script defer src="/utils.js"></script>
+    <script defer src="/state.js"></script>
+    <script defer src="/sidebar-helpers.js"></script>
+    <script defer src="/snippet-detect.js"></script>
+    <script defer src="/snippet-table.js"></script>
+    <script defer src="/snippet-tree.js"></script>
+    <script defer src="/dark-mode.js"></script>
+    <script defer src="/config.js"></script>
+    <script defer src="/sidebar.js"></script>
+    <script defer src="/sidebar-resize.js"></script>
+    <script defer src="/search.js"></script>
+    <script defer src="/local-search.js"></script>
+    <script defer src="/image-paste.js"></script>
+    <script defer src="/file-attach.js"></script>
+    <script defer src="/documents.js"></script>
+    <script defer src="/misc.js"></script>
+    <script defer src="/snippets.js"></script>
+    <script defer src="/annotations.js"></script>
+    <script defer src="/metadata.js"></script>
+    <script defer src="/accuracy-gauge.js"></script>
+    <script defer src="/export.js"></script>
+    <script defer src="/diagram-link-modal.js"></script>
+    <script defer src="/new-folder-modal.js"></script>
+    <script defer src="/new-doc-modal.js"></script>
+    <script defer src="/confirm-modal.js"></script>
+    <script defer src="/files-modal.js"></script>
+    <script defer src="/boot.js"></script>
+
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: { extend: {} },
+      };
+    </script>
+
+    <style>
+      /* Smooth sidebar transitions */
+      .category-docs {
+        transition:
+          max-height 0.2s ease,
+          opacity 0.2s ease;
+      }
+      .category-docs.collapsed {
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+      }
+      .category-docs.expanded {
+        max-height: 9999px;
+        opacity: 1;
+      }
+      .category-docs.no-transition {
+        transition: none !important;
+      }
+
+      /* Code block decorations (copy + collapse) */
+      .prose pre {
+        position: relative;
+      }
+      .ld-code-copy {
+        position: absolute;
+        top: 0.4rem;
+        right: 0.5rem;
+        z-index: 2;
+        width: 28px;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.375rem;
+        background: rgba(255, 255, 255, 0.08);
+        color: #d1d5db;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        cursor: pointer;
+        opacity: 0;
+        transition:
+          opacity 0.15s ease,
+          background 0.15s ease;
+        font-size: 0.8rem;
+        line-height: 1;
+      }
+      .prose pre:hover .ld-code-copy,
+      .ld-code-copy:focus-visible,
+      .ld-code-copy.ld-copied {
+        opacity: 1;
+      }
+      .ld-code-copy:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .ld-code-copy.ld-copied {
+        background: rgba(34, 197, 94, 0.25);
+        color: #86efac;
+        border-color: rgba(34, 197, 94, 0.4);
+      }
+
+      /* Collapsible code blocks (set via --ld-code-max-h from .living-doc.json) */
+      pre.ld-collapsible {
+        max-height: var(--ld-code-max-h, 400px);
+        overflow: hidden;
+        position: relative;
+      }
+      pre.ld-collapsible.ld-expanded {
+        max-height: none;
+        overflow: auto;
+      }
+      pre.ld-collapsible:not(.ld-expanded)::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 64px;
+        pointer-events: none;
+        background: linear-gradient(
+          to bottom,
+          rgba(40, 44, 52, 0) 0%,
+          rgba(40, 44, 52, 0.85) 100%
+        );
+      }
+      .ld-code-toggle {
+        position: absolute;
+        right: 0.5rem;
+        bottom: 0.4rem;
+        z-index: 1;
+        padding: 0.15rem 0.6rem;
+        border-radius: 0.375rem;
+        background: rgba(255, 255, 255, 0.12);
+        color: #e5e7eb;
+        font-size: 0.75rem;
+        font-weight: 500;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        cursor: pointer;
+        transition: background 0.15s ease;
+      }
+      .ld-code-toggle:hover {
+        background: rgba(255, 255, 255, 0.22);
+      }
+
+      /* Color swatch selection ring */
+      .color-swatch-btn.selected-swatch,
+      .color-text-swatch-btn.selected-text-swatch {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+        box-shadow: 0 0 0 3px rgba(0,0,0,0.15);
+      }
+
+      /* Active doc highlight */
+      .doc-item.active {
+        background-color: rgba(59, 130, 246, 0.12);
+        color: rgb(59, 130, 246);
+        font-weight: 600;
+      }
+      .dark .doc-item.active {
+        background-color: rgba(96, 165, 250, 0.15);
+        color: rgb(96, 165, 250);
+      }
+
+      /* Prose overrides for correct dark mode */
+      .dark .prose {
+        color: #d1d5db;
+      }
+      .dark .prose h1,
+      .dark .prose h2,
+      .dark .prose h3,
+      .dark .prose h4,
+      .dark .prose h5,
+      .dark .prose h6 {
+        color: #f9fafb;
+      }
+      .dark .prose a {
+        color: #60a5fa;
+      }
+      .dark .prose strong {
+        color: #f3f4f6;
+      }
+      .prose code:not(pre code) {
+        background: #e5e7eb;
+        color: #111827;
+        padding: 0.1em 0.35em;
+        border-radius: 0.25em;
+        font-size: 0.875em;
+        font-weight: 400;
+      }
+      .dark .prose code:not(pre code) {
+        background: #4b5563;
+        color: #f87171;
+        padding: 0.1em 0.35em;
+        border-radius: 0.25em;
+        font-size: 0.875em;
+        font-weight: 400;
+      }
+
+      .dark .prose blockquote {
+        border-color: #4b5563;
+        color: #9ca3af;
+      }
+
+      /* Image margins — inline images (in lists, after <br>, mixed with text)
+         collapse to zero vertical margin; only images that sit alone in their
+         own paragraph keep a visual breathing room. */
+      .prose img {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+      .prose p > img:only-child,
+      .prose p > a:only-child > img {
+        margin-top: 1em;
+        margin-bottom: 1em;
+      }
+
+      /* Horizontal rules — tame Tailwind Typography's 3em default + bump contrast */
+      .prose hr {
+        margin-top: 2em;
+        margin-bottom: 2em;
+        border-color: #d1d5db;
+      }
+
+      /* Local search highlight — distinct from the global yellow search */
+      mark.ld-local-mark {
+        background: #bae6fd;
+        color: inherit;
+        padding: 0 1px;
+        border-radius: 2px;
+      }
+      mark.ld-local-mark.ld-local-active {
+        background: #0284c7;
+        color: #fff;
+      }
+      .dark mark.ld-local-mark {
+        background: #075985;
+        color: #e0f2fe;
+      }
+      .dark mark.ld-local-mark.ld-local-active {
+        background: #0ea5e9;
+        color: #082f49;
+      }
+      .ld-local-item-active {
+        background: rgba(14, 165, 233, 0.12);
+      }
+
+      /* File attachment pills — links pointing to /files/ */
+      .prose a.ld-file-attachment,
+      a.ld-file-attachment {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35em;
+        padding: 0.1em 0.55em;
+        border-radius: 0.375rem;
+        background: #ede9fe;
+        color: #5b21b6;
+        text-decoration: none;
+        font-weight: 500;
+        border: 1px solid #ddd6fe;
+        transition: background-color 0.15s, border-color 0.15s;
+      }
+      .prose a.ld-file-attachment:hover,
+      a.ld-file-attachment:hover {
+        background: #ddd6fe;
+        border-color: #c4b5fd;
+      }
+      .dark .prose a.ld-file-attachment,
+      .dark a.ld-file-attachment {
+        background: rgba(139, 92, 246, 0.18);
+        color: #c4b5fd;
+        border-color: rgba(139, 92, 246, 0.3);
+      }
+      .dark .prose a.ld-file-attachment:hover,
+      .dark a.ld-file-attachment:hover {
+        background: rgba(139, 92, 246, 0.28);
+        border-color: rgba(139, 92, 246, 0.45);
+      }
+      a.ld-file-attachment .ld-file-icon {
+        font-size: 0.85em;
+        opacity: 0.85;
+      }
+      .dark .prose hr {
+        border-color: #374151;
+      }
+      .dark .prose table th {
+        background: #1f2937;
+        color: #f9fafb;
+      }
+      .dark .prose table td {
+        border-color: #374151;
+      }
+      .dark .prose table tr:nth-child(even) {
+        background: #111827;
+      }
+
+      /* Print / Export PDF */
+      @media print {
+        #sidebar,
+        #header {
+          display: none !important;
+        }
+        #content-area {
+          margin: 0 !important;
+        }
+        .no-print {
+          display: none !important;
+        }
+        .prose {
+          max-width: 100% !important;
+        }
+      }
+
+      /* Scrollbar thin */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 3px;
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background: #4b5563;
+      }
+
+      /* Search highlight */
+      mark {
+        background: #fef08a;
+        color: inherit;
+        border-radius: 2px;
+        padding: 0 2px;
+      }
+      mark.match-active {
+        background: #f97316;
+        color: #fff;
+      }
+      .dark mark {
+        background: #713f12;
+        color: #fef9c3;
+      }
+      .dark mark.match-active {
+        background: #ea580c;
+        color: #fff;
+      }
+    </style>
+  </head>
+
+  <body
+    class="h-full bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-200"
+  >
+    <div class="h-full flex flex-col">
+      <!-- ── Header ── -->
+      <header
+        id="header"
+        class="no-print flex items-center justify-between px-4 h-14 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0 z-10 shadow-sm"
+      >
+        <div class="flex items-center gap-3">
+          <span
+            onclick="toggleSidebar()"
+            data-i18n-title="nav.toggle_sidebar"
+            title="Toggle sidebar"
+            class="text-blue-600 dark:text-blue-400 text-xl select-none cursor-pointer hover:opacity-70 transition-opacity"
+            >&#128218;</span
+          >
+          <span id="app-title" class="font-semibold text-base tracking-tight"
+            >Living Documentation</span
+          >
+        </div>
+
+        <div class="flex items-center gap-2">
+          <!-- Search (desktop — mirrors sidebar search) -->
+          <div class="relative hidden sm:block">
+            <input
+              id="header-search"
+              type="search"
+              data-i18n-placeholder="nav.search_placeholder"
+              placeholder="Search docs…"
+              class="w-56 pl-8 pr-3 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <span
+              class="absolute left-2.5 top-2 text-gray-400 text-sm pointer-events-none"
+              >&#128269;</span
+            >
+          </div>
+
+          <!-- Dark mode toggle -->
+          <button
+            id="dark-toggle"
+            data-i18n-title="nav.toggle_dark"
+            title="Toggle dark mode"
+            class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          >
+            <span id="dark-icon" class="text-lg leading-none">&#9790;</span>
+          </button>
+
+          <!-- Word Cloud -->
+          <button
+            onclick="openWordCloud()"
+            data-i18n="nav.word_cloud"
+            class="text-sm px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+          >
+            &#9729; Word Cloud
+          </button>
+
+          <!-- Diagram link -->
+          <a
+            href="/diagram"
+            data-i18n="nav.diagram"
+            class="text-sm px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+          >
+            &#9671; Diagram
+          </a>
+
+          <!-- Files -->
+          <button
+            onclick="openFilesModal()"
+            data-i18n="nav.files"
+            class="text-sm px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+          >
+            &#128193; Files
+          </button>
+
+          <!-- Admin link -->
+          <a
+            href="/admin"
+            data-i18n="nav.admin"
+            class="text-sm px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+          >
+            &#9881; Admin
+          </a>
+        </div>
+      </header>
+
+      <!-- ── Body ── -->
+      <div class="flex flex-1 overflow-hidden">
+        <!-- ── Sidebar ── -->
+        <aside
+          id="sidebar"
+          class="no-print w-72 shrink-0 flex flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-y-auto"
+        >
+          <!-- Mobile / sidebar search -->
+          <div class="sticky top-0 z-10 bg-white dark:bg-gray-900 p-3 border-b border-gray-100 dark:border-gray-800">
+            <div class="relative sm:hidden">
+              <input
+                id="sidebar-search"
+                type="search"
+                data-i18n-placeholder="nav.search_mobile_placeholder"
+                placeholder="Search…"
+                class="w-full pl-8 pr-3 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <span
+                class="absolute left-2.5 top-2 text-gray-400 text-sm pointer-events-none"
+                >&#128269;</span
+              >
+            </div>
+
+            <!-- Stats -->
+            <div class="flex items-center justify-between mt-2 sm:mt-0">
+              <p
+                id="doc-count"
+                class="text-xs text-gray-400 dark:text-gray-500"
+              ></p>
+              <div class="flex items-center gap-2">
+                <button
+                  id="toggle-attachments-btn"
+                  onclick="toggleHideAttachments()"
+                  data-i18n-title="nav.toggle_attachments"
+                  title="Toggle attachments"
+                  class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors leading-none"
+                >
+                  <i class="fa-solid fa-paperclip"></i>
+                </button>
+                <button
+                  id="toggle-categories-btn"
+                  onclick="toggleHideCategories()"
+                  data-i18n-title="nav.toggle_categories"
+                  title="Toggle categories"
+                  class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors leading-none"
+                >
+                  <i class="fa-solid fa-tags"></i>
+                </button>
+                <button
+                  onclick="openExportModal()"
+                  data-i18n-title="nav.export"
+                  title="Export"
+                  class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors leading-none"
+                >
+                  <i class="fa-solid fa-file-export"></i>
+                </button>
+                <button
+                  onclick="openNewFolderModal()"
+                  data-i18n-title="nav.new_folder"
+                  title="New folder"
+                  class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors leading-none"
+                >
+                  <i class="fa-solid fa-folder-plus"></i>
+                </button>
+                <button
+                  onclick="openNewDocModal()"
+                  data-i18n-title="nav.new_document"
+                  title="New document"
+                  class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors leading-none"
+                >
+                  <i class="fa-solid fa-file-circle-plus"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category tree -->
+          <nav id="category-tree" class="flex-1 py-2 space-y-0.5">
+            <p class="px-4 py-8 text-sm text-gray-400 text-center" data-i18n="common.loading">Loading…</p>
+          </nav>
+        </aside>
+
+        <!-- ── Main content ── -->
+        <main id="content-area" class="flex-1 overflow-y-auto">
+          <!-- Welcome / empty state -->
+          <div id="welcome" class="h-full flex items-center justify-center p-8">
+            <div class="max-w-md text-center">
+              <div class="text-5xl mb-4 select-none" aria-hidden="true">
+                &#128218;
+              </div>
+              <h2
+                data-i18n="welcome.title"
+                class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2"
+              >
+                Select a document
+              </h2>
+              <p data-i18n="welcome.hint" class="text-sm text-gray-500 dark:text-gray-500">
+                Choose a document from the sidebar to start reading.
+              </p>
+              <p
+                id="welcome-pattern"
+                class="mt-4 text-xs text-gray-400 dark:text-gray-600 font-mono bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 inline-block"
+              >
+                YYYY_MM_DD_HH_mm_[Category]_title.md
+              </p>
+              <p data-i18n="welcome.pattern_hint" class="mt-2 text-xs text-gray-400">
+                Expected filename pattern
+              </p>
+            </div>
+          </div>
+
+          <!-- Document viewer -->
+          <article id="doc-view" class="hidden max-w-4xl mx-auto px-6 py-8">
+            <!-- Doc header -->
+            <header
+              class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-950 -mx-6 px-6 pt-8 mb-8 pb-6 border-b border-gray-300 dark:border-gray-800"
+            >
+              <div class="flex items-start gap-4 flex-wrap">
+                <div class="shrink min-w-0">
+                  <div class="flex items-center gap-2 mb-2 flex-wrap">
+                    <span
+                      id="doc-breadcrumbs"
+                      class="flex items-center gap-2 flex-wrap"
+                    ></span>
+                    <span
+                      id="doc-date"
+                      class="text-xs text-gray-400 dark:text-gray-500"
+                    ></span>
+                  </div>
+                  <h1
+                    id="doc-title"
+                    class="text-2xl font-bold text-gray-900 dark:text-gray-50 leading-tight"
+                  ></h1>
+                </div>
+                <!-- Actions -->
+                <div class="flex items-center gap-2 flex-wrap ml-auto">
+                  <!-- View mode actions -->
+                  <div id="view-actions" class="flex items-center gap-2">
+                    <button
+                      onclick="toggleMarker()"
+                      id="stabilo-btn"
+                      data-i18n-title="doc.marker_mode"
+                      title="Mode Marker — surligner pour annoter"
+                      class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      <svg
+                        id="stabilo-icon"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 100 100"
+                        fill="none"
+                        style="
+                          display: inline-block;
+                          vertical-align: middle;
+                          margin-right: 4px;
+                        "
+                      >
+                        <!-- body -->
+                        <rect
+                          x="28"
+                          y="10"
+                          width="44"
+                          height="52"
+                          rx="6"
+                          transform="rotate(40 50 50)"
+                          fill="#bfdbfe"
+                          stroke="currentColor"
+                          stroke-width="6"
+                        />
+                        <!-- cap -->
+                        <rect
+                          x="52"
+                          y="8"
+                          width="22"
+                          height="30"
+                          rx="6"
+                          transform="rotate(40 50 50)"
+                          fill="#93c5fd"
+                          stroke="currentColor"
+                          stroke-width="6"
+                        />
+                        <!-- nib -->
+                        <polygon
+                          points="28,60 10,80 30,80 38,72"
+                          fill="#93c5fd"
+                          stroke="currentColor"
+                          stroke-width="5"
+                          stroke-linejoin="round"
+                        />
+                        <polygon
+                          points="28,48 19,70 36,75 55,70"
+                          fill="#93c5fd"
+                          stroke="currentColor"
+                          stroke-width="5"
+                          stroke-linejoin="round"
+                        />
+                        <!-- underline stroke -->
+                        <line
+                          x1="10"
+                          y1="90"
+                          x2="72"
+                          y2="90"
+                          stroke="currentColor"
+                          stroke-width="6"
+                          stroke-linecap="round"
+                        />
+                        <!-- hidden cross (two diagonal bars) -->
+                        <g id="stabilo-cross" style="display: none">
+                          <line
+                            x1="8"
+                            y1="8"
+                            x2="92"
+                            y2="92"
+                            stroke="currentColor"
+                            stroke-width="8"
+                            stroke-linecap="round"
+                          />
+                          <line
+                            x1="92"
+                            y1="8"
+                            x2="8"
+                            y2="92"
+                            stroke="currentColor"
+                            stroke-width="8"
+                            stroke-linecap="round"
+                          />
+                        </g></svg
+                      ><span data-i18n="doc.marker_btn">Marker</span>
+                    </button>
+                    <button
+                      onclick="toggleFullWidth()"
+                      id="full-width-btn"
+                      data-i18n-title="doc.toggle_width"
+                      title="Toggle full width"
+                      class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      <span data-i18n="doc.full_width_btn">&#8596; Full width</span>
+                    </button>
+                    <button
+                      onclick="exportPDF()"
+                      data-i18n-title="doc.export_pdf"
+                      title="Export as PDF"
+                      class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      &#128196; <span data-i18n="doc.export_pdf_btn">Export PDF</span>
+                    </button>
+                    <button
+                      onclick="copyLink()"
+                      id="copy-link-btn"
+                      data-i18n-title="doc.copy_link"
+                      title="Copy link"
+                      class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      <i class="fa-solid fa-link"></i> <span data-i18n="doc.copy_link_btn">Copy link</span>
+                    </button>
+                    <button
+                      onclick="openMetadataModal()"
+                      id="metadata-btn"
+                      data-i18n-title="metadata.button_title"
+                      title="Manage source-file metadata"
+                      class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      <i class="fa-solid fa-code-compare"></i> <span data-i18n="metadata.button">Metadata</span>
+                    </button>
+                    <button
+                      onclick="enterEditMode()"
+                      data-i18n-title="doc.edit"
+                      title="Edit document"
+                      class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      <i class="fa-solid fa-file-pen"></i> <span data-i18n="doc.edit_btn">Edit</span>
+                    </button>
+                    <button
+                      onclick="askDeleteDocument()"
+                      data-i18n-title="doc.delete"
+                      title="Delete document"
+                      class="no-print text-sm px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-700 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 transition-colors"
+                    >
+                      <i class="fa-solid fa-trash"></i> <span data-i18n="doc.delete_btn">Delete</span>
+                    </button>
+                  </div>
+                  <!-- Edit mode actions -->
+                  <div id="edit-actions" class="hidden flex items-center gap-2">
+                    <span id="edit-save-msg" class="text-xs"></span>
+                    <button
+                      onclick="exitEditMode()"
+                      data-i18n-title="doc.cancel_edit"
+                      title="Cancel editing"
+                      class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      <span data-i18n="common.cancel">Cancel</span>
+                    </button>
+                    <button
+                      onclick="openSnippetsModal()"
+                      data-i18n-title="doc.snippets"
+                      title="Insert a snippet"
+                      class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      <span data-i18n="doc.snippets_btn">🧩 Snippets</span>
+                    </button>
+                    <button
+                      onclick="saveDocument()"
+                      data-i18n-title="doc.save"
+                      title="Save document"
+                      class="text-sm px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+                    >
+                      <span data-i18n="common.save">Save</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!-- Accuracy gauge (shown when the current doc has metadata entries) -->
+              <div
+                id="accuracy-gauge"
+                onclick="openMetadataModal()"
+                class="hidden no-print mt-5 flex items-center gap-3 mr-auto w-full sm:w-80 cursor-pointer select-none"
+              >
+                <span
+                  id="accuracy-gauge-label"
+                  data-i18n="accuracy.label"
+                  class="text-xs text-gray-500 dark:text-gray-400 shrink-0"
+                >Reliability</span>
+                <div
+                  class="flex-1 h-4 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden"
+                >
+                  <div
+                    id="accuracy-gauge-bar"
+                    class="h-full w-full transition-all"
+                    style="background: #dc2626;"
+                  ></div>
+                </div>
+                <span
+                  id="accuracy-gauge-value"
+                  class="text-xs font-semibold shrink-0 tabular-nums"
+                  style="color: #9ca3af"
+                >0%</span>
+              </div>
+
+              <!-- Navigation history back-links -->
+              <div
+                id="doc-back"
+                class="hidden mt-2 flex flex-wrap gap-1 text-xs"
+              ></div>
+              <!-- Search match notice (inside sticky header) -->
+              <div
+                id="search-notice"
+                class="hidden mt-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-sm text-yellow-800 dark:text-yellow-300 overflow-hidden"
+              >
+                <div
+                  id="search-notice-title"
+                  class="px-3 py-2 font-medium border-b border-yellow-200 dark:border-yellow-800"
+                ></div>
+                <ol
+                  id="search-notice-list"
+                  class="max-h-40 overflow-y-auto divide-y divide-yellow-100 dark:divide-yellow-900/40 list-none m-0 p-0"
+                ></ol>
+              </div>
+              <!-- Local search widget mount point (populated by local-search.js) -->
+              <div id="local-search-mount" class="hidden no-print"></div>
+            </header>
+
+            <!-- Rendered markdown -->
+            <div
+              id="doc-content"
+              class="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-code:before:content-none prose-code:after:content-none prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-gray-700"
+            ></div>
+
+            <!-- Markdown editor -->
+            <textarea
+              id="doc-editor"
+              class="hidden w-full min-h-[70vh] px-4 py-3 text-sm font-mono leading-relaxed rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
+              spellcheck="false"
+            ></textarea>
+          </article>
+        </main>
+      </div>
+      <!-- end body row -->
+    </div>
+    <!-- end root -->
+
+    <!-- ── Metadata modal ── -->
+    <div
+      id="metadata-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    >
+      <div
+        class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl mx-4 p-6 space-y-4"
+      >
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+              <i class="fa-solid fa-code-compare mr-1"></i>
+              <span data-i18n="metadata.title">Source metadata</span>
+            </h3>
+            <p
+              data-i18n="metadata.subtitle"
+              class="text-xs text-gray-500 dark:text-gray-400 mt-1"
+            >
+              Attach source files to track whether this document is still accurate.
+            </p>
+          </div>
+          <button
+            onclick="closeMetadataModal()"
+            data-i18n-title="common.close"
+            title="Close"
+            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+          >
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <!-- Summary -->
+        <div
+          id="metadata-summary"
+          class="text-xs text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2"
+        ></div>
+
+        <!-- List -->
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <div
+            id="metadata-list"
+            class="max-h-64 overflow-y-auto"
+          ></div>
+          <div
+            id="metadata-empty"
+            data-i18n="metadata.empty"
+            class="hidden px-3 py-4 text-center text-xs text-gray-400"
+          >
+            No metadata yet — add a source file to start tracking accuracy.
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-2 flex-wrap">
+          <button
+            onclick="metadataToggleBrowser()"
+            class="text-sm px-3 py-1.5 rounded-lg border border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
+          >
+            <i class="fa-solid fa-plus"></i> <span data-i18n="metadata.add">Add source file</span>
+          </button>
+          <button
+            onclick="metadataRefresh()"
+            id="metadata-refresh-btn"
+            class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
+            <i class="fa-solid fa-arrows-rotate"></i> <span data-i18n="metadata.refresh">Refresh hashes</span>
+          </button>
+        </div>
+
+        <!-- Source browser -->
+        <div
+          id="metadata-browser"
+          class="hidden border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden text-sm"
+        >
+          <div
+            class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"
+          >
+            <button
+              id="metadata-browse-up"
+              onclick="metadataBrowseUp()"
+              data-i18n="common.up"
+              class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0"
+            >
+              ↑ Up
+            </button>
+            <span
+              id="metadata-browse-path"
+              class="text-xs text-gray-500 dark:text-gray-400 font-mono truncate flex-1"
+            ></span>
+          </div>
+          <div
+            id="metadata-browse-list"
+            class="max-h-56 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800"
+          ></div>
+        </div>
+
+        <p id="metadata-error" class="hidden text-xs text-red-500"></p>
+
+        <div class="flex justify-end">
+          <button
+            onclick="closeMetadataModal()"
+            data-i18n="common.close"
+            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── New Folder modal ── -->
+    <div
+      id="new-folder-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    >
+      <div
+        class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-md mx-4 p-6 space-y-4"
+      >
+        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            class="inline-block mr-1 align-text-bottom"
+          >
+            <path
+              d="M2 5a2 2 0 012-2h3.586a1 1 0 01.707.293L9.707 4.707A1 1 0 0010.414 5H16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V5z"
+              stroke="currentColor"
+              stroke-width="1.5"
+              fill="none"
+            />
+            <line
+              x1="10"
+              y1="8"
+              x2="10"
+              y2="14"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+            <line
+              x1="7"
+              y1="11"
+              x2="13"
+              y2="11"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+          </svg>
+          <span data-i18n="modal.new_folder.title">New Folder</span>
+        </h3>
+
+        <!-- Folder name -->
+        <div class="space-y-1.5">
+          <label
+            data-i18n="modal.new_folder.name_label"
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Folder name</label
+          >
+          <input
+            id="new-folder-name"
+            type="text"
+            data-i18n-placeholder="modal.new_folder.name_placeholder"
+            placeholder="my-folder"
+            oninput="newFolderUpdatePreview()"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <!-- Location -->
+        <div class="space-y-1.5">
+          <label
+            data-i18n="modal.new_folder.location_label"
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Location</label
+          >
+          <div class="flex items-center gap-2">
+            <span
+              id="new-folder-location-display"
+              class="flex-1 text-sm text-gray-600 dark:text-gray-300 font-mono truncate"
+              >/ (root)</span
+            >
+            <button
+              onclick="newFolderToggleBrowser()"
+              data-i18n="modal.new_folder.browse_btn"
+              class="text-xs px-2 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shrink-0"
+            >
+              Browse…
+            </button>
+          </div>
+          <!-- Inline browser -->
+          <div
+            id="new-folder-browser"
+            class="hidden border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden text-sm"
+          >
+            <div
+              class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"
+            >
+              <button
+                id="new-folder-browse-up"
+                onclick="newFolderBrowseUp()"
+                data-i18n="common.up"
+                class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0"
+              >
+                ↑ Up
+              </button>
+              <span
+                id="new-folder-browse-path"
+                class="text-xs text-gray-500 dark:text-gray-400 font-mono truncate flex-1"
+              ></span>
+            </div>
+            <div
+              id="new-folder-browse-list"
+              class="max-h-40 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="space-y-1">
+          <label
+            data-i18n="modal.new_folder.will_be_created"
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Will be created at</label
+          >
+          <p
+            id="new-folder-preview"
+            data-i18n="modal.new_folder.enter_name"
+            class="text-xs font-mono text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 truncate"
+          >
+            (enter a name)
+          </p>
+        </div>
+
+        <p id="new-folder-error" class="hidden text-xs text-red-500"></p>
+
+        <div class="flex justify-end gap-3 pt-1">
+          <button
+            onclick="closeNewFolderModal()"
+            data-i18n="common.cancel"
+            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onclick="createNewFolder()"
+            id="new-folder-create-btn"
+            data-i18n="modal.new_folder.create_btn"
+            class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+          >
+            Create
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── New Document modal ── -->
+    <div
+      id="new-doc-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    >
+      <div
+        class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-lg mx-4 p-6 space-y-4"
+      >
+        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+          &#10133; <span data-i18n="modal.new_doc.title">New Document</span>
+        </h3>
+
+        <!-- Title -->
+        <div class="space-y-1.5">
+          <label
+            data-i18n="modal.new_doc.title_label"
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Title</label
+          >
+          <input
+            id="new-doc-title"
+            type="text"
+            data-i18n-placeholder="modal.new_doc.title_placeholder"
+            placeholder="My document"
+            oninput="newDocUpdatePreview()"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <!-- Category -->
+        <div class="space-y-1.5">
+          <label
+            data-i18n="modal.new_doc.category_label"
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Category</label
+          >
+          <input
+            id="new-doc-category"
+            type="text"
+            list="new-doc-category-options"
+            autocomplete="off"
+            placeholder="GENERAL"
+            oninput="newDocSanitizeCategoryInput()"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <datalist id="new-doc-category-options"></datalist>
+        </div>
+
+        <!-- Location -->
+        <div class="space-y-1.5">
+          <label
+            data-i18n="modal.new_doc.location_label"
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Location</label
+          >
+          <div class="flex items-center gap-2">
+            <span
+              id="new-doc-folder-display"
+              class="flex-1 px-3 py-2 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-mono truncate"
+            >
+              / (root)
+            </span>
+            <button
+              onclick="newDocToggleBrowser()"
+              class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shrink-0"
+            >
+              &#128193; <span data-i18n="modal.new_doc.browse_btn">Browse</span>
+            </button>
+          </div>
+          <!-- Inline folder browser -->
+          <div
+            id="new-doc-browser"
+            class="hidden border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
+          >
+            <div
+              class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"
+            >
+              <button
+                id="new-doc-browse-up"
+                onclick="newDocBrowseUp()"
+                data-i18n="common.up"
+                class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0"
+              >
+                &#8593; Up
+              </button>
+              <span
+                id="new-doc-browse-path"
+                class="font-mono text-xs text-gray-400 dark:text-gray-500 truncate flex-1 text-right"
+              ></span>
+            </div>
+            <div
+              id="new-doc-browse-list"
+              class="divide-y divide-gray-100 dark:divide-gray-800 max-h-40 overflow-y-auto"
+            ></div>
+            <!-- Create new folder row -->
+            <div
+              class="border-t border-gray-200 dark:border-gray-700 flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800/50"
+            >
+              <input
+                id="new-doc-new-folder-name"
+                type="text"
+                data-i18n-placeholder="modal.new_doc.new_folder_placeholder"
+                placeholder="New folder name…"
+                class="flex-1 px-2 py-1 text-xs rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-400"
+              />
+              <button
+                onclick="newDocCreateFolder()"
+                data-i18n="modal.new_doc.create_folder_btn"
+                class="text-xs px-2 py-1 rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors shrink-0"
+              >
+                + Create
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filename preview -->
+        <div class="space-y-1.5">
+          <label
+            data-i18n="modal.new_doc.filename_label"
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Generated filename</label
+          >
+          <p
+            id="new-doc-filename-preview"
+            data-i18n="modal.new_doc.title_placeholder"
+            class="text-xs bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 font-mono text-gray-600 dark:text-gray-300 break-all"
+          >
+            (enter a title)
+          </p>
+        </div>
+
+        <!-- Error -->
+        <p id="new-doc-error" class="hidden text-xs text-red-500"></p>
+
+        <!-- Actions -->
+        <div class="flex justify-end gap-3 pt-1">
+          <button
+            onclick="closeNewDocModal()"
+            data-i18n="common.cancel"
+            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onclick="createNewDocument()"
+            id="new-doc-create-btn"
+            data-i18n="common.create"
+            class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+          >
+            Create
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Diagram link modal ── -->
+    <div
+      id="diag-link-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    >
+      <div
+        class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-lg mx-4 p-6 space-y-5"
+      >
+        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+          <span data-i18n="modal.diag_link.title">&#9671; Link a diagram</span>
+        </h3>
+
+        <!-- Mode toggle -->
+        <div class="flex gap-4 text-sm">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name="diag-mode"
+              id="diag-mode-existing"
+              value="existing"
+              checked
+              onchange="diagModeChanged()"
+            />
+            <span data-i18n="modal.diag_link.existing_radio" class="text-gray-700 dark:text-gray-300"
+              >Existing diagram</span
+            >
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name="diag-mode"
+              id="diag-mode-new"
+              value="new"
+              onchange="diagModeChanged()"
+            />
+            <span data-i18n="modal.diag_link.new_radio" class="text-gray-700 dark:text-gray-300">New diagram</span>
+          </label>
+        </div>
+
+        <!-- Existing diagram picker -->
+        <div id="diag-existing-section" class="space-y-1.5">
+          <label
+            data-i18n="modal.diag_link.select_label"
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Select diagram</label
+          >
+          <select
+            id="diag-select"
+            onchange="diagUpdatePreview()"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          ></select>
+        </div>
+
+        <!-- New diagram name -->
+        <div id="diag-new-section" class="hidden space-y-1.5">
+          <label
+            data-i18n="modal.diag_link.name_label"
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Diagram name</label
+          >
+          <input
+            id="diag-new-name"
+            type="text"
+            data-i18n-placeholder="modal.diag_link.name_placeholder"
+            placeholder="My diagram"
+            oninput="diagUpdatePreview()"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <!-- Image filename -->
+        <div class="space-y-1.5">
+          <label
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            ><span data-i18n="modal.diag_link.img_label">Image filename</span>
+            <span data-i18n="modal.diag_link.img_hint" class="font-normal text-gray-400"
+              >(saved in ./images/)</span
+            ></label
+          >
+          <input
+            id="diag-img-name"
+            type="text"
+            placeholder="diagram.png"
+            oninput="diagUpdatePreview()"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <!-- Markdown preview -->
+        <div class="space-y-1.5">
+          <label
+            data-i18n="modal.diag_link.markdown_label"
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Markdown that will be appended</label
+          >
+          <pre
+            id="diag-preview"
+            class="text-xs bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 overflow-x-auto text-gray-700 dark:text-gray-300 whitespace-pre-wrap"
+          ></pre>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-end gap-3 pt-1">
+          <button
+            onclick="closeDiagramLinkModal()"
+            data-i18n="common.cancel"
+            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onclick="insertDiagramLink()"
+            id="diag-insert-btn"
+            data-i18n="modal.diag_link.insert_btn"
+            class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+          >
+            Insert &amp; Open Diagram
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Snippets modal ── -->
+    <div
+      id="snippets-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    >
+      <div
+        class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-lg mx-4 p-6 space-y-5 max-h-[90vh] overflow-y-auto"
+      >
+        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+          <span data-i18n="snippet.modal_title">🧩 Insert a snippet</span>
+        </h3>
+
+        <div
+          id="snippet-detect-msg"
+          class="hidden rounded-lg px-3 py-2 text-xs"
+        ></div>
+
+        <!-- Snippet type selector -->
+        <div class="space-y-1.5">
+          <label
+            data-i18n="snippet.type_label"
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Snippet type</label
+          >
+          <select
+            id="snippet-type"
+            onchange="snippetTypeChanged()"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option data-i18n="snippet.diagram" value="diagram" selected>Diagram</option>
+            <option data-i18n="snippet.collapsible" value="collapsible">Collapsible block (details)</option>
+            <option data-i18n="snippet.link" value="link">Link</option>
+            <option data-i18n="snippet.link_doc" value="doc-link">Link to document</option>
+            <option data-i18n="snippet.link_anchor" value="anchor-link">Link to anchor</option>
+            <option data-i18n="snippet.link_doc_anchor" value="anchor-doc-link">
+              Link to document with anchor
+            </option>
+            <option data-i18n="snippet.numbered_list" value="ordered-list">Numbered list</option>
+            <option data-i18n="snippet.bullet_list" value="unordered-list">Bullet list</option>
+            <option data-i18n="snippet.code_block" value="code-block">Code block</option>
+            <option data-i18n="snippet.blockquote" value="blockquote">Blockquote</option>
+            <option data-i18n="snippet.separator" value="separator">Horizontal rule</option>
+            <option data-i18n="snippet.image" value="image">Image</option>
+            <option data-i18n="snippet.table" value="table">Table</option>
+            <option data-i18n="snippet.tree" value="tree">Tree</option>
+            <option data-i18n="snippet.colored_section" value="colored-section">Colored section</option>
+            <option data-i18n="snippet.colored_text" value="colored-text">Colored text</option>
+            <option data-i18n="snippet.emojis" value="emojis">😀 Emojis</option>
+            <option data-i18n="snippet.attachment" value="attachment">📎 File attachment</option>
+            <option data-i18n="snippet.local_search" value="local-search">🔎 Local search</option>
+          </select>
+        </div>
+
+        <!-- Panel: collapsible -->
+        <div id="snip-panel-collapsible" class="space-y-3">
+          <div class="space-y-1.5">
+            <label
+              data-i18n="snippet.collapsible_summary_label"
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Summary title</label
+            >
+            <input
+              id="snip-collapsible-summary"
+              type="text"
+              value="Details"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+
+        <!-- Panel: link -->
+        <div id="snip-panel-link" class="hidden space-y-3">
+          <div class="space-y-1.5">
+            <label
+              data-i18n="snippet.link_text_label"
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Link text</label
+            >
+            <input
+              id="snip-link-text"
+              type="text"
+              data-i18n-placeholder="snippet.link_text_placeholder"
+              placeholder="My link"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div class="space-y-1.5">
+            <label
+              data-i18n="snippet.link_url_label"
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >URL</label
+            >
+            <input
+              id="snip-link-url"
+              type="text"
+              data-i18n-placeholder="snippet.link_url_placeholder"
+              placeholder="https://..."
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+
+        <!-- Panel: doc-link -->
+        <div id="snip-panel-doc-link" class="hidden space-y-3">
+          <div class="space-y-1.5">
+            <label
+              data-i18n="snippet.link_doc_label"
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Document</label
+            >
+            <select
+              id="snip-doc-select"
+              onchange="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ></select>
+          </div>
+          <div class="space-y-1.5">
+            <label
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              ><span data-i18n="snippet.link_text_label">Link text</span>
+              <span data-i18n="snippet.link_doc_text_hint" class="font-normal text-gray-400"
+                >(optional, uses default title)</span
+              ></label
+            >
+            <input
+              id="snip-doc-link-text"
+              type="text"
+              placeholder=""
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+
+        <!-- Panel: anchor-link -->
+        <div id="snip-panel-anchor-link" class="hidden space-y-3">
+          <div class="space-y-1.5">
+            <label
+              data-i18n="snippet.link_text_label"
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Link text</label
+            >
+            <input
+              id="snip-anchor-text"
+              type="text"
+              data-i18n-placeholder="snippet.link_section_placeholder"
+              placeholder="View section"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div class="space-y-1.5">
+            <label
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              ><span data-i18n="snippet.link_anchor_label">Anchor</span>
+              <span data-i18n="snippet.link_anchor_select_hint" class="font-normal text-gray-400"
+                >(pick a heading from the document)</span
+              ></label
+            >
+            <select
+              id="snip-anchor-id"
+              onchange="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ></select>
+          </div>
+        </div>
+
+        <!-- Panel: anchor-doc-link -->
+        <div id="snip-panel-anchor-doc-link" class="hidden space-y-3">
+          <div class="space-y-1.5">
+            <label
+              data-i18n="snippet.link_target_doc_label"
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Target document</label
+            >
+            <select
+              id="snip-anchor-doc-select"
+              onchange="snippetAnchorDocChanged()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ></select>
+          </div>
+          <div class="space-y-1.5">
+            <label
+              data-i18n="snippet.link_text_label"
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Link text</label
+            >
+            <input
+              id="snip-anchor-doc-text"
+              type="text"
+              data-i18n-placeholder="snippet.link_section_placeholder"
+              placeholder="View section"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div class="space-y-1.5">
+            <label
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              ><span data-i18n="snippet.link_anchor_label">Anchor</span>
+              <span data-i18n="snippet.link_anchor_select_hint" class="font-normal text-gray-400"
+                >(pick a heading from the document)</span
+              ></label
+            >
+            <select
+              id="snip-anchor-doc-id"
+              onchange="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ></select>
+          </div>
+        </div>
+
+        <!-- Panel: code-block -->
+        <div id="snip-panel-code-block" class="hidden space-y-3">
+          <div class="space-y-1.5">
+            <label
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              ><span data-i18n="snippet.code_lang_label">Language</span>
+              <span data-i18n="snippet.code_lang_hint" class="font-normal text-gray-400"
+                >(e.g. javascript, python, bash…)</span
+              ></label
+            >
+            <input
+              id="snip-code-lang"
+              type="text"
+              placeholder="javascript"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+
+        <!-- Panel: image -->
+        <div id="snip-panel-image" class="hidden space-y-3">
+          <div class="space-y-1.5">
+            <label
+              data-i18n="snippet.image_alt_label"
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Alt text</label
+            >
+            <input
+              id="snip-image-alt"
+              type="text"
+              data-i18n-placeholder="snippet.image_alt_placeholder"
+              placeholder="Image description"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div class="space-y-1.5">
+            <label
+              data-i18n="snippet.image_url_label"
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Image URL</label
+            >
+            <input
+              id="snip-image-url"
+              type="text"
+              data-i18n-placeholder="snippet.image_src_placeholder"
+              placeholder="./images/my-image.png"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+
+        <!-- Panel: table -->
+        <div id="snip-panel-table" class="hidden space-y-3">
+          <div class="flex items-center gap-5">
+            <div class="flex items-center gap-2">
+              <span data-i18n="snippet.table_rows_label" class="text-xs text-gray-500 dark:text-gray-400"
+                >Rows</span
+              >
+              <button
+                onclick="tableChangeRows(-1)"
+                class="text-xs px-2 py-0.5 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                −
+              </button>
+              <span
+                id="snip-table-rows"
+                class="text-xs font-mono w-4 text-center"
+                >3</span
+              >
+              <button
+                onclick="tableChangeRows(1)"
+                class="text-xs px-2 py-0.5 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                +
+              </button>
+            </div>
+            <div class="flex items-center gap-2">
+              <span data-i18n="snippet.table_cols_label" class="text-xs text-gray-500 dark:text-gray-400"
+                >Columns</span
+              >
+              <button
+                onclick="tableChangeCols(-1)"
+                class="text-xs px-2 py-0.5 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                −
+              </button>
+              <span
+                id="snip-table-cols"
+                class="text-xs font-mono w-4 text-center"
+                >3</span
+              >
+              <button
+                onclick="tableChangeCols(1)"
+                class="text-xs px-2 py-0.5 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                +
+              </button>
+            </div>
+          </div>
+          <div id="snip-table-grid" class="overflow-x-auto"></div>
+        </div>
+
+        <!-- Panel: tree -->
+        <div id="snip-panel-tree" class="hidden space-y-2">
+          <p data-i18n="snippet.tree_hint" class="text-xs text-gray-400 dark:text-gray-500">
+            ← → to indent · names with / will be folders
+          </p>
+          <div id="snip-tree-list" class="space-y-1"></div>
+          <button
+            onclick="treeAddItem()"
+            data-i18n="snippet.tree_add_btn"
+            class="text-xs px-3 py-1.5 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors w-full"
+          >
+            + Add item
+          </button>
+        </div>
+
+        <!-- Panel: diagram -->
+        <div id="snip-panel-diagram" class="hidden space-y-3">
+          <!-- Mode toggle -->
+          <div class="flex gap-4 text-sm">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="snip-diag-mode"
+                id="snip-diag-mode-existing"
+                value="existing"
+                checked
+                onchange="snippetDiagModeChanged()"
+              />
+              <span data-i18n="snippet.diagram_existing" class="text-gray-700 dark:text-gray-300"
+                >Existing diagram</span
+              >
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="snip-diag-mode"
+                id="snip-diag-mode-new"
+                value="new"
+                onchange="snippetDiagModeChanged()"
+              />
+              <span data-i18n="snippet.diagram_new" class="text-gray-700 dark:text-gray-300"
+                >New diagram</span
+              >
+            </label>
+          </div>
+          <!-- Existing picker -->
+          <div id="snip-diag-existing-section" class="space-y-1.5">
+            <label
+              data-i18n="snippet.diagram_select_label"
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Select diagram</label
+            >
+            <select
+              id="snip-diag-select"
+              onchange="
+                snippetDiagSyncImgName();
+                snippetUpdatePreview();
+              "
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ></select>
+          </div>
+          <!-- New diagram name -->
+          <div id="snip-diag-new-section" class="hidden space-y-1.5">
+            <label
+              data-i18n="snippet.diagram_name_label"
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Diagram name</label
+            >
+            <input
+              id="snip-diag-new-name"
+              type="text"
+              data-i18n-placeholder="snippet.diagram_name_placeholder"
+              placeholder="Diagram name…"
+              oninput="
+                snippetDiagSyncImgName();
+                snippetUpdatePreview();
+              "
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <!-- Image filename -->
+          <div class="space-y-1.5">
+            <label
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >
+              <span data-i18n="snippet.diag_img_label">Image filename</span>
+              <span data-i18n="snippet.diag_img_saved_hint" class="font-normal text-gray-400"
+                >(saved in ./images/)</span
+              >
+            </label>
+            <input
+              id="snip-diag-img-name"
+              type="text"
+              placeholder="diagram.png"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+
+        <!-- Panel: colored-section -->
+        <div id="snip-panel-colored-section" class="hidden space-y-3">
+          <div class="space-y-1.5">
+            <label
+              data-i18n="snippet.colored_section_color_label"
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Color</label
+            >
+            <div class="flex flex-wrap gap-2">
+              <button
+                type="button"
+                data-color-swatch="info"
+                onclick="colorSectionPickSwatch(this)"
+                data-i18n-title="snippet.colored_section_swatch_info"
+                title="Info (blue)"
+                class="w-7 h-7 rounded-full border-2 border-blue-400 bg-blue-100 ring-2 ring-transparent hover:ring-blue-400 transition-all color-swatch-btn selected-swatch"
+              ></button>
+              <button
+                type="button"
+                data-color-swatch="success"
+                onclick="colorSectionPickSwatch(this)"
+                data-i18n-title="snippet.colored_section_swatch_success"
+                title="Success (green)"
+                class="w-7 h-7 rounded-full border-2 border-green-400 bg-green-100 ring-2 ring-transparent hover:ring-green-400 transition-all color-swatch-btn"
+              ></button>
+              <button
+                type="button"
+                data-color-swatch="warning"
+                onclick="colorSectionPickSwatch(this)"
+                data-i18n-title="snippet.colored_section_swatch_warning"
+                title="Warning (amber)"
+                class="w-7 h-7 rounded-full border-2 border-amber-400 bg-amber-100 ring-2 ring-transparent hover:ring-amber-400 transition-all color-swatch-btn"
+              ></button>
+              <button
+                type="button"
+                data-color-swatch="danger"
+                onclick="colorSectionPickSwatch(this)"
+                data-i18n-title="snippet.colored_section_swatch_danger"
+                title="Danger (red)"
+                class="w-7 h-7 rounded-full border-2 border-red-400 bg-red-100 ring-2 ring-transparent hover:ring-red-400 transition-all color-swatch-btn"
+              ></button>
+              <button
+                type="button"
+                data-color-swatch="note"
+                onclick="colorSectionPickSwatch(this)"
+                data-i18n-title="snippet.colored_section_swatch_note"
+                title="Note (purple)"
+                class="w-7 h-7 rounded-full border-2 border-purple-400 bg-purple-100 ring-2 ring-transparent hover:ring-purple-400 transition-all color-swatch-btn"
+              ></button>
+              <button
+                type="button"
+                data-color-swatch="neutral"
+                onclick="colorSectionPickSwatch(this)"
+                data-i18n-title="snippet.colored_section_swatch_neutral"
+                title="Neutral (gray)"
+                class="w-7 h-7 rounded-full border-2 border-gray-400 bg-gray-100 ring-2 ring-transparent hover:ring-gray-400 transition-all color-swatch-btn"
+              ></button>
+            </div>
+          </div>
+          <div class="space-y-1.5">
+            <label
+              data-i18n="snippet.colored_section_content_label"
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Content</label
+            >
+            <textarea
+              id="snip-colored-content"
+              rows="4"
+              data-i18n-placeholder="snippet.colored_section_content_placeholder"
+              placeholder="Your text here…"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y font-mono"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Panel: colored-text -->
+        <div id="snip-panel-colored-text" class="hidden space-y-3">
+          <div class="space-y-1.5">
+            <label
+              data-i18n="snippet.colored_text_color_label"
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Color</label
+            >
+            <div class="flex flex-wrap gap-2">
+              <button
+                type="button"
+                data-color-text-swatch="info"
+                onclick="colorTextPickSwatch(this)"
+                data-i18n-title="snippet.colored_section_swatch_info"
+                title="Info (blue)"
+                class="w-7 h-7 rounded-full border-2 border-blue-500 bg-blue-500 ring-2 ring-transparent hover:ring-blue-400 transition-all color-text-swatch-btn selected-text-swatch"
+              ></button>
+              <button
+                type="button"
+                data-color-text-swatch="success"
+                onclick="colorTextPickSwatch(this)"
+                data-i18n-title="snippet.colored_section_swatch_success"
+                title="Success (green)"
+                class="w-7 h-7 rounded-full border-2 border-green-500 bg-green-500 ring-2 ring-transparent hover:ring-green-400 transition-all color-text-swatch-btn"
+              ></button>
+              <button
+                type="button"
+                data-color-text-swatch="warning"
+                onclick="colorTextPickSwatch(this)"
+                data-i18n-title="snippet.colored_section_swatch_warning"
+                title="Warning (amber)"
+                class="w-7 h-7 rounded-full border-2 border-amber-500 bg-amber-500 ring-2 ring-transparent hover:ring-amber-400 transition-all color-text-swatch-btn"
+              ></button>
+              <button
+                type="button"
+                data-color-text-swatch="danger"
+                onclick="colorTextPickSwatch(this)"
+                data-i18n-title="snippet.colored_section_swatch_danger"
+                title="Danger (red)"
+                class="w-7 h-7 rounded-full border-2 border-red-500 bg-red-500 ring-2 ring-transparent hover:ring-red-400 transition-all color-text-swatch-btn"
+              ></button>
+              <button
+                type="button"
+                data-color-text-swatch="note"
+                onclick="colorTextPickSwatch(this)"
+                data-i18n-title="snippet.colored_section_swatch_note"
+                title="Note (purple)"
+                class="w-7 h-7 rounded-full border-2 border-purple-500 bg-purple-500 ring-2 ring-transparent hover:ring-purple-400 transition-all color-text-swatch-btn"
+              ></button>
+              <button
+                type="button"
+                data-color-text-swatch="neutral"
+                onclick="colorTextPickSwatch(this)"
+                data-i18n-title="snippet.colored_section_swatch_neutral"
+                title="Neutral (gray)"
+                class="w-7 h-7 rounded-full border-2 border-gray-500 bg-gray-500 ring-2 ring-transparent hover:ring-gray-400 transition-all color-text-swatch-btn"
+              ></button>
+            </div>
+          </div>
+          <div class="space-y-1.5">
+            <label
+              data-i18n="snippet.colored_text_content_label"
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Text</label
+            >
+            <input
+              id="snip-colored-text-content"
+              type="text"
+              data-i18n-placeholder="snippet.colored_text_content_placeholder"
+              placeholder="Your text…"
+              oninput="snippetUpdatePreview()"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+
+        <!-- Panel: emojis -->
+        <div id="snip-panel-emojis" class="hidden space-y-3">
+          <div class="space-y-1.5">
+            <label
+              data-i18n="snippet.emoji_selected_label"
+              class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+              >Selected emojis</label
+            >
+            <div class="flex gap-1">
+              <input
+                id="snip-emoji-string"
+                type="text"
+                oninput="snippetUpdatePreview()"
+                class="flex-1 px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="button"
+                id="snip-emoji-clear"
+                onclick="emojiClear()"
+                data-i18n="snippet.emoji_clear_btn"
+                class="px-3 py-2 text-xs rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >Clear</button>
+            </div>
+          </div>
+          <div class="space-y-1.5">
+            <input
+              id="snip-emoji-search"
+              type="text"
+              data-i18n-placeholder="snippet.emoji_search_placeholder"
+              placeholder="Search emojis… (e.g. heart, star, rocket)"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div
+            id="snip-emoji-grid"
+            class="space-y-2 max-h-64 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg p-2 bg-white dark:bg-gray-900"
+          ></div>
+        </div>
+
+        <!-- Panel: file attachment -->
+        <div id="snip-panel-attachment" class="hidden space-y-3">
+          <div class="rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 px-3 py-3 text-sm text-blue-900 dark:text-blue-100 space-y-2">
+            <p data-i18n-html="snippet.attachment_help">
+              Click <strong>Insert</strong> to choose a file. It will be uploaded under the <code>files/</code> folder and inserted as a <i class="fa-solid fa-paperclip"></i> link in your document.
+            </p>
+            <p data-i18n-html="snippet.attachment_alt" class="text-xs text-blue-700 dark:text-blue-300">
+              Tip: you can also drag &amp; drop a file onto the editor, or paste it from the clipboard.
+            </p>
+          </div>
+        </div>
+
+        <!-- Markdown preview -->
+        <div class="space-y-1.5">
+          <label
+            data-i18n="snippet.markdown_preview_label"
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+            >Markdown preview</label
+          >
+          <pre
+            id="snippet-preview"
+            class="text-xs bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 overflow-x-auto text-gray-700 dark:text-gray-300 whitespace-pre-wrap"
+          ></pre>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-end gap-3 pt-1">
+          <button
+            onclick="closeSnippetsModal()"
+            data-i18n="common.cancel"
+            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onclick="insertSnippet()"
+            data-i18n="snippet.insert_btn"
+            class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+          >
+            Insert
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Image paste confirmation modal ── -->
+    <div
+      id="img-paste-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    >
+      <div
+        class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-sm mx-4 p-6 space-y-5"
+      >
+        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+          🖼️ <span data-i18n="modal.img_paste.title">Paste clipboard image?</span>
+        </h3>
+        <div class="space-y-1.5">
+          <label
+            class="block text-xs font-medium text-gray-500 dark:text-gray-400"
+          >
+            <span data-i18n="modal.img_paste.filename_label">Filename</span>
+            <span data-i18n="modal.img_paste.saved_hint" class="font-normal text-gray-400"
+              >(saved in images/)</span
+            >
+          </label>
+          <div class="flex items-center gap-2">
+            <input
+              id="img-paste-name"
+              type="text"
+              class="flex-1 px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <span
+              id="img-paste-ext"
+              class="text-xs text-gray-400 shrink-0"
+            ></span>
+          </div>
+        </div>
+        <div class="flex justify-end gap-3 pt-1">
+          <button
+            onclick="imgPasteCancel()"
+            data-i18n="common.cancel"
+            class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onclick="imgPasteConfirm()"
+            data-i18n="modal.img_paste.paste_btn"
+            class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+          >
+            Paste
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Marker: post-it creation popup ── -->
+    <div
+      id="stabilo-popup"
+      class="hidden fixed z-50 w-80 bg-yellow-50 dark:bg-yellow-900/80 border-2 border-yellow-300 dark:border-yellow-600 rounded-xl shadow-2xl p-4 flex flex-col gap-3"
+      style="top: 0; left: 0"
+    >
+      <div
+        class="text-xs font-semibold text-yellow-700 dark:text-yellow-300 flex items-center gap-2"
+      >
+        <span>&#9999;</span> <span data-i18n="annotation.title">Annotation</span>
+      </div>
+      <div
+        id="stabilo-selected-preview"
+        class="text-xs text-yellow-800 dark:text-yellow-200 bg-yellow-100 dark:bg-yellow-800/50 rounded px-2 py-1 italic max-h-16 overflow-y-auto border border-yellow-200 dark:border-yellow-700"
+      ></div>
+      <textarea
+        id="stabilo-note-input"
+        rows="4"
+        data-i18n-placeholder="annotation.placeholder"
+        placeholder="Your comment or suggestion…"
+        class="w-full text-sm rounded-lg border border-yellow-300 dark:border-yellow-600 bg-white dark:bg-yellow-950 text-gray-900 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
+      >
+      </textarea>
+      <div class="flex justify-end gap-2">
+        <button
+          onclick="cancelMarkerPopup()"
+          data-i18n="common.cancel"
+          class="text-sm px-3 py-1.5 rounded-lg border border-yellow-300 dark:border-yellow-600 text-yellow-700 dark:text-yellow-300 hover:bg-yellow-100 dark:hover:bg-yellow-800 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          onclick="saveAnnotation()"
+          data-i18n="annotation.save_btn"
+          class="text-sm px-4 py-1.5 rounded-lg bg-yellow-400 hover:bg-yellow-500 dark:bg-yellow-600 dark:hover:bg-yellow-500 text-yellow-900 dark:text-white font-semibold transition-colors"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Marker: read-only post-it hover popup ── -->
+    <div
+      id="stabilo-read-popup"
+      class="hidden fixed z-50 w-80 bg-yellow-50 dark:bg-yellow-900/80 border-2 border-yellow-300 dark:border-yellow-600 rounded-xl shadow-2xl p-4 flex flex-col gap-2 pointer-events-auto"
+      style="top: 0; left: 0"
+    >
+      <div
+        class="text-xs font-semibold text-yellow-700 dark:text-yellow-300 flex items-center gap-2"
+      >
+        <span>&#9999;</span>
+        <span
+          id="stabilo-read-date"
+          class="font-normal text-yellow-600 dark:text-yellow-400"
+        ></span>
+      </div>
+      <div
+        id="stabilo-read-orphan"
+        data-i18n="annotation.orphan"
+        class="hidden text-xs font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 rounded px-2 py-1"
+      ></div>
+      <div
+        id="stabilo-read-text"
+        class="text-sm text-gray-800 dark:text-gray-100 whitespace-pre-wrap max-h-48 overflow-y-auto"
+      ></div>
+      <div
+        class="flex justify-end pt-1 border-t border-yellow-200 dark:border-yellow-700"
+      >
+        <button
+          id="stabilo-delete-btn"
+          data-i18n="annotation.delete_btn"
+          class="text-xs px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-700 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 transition-colors flex items-center gap-1"
+        >
+          🗑 Delete
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Marker: delete confirmation ── -->
+    <div
+      id="stabilo-confirm-delete"
+      class="hidden fixed z-50 w-72 bg-white dark:bg-gray-900 border border-red-200 dark:border-red-700 rounded-xl shadow-2xl p-4 flex flex-col gap-3"
+      style="top: 0; left: 0"
+    >
+      <p data-i18n="annotation.confirm_delete" class="text-sm text-gray-700 dark:text-gray-200">
+        Delete this annotation?
+      </p>
+      <div class="flex justify-end gap-2">
+        <button
+          onclick="cancelDeleteAnnotation()"
+          data-i18n="common.cancel"
+          class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          onclick="confirmDeleteAnnotation()"
+          data-i18n="annotation.confirm_btn"
+          class="text-sm px-4 py-1.5 rounded-lg bg-red-500 hover:bg-red-600 text-white font-semibold transition-colors"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Document: delete confirmation ── -->
+    <div
+      id="doc-confirm-delete"
+      class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+      onclick="cancelDeleteDocument(event)"
+    >
+      <div
+        class="w-full max-w-sm bg-white dark:bg-gray-900 border border-red-200 dark:border-red-700 rounded-xl shadow-2xl p-5 flex flex-col gap-3"
+        onclick="event.stopPropagation()"
+      >
+        <p data-i18n="doc.confirm_delete" class="text-sm text-gray-700 dark:text-gray-200">
+          Permanently delete this document?
+        </p>
+        <p id="doc-confirm-delete-title" class="text-xs text-gray-500 dark:text-gray-400 italic truncate"></p>
+        <div class="flex justify-end gap-2 mt-2">
+          <button
+            onclick="cancelDeleteDocument()"
+            data-i18n="common.cancel"
+            class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onclick="confirmDeleteDocument()"
+            data-i18n="doc.confirm_delete_btn"
+            class="text-sm px-4 py-1.5 rounded-lg bg-red-500 hover:bg-red-600 text-white font-semibold transition-colors"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Marker: right elevator ── -->
+    <div
+      id="stabilo-elevator"
+      class="hidden fixed top-14 right-0 w-10 flex flex-col items-center py-2 gap-2 z-40 overflow-y-auto"
+      style="max-height: calc(100vh - 3.5rem)"
+    ></div>
+
+    <!-- ── Image lightbox overlay ── -->
+    <div
+      id="img-lightbox"
+      class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center cursor-pointer"
+      onclick="closeLightbox()"
+    >
+      <img
+        id="img-lightbox-img"
+        src=""
+        alt=""
+        class="max-w-full max-h-full object-contain select-none"
+        onclick="event.stopPropagation()"
+      />
+      <button
+        onclick="closeLightbox()"
+        class="absolute top-4 right-4 text-white/70 hover:text-white text-2xl leading-none"
+      >
+        &times;
+      </button>
+    </div>
+
+    <!-- ── Word Cloud overlay ── -->
+    <div
+      id="wc-overlay"
+      class="hidden fixed inset-0 z-50 flex flex-col bg-white dark:bg-gray-950"
+    >
+      <div
+        class="flex items-center justify-between px-6 h-14 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0"
+      >
+        <h2 data-i18n="wc.title" class="font-semibold text-base">&#9729; Word Cloud</h2>
+        <button
+          onclick="closeWordCloud()"
+          data-i18n="wc.close_btn"
+          class="text-sm px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        >
+          ✕ Close
+        </button>
+      </div>
+      <!-- Search root toolbar -->
+      <div
+        class="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0"
+      >
+        <!-- Row 1: path + browse + launch -->
+        <div class="flex items-center gap-3 px-6 py-3">
+          <label
+            data-i18n="wc.search_root_label"
+            class="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0"
+            >Search root</label
+          >
+          <input
+            id="wc-root"
+            type="text"
+            readonly
+            spellcheck="false"
+            class="flex-1 px-3 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono cursor-default focus:outline-none"
+          />
+          <button
+            onclick="wcToggleBrowser()"
+            class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shrink-0"
+          >
+            &#128193; <span data-i18n="wc.browse_btn">Browse</span>
+          </button>
+          <button
+            onclick="launchWordCloud()"
+            data-i18n="wc.launch_btn"
+            class="text-sm px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors shrink-0"
+          >
+            &#9654; Launch
+          </button>
+        </div>
+        <!-- Row 1b: exclude folders -->
+        <div class="flex items-start gap-3 px-6 pb-2">
+          <label
+            data-i18n="wc.exclude_label"
+            class="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0 pt-1.5"
+            >Exclude</label
+          >
+          <textarea
+            id="wc-exclude"
+            rows="3"
+            spellcheck="false"
+            data-i18n-placeholder="wc.exclude_placeholder"
+            placeholder="components/ui, package-lock.json  (one per line or comma-separated)"
+            oninput="wcOnExcludeChange()"
+            class="flex-1 px-3 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono focus:outline-none focus:ring-1 focus:ring-blue-400 resize-y"
+          ></textarea>
+          <button
+            onclick="wcToggleExcludeBrowser()"
+            class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shrink-0"
+          >
+            &#128193; <span data-i18n="wc.browse_btn">Browse</span>
+          </button>
+        </div>
+        <!-- Row 1c: exclude browser (collapsed by default) -->
+        <div
+          id="wc-exclude-browser"
+          class="hidden border-t border-gray-200 dark:border-gray-700"
+        >
+          <div
+            class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"
+          >
+            <button
+              id="wc-excl-browse-up"
+              onclick="wcExclBrowseUp()"
+              class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0"
+            >
+              &#8593; Up
+            </button>
+            <span
+              id="wc-excl-browse-path"
+              class="font-mono text-xs text-gray-400 dark:text-gray-500 truncate flex-1 text-right"
+            ></span>
+          </div>
+          <div
+            id="wc-excl-browse-list"
+            class="divide-y divide-gray-100 dark:divide-gray-800 max-h-52 overflow-y-auto"
+          ></div>
+        </div>
+        <!-- Row 2: extension checkboxes -->
+        <div class="flex items-center gap-x-4 gap-y-2 px-6 pb-3 flex-wrap">
+          <span
+            data-i18n="wc.extensions_label"
+            class="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0"
+            >Extensions</span
+          >
+          <button
+            onclick="wcToggleAllExts()"
+            id="wcToggleAllBtn"
+            data-i18n="wc.all_btn"
+            class="text-xs text-blue-600 dark:text-blue-400 hover:underline shrink-0"
+          >
+            All
+          </button>
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="md" checked />
+            .md</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="mdx" /> .mdx</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="txt" /> .txt</label
+          >
+          <span class="text-gray-200 dark:text-gray-700 text-xs">|</span>
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="ts" /> .ts</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="tsx" /> .tsx</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="js" /> .js</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="jsx" /> .jsx</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="mjs" /> .mjs</label
+          >
+          <span class="text-gray-200 dark:text-gray-700 text-xs">|</span>
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="java" /> .java</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="kt" /> .kt</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="py" /> .py</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="go" /> .go</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="rs" /> .rs</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="cs" /> .cs</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="swift" />
+            .swift</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="rb" /> .rb</label
+          >
+          <span class="text-gray-200 dark:text-gray-700 text-xs">|</span>
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="prisma" />
+            .prisma</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="graphql" />
+            .graphql</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="gql" /> .gql</label
+          >
+          <span class="text-gray-200 dark:text-gray-700 text-xs">|</span>
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="html" /> .html</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="css" /> .css</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="scss" /> .scss</label
+          >
+          <span class="text-gray-200 dark:text-gray-700 text-xs">|</span>
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="yml" /> .yml</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="yaml" /> .yaml</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="json" /> .json</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="xml" /> .xml</label
+          >
+          <label
+            class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+            ><input type="checkbox" class="wc-ext" value="toml" /> .toml</label
+          >
+        </div>
+        <!-- Row 3: inline folder browser (collapsed by default) -->
+        <div
+          id="wc-browser"
+          class="hidden border-t border-gray-200 dark:border-gray-700"
+        >
+          <div
+            class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"
+          >
+            <button
+              id="wc-browse-up"
+              onclick="wcBrowseUp()"
+              class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0"
+            >
+              &#8593; Up
+            </button>
+            <span
+              id="wc-browse-path"
+              class="font-mono text-xs text-gray-400 dark:text-gray-500 truncate flex-1 text-right"
+            ></span>
+          </div>
+          <div
+            id="wc-browse-list"
+            class="divide-y divide-gray-100 dark:divide-gray-800 max-h-52 overflow-y-auto"
+          ></div>
+        </div>
+      </div>
+      <div id="wc-body" class="flex-1 overflow-hidden flex">
+        <!-- Left sidebar: stats + controls + top-50 words -->
+        <div
+          id="wc-sidebar"
+          class="hidden w-56 shrink-0 border-r border-gray-200 dark:border-gray-800 flex flex-col bg-white dark:bg-gray-900 overflow-hidden"
+        >
+          <div
+            id="wc-stats"
+            class="px-3 py-2 text-xs text-gray-500 dark:text-gray-400 space-y-0.5 border-b border-gray-100 dark:border-gray-800"
+          ></div>
+          <div
+            class="px-3 py-2 border-b border-gray-100 dark:border-gray-800 flex items-center gap-2"
+          >
+            <span data-i18n="wc.min_files_label" class="text-xs text-gray-500 dark:text-gray-400 shrink-0"
+              >Min files</span
+            >
+            <input
+              id="wc-min-files"
+              type="number"
+              min="1"
+              max="20"
+              value="1"
+              class="w-12 px-1.5 py-0.5 text-xs rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none"
+            />
+            <button
+              onclick="wcApplyFilter()"
+              data-i18n="wc.apply_btn"
+              class="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              Apply
+            </button>
+          </div>
+          <p
+            data-i18n="wc.top_words"
+            class="px-3 pt-2 pb-1 text-xs font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-wider"
+          >
+            Top words
+          </p>
+          <div id="wc-top-list" class="flex-1 overflow-y-auto"></div>
+        </div>
+        <!-- Canvas / status area -->
+        <div id="wc-canvas-wrap" class="flex-1 relative overflow-hidden">
+          <p
+            id="wc-status"
+            class="absolute inset-0 flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm animate-pulse"
+          ></p>
+          <canvas
+            id="wc-canvas"
+            class="hidden"
+            style="position: absolute; inset: 0"
+          ></canvas>
+        </div>
+        <!-- Right detail panel: shown on word click -->
+        <div
+          id="wc-detail"
+          class="hidden w-80 shrink-0 border-l border-gray-200 dark:border-gray-800 flex flex-col bg-white dark:bg-gray-900 overflow-hidden"
+        >
+          <div
+            class="px-3 py-2 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between"
+          >
+            <span
+              id="wc-detail-word"
+              class="font-bold text-sm text-gray-900 dark:text-gray-100"
+            ></span>
+            <button
+              onclick="wcCloseDetail()"
+              class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xs leading-none"
+            >
+              ✕
+            </button>
+          </div>
+          <p
+            data-i18n="wc.found_in"
+            class="px-3 pt-2 pb-1 text-xs font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-wider"
+          >
+            Found in
+          </p>
+          <div
+            id="wc-detail-files"
+            class="flex-1 overflow-y-auto px-3 py-1 space-y-1 text-xs"
+          ></div>
+        </div>
+      </div>
+    </div>
+    <!-- All inline logic extracted to modules under src/frontend/*.js -->
+
+    <!-- ── Export modal (Markdown / HTML / PDF) ────────────────────────────── -->
+    <div
+      id="export-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    >
+      <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-sm mx-4 p-6 space-y-4">
+        <!-- Title -->
+        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">
+          <i class="fa-solid fa-file-export mr-2 text-blue-500"></i>
+          <span data-i18n="modal.export.title">Export</span>
+        </h3>
+
+        <!-- Tabs -->
+        <div class="flex gap-0 border-b border-gray-200 dark:border-gray-700">
+          <button
+            id="export-tab-markdown"
+            onclick="switchExportTab('markdown')"
+            data-i18n="modal.export.tab_markdown"
+            class="px-4 py-2 text-sm border-b-2 border-blue-500 text-blue-600 dark:text-blue-400 font-semibold transition-colors"
+          >Markdown</button>
+          <button
+            id="export-tab-html"
+            onclick="switchExportTab('html')"
+            data-i18n="modal.export.tab_html"
+            class="px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+          >HTML</button>
+          <button
+            id="export-tab-pdf"
+            onclick="switchExportTab('pdf')"
+            data-i18n="modal.export.tab_pdf"
+            class="px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+          >PDF</button>
+        </div>
+
+        <!-- Folder list (html tab only) -->
+        <div id="export-folder-section" class="hidden">
+          <div
+            id="export-folder-list"
+            class="max-h-48 overflow-y-auto space-y-0.5 border border-gray-200 dark:border-gray-700 rounded-lg p-2"
+          ></div>
+        </div>
+
+        <!-- Markdown tab content -->
+        <div id="export-content-markdown">
+          <p class="text-xs text-gray-500 dark:text-gray-400" data-i18n="modal.export.markdown_hint">
+            Export all documents and images as Markdown files, with internal links rewritten to relative paths.
+          </p>
+          <div class="flex justify-end gap-3 pt-2">
+            <button
+              onclick="closeExportModal()"
+              data-i18n="common.cancel"
+              class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            >Cancel</button>
+            <button
+              id="export-md-btn"
+              onclick="exportMarkdown()"
+              data-i18n="modal.export.markdown_btn"
+              class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+            >Export Markdown</button>
+          </div>
+        </div>
+
+        <!-- HTML tab content -->
+        <div id="export-content-html" class="hidden">
+          <p class="text-xs text-gray-500 dark:text-gray-400" data-i18n="modal.export_html.hint">
+            Select the folders to include in the ZIP archive.
+          </p>
+          <div class="flex justify-end gap-3 pt-2">
+            <button
+              onclick="closeExportModal()"
+              data-i18n="common.cancel"
+              class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            >Cancel</button>
+            <button
+              id="export-notion-btn"
+              onclick="exportHtml('notion')"
+              data-i18n="modal.export_html.notion_btn"
+              class="text-sm px-4 py-2 rounded-lg border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-semibold transition-colors"
+            >Export Notion</button>
+            <button
+              id="export-confluence-btn"
+              onclick="exportHtml('confluence')"
+              data-i18n="modal.export_html.confluence_btn"
+              class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+            >Export Confluence</button>
+          </div>
+        </div>
+
+        <!-- PDF tab content -->
+        <div id="export-content-pdf" class="hidden">
+          <p class="text-xs text-gray-500 dark:text-gray-400" data-i18n="modal.export.pdf_hint">
+            Export all documents as a single PDF with table of contents.
+          </p>
+          <div class="flex justify-end gap-3 pt-2">
+            <button
+              onclick="closeExportModal()"
+              data-i18n="common.cancel"
+              class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            >Cancel</button>
+            <button
+              id="export-pdf-btn"
+              onclick="exportAllPdfFromModal()"
+              data-i18n="modal.export.pdf_btn"
+              class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+            >Export all PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Generic confirmation modal (used by showConfirm) ── -->
+    <div
+      id="confirm-modal"
+      class="hidden fixed inset-0 z-[60] bg-black/50 flex items-center justify-center p-4"
+      onclick="_confirmModalBackdrop(event)"
+    >
+      <div
+        class="w-full max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl p-5 flex flex-col gap-3"
+        onclick="event.stopPropagation()"
+      >
+        <h3 id="confirm-modal-title" class="font-semibold text-gray-900 dark:text-gray-100"></h3>
+        <p id="confirm-modal-message" class="text-sm text-gray-700 dark:text-gray-200"></p>
+        <p id="confirm-modal-detail" class="text-xs text-gray-500 dark:text-gray-400 italic break-all"></p>
+        <div class="flex justify-end gap-2 mt-2">
+          <button
+            id="confirm-modal-cancel"
+            type="button"
+            class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          ></button>
+          <button
+            id="confirm-modal-ok"
+            type="button"
+            class="text-sm px-4 py-1.5 rounded-lg text-white font-semibold transition-colors"
+          ></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Files modal ── -->
+    <div
+      id="files-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+      onclick="if(event.target===this)closeFilesModal()"
+    >
+      <div
+        class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-[min(720px,92vw)] max-h-[85vh] flex flex-col border border-gray-200 dark:border-gray-800"
+      >
+        <div
+          class="flex items-center justify-between px-5 py-3 border-b border-gray-200 dark:border-gray-800 shrink-0"
+        >
+          <h2 data-i18n="files.title" class="font-semibold text-base text-gray-900 dark:text-gray-100">
+            &#128193; Files
+          </h2>
+          <button
+            onclick="closeFilesModal()"
+            data-i18n-title="common.close"
+            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xl leading-none px-2"
+          >
+            &times;
+          </button>
+        </div>
+        <div id="files-modal-body" class="flex-1 overflow-y-auto p-5">
+          <p class="text-sm text-gray-400" data-i18n="common.loading">Loading…</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
