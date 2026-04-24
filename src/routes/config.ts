@@ -55,17 +55,23 @@ export function configRouter(docsPath: string): Router {
       if ('language' in safe && !['en', 'fr'].includes(safe.language as string)) {
         delete (safe as Record<string, unknown>).language;
       }
-      // diagramNodePalette / diagramEdgePalette: null or array of strings
+      // diagramNodePalette / diagramEdgePalette: null or array of strings.
+      // Must drop invalid values explicitly — the initial allowed-key loop copied the raw
+      // value into `safe`, and silence without a delete would persist garbage (e.g. a string).
       if ('diagramNodePalette' in patch) {
         const v = patch.diagramNodePalette;
         if (v === null || (Array.isArray(v) && v.every((s) => typeof s === 'string'))) {
           safe.diagramNodePalette = v as string[] | null;
+        } else {
+          delete (safe as Record<string, unknown>).diagramNodePalette;
         }
       }
       if ('diagramEdgePalette' in patch) {
         const v = patch.diagramEdgePalette;
         if (v === null || (Array.isArray(v) && v.every((s) => typeof s === 'string'))) {
           safe.diagramEdgePalette = v as string[] | null;
+        } else {
+          delete (safe as Record<string, unknown>).diagramEdgePalette;
         }
       }
       // sourceRoot: null or a RELATIVE path (relative to docsFolder). Absolute paths are rejected

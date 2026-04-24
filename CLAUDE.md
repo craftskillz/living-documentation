@@ -344,6 +344,12 @@ End-to-end suite lives under `tests/`. Each test spawns a **real CLI child proce
 
 When adding tests that need a specific pre-state, create a new folder under `tests/fixtures/` rather than mutating an existing one — fixtures are meant to be reusable across multiple tests.
 
+### Coverage strategy — prefer server spawn over direct dist imports
+
+**Pitfall**: importing a compiled module into a Playwright spec file (`import { foo } from '../../dist/src/lib/foo'`) works at runtime but **breaks V8 coverage attribution** for that module's branches. Tests pass, assertions succeed, yet c8 reports 0 executions on non-happy-path lines. Root cause: Playwright's TS transform layer for spec files masks the `dist/` file's URL from V8's coverage tracker. Empirically confirmed in the 2026-04-24 testing session — `parser.ts` stalled at 72% via unit-spec imports, jumped to **100%** when the same logic was exercised via a spawned CLI + fixture.
+
+**Rule**: to boost coverage on `src/lib/*` or any module, **spawn the server and exercise the module through the route that calls it** (e.g. `parseFilename` via `GET /api/documents` with a fixture whose filenames hit each branch). Existing `tests/unit/*.spec.ts` files are kept for correctness/readability even though they don't contribute to coverage numbers. A standalone `node` script does record coverage correctly — it's specifically the Playwright spec loader that interferes.
+
 ---
 
 ## npm package

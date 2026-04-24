@@ -154,3 +154,56 @@ test('GET /api/documents/file-counts returns attachment counts per doc', async (
   expect(introKey).toBeDefined();
   expect(counts[introKey!]).toBe(1);
 });
+
+test('POST /api/documents returns 409 when a document with that slug already exists', async ({
+  request,
+  ld,
+}) => {
+  const first = await request.post(`${ld.baseURL}/api/documents`, {
+    data: { title: 'Same Title', category: 'GENERAL' },
+  });
+  expect(first.ok()).toBe(true);
+  const second = await request.post(`${ld.baseURL}/api/documents`, {
+    data: { title: 'Same Title', category: 'GENERAL' },
+  });
+  expect(second.status()).toBe(409);
+});
+
+test('POST /api/documents creates the target subfolder when it does not exist yet', async ({
+  request,
+  ld,
+}) => {
+  const res = await request.post(`${ld.baseURL}/api/documents`, {
+    data: { title: 'Nested', category: 'GENERAL', folder: 'deep/nested' },
+  });
+  expect(res.ok()).toBe(true);
+  expect(fs.existsSync(path.join(ld.docsAbs, 'deep', 'nested'))).toBe(true);
+  const files = fs.readdirSync(path.join(ld.docsAbs, 'deep', 'nested'));
+  expect(files.some((f) => f.includes('nested.md'))).toBe(true);
+});
+
+test('DELETE /api/documents/:id also removes matching annotations from .annotations.json', async ({
+  request,
+  ld,
+}) => {
+  const docId = '2026_01_01_10_00_[General]_intro';
+  // Pre-populate annotations store with an entry for this doc.
+  fs.writeFileSync(
+    path.join(ld.docsAbs, '.annotations.json'),
+    JSON.stringify({
+      [docId]: [{ id: 'a1', selectedText: 't', contextBefore: '', contextAfter: '', note: 'n', createdAt: '' }],
+      'other-doc': [{ id: 'a2', selectedText: 't', contextBefore: '', contextAfter: '', note: 'keep', createdAt: '' }],
+    }),
+  );
+
+  const res = await request.delete(
+    `${ld.baseURL}/api/documents/${encodeURIComponent(docId)}`,
+  );
+  expect(res.ok()).toBe(true);
+
+  const store = JSON.parse(
+    fs.readFileSync(path.join(ld.docsAbs, '.annotations.json'), 'utf-8'),
+  );
+  expect(store[docId]).toBeUndefined();
+  expect(store['other-doc']).toBeDefined(); // untouched
+});

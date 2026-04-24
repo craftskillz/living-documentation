@@ -20,13 +20,15 @@ export interface SpawnOptions {
   cwd: string;
   docsArg: string;
   port: number;
+  extraArgs?: string[];
 }
 
 // Start the built CLI as a child process; resolve once the server prints its boot banner.
 // The child inherits stdout/stderr capture so test failures include server logs.
 export async function spawnLD(opts: SpawnOptions): Promise<ChildProcess> {
   const cliPath = path.resolve(__dirname, '../../dist/bin/cli.js');
-  const proc = spawn('node', [cliPath, opts.docsArg, '--port', String(opts.port)], {
+  const args = [cliPath, opts.docsArg, '--port', String(opts.port), ...(opts.extraArgs ?? [])];
+  const proc = spawn('node', args, {
     cwd: opts.cwd,
     stdio: ['ignore', 'pipe', 'pipe'],
     env: coverageEnv({ NODE_ENV: 'test' }),

@@ -36,6 +36,8 @@ async function initialize(request: APIRequestContext, baseURL: string): Promise<
 }
 
 // Call an MCP tool and return the parsed tool-result content as either JSON or raw text.
+// When the tool signals an error (either via JSON-RPC envelope or the SDK's `isError: true`
+// content-wrapper), the promise rejects with the server-side error message.
 export async function callTool<T = unknown>(
   request: APIRequestContext,
   baseURL: string,
@@ -48,7 +50,14 @@ export async function callTool<T = unknown>(
     arguments: args,
   });
   if (envelope.error) throw new Error(`MCP tool error: ${JSON.stringify(envelope.error)}`);
-  const textContent = envelope.result.content[0].text as string;
+  const result = envelope.result;
+  const textContent = result.content?.[0]?.text as string | undefined;
+  if (result.isError) {
+    throw new Error(textContent ?? 'MCP tool error');
+  }
+  if (typeof textContent !== 'string') {
+    throw new Error(`Unexpected MCP result shape: ${JSON.stringify(result)}`);
+  }
   try {
     return JSON.parse(textContent) as T;
   } catch {

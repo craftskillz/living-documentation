@@ -17,7 +17,7 @@
     "test": "npm run test:e2e",
     "test:e2e": "npm run build && playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:coverage": "rm -rf coverage && npm run build && COVERAGE=1 playwright test && c8 report",
+    "test:coverage": "rm -rf coverage && npm run build && mkdir -p coverage/tmp && COVERAGE=1 NODE_V8_COVERAGE=coverage/tmp playwright test && c8 report",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
