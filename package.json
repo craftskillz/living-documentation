@@ -1,6 +1,6 @@
 {
   "name": "living-documentation",
-  "version": "7.25.0",
+  "version": "7.26.0",
   "description": "A CLI tool that serves a local Markdown documentation viewer",
   "main": "dist/src/server.js",
   "bin": {
