@@ -109,19 +109,24 @@ Documents are sorted by **full filename** (ascending `localeCompare`) within eac
 
 ## Config
 
-Persisted as `.living-doc.json` inside the docs folder.
-Editable fields via `PUT /api/config`: `title`, `theme`, `filenamePattern`, `extraFiles`, `showDiagramDebug`, `sourceRoot`, `blockedFileExtensions`.
-`docsFolder` and `port` are write-once from CLI and are informational only in the API.
+Persisted as `.living-doc.json` inside the docs folder. **All stored paths are relative to the docs folder** (POSIX slashes) so the file can be checked into git and shared across machines. Absolute paths are rejected by the CLI, by `PUT /api/config`, and by the Admin panel. Legacy configs with absolute paths are silently migrated to relative on first read (one-time `[living-doc]` console warnings are printed).
 
-`sourceRoot` (string|null, default: parent directory of `docsFolder`, auto-filled on first run) — absolute path used by the MCP source tools (`list_source_files`, `read_source_file`, `search_source`). Keeps the MCP server able to read the project source when the docs folder sits inside a larger repo.
+`src/lib/config.ts` exposes two shapes:
+- `StoredConfig` — what is serialised to disk (relative paths; no `docsFolder` field).
+- `LivingDocConfig` — what `readConfig()` returns to the rest of the app (absolute `sourceRoot`, `extraFiles`, and `docsFolder`, all resolved at runtime from the storage form).
+
+Editable fields via `PUT /api/config`: `title`, `theme`, `language`, `filenamePattern`, `extraFiles`, `showDiagramDebug`, `sourceRoot`, `diagramNodePalette`, `diagramEdgePalette`, `blockedFileExtensions`, `exclusiveFolderExpansion`, `exclusiveCategoryExpansion`, `codeBlockMaxHeight`, `markdownSoftBreaks`.
+`port` is write-once from CLI and is informational only. `docsFolder` is runtime-only (resolved from the CLI argument) and never persisted — the CLI requires a relative folder argument (e.g. `npx living-documentation ./mydocs`); absolute or `~`-prefixed paths are rejected at startup.
+
+`sourceRoot` (stored: `string|null` relative to docs folder, default `null` → runtime resolves to `..`) — once resolved to an absolute path, this is used by the MCP source tools (`list_source_files`, `read_source_file`, `search_source`) and the metadata picker. Keeps the MCP server able to read the project source when the docs folder sits inside a larger repo.
 
 `showDiagramDebug` (bool, default `false`) — when `true`, a "dbg" button appears in the diagram editor top bar that toggles a DOM debug overlay showing each node's position and dimensions. Toggled from the Admin panel.
 
 ### extraFiles
 
-An ordered array of absolute paths to `.md` files outside the docs folder.
+An ordered array of **paths relative to the docs folder** pointing to `.md` files outside it (e.g. `"../README.md"`).
 These files are always shown under the **General** category, before regular General documents.
-Validated on write: must be absolute paths ending in `.md`.
+Validated on write: entries must be relative paths ending in `.md`; absolute or `~`-prefixed paths return HTTP 400. At runtime `readConfig()` resolves each entry to an absolute path so downstream code (routes, MCP tools, export) keeps manipulating absolute paths.
 
 ## Frontend
 

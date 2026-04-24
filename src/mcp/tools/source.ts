@@ -26,20 +26,15 @@ const DEFAULT_MAX_SEARCH_RESULTS = 200;
 const MAX_FILE_BYTES             = 512 * 1024; // 512 KB
 
 function resolveSourceRoot(docsPath: string): string {
-  const { sourceRoot } = readConfig(docsPath);
-  // sourceRoot is initialised at server startup to the parent of docsPath
-  // when absent; users can override it via the admin panel / PUT /api/config.
-  const resolved =
-    sourceRoot && path.isAbsolute(sourceRoot)
-      ? sourceRoot
-      : path.dirname(path.resolve(docsPath));
+  // readConfig always returns sourceRoot as an absolute path (resolved from storage).
+  const resolved = readConfig(docsPath).sourceRoot;
   if (!fs.existsSync(resolved)) {
     throw new Error(
       `sourceRoot "${resolved}" does not exist. ` +
       `Update it in .living-doc.json or via PUT /api/config.`,
     );
   }
-  return path.resolve(resolved);
+  return resolved;
 }
 
 function safeResolve(root: string, rel: string): string {

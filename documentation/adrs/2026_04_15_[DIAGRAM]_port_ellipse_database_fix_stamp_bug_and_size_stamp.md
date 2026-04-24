@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_15_[DIAGRAM]_port_ellipse_database_fix_stamp_bug_and_size_stamp.md`
 **date:** 2026-04-15
-**status:** Validated
+**status:** Accepted
 **description:** Fix port positions for ellipse (H forced to W only for circle) and database (dedicated PORT_OFFSETS_DATABASE with diagonals at wall edge), fix stamp crash caused by missing btnStampRotation element, and add a third size stamp to copy nodeWidth/nodeHeight between shapes.
 **tags:** diagram, ports, ellipse, database, cylinder, port-offsets, CIRCULAR_SHAPES, stamp, color-stamp, font-stamp, size-stamp, btnStampRotation, btnStampSize, applyStamp, STAMP_BTNS, getNodeAtDOMPoint, nodeWidth, nodeHeight
 ---

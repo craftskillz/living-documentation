@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_08_12_20_[FILENAME]_datetime_precision_in_filename_pattern.md`
 **date:** 2026-04-08
-**status:** Validated
+**status:** Accepted
 **description:** Extend the default filename pattern from YYYY_MM_DD to YYYY_MM_DD_HH_mm to allow multiple documents per day to coexist without naming conflicts, while preserving backward compatibility with existing YYYY_MM_DD files.
 **tags:** filename, pattern, datetime, parser, config, backward-compatibility, HH, mm, date, documents
 ---

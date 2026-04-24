@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_14_[DIAGRAM]_Undo_Redo_History_Snapshot_Based.md`
 **date:** 2026-04-14
-**status:** Validated
+**status:** Accepted
 **description:** Add in-session undo/redo (Cmd+Z / Cmd+Shift+Z) to the diagram editor via a snapshot-based history module (history.js) that captures semantic node/edge state before every mutating action, with a max stack of 50 entries reset on diagram switch.
 **tags:** diagram, undo, redo, history, snapshot, history.js, pushSnapshot, resetHistory, Cmd+Z, Cmd+Shift+Z, keyboard, state, vis-network, DataSet
 ---

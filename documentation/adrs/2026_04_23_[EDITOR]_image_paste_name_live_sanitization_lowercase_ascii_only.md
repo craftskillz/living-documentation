@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_23_[EDITOR]_image_paste_name_live_sanitization_lowercase_ascii_only.md`
 **date:** 2026-04-23
-**status:** Validated
+**status:** Accepted
 **description:** When the user pastes an image in the markdown editor, sanitize the proposed image filename live as they type — NFD-decompose diacritics so `é → e` / `à → a` / `ç → c`, lowercase everything, and replace any non `[a-z0-9]` character by `_`. The caret position is preserved because the sanitizer is length-preserving, and a final safety pass runs on confirm in case the DOM was bypassed.
 **tags:** editor, image-paste, clipboard, filename, sanitization, slug, diacritics, nfd, normalize, ascii, lowercase, input-filter, ux, frontend, images-upload
 ---

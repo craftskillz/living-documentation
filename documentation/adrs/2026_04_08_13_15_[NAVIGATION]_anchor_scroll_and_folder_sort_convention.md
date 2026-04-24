@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_08_13_15_[NAVIGATION]_anchor_scroll_and_folder_sort_convention.md`
 **date:** 2026-04-08
-**status:** Validated
+**status:** Accepted
 **description:** Auto-generate heading IDs after async document render to enable in-page anchor scroll; introduce a numeric prefix convention (1_NAME) for controlling folder sort order in the sidebar while hiding the prefix in the UI.
 **tags:** navigation, anchor, heading, scroll, sidebar, folder, sort, convention, prefix, frontend, marked, breadcrumbs
 ---

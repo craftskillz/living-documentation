@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_08_13_00_[EDITOR]_markdown_snippet_inserter_with_detection.md`
 **date:** 2026-04-08
-**status:** Validated
+**status:** Accepted
 **description:** Add a 🧩 Snippets button in edit mode that opens a modal for inserting pre-built Markdown constructs at cursor position, with automatic detection and pre-filling when an existing snippet is selected in the editor.
 **tags:** editor, snippet, modal, markdown, table, tree, detection, frontend, inline-editing, clipboard
 ---

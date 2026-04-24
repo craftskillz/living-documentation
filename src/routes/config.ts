@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import path from 'path';
-import { readConfig, writeConfig, LivingDocConfig } from '../lib/config';
+import { readConfig, writeConfig, StoredConfig } from '../lib/config';
 
 export function configRouter(docsPath: string): Router {
   const router = Router();
@@ -17,9 +17,9 @@ export function configRouter(docsPath: string): Router {
   // PUT /api/config
   router.put('/', (req: Request, res: Response) => {
     try {
-      const patch = req.body as Partial<LivingDocConfig>;
+      const patch = req.body as Partial<StoredConfig>;
       // Only allow safe fields — prevent path traversal via config
-      const allowed: (keyof LivingDocConfig)[] = [
+      const allowed: (keyof StoredConfig)[] = [
         'title',
         'filenamePattern',
         'theme',
@@ -28,13 +28,14 @@ export function configRouter(docsPath: string): Router {
         'diagramNodePalette',
         'diagramEdgePalette',
         'sourceRoot',
+        'extraFiles',
         'blockedFileExtensions',
         'exclusiveFolderExpansion',
         'exclusiveCategoryExpansion',
         'codeBlockMaxHeight',
         'markdownSoftBreaks',
       ];
-      const safe: Partial<LivingDocConfig> = {};
+      const safe: Partial<StoredConfig> = {};
       for (const key of allowed) {
         if (key in patch) {
           (safe as Record<string, unknown>)[key] = patch[key];
@@ -67,15 +68,16 @@ export function configRouter(docsPath: string): Router {
           safe.diagramEdgePalette = v as string[] | null;
         }
       }
-      // sourceRoot: null or absolute directory path that exists
+      // sourceRoot: null or a RELATIVE path (relative to docsFolder). Absolute paths are rejected
+      // so .living-doc.json stays portable across machines.
       if ('sourceRoot' in patch) {
         const v = patch.sourceRoot;
         if (v === null || v === '') {
           safe.sourceRoot = null;
-        } else if (typeof v === 'string' && path.isAbsolute(v)) {
+        } else if (typeof v === 'string' && !path.isAbsolute(v) && !v.startsWith('~')) {
           safe.sourceRoot = v;
         } else {
-          return res.status(400).json({ error: 'sourceRoot must be an absolute path or null' });
+          return res.status(400).json({ error: 'sourceRoot must be a relative path or null' });
         }
       }
       // blockedFileExtensions: array of extension strings (without leading dot), lowercase
@@ -99,14 +101,19 @@ export function configRouter(docsPath: string): Router {
           return res.status(400).json({ error: 'codeBlockMaxHeight must be a non-negative number' });
         }
       }
-      // extraFiles: only absolute .md paths
+      // extraFiles: only RELATIVE .md paths (relative to docsFolder). Absolute entries are rejected.
       if ('extraFiles' in patch && Array.isArray(patch.extraFiles)) {
-        safe.extraFiles = (patch.extraFiles as unknown[]).filter(
-          (f): f is string =>
-            typeof f === 'string' &&
-            path.isAbsolute(f) &&
-            f.toLowerCase().endsWith('.md'),
-        );
+        const entries = patch.extraFiles as unknown[];
+        const valid: string[] = [];
+        for (const f of entries) {
+          if (typeof f !== 'string') continue;
+          if (path.isAbsolute(f) || f.startsWith('~')) {
+            return res.status(400).json({ error: 'extraFiles entries must be relative paths' });
+          }
+          if (!f.toLowerCase().endsWith('.md')) continue;
+          valid.push(f);
+        }
+        safe.extraFiles = valid;
       }
       const updated = writeConfig(docsPath, safe);
       res.json(updated);

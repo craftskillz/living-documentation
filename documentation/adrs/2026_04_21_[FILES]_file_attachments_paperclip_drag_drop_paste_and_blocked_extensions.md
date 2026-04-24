@@ -1,6 +1,6 @@
 ---
 date: 2026-04-21
-status: Validated
+status: Accepted
 description: Add a file attachment feature to the Markdown editor (non-image files) — base64 upload, drag-drop / paste / file-picker entry points, paperclip decoration at render time, configurable blocked extensions and 19 MB cap.
 tags: files, attachments, upload, paperclip, drag-drop, paste, base64, blocked-extensions, admin-config, security, documents, rendering, i18n
 ---
@@ -34,7 +34,7 @@ Constraints expressed by the user:
   3. `openFilePicker()` invoked from the 📎 snippet — opens the OS file picker.
      The module inserts a `[📎 uploading…](…)` placeholder at the caret, uploads via `POST /api/files/upload`, then replaces the placeholder by `[📎 <originalName>](./files/<filename>)`. Size guard mirrors the server (19 MB).
 - **Snippet integration** in `snippets.js` + `index.html`: a new `attachment` option in the snippet picker with a help panel; clicking **Insert** calls `openFilePicker()` and closes the modal (no preview needed).
-- **Admin panel** (`admin.html`): a new "File Attachments" section with a `#field-blocked-extensions` textarea (space / comma / newline separated, leading dots stripped, `/^[a-z0-9]+$/` validated before `PUT /api/config`).
+- **Admin panel** (`admin.html`): a new "File Attachments" section with a `#field-blocked-extensions` textarea (space / comma / newline separated, leading dots stripped, `/^[a-z0-9]+$/` Accepted before `PUT /api/config`).
 - **CSS** for `.ld-file-attachment` (purple pill, hover state, dark-mode variant) in `index.html`.
 - **i18n keys** added to both `en.json` and `fr.json`: `doc.uploading_file`, `doc.file_upload_failed`, `doc.file_too_large`, `snippet.attachment`, `snippet.attachment_help`, `snippet.attachment_alt`, `admin.files.title`, `admin.files.description`, `admin.files.blocked_label`, `admin.files.hint`.
 

@@ -65,6 +65,8 @@ npx living-documentation ./path/to/docs
 
 Then open [http://localhost:4321](http://localhost:4321).
 
+> **The folder argument must be a relative path** (`./docs`, `../shared/docs`, etc.). Absolute paths (`/abs/...`) and `~`-prefixed paths are rejected at startup so the generated `.living-doc.json` stays portable across machines and can be committed to git.
+
 ---
 
 ## Installation
@@ -191,31 +193,37 @@ A `.living-doc.json` file is created automatically in your docs folder on first 
 
 ```json
 {
-  "docsFolder": "/absolute/path/to/docs",
   "filenamePattern": "YYYY_MM_DD_HH_mm_[Category]_title",
   "title": "Living Documentation",
   "theme": "system",
   "port": 4321,
-  "extraFiles": []
+  "extraFiles": [],
+  "sourceRoot": null
 }
 ```
 
-You can edit it manually or use the **Admin panel** at [http://localhost:4321/admin](http://localhost:4321/admin).
+All paths stored in this file are **relative to the docs folder** (POSIX slashes), so you can commit `.living-doc.json` to git and share it across machines. The CLI, the API, and the admin panel all reject absolute paths. If you upgrade from an older version whose config contains absolute paths, they are silently migrated to relative on the first read — a one-time `[living-doc] Migrating …` message is printed to the console.
+
+You can edit this file manually or use the **Admin panel** at [http://localhost:4321/admin](http://localhost:4321/admin).
 
 ### Extra files
 
-The `extraFiles` field accepts an ordered list of absolute paths to `.md` files located **outside** the docs folder. These files always appear in the **General** section, before regular General documents, in the order defined.
+The `extraFiles` field accepts an ordered list of **paths relative to the docs folder** pointing to `.md` files located **outside** it. These files always appear in the **General** section, before regular General documents, in the order defined.
 
 ```json
 {
   "extraFiles": [
-    "/path/to/project/README.md",
-    "/path/to/project/CLAUDE.md"
+    "../README.md",
+    "../CLAUDE.md"
   ]
 }
 ```
 
-Use the Admin panel's **General — Extra Files** section to browse the filesystem and manage this list without editing the config manually.
+Use the Admin panel's **General — Extra Files** section to browse the filesystem and manage this list without editing the config manually — it stores relative paths automatically.
+
+### Source root
+
+The `sourceRoot` field (relative path, or `null` to default to the docs-folder parent, e.g. `".."`) tells the MCP source tools (`list_source_files`, `read_source_file`, `search_source`) and the metadata picker where your project's source code lives relative to the docs folder. Set it to `"../src"` or similar if your source is nested differently.
 
 ---
 

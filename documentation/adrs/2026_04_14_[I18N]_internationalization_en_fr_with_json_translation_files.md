@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_14_[I18N]_internationalization_en_fr_with_json_translation_files.md`
 **date:** 2026-04-14
-**status:** Validated
+**status:** Accepted
 **description:** Add full internationalization support to all three pages (index.html, admin.html, diagram.html) via a shared i18n.js loader, two JSON translation files (en.json, fr.json), and four data attributes (data-i18n, data-i18n-title, data-i18n-placeholder, data-i18n-html). Language is persisted in config as "en" | "fr" and selected from the Admin panel. Updated 2026-04-22: dynamically rendered content must await initI18n before its first render to avoid raw keys being displayed (diagram sidebar bootstrap fix).
 **tags:** i18n, internationalization, language, translation, en, fr, json, data-i18n, i18n.js, config, admin, frontend, index, diagram, window.t, applyI18n, initI18n, bootstrap, loadDiagramList, dynamic-rendering
 ---
@@ -50,7 +50,7 @@ HTML elements keep their original English text as a pre-`applyI18n` fallback, so
 
 ### Config field
 
-`language: "en" | "fr"` added to `LivingDocConfig` with default `"en"`. Validated server-side in `PUT /api/config` — only `"en"` and `"fr"` are accepted, any other value is silently dropped.
+`language: "en" | "fr"` added to `LivingDocConfig` with default `"en"`. Accepted server-side in `PUT /api/config` — only `"en"` and `"fr"` are accepted, any other value is silently dropped.
 
 ### Admin panel selector
 

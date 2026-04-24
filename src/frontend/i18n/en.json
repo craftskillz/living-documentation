@@ -306,7 +306,7 @@
   "admin.server_info.docs_folder": "Docs Folder",
   "admin.server_info.port": "Port",
   "admin.server_info.source_root": "Source Root",
-  "admin.server_info.source_root_hint": "Absolute path used by MCP source tools. Defaults to the parent of Docs Folder when empty.",
+  "admin.server_info.source_root_hint": "Path relative to the docs folder (e.g. \"..\" or \"../src\"). Used by MCP source tools. Leave empty to default to the parent directory.",
 
   "admin.config.title": "Configuration",
   "admin.config.description": "Settings are saved to .living-doc.json in your docs folder.",
@@ -396,6 +396,7 @@
   "admin.msg.load_failed": "Failed to load config.",
   "admin.msg.pattern_no_category": "Filename pattern must contain [Category]",
   "admin.msg.pattern_one_category": "Filename pattern must contain [Category] exactly once",
+  "admin.msg.source_root_absolute": "Source Root must be a relative path (e.g. \"..\" or \"../src\"). Absolute paths are not allowed.",
 
   "diagram.back_btn": "← Back",
   "diagram.diagrams_list_title": "My diagrams",

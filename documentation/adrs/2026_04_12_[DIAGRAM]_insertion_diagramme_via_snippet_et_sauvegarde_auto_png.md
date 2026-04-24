@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_12_[DIAGRAM]_insertion_diagramme_via_snippet_et_sauvegarde_auto_png.md`
 **date:** 2026-04-12
-**status:** Validated
+**status:** Accepted
 **description:** Déplacer l'insertion d'un lien diagramme du bouton standalone en mode lecture vers une entrée "Diagramme" dans la modale Snippets (mode édition), avec auto-save du document et redirection vers l'éditeur de diagramme ; et enregistrement automatique du PNG dans images/ à la place du clipboard lorsqu'on arrive via ce flux.
 **tags:** diagram, snippet, modal, editor, png, clipboard, auto-save, image-upload, url-param, frontend, inline-editing
 ---

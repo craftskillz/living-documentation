@@ -306,7 +306,7 @@
   "admin.server_info.docs_folder": "Dossier docs",
   "admin.server_info.port": "Port",
   "admin.server_info.source_root": "Racine des sources",
-  "admin.server_info.source_root_hint": "Chemin absolu utilisé par les outils MCP de lecture du code source. Par défaut, le dossier parent du dossier docs si vide.",
+  "admin.server_info.source_root_hint": "Chemin relatif au dossier docs (ex. \"..\" ou \"../src\"). Utilisé par les outils MCP de lecture du code source. Laisser vide pour utiliser le dossier parent par défaut.",
 
   "admin.config.title": "Configuration",
   "admin.config.description": "Les paramètres sont sauvegardés dans .living-doc.json dans votre dossier docs.",
@@ -396,6 +396,7 @@
   "admin.msg.load_failed": "Impossible de charger la configuration.",
   "admin.msg.pattern_no_category": "Le modèle de nom de fichier doit contenir [Category]",
   "admin.msg.pattern_one_category": "Le modèle de nom de fichier doit contenir [Category] exactement une fois",
+  "admin.msg.source_root_absolute": "La racine du code source doit être un chemin relatif (ex. \"..\" ou \"../src\"). Les chemins absolus ne sont pas autorisés.",
 
   "diagram.back_btn": "← Retour",
   "diagram.diagrams_list_title": "Mes diagrammes",

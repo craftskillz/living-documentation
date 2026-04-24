@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_13_[DIAGRAM]_port_anchored_edges_free_arrows_and_edge_styling.md`
 **date:** 2026-04-13
-**status:** Validated
+**status:** Accepted
 **description:** Add 8 attachment ports per shape (N/NE/E/SE/S/SW/W/NW) with bezier routing guided by port normals, transparent ghost edges to prevent double-rendering, manual proximity hit detection for port edges, free-standing arrows via double-click on empty canvas, improved anchor node drag (16×16 hit area), and edge color/width customization with a palette of 8 colors.
 **tags:** diagram, ports, attachment-points, bezier, edge-routing, anchor, free-arrow, ghost-edge, hit-detection, drawPortEdge, ports.js, edge-color, edge-width, edge-styling, edge-panel, persistence
 ---

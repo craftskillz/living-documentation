@@ -13,7 +13,7 @@ import { metadataRouter } from './routes/metadata';
 import { browseSourceRouter } from './routes/browse-source';
 import { exportRouter } from './routes/export';
 import { mcpRouter } from './mcp/server';
-import { readConfig, writeConfig } from './lib/config';
+import { writeConfig } from './lib/config';
 
 export interface ServerOptions {
   docsPath: string;
@@ -30,13 +30,8 @@ export async function startServer({
 
   app.use(express.json({ limit: '20mb' }));
 
-  // Persist initial state to .living-doc.json
-  const existing = readConfig(docsPath);
-  const initPatch: Parameters<typeof writeConfig>[1] = { docsFolder: docsPath, port };
-  if (!existing.sourceRoot) {
-    initPatch.sourceRoot = path.resolve(path.dirname(path.resolve(docsPath)));
-  }
-  writeConfig(docsPath, initPatch);
+  // Persist port to .living-doc.json; readAndMigrate runs here and strips any legacy absolute paths.
+  writeConfig(docsPath, { port });
 
   // API
   app.use('/api/documents', documentsRouter(docsPath));

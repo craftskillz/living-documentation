@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_10_[ANNOTATION]_marker_highlight_with_anchor_spans_and_dom_traversal.md`
 **date:** 2026-04-10
-**status:** Validated
+**status:** Accepted
 **description:** Add a Marker (Stabilo) annotation feature with persistent post-its; highlight text using two single-char anchor spans placed via innerHTML regex, then wrap intermediate text nodes in <mark> elements via DOM TreeWalker — avoiding all block-boundary HTML validity issues.
 **tags:** annotation, marker, highlight, stabilo, post-it, elevator, innerHTML, dom, treewalker, range, text-node, block-boundary, anchor-span, regex, persistence, api, json
 ---

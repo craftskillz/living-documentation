@@ -1,15 +1,43 @@
 {
-  "docsFolder": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation",
   "filenamePattern": "YYYY_MM_DD_HH_mm_[Category]_title",
   "title": "Living Documentation",
   "theme": "system",
+  "language": "en",
   "port": 4321,
   "extraFiles": [
-    "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/README.md",
-    "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/CLAUDE.md"
+    "../README.md",
+    "../CLAUDE.md"
   ],
   "showDiagramDebug": true,
-  "sourceRoot": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation",
+  "diagramNodePalette": [
+    "#ffffff",
+    "#f5f5f4",
+    "#f1f5f9",
+    "#dbeafe",
+    "#e0f2fe",
+    "#cffafe",
+    "#ccfbf1",
+    "#dcfce7",
+    "#ecfccb",
+    "#fef9c3",
+    "#ffedd5",
+    "#fee2e2",
+    "#ffe4e6",
+    "#fce7f3",
+    "#ede9fe"
+  ],
+  "diagramEdgePalette": [
+    "#ffffff",
+    "#a8a29e",
+    "#374151",
+    "#3b82f6",
+    "#14b8a6",
+    "#22c55e",
+    "#f97316",
+    "#ef4444",
+    "#a855f7"
+  ],
+  "sourceRoot": "../",
   "blockedFileExtensions": [
     "exe",
     "sh",
@@ -19,5 +47,9 @@
     "scr",
     "ps1",
     "msi"
-  ]
+  ],
+  "exclusiveFolderExpansion": false,
+  "exclusiveCategoryExpansion": false,
+  "codeBlockMaxHeight": 400,
+  "markdownSoftBreaks": false
 }

@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_20_[DIAGRAM]_edge_anchor_rehook_on_selection.md`
 **date:** 2026-04-20
-**status:** Validated
+**status:** Accepted
 **description:** Allow users to change the attachment port of an existing port edge by clicking the edge to select it, then clicking a different port dot on either the source or target node to reconnect that end of the arrow.
 **tags:** diagram, ports, attachment-points, rehook, edge-reconnect, port-dots, afterDrawing, mousemove, onClickNode, _rehookEdgeId, onSelectEdge, onDeselectAll, vis-network, event-order
 ---

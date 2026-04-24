@@ -325,7 +325,7 @@
                   name="sourceRoot"
                   type="text"
                   class="w-full px-3 py-2 font-mono text-xs rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 break-all"
-                  placeholder="/absolute/path"
+                  placeholder=".."
                 />
                 <p
                   class="text-xs text-gray-400 dark:text-gray-500"
@@ -831,7 +831,9 @@
             cfg.docsFolder || "—";
           document.getElementById("info-port").textContent = cfg.port || "—";
           document.getElementById("field-source-root").value =
-            cfg.sourceRoot || "";
+            cfg.docsFolder && cfg.sourceRoot
+              ? pathRelative(cfg.docsFolder, cfg.sourceRoot)
+              : "";
           document.getElementById("field-title").value = cfg.title || "";
           document.getElementById("field-theme").value = cfg.theme || "system";
           document.getElementById("field-language").value = cfg.language || "en";
@@ -879,6 +881,10 @@
         const sourceRootRaw = document
           .getElementById("field-source-root")
           .value.trim();
+        if (sourceRootRaw !== "" && isAbsolutePath(sourceRootRaw)) {
+          showMsg(window.t('admin.msg.source_root_absolute'), "error");
+          return;
+        }
         const blockedExtensions = document
           .getElementById("field-blocked-extensions")
           .value
@@ -1094,6 +1100,8 @@
       }
 
       // ── Extra Files / Browser ──────────────────────────────────
+      // extraFiles is stored internally as absolute paths (matching what GET /api/config returns
+      // and what /api/browse emits). On save, paths are converted to relative before PUT.
       let extraFiles = [];
       let browseParent = null;
       let browseCurrent = "";
@@ -1106,10 +1114,18 @@
         loadBrowse(cfg.docsFolder || "/");
       }
 
-      function relativeDisplay(filePath) {
-        if (!docsFolder) return filePath;
-        const fromParts = docsFolder.split("/").filter(Boolean);
-        const toParts = filePath.split("/").filter(Boolean);
+      // Returns true if the path looks absolute (unix, Windows, or tilde-home).
+      function isAbsolutePath(p) {
+        if (!p) return false;
+        return /^([/\\]|[a-zA-Z]:[\\/]|~)/.test(p);
+      }
+
+      // Posix-style path.relative(from, to). Returns "." when equal, "../x" etc.
+      function pathRelative(from, to) {
+        if (!from) return to;
+        const norm = (s) => s.replace(/\\/g, "/");
+        const fromParts = norm(from).split("/").filter(Boolean);
+        const toParts = norm(to).split("/").filter(Boolean);
         let common = 0;
         while (
           common < fromParts.length &&
@@ -1119,8 +1135,14 @@
           common++;
         const ups = fromParts.length - common;
         const downs = toParts.slice(common).join("/");
-        const rel = "../".repeat(ups) + downs;
-        return "$DOCS_FOLDER/" + rel;
+        let rel = "../".repeat(ups) + downs;
+        if (rel.endsWith("/")) rel = rel.slice(0, -1);
+        return rel === "" ? "." : rel;
+      }
+
+      function relativeDisplay(filePath) {
+        if (!docsFolder) return filePath;
+        return "$DOCS_FOLDER/" + pathRelative(docsFolder, filePath);
       }
 
       async function loadBrowse(dirPath) {
@@ -1201,10 +1223,13 @@
 
       async function saveExtraFiles() {
         try {
+          const relativeEntries = extraFiles.map((abs) =>
+            pathRelative(docsFolder, abs),
+          );
           const res = await fetch("/api/config", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ extraFiles }),
+            body: JSON.stringify({ extraFiles: relativeEntries }),
           });
           if (!res.ok) throw new Error(await res.text());
         } catch (err) {

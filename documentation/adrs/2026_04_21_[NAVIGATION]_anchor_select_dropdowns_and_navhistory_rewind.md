@@ -1,7 +1,7 @@
 ---
 🗄️ ADR : 2026_04_21_[NAVIGATION]_anchor_select_dropdowns_and_navhistory_rewind.md
 **date:** 2026-04-21
-**status:** Validated
+**status:** Accepted
 **description:** Preserve the #anchor fragment through SPA navigation, replace anchor text inputs by heading select dropdowns (co-dependent for doc+anchor), and rewind navHistory when clicking a link whose target already sits in the back-stack.
 **tags:** navigation, anchor, fragment, spa, history, pushstate, snippets, anchor-link, anchor-doc-link, select, dropdown, headings, slugify, back-button, navhistory, rewind, cycle
 ---

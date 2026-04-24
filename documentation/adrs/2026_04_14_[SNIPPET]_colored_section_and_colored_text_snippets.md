@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_14_[SNIPPET]_colored_section_and_colored_text_snippets.md`
 **date:** 2026-04-14
-**status:** Validated
+**status:** Accepted
 **description:** Add two new snippet types to the Snippets modal: "Colored section" (block-level div with a left-border accent and background) and "Colored text" (inline span with a foreground color). Both use inline CSS styles with 6 semantic color swatches, support detect-and-re-edit, and are fully internationalized in EN and FR. Also fixes the diagram nav icon (⋄ U+22C4 → ◇ U+25C7).
 **tags:** snippet, editor, colored-section, colored-text, inline-style, html-in-markdown, i18n, span, div, swatch, detection, marked, frontend
 ---

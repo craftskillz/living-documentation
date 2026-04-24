@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_23_[FRONTEND]_code_block_collapsible_with_configurable_max_height_and_copy_button.md`
 **date:** 2026-04-23
-**status:** Validated
+**status:** Accepted
 **description:** Make rendered markdown `<pre>` blocks friendlier to long snippets — add a per-project `codeBlockMaxHeight` option (in pixels, default 400, `0` disables) editable from the Admin page that caps long blocks with a bottom-fade gradient and a "Show more / Show less" toggle, and always render a hover-revealed copy-to-clipboard icon in the top-right corner of every code block with visual confirmation on success.
 **tags:** frontend, code-block, pre, markdown, copy, clipboard, collapsible, max-height, admin, configuration, ux, hljs, highlight.js, i18n, gradient, toggle
 ---

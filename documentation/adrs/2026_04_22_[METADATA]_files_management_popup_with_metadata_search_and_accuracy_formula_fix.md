@@ -1,6 +1,6 @@
 ---
 date: 2026-04-22
-status: Validated
+status: Accepted
 description: Add a "Metadata Files" top-bar popup to list/replace/delete files under DOCS_FOLDER/files, fix the accuracy formula to unchanged/total, introduce a metadata:// search prefix to locate documents referencing a file, refresh the in-doc search banner live, and add a reusable showConfirm() modal replacing window.confirm().
 tags: metadata, files, accuracy, unchanged-over-total, search-prefix, metadata-search, confirm-modal, ux, modal, i18n, rest, put, delete, supersedes-accuracy-formula
 ---

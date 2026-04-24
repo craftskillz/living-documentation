@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_13_[DIAGRAM]_palette_couleurs_admin_et_corrections_editeur.md`
 **date:** 2026-04-13
-**status:** Validated
+**status:** Accepted
 **description:** Add admin panel configuration for diagram color palettes (15 node slots + edge palette) with HSL-based border derivation using per-slot lightness ratios; default palettes persisted in config; plus editor bug fixes for free arrow copy/paste, locked node drag, textarea width, and multiline textValign.
 **tags:** diagram, palette, admin, color, hsl, border-derivation, NODE_L_RATIOS, deriveNodeColors, config, diagramNodePalette, diagramEdgePalette, node-rendering, lock, drag, draggable, textarea, label-editor, textValign, multiline, copy-paste, free-arrow, anchor, clipboard
 ---

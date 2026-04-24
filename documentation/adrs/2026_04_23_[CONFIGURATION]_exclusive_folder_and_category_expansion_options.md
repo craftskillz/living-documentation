@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_23_[CONFIGURATION]_exclusive_folder_and_category_expansion_options.md`
 **date:** 2026-04-23
-**status:** Validated
+**status:** Accepted
 **description:** Add two admin-configurable options (exclusiveFolderExpansion, exclusiveCategoryExpansion, both off by default) that make the index sidebar behave as an "accordion" — opening a folder or category auto-collapses its siblings (and, for folders, their entire subtree) ; sibling collapse is rendered instantly (transition disabled) so the new panel's open animation does not visually fight with the old panel's close animation.
 **tags:** configuration, sidebar, drawer, folder, category, accordion, exclusive, expansion, collapse, admin, ux, animation, transition, frontend, i18n
 ---

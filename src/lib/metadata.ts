@@ -56,12 +56,8 @@ export function writeMetadataStore(
 }
 
 export function resolveSourceRoot(docsPath: string): string {
-  const { sourceRoot } = readConfig(docsPath);
-  const resolved =
-    sourceRoot && path.isAbsolute(sourceRoot)
-      ? sourceRoot
-      : path.dirname(path.resolve(docsPath));
-  return path.resolve(resolved);
+  // readConfig always returns sourceRoot as an absolute path (resolved from storage).
+  return readConfig(docsPath).sourceRoot;
 }
 
 export function assertUnderSourceRoot(

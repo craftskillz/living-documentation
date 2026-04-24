@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_20_[DIAGRAM]_free_arrow_two_click_anchor_pivot_and_snap_to_connect.md`
 **date:** 2026-04-20
-**status:** Validated
+**status:** Accepted
 **description:** Replace double-click free arrow creation with a two-click flow (click 1 = origin, click 2 = destination), fix anchor pivot so dragging a single endpoint moves only that endpoint, and add snap-to-connect so dragging an anchor endpoint near a shape or another anchor merges the connection with port attachment.
 **tags:** diagram, free-arrow, anchor, two-click, pivot, snap-to-connect, addEdge, port, dragEnd, Hammer.js, vis-network, freeArrowFirstPoint, _onAnchorSnapConnect, port-dots, _draggingAnchorIds
 ---

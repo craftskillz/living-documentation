@@ -1,9 +1,10 @@
 ---
 `🗄️ ADR : 2026_03_20_10_15_[CONFIGURATION]_link_extra_files_as_documentation.md`
 **date:** 2026-03-20
-**status:** Accepted
-**description:** Support for including Markdown files outside the docs folder via an extraFiles config array, with a filesystem browser in the admin panel.
-**tags:** configuration, extraFiles, sidebar, security, api, browse, path-traversal, document-id
+**status:** SuperSeeded
+**superseded_by:** 2026_04_24_[CONFIGURATION]_portable_living_doc_json_with_relative_paths.md
+**description:** Support for including Markdown files outside the docs folder via an extraFiles config array, with a filesystem browser in the admin panel. [SuperSeeded: the path-storage format moved from absolute to relative; the feature itself (whitelist security, admin browser, ordering, sidebar placement, document-id scheme) is preserved in the new ADR.]
+**tags:** configuration, extraFiles, sidebar, security, api, browse, path-traversal, document-id, superseded
 ---
 
 ## Context

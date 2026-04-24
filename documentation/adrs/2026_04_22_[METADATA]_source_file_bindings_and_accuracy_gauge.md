@@ -10,7 +10,7 @@ tags: metadata, accuracy, sha-256, hash, drift, documents, source-root, mcp, res
 "Living documentation" only lives when someone keeps it aligned with the code. Today the tool has no way to signal that a doc has drifted away from the files it describes: a dev reads a doc, doesn't notice that the underlying class has been refactored, and the doc silently goes stale. Users asked for a way to:
 
 1. Attach one or more source files to a doc (the files that the doc is actually explaining).
-2. Detect when any of those source files has changed or been deleted since the doc was last validated.
+2. Detect when any of those source files has changed or been deleted since the doc was last Accepted.
 3. Surface that signal both in the viewer (for humans) and over MCP (for agents regenerating the doc).
 
 Constraints expressed by the user:

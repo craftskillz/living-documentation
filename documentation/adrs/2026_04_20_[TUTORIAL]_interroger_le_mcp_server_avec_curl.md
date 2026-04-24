@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_20_[TUTORIAL]_interroger_le_mcp_server_avec_curl.md`
 **date:** 2026-04-20
-**status:** Validated
+**status:** Accepted
 **description:** Guide opérationnel pour inspecter le serveur MCP de Living Documentation avec curl — liste des tools, des prompts et lecture du contenu d'un prompt tel qu'un LLM le reçoit.
 **tags:** mcp, curl, debug, tutorial, streamable-http, sse, tools, prompts, json-rpc
 ---

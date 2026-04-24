@@ -1,7 +1,7 @@
 ---
 `🗄️ ADR : 2026_04_13_[DIAGRAM]_node_locking.md`
 **date:** 2026-04-13
-**status:** Validated
+**status:** Accepted
 **description:** Add a per-node and per-edge lock/unlock toggle that prevents all interactions (drag, resize, rotate, label edit, edge creation, deletion) on locked shapes/edges while preserving zoom and selection.
 **tags:** diagram, lock, node, edge, interaction, fixed, vis-network, node-panel, edge-panel, selection-overlay, persistence, delete, deletion, free-arrow, anchor
 ---
