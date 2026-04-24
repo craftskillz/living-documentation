@@ -79,7 +79,7 @@ export function filesRouter(docsPath: string): Router {
 
   // PUT /api/files/:filename — overwrite existing file (same filename, no history).
   router.put('/:filename', (req: Request, res: Response) => {
-    const { filename } = req.params;
+    const filename = req.params.filename as string;
     const { data } = req.body as { data?: string };
 
     const filesDir = path.join(docsPath, 'files');
@@ -114,7 +114,7 @@ export function filesRouter(docsPath: string): Router {
 
   // DELETE /api/files/:filename — remove a file from DOCS_FOLDER/files/.
   router.delete('/:filename', (req: Request, res: Response) => {
-    const { filename } = req.params;
+    const filename = req.params.filename as string;
     const filesDir = path.join(docsPath, 'files');
     const filePath = resolveFilePathSafe(filesDir, filename);
     if (!filePath) {

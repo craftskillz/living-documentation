@@ -237,7 +237,7 @@ export function documentsRouter(docsPath: string): Router {
 
   // GET /api/documents/:id — get a single document (content + rendered HTML)
   router.get("/:id", async (req: Request, res: Response) => {
-    const id = decodeURIComponent(req.params.id);
+    const id = decodeURIComponent(req.params.id as string);
     const { extraFiles = [], filenamePattern, markdownSoftBreaks } = readConfig(docsPath);
     const markedOpts = { breaks: !!markdownSoftBreaks };
 
@@ -296,7 +296,7 @@ export function documentsRouter(docsPath: string): Router {
 
   // PUT /api/documents/:id — update document content
   router.put("/:id", (req: Request, res: Response) => {
-    const id = decodeURIComponent(req.params.id);
+    const id = decodeURIComponent(req.params.id as string);
     const { content } = req.body as { content?: string };
 
     if (typeof content !== "string") {
@@ -337,7 +337,7 @@ export function documentsRouter(docsPath: string): Router {
 
   // DELETE /api/documents/:id — delete a document permanently
   router.delete("/:id", (req: Request, res: Response) => {
-    const id = decodeURIComponent(req.params.id);
+    const id = decodeURIComponent(req.params.id as string);
     const { extraFiles = [] } = readConfig(docsPath);
 
     if (path.isAbsolute(id)) {

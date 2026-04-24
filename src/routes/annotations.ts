@@ -47,14 +47,14 @@ export function annotationsRouter(docsPath: string): Router {
 
   // GET /api/annotations/:docId
   router.get("/:docId", (req: Request, res: Response) => {
-    const docId = decodeURIComponent(req.params.docId);
+    const docId = decodeURIComponent(req.params.docId as string);
     const store = readAnnotations(docsPath);
     res.json(store[docId] || []);
   });
 
   // POST /api/annotations/:docId
   router.post("/:docId", (req: Request, res: Response) => {
-    const docId = decodeURIComponent(req.params.docId);
+    const docId = decodeURIComponent(req.params.docId as string);
     const { selectedText, contextBefore, contextAfter, note } = req.body as {
       selectedText?: string;
       contextBefore?: string;
@@ -85,8 +85,8 @@ export function annotationsRouter(docsPath: string): Router {
 
   // DELETE /api/annotations/:docId/:id
   router.delete("/:docId/:id", (req: Request, res: Response) => {
-    const docId = decodeURIComponent(req.params.docId);
-    const id = req.params.id;
+    const docId = decodeURIComponent(req.params.docId as string);
+    const id = req.params.id as string;
 
     const store = readAnnotations(docsPath);
     if (!store[docId]) return res.status(404).json({ error: "Not found" });

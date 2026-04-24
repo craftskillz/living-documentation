@@ -16,7 +16,7 @@ export function metadataRouter(docsPath: string): Router {
 
   // GET /api/metadata/:docId → { items, total, unchanged, modified, missing, accuracy }
   router.get("/:docId", (req: Request, res: Response) => {
-    const docId = decodeURIComponent(req.params.docId);
+    const docId = decodeURIComponent(req.params.docId as string);
     try {
       const sourceRoot = resolveSourceRoot(docsPath);
       const entries = getDocEntries(docsPath, docId);
@@ -31,7 +31,7 @@ export function metadataRouter(docsPath: string): Router {
 
   // POST /api/metadata/:docId  body: { path }
   router.post("/:docId", (req: Request, res: Response) => {
-    const docId = decodeURIComponent(req.params.docId);
+    const docId = decodeURIComponent(req.params.docId as string);
     const { path: rawPath } = req.body as { path?: string };
     if (!rawPath || typeof rawPath !== "string") {
       return res.status(400).json({ error: "path is required" });
@@ -65,7 +65,7 @@ export function metadataRouter(docsPath: string): Router {
 
   // DELETE /api/metadata/:docId  body: { path }
   router.delete("/:docId", (req: Request, res: Response) => {
-    const docId = decodeURIComponent(req.params.docId);
+    const docId = decodeURIComponent(req.params.docId as string);
     const { path: rel } = req.body as { path?: string };
     if (!rel) return res.status(400).json({ error: "path is required" });
     try {
@@ -85,7 +85,7 @@ export function metadataRouter(docsPath: string): Router {
 
   // POST /api/metadata/:docId/refresh → recompute stored hashes from current file state
   router.post("/:docId/refresh", (req: Request, res: Response) => {
-    const docId = decodeURIComponent(req.params.docId);
+    const docId = decodeURIComponent(req.params.docId as string);
     try {
       const sourceRoot = resolveSourceRoot(docsPath);
       const entries = getDocEntries(docsPath, docId).map((e) => {
