@@ -115,6 +115,43 @@ export function toolReadDocument(docsPath: string, args: { id: string }) {
   return { content: [{ type: 'text' as const, text: content }] };
 }
 
+export function toolUpdateDocument(docsPath: string, args: { id: string; content: string }) {
+  if (!args || typeof args.id !== 'string' || !args.id) {
+    throw new Error("Missing required parameter 'id'");
+  }
+  if (typeof args.content !== 'string' || !args.content) {
+    throw new Error("Missing required parameter 'content' (must be non-empty)");
+  }
+
+  const { extraFiles = [] } = readConfig(docsPath);
+  const decoded = decodeURIComponent(args.id);
+
+  let filePath: string;
+  if (path.isAbsolute(decoded)) {
+    const fp = decoded + '.md';
+    if (!extraFiles.includes(fp)) throw new Error('Access denied: not an allowed extra file');
+    filePath = fp;
+  } else {
+    const resolved = safeResolve(docsPath, decoded + '.md');
+    if (!resolved) throw new Error('Access denied: path traversal attempt');
+    filePath = resolved;
+  }
+
+  if (!fs.existsSync(filePath)) throw new Error(`Document not found: ${args.id}`);
+  fs.writeFileSync(filePath, args.content, 'utf-8');
+
+  return {
+    content: [{
+      type: 'text' as const,
+      text: JSON.stringify({
+        success: true,
+        id: args.id,
+        bytes: Buffer.byteLength(args.content, 'utf-8'),
+      }, null, 2),
+    }],
+  };
+}
+
 export function toolCreateDocument(docsPath: string, args: {
   title: string;
   category: string;

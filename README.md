@@ -1,12 +1,33 @@
 # Living Documentation
 
 A CLI tool that serves a local Markdown documentation viewer in your browser.
-`NASHTAZ DOO`
 No cloud, no database, no build step — just point it at a folder where you add your project's folder documentation composed of `.md` files (ADR : Architecture Decision Records, generally).
 
 ![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)
 ![License](https://img.shields.io/badge/License-AGPL--3.0-blue)
+
+## Use cases
+
+### 1. AI-Assisted Living Documentation — the primary use case
+
+The tool ships with a built-in **MCP server**, so any coding agent that speaks MCP (Claude Desktop, Claude Code, Cursor…) can co-maintain your project documentation as it codes:
+
+- **One ADR per feature, automatically.** Tell your agent *"feature done"* / *"feature terminée"* and it invokes the `create-adr` MCP prompt: it searches for any ADR to supersede, writes the new one with a normalized frontmatter (`**date:**`, `**status: To be validated**`, `**description:**`, `**tags:**`), and binds the source files it just touched to the ADR via metadata.
+- **Drift, made visible.** Each ADR stores SHA-256 hashes of the source files it describes. When the code changes, the **reliability gauge** in the doc header drops from green to red. `list_documents_below_accuracy` lets the agent batch-audit which ADRs have fallen below 80% reliability.
+- **Audit on demand.** Ask your agent *"audit the docs"* / *"vérifie la fiabilité de la doc"* and it invokes the `audit-doc-drift` prompt: for each drifting ADR, it reads the doc and the attached source files, then either re-baselines the hashes (description still correct) or rewrites the body and re-baselines (description out of sync). Major redesigns are surfaced back to you for a fresh `create-adr` — you stay in control of structural changes.
+- **`To be validated` by default.** New ADRs land in a review state — *you* promote them to `Accepted`. The agent never promotes on your behalf.
+- **Diagrams that don't lie.** Context / container / UML / flow / ERD generation is gated by server-side guardrails: diagrams are *derived* from the documents, never invented.
+
+Setup is two lines of JSON — see **[MCP server](#mcp-server-model-context-protocol)** below.
+
+### 2. Standalone — a note-taking hub for the new-gen developer
+
+No AI required. Run it solo as your personal docs hub for **project meetings, architecture decisions, feature plans, dev journals, ADRs you write yourself** — all kept as Markdown on disk, git-friendly, no vendor lock-in. The full toolbox (inline editor, image paste, file attachments, built-in diagram editor, word cloud, annotations, full-text search, PDF / Notion / Confluence export…) is detailed in the **Features** section below.
+
+The two modes are not exclusive: take notes solo as your week unfolds, then let your coding agent record the ADR when the feature actually lands.
+
+---
 
 ## Features
 
@@ -344,6 +365,7 @@ A `GET http://localhost:4321/mcp` returns a JSON summary of available tools for 
 | `list_documents` | List all documents with their id, title, category and folder |
 | `read_document` | Read the raw Markdown content of a document by its id |
 | `create_document` | Create a new Markdown document (filename generated from the configured pattern) |
+| `update_document` | Overwrite the Markdown content of an existing doc by id — used for drift correction (Scenario B) and supersede (Scenario A) |
 | `list_diagrams` | List all saved diagrams with their id and title |
 | `read_diagram` | Read the nodes and edges of a diagram (same shape as `create_diagram` input) |
 | `create_diagram` | Create or overwrite a diagram from nodes and edges (shapes, colors, labels) |
@@ -353,9 +375,15 @@ A `GET http://localhost:4321/mcp` returns a JSON summary of available tools for 
 | `list_metadata` | List the source-file bindings of every doc |
 | `get_accuracy` | Get the reliability report of a doc (per-entry status + ratio) — detect drift |
 | `add_metadata` | Bind a source file to a doc (stores the SHA-256 hash) |
+| `remove_metadata` | Detach a source file from a doc (idempotent) — used for renames / deletes |
 | `refresh_metadata` | Re-hash all bindings for a doc — re-baseline after the doc has been rewritten |
+| `list_documents_below_accuracy` | List up to 10 ADRs whose reliability < 80%, sorted most-degraded first — entry point for batch drift audit |
 
-Prompts (`generate-context-diagram`, `generate-container-diagram`, `generate-uml-diagram`, `update-diagram-from-docs`, `generate-screen-guide`, `flow`, `erd`) are exposed alongside the tools for clients that surface MCP prompts to the user.
+Prompts:
+
+- **`create-adr`** — primary feature-completion prompt (Scenario A): search for an ADR to supersede, write a new ADR at `status: To be validated` with the project frontmatter, and bind the source files via `add_metadata` (god files excluded). See **[Use cases → AI-Assisted](#1-ai-assisted-living-documentation--the-primary-use-case)** above.
+- **`audit-doc-drift`** — primary documentation-audit prompt (Scenario B): list every ADR below 80% reliability and bring each one back in sync — either re-baseline as-is (description still correct) or rewrite then re-baseline (description out of sync). Renames / deletes are surfaced back to you for confirmation.
+- Diagram-creation templates: `generate-context-diagram` (default), `generate-container-diagram`, `generate-uml-diagram`, `update-diagram-from-docs`, `generate-screen-guide`, `flow`, `erd`.
 
 ### Installation — Claude Desktop
 

@@ -7,7 +7,7 @@ import {
   GetPromptRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import { Router, Request, Response } from 'express';
-import { toolListDocuments, toolReadDocument, toolCreateDocument } from './tools/documents';
+import { toolListDocuments, toolReadDocument, toolCreateDocument, toolUpdateDocument } from './tools/documents';
 import { toolListDiagrams, toolReadDiagram, toolCreateDiagram } from './tools/diagrams';
 import { toolListSourceFiles, toolReadSourceFile, toolSearchSource } from './tools/source';
 import { toolListMetadata, toolGetAccuracy, toolRefreshMetadata, toolAddMetadata, toolRemoveMetadata, toolListDocumentsBelowAccuracy } from './tools/metadata';
@@ -26,6 +26,76 @@ This server maintains a living documentation system composed of:
 Documents are authoritative. Diagrams are derived views and must not introduce
 information that is absent from the documents. If a diagram needs a concept
 that isn't documented yet, create or update the document first.
+
+## Feature workflow — ADRs are how the documentation grows
+When a coding agent implements or modifies a feature on this project, the
+feature is **not done** until an ADR (Architecture Decision Record) has been
+created (or an existing one superseded) and bound to the source files it
+covers. This is what keeps the documentation alive.
+
+### Mandatory steps after finishing a feature
+1. \`list_documents\` — get the inventory.
+2. Shortlist ADRs whose title / category looks topically related to the
+   feature, then \`read_document\` their frontmatter (\`description\`,
+   \`tags\`) to confirm.
+3. **Supersede check** — if an existing ADR is **made obsolete** by the new
+   feature, use \`update_document(id, ...)\` to flip its \`**status:**\` to
+   \`SuperSeeded\` and add a one-line pointer to the new ADR (do **not** call
+   \`create_document\` — it does not overwrite and will reject a colliding
+   filename).
+4. \`create_document\` for the new ADR with the **mandatory frontmatter**
+   below at \`status: To be validated\`.
+5. \`add_metadata\` for **each source file** that materially carries the
+   feature's logic — never god files (see \`add_metadata\`).
+
+### Mandatory ADR frontmatter
+Every ADR document body starts with:
+
+\`\`\`
+---
+**date:** YYYY-MM-DD
+**status:** To be validated
+**description:** One dense, technical sentence — what the decision does, not why.
+**tags:** 5–10 specific tags mixing concepts, technologies, and key symbol names
+---
+\`\`\`
+
+Rules:
+- \`status:\` is **always** \`To be validated\` at creation. Only the human
+  owner promotes to \`Accepted\`. The status has **no effect** on how the LLM
+  treats the ADR — only \`SuperSeeded\` is filtered downstream.
+- \`description:\` stays factual and short — one sentence. The "why" goes in
+  the body.
+- \`tags:\` are the primary search signal. Mix library names (\`stripe\`,
+  \`amplify\`), domain concepts (\`workflow\`, \`moderation\`), and symbol
+  names (\`useAdScheduler\`, \`presigned-url\`).
+- \`category\` argument: domain bucket in the filename pattern, uppercase,
+  e.g. \`SERVICES CLOUD\`, \`INTEGRATION\`, \`ALGORITHMES\`.
+- \`folder\` argument: \`adrs\` (or the project's ADR sub-folder).
+
+## Markdown conventions for documents written via this MCP
+
+Standard CommonMark + GitHub-flavored Markdown is supported as-is (lists, code
+blocks, tables, blockquotes, \`<details>/<summary>\`, etc.). Use vanilla syntax
+for those — there is no need to align table columns visually.
+
+The viewer recognises four project-specific link patterns. Use them whenever
+they apply, otherwise the cross-reference is invisible to the reader:
+
+- **Cross-document link** — \`[label](?doc=<encodedId>)\` (use the \`id\` returned
+  by \`list_documents\` verbatim; it is already URL-encoded). Add \`#heading-slug\`
+  to jump to a heading inside the target doc.
+- **Diagram link** (C4 drill-down or ADR → diagram pointer) —
+  \`[label](/diagram?id=<diagramId>)\`.
+- **File attachment** — \`[name](./files/<filename>)\` where \`<filename>\` is what
+  \`POST /api/files/upload\` returned. The viewer auto-styles these as a purple
+  pill with a paperclip glyph; do not add the glyph yourself.
+- **In-doc anchor** — \`[label](#heading-slug)\` where \`heading-slug\` is the
+  lowercased + dash-joined version of the heading text (auto-generated).
+
+ASCII trees inside a fenced code block render with their box-drawing characters
+preserved (\`├──\`, \`└──\`, \`│ \`). Prefer this over nested bullet lists when
+describing a folder layout or a hierarchy in an ADR.
 
 ## Default diagram scope
 - When documenting the project big picture, generate a **context diagram**.
@@ -176,17 +246,22 @@ Tools:
   metadata are excluded. Use this instead of looping
   \`list_documents\` + \`get_accuracy\`.
 
-Recommended workflow to keep docs accurate:
+Recommended workflow to keep docs accurate (single-doc):
 1. \`list_documents\` → pick a doc.
 2. \`get_accuracy\` → if accuracy < 1, the doc is drifting.
 3. \`read_document\` and \`read_source_file\` on the \`modified\` entries.
-4. Update the doc with \`create_document\` (overwrites by id).
+4. Decide: is the doc still factually correct, or out of sync with the code?
+   - **Still correct** → skip to step 5 (cosmetic code change, no doc rewrite).
+   - **Out of sync** → update the doc with \`update_document(id, content)\`.
 5. \`refresh_metadata\` to re-baseline the hashes.
 
-Bulk audit workflow:
+Bulk audit workflow (Scenario B — invoke prompt \`audit-doc-drift\` for the
+full template):
 1. \`list_documents_below_accuracy\` → batch of up to 10 most-degraded docs.
-2. For each item: \`read_document\` + \`read_source_file\` on modified
-   entries → update with \`create_document\` → \`refresh_metadata\`.
+2. For each item: \`get_accuracy\` + \`read_document\` + \`read_source_file\`
+   on \`modified\` entries → decide:
+   - **Description still holds** → \`refresh_metadata\` (re-baseline as-is).
+   - **Description out of sync** → \`update_document\` → \`refresh_metadata\`.
 3. Re-call \`list_documents_below_accuracy\` until \`totalBelowThreshold\`
    reaches 0 or the remaining items are intentionally drifting.
 `;
@@ -251,20 +326,45 @@ const CREATE_DIAGRAM_DESCRIPTION = [
 ].join('\n');
 
 const CREATE_DOCUMENT_DESCRIPTION = [
-  'Create a new Markdown document. The filename is generated automatically from the configured pattern (date + category + title slug). Pass `content` as full Markdown; omit to create an empty stub.',
+  'Create a **new** Markdown document. The filename is generated automatically from the configured pattern (date + category + title slug). Pass `content` as full Markdown; omit to create an empty stub. To **modify an existing document** (correct drift, flip `**status:**` to `SuperSeeded`, edit body), use `update_document(id, content)` instead — `create_document` will refuse with `A document with this name already exists` if the target filename collides.',
+  '',
+  '## Primary use case — ADRs (Architecture Decision Records)',
+  'On this project, the dominant use of `create_document` is to record an ADR every time a coding agent implements or modifies a feature. The full workflow is described in `get_server_guide` ("Feature workflow"). In short:',
+  '',
+  '1. **Supersede check first.** `list_documents` → shortlist ADRs whose title/category overlaps the feature → `read_document` to confirm. If one is obsoleted, overwrite it with `status: SuperSeeded` + a one-line pointer to the new ADR.',
+  '2. **Create the new ADR** with the mandatory frontmatter (below).',
+  '3. **Bind the source files** with `add_metadata` (see that tool for the god-files exclusion list). Without this, the ADR escapes drift detection.',
+  '',
+  '## Mandatory ADR frontmatter',
+  'Every ADR body starts with these four fields. They drive search, audit, and lifecycle:',
+  '',
+  '```',
+  '---',
+  '**date:** YYYY-MM-DD',
+  '**status:** To be validated',
+  '**description:** One dense, technical sentence — what the decision does, not why.',
+  '**tags:** 5–10 specific tags mixing concepts, technologies, and key symbol names',
+  '---',
+  '```',
+  '',
+  '- `status:` is **always** `To be validated` at creation. Only the human owner promotes to `Accepted`. The status has **no effect** on how the LLM treats the ADR — only `SuperSeeded` is filtered out downstream.',
+  '- `description:` stays factual and short — one sentence. The "why" goes in the body.',
+  '- `tags:` are the primary search signal. Be specific.',
+  '- `category` is the domain bucket in the filename pattern, uppercase (e.g. `SERVICES CLOUD`, `INTEGRATION`, `ALGORITHMES`).',
+  '- `folder` should be `adrs` (or the project ADR sub-folder).',
+  '',
+  '## Worked ADR example',
+  '```json',
+  '{',
+  '  "title":    "ajout ressource storage s3",',
+  '  "category": "SERVICES CLOUD",',
+  '  "folder":   "adrs",',
+  '  "content":  "---\\n**date:** 2026-04-27\\n**status:** To be validated\\n**description:** Ajout du module S3 Storage via Amplify Gen 2 — bucket nommé via CDK override, CORS configuré, pas de mode hors-ligne\\n**tags:** s3, storage, amplify, CDK, bucket, CORS, cloud\\n---\\n\\n# Ajout ressource storage S3\\n\\n## Contexte\\n...\\n\\n## Décision\\n...\\n\\n## Conséquences\\n..."',
+  '}',
+  '```',
   '',
   '## Source-of-truth contract',
   'Documents are the source of truth. Diagrams are derived views. If a diagram needs a concept that isn\'t documented, create or update the document first (here) before calling `create_diagram`.',
-  '',
-  '## Worked example',
-  '```json',
-  '{',
-  '  "title":    "Payment system context",',
-  '  "category": "Architecture",',
-  '  "folder":   "adrs",',
-  '  "content":  "# Payment system context\\n\\n**status:** Accepted\\n**tags:** context, payment\\n\\nThe system integrates with Stripe for card capture and pre-authorization..."',
-  '}',
-  '```',
   '',
   GUIDE_HINT,
 ].join('\n');
@@ -289,6 +389,32 @@ const TOOLS = [
         id: { type: 'string', description: 'Document id as returned by list_documents' },
       },
       required: ['id'],
+    },
+  },
+  {
+    name: 'update_document',
+    description: [
+      'Overwrite the Markdown content of an existing document by its id. Use this whenever you need to modify a doc in place — e.g. correcting drift detected by `get_accuracy` (Scenario B audit), or flipping `**status:**` to `SuperSeeded` after a feature has obsoleted a prior ADR (Scenario A supersede).',
+      '',
+      '## Workflow',
+      '1. `read_document(id)` to load the current Markdown.',
+      '2. Compose the new full content in your reasoning (fix description, body, flip status, etc.).',
+      '3. `update_document(id, content)` with the **full** new Markdown body — the file is overwritten exactly with this string.',
+      '4. `refresh_metadata(id)` once the doc is back in sync with the source files (re-baselines the SHA-256 hashes).',
+      '',
+      'The filename, id, date, category, and folder are NOT changed by this call — content-only update. To rename or recategorise, create a new doc with `create_document` and (optionally) supersede the old one via this tool.',
+      '',
+      'Returns `{ success, id, bytes }`.',
+      '',
+      GUIDE_HINT,
+    ].join('\n'),
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id:      { type: 'string', description: 'Document id as returned by list_documents' },
+        content: { type: 'string', description: 'Full Markdown content (frontmatter + body) — the file is overwritten with exactly this string. Must be non-empty.' },
+      },
+      required: ['id', 'content'],
     },
   },
   {
@@ -464,6 +590,19 @@ const TOOLS = [
       '',
       'If the document already has an entry for that path, its hash is updated.',
       '',
+      '## Call this after every `create_document` for an ADR',
+      'Each ADR must be bound to the source files it materially describes. Without this binding, the ADR escapes drift detection (`get_accuracy`, `list_documents_below_accuracy`) and the documentation stops being "living".',
+      '',
+      '## What to attach — and what NOT to attach',
+      'Attach: every source file whose **logic** is the subject of the ADR (component, hook, service, route, schema, infra config that this decision created or changed).',
+      '',
+      'Do **NOT** attach god files / god objects — files that change for nearly every feature and would produce false-positive drift signals across many ADRs:',
+      '- Lock and manifest files: `package.json`, `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `tsconfig.json`, `requirements.txt`, `Cargo.lock`, `go.sum`, `pyproject.toml` (when it tracks dependencies).',
+      '- Central re-export / barrel files (`index.ts` that just re-exports), root routers, root stores, top-level app entry files — unless the ADR is specifically about that file.',
+      '- Auto-generated files (build outputs, OpenAPI clients, schema codegen).',
+      '',
+      '**Rule of thumb**: if a routine modification of the file would NOT reflect a semantic change of the feature this ADR describes, do not attach it.',
+      '',
       'Returns only the added entry and aggregate totals. Use `list_metadata` to retrieve the full list.',
     ].join('\n'),
     inputSchema: {
@@ -518,6 +657,18 @@ const TOOLS = [
 // zero tokens consumed by the server.
 
 const PROMPTS = [
+  {
+    name: 'audit-doc-drift',
+    description: 'Audit drifting documentation: list every ADR with reliability < 80%, verify whether the description still matches the attached source code, then either re-baseline the hashes (description still correct) or rewrite the ADR body and re-baseline (description out of sync). Auto-invoke when the user asks to audit / refresh / review drifting docs ("audite la doc", "vérifie la fiabilité de la doc", "fais le tour des ADR qui ne sont plus à jour", "review doc drift").',
+  },
+  {
+    name: 'create-adr',
+    description: 'Record an ADR (Architecture Decision Record) for a feature you just implemented or modified. Auto-invoke when the user signals a feature is done ("feature terminée", "j\'ai fini cette fonctionnalité"), or proactively at the end of a coding task. Walks through: search for ADRs to supersede, write the new ADR with the mandatory frontmatter at status `To be validated`, attach source files via `add_metadata` (god files excluded).',
+    arguments: [
+      { name: 'featureSummary', description: 'One-line description of the feature/decision being recorded. Example: "Ajout du module S3 Storage via Amplify Gen 2".', required: false },
+      { name: 'modifiedFiles',  description: 'Comma-separated list of source files materially modified or created by this feature (relative to sourceRoot). Used to seed the metadata bindings; god files should already be filtered out by the caller.', required: false },
+    ],
+  },
   {
     name: 'generate-context-diagram',
     description: 'DEFAULT. Generate a C4 System Context diagram — one system in the center, surrounding users and external systems. Safe to auto-invoke when the user asks for "a diagram", "the big picture", or "documentation".',
@@ -623,6 +774,137 @@ Clicking a linked node in the editor navigates directly to the child diagram.
 
 function buildPromptTemplate(name: PromptName, args: Record<string, string>): string {
   switch (name) {
+    case 'audit-doc-drift':
+      return `
+You are about to **audit the documentation for drift between ADRs and the source code they describe**, and bring every drifting ADR back in sync.
+
+## Step 1 — Inventory drifting ADRs
+
+Call \`list_documents_below_accuracy\`. It returns up to 10 ADRs whose reliability is below 80%, sorted most-degraded first, plus a \`totalBelowThreshold\` counter (\`SuperSeeded\` docs and docs without metadata are excluded automatically).
+
+If the result is empty, tell the user *"All documents are above the 80% reliability threshold — nothing to audit."* and stop.
+
+## Step 2 — Audit each ADR in the batch
+
+For each ADR returned, in order:
+
+1. \`get_accuracy(id)\` — read the per-entry breakdown (\`unchanged\` / \`modified\` / \`missing\`).
+2. \`read_document(id)\` — load the ADR's current Markdown (frontmatter + body).
+3. For every entry whose status is \`modified\`: \`read_source_file(path)\` — load the current code.
+4. **Compare and decide.** The ADR's \`**description:**\` field claims a technical fact about the code, and the body (Contexte / Décision / Conséquences) describes how the code behaves. Are they still accurate against the current code, or have they fallen out of sync?
+
+### Outcome A — The ADR is still accurate
+The code changes were cosmetic (renames, formatting, refactors that don't affect documented behavior).
+
+→ Call \`refresh_metadata(id)\` to re-baseline the hashes against the current files.
+
+Tell the user: *"\`<title>\` — accuracy was X%, but the description still holds. Re-baselined."*
+
+### Outcome B — The ADR is out of sync
+The description and/or body no longer match what the code does.
+
+1. Compose the corrected Markdown:
+   - Update \`**description:**\` if its technical sentence is wrong.
+   - Update the body sections to reflect the current behavior.
+   - Add new entries to \`**tags:**\` if new concepts/symbols appeared in the code.
+   - **Do NOT change \`**status:**\`** — auditing is not superseding. If you believe the change is structural enough to warrant a brand-new ADR with a different design altogether, stop and tell the user — they will trigger \`create-adr\` instead.
+2. Call \`update_document(id, content)\` with the **full** corrected Markdown.
+3. Call \`refresh_metadata(id)\` once the doc is updated.
+
+Tell the user: *"\`<title>\` — description was out of sync. Updated body and re-baselined. Diff summary: <one line>."*
+
+### Outcome C — Source files are missing
+\`get_accuracy\` flags entries as \`missing\` (the source file no longer exists).
+
+Do **not** auto-remove the metadata entry. The file may have been **renamed** (the user should run \`add_metadata\` for the new path then \`remove_metadata\` for the old one) or genuinely **deleted** (\`remove_metadata\`). Surface the situation to the user and wait for instruction.
+
+## Step 3 — Loop until done
+
+After processing the batch, call \`list_documents_below_accuracy\` again. If \`totalBelowThreshold\` > 0 **and** the new batch makes progress (different docs or fewer docs), continue from Step 2.
+
+If the same docs come back unchanged, the remaining drift is intentional or blocked by Outcome C — stop and report.
+
+## Step 4 — Final report
+
+Summarise to the user:
+- N ADRs audited.
+- N re-baselined as-is (Outcome A — description was correct).
+- N rewritten and re-baselined (Outcome B — content corrected). Include the list with one-line diff summaries.
+- N flagged for user input (Outcome C — missing source files, or structural change requiring \`create-adr\`).
+- Final \`totalBelowThreshold\` after the audit.
+`.trim();
+
+    case 'create-adr': {
+      const today = new Date().toISOString().slice(0, 10);
+      const featureLine = args.featureSummary
+        ? `The user described this feature as: **${args.featureSummary}**.`
+        : 'Identify in one sentence what was implemented or changed — that sentence becomes the ADR `description:`.';
+      const filesLine = args.modifiedFiles
+        ? `Files reported as modified by this feature: \`${args.modifiedFiles}\`. Verify each one is non-god before attaching.`
+        : 'Determine which source files materially carry this feature\'s logic (component, hook, service, route, schema, infra config). Exclude god files.';
+      return `
+You are about to record an **ADR (Architecture Decision Record)** for a feature that has just been implemented or modified.
+
+${featureLine}
+
+## Step 1 — Search for an ADR to supersede
+
+1. Call \`list_documents\`.
+2. Shortlist ADRs whose title or category looks topically related to the feature (cheap — just title + category strings).
+3. \`read_document\` on the shortlisted ADRs and inspect their frontmatter (\`description\`, \`tags\`).
+4. If an existing ADR is **made obsolete** by this feature:
+   - \`read_document(id)\` to load its current Markdown.
+   - Modify only the frontmatter: flip \`**status:**\` to \`SuperSeeded\` and add a one-line pointer just under the frontmatter (e.g. \`> Superseded by: <new ADR title>\`). Keep the body intact — supersede is a status flip, not a delete.
+   - \`update_document(id, content)\` with the modified Markdown. Do **not** use \`create_document\` for this — it does not overwrite and will reject a colliding filename.
+5. If no ADR is superseded, proceed.
+
+## Step 2 — Write the new ADR
+
+Mandatory frontmatter at the very top of \`content\`:
+
+\`\`\`
+---
+**date:** ${today}
+**status:** To be validated
+**description:** One dense, technical sentence — what the decision does, not why.
+**tags:** 5–10 specific tags mixing concepts, technologies, and key symbol names
+---
+\`\`\`
+
+Rules (re-stated, do not skip):
+- \`status:\` is **always** \`To be validated\`. The human owner promotes to \`Accepted\` later — you do not.
+- \`description:\` is one sentence, factual, technical. The "why" goes in the body.
+- \`tags:\` are the primary search signal. Be specific: library names (\`stripe\`, \`amplify\`), domain concepts (\`workflow\`, \`moderation\`), symbol names where relevant (\`useAdScheduler\`, \`presigned-url\`).
+- Body sections (suggested): \`## Contexte\`, \`## Décision\`, \`## Conséquences\`.
+
+Call \`create_document\` with:
+- \`title\` — short, lowercase, becomes the filename slug (e.g. \`ajout ressource storage s3\`).
+- \`category\` — domain bucket in the filename pattern, **uppercase**, e.g. \`SERVICES CLOUD\`, \`INTEGRATION\`, \`ALGORITHMES\`.
+- \`folder: "adrs"\` (or the project's ADR sub-folder).
+- \`content\` — frontmatter + body.
+
+## Step 3 — Bind the source files
+
+For **each** source file that materially carries the feature's logic, call \`add_metadata(<new ADR id>, <relative path>)\`.
+
+${filesLine}
+
+**Do NOT attach god files** — they would produce false-positive drift signals across many ADRs. Excluded by default:
+- Lock and manifest files: \`package.json\`, \`package-lock.json\`, \`yarn.lock\`, \`pnpm-lock.yaml\`, \`tsconfig.json\`, \`requirements.txt\`, \`Cargo.lock\`, \`go.sum\`.
+- Central re-export / barrel files, root routers, root stores, top-level app entry files (unless the ADR is about that file).
+- Auto-generated files (build outputs, codegen).
+
+Rule of thumb: if a routine modification of the file would NOT reflect a semantic change of *this* feature, do not attach it.
+
+## Step 4 — Report
+
+Tell the user:
+- The id and title of the new ADR (status \`To be validated\`, awaiting their review).
+- Whether any prior ADR was superseded — and which.
+- The list of source files attached as metadata.
+`.trim();
+    }
+
     case 'generate-context-diagram':
       return `
 ${PREAMBLE}
@@ -1081,6 +1363,8 @@ function createMcpServer(docsPath: string): Server {
           return toolCreateDocument(docsPath, args as {
             title: string; category: string; folder?: string; content?: string;
           });
+        case 'update_document':
+          return toolUpdateDocument(docsPath, args as { id: string; content: string });
         case 'list_diagrams':
           return toolListDiagrams(docsPath);
         case 'read_diagram':
