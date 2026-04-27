@@ -48,21 +48,23 @@ export async function startServer({
   app.use('/mcp', mcpRouter(docsPath));
 
   // Static frontend assets
+  // dotfiles: 'allow' so the npx cache (~/.npm/_npx/...) doesn't trip send's
+  // dotfile guard on the .npm path segment and 404 every asset.
   const frontendPath = path.join(__dirname, 'frontend');
-  app.use(express.static(frontendPath));
+  app.use(express.static(frontendPath, { dotfiles: 'allow' }));
 
   // Static assets from docs folder (images, etc.)
-  app.use('/images', express.static(path.join(docsPath, 'images')));
-  app.use('/files', express.static(path.join(docsPath, 'files')));
+  app.use('/images', express.static(path.join(docsPath, 'images'), { dotfiles: 'allow' }));
+  app.use('/files', express.static(path.join(docsPath, 'files'), { dotfiles: 'allow' }));
 
   app.get('/', (_req, res) =>
-    res.sendFile(path.join(frontendPath, 'index.html')),
+    res.sendFile(path.join(frontendPath, 'index.html'), { dotfiles: 'allow' }),
   );
   app.get('/admin', (_req, res) =>
-    res.sendFile(path.join(frontendPath, 'admin.html')),
+    res.sendFile(path.join(frontendPath, 'admin.html'), { dotfiles: 'allow' }),
   );
   app.get('/diagram', (_req, res) =>
-    res.sendFile(path.join(frontendPath, 'diagram.html')),
+    res.sendFile(path.join(frontendPath, 'diagram.html'), { dotfiles: 'allow' }),
   );
 
   return new Promise((resolve) => {
