@@ -87,7 +87,10 @@ export function resolveDocFilePath(docsPath: string, doc: DocSummary): string | 
 }
 
 export function toolListDocuments(docsPath: string) {
-  const docs = listAllDocuments(docsPath);
+  const docs = listAllDocuments(docsPath).map(d => ({
+    ...d,
+    linkHref: `?doc=${encodeURIComponent(d.id)}`,
+  }));
   return { content: [{ type: 'text' as const, text: JSON.stringify(docs, null, 2) }] };
 }
 
@@ -187,6 +190,7 @@ export function toolCreateDocument(docsPath: string, args: {
         filename,
         id: docId,
         url: `http://localhost:${port}/?doc=${encodeURIComponent(docId)}`,
+        linkHref: `?doc=${encodeURIComponent(docId)}`,
       }, null, 2),
     }],
   };

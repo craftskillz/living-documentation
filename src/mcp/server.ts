@@ -82,9 +82,17 @@ for those — there is no need to align table columns visually.
 The viewer recognises four project-specific link patterns. Use them whenever
 they apply, otherwise the cross-reference is invisible to the reader:
 
-- **Cross-document link** — \`[label](?doc=<encodedId>)\` (use the \`id\` returned
-  by \`list_documents\` verbatim; it is already URL-encoded). Add \`#heading-slug\`
-  to jump to a heading inside the target doc.
+- **Cross-document link** — \`[label](?doc=<doublyEncodedId>)\`. The \`id\`
+  returned by \`list_documents\` and \`create_document\` is **already** URL-encoded
+  once (a doc in folder \`adrs/\` has id \`adrs%2Ffoo\`, not \`adrs/foo\`).
+  To embed it in a query string you must encode it **again** — every \`%\`
+  becomes \`%25\`, so \`adrs%2Ffoo\` becomes \`adrs%252Ffoo\` in the link href.
+  **Operational rule (preferred — zero encoding to do)**: copy the
+  \`linkHref\` field returned by \`list_documents\` and \`create_document\` and
+  paste it verbatim between the parentheses. Worked example:
+  \`{ id: "adrs%2Ffoo", linkHref: "?doc=adrs%252Ffoo" }\` →
+  \`[Foo ADR](?doc=adrs%252Ffoo)\`. Append \`#heading-slug\` to the linkHref
+  to jump to a specific heading inside the target doc.
 - **Diagram link** (C4 drill-down or ADR → diagram pointer) —
   \`[label](/diagram?id=<diagramId>)\`.
 - **File attachment** — \`[name](./files/<filename>)\` where \`<filename>\` is what
@@ -377,7 +385,7 @@ const TOOLS = [
   },
   {
     name: 'list_documents',
-    description: `List all documents with their id, title, category, and folder. Documents are the source of truth — read them before creating or updating any diagram. ${GUIDE_HINT}`,
+    description: `List all documents with their id, title, category, folder, and \`linkHref\` (the ready-to-paste \`?doc=...\` segment for a Markdown cross-doc link — copy it verbatim, do not re-encode). Documents are the source of truth — read them before creating or updating any diagram. ${GUIDE_HINT}`,
     inputSchema: { type: 'object', properties: {} },
   },
   {
