@@ -155,6 +155,29 @@ test('GET /api/documents/file-counts returns attachment counts per doc', async (
   expect(counts[introKey!]).toBe(1);
 });
 
+test('GET /api/documents/file-counts ignores placeholder file-link examples', async ({
+  request,
+  ld,
+}) => {
+  fs.writeFileSync(
+    path.join(ld.docsAbs, '2026_01_01_10_00_[General]_intro.md'),
+    [
+      '# Intro',
+      '',
+      '- Convention: `[name](./files/<filename>)`.',
+      '- Concrete link: [attestation.pdf](/files/20260428093235_zped_attestation.pdf).',
+      '',
+    ].join('\n'),
+  );
+
+  const res = await request.get(`${ld.baseURL}/api/documents/file-counts`);
+  expect(res.ok()).toBe(true);
+  const counts = (await res.json()) as Record<string, number>;
+  const introKey = Object.keys(counts).find((k) => decodeURIComponent(k).includes('intro'));
+  expect(introKey).toBeDefined();
+  expect(counts[introKey!]).toBe(1);
+});
+
 test('POST /api/documents returns 409 when a document with that slug already exists', async ({
   request,
   ld,

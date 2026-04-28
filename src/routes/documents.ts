@@ -111,12 +111,41 @@ export function stripFrontmatter(content: string): string {
   return content.slice(end + 4).replace(/^\n/, "");
 }
 
+export function isConcreteFileAttachmentHref(href: string): boolean {
+  const raw = (href || "").trim();
+  if (!/^\.?\/files\//i.test(raw)) return false;
+
+  let decoded = raw;
+  try {
+    decoded = decodeURIComponent(raw);
+  } catch {
+    // Keep the raw href if it is not valid URI-encoded text.
+  }
+
+  if (/[<>]/.test(raw) || /[<>]/.test(decoded)) return false;
+
+  const filename = decoded.split(/[?#]/, 1)[0].split("/").pop() || "";
+  return filename.length > 0;
+}
+
+export function countFileAttachmentLinks(content: string): number {
+  const linkRe = /\[[^\]]*]\(\s*(\.?\/files\/[^)\s]+)(?:\s+["'][^)]*["'])?\s*\)/gi;
+  let count = 0;
+  let match: RegExpExecArray | null;
+  while ((match = linkRe.exec(content)) !== null) {
+    if (isConcreteFileAttachmentHref(match[1])) count += 1;
+  }
+  return count;
+}
+
 // Decorate <a> tags pointing to the /files/ folder with a paperclip icon and
 // target="_blank" so attachments open in a new tab.
 export function decorateFileLinks(html: string): string {
   return html.replace(
     /<a\s+([^>]*?)href="(\.?\/files\/[^"]+)"([^>]*)>([\s\S]*?)<\/a>/gi,
     (_m, pre: string, href: string, post: string, label: string) => {
+      if (!isConcreteFileAttachmentHref(href)) return _m;
+
       const attrs = `${pre} ${post}`.trim();
       const hasClass = /\bclass\s*=/.test(attrs);
       const classFragment = hasClass
@@ -221,13 +250,12 @@ export function documentsRouter(docsPath: string): Router {
       const { extraFiles = [], filenamePattern } = readConfig(docsPath);
       const docs = listDocs(docsPath, extraFiles, filenamePattern);
       const counts: Record<string, number> = {};
-      const linkRe = /\]\(\s*\.?\/files\/[^)\s]+/g;
       for (const doc of docs) {
         const filePath = resolveDocPath(docsPath, doc, extraFiles);
         if (!filePath || !fs.existsSync(filePath)) continue;
         const content = fs.readFileSync(filePath, "utf-8");
-        const matches = content.match(linkRe);
-        if (matches && matches.length > 0) counts[doc.id] = matches.length;
+        const count = countFileAttachmentLinks(content);
+        if (count > 0) counts[doc.id] = count;
       }
       res.json(counts);
     } catch {
