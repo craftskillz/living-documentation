@@ -4,6 +4,7 @@
 import { st, markDirty } from './state.js';
 import { visEdgeProps }  from './edge-rendering.js';
 import { pushSnapshot }  from './history.js';
+import { t }             from './t.js';
 
 const DEFAULT_EDGE_COLOR = '#a8a29e';
 const FREE_ARROW_STYLE_KEY = 'ld-free-arrow-style';
@@ -33,12 +34,55 @@ export function getLastFreeArrowStyle() {
   catch { return {}; }
 }
 
+function isEdgeLocked(edge) {
+  if (!edge) return false;
+  const fromN = st.nodes && st.nodes.get(edge.from);
+  const toN   = st.nodes && st.nodes.get(edge.to);
+  const isFreeArrow = fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor';
+  return isFreeArrow ? !!(fromN.locked && toN.locked) : !!edge.edgeLocked;
+}
+
+function selectedEdgeLockState() {
+  const edgeIds = (st.selectedEdgeIds || []).filter((id) => st.edges && st.edges.get(id));
+  if (!edgeIds.length) return { allLocked: false, edgeIds };
+  return {
+    allLocked: edgeIds.every((id) => isEdgeLocked(st.edges.get(id))),
+    edgeIds,
+  };
+}
+
+function syncEdgeLockButton() {
+  const btn = document.getElementById('btnEdgeLock');
+  if (!btn) return;
+  const { allLocked } = selectedEdgeLockState();
+  btn.textContent = allLocked ? '🔓' : '🔒';
+  btn.title = t(allLocked ? 'diagram.edge_panel.unlock' : 'diagram.edge_panel.lock');
+  btn.setAttribute('aria-label', btn.title);
+  btn.classList.toggle('tool-active', allLocked);
+}
+
+function setEdgeLocked(edge, locked) {
+  if (!edge) return;
+  const fromN = st.nodes && st.nodes.get(edge.from);
+  const toN   = st.nodes && st.nodes.get(edge.to);
+  const isFreeArrow = fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor';
+  if (isFreeArrow) {
+    [edge.from, edge.to].forEach((nodeId) => {
+      st.nodes.update({ id: nodeId, locked, fixed: locked ? { x: true, y: true } : false, draggable: !locked });
+      const bn = st.network && st.network.body.nodes[nodeId];
+      if (bn) bn.refreshNeeded = true;
+    });
+  } else {
+    st.edges.update({ id: edge.id, edgeLocked: locked });
+  }
+}
+
 export function showEdgePanel() {
   if (!st.selectedEdgeIds.length) return;
   const e = st.edges.get(st.selectedEdgeIds[0]);
   if (!e) return;
 
-  document.getElementById('btnEdgeLock').classList.remove('tool-active');
+  syncEdgeLockButton();
   document.getElementById('edgePanelControls').classList.remove('hidden');
 
   const dir    = e.arrowDir ?? 'to';
@@ -69,33 +113,22 @@ export function showEdgePanel() {
 }
 
 export function toggleEdgeLock() {
-  if (!st.selectedEdgeIds.length) return;
+  const { allLocked, edgeIds } = selectedEdgeLockState();
+  if (!edgeIds.length) return;
+  const nextLocked = !allLocked;
   pushSnapshot();
-  // Locking is a one-way UI action — once locked, the only way back is the
-  // long-press on the shape itself (see unlock-hold.js).
-  st.selectedEdgeIds.forEach((id) => {
-    const e = st.edges.get(id);
-    if (!e) return;
-    const fromN = st.nodes && st.nodes.get(e.from);
-    const toN   = st.nodes && st.nodes.get(e.to);
-    const isFreeArrow = fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor';
-    if (isFreeArrow) {
-      [e.from, e.to].forEach((nodeId) => {
-        st.nodes.update({ id: nodeId, locked: true, fixed: { x: true, y: true }, draggable: false });
-        const bn = st.network && st.network.body.nodes[nodeId];
-        if (bn) bn.refreshNeeded = true;
-      });
-    } else {
-      st.edges.update({ id, edgeLocked: true });
-    }
-  });
+  edgeIds.forEach((id) => setEdgeLocked(st.edges.get(id), nextLocked));
   if (st.network) {
-    st.network.unselectAll();
     st.network.redraw();
+    if (nextLocked) st.network.unselectAll();
   }
-  st.selectedNodeIds = [];
-  st.selectedEdgeIds = [];
-  hideEdgePanel();
+  if (nextLocked) {
+    st.selectedNodeIds = [];
+    st.selectedEdgeIds = [];
+    hideEdgePanel();
+  } else {
+    syncEdgeLockButton();
+  }
   markDirty();
 }
 

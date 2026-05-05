@@ -4,6 +4,7 @@
 import { st, markDirty } from './state.js';
 import { SHAPE_DEFAULTS } from './node-rendering.js';
 import { pushSnapshot }   from './history.js';
+import { t }              from './t.js';
 
 // ── Last-used style persistence (per shape type) ──────────────────────────────
 // Saves colorKey/fontSize/textAlign/textValign per shapeType to localStorage so
@@ -38,10 +39,61 @@ function forceRedraw() {
   if (st.network) st.network.redraw();
 }
 
+function isEdgeLocked(edge) {
+  if (!edge) return false;
+  const fromN = st.nodes && st.nodes.get(edge.from);
+  const toN   = st.nodes && st.nodes.get(edge.to);
+  const isFreeArrow = fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor';
+  return isFreeArrow ? !!(fromN.locked && toN.locked) : !!(edge.edgeLocked || (fromN && fromN.locked && toN && toN.locked));
+}
+
+function selectedLockState() {
+  const nodeIds = (st.selectedNodeIds || []).filter((id) => {
+    const n = st.nodes && st.nodes.get(id);
+    return n && n.shapeType !== 'anchor';
+  });
+  const edgeIds = (st.selectedEdgeIds || []).filter((id) => st.edges && st.edges.get(id));
+  const total = nodeIds.length + edgeIds.length;
+  if (!total) return { allLocked: false, nodeIds, edgeIds };
+
+  const nodesLocked = nodeIds.every((id) => {
+    const n = st.nodes.get(id);
+    return !!(n && n.locked);
+  });
+  const edgesLocked = edgeIds.every((id) => isEdgeLocked(st.edges.get(id)));
+  return { allLocked: nodesLocked && edgesLocked, nodeIds, edgeIds };
+}
+
+function syncNodeLockButton() {
+  const btn = document.getElementById('btnNodeLock');
+  if (!btn) return;
+  const { allLocked } = selectedLockState();
+  btn.textContent = allLocked ? '🔓' : '🔒';
+  btn.title = t(allLocked ? 'diagram.node_panel.unlock' : 'diagram.node_panel.lock');
+  btn.setAttribute('aria-label', btn.title);
+  btn.classList.toggle('tool-active', allLocked);
+}
+
+function setEdgeLocked(edge, locked) {
+  if (!edge) return;
+  const fromN = st.nodes && st.nodes.get(edge.from);
+  const toN   = st.nodes && st.nodes.get(edge.to);
+  const isFreeArrow = fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor';
+  if (isFreeArrow) {
+    [edge.from, edge.to].forEach((nodeId) => {
+      st.nodes.update({ id: nodeId, locked, fixed: locked ? { x: true, y: true } : false, draggable: !locked });
+      const bn = st.network && st.network.body.nodes[nodeId];
+      if (bn) bn.refreshNeeded = true;
+    });
+  } else {
+    st.edges.update({ id: edge.id, edgeLocked: locked });
+  }
+}
+
 export function showNodePanel() {
   document.getElementById('nodePanel').classList.remove('hidden');
   document.getElementById('nodePanelControls').classList.remove('hidden');
-  document.getElementById('btnNodeLock').classList.remove('tool-active');
+  syncNodeLockButton();
   // Sync the opacity slider with the first selected node's current value so the
   // slider reflects the live state rather than whatever position it was left at.
   const slider = document.getElementById('nodeBgOpacity');
@@ -57,22 +109,27 @@ export function hideNodePanel() {
 }
 
 export function toggleNodeLock() {
-  if (!st.selectedNodeIds.length) return;
+  const { allLocked, nodeIds, edgeIds } = selectedLockState();
+  if (!nodeIds.length && !edgeIds.length) return;
+  const nextLocked = !allLocked;
   pushSnapshot();
-  // Locking is a one-way UI action — once locked, the only way back is the
-  // long-press on the shape itself (see unlock-hold.js).
-  st.selectedNodeIds.forEach((id) => {
-    st.nodes.update({ id, locked: true, fixed: { x: true, y: true }, draggable: false });
+  nodeIds.forEach((id) => {
+    st.nodes.update({ id, locked: nextLocked, fixed: nextLocked ? { x: true, y: true } : false, draggable: !nextLocked });
     const bn = st.network && st.network.body.nodes[id];
     if (bn) bn.refreshNeeded = true;
   });
+  edgeIds.forEach((id) => setEdgeLocked(st.edges.get(id), nextLocked));
   if (st.network) {
-    st.network.unselectAll();
     st.network.redraw();
+    if (nextLocked) st.network.unselectAll();
   }
-  st.selectedNodeIds = [];
-  st.selectedEdgeIds = [];
-  hideNodePanel();
+  if (nextLocked) {
+    st.selectedNodeIds = [];
+    st.selectedEdgeIds = [];
+    hideNodePanel();
+  } else {
+    syncNodeLockButton();
+  }
   markDirty();
 }
 

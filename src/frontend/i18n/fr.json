@@ -428,7 +428,8 @@
   "diagram.sidebar.empty": "Aucun diagramme",
   "diagram.sidebar.delete_title": "Supprimer",
 
-  "diagram.node_panel.lock": "Verrouiller la forme",
+  "diagram.node_panel.lock": "Verrouiller la sélection",
+  "diagram.node_panel.unlock": "Déverrouiller la sélection",
   "diagram.node_panel.edit_label": "Modifier le texte (double-clic)",
   "diagram.node_panel.edit_link": "Ajouter / modifier un lien",
   "diagram.node_panel.bg_opacity": "Opacité du fond",
@@ -461,6 +462,7 @@
   "diagram.link_panel.remove_btn": "Retirer",
 
   "diagram.edge_panel.lock": "Verrouiller la flèche",
+  "diagram.edge_panel.unlock": "Déverrouiller la flèche",
   "diagram.edge_panel.no_arrow": "Trait simple",
   "diagram.edge_panel.arrow_to": "Flèche directionnelle",
   "diagram.edge_panel.arrow_both": "Bidirectionnelle",

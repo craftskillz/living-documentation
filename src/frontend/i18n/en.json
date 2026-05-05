@@ -428,7 +428,8 @@
   "diagram.sidebar.empty": "No diagrams",
   "diagram.sidebar.delete_title": "Delete",
 
-  "diagram.node_panel.lock": "Lock shape",
+  "diagram.node_panel.lock": "Lock selection",
+  "diagram.node_panel.unlock": "Unlock selection",
   "diagram.node_panel.edit_label": "Edit text (double-click)",
   "diagram.node_panel.edit_link": "Add / edit link",
   "diagram.node_panel.bg_opacity": "Background opacity",
@@ -461,6 +462,7 @@
   "diagram.link_panel.remove_btn": "Remove",
 
   "diagram.edge_panel.lock": "Lock arrow",
+  "diagram.edge_panel.unlock": "Unlock arrow",
   "diagram.edge_panel.no_arrow": "Simple line",
   "diagram.edge_panel.arrow_to": "Directional arrow",
   "diagram.edge_panel.arrow_both": "Bidirectional",
