@@ -82,3 +82,18 @@ export async function listPrompts(
   const envelope = await rpcCall(request, baseURL, 2, 'prompts/list', {});
   return envelope.result.prompts;
 }
+
+export async function getPrompt(
+  request: APIRequestContext,
+  baseURL: string,
+  name: string,
+  args: Record<string, unknown> = {},
+): Promise<{ description: string; messages: Array<{ role: string; content: { type: string; text: string } }> }> {
+  await initialize(request, baseURL);
+  const envelope = await rpcCall(request, baseURL, 2, 'prompts/get', {
+    name,
+    arguments: args,
+  });
+  if (envelope.error) throw new Error(`MCP prompt error: ${JSON.stringify(envelope.error)}`);
+  return envelope.result;
+}

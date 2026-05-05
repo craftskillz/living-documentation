@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { test, expect } from '../helpers/ld-fixture';
-import { callTool, listTools, listPrompts } from '../helpers/mcp';
+import { callTool, getPrompt, listTools, listPrompts } from '../helpers/mcp';
 
 test('tools/list exposes the expected tool set', async ({ request, ld }) => {
   const tools = await listTools(request, ld.baseURL);
@@ -25,11 +25,13 @@ test('tools/list exposes the expected tool set', async ({ request, ld }) => {
   );
 });
 
-test('prompts/list exposes the diagram-generation prompts', async ({ request, ld }) => {
+test('prompts/list exposes the workflow and diagram-generation prompts over Streamable HTTP', async ({ request, ld }) => {
   const prompts = await listPrompts(request, ld.baseURL);
   const names = prompts.map((p) => p.name);
   expect(names).toEqual(
     expect.arrayContaining([
+      'audit-doc-drift',
+      'create-adr',
       'generate-context-diagram',
       'generate-container-diagram',
       'generate-uml-diagram',
@@ -38,6 +40,22 @@ test('prompts/list exposes the diagram-generation prompts', async ({ request, ld
       'erd',
     ]),
   );
+});
+
+test('prompts/get returns the create-adr and audit-doc-drift templates over Streamable HTTP', async ({ request, ld }) => {
+  const createAdr = await getPrompt(request, ld.baseURL, 'create-adr', {
+    featureSummary: 'Neon browser obstacle game',
+    modifiedFiles: 'index.html',
+  });
+  expect(createAdr.messages[0].content.text).toContain('record an **ADR');
+  expect(createAdr.messages[0].content.text).toContain('Neon browser obstacle game');
+  expect(createAdr.messages[0].content.text).toContain('create_document');
+  expect(createAdr.messages[0].content.text).toContain('add_metadata');
+
+  const audit = await getPrompt(request, ld.baseURL, 'audit-doc-drift');
+  expect(audit.messages[0].content.text).toContain('list_documents_below_accuracy');
+  expect(audit.messages[0].content.text).toContain('refresh_metadata');
+  expect(audit.messages[0].content.text).toContain('update_document');
 });
 
 test('list_documents returns the three fixture docs', async ({ request, ld }) => {
