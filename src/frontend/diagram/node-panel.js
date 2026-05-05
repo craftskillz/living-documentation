@@ -74,6 +74,22 @@ function syncNodeLockButton() {
   btn.classList.toggle('tool-active', allLocked);
 }
 
+function syncNodeFontSizeValue() {
+  const el = document.getElementById('nodeFontSizeValue');
+  if (!el) return;
+  const sizes = (st.selectedNodeIds || []).map((id) => {
+    const n = st.nodes && st.nodes.get(id);
+    return n && n.shapeType !== 'anchor' ? (n.fontSize || 13) : null;
+  }).filter((size) => size !== null);
+
+  if (!sizes.length) {
+    el.textContent = '–';
+    return;
+  }
+  const first = sizes[0];
+  el.textContent = sizes.every((size) => size === first) ? String(first) : '–';
+}
+
 function setEdgeLocked(edge, locked) {
   if (!edge) return;
   const fromN = st.nodes && st.nodes.get(edge.from);
@@ -94,6 +110,7 @@ export function showNodePanel() {
   document.getElementById('nodePanel').classList.remove('hidden');
   document.getElementById('nodePanelControls').classList.remove('hidden');
   syncNodeLockButton();
+  syncNodeFontSizeValue();
   // Sync the opacity slider with the first selected node's current value so the
   // slider reflects the live state rather than whatever position it was left at.
   const slider = document.getElementById('nodeBgOpacity');
@@ -171,6 +188,7 @@ export function changeNodeFontSize(delta) {
     st.nodes.update({ id, fontSize: newSize });
   });
   persistNodeStyle();
+  syncNodeFontSizeValue();
   forceRedraw();
   markDirty();
 }

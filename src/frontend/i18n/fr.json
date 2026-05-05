@@ -434,6 +434,7 @@
   "diagram.node_panel.edit_link": "Ajouter / modifier un lien",
   "diagram.node_panel.bg_opacity": "Opacité du fond",
   "diagram.node_panel.font_decrease": "Réduire la police",
+  "diagram.node_panel.font_size_value": "Taille de police actuelle",
   "diagram.node_panel.font_increase": "Agrandir la police",
   "diagram.node_panel.align_left": "Aligner à gauche",
   "diagram.node_panel.align_center": "Centrer horizontalement",

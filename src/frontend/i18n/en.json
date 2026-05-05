@@ -434,6 +434,7 @@
   "diagram.node_panel.edit_link": "Add / edit link",
   "diagram.node_panel.bg_opacity": "Background opacity",
   "diagram.node_panel.font_decrease": "Decrease font size",
+  "diagram.node_panel.font_size_value": "Current font size",
   "diagram.node_panel.font_increase": "Increase font size",
   "diagram.node_panel.align_left": "Align left",
   "diagram.node_panel.align_center": "Align center",
