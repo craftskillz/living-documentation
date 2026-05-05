@@ -34,6 +34,7 @@ let _draggingAnchorIds = new Set();
 let _rehookEdgeId      = null;
 let _rehookHoveredNodeId  = null;
 let _rehookHoveredPortKey = null;
+let _pointerDownSelection = { nodeIds: [], edgeIds: [] };
 
 // Returns true when an edge can enter rehook mode (at least one non-anchor endpoint).
 // Works for both port edges and native vis-network edges.
@@ -126,7 +127,11 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
         callback(data);
         markDirty();
         _addEdgeFromPort = null;
-        setTimeout(() => { if (st.currentTool === 'addEdge') st.network.addEdgeMode(); }, 0);
+        setTimeout(() => {
+          if (st.currentTool === 'addEdge') {
+            window.dispatchEvent(new CustomEvent('diagram:setTool', { detail: { tool: 'select' } }));
+          }
+        }, 0);
       },
     },
   };
@@ -138,6 +143,13 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
   // Must be registered BEFORE any other capture-phase mousedown listeners on
   // the container so it can stopImmediatePropagation for locked targets.
   installUnlockHold(container);
+  container.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+    _pointerDownSelection = {
+      nodeIds: [...(st.selectedNodeIds || [])],
+      edgeIds: [...(st.selectedEdgeIds || [])],
+    };
+  }, { capture: true });
 
   // ── Z-order patch ──────────────────────────────────────────────────────────
   // vis.js renders in 3 passes (normal → selected → hovered), which breaks
@@ -189,7 +201,7 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
       } else if (fromIsAnchor && !toIsAnchor) {
         level = toLevel;
       } else {
-        level = Math.min(fromLevel, toLevel);
+        level = Math.max(fromLevel, toLevel);
       }
       if (!edgesByLevel.has(level)) edgesByLevel.set(level, []);
       edgesByLevel.get(level).push(edge);
@@ -1037,26 +1049,121 @@ function _distToSegment(px, py, ax, ay, bx, by) {
 }
 
 
-// Returns the topmost (highest z-order) node whose bounding box contains canvasPos.
+function nodeContainsCanvasPoint(id, canvasPos) {
+  const n  = st.nodes.get(id);
+  const bn = st.network && st.network.body.nodes[id];
+  if (!n || !bn || n.shapeType === 'anchor') return false;
+
+  const shapeType = n.shapeType || 'box';
+  const defaults  = SHAPE_DEFAULTS[shapeType] || [60, 28];
+  const W = n.nodeWidth || defaults[0];
+  const H = shapeType === 'circle' ? W : (n.nodeHeight || defaults[1]);
+
+  const dx = canvasPos.x - bn.x;
+  const dy = canvasPos.y - bn.y;
+  const rot = n.rotation || 0;
+  const lx = rot ? dx * Math.cos(-rot) - dy * Math.sin(-rot) : dx;
+  const ly = rot ? dx * Math.sin(-rot) + dy * Math.cos(-rot) : dy;
+
+  if (shapeType === 'circle' || shapeType === 'ellipse') {
+    const rx = W / 2;
+    const ry = H / 2;
+    return rx > 0 && ry > 0 && ((lx * lx) / (rx * rx) + (ly * ly) / (ry * ry)) <= 1;
+  }
+
+  return Math.abs(lx) <= W / 2 && Math.abs(ly) <= H / 2;
+}
+
+// Returns the topmost (highest z-order) node containing canvasPos.
 // Ignores anchor nodes and respects st.canonicalOrder.
 function topmostNodeAt(canvasPos) {
-  let topmost = null;
-  let topmostIdx = -1;
-  for (const id of st.canonicalOrder) {
-    const n  = st.nodes.get(id);
-    const bn = st.network && st.network.body.nodes[id];
-    if (!n || !bn || n.shapeType === 'anchor') continue;
-    const defaults = SHAPE_DEFAULTS[n.shapeType || 'box'] || [60, 28];
-    const W  = n.nodeWidth  || defaults[0];
-    const H  = n.nodeHeight || defaults[1];
-    const cx = bn.x, cy = bn.y;
-    if (canvasPos.x >= cx - W / 2 && canvasPos.x <= cx + W / 2 &&
-        canvasPos.y >= cy - H / 2 && canvasPos.y <= cy + H / 2) {
-      const idx = st.canonicalOrder.indexOf(id);
-      if (idx > topmostIdx) { topmostIdx = idx; topmost = id; }
+  for (let i = st.canonicalOrder.length - 1; i >= 0; i--) {
+    const id = st.canonicalOrder[i];
+    if (nodeContainsCanvasPoint(id, canvasPos)) return id;
+  }
+  return null;
+}
+
+function edgeDrawLevel(edgeData) {
+  if (!edgeData) return -1;
+  const fromLevel = st.canonicalOrder.indexOf(edgeData.from);
+  const toLevel   = st.canonicalOrder.indexOf(edgeData.to);
+  if (fromLevel === -1 && toLevel === -1) return -1;
+  if (fromLevel === -1) return toLevel;
+  if (toLevel === -1) return fromLevel;
+
+  const fromNode = st.nodes.get(edgeData.from);
+  const toNode   = st.nodes.get(edgeData.to);
+  const fromIsAnchor = fromNode && fromNode.shapeType === 'anchor';
+  const toIsAnchor   = toNode   && toNode.shapeType   === 'anchor';
+  if (toIsAnchor && !fromIsAnchor) return fromLevel;
+  if (fromIsAnchor && !toIsAnchor) return toLevel;
+  return Math.max(fromLevel, toLevel);
+}
+
+function nearestPortEdgeAt(canvasPos, threshold = 8) {
+  const portEdges = st.edges.get({ filter: (e) => e.fromPort || e.toPort });
+  let nearest = null;
+  let nearestDist = Infinity;
+  for (const edge of portEdges) {
+    const d = distanceToPortEdge(edge, canvasPos);
+    if (d < nearestDist) {
+      nearestDist = d;
+      nearest = edge;
     }
   }
-  return topmost;
+  return nearest && nearestDist <= threshold ? nearest : null;
+}
+
+function selectableEdgesForNodes(nodeIds) {
+  const selectedSet = new Set(nodeIds);
+  return st.edges.get().filter((e) => {
+    if (!selectedSet.has(e.from) || !selectedSet.has(e.to)) return false;
+    const fromN = st.nodes.get(e.from);
+    const toN   = st.nodes.get(e.to);
+    const isFreeArrow = fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor';
+    return isFreeArrow ? !(fromN.locked && toN.locked) : !e.edgeLocked;
+  }).map((e) => e.id);
+}
+
+function selectNodesFromClick(nodeId, srcEvent) {
+  const additive = !!(srcEvent && (srcEvent.metaKey || srcEvent.ctrlKey));
+  const clicked = expandSelectionToGroup([nodeId]).filter((id) => {
+    const n = st.nodes.get(id);
+    return n && !n.locked && n.shapeType !== 'anchor';
+  });
+  if (!clicked.length) return;
+
+  let nodeIds;
+  if (additive) {
+    const next = new Set(_pointerDownSelection.nodeIds || []);
+    const allAlreadySelected = clicked.every((id) => next.has(id));
+    clicked.forEach((id) => {
+      if (allAlreadySelected) next.delete(id);
+      else next.add(id);
+    });
+    nodeIds = Array.from(next).filter((id) => {
+      const n = st.nodes.get(id);
+      return n && !n.locked && n.shapeType !== 'anchor';
+    });
+  } else {
+    nodeIds = clicked;
+  }
+
+  const edgeIds = selectableEdgesForNodes(nodeIds);
+  _addingEdgesToSelection = true;
+  st.network.setSelection({ nodes: nodeIds, edges: edgeIds });
+  _addingEdgesToSelection = false;
+  st.selectedNodeIds = nodeIds;
+  st.selectedEdgeIds = edgeIds;
+  _rehookEdgeId = _rehookHoveredNodeId = _rehookHoveredPortKey = null;
+
+  hideEdgePanel();
+  if (nodeIds.length) showNodePanel();
+  else {
+    hideNodePanel();
+    hideSelectionOverlay();
+  }
 }
 
 function onDoubleClick(params) {
@@ -1229,8 +1336,8 @@ function onClickNode(params) {
         update.color  = { color: 'rgba(0,0,0,0)', highlight: 'rgba(0,0,0,0)', hover: 'rgba(0,0,0,0)' };
         update.arrows = { to: { enabled: false }, from: { enabled: false } };
       }
-      st.edges.update(update);
       pushSnapshot();
+      st.edges.update(update);
       markDirty();
       const edgeId = edgeData.id;
       _rehookHoveredNodeId = _rehookHoveredPortKey = null;
@@ -1244,14 +1351,34 @@ function onClickNode(params) {
     }
   }
 
-  // When a node is reported, params.edges is always empty — vis-network short-circuits
+  // When a node is reported, params.edges is usually empty — vis-network short-circuits
   // edge detection once a node is found. Fix: call getEdgeAt() directly with CLIENT
   // coordinates. params.pointer.DOM is already offset-relative to the container, so
   // passing it to getEdgeAt() causes a double-subtraction of the container rect and
   // returns null. Passing clientX/Y lets vis-network do its own pixel-perfect detection.
   if (params.nodes.length > 0) {
     const clientPos = { x: params.event.srcEvent.clientX, y: params.event.srcEvent.clientY };
-    const edgeId = st.network.getEdgeAt(clientPos);
+    const nativeEdgeId = st.network.getEdgeAt(clientPos);
+    const portEdge = nearestPortEdgeAt(params.pointer.canvas);
+    const edgeId = nativeEdgeId || (portEdge && portEdge.id);
+
+    // First honour the app-managed z-order. vis-network may report an edge or a
+    // lower node at the click point; compare draw levels so the visibly top
+    // element gets the click.
+    const top = topmostNodeAt(params.pointer.canvas);
+    if (top) {
+      const topNode = st.nodes.get(top);
+      const topLevel = st.canonicalOrder.indexOf(top);
+      const edgeLevel = edgeId ? edgeDrawLevel(st.edges.get(edgeId)) : -1;
+      if (topNode && !topNode.locked && topNode.shapeType !== 'anchor') {
+        if (!edgeId || topLevel >= edgeLevel) {
+          setTimeout(() => {
+            selectNodesFromClick(top, params.event.srcEvent);
+          }, 0);
+          return;
+        }
+      }
+    }
     if (edgeId) {
       const edge  = st.edges.get(edgeId);
       const fromN = edge && st.nodes.get(edge.from);
@@ -1277,12 +1404,12 @@ function onClickNode(params) {
       return;
     }
     // No edge at click position — apply z-order correction for the topmost node.
-    const top = topmostNodeAt(params.pointer.canvas);
+    const fallbackTop = topmostNodeAt(params.pointer.canvas);
     const clickable = params.nodes.filter(id => {
       const n = st.nodes.get(id);
       return n && !n.locked && n.shapeType !== 'anchor';
     });
-    if (!top || !clickable.includes(top)) {
+    if (!fallbackTop || !clickable.includes(fallbackTop)) {
       const fallbackEdgeId = params.edges.length > 0 ? params.edges[0] : null;
       if (fallbackEdgeId) {
         setTimeout(() => {
@@ -1305,19 +1432,12 @@ function onClickNode(params) {
   // Also check the canvas for port-edge proximity when nothing was hit.
   if (params.nodes.length === 0 && params.edges.length === 0) {
     const cp        = params.pointer.canvas;
-    const THRESHOLD = 8;
 
     // ── Port edge proximity check ──────────────────────────────────────────
     // vis-network's hit detection uses the invisible centre-to-centre ghost,
     // so port edges that diverge visually from that path are not selectable.
-    // We scan all port edges and pick the one whose bezier path is closest.
-    const portEdges = st.edges.get({ filter: (e) => e.fromPort || e.toPort });
-    let nearest = null, nearestDist = Infinity;
-    for (const edge of portEdges) {
-      const d = distanceToPortEdge(edge, cp);
-      if (d < nearestDist) { nearestDist = d; nearest = edge; }
-    }
-    if (nearest && nearestDist <= THRESHOLD) {
+    const nearest = nearestPortEdgeAt(cp);
+    if (nearest) {
       st.network.selectEdges([nearest.id]);
       st.selectedEdgeIds = [nearest.id];
       st.selectedNodeIds = [];

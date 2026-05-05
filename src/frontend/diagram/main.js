@@ -44,6 +44,12 @@ function setTool(tool, shape) {
   }
 }
 
+window.addEventListener('diagram:setTool', (e) => {
+  const detail = e.detail || {};
+  if (!detail.tool) return;
+  setTool(detail.tool, detail.shape);
+});
+
 function selectAll() {
   if (!st.network || !st.nodes || !st.edges) return;
   const ids = st.nodes.getIds();
