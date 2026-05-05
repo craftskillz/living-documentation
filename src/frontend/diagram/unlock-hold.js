@@ -21,6 +21,29 @@ function isEdgeLocked(edge) {
   return isFreeArrow ? !!(fromN.locked && toN.locked) : !!edge.edgeLocked;
 }
 
+function hitInteractiveEdgeLabel(container, clientX, clientY) {
+  if (!st.network || !st.edgeLabelBBox || !st.selectedEdgeIds || st.selectedEdgeIds.length !== 1) return false;
+  const edgeId = st.selectedEdgeIds[0];
+  const edge = st.edges && st.edges.get(edgeId);
+  if (!edge || !edge.label) return false;
+  const bbox = st.edgeLabelBBox[edgeId];
+  if (!bbox) return false;
+
+  const rect = container.getBoundingClientRect();
+  const cp = st.network.DOMtoCanvas({ x: clientX - rect.left, y: clientY - rect.top });
+  const r = -(bbox.rotation || 0);
+  const dx = cp.x - bbox.cx;
+  const dy = cp.y - bbox.cy;
+  const lx = dx * Math.cos(r) - dy * Math.sin(r);
+  const ly = dx * Math.sin(r) + dy * Math.cos(r);
+
+  const handleRadius = 8 / st.network.getScale();
+  const onLeftHandle = Math.hypot(lx + bbox.w / 2, ly) <= handleRadius;
+  const onRightHandle = Math.hypot(lx - bbox.w / 2, ly) <= handleRadius;
+  const insideLabelBox = Math.abs(lx) <= bbox.w / 2 && Math.abs(ly) <= bbox.h / 2;
+  return onLeftHandle || onRightHandle || insideLabelBox;
+}
+
 // Returns a target descriptor ({type, id, ...}) if the DOM point lands on a
 // locked node or locked edge, otherwise null.
 function hitTestLocked(container, clientX, clientY) {
@@ -154,6 +177,7 @@ function onUp() {
 export function installUnlockHold(container) {
   container.addEventListener('mousedown', (e) => {
     if (e.button !== 0) return;
+    if (hitInteractiveEdgeLabel(container, e.clientX, e.clientY)) return;
     const target = hitTestLocked(container, e.clientX, e.clientY);
     if (!target) return;
 

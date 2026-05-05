@@ -35,6 +35,7 @@ let _rehookEdgeId      = null;
 let _rehookHoveredNodeId  = null;
 let _rehookHoveredPortKey = null;
 let _pointerDownSelection = { nodeIds: [], edgeIds: [] };
+let _edgeLabelPointerAbort = null;
 
 // Returns true when an edge can enter rehook mode (at least one non-anchor endpoint).
 // Works for both port edges and native vis-network edges.
@@ -397,14 +398,13 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
       ctx.restore();
     });
 
-    // Track hover during mousemove — computed before any mousedown fires.
-    container.addEventListener('mousemove', (e) => {
+    function edgeLabelHitAt(clientX, clientY) {
       if (!st.network || !st.edgeLabelBBox) return;
-      const cp = st.network.DOMtoCanvas({ x: e.offsetX, y: e.offsetY });
+      const rect = container.getBoundingClientRect();
+      const cp = st.network.DOMtoCanvas({ x: clientX - rect.left, y: clientY - rect.top });
       const hr = 8 / st.network.getScale();
 
       // ── Resize handle detection ──────────────────────────────────────────────
-      let found = null;
       for (const edgeId of (st.selectedEdgeIds || [])) {
         const edge = st.edges && st.edges.get(edgeId);
         if (!edge || !edge.label) continue;
@@ -417,18 +417,12 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
         const ly = dx * Math.sin(r) + dy * Math.cos(r);
 
         if (Math.hypot(lx - (-bbox.w / 2), ly) < hr || Math.hypot(lx - (bbox.w / 2), ly) < hr) {
-          found = { edgeId, bboxCx: bbox.cx, bboxCy: bbox.cy, rotation: bbox.rotation || 0 };
-          break;
+          return { type: 'handle', edgeId, bboxCx: bbox.cx, bboxCy: bbox.cy, rotation: bbox.rotation || 0 };
         }
       }
-      if (Boolean(found) !== Boolean(_hoverHandle)) {
-        container.style.cursor = found ? 'ew-resize' : (_hoverLabelDrag ? 'grab' : '');
-      }
-      _hoverHandle = found;
 
-      // ── Label box hover detection (drag) — only when no handle hovered ───────
-      let labelFound = null;
-      if (!found && st.selectedEdgeIds && st.selectedEdgeIds.length === 1) {
+      // ── Label box detection (drag) — only when no handle hovered ───────────
+      if (st.selectedEdgeIds && st.selectedEdgeIds.length === 1) {
         const edgeId = st.selectedEdgeIds[0];
         const edge = st.edges && st.edges.get(edgeId);
         if (edge && edge.label) {
@@ -439,39 +433,104 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
             const lx = dx * Math.cos(r) - dy * Math.sin(r);
             const ly = dx * Math.sin(r) + dy * Math.cos(r);
             if (Math.abs(lx) <= bbox.w / 2 && Math.abs(ly) <= bbox.h / 2) {
-              labelFound = { edgeId };
+              return { type: 'label', edgeId };
             }
           }
         }
       }
+
+      return null;
+    }
+
+    // Track hover during mousemove — computed before any mousedown fires.
+    container.addEventListener('mousemove', (e) => {
+      const hit = edgeLabelHitAt(e.clientX, e.clientY);
+      const found = hit && hit.type === 'handle'
+        ? { edgeId: hit.edgeId, bboxCx: hit.bboxCx, bboxCy: hit.bboxCy, rotation: hit.rotation }
+        : null;
+      if (Boolean(found) !== Boolean(_hoverHandle)) {
+        container.style.cursor = found ? 'ew-resize' : (_hoverLabelDrag ? 'grab' : '');
+      }
+      _hoverHandle = found;
+
+      const labelFound = !found && hit && hit.type === 'label' ? { edgeId: hit.edgeId } : null;
       if (Boolean(labelFound) !== Boolean(_hoverLabelDrag)) {
         if (!found) container.style.cursor = labelFound ? 'grab' : '';
       }
       _hoverLabelDrag = labelFound;
     });
 
-    // Mousedown: start resize (handles take priority) or label drag.
-    container.addEventListener('mousedown', (e) => {
-      if (e.button !== 0) return;
-      if (_hoverHandle) {
+    function startEdgeLabelPointerInteraction(e) {
+      if (e.button !== 0) return false;
+      if (!container.contains(e.target)) return false;
+      const hit = edgeLabelHitAt(e.clientX, e.clientY);
+      if (hit && hit.type === 'handle') {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        _hoverHandle = { edgeId: hit.edgeId, bboxCx: hit.bboxCx, bboxCy: hit.bboxCy, rotation: hit.rotation };
         _lr = { ..._hoverHandle, dragging: false };
         st.network.setOptions({ interaction: { dragView: false } });
-      } else if (_hoverLabelDrag) {
-        const edge = st.edges && st.edges.get(_hoverLabelDrag.edgeId);
-        if (!edge) return;
+        return true;
+      } else if (hit && hit.type === 'label') {
+        const edge = st.edges && st.edges.get(hit.edgeId);
+        if (!edge) return false;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        _hoverLabelDrag = { edgeId: hit.edgeId };
         _ld = {
-          edgeId: _hoverLabelDrag.edgeId,
+          edgeId: hit.edgeId,
           startMouse: { x: e.clientX, y: e.clientY },
           startOffsetX: edge.edgeLabelOffsetX || 0,
           startOffsetY: edge.edgeLabelOffsetY || 0,
           dragging: false,
         };
         st.network.setOptions({ interaction: { dragView: false } });
+        return true;
       }
-    }, { capture: true });
+      return false;
+    }
+
+    if (_edgeLabelPointerAbort) _edgeLabelPointerAbort.abort();
+    _edgeLabelPointerAbort = new AbortController();
+
+    // Mousedown: start resize (handles take priority) or label drag.
+    // The document-level capture listener runs before vis-network's internal
+    // pointer handlers, so a node underneath the edge label cannot start moving.
+    document.addEventListener('pointerdown', startEdgeLabelPointerInteraction, {
+      capture: true,
+      signal: _edgeLabelPointerAbort.signal,
+    });
+    document.addEventListener('mousedown', startEdgeLabelPointerInteraction, {
+      capture: true,
+      signal: _edgeLabelPointerAbort.signal,
+    });
+    container.addEventListener('pointerdown', (e) => {
+      startEdgeLabelPointerInteraction(e);
+    }, { capture: true, signal: _edgeLabelPointerAbort.signal });
+    container.addEventListener('mousedown', (e) => {
+      startEdgeLabelPointerInteraction(e);
+    }, { capture: true, signal: _edgeLabelPointerAbort.signal });
+
+    document.addEventListener('dblclick', (e) => {
+      if (!container.contains(e.target)) return;
+      const hit = edgeLabelHitAt(e.clientX, e.clientY);
+      if (!hit || hit.type !== 'label') return;
+
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      _lr = null;
+      _ld = null;
+      st.network.setOptions({ interaction: { dragView: true } });
+      st.selectedNodeIds = [];
+      st.selectedEdgeIds = [hit.edgeId];
+      st.network.setSelection({ nodes: [], edges: [hit.edgeId] });
+      hideNodePanel();
+      showEdgePanel();
+      startEdgeLabelEdit();
+    }, { capture: true, signal: _edgeLabelPointerAbort.signal });
 
     // Update width (resize) or offset (label drag) while dragging.
-    document.addEventListener('mousemove', (e) => {
+    function onEdgeLabelPointerMove(e) {
       if (!st.network) return;
       if (_lr) {
         if (!_lr.dragging) { _lr.dragging = true; pushSnapshot(); }
@@ -497,10 +556,12 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
         });
         st.network.redraw();
       }
-    });
+    }
+    document.addEventListener('pointermove', onEdgeLabelPointerMove, { signal: _edgeLabelPointerAbort.signal });
+    document.addEventListener('mousemove', onEdgeLabelPointerMove, { signal: _edgeLabelPointerAbort.signal });
 
     // Commit on mouseup.
-    document.addEventListener('mouseup', () => {
+    function onEdgeLabelPointerUp() {
       if (_lr) {
         st.network.setOptions({ interaction: { dragView: true } });
         if (_lr.dragging) markDirty();
@@ -512,7 +573,9 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
         _ld = null;
       }
       container.style.cursor = _hoverHandle ? 'ew-resize' : (_hoverLabelDrag ? 'grab' : '');
-    });
+    }
+    document.addEventListener('pointerup', onEdgeLabelPointerUp, { signal: _edgeLabelPointerAbort.signal });
+    document.addEventListener('mouseup', onEdgeLabelPointerUp, { signal: _edgeLabelPointerAbort.signal });
   }
 
   // ── Free-arrow body drag ──────────────────────────────────────────────────────
@@ -1115,14 +1178,45 @@ function nearestPortEdgeAt(canvasPos, threshold = 8) {
   return nearest && nearestDist <= threshold ? nearest : null;
 }
 
+function edgeLabelAtCanvasPoint(canvasPos) {
+  if (!st.edgeLabelBBox || !st.edges) return null;
+
+  let bestEdgeId = null;
+  let bestLevel = -1;
+  for (const edge of st.edges.get()) {
+    if (!edge || !edge.label) continue;
+    const bbox = st.edgeLabelBBox[edge.id];
+    if (!bbox) continue;
+
+    const r  = -(bbox.rotation || 0);
+    const dx = canvasPos.x - bbox.cx;
+    const dy = canvasPos.y - bbox.cy;
+    const lx = dx * Math.cos(r) - dy * Math.sin(r);
+    const ly = dx * Math.sin(r) + dy * Math.cos(r);
+    if (Math.abs(lx) > bbox.w / 2 || Math.abs(ly) > bbox.h / 2) continue;
+
+    const level = edgeDrawLevel(edge);
+    if (level >= bestLevel) {
+      bestLevel = level;
+      bestEdgeId = edge.id;
+    }
+  }
+  return bestEdgeId;
+}
+
+function isEdgeInteractive(edge) {
+  if (!edge) return false;
+  const fromN = st.nodes.get(edge.from);
+  const toN   = st.nodes.get(edge.to);
+  const isFreeArrow = fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor';
+  return isFreeArrow ? !(fromN.locked && toN.locked) : !edge.edgeLocked;
+}
+
 function selectableEdgesForNodes(nodeIds) {
   const selectedSet = new Set(nodeIds);
   return st.edges.get().filter((e) => {
     if (!selectedSet.has(e.from) || !selectedSet.has(e.to)) return false;
-    const fromN = st.nodes.get(e.from);
-    const toN   = st.nodes.get(e.to);
-    const isFreeArrow = fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor';
-    return isFreeArrow ? !(fromN.locked && toN.locked) : !e.edgeLocked;
+    return isEdgeInteractive(e);
   }).map((e) => e.id);
 }
 
@@ -1167,25 +1261,36 @@ function selectNodesFromClick(nodeId, srcEvent) {
 }
 
 function onDoubleClick(params) {
-  // Locked nodes never intercept double-click — filter them out first.
-  const unlockedNodes = params.nodes.filter(id => { const n = st.nodes.get(id); return n && !n.locked; });
+  const srcEvent = params.event && params.event.srcEvent;
+  const clientPos = srcEvent ? { x: srcEvent.clientX, y: srcEvent.clientY } : null;
+  const labelEdgeId = edgeLabelAtCanvasPoint(params.pointer.canvas);
+  const nativeEdgeId = clientPos ? st.network.getEdgeAt(clientPos) : null;
+  const portEdge = nearestPortEdgeAt(params.pointer.canvas);
+  const edgeCandidates = [labelEdgeId, nativeEdgeId, portEdge && portEdge.id, ...params.edges]
+    .filter((id, index, list) => id && list.indexOf(id) === index)
+    .filter((id) => isEdgeInteractive(st.edges.get(id)));
+  const edgeId = edgeCandidates.reduce((bestId, id) => {
+    if (!bestId) return id;
+    return edgeDrawLevel(st.edges.get(id)) >= edgeDrawLevel(st.edges.get(bestId)) ? id : bestId;
+  }, null);
 
-  // When nodes and edges both match the click position, honour z-order:
-  // only give the click to a node if it is truly the topmost element there.
-  // Otherwise fall through to edge handling.
-  let effectiveNodes = unlockedNodes;
-  if (unlockedNodes.length > 0 && params.edges.length > 0) {
-    const top = topmostNodeAt(params.pointer.canvas);
-    effectiveNodes = (top && unlockedNodes.includes(top)) ? [top] : [];
-  }
+  const topNodeId = topmostNodeAt(params.pointer.canvas);
+  const topNode = topNodeId && st.nodes.get(topNodeId);
+  const canEditTopNode = topNode && !topNode.locked && topNode.shapeType !== 'anchor';
+  const topNodeWins = canEditTopNode && !labelEdgeId && (!edgeId || st.canonicalOrder.indexOf(topNodeId) >= edgeDrawLevel(st.edges.get(edgeId)));
 
-  if (effectiveNodes.length > 0) {
-    st.selectedNodeIds = effectiveNodes;
-    st.network.selectNodes(st.selectedNodeIds);
+  if (topNodeWins) {
+    st.selectedNodeIds = [topNodeId];
+    st.selectedEdgeIds = [];
+    st.network.setSelection({ nodes: st.selectedNodeIds, edges: [] });
     showNodePanel();
+    hideEdgePanel();
     startLabelEdit();
-  } else if (params.edges.length > 0) {
-    st.selectedEdgeIds = [params.edges[0]];
+  } else if (edgeId) {
+    st.selectedNodeIds = [];
+    st.selectedEdgeIds = [edgeId];
+    st.network.setSelection({ nodes: [], edges: [edgeId] });
+    hideNodePanel();
     showEdgePanel();
     startEdgeLabelEdit();
   } else if (st.currentTool === 'addNode' && st.pendingShape === 'image') {
