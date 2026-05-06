@@ -31,6 +31,7 @@ export const st = {
   edgeLabelCanvasPos: {}, // edgeId → {x, y} canvas coords of last drawn label, used by label editor
   edgeLabelBBox: {},     // edgeId → {cx, cy, w, h, rotation} canvas world coords, used by label resize
   freeArrowFirstPoint: null, // addEdge two-click flow: {x, y} canvas coords of first click, or null
+  exportingPng: false, // suppress interactive-only canvas chrome during PNG export
 };
 
 export function markDirty() {

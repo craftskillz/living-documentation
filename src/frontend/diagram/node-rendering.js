@@ -679,6 +679,7 @@ function makeAnchorRenderer() {
     const r = 4;
     return {
       drawNode() {
+        if (st.exportingPng) return;
         if (!selected && !hover) return; // invisible at rest
         ctx.save();
         ctx.translate(x, y);

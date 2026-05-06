@@ -123,6 +123,7 @@ export function getNearestPort(nodeId, canvasPos) {
  * `highlightedPort` (if any) is rendered larger and fully orange.
  */
 export function drawPortDots(ctx, nodeId, highlightedPort) {
+  if (st.exportingPng) return;
   for (const key of PORT_KEYS) {
     const p = getPortPosition(nodeId, key);
     if (!p) continue;
@@ -383,4 +384,3 @@ function _distToSegment(p, a, b) {
   const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2));
   return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy));
 }
-

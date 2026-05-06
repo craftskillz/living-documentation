@@ -48,15 +48,25 @@ async function _selectionToBlob() {
   const cropW = Math.ceil(br.x - tl.x + PAD * 2);
   const cropH = Math.ceil(br.y - tl.y + PAD * 2);
 
-  // Temporarily deselect so highlights don't appear in the PNG
+  // Temporarily clear every selection state so interactive chrome (selected
+  // edge color, label resize handles, anchor handles) does not appear in PNGs.
   const savedNodeIds = [...st.selectedNodeIds];
+  const savedEdgeIds = [...(st.selectedEdgeIds || [])];
+  const savedNetworkNodeIds = st.network.getSelectedNodes();
+  const savedNetworkEdgeIds = st.network.getSelectedEdges();
   st.network.unselectAll();
   st.selectedNodeIds = [];
+  st.selectedEdgeIds = [];
+  st.exportingPng = true;
   st.network.redraw();
+  await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
   const visCanvas = document.querySelector('#vis-canvas canvas');
   if (!visCanvas) {
-    st.network.selectNodes(savedNodeIds);
+    st.exportingPng = false;
+    st.selectedNodeIds = savedNodeIds;
+    st.selectedEdgeIds = savedEdgeIds;
+    st.network.setSelection({ nodes: savedNetworkNodeIds, edges: savedNetworkEdgeIds });
     return null;
   }
 
@@ -73,9 +83,10 @@ async function _selectionToBlob() {
     cropX * dpr, cropY * dpr, cropW * dpr, cropH * dpr,
     0, 0, out.width, out.height
   );
+  st.exportingPng = false;
 
   const blob = await new Promise((res) => out.toBlob(res, 'image/png'));
-  return { blob, savedNodeIds };
+  return { blob, savedNodeIds, savedEdgeIds, savedNetworkNodeIds, savedNetworkEdgeIds };
 }
 
 // ── Copy selection as PNG (to clipboard) ─────────────────────────────────────
@@ -83,14 +94,16 @@ async function _selectionToBlob() {
 export async function copySelectionAsPng() {
   const result = await _selectionToBlob();
   if (!result) return;
-  const { blob, savedNodeIds } = result;
+  const { blob, savedNodeIds, savedEdgeIds, savedNetworkNodeIds, savedNetworkEdgeIds } = result;
   try {
     await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
     showToast(t('diagram.toast.png_copied'));
   } catch {
     showToast(t('diagram.toast.png_copy_error'), 'error');
   } finally {
-    st.network.selectNodes(savedNodeIds);
+    st.selectedNodeIds = savedNodeIds;
+    st.selectedEdgeIds = savedEdgeIds;
+    st.network.setSelection({ nodes: savedNetworkNodeIds, edges: savedNetworkEdgeIds });
   }
 }
 
@@ -99,7 +112,7 @@ export async function copySelectionAsPng() {
 export async function saveSelectionAsPng(filename) {
   const result = await _selectionToBlob();
   if (!result) return;
-  const { blob, savedNodeIds } = result;
+  const { blob, savedNodeIds, savedEdgeIds, savedNetworkNodeIds, savedNetworkEdgeIds } = result;
   try {
     const name = filename.replace(/\.[^.]+$/, ''); // strip extension
     await uploadImageBlob(blob, 'png', name);
@@ -107,7 +120,9 @@ export async function saveSelectionAsPng(filename) {
   } catch {
     showToast(t('diagram.toast.diagram_save_png_error'), 'error');
   } finally {
-    st.network.selectNodes(savedNodeIds);
+    st.selectedNodeIds = savedNodeIds;
+    st.selectedEdgeIds = savedEdgeIds;
+    st.network.setSelection({ nodes: savedNetworkNodeIds, edges: savedNetworkEdgeIds });
   }
 }
 
