@@ -111,18 +111,117 @@ test.describe('diagram MCP tools on the with-diagrams fixture', () => {
     expect(diagrams).toEqual([{ id: 'diag-1', title: 'Sample Diagram' }]);
   });
 
-  test('read_diagram returns a compact node/edge summary (not the raw DSL)', async ({
+  test('read_diagram returns nodes, edges, and persisted editor style fields', async ({
     request,
     ld,
   }) => {
-    const result = await callTool<{ nodes: Array<{ name: string }>; edges: Array<unknown> }>(
+    const result = await callTool<{
+      edgesStraight: boolean;
+      gridEnabled: boolean;
+      alignGuides: boolean;
+      nodes: Array<{ name: string }>;
+      edges: Array<unknown>;
+    }>(
       request,
       ld.baseURL,
       'read_diagram',
       { id: 'diag-1' },
     );
+    expect(result.edgesStraight).toBe(false);
+    expect(result.gridEnabled).toBe(true);
+    expect(result.alignGuides).toBe(true);
     expect(result.nodes.map((n) => n.name).sort()).toEqual(['End', 'Start']);
     expect(result.edges).toHaveLength(1);
+  });
+
+  test('create_diagram applies MCP editor style defaults and inferred ports', async ({
+    request,
+    ld,
+  }) => {
+    await callTool(request, ld.baseURL, 'create_diagram', {
+      id: 'mcp-style-defaults',
+      title: 'MCP Style Defaults',
+      diagramType: 'context',
+      nodes: [
+        { name: 'App\n[Software System]\nRuns work', type: 'box', color: 'c-blue', x: 0, y: 0 },
+        { name: 'Billing\n[External System]\nCharges cards', type: 'box', color: 'c-slate', x: 240, y: 0 },
+        { name: 'CRM\n[External System]\nStores a deliberately longer business profile', type: 'box', color: 'c-slate', x: 240, y: 160 },
+        { name: 'Store\n[Database]\nPersists state', type: 'database', color: 'c-teal', x: 0, y: 160 },
+      ],
+      edges: [
+        { from: 'App\n[Software System]\nRuns work', to: 'Billing\n[External System]\nCharges cards', label: 'charges via' },
+        { from: 'App\n[Software System]\nRuns work', to: 'Store\n[Database]\nPersists state', label: 'reads and writes documents to' },
+        {
+          from: 'CRM\n[External System]\nStores a deliberately longer business profile',
+          to: 'App\n[Software System]\nRuns work',
+          label: 'synchronizes account lifecycle and segmentation data with',
+          arrowDir: 'both',
+        },
+      ],
+    });
+
+    const diagrams = JSON.parse(fs.readFileSync(path.join(ld.docsAbs, '.diagrams.json'), 'utf-8'));
+    const diagram = diagrams.find((d: { id: string }) => d.id === 'mcp-style-defaults');
+    expect(diagram).toMatchObject({
+      edgesStraight: false,
+      gridEnabled: false,
+      alignGuides: true,
+    });
+
+    expect(diagram.nodes[0]).toMatchObject({
+      fontSize: null,
+      textAlign: null,
+      textValign: null,
+      bgOpacity: null,
+      rotation: 0,
+      labelRotation: 0,
+      imageSrc: null,
+      groupId: null,
+      nodeLink: null,
+      locked: false,
+    });
+    expect(diagram.nodes[1].nodeWidth).toBe(diagram.nodes[2].nodeWidth);
+
+    expect(diagram.edges[0]).toMatchObject({
+      arrowDir: 'to',
+      dashes: false,
+      fontSize: 12,
+      fromPort: 'E',
+      toPort: 'W',
+      edgeLabelWidth: 80,
+      edgeLabelOffsetX: 0,
+      edgeLabelOffsetY: 0,
+      edgeColor: null,
+      edgeWidth: null,
+      edgeLocked: false,
+    });
+    expect(diagram.edges[1]).toMatchObject({
+      fromPort: 'S',
+      toPort: 'N',
+      edgeLabelWidth: 95,
+    });
+    expect(diagram.edges[2]).toMatchObject({
+      arrowDir: 'both',
+      fontSize: 11,
+      edgeLabelWidth: 105,
+    });
+
+    const readBack = await callTool<{
+      gridEnabled: boolean;
+      edges: Array<{ arrowDir: string; edgeLabelWidth: number; fromPort: string; toPort: string }>;
+    }>(
+      request,
+      ld.baseURL,
+      'read_diagram',
+      { id: 'mcp-style-defaults' },
+    );
+    expect(readBack.gridEnabled).toBe(false);
+    expect(readBack.edges[2]).toMatchObject({
+      arrowDir: 'both',
+      edgeLabelWidth: 105,
+      fromPort: 'W',
+      toPort: 'E',
+    });
   });
 });
 

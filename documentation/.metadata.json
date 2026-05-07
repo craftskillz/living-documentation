@@ -1,1 +1,12 @@
-{}
+{
+  "adrs/2026_05_07_22_05_[MCP]_default_diagram_style_conventions": [
+    {
+      "path": "src/mcp/tools/diagrams.ts",
+      "hash": "bef74eaa44a03626ce2a59e33f9abf75ce596fb83918b94ff16c377a2054076f"
+    },
+    {
+      "path": "src/mcp/server.ts",
+      "hash": "189c21441a56cf320aa4d3f54a5493f03009db4100bc017b66507fa41318773e"
+    }
+  ]
+}

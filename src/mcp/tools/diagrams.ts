@@ -24,7 +24,82 @@ interface StoredDiagram {
   nodes: StoredNode[];
   edges: StoredEdge[];
   edgesStraight?: boolean;
+  gridEnabled?: boolean;
+  alignGuides?: boolean;
 }
+
+type PortKey = 'N' | 'NE' | 'E' | 'SE' | 'S' | 'SW' | 'W' | 'NW';
+type ArrowDir = 'to' | 'both' | 'none';
+
+interface DiagramNodeInput {
+  name: string;
+  type: string;
+  color?: string;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  fontSize?: number | null;
+  textAlign?: string | null;
+  textValign?: string | null;
+  bgOpacity?: number | null;
+  rotation?: number | null;
+  labelRotation?: number | null;
+  locked?: boolean;
+  linkedDiagramId?: string;
+  imageSrc?: string | null;
+  groupId?: string | null;
+  nodeLink?: { type?: unknown; value?: unknown } | null;
+}
+
+interface DiagramEdgeInput {
+  from: string;
+  to?: string;
+  label?: string;
+  arrowDir?: string;
+  dashes?: boolean;
+  fontSize?: number | null;
+  labelRotation?: number | null;
+  edgeLabelOffsetX?: number | null;
+  edgeLabelOffsetY?: number | null;
+  fromPort?: string | null;
+  toPort?: string | null;
+  edgeColor?: string | null;
+  edgeWidth?: number | null;
+  edgeLocked?: boolean;
+  edgeLabelWidth?: number | null;
+}
+
+const VALID_PORTS = new Set<PortKey>(['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']);
+const VALID_ARROW_DIRS = new Set<ArrowDir>(['to', 'both', 'none']);
+
+const NODE_STYLE_KEYS = [
+  'fontSize',
+  'textAlign',
+  'textValign',
+  'bgOpacity',
+  'rotation',
+  'labelRotation',
+  'imageSrc',
+  'groupId',
+  'nodeLink',
+  'locked',
+] as const;
+
+const EDGE_STYLE_KEYS = [
+  'arrowDir',
+  'dashes',
+  'fontSize',
+  'labelRotation',
+  'edgeLabelOffsetX',
+  'edgeLabelOffsetY',
+  'fromPort',
+  'toPort',
+  'edgeColor',
+  'edgeWidth',
+  'edgeLocked',
+  'edgeLabelWidth',
+] as const;
 
 // Estimates node dimensions from label content (font ~13px, lineH ~17px, pad 16px).
 // Used to size MCP-created nodes so multiline labels are not clipped.
@@ -54,6 +129,105 @@ function estimateNodeSize(label: string, shapeType: string): { nodeWidth: number
   const nodeHeight = Math.round(rawHFinal / 8) * 8;
 
   return { nodeWidth, nodeHeight };
+}
+
+function estimateEdgeLabelWidth(label: string): number {
+  if (label.length <= 24) return 80;
+  if (label.length <= 36) return 95;
+  return 105;
+}
+
+function estimateEdgeFontSize(label: string): number {
+  return label.length > 36 ? 11 : 12;
+}
+
+function normalizeArrowDir(raw: string | undefined): ArrowDir {
+  if (!raw) return 'to';
+  const dir = raw.toLowerCase();
+  if (!VALID_ARROW_DIRS.has(dir as ArrowDir)) {
+    throw new Error(`Invalid arrowDir "${raw}". Allowed: to, both, none.`);
+  }
+  return dir as ArrowDir;
+}
+
+function normalizePort(raw: string | null | undefined, fieldName: string): PortKey | null | undefined {
+  if (raw === null) return null;
+  if (raw === undefined) return undefined;
+  const port = raw.toUpperCase();
+  if (!VALID_PORTS.has(port as PortKey)) {
+    throw new Error(`Invalid ${fieldName} "${raw}". Allowed: ${Array.from(VALID_PORTS).join(', ')}.`);
+  }
+  return port as PortKey;
+}
+
+function numberOrNull(value: number | null | undefined, fallback: number | null): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+}
+
+function stringOrNull(value: string | null | undefined): string | null {
+  return typeof value === 'string' ? value : null;
+}
+
+function resolveNodeLink(n: DiagramNodeInput): { type: string; value: string } | null {
+  if (n.linkedDiagramId) return { type: 'diagram', value: n.linkedDiagramId };
+  if (
+    n.nodeLink &&
+    typeof n.nodeLink.type === 'string' &&
+    typeof n.nodeLink.value === 'string'
+  ) {
+    return { type: n.nodeLink.type, value: n.nodeLink.value };
+  }
+  return null;
+}
+
+function inferPorts(fromNode: StoredNode, toNode: StoredNode | undefined): { fromPort: PortKey; toPort: PortKey | null } {
+  if (!toNode) return { fromPort: 'E', toPort: null };
+
+  const fromX = typeof fromNode.x === 'number' ? fromNode.x : undefined;
+  const fromY = typeof fromNode.y === 'number' ? fromNode.y : undefined;
+  const toX = typeof toNode.x === 'number' ? toNode.x : undefined;
+  const toY = typeof toNode.y === 'number' ? toNode.y : undefined;
+
+  if (fromX === undefined || fromY === undefined || toX === undefined || toY === undefined) {
+    return { fromPort: 'E', toPort: 'W' };
+  }
+
+  const dx = toX - fromX;
+  const dy = toY - fromY;
+  if (Math.abs(dx) >= Math.abs(dy) && dx !== 0) {
+    return dx > 0 ? { fromPort: 'E', toPort: 'W' } : { fromPort: 'W', toPort: 'E' };
+  }
+  if (dy !== 0) {
+    return dy > 0 ? { fromPort: 'S', toPort: 'N' } : { fromPort: 'N', toPort: 'S' };
+  }
+  return { fromPort: 'E', toPort: 'W' };
+}
+
+function normalizeAlignedExternalSystemWidths(nodes: StoredNode[]): void {
+  const columns = new Map<number, StoredNode[]>();
+  for (const node of nodes) {
+    const isExternalSystem = node.shapeType === 'box' && /\[External System\]/i.test(node.label);
+    if (!isExternalSystem || typeof node.x !== 'number') continue;
+    const column = columns.get(node.x) ?? [];
+    column.push(node);
+    columns.set(node.x, column);
+  }
+  for (const column of columns.values()) {
+    if (column.length < 2) continue;
+    const maxWidth = Math.max(...column.map(n => Number(n.nodeWidth) || 0));
+    for (const node of column) node.nodeWidth = maxWidth;
+  }
+}
+
+function copyExistingFields(
+  source: Record<string, unknown>,
+  target: Record<string, unknown>,
+  keys: readonly string[],
+): Record<string, unknown> {
+  for (const key of keys) {
+    if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
+  }
+  return target;
 }
 
 // Maps semantic type names → vis-network shape properties.
@@ -136,24 +310,34 @@ export function toolReadDiagram(docsPath: string, args: { id: string }) {
   const idToLabel: Record<string, string> = {};
   for (const n of diagram.nodes) idToLabel[n.id] = n.label;
 
-  const nodes = diagram.nodes.map(n => ({
+  const nodes = diagram.nodes.map(n => copyExistingFields(n, {
     name:  n.label,
     type:  n.shapeType,
     color: n.colorKey,
     ...(n.x !== undefined ? { x: n.x } : {}),
     ...(n.y !== undefined ? { y: n.y } : {}),
-  }));
+    ...(n.nodeWidth !== undefined ? { width: n.nodeWidth } : {}),
+    ...(n.nodeHeight !== undefined ? { height: n.nodeHeight } : {}),
+  }, NODE_STYLE_KEYS));
 
-  const edges = diagram.edges.map(e => ({
+  const edges = diagram.edges.map(e => copyExistingFields(e, {
     from: idToLabel[e.from] ?? e.from,
     ...(e.to !== undefined ? { to: idToLabel[e.to] ?? e.to } : {}),
-    ...(e.label ? { label: e.label } : {}),
-  }));
+    ...(e.label !== undefined ? { label: e.label } : {}),
+  }, EDGE_STYLE_KEYS));
 
   return {
     content: [{
       type: 'text' as const,
-      text: JSON.stringify({ id: diagram.id, title: diagram.title, nodes, edges }, null, 2),
+      text: JSON.stringify({
+        id: diagram.id,
+        title: diagram.title,
+        ...(diagram.edgesStraight !== undefined ? { edgesStraight: diagram.edgesStraight } : {}),
+        ...(diagram.gridEnabled !== undefined ? { gridEnabled: diagram.gridEnabled } : {}),
+        ...(diagram.alignGuides !== undefined ? { alignGuides: diagram.alignGuides } : {}),
+        nodes,
+        edges,
+      }, null, 2),
     }],
   };
 }
@@ -167,20 +351,11 @@ export function toolCreateDiagram(docsPath: string, args: {
   title: string;
   diagramType?: string;
   userRequestedExplicitly?: boolean;
-  nodes: Array<{
-    name: string;
-    type: string;
-    color?: string;
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
-    bgOpacity?: number;
-    locked?: boolean;
-    linkedDiagramId?: string;
-    imageSrc?: string;
-  }>;
-  edges: Array<{ from: string; to?: string; label?: string }>;
+  edgesStraight?: boolean;
+  gridEnabled?: boolean;
+  alignGuides?: boolean;
+  nodes: DiagramNodeInput[];
+  edges: DiagramEdgeInput[];
 }) {
   const diagramType = (args.diagramType ?? '').toLowerCase();
   if (!diagramType) {
@@ -229,35 +404,71 @@ export function toolCreateDiagram(docsPath: string, args: {
       colorKey: resolveColor(n.color),
       nodeWidth,
       nodeHeight,
+      fontSize: numberOrNull(n.fontSize, null),
+      textAlign: stringOrNull(n.textAlign),
+      textValign: stringOrNull(n.textValign),
+      bgOpacity: numberOrNull(n.bgOpacity, null),
+      rotation: numberOrNull(n.rotation, 0),
+      labelRotation: numberOrNull(n.labelRotation, 0),
+      imageSrc: stringOrNull(n.imageSrc),
+      groupId: stringOrNull(n.groupId),
+      nodeLink: resolveNodeLink(n),
+      locked: n.locked === true,
     };
     if (n.x !== undefined) node.x = n.x;
     if (n.y !== undefined) node.y = n.y;
-    if (n.bgOpacity !== undefined) node.bgOpacity = n.bgOpacity;
-    if (n.locked !== undefined) node.locked = n.locked;
-    if (n.linkedDiagramId) node.nodeLink = { type: 'diagram', value: n.linkedDiagramId };
-    if (n.imageSrc) node.imageSrc = n.imageSrc;
     return node;
   });
+  normalizeAlignedExternalSystemWidths(nodes);
 
   const edges: StoredEdge[] = args.edges.map((e, i) => {
     const fromId = nameToId[e.from];
     if (!fromId) throw new Error(`Edge references unknown node: "${e.from}"`);
-    const edge: StoredEdge = { id: `e${i + 1}`, from: fromId, to: '' };
+    const fromNode = nodes.find(n => n.id === fromId);
+    if (!fromNode) throw new Error(`Edge references unknown node: "${e.from}"`);
+    const label = e.label ?? '';
+    const edge: StoredEdge = {
+      id: `e${i + 1}`,
+      from: fromId,
+      to: '',
+      label,
+      arrowDir: normalizeArrowDir(e.arrowDir),
+      dashes: e.dashes === true,
+      fontSize: numberOrNull(e.fontSize, estimateEdgeFontSize(label)),
+      labelRotation: numberOrNull(e.labelRotation, 0),
+      edgeLabelOffsetX: numberOrNull(e.edgeLabelOffsetX, 0),
+      edgeLabelOffsetY: numberOrNull(e.edgeLabelOffsetY, 0),
+      edgeColor: stringOrNull(e.edgeColor),
+      edgeWidth: numberOrNull(e.edgeWidth, null),
+      edgeLocked: e.edgeLocked === true,
+      edgeLabelWidth: numberOrNull(e.edgeLabelWidth, estimateEdgeLabelWidth(label)),
+    };
+    let toNode: StoredNode | undefined;
     if (e.to !== undefined && e.to !== '') {
       const toId = nameToId[e.to];
       if (!toId) throw new Error(`Edge references unknown node: "${e.to}"`);
       edge.to = toId;
+      toNode = nodes.find(n => n.id === toId);
     } else {
       delete (edge as Partial<StoredEdge>).to;
     }
-    if (e.label) {
-      edge.label = e.label;
-      edge.edgeLabelWidth = 80;
-    }
+    const inferredPorts = inferPorts(fromNode, toNode);
+    const fromPort = normalizePort(e.fromPort, 'fromPort') ?? inferredPorts.fromPort;
+    const toPort = normalizePort(e.toPort, 'toPort') ?? inferredPorts.toPort;
+    edge.fromPort = fromPort;
+    edge.toPort = toPort;
     return edge;
   });
 
-  const diagram: StoredDiagram = { id, title: args.title, nodes, edges };
+  const diagram: StoredDiagram = {
+    id,
+    title: args.title,
+    nodes,
+    edges,
+    edgesStraight: args.edgesStraight ?? false,
+    gridEnabled: args.gridEnabled ?? false,
+    alignGuides: args.alignGuides ?? true,
+  };
   const all = loadDiagrams(docsPath);
   const existingIndex = all.findIndex(d => d.id === id);
   if (existingIndex !== -1) {
