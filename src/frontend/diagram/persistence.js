@@ -125,6 +125,8 @@ export async function saveDiagram() {
     .map((n) => ({
       id: n.id, label: n.label,
       shapeType: n.shapeType || 'box', colorKey: n.colorKey || 'c-gray',
+      kind: n.kind || null, renderAs: n.renderAs || null,
+      description: n.description || null,
       nodeWidth: n.nodeWidth || null, nodeHeight: n.nodeHeight || null,
       fontSize: n.fontSize || null, textAlign: n.textAlign || null, textValign: n.textValign || null,
       bgOpacity: n.bgOpacity ?? null,

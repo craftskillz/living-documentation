@@ -33,7 +33,10 @@ type ArrowDir = 'to' | 'both' | 'none';
 
 interface DiagramNodeInput {
   name: string;
-  type: string;
+  type?: string;
+  kind?: string;
+  renderAs?: string;
+  description?: string;
   color?: string;
   x?: number;
   y?: number;
@@ -73,7 +76,29 @@ interface DiagramEdgeInput {
 const VALID_PORTS = new Set<PortKey>(['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']);
 const VALID_ARROW_DIRS = new Set<ArrowDir>(['to', 'both', 'none']);
 
+const KIND_DEFAULTS: Record<string, { renderAs: string; color: string; labelType: string }> = {
+  person:          { renderAs: 'actor',    color: 'c-gray',   labelType: 'Person' },
+  software_system: { renderAs: 'box',      color: 'c-blue',   labelType: 'Software System' },
+  external_system: { renderAs: 'box',      color: 'c-slate',  labelType: 'External System' },
+  container:       { renderAs: 'box',      color: 'c-sky',    labelType: 'Container' },
+  component:       { renderAs: 'box',      color: 'c-indigo', labelType: 'Component' },
+  database:        { renderAs: 'database', color: 'c-teal',   labelType: 'Database' },
+  object_storage:  { renderAs: 'database', color: 'c-teal',   labelType: 'Object Storage' },
+  queue:           { renderAs: 'ellipse',  color: 'c-amber',  labelType: 'Queue' },
+  device:          { renderAs: 'box',      color: 'c-sky',    labelType: 'Device' },
+  api:             { renderAs: 'box',      color: 'c-cyan',   labelType: 'API' },
+  cloud_service:   { renderAs: 'box',      color: 'c-slate',  labelType: 'Cloud Service' },
+  browser_app:     { renderAs: 'box',      color: 'c-sky',    labelType: 'Browser App' },
+  mobile_app:      { renderAs: 'box',      color: 'c-sky',    labelType: 'Mobile App' },
+  backend_service: { renderAs: 'box',      color: 'c-sky',    labelType: 'Backend Service' },
+  job:             { renderAs: 'box',      color: 'c-amber',  labelType: 'Job' },
+  unknown:         { renderAs: 'box',      color: 'c-gray',   labelType: 'Unknown' },
+};
+
 const NODE_STYLE_KEYS = [
+  'kind',
+  'renderAs',
+  'description',
   'fontSize',
   'textAlign',
   'textValign',
@@ -279,6 +304,31 @@ function resolveColor(raw: string | undefined): string {
   return COLOR_ALIASES[key] ?? 'c-blue';
 }
 
+function normalizeKind(raw: string | undefined): string | null {
+  if (!raw) return null;
+  const kind = raw.toLowerCase();
+  if (!KIND_DEFAULTS[kind]) {
+    throw new Error(`Invalid kind "${raw}". Allowed: ${Object.keys(KIND_DEFAULTS).join(', ')}.`);
+  }
+  return kind;
+}
+
+function resolveRenderAs(n: DiagramNodeInput, kind: string | null): string {
+  return n.renderAs ?? (kind ? KIND_DEFAULTS[kind].renderAs : n.type ?? 'box');
+}
+
+function resolveNodeColor(n: DiagramNodeInput, kind: string | null): string {
+  return resolveColor(n.color ?? (kind ? KIND_DEFAULTS[kind].color : undefined));
+}
+
+function buildNodeLabel(n: DiagramNodeInput, kind: string | null): string {
+  if (!kind || n.name.includes('\n')) return n.name;
+
+  const lines = [n.name, `[${KIND_DEFAULTS[kind].labelType}]`];
+  if (n.description && n.description.trim()) lines.push(n.description.trim());
+  return lines.join('\n');
+}
+
 function diagramsFilePath(docsPath: string): string {
   return path.join(docsPath, '.diagrams.json');
 }
@@ -385,23 +435,30 @@ export function toolCreateDiagram(docsPath: string, args: {
 
   const nodes: StoredNode[] = args.nodes.map((n, i) => {
     const nodeId = `n${i + 1}`;
+    const kind = normalizeKind(n.kind);
+    const renderAs = resolveRenderAs(n, kind);
+    const label = buildNodeLabel(n, kind);
     nameToId[n.name] = nodeId;
-    const shapeInfo = SHAPE_MAP[n.type.toLowerCase()] ?? { shape: 'box', shapeType: 'box' };
+    nameToId[label] = nodeId;
+    const shapeInfo = SHAPE_MAP[renderAs.toLowerCase()] ?? { shape: 'box', shapeType: 'box' };
     if (shapeInfo.shapeType === 'image' && !n.imageSrc) {
       throw new Error(
         `Node "${n.name || `#${i + 1}`}" uses type "image" but is missing \`imageSrc\`. ` +
         `Upload the image via POST /api/images/upload and pass the returned URL (e.g. "/images/foo.png").`,
       );
     }
-    const estimated = estimateNodeSize(n.name, shapeInfo.shapeType);
+    const estimated = estimateNodeSize(label, shapeInfo.shapeType);
     const nodeWidth  = n.width  ?? estimated.nodeWidth;
     const nodeHeight = n.height ?? estimated.nodeHeight;
     const node: StoredNode = {
       id: nodeId,
-      label: n.name,
+      label,
       shape: shapeInfo.shape,
       shapeType: shapeInfo.shapeType,
-      colorKey: resolveColor(n.color),
+      kind,
+      renderAs: shapeInfo.shapeType,
+      description: stringOrNull(n.description),
+      colorKey: resolveNodeColor(n, kind),
       nodeWidth,
       nodeHeight,
       fontSize: numberOrNull(n.fontSize, null),

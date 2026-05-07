@@ -223,6 +223,89 @@ test.describe('diagram MCP tools on the with-diagrams fixture', () => {
       toPort: 'E',
     });
   });
+
+  test('create_diagram accepts architectural kind separately from visual renderAs', async ({
+    request,
+    ld,
+  }) => {
+    await callTool(request, ld.baseURL, 'create_diagram', {
+      id: 'mcp-kind-render',
+      title: 'MCP Kind Render',
+      diagramType: 'context',
+      nodes: [
+        {
+          name: 'Stripe',
+          kind: 'external_system',
+          description: 'Preauthorizes and captures card payments',
+          x: 240,
+          y: 0,
+        },
+        {
+          name: 'Campaign API',
+          kind: 'api',
+          renderAs: 'ellipse',
+          description: 'Accepts scheduling commands',
+          x: 0,
+          y: 0,
+        },
+        {
+          name: 'Legacy Type Node',
+          type: 'database',
+          color: 'c-teal',
+          x: 0,
+          y: 160,
+        },
+      ],
+      edges: [
+        { from: 'Campaign API', to: 'Stripe', label: 'preauthorizes payments with' },
+      ],
+    });
+
+    const diagrams = JSON.parse(fs.readFileSync(path.join(ld.docsAbs, '.diagrams.json'), 'utf-8'));
+    const diagram = diagrams.find((d: { id: string }) => d.id === 'mcp-kind-render');
+    expect(diagram.nodes[0]).toMatchObject({
+      label: 'Stripe\n[External System]\nPreauthorizes and captures card payments',
+      kind: 'external_system',
+      renderAs: 'box',
+      shapeType: 'box',
+      colorKey: 'c-slate',
+      description: 'Preauthorizes and captures card payments',
+    });
+    expect(diagram.nodes[1]).toMatchObject({
+      label: 'Campaign API\n[API]\nAccepts scheduling commands',
+      kind: 'api',
+      renderAs: 'ellipse',
+      shapeType: 'ellipse',
+      colorKey: 'c-cyan',
+    });
+    expect(diagram.nodes[2]).toMatchObject({
+      label: 'Legacy Type Node',
+      kind: null,
+      renderAs: 'database',
+      shapeType: 'database',
+      colorKey: 'c-teal',
+    });
+
+    const readBack = await callTool<{
+      nodes: Array<{ name: string; kind: string | null; renderAs: string; description: string | null }>;
+      edges: Array<{ from: string; to: string }>;
+    }>(
+      request,
+      ld.baseURL,
+      'read_diagram',
+      { id: 'mcp-kind-render' },
+    );
+    expect(readBack.nodes[0]).toMatchObject({
+      name: 'Stripe\n[External System]\nPreauthorizes and captures card payments',
+      kind: 'external_system',
+      renderAs: 'box',
+      description: 'Preauthorizes and captures card payments',
+    });
+    expect(readBack.edges[0]).toMatchObject({
+      from: 'Campaign API\n[API]\nAccepts scheduling commands',
+      to: 'Stripe\n[External System]\nPreauthorizes and captures card payments',
+    });
+  });
 });
 
 test.describe('source MCP tools on the with-metadata fixture', () => {

@@ -188,11 +188,21 @@ label warnings are disabled for screen-guide.
 - Exception: screen-guide diagrams may have unlabeled edges.
 
 ## Node label format (C4 convention)
-Use \`\\n\` line breaks:
+Either provide a full C4 label in \`name\` using \`\\n\` line breaks, or provide
+\`kind\` plus optional \`description\` and let the MCP build the C4 label:
 \`\`\`
 Name\\n[Type]\\nShort description of role or responsibility
 \`\`\`
-Types: \`[Person]\`, \`[Software System]\`, \`[External System]\`, \`[Database]\`, \`[Device]\`.
+Architectural \`kind\` is separate from visual \`renderAs\`: \`kind\` describes
+the concept, \`renderAs\` chooses the shape. If \`kind\` is present and
+\`renderAs\` is absent, the MCP chooses the default shape and color for that
+kind. Legacy \`type\` still works as the visual shape when \`kind\` is absent.
+Kinds: \`person\`, \`software_system\`, \`external_system\`, \`container\`,
+\`component\`, \`database\`, \`object_storage\`, \`queue\`, \`device\`, \`api\`,
+\`cloud_service\`, \`browser_app\`, \`mobile_app\`, \`backend_service\`, \`job\`,
+\`unknown\`.
+Types include \`[Person]\`, \`[Software System]\`, \`[External System]\`,
+\`[Container]\`, \`[Component]\`, \`[Database]\`, \`[Device]\`.
 Keep descriptions to 1–2 short lines.
 
 ## Coordinate system (when positions are provided)
@@ -278,6 +288,7 @@ full template):
 
 const SHAPE_LIST  = 'box, actor (person), database, ellipse, circle, post-it, text-free, image, anchor (invisible endpoint for free-end arrows — screen-guide only)';
 const COLOR_LIST  = 'c-blue, c-green, c-gray, c-teal, c-amber, c-orange, c-rose, c-purple, c-cyan, c-indigo, c-pink, c-lime, c-red, c-sky, c-slate (short aliases like "blue", "teal" also work)';
+const KIND_LIST   = 'person, software_system, external_system, container, component, database, object_storage, queue, device, api, cloud_service, browser_app, mobile_app, backend_service, job, unknown';
 const GUIDE_HINT  = 'If unsure of the workflow, call `get_server_guide` first.';
 
 const CREATE_DIAGRAM_DESCRIPTION = [
@@ -306,6 +317,7 @@ const CREATE_DIAGRAM_DESCRIPTION = [
   '',
   '## MCP default styling',
   'Diagrams created through this tool default to `edgesStraight: false`, `gridEnabled: false`, and `alignGuides: true`.',
+  '`kind` describes the architectural concept; `renderAs` describes the visual shape. When `kind` is present and `renderAs` is absent, the MCP chooses the default shape and color for that kind and builds a C4 label from `name`, `[Kind]`, and optional `description`. Legacy `type` remains supported as the visual shape when `kind` is absent.',
   'Edges default to curved port-anchored arrows with `arrowDir: "to"`, `dashes: false`, label offsets at `0`, and automatic `fromPort`/`toPort` inferred from node positions. Label width and font size are estimated from label length unless explicitly supplied.',
   'Use `arrowDir: "both"` when a single relation represents a bidirectional exchange.',
   '',
@@ -334,6 +346,7 @@ const CREATE_DIAGRAM_DESCRIPTION = [
   `## Available shapes and colors`,
   `Shapes: ${SHAPE_LIST}.`,
   `Colors: ${COLOR_LIST}.`,
+  `Kinds: ${KIND_LIST}.`,
   '',
   GUIDE_HINT,
 ].join('\n');
@@ -486,8 +499,11 @@ const TOOLS = [
           items: {
             type: 'object',
             properties: {
-              name:            { type: 'string', description: 'Node label shown in the diagram. Use \\n for line breaks. C4 format: "Name\\n[Type]\\nDescription". Empty string allowed for zone overlays, anchors, and the image background.' },
-              type:            { type: 'string', description: `Shape type: ${SHAPE_LIST}.` },
+              name:            { type: 'string', description: 'Node label shown in the diagram. With `kind`, pass the display name only and optional `description`; without `kind`, use \\n for C4 labels. Empty string allowed for zone overlays, anchors, and the image background.' },
+              kind:            { type: 'string', enum: KIND_LIST.split(', '), description: 'Optional architectural concept. When present, the MCP builds a C4 label and chooses default renderAs/color unless overridden.' },
+              renderAs:        { type: 'string', description: `Optional visual shape override used with kind. Available: ${SHAPE_LIST}.` },
+              description:     { type: 'string', description: 'Optional architectural description appended as the third C4 label line when kind is present and name is not already a multiline label.' },
+              type:            { type: 'string', description: `Legacy visual shape. Still supported when kind is absent. Available: ${SHAPE_LIST}.` },
               color:           { type: 'string', description: `Color key, e.g. c-blue or "blue". Available: ${COLOR_LIST}.` },
               x:               { type: 'number', description: 'Optional canvas X (0 = center). Omit to auto-lay out. When provided, use multiples of 40 (screen-guide exception: pixel-aligned).' },
               y:               { type: 'number', description: 'Optional canvas Y (0 = center, positive = down). Omit to auto-lay out. When provided, use multiples of 40 (screen-guide exception: pixel-aligned).' },
@@ -504,7 +520,7 @@ const TOOLS = [
               groupId:         { type: ['string', 'null'], description: 'Optional editor group id. Defaults to null.' },
               imageSrc:        { type: 'string', description: 'Required when `type` is "image". URL path returned by POST /api/images/upload (e.g. "/images/foo.png").' },
             },
-            required: ['name', 'type'],
+            required: ['name'],
           },
         },
         edges: {
@@ -761,9 +777,17 @@ Living Documentation is a tool where knowledge lives primarily in Markdown docum
 4. Read the frontmatter (\`description\` and \`tags\` fields) of each relevant document with \`read_document\` to find answers to the diagram-specific questions below.
 5. Only ask the user for information that cannot be found in any active (non-superseded) document.
 
-## Node label format — mandatory
+## Node semantics and label format — mandatory
 
-Every node label must follow the Simon Brown C4 convention using \\n for line breaks:
+Prefer structured node semantics when calling \`create_diagram\`: pass \`kind\`
+(\`person\`, \`software_system\`, \`external_system\`, \`container\`, \`component\`,
+\`database\`, \`object_storage\`, \`queue\`, \`device\`, \`api\`, \`cloud_service\`,
+\`browser_app\`, \`mobile_app\`, \`backend_service\`, \`job\`, \`unknown\`) plus optional
+\`description\`. The MCP will build the Simon Brown C4 label and choose the
+default visual shape/color. Use \`renderAs\` only when the default visual shape
+should be overridden.
+
+If you do not use \`kind\`, every node label must follow the C4 convention using \\n for line breaks:
 
 \`\`\`
 Name\\n[Type]\\nShort description of role or responsibility
@@ -774,7 +798,7 @@ Examples:
 - \`"Advertiser\\n[Person]\\nUploads media and\\npays for campaigns"\`
 - \`"Stripe\\n[External System]\\nCard payment and\\npre-authorization"\`
 
-Types to use: \`[Person]\`, \`[Software System]\`, \`[External System]\`, \`[Database]\`, \`[Device]\`
+Types to use include: \`[Person]\`, \`[Software System]\`, \`[External System]\`, \`[Container]\`, \`[Component]\`, \`[Database]\`, \`[Device]\`
 Keep descriptions short — 1 to 2 lines maximum.
 
 ## C4 progression — mandatory ordering

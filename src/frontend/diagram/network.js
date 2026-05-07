@@ -52,11 +52,15 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
   const edgeSmooth = edgesStraight ? { enabled: false } : { type: 'continuous' };
 
   st.nodes = new vis.DataSet(
-    savedNodes.map((n) => ({
-      ...n,
-      ...visNodeProps(n.shapeType || 'box', n.colorKey || 'c-gray', n.nodeWidth, n.nodeHeight, n.fontSize, n.textAlign, n.textValign),
-      ...(n.locked ? { fixed: { x: true, y: true }, draggable: false } : {}),
-    }))
+    savedNodes.map((n) => {
+      const shapeType = n.shapeType || n.renderAs || 'box';
+      return {
+        ...n,
+        shapeType,
+        ...visNodeProps(shapeType, n.colorKey || 'c-gray', n.nodeWidth, n.nodeHeight, n.fontSize, n.textAlign, n.textValign),
+        ...(n.locked ? { fixed: { x: true, y: true }, draggable: false } : {}),
+      };
+    })
   );
   st.edges = new vis.DataSet(
     savedEdges.map((e) => {

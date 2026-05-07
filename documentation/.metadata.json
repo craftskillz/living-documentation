@@ -2,11 +2,33 @@
   "adrs/2026_05_07_22_05_[MCP]_default_diagram_style_conventions": [
     {
       "path": "src/mcp/tools/diagrams.ts",
-      "hash": "bef74eaa44a03626ce2a59e33f9abf75ce596fb83918b94ff16c377a2054076f"
+      "hash": "46661b54e9830f1b5fcb3cacb7a7ecd6bd195eac146bd94a78c4dfc207986f53"
     },
     {
       "path": "src/mcp/server.ts",
-      "hash": "189c21441a56cf320aa4d3f54a5493f03009db4100bc017b66507fa41318773e"
+      "hash": "6acb753ef782c42709cd49dd48673cd3b230cae6ea733478a86bfe852910ec2c"
+    }
+  ],
+  "adrs/2026_05_07_22_25_[MCP_DIAGRAM]_architectural_kind_render_as_separation": [
+    {
+      "path": "src/mcp/tools/diagrams.ts",
+      "hash": "46661b54e9830f1b5fcb3cacb7a7ecd6bd195eac146bd94a78c4dfc207986f53"
+    },
+    {
+      "path": "src/mcp/server.ts",
+      "hash": "6acb753ef782c42709cd49dd48673cd3b230cae6ea733478a86bfe852910ec2c"
+    },
+    {
+      "path": "src/frontend/diagram/persistence.js",
+      "hash": "08384a6c3701f7c977981767e7b7b1e0efac698f94bc2b9aaec981b766c7d87d"
+    },
+    {
+      "path": "src/frontend/diagram/history.js",
+      "hash": "30ea4e93c009c441ffaf73ad93500e388a52aeb8f42a88012d13e72fa3055260"
+    },
+    {
+      "path": "src/frontend/diagram/network.js",
+      "hash": "964ec377880c0702819c348b6eab04a5888d73efd62b73926008e87eab2f2933"
     }
   ]
 }
