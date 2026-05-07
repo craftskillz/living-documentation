@@ -27,6 +27,26 @@ Documents are authoritative. Diagrams are derived views and must not introduce
 information that is absent from the documents. If a diagram needs a concept
 that isn't documented yet, create or update the document first.
 
+## Cross-project documentation workspace convention
+The configured documentation workspace and the source folder mentioned by the
+user may intentionally differ. This is valid when the user wants to keep
+analysis documents and diagrams in a new Living Documentation project instead
+of writing into the source repository.
+
+When a user points you to a folder or repository and it does not appear to
+match this MCP's configured \`sourceRoot\` / document inventory, do **not**
+silently switch strategy, do **not** write documents by hand into the pointed
+repository, and do **not** assume the MCP is misconfigured. Ask the user to
+confirm whether this mismatch is intentional.
+
+If the user confirms the mismatch is intentional, keep using this MCP workspace
+as the documentation target. First create the missing Markdown source-of-truth
+documents in this MCP project (overview, actors, runtime containers, external
+systems, data flows, key decisions, constraints) using \`create_document\`.
+Only after those documents exist and have been read should you create diagrams
+from them. Use source-code access only as research input for the documents; the
+diagram evidence must cite Markdown documents from this MCP workspace.
+
 ## Feature workflow — ADRs are how the documentation grows
 When a coding agent implements or modifies a feature on this project, the
 feature is **not done** until an ADR (Architecture Decision Record) has been
@@ -313,6 +333,10 @@ const CREATE_DIAGRAM_DESCRIPTION = [
   'Documents are authoritative. A diagram must not contain information absent from the documents. If a diagram needs a concept that isn\'t documented, create or update the document first (via `create_document`).',
   'Use `evidence` on nodes and edges to cite the document sections that justify what is drawn. Evidence must come from Markdown documents read or created through the documentation tools, not from source-code tools. If the required document does not exist, create it first.',
   '',
+  '## Cross-project documentation workspace',
+  'If the user points you to a folder/repository that does not appear to match this MCP workspace\'s configured `sourceRoot` or current document inventory, ask whether the mismatch is intentional before creating documents or diagrams.',
+  'When the user confirms it is intentional, keep this MCP workspace as the documentation target: create the missing Markdown source-of-truth documents here first, then derive diagrams from those documents. Do not write documentation by hand into the pointed source repository as a fallback.',
+  '',
   '## Positioning',
   '`x` and `y` are **optional**. Omit them and the editor auto-lays out nodes. Provide coordinates only when a fixed layout is required (e.g., following a C4 convention). When provided: origin `(0,0)` is the canvas center, `+x` = right, `+y` = down; use multiples of 40.',
   '',
@@ -392,6 +416,9 @@ const CREATE_DOCUMENT_DESCRIPTION = [
   '',
   '## Source-of-truth contract',
   'Documents are the source of truth. Diagrams are derived views. If a diagram needs a concept that isn\'t documented, create or update the document first (here) before calling `create_diagram`.',
+  '',
+  '## Cross-project documentation workspace',
+  'If the user points you to a folder/repository that does not appear to match this MCP workspace, ask whether the mismatch is intentional. When confirmed, create the source-of-truth documents in this MCP workspace first; diagrams must then cite those documents, not raw source-code inspection.',
   '',
   GUIDE_HINT,
 ].join('\n');

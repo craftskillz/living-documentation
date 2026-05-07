@@ -6,7 +6,7 @@
     },
     {
       "path": "src/mcp/server.ts",
-      "hash": "51ca3436189fffb095e4b208ce99c9d5c517207132f1286a7f8d35b12a089391"
+      "hash": "c6e777ec548f7b851de92baa77d074d3abe0bb0ec173cabbf208a8c7382f54ea"
     }
   ],
   "adrs/2026_05_07_22_25_[MCP_DIAGRAM]_architectural_kind_render_as_separation": [
@@ -16,7 +16,7 @@
     },
     {
       "path": "src/mcp/server.ts",
-      "hash": "51ca3436189fffb095e4b208ce99c9d5c517207132f1286a7f8d35b12a089391"
+      "hash": "c6e777ec548f7b851de92baa77d074d3abe0bb0ec173cabbf208a8c7382f54ea"
     },
     {
       "path": "src/frontend/diagram/persistence.js",
@@ -38,7 +38,7 @@
     },
     {
       "path": "src/mcp/server.ts",
-      "hash": "51ca3436189fffb095e4b208ce99c9d5c517207132f1286a7f8d35b12a089391"
+      "hash": "c6e777ec548f7b851de92baa77d074d3abe0bb0ec173cabbf208a8c7382f54ea"
     },
     {
       "path": "src/frontend/diagram/persistence.js",
@@ -75,6 +75,12 @@
     {
       "path": "src/frontend/i18n/fr.json",
       "hash": "3da4411ac1ba31047cc0c41f69613ef24ea2c10d180533a3359efcf1a2bbd86f"
+    }
+  ],
+  "adrs/2026_05_07_23_05_[MCP]_cross_project_documentation_workspace_confirmation": [
+    {
+      "path": "src/mcp/server.ts",
+      "hash": "c6e777ec548f7b851de92baa77d074d3abe0bb0ec173cabbf208a8c7382f54ea"
     }
   ]
 }
