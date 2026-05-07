@@ -53,6 +53,7 @@ interface DiagramNodeInput {
   imageSrc?: string | null;
   groupId?: string | null;
   nodeLink?: { type?: unknown; value?: unknown } | null;
+  evidence?: EvidenceInput[];
 }
 
 interface DiagramEdgeInput {
@@ -71,6 +72,13 @@ interface DiagramEdgeInput {
   edgeWidth?: number | null;
   edgeLocked?: boolean;
   edgeLabelWidth?: number | null;
+  evidence?: EvidenceInput[];
+}
+
+interface EvidenceInput {
+  documentId?: unknown;
+  section?: unknown;
+  summary?: unknown;
 }
 
 const VALID_PORTS = new Set<PortKey>(['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']);
@@ -99,6 +107,7 @@ const NODE_STYLE_KEYS = [
   'kind',
   'renderAs',
   'description',
+  'evidence',
   'fontSize',
   'textAlign',
   'textValign',
@@ -124,6 +133,7 @@ const EDGE_STYLE_KEYS = [
   'edgeWidth',
   'edgeLocked',
   'edgeLabelWidth',
+  'evidence',
 ] as const;
 
 // Estimates node dimensions from label content (font ~13px, lineH ~17px, pad 16px).
@@ -191,6 +201,29 @@ function numberOrNull(value: number | null | undefined, fallback: number | null)
 
 function stringOrNull(value: string | null | undefined): string | null {
   return typeof value === 'string' ? value : null;
+}
+
+function normalizeEvidence(raw: EvidenceInput[] | undefined): Array<{ documentId: string; section: string | null; summary: string | null }> | null {
+  if (raw === undefined) return null;
+  if (!Array.isArray(raw)) throw new Error('evidence must be an array when provided.');
+  return raw
+    .map((item, index) => {
+      if (!item || typeof item !== 'object') {
+        throw new Error(`evidence[${index}] must be an object.`);
+      }
+      if (typeof item.documentId !== 'string' || !item.documentId.trim()) {
+        throw new Error(`evidence[${index}].documentId is required and must be a non-empty string.`);
+      }
+      return {
+        documentId: item.documentId,
+        section: typeof item.section === 'string' && item.section.trim() ? item.section : null,
+        summary: typeof item.summary === 'string' && item.summary.trim() ? item.summary : null,
+      };
+    });
+}
+
+function hasEvidence(items: Array<Record<string, unknown>>): boolean {
+  return items.some(item => Array.isArray(item.evidence) && item.evidence.length > 0);
 }
 
 function resolveNodeLink(n: DiagramNodeInput): { type: string; value: string } | null {
@@ -458,6 +491,7 @@ export function toolCreateDiagram(docsPath: string, args: {
       kind,
       renderAs: shapeInfo.shapeType,
       description: stringOrNull(n.description),
+      evidence: normalizeEvidence(n.evidence),
       colorKey: resolveNodeColor(n, kind),
       nodeWidth,
       nodeHeight,
@@ -499,6 +533,7 @@ export function toolCreateDiagram(docsPath: string, args: {
       edgeWidth: numberOrNull(e.edgeWidth, null),
       edgeLocked: e.edgeLocked === true,
       edgeLabelWidth: numberOrNull(e.edgeLabelWidth, estimateEdgeLabelWidth(label)),
+      evidence: normalizeEvidence(e.evidence),
     };
     let toNode: StoredNode | undefined;
     if (e.to !== undefined && e.to !== '') {
@@ -549,6 +584,15 @@ export function toolCreateDiagram(docsPath: string, args: {
     warnings.push(
       `Context diagram has ${nodes.length} nodes — keep it ≤ ${CONTEXT_NODE_SOFT_LIMIT} for readability. ` +
       `If the system is too large, create a container diagram for the detailed view instead.`,
+    );
+  }
+  if (
+    ['context', 'container', 'component', 'uml'].includes(diagramType) &&
+    !hasEvidence(nodes) &&
+    !hasEvidence(edges)
+  ) {
+    warnings.push(
+      'Diagram has no evidence metadata. Consider adding document references for auditability.',
     );
   }
 

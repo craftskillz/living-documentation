@@ -21,6 +21,7 @@ import { uploadImageBlob } from './image-upload.js';
 import { promptImageName } from './image-name-modal.js';
 import { showToast }       from './toast.js';
 import { t }               from './t.js';
+import { initEvidenceMode, toggleEvidenceMode } from './evidence.js';
 
 // ── Tool management ───────────────────────────────────────────────────────────
 
@@ -30,6 +31,7 @@ function setTool(tool, shape) {
 
   document.querySelectorAll('.tool-btn').forEach((b) => b.classList.remove('tool-active'));
   if (st.alignGuides) document.getElementById('btnAlign').classList.add('tool-active');
+  if (st.evidenceMode) document.getElementById('btnEvidenceMode').classList.add('tool-active');
 
   const key = tool === 'addNode' ? `addNode:${shape || st.pendingShape}` : tool;
   const btn = document.getElementById(TOOL_BTN_MAP[key]);
@@ -134,6 +136,7 @@ document.getElementById('btnDelete').addEventListener('click', deleteSelected);
 document.getElementById('btnAlign').addEventListener('click', toggleAlignGuides);
 document.getElementById('btnGrid').addEventListener('click', toggleGrid);
 document.getElementById('btnEdgeStraight').addEventListener('click', toggleEdgeStraight);
+document.getElementById('btnEvidenceMode').addEventListener('click', toggleEvidenceMode);
 document.getElementById('btnResizeMode').addEventListener('click', toggleResizeMode);
 
 document.getElementById('btnZoomOut').addEventListener('click',   () => adjustZoom(-0.2));
@@ -147,6 +150,7 @@ document.getElementById('btnNewDiagram').addEventListener('click', newDiagram);
 
 // Dirty state on title edits
 document.getElementById('diagramTitle').addEventListener('input', markDirty);
+initEvidenceMode();
 
 // ── Node panel wiring ─────────────────────────────────────────────────────────
 

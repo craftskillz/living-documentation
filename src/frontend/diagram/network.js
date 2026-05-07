@@ -875,6 +875,7 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
     }
     st.network.redraw();
   });
+  window.dispatchEvent(new CustomEvent('diagram:network-ready'));
 }
 
 // ── Anchor snap-to-connect ────────────────────────────────────────────────────

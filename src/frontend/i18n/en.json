@@ -484,6 +484,15 @@
   "diagram.edge_panel.width_increase": "Increase width",
   "diagram.edge_panel.clear_ports": "Clear attachment points",
 
+  "diagram.toolbar.evidence_mode": "Source consultation mode",
+  "diagram.evidence.panel_title": "Sources",
+  "diagram.evidence.node_title": "Node sources",
+  "diagram.evidence.edge_title": "Relation sources",
+  "diagram.evidence.marker_title": "View document sources",
+  "diagram.evidence.close": "Close sources",
+  "diagram.evidence.empty": "No source attached.",
+  "diagram.evidence.section_label": "Section",
+
   "diagram.label_input.placeholder": "Label…",
   "diagram.empty_state": "Select or create a diagram",
 

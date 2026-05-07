@@ -23,6 +23,7 @@ function captureState() {
     shapeType: n.shapeType || 'box', colorKey: n.colorKey || 'c-gray',
     kind: n.kind || null, renderAs: n.renderAs || null,
     description: n.description || null,
+    evidence: Array.isArray(n.evidence) ? n.evidence : null,
     nodeWidth: n.nodeWidth || null, nodeHeight: n.nodeHeight || null,
     fontSize: n.fontSize || null, textAlign: n.textAlign || null, textValign: n.textValign || null,
     bgOpacity: n.bgOpacity ?? null,
@@ -39,6 +40,7 @@ function captureState() {
     fromPort: e.fromPort || null, toPort: e.toPort || null,
     edgeColor: e.edgeColor || null, edgeWidth: e.edgeWidth || null,
     edgeLocked: e.edgeLocked || false,
+    evidence: Array.isArray(e.evidence) ? e.evidence : null,
   }));
   return {
     nodes,

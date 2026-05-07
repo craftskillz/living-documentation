@@ -70,6 +70,7 @@ export async function openDiagram(id) {
   st.edgesStraight    = diagram.edgesStraight === true;
   document.getElementById('btnSave').disabled      = true;
   document.getElementById('diagramTitle').value    = diagram.title || '';
+  document.getElementById('evidencePanel')?.classList.add('hidden');
   document.getElementById('btnEdgeStraight').classList.toggle('tool-active', st.edgesStraight);
   applyGridState(diagram.gridEnabled ?? true);
   applyAlignGuidesState(diagram.alignGuides ?? true);
@@ -127,6 +128,7 @@ export async function saveDiagram() {
       shapeType: n.shapeType || 'box', colorKey: n.colorKey || 'c-gray',
       kind: n.kind || null, renderAs: n.renderAs || null,
       description: n.description || null,
+      evidence: Array.isArray(n.evidence) ? n.evidence : null,
       nodeWidth: n.nodeWidth || null, nodeHeight: n.nodeHeight || null,
       fontSize: n.fontSize || null, textAlign: n.textAlign || null, textValign: n.textValign || null,
       bgOpacity: n.bgOpacity ?? null,
@@ -147,6 +149,7 @@ export async function saveDiagram() {
     fromPort: e.fromPort || null, toPort: e.toPort || null,
     edgeColor: e.edgeColor || null, edgeWidth: e.edgeWidth || null,
     edgeLocked: e.edgeLocked || false, edgeLabelWidth: e.edgeLabelWidth || null,
+    evidence: Array.isArray(e.evidence) ? e.evidence : null,
   }));
 
   const title = document.getElementById('diagramTitle').value || t('diagram.toast.untitled');

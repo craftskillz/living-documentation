@@ -306,6 +306,107 @@ test.describe('diagram MCP tools on the with-diagrams fixture', () => {
       to: 'Stripe\n[External System]\nPreauthorizes and captures card payments',
     });
   });
+
+  test('create_diagram persists documentary evidence on nodes and edges', async ({
+    request,
+    ld,
+  }) => {
+    const result = await callTool<{ warnings?: string[] }>(request, ld.baseURL, 'create_diagram', {
+      id: 'mcp-evidence',
+      title: 'MCP Evidence',
+      diagramType: 'context',
+      nodes: [
+        {
+          name: 'DriveBox',
+          kind: 'software_system',
+          description: 'Coordinates campaigns',
+          x: 0,
+          y: 0,
+          evidence: [
+            {
+              documentId: '2026_01_01_%5BARCHITECTURE%5D_drivebox_context',
+              section: 'Decision',
+              summary: 'DriveBox is the central software system.',
+            },
+          ],
+        },
+        {
+          name: 'Stripe',
+          kind: 'external_system',
+          description: 'Handles card preauthorization',
+          x: 240,
+          y: 0,
+        },
+      ],
+      edges: [
+        {
+          from: 'DriveBox',
+          to: 'Stripe',
+          label: 'preauthorizes payments via',
+          evidence: [
+            {
+              documentId: '2026_01_02_%5BINTEGRATION%5D_stripe_payment_flow',
+              section: 'Flow',
+              summary: 'Stripe preauthorization happens before moderation.',
+            },
+          ],
+        },
+      ],
+    });
+    expect(result.warnings ?? []).not.toContain(
+      'Diagram has no evidence metadata. Consider adding document references for auditability.',
+    );
+
+    const diagrams = JSON.parse(fs.readFileSync(path.join(ld.docsAbs, '.diagrams.json'), 'utf-8'));
+    const diagram = diagrams.find((d: { id: string }) => d.id === 'mcp-evidence');
+    expect(diagram.nodes[0].evidence).toEqual([
+      {
+        documentId: '2026_01_01_%5BARCHITECTURE%5D_drivebox_context',
+        section: 'Decision',
+        summary: 'DriveBox is the central software system.',
+      },
+    ]);
+    expect(diagram.edges[0].evidence).toEqual([
+      {
+        documentId: '2026_01_02_%5BINTEGRATION%5D_stripe_payment_flow',
+        section: 'Flow',
+        summary: 'Stripe preauthorization happens before moderation.',
+      },
+    ]);
+
+    const readBack = await callTool<{
+      nodes: Array<{ evidence: Array<{ documentId: string }> }>;
+      edges: Array<{ evidence: Array<{ documentId: string }> }>;
+    }>(
+      request,
+      ld.baseURL,
+      'read_diagram',
+      { id: 'mcp-evidence' },
+    );
+    expect(readBack.nodes[0].evidence[0].documentId).toBe('2026_01_01_%5BARCHITECTURE%5D_drivebox_context');
+    expect(readBack.edges[0].evidence[0].documentId).toBe('2026_01_02_%5BINTEGRATION%5D_stripe_payment_flow');
+  });
+
+  test('create_diagram warns when an architectural diagram has no evidence metadata', async ({
+    request,
+    ld,
+  }) => {
+    const result = await callTool<{ warnings?: string[] }>(request, ld.baseURL, 'create_diagram', {
+      id: 'mcp-no-evidence-warning',
+      title: 'MCP No Evidence Warning',
+      diagramType: 'context',
+      nodes: [
+        { name: 'App\n[Software System]\nRuns work', type: 'box', x: 0, y: 0 },
+        { name: 'Store\n[Database]\nPersists state', type: 'database', x: 240, y: 0 },
+      ],
+      edges: [
+        { from: 'App\n[Software System]\nRuns work', to: 'Store\n[Database]\nPersists state', label: 'reads from' },
+      ],
+    });
+    expect(result.warnings).toContain(
+      'Diagram has no evidence metadata. Consider adding document references for auditability.',
+    );
+  });
 });
 
 test.describe('source MCP tools on the with-metadata fixture', () => {

@@ -2,33 +2,79 @@
   "adrs/2026_05_07_22_05_[MCP]_default_diagram_style_conventions": [
     {
       "path": "src/mcp/tools/diagrams.ts",
-      "hash": "46661b54e9830f1b5fcb3cacb7a7ecd6bd195eac146bd94a78c4dfc207986f53"
+      "hash": "9f9a884e04be20a8f22294eaa221260ef6f57797f2e59ca73e93028f6f21a899"
     },
     {
       "path": "src/mcp/server.ts",
-      "hash": "6acb753ef782c42709cd49dd48673cd3b230cae6ea733478a86bfe852910ec2c"
+      "hash": "51ca3436189fffb095e4b208ce99c9d5c517207132f1286a7f8d35b12a089391"
     }
   ],
   "adrs/2026_05_07_22_25_[MCP_DIAGRAM]_architectural_kind_render_as_separation": [
     {
       "path": "src/mcp/tools/diagrams.ts",
-      "hash": "46661b54e9830f1b5fcb3cacb7a7ecd6bd195eac146bd94a78c4dfc207986f53"
+      "hash": "9f9a884e04be20a8f22294eaa221260ef6f57797f2e59ca73e93028f6f21a899"
     },
     {
       "path": "src/mcp/server.ts",
-      "hash": "6acb753ef782c42709cd49dd48673cd3b230cae6ea733478a86bfe852910ec2c"
+      "hash": "51ca3436189fffb095e4b208ce99c9d5c517207132f1286a7f8d35b12a089391"
     },
     {
       "path": "src/frontend/diagram/persistence.js",
-      "hash": "08384a6c3701f7c977981767e7b7b1e0efac698f94bc2b9aaec981b766c7d87d"
+      "hash": "0c168dc14ea0a44bd08298e8698bb808d12d21a3a0c50d6d63f47402e2436f6d"
     },
     {
       "path": "src/frontend/diagram/history.js",
-      "hash": "30ea4e93c009c441ffaf73ad93500e388a52aeb8f42a88012d13e72fa3055260"
+      "hash": "88db5d52ff612c77eaff6417a507caf257ed400488da1637ac34a8c0c1bb6a93"
     },
     {
       "path": "src/frontend/diagram/network.js",
-      "hash": "964ec377880c0702819c348b6eab04a5888d73efd62b73926008e87eab2f2933"
+      "hash": "5fbc4f3669320a447e12664b7d7d444e2cca0d3ca75e6fcbc5adffb143b98938"
+    }
+  ],
+  "adrs/2026_05_07_22_45_[MCP_DIAGRAM]_documentary_evidence_provenance": [
+    {
+      "path": "src/mcp/tools/diagrams.ts",
+      "hash": "9f9a884e04be20a8f22294eaa221260ef6f57797f2e59ca73e93028f6f21a899"
+    },
+    {
+      "path": "src/mcp/server.ts",
+      "hash": "51ca3436189fffb095e4b208ce99c9d5c517207132f1286a7f8d35b12a089391"
+    },
+    {
+      "path": "src/frontend/diagram/persistence.js",
+      "hash": "0c168dc14ea0a44bd08298e8698bb808d12d21a3a0c50d6d63f47402e2436f6d"
+    },
+    {
+      "path": "src/frontend/diagram/history.js",
+      "hash": "88db5d52ff612c77eaff6417a507caf257ed400488da1637ac34a8c0c1bb6a93"
+    },
+    {
+      "path": "src/frontend/diagram/network.js",
+      "hash": "5fbc4f3669320a447e12664b7d7d444e2cca0d3ca75e6fcbc5adffb143b98938"
+    },
+    {
+      "path": "src/frontend/diagram/state.js",
+      "hash": "d961af0c95055254a98fde8bb051913050c100ab0b5012c2aad8941ced6e5944"
+    },
+    {
+      "path": "src/frontend/diagram/main.js",
+      "hash": "0eed8fddc330fbee1237dd62b7eb7bf0b38f30329da405b612d5f6f4e37e906f"
+    },
+    {
+      "path": "src/frontend/diagram/evidence.js",
+      "hash": "81b50d19b17361fffb6bdab50986395968b625ebebe64e53a1cabf5723b4f4df"
+    },
+    {
+      "path": "src/frontend/diagram.html",
+      "hash": "44e10b9125aa7105c1c3999db2623fd8ca530537945eec4a07fa4e84d29f5334"
+    },
+    {
+      "path": "src/frontend/i18n/en.json",
+      "hash": "b7c25409ea0853076ee62c19e5d3315f3f5a6e5ed8a37d27657610d09d0de93b"
+    },
+    {
+      "path": "src/frontend/i18n/fr.json",
+      "hash": "3da4411ac1ba31047cc0c41f69613ef24ea2c10d180533a3359efcf1a2bbd86f"
     }
   ]
 }

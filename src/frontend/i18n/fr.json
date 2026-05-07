@@ -484,6 +484,15 @@
   "diagram.edge_panel.width_increase": "Augmenter l'épaisseur",
   "diagram.edge_panel.clear_ports": "Supprimer les points d'attache",
 
+  "diagram.toolbar.evidence_mode": "Mode consultation des sources",
+  "diagram.evidence.panel_title": "Sources",
+  "diagram.evidence.node_title": "Sources du nœud",
+  "diagram.evidence.edge_title": "Sources de la relation",
+  "diagram.evidence.marker_title": "Voir les sources documentaires",
+  "diagram.evidence.close": "Fermer les sources",
+  "diagram.evidence.empty": "Aucune source attachée.",
+  "diagram.evidence.section_label": "Section",
+
   "diagram.label_input.placeholder": "Libellé…",
   "diagram.empty_state": "Sélectionne ou crée un diagramme",
 

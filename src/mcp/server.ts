@@ -311,6 +311,7 @@ const CREATE_DIAGRAM_DESCRIPTION = [
   '',
   '## Source-of-truth contract',
   'Documents are authoritative. A diagram must not contain information absent from the documents. If a diagram needs a concept that isn\'t documented, create or update the document first (via `create_document`).',
+  'Use `evidence` on nodes and edges to cite the document sections that justify what is drawn. Evidence must come from Markdown documents read or created through the documentation tools, not from source-code tools. If the required document does not exist, create it first.',
   '',
   '## Positioning',
   '`x` and `y` are **optional**. Omit them and the editor auto-lays out nodes. Provide coordinates only when a fixed layout is required (e.g., following a C4 convention). When provided: origin `(0,0)` is the canvas center, `+x` = right, `+y` = down; use multiples of 40.',
@@ -519,6 +520,19 @@ const TOOLS = [
               linkedDiagramId: { type: 'string', description: 'Optional: id of another diagram to navigate to when clicking this node (C4 drill-down).' },
               groupId:         { type: ['string', 'null'], description: 'Optional editor group id. Defaults to null.' },
               imageSrc:        { type: 'string', description: 'Required when `type` is "image". URL path returned by POST /api/images/upload (e.g. "/images/foo.png").' },
+              evidence: {
+                type: 'array',
+                description: 'Optional documentary provenance for this node. Cite only Markdown documents from list_documents/read_document/create_document, not source files.',
+                items: {
+                  type: 'object',
+                  properties: {
+                    documentId: { type: 'string', description: 'Document id as returned by list_documents or create_document.' },
+                    section:    { type: ['string', 'null'], description: 'Optional section heading inside the document.' },
+                    summary:    { type: ['string', 'null'], description: 'Short paraphrase of the documentary fact that justifies this node.' },
+                  },
+                  required: ['documentId'],
+                },
+              },
             },
             required: ['name'],
           },
@@ -544,6 +558,19 @@ const TOOLS = [
               edgeWidth: { type: ['number', 'null'], description: 'Optional custom edge width. Defaults to null.' },
               edgeLocked: { type: 'boolean', description: 'Optional lock flag for the edge. Defaults to false.' },
               edgeLabelWidth: { type: ['number', 'null'], description: 'Optional fixed edge-label wrapping width. Defaults to 80/95/105 depending on label length.' },
+              evidence: {
+                type: 'array',
+                description: 'Optional documentary provenance for this relation. Cite only Markdown documents from list_documents/read_document/create_document, not source files.',
+                items: {
+                  type: 'object',
+                  properties: {
+                    documentId: { type: 'string', description: 'Document id as returned by list_documents or create_document.' },
+                    section:    { type: ['string', 'null'], description: 'Optional section heading inside the document.' },
+                    summary:    { type: ['string', 'null'], description: 'Short paraphrase of the documentary fact that justifies this relation.' },
+                  },
+                  required: ['documentId'],
+                },
+              },
             },
             required: ['from'],
           },
@@ -776,6 +803,7 @@ Living Documentation is a tool where knowledge lives primarily in Markdown docum
 3. **Ignore any document whose frontmatter contains \`status: SuperSeeded\`** — it is deprecated and must not be used as a source of truth.
 4. Read the frontmatter (\`description\` and \`tags\` fields) of each relevant document with \`read_document\` to find answers to the diagram-specific questions below.
 5. Only ask the user for information that cannot be found in any active (non-superseded) document.
+6. Every architectural node or relation should include \`evidence\` entries that cite the Markdown documents and sections that justify it. Evidence must come from documents, not from source code. If the required document does not exist, create it first.
 
 ## Node semantics and label format — mandatory
 

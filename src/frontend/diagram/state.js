@@ -32,6 +32,7 @@ export const st = {
   edgeLabelBBox: {},     // edgeId → {cx, cy, w, h, rotation} canvas world coords, used by label resize
   freeArrowFirstPoint: null, // addEdge two-click flow: {x, y} canvas coords of first click, or null
   exportingPng: false, // suppress interactive-only canvas chrome during PNG export
+  evidenceMode: false, // when true, show document-provenance markers on nodes/edges
 };
 
 export function markDirty() {
