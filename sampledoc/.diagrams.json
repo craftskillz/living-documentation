@@ -1,0 +1,172 @@
+[
+  {
+    "id": "d1778158760741",
+    "title": "DriveBox — diagramme de contexte",
+    "nodes": [
+      {
+        "id": "n1",
+        "label": "Client annonceur\n[Person]\nCree et paie les campagnes",
+        "shape": "custom",
+        "shapeType": "actor",
+        "colorKey": "c-gray",
+        "nodeWidth": 30,
+        "nodeHeight": 52,
+        "x": -360,
+        "y": -160
+      },
+      {
+        "id": "n2",
+        "label": "Administrateur\n[Person]\nModere et pilote le backoffice",
+        "shape": "custom",
+        "shapeType": "actor",
+        "colorKey": "c-gray",
+        "nodeWidth": 30,
+        "nodeHeight": 52,
+        "x": -360,
+        "y": 0
+      },
+      {
+        "id": "n3",
+        "label": "Tablette taxi\n[Device]\nDiffuse les campagnes actives",
+        "shape": "box",
+        "shapeType": "box",
+        "colorKey": "c-sky",
+        "nodeWidth": 240,
+        "nodeHeight": 72,
+        "x": -360,
+        "y": 160
+      },
+      {
+        "id": "n4",
+        "label": "Passager taxi\n[Person]\nVoit les publicites embarquees",
+        "shape": "custom",
+        "shapeType": "actor",
+        "colorKey": "c-gray",
+        "nodeWidth": 30,
+        "nodeHeight": 52,
+        "x": -360,
+        "y": 320
+      },
+      {
+        "id": "n5",
+        "label": "DriveBox\n[Software System]\nSaaS de campagnes publicitaires\npour tablettes taxi",
+        "shape": "box",
+        "shapeType": "box",
+        "colorKey": "c-blue",
+        "nodeWidth": 256,
+        "nodeHeight": 96,
+        "x": 0,
+        "y": 80
+      },
+      {
+        "id": "n6",
+        "label": "AWS Amplify Backend\n[External System]\nCognito, AppSync, DynamoDB, S3",
+        "shape": "box",
+        "shapeType": "box",
+        "colorKey": "c-slate",
+        "nodeWidth": 248,
+        "nodeHeight": 72,
+        "x": 400,
+        "y": -160
+      },
+      {
+        "id": "n7",
+        "label": "Stripe\n[External System]\nPreautorisation et capture manuelle",
+        "shape": "box",
+        "shapeType": "box",
+        "colorKey": "c-slate",
+        "nodeWidth": 288,
+        "nodeHeight": 72,
+        "x": 400,
+        "y": 0
+      },
+      {
+        "id": "n8",
+        "label": "TinyMDM\n[External System]\nSource de verite des tablettes",
+        "shape": "box",
+        "shapeType": "box",
+        "colorKey": "c-slate",
+        "nodeWidth": 248,
+        "nodeHeight": 72,
+        "x": 400,
+        "y": 160
+      },
+      {
+        "id": "n9",
+        "label": "APIs contenu et localisation\n[External System]\nopen-meteo, newsdata.io,\nBigDataCloud",
+        "shape": "box",
+        "shapeType": "box",
+        "colorKey": "c-slate",
+        "nodeWidth": 232,
+        "nodeHeight": 96,
+        "x": 400,
+        "y": 320
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "from": "n1",
+        "to": "n5",
+        "label": "cree des campagnes via",
+        "edgeLabelWidth": 80
+      },
+      {
+        "id": "e2",
+        "from": "n2",
+        "to": "n5",
+        "label": "modere et administre via",
+        "edgeLabelWidth": 80
+      },
+      {
+        "id": "e3",
+        "from": "n3",
+        "to": "n5",
+        "label": "recupere campagnes et medias depuis",
+        "edgeLabelWidth": 80
+      },
+      {
+        "id": "e4",
+        "from": "n5",
+        "to": "n3",
+        "label": "diffuse les campagnes vers",
+        "edgeLabelWidth": 80
+      },
+      {
+        "id": "e5",
+        "from": "n3",
+        "to": "n4",
+        "label": "affiche les publicites a",
+        "edgeLabelWidth": 80
+      },
+      {
+        "id": "e6",
+        "from": "n5",
+        "to": "n6",
+        "label": "authentifie, persiste et stocke via",
+        "edgeLabelWidth": 80
+      },
+      {
+        "id": "e7",
+        "from": "n5",
+        "to": "n7",
+        "label": "preautorise et capture les paiements via",
+        "edgeLabelWidth": 80
+      },
+      {
+        "id": "e8",
+        "from": "n5",
+        "to": "n8",
+        "label": "lit les appareils et comptes depuis",
+        "edgeLabelWidth": 80
+      },
+      {
+        "id": "e9",
+        "from": "n5",
+        "to": "n9",
+        "label": "recupere meteo, actualites et geocodage via",
+        "edgeLabelWidth": 80
+      }
+    ]
+  }
+]
