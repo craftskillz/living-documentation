@@ -277,6 +277,124 @@ function normalizeAlignedExternalSystemWidths(nodes: StoredNode[]): void {
   }
 }
 
+function nodeKind(node: StoredNode): string {
+  return typeof node.kind === 'string' ? node.kind : '';
+}
+
+function nodeLabel(node: StoredNode): string {
+  return typeof node.label === 'string' ? node.label : '';
+}
+
+function isActorNode(node: StoredNode): boolean {
+  return node.shapeType === 'actor' || nodeKind(node) === 'person';
+}
+
+function isDatabaseNode(node: StoredNode): boolean {
+  return node.shapeType === 'database' || ['database', 'object_storage'].includes(nodeKind(node));
+}
+
+function isCentralSystemNode(node: StoredNode): boolean {
+  const kind = nodeKind(node);
+  return ['software_system', 'container', 'component', 'api', 'backend_service'].includes(kind);
+}
+
+function isExternalSystemNode(node: StoredNode): boolean {
+  const kind = nodeKind(node);
+  return kind === 'external_system' || /\[External System\]/i.test(nodeLabel(node));
+}
+
+function hasPosition(node: StoredNode): boolean {
+  return typeof node.x === 'number' && typeof node.y === 'number';
+}
+
+function spreadAtX(nodes: StoredNode[], x: number, step = 280, centerY = 0): void {
+  const startY = centerY - ((nodes.length - 1) * step) / 2;
+  nodes.forEach((node, index) => {
+    if (!hasPosition(node)) {
+      node.x = x;
+      node.y = Math.round((startY + index * step) / 40) * 40;
+    }
+  });
+}
+
+function gridPlace(nodes: StoredNode[], columns: number, startX: number, startY: number, stepX: number, stepY: number): void {
+  nodes.forEach((node, index) => {
+    if (hasPosition(node)) return;
+    node.x = startX + (index % columns) * stepX;
+    node.y = startY + Math.floor(index / columns) * stepY;
+  });
+}
+
+function applyContextLayout(nodes: StoredNode[]): void {
+  const unpositioned = nodes.filter(node => !hasPosition(node));
+  if (!unpositioned.length) return;
+
+  const actors = unpositioned.filter(isActorNode);
+  const stores = unpositioned.filter(isDatabaseNode);
+  const externals = unpositioned.filter(node => isExternalSystemNode(node) && !isDatabaseNode(node));
+  const centralCandidates = unpositioned.filter(node =>
+    isCentralSystemNode(node) &&
+    !isActorNode(node) &&
+    !isDatabaseNode(node) &&
+    !isExternalSystemNode(node),
+  );
+  const central = centralCandidates.slice(0, Math.max(1, Math.min(centralCandidates.length, 2)));
+  const centralSet = new Set(central);
+  const remaining = unpositioned.filter(node =>
+    !actors.includes(node) &&
+    !stores.includes(node) &&
+    !externals.includes(node) &&
+    !centralSet.has(node),
+  );
+
+  spreadAtX(actors, -880, 280);
+  spreadAtX(central, -280, 280);
+  spreadAtX(remaining, 360, 280);
+
+  const rightColumn = [...externals, ...stores];
+  if (rightColumn.length <= 3) {
+    spreadAtX(rightColumn, 920, 280);
+  } else {
+    gridPlace(rightColumn, 2, 760, -280, 360, 280);
+  }
+}
+
+function applyFlowLayout(nodes: StoredNode[]): void {
+  const unpositioned = nodes.filter(node => !hasPosition(node));
+  if (!unpositioned.length) return;
+
+  const stepX = 320;
+  const startX = -Math.round(((unpositioned.length - 1) * stepX) / 2 / 40) * 40;
+  unpositioned.forEach((node, index) => {
+    node.x = startX + index * stepX;
+    node.y = 0;
+  });
+}
+
+function applyGridLayout(nodes: StoredNode[]): void {
+  const unpositioned = nodes.filter(node => !hasPosition(node));
+  if (!unpositioned.length) return;
+
+  const columns = Math.min(3, Math.max(1, Math.ceil(Math.sqrt(unpositioned.length))));
+  const startX = -Math.round(((columns - 1) * 360) / 2 / 40) * 40;
+  gridPlace(unpositioned, columns, startX, -240, 360, 240);
+}
+
+function applyDeterministicLayout(diagramType: string, nodes: StoredNode[]): void {
+  if (!nodes.some(node => !hasPosition(node))) return;
+
+  if (diagramType === 'screen-guide') return;
+  if (diagramType === 'context') {
+    applyContextLayout(nodes);
+    return;
+  }
+  if (diagramType === 'flow') {
+    applyFlowLayout(nodes);
+    return;
+  }
+  applyGridLayout(nodes);
+}
+
 function copyExistingFields(
   source: Record<string, unknown>,
   target: Record<string, unknown>,
@@ -510,6 +628,8 @@ export function toolCreateDiagram(docsPath: string, args: {
     if (n.y !== undefined) node.y = n.y;
     return node;
   });
+  normalizeAlignedExternalSystemWidths(nodes);
+  applyDeterministicLayout(diagramType, nodes);
   normalizeAlignedExternalSystemWidths(nodes);
 
   const edges: StoredEdge[] = args.edges.map((e, i) => {

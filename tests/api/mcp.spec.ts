@@ -224,6 +224,84 @@ test.describe('diagram MCP tools on the with-diagrams fixture', () => {
     });
   });
 
+  test('create_diagram assigns deterministic context positions when coordinates are omitted', async ({
+    request,
+    ld,
+  }) => {
+    await callTool(request, ld.baseURL, 'create_diagram', {
+      id: 'mcp-deterministic-context-layout',
+      title: 'MCP Deterministic Context Layout',
+      diagramType: 'context',
+      nodes: [
+        { name: 'Customer', kind: 'person', description: 'Uses the service' },
+        { name: 'Admin', kind: 'person', description: 'Operates the backoffice' },
+        { name: 'App', kind: 'software_system', description: 'Coordinates work' },
+        { name: 'Billing', kind: 'external_system', description: 'Charges cards' },
+        { name: 'CRM', kind: 'external_system', description: 'Stores customer profiles' },
+        { name: 'Store', kind: 'database', description: 'Persists state' },
+      ],
+      edges: [
+        { from: 'Customer', to: 'App', label: 'uses' },
+        { from: 'Admin', to: 'App', label: 'operates' },
+        { from: 'App', to: 'Billing', label: 'charges cards via' },
+        { from: 'App', to: 'CRM', label: 'syncs accounts with' },
+        { from: 'App', to: 'Store', label: 'persists state in' },
+      ],
+    });
+
+    const diagrams = JSON.parse(fs.readFileSync(path.join(ld.docsAbs, '.diagrams.json'), 'utf-8'));
+    const diagram = diagrams.find((d: { id: string }) => d.id === 'mcp-deterministic-context-layout');
+    const positions = Object.fromEntries(
+      diagram.nodes.map((node: { label: string; x: number; y: number; nodeWidth: number }) => [
+        node.label.split('\n')[0],
+        { x: node.x, y: node.y, nodeWidth: node.nodeWidth },
+      ]),
+    );
+
+    expect(positions.Customer).toMatchObject({ x: -880, y: -120 });
+    expect(positions.Admin).toMatchObject({ x: -880, y: 160 });
+    expect(positions.App).toMatchObject({ x: -280, y: 0 });
+    expect(positions.Billing.x).toBe(920);
+    expect(positions.CRM.x).toBe(920);
+    expect(positions.Store.x).toBe(920);
+    expect(positions.Billing.nodeWidth).toBe(positions.CRM.nodeWidth);
+
+    expect(diagram.edges[0]).toMatchObject({ fromPort: 'E', toPort: 'W' });
+    expect(diagram.edges[2]).toMatchObject({ fromPort: 'E', toPort: 'W' });
+  });
+
+  test('create_diagram assigns deterministic flow positions when coordinates are omitted', async ({
+    request,
+    ld,
+  }) => {
+    await callTool(request, ld.baseURL, 'create_diagram', {
+      id: 'mcp-deterministic-flow-layout',
+      title: 'MCP Deterministic Flow Layout',
+      diagramType: 'flow',
+      nodes: [
+        { name: 'Upload', type: 'box' },
+        { name: 'Pay', type: 'box' },
+        { name: 'Moderate', type: 'box' },
+        { name: 'Publish', type: 'box' },
+      ],
+      edges: [
+        { from: 'Upload', to: 'Pay', label: 'continues to' },
+        { from: 'Pay', to: 'Moderate', label: 'submits for' },
+        { from: 'Moderate', to: 'Publish', label: 'approves' },
+      ],
+    });
+
+    const diagrams = JSON.parse(fs.readFileSync(path.join(ld.docsAbs, '.diagrams.json'), 'utf-8'));
+    const diagram = diagrams.find((d: { id: string }) => d.id === 'mcp-deterministic-flow-layout');
+    expect(diagram.nodes.map((node: { x: number; y: number }) => ({ x: node.x, y: node.y }))).toEqual([
+      { x: -480, y: 0 },
+      { x: -160, y: 0 },
+      { x: 160, y: 0 },
+      { x: 480, y: 0 },
+    ]);
+    expect(diagram.edges[0]).toMatchObject({ fromPort: 'E', toPort: 'W' });
+  });
+
   test('create_diagram accepts architectural kind separately from visual renderAs', async ({
     request,
     ld,
