@@ -5,7 +5,7 @@ export function visEdgeProps(arrowDir, dashes) {
   return {
     arrows: {
       to:   { enabled: arrowDir === 'to'   || arrowDir === 'both', scaleFactor: 0.7 },
-      from: { enabled: arrowDir === 'both',                        scaleFactor: 0.7 },
+      from: { enabled: arrowDir === 'from' || arrowDir === 'both', scaleFactor: 0.7 },
     },
     dashes: dashes === true,
   };

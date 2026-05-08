@@ -203,6 +203,7 @@ document.getElementById('btnUngroup').addEventListener('click', () => ungroupNod
 // ── Edge panel wiring ─────────────────────────────────────────────────────────
 
 document.getElementById('edgeBtnNone').addEventListener('click',   () => setEdgeArrow('none'));
+document.getElementById('edgeBtnFrom').addEventListener('click',   () => setEdgeArrow('from'));
 document.getElementById('edgeBtnTo').addEventListener('click',     () => setEdgeArrow('to'));
 document.getElementById('edgeBtnBoth').addEventListener('click',   () => setEdgeArrow('both'));
 document.getElementById('edgeBtnSolid').addEventListener('click',  () => setEdgeDashes(false));

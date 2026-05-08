@@ -465,6 +465,7 @@
   "diagram.edge_panel.lock": "Verrouiller la flèche",
   "diagram.edge_panel.unlock": "Déverrouiller la flèche",
   "diagram.edge_panel.no_arrow": "Trait simple",
+  "diagram.edge_panel.arrow_from": "Flèche directionnelle inverse",
   "diagram.edge_panel.arrow_to": "Flèche directionnelle",
   "diagram.edge_panel.arrow_both": "Bidirectionnelle",
   "diagram.edge_panel.solid": "Trait plein",

@@ -88,9 +88,9 @@ export function showEdgePanel() {
   const dir    = e.arrowDir ?? 'to';
   const dashes = e.dashes   ?? false;
 
-  ['edgeBtnNone', 'edgeBtnTo', 'edgeBtnBoth'].forEach((id) =>
+  ['edgeBtnNone', 'edgeBtnFrom', 'edgeBtnTo', 'edgeBtnBoth'].forEach((id) =>
     document.getElementById(id).classList.remove('edge-btn-active'));
-  document.getElementById({ none: 'edgeBtnNone', to: 'edgeBtnTo', both: 'edgeBtnBoth' }[dir] || 'edgeBtnTo')
+  document.getElementById({ none: 'edgeBtnNone', from: 'edgeBtnFrom', to: 'edgeBtnTo', both: 'edgeBtnBoth' }[dir] || 'edgeBtnTo')
     .classList.add('edge-btn-active');
 
   ['edgeBtnSolid', 'edgeBtnDashed'].forEach((id) =>

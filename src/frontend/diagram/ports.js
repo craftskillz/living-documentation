@@ -180,7 +180,7 @@ function isAnchorNode(nodeId) {
  * Handles:
  *  - Bezier curve (when both ports are set and not in straight mode)
  *  - Straight line fallback
- *  - Arrowheads (to / both / none)
+ *  - Arrowheads (from / to / both / none)
  *  - Dashes
  *  - Label (rotated or plain) at the curve midpoint
  */
@@ -235,7 +235,7 @@ export function drawPortEdge(ctx, edgeData) {
   // ── Arrowheads ─────────────────────────────────────────────────────────────
   const arrowDir = edgeData.arrowDir ?? 'to';
   const drawTo   = arrowDir === 'to'   || arrowDir === 'both';
-  const drawFrom = arrowDir === 'both';
+  const drawFrom = arrowDir === 'from' || arrowDir === 'both';
 
   if (drawTo) {
     const a = cp2

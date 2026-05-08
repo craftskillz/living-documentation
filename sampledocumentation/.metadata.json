@@ -1,0 +1,12 @@
+{
+  "adrs/2026_05_07_23_23_[DIAGRAM]_layout_deterministe_des_diagrammes_mcp": [
+    {
+      "path": "src/mcp/tools/diagrams.ts",
+      "hash": "454f8e6fdf88a35274c1edabae4f6216bb4812abe4c46e18573acdeacd189e1b"
+    },
+    {
+      "path": "src/mcp/server.ts",
+      "hash": "f57a2a9dae1743229a6165889b29f482a5e5300fa1e66312cfb00aab0092897b"
+    }
+  ]
+}

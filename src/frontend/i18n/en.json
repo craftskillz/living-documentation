@@ -465,6 +465,7 @@
   "diagram.edge_panel.lock": "Lock arrow",
   "diagram.edge_panel.unlock": "Unlock arrow",
   "diagram.edge_panel.no_arrow": "Simple line",
+  "diagram.edge_panel.arrow_from": "Reverse directional arrow",
   "diagram.edge_panel.arrow_to": "Directional arrow",
   "diagram.edge_panel.arrow_both": "Bidirectional",
   "diagram.edge_panel.solid": "Solid line",

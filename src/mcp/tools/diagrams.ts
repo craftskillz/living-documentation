@@ -29,7 +29,7 @@ interface StoredDiagram {
 }
 
 type PortKey = 'N' | 'NE' | 'E' | 'SE' | 'S' | 'SW' | 'W' | 'NW';
-type ArrowDir = 'to' | 'both' | 'none';
+type ArrowDir = 'to' | 'from' | 'both' | 'none';
 
 interface DiagramNodeInput {
   name: string;
@@ -82,7 +82,7 @@ interface EvidenceInput {
 }
 
 const VALID_PORTS = new Set<PortKey>(['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']);
-const VALID_ARROW_DIRS = new Set<ArrowDir>(['to', 'both', 'none']);
+const VALID_ARROW_DIRS = new Set<ArrowDir>(['to', 'from', 'both', 'none']);
 
 const KIND_DEFAULTS: Record<string, { renderAs: string; color: string; labelType: string }> = {
   person:          { renderAs: 'actor',    color: 'c-gray',   labelType: 'Person' },
@@ -180,7 +180,7 @@ function normalizeArrowDir(raw: string | undefined): ArrowDir {
   if (!raw) return 'to';
   const dir = raw.toLowerCase();
   if (!VALID_ARROW_DIRS.has(dir as ArrowDir)) {
-    throw new Error(`Invalid arrowDir "${raw}". Allowed: to, both, none.`);
+    throw new Error(`Invalid arrowDir "${raw}". Allowed: to, from, both, none.`);
   }
   return dir as ArrowDir;
 }
