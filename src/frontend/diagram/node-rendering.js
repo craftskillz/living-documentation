@@ -6,6 +6,7 @@
 
 import { NODE_COLORS } from "./constants.js";
 import { st } from "./state.js";
+import { CUSTOM_SHAPE_TYPE, getCustomShapeDefinition } from "./custom-shapes.js";
 
 // Returns the color object for a key, checking runtime overrides first.
 function getNodeColor(colorKey) {
@@ -180,6 +181,19 @@ function nodeData(id, defaultW, defaultH, defaultColorKey) {
     colorKey,
     c,
   };
+}
+
+function textLines(label) {
+  return label ? String(label).split("\n") : [];
+}
+
+export function customShapeImageOffsetY(node, label) {
+  const def = getCustomShapeDefinition(node && node.customShapeId);
+  if (!def || def.labelPlacement !== "below" || !label) return 0;
+  const fontSize = (node && node.fontSize) || 13;
+  const lines = textLines(label);
+  if (!lines.length) return 0;
+  return -(lines.length * fontSize * 1.3 + 8) / 2;
 }
 
 // ── Shape renderers ───────────────────────────────────────────────────────────
@@ -653,6 +667,86 @@ export function makeImageRenderer(colorKey) {
   };
 }
 
+export function makeCustomShapeRenderer(colorKey) {
+  return function ({ ctx, x, y, id, state: visState, label }) {
+    const n = st.nodes && st.nodes.get(id);
+    const def = getCustomShapeDefinition(n && n.customShapeId);
+    const defaultW = def && def.width || 96;
+    const defaultH = def && def.height || 96;
+    const {
+      W,
+      H,
+      rotation,
+      labelRotation,
+      textAlign,
+      textValign,
+      fontSize,
+      c,
+    } = nodeData(id, defaultW, defaultH, colorKey || "c-gray");
+    const img = getCachedImage(def && def.imageSrc, () => st.network && st.network.redraw());
+    const labelBelow = def && def.labelPlacement === "below";
+    const lines = textLines(label);
+    const belowLabelH = labelBelow && lines.length ? lines.length * fontSize * 1.3 + 8 : 0;
+    const imageOffsetY = labelBelow ? -belowLabelH / 2 : 0;
+    const totalH = H + belowLabelH;
+    return {
+      drawNode() {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(rotation);
+
+        if (img) {
+          ctx.drawImage(img, -W / 2, imageOffsetY - H / 2, W, H);
+        } else {
+          ctx.fillStyle = visState.selected ? c.hbg : c.bg;
+          ctx.strokeStyle = visState.selected ? "#f97316" : c.border;
+          ctx.lineWidth = 1.5;
+          roundRect(ctx, -W / 2, imageOffsetY - H / 2, W, H, 4);
+          ctx.fill();
+          ctx.stroke();
+        }
+
+        if (visState.selected || visState.hover) {
+          ctx.strokeStyle = visState.selected ? "#f97316" : c.border;
+          ctx.lineWidth = visState.selected ? 2 : 1;
+          ctx.setLineDash([4, 3]);
+          roundRect(ctx, -W / 2, -totalH / 2, W, totalH, 4);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        if (labelBelow && lines.length) {
+          ctx.save();
+          if (labelRotation) ctx.rotate(labelRotation);
+          ctx.font = `${fontSize}px system-ui,-apple-system,sans-serif`;
+          ctx.fillStyle = c.font;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          const lineH = fontSize * 1.3;
+          const startY = imageOffsetY + H / 2 + 4;
+          lines.forEach((line, i) => ctx.fillText(line, 0, startY + i * lineH));
+          ctx.restore();
+        } else {
+          drawLabel(
+            ctx,
+            label,
+            fontSize,
+            c.font,
+            textAlign,
+            textValign,
+            W,
+            H,
+            labelRotation,
+          );
+        }
+        drawLinkIndicator(ctx, id, W, H);
+        ctx.restore();
+      },
+      nodeDimensions: { width: W, height: totalH },
+    };
+  };
+}
+
 // ── Public API ────────────────────────────────────────────────────────────────
 
 // Returns the rendered height from vis-network internals (used by node-panel
@@ -703,6 +797,7 @@ const RENDERER_MAP = {
   "text-free": makeTextFreeRenderer,
   actor: makeActorRenderer,
   image: makeImageRenderer,
+  [CUSTOM_SHAPE_TYPE]: makeCustomShapeRenderer,
   anchor: makeAnchorRenderer,
 };
 
@@ -716,6 +811,7 @@ export const SHAPE_DEFAULTS = {
   "post-it": [120, 100],
   "text-free": [80, 30],
   image: [160, 120],
+  [CUSTOM_SHAPE_TYPE]: [96, 96],
   anchor: [8, 8],
 };
 

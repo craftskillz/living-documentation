@@ -22,6 +22,7 @@ import { promptImageName } from './image-name-modal.js';
 import { showToast }       from './toast.js';
 import { t }               from './t.js';
 import { initEvidenceMode, toggleEvidenceMode } from './evidence.js';
+import { customShapeIdFromTool, isCustomShapeTool } from './custom-shapes.js';
 
 // ── Tool management ───────────────────────────────────────────────────────────
 
@@ -36,6 +37,12 @@ function setTool(tool, shape) {
   const key = tool === 'addNode' ? `addNode:${shape || st.pendingShape}` : tool;
   const btn = document.getElementById(TOOL_BTN_MAP[key]);
   if (btn) btn.classList.add('tool-active');
+  document.querySelectorAll('.custom-shape-btn').forEach((b) => {
+    b.classList.toggle(
+      'tool-active',
+      tool === 'addNode' && isCustomShapeTool(shape || st.pendingShape) && b.dataset.customShapeId === customShapeIdFromTool(shape || st.pendingShape),
+    );
+  });
 
   document.getElementById('vis-canvas').classList.toggle('cursor-crosshair', tool === 'addNode' || tool === 'addEdge');
 

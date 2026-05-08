@@ -126,6 +126,7 @@ export async function saveDiagram() {
     .map((n) => ({
       id: n.id, label: n.label,
       shapeType: n.shapeType || 'box', colorKey: n.colorKey || 'c-gray',
+      customShapeId: n.customShapeId || null,
       kind: n.kind || null, renderAs: n.renderAs || null,
       description: n.description || null,
       evidence: Array.isArray(n.evidence) ? n.evidence : null,

@@ -7,7 +7,8 @@
 // vis-network's native rendering unchanged.
 
 import { st } from './state.js';
-import { SHAPE_DEFAULTS } from './node-rendering.js';
+import { customShapeImageOffsetY, SHAPE_DEFAULTS } from './node-rendering.js';
+import { CUSTOM_SHAPE_TYPE, getCustomShapeAnchors } from './custom-shapes.js';
 
 /**
  * Splits `text` into lines that each fit within `maxWidth` canvas units.
@@ -83,20 +84,52 @@ function nodeGeometry(nodeId) {
   const W = n.nodeWidth  || defaults[0];
   // 'circle' is always square (H = W); 'ellipse' uses its own height.
   const H = shapeType === 'circle' ? W : (n.nodeHeight || defaults[1]);
-  return { cx: pos.x, cy: pos.y, W, H, rotation: n.rotation || 0, shapeType };
+  const imageOffsetY = shapeType === CUSTOM_SHAPE_TYPE ? customShapeImageOffsetY(n, n.label) : 0;
+  return { cx: pos.x, cy: pos.y, W, H, rotation: n.rotation || 0, shapeType, customShapeId: n.customShapeId || null, imageOffsetY };
+}
+
+export function getPortKeys(nodeId) {
+  const n = st.nodes && st.nodes.get(nodeId);
+  if (n && n.shapeType === CUSTOM_SHAPE_TYPE) {
+    return getCustomShapeAnchors(n.customShapeId).map((anchor) => anchor.id);
+  }
+  return PORT_KEYS;
+}
+
+function customPortOffset(customShapeId, portKey) {
+  const anchor = getCustomShapeAnchors(customShapeId).find((item) => item.id === portKey);
+  if (!anchor) return null;
+  return [(anchor.x - 0.5) * 2, (anchor.y - 0.5) * 2];
+}
+
+function normalForPort(shapeType, customShapeId, portKey) {
+  if (shapeType === CUSTOM_SHAPE_TYPE) {
+    const offset = customPortOffset(customShapeId, portKey) || [0, -1];
+    const len = Math.hypot(offset[0], offset[1]) || 1;
+    return [offset[0] / len, offset[1] / len];
+  }
+  return PORT_NORMALS[portKey] || [0, -1];
+}
+
+function controlNormalForEdge(nodeId, portKey) {
+  const n = st.nodes && st.nodes.get(nodeId);
+  return normalForPort(n && n.shapeType, n && n.customShapeId, portKey);
 }
 
 /** Returns the world-space {x, y} of a port on a node. */
 export function getPortPosition(nodeId, portKey) {
   const geo = nodeGeometry(nodeId);
   if (!geo) return null;
-  const { cx, cy, W, H, rotation, shapeType } = geo;
-  const offsets = shapeType === 'database'      ? PORT_OFFSETS_DATABASE
+  const { cx, cy, W, H, rotation, shapeType, customShapeId, imageOffsetY } = geo;
+  const offsets = shapeType === CUSTOM_SHAPE_TYPE ? null
+               : shapeType === 'database'      ? PORT_OFFSETS_DATABASE
                : CIRCULAR_SHAPES.has(shapeType) ? PORT_OFFSETS_CIRC
                : PORT_OFFSETS_RECT;
-  const [ox, oy] = offsets[portKey] || [0, 0];
+  const [ox, oy] = shapeType === CUSTOM_SHAPE_TYPE
+    ? customPortOffset(customShapeId, portKey) || [0, 0]
+    : offsets[portKey] || [0, 0];
   let dx = ox * W / 2;
-  let dy = oy * H / 2;
+  let dy = oy * H / 2 + imageOffsetY;
   if (rotation) {
     const cos = Math.cos(rotation), sin = Math.sin(rotation);
     [dx, dy] = [dx * cos - dy * sin, dx * sin + dy * cos];
@@ -107,7 +140,7 @@ export function getPortPosition(nodeId, portKey) {
 /** Returns the port key whose position is closest to `canvasPos` (world coords). */
 export function getNearestPort(nodeId, canvasPos) {
   let minD2 = Infinity, nearest = 'N';
-  for (const key of PORT_KEYS) {
+  for (const key of getPortKeys(nodeId)) {
     const p = getPortPosition(nodeId, key);
     if (!p) continue;
     const d2 = (canvasPos.x - p.x) ** 2 + (canvasPos.y - p.y) ** 2;
@@ -119,12 +152,12 @@ export function getNearestPort(nodeId, canvasPos) {
 // ── Port dot visualisation ────────────────────────────────────────────────────
 
 /**
- * Draws 8 port hint dots for `nodeId` in the vis-network afterDrawing context.
+ * Draws port hint dots for `nodeId` in the vis-network afterDrawing context.
  * `highlightedPort` (if any) is rendered larger and fully orange.
  */
 export function drawPortDots(ctx, nodeId, highlightedPort) {
   if (st.exportingPng) return;
-  for (const key of PORT_KEYS) {
+  for (const key of getPortKeys(nodeId)) {
     const p = getPortPosition(nodeId, key);
     if (!p) continue;
     const hl = key === highlightedPort;
@@ -219,8 +252,8 @@ export function drawPortEdge(ctx, edgeData) {
   if (useBezier) {
     const dist    = Math.hypot(toPos.x - fromPos.x, toPos.y - fromPos.y);
     const tension = Math.max(60, dist * 0.4);
-    const fn = PORT_NORMALS[edgeData.fromPort];
-    const tn = PORT_NORMALS[edgeData.toPort];
+    const fn = controlNormalForEdge(edgeData.from, edgeData.fromPort);
+    const tn = controlNormalForEdge(edgeData.to, edgeData.toPort);
     cp1 = { x: fromPos.x + fn[0] * tension, y: fromPos.y + fn[1] * tension };
     cp2 = { x: toPos.x   + tn[0] * tension, y: toPos.y   + tn[1] * tension };
   }
@@ -358,8 +391,8 @@ export function distanceToPortEdge(edgeData, p) {
   if (!st.edgesStraight && edgeData.fromPort && !fromIsAnch && edgeData.toPort && !toIsAnch) {
     const dist    = Math.hypot(toPos.x - fromPos.x, toPos.y - fromPos.y);
     const tension = Math.max(60, dist * 0.4);
-    const fn = PORT_NORMALS[edgeData.fromPort];
-    const tn = PORT_NORMALS[edgeData.toPort];
+    const fn = controlNormalForEdge(edgeData.from, edgeData.fromPort);
+    const tn = controlNormalForEdge(edgeData.to, edgeData.toPort);
     const cp1 = { x: fromPos.x + fn[0] * tension, y: fromPos.y + fn[1] * tension };
     const cp2 = { x: toPos.x   + tn[0] * tension, y: toPos.y   + tn[1] * tension };
     return _distToBezier(p, fromPos, cp1, cp2, toPos);

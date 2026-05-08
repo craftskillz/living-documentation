@@ -92,5 +92,55 @@
       "path": "src/mcp/server.ts",
       "hash": "c6e777ec548f7b851de92baa77d074d3abe0bb0ec173cabbf208a8c7382f54ea"
     }
+  ],
+  "adrs/2026_05_08_20_01_[DIAGRAM]_custom_shape_libraries_and_variable_ports": [
+    {
+      "path": "src/routes/shape-libraries.ts",
+      "hash": "97f084149ff11c650e327b88a62ea115436f74db3fc0fa023eb9dfaaa62f47c6"
+    },
+    {
+      "path": "src/frontend/shape-editor.html",
+      "hash": "313401af795f1b3fe11d58f8880ede79139c0b0962ddfccfa6ddc326c9cfeb50"
+    },
+    {
+      "path": "src/frontend/diagram/custom-shapes.js",
+      "hash": "3257c2d3f1a3a0ecccbc5f0e2a6081784a9d215d42e84fa6c0889a63429b2b0b"
+    },
+    {
+      "path": "src/frontend/diagram/node-rendering.js",
+      "hash": "58ae8fa7bc049fe103016cc03a0ecc33c574b33a690791f3179aac37fb36bc46"
+    },
+    {
+      "path": "src/frontend/diagram/ports.js",
+      "hash": "e06c3c3304b3946a7addae4b8e6e937ba7825e0fb99b3c0c0bd3f4b3d34e1033"
+    },
+    {
+      "path": "src/frontend/diagram/persistence.js",
+      "hash": "3e08cd5b352ff4672da452f0054d845e756f0e11e4cd3a950a4efb28ad9c8219"
+    },
+    {
+      "path": "src/frontend/diagram/state.js",
+      "hash": "4504b5de487b2a562cfd16bdde02b080ac4d17733ba5b76d8d7a81c3601c7ea6"
+    },
+    {
+      "path": "src/frontend/diagram.html",
+      "hash": "4ed66c5f6125d966a820a9431849cb4199ffbd8741b441a780e44ac1d46f7128"
+    },
+    {
+      "path": "tests/api/shape-libraries.spec.ts",
+      "hash": "578d8db8ae926a69e92823c2fddfcbbfa2d9b455803caa8b7bfa6ba4092d6a88"
+    }
+  ],
+  "adrs/2026_05_08_20_45_[DIAGRAM]_node_double_click_takes_precedence_over_crossing_edges": [
+    {
+      "path": "src/frontend/diagram/network.js",
+      "hash": "b6e8c6755ac865e20226d51afabcb008828436056b0f02c0c01bb9183b0d6f66"
+    }
+  ],
+  "adrs/2026_05_08_21_26_[DIAGRAM]_lower_z_targets_can_be_connected_unless_they_are_background_containers": [
+    {
+      "path": "src/frontend/diagram/network.js",
+      "hash": "2738efd0e0b8d3cad0f62437f33fbc6f540ad774be31649b69ea646646928b4e"
+    }
   ]
 }

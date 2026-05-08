@@ -409,6 +409,7 @@
   "diagram.toolbar.postit": "Post-it (P)",
   "diagram.toolbar.text_free": "Free text (T)",
   "diagram.toolbar.image": "Image — double-click on canvas to select a file, or paste (⌘V) from clipboard",
+  "diagram.toolbar.shape_editor": "Custom shape editor",
   "diagram.toolbar.arrow": "Arrow (F)",
   "diagram.toolbar.delete": "Delete (Del)",
   "diagram.toolbar.align_guides": "Alignment guides — highlights same-type shape alignment",

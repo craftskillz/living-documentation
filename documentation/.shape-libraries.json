@@ -1,0 +1,110 @@
+{
+  "libraries": [
+    {
+      "id": "lib-mox8eg7y-9udl",
+      "name": "AWS Shapes",
+      "shapes": [
+        {
+          "id": "shape-mox8nu3x-m8oj",
+          "name": "S3",
+          "imageSrc": "/images/Simple_Storage_Service.svg",
+          "width": 96,
+          "height": 96,
+          "labelPlacement": "below",
+          "anchors": [
+            {
+              "id": "N",
+              "x": 0.5,
+              "y": 0
+            },
+            {
+              "id": "NE",
+              "x": 1,
+              "y": 0
+            },
+            {
+              "id": "E",
+              "x": 1,
+              "y": 0.5
+            },
+            {
+              "id": "SE",
+              "x": 1,
+              "y": 1
+            },
+            {
+              "id": "S",
+              "x": 0.5,
+              "y": 1
+            },
+            {
+              "id": "SW",
+              "x": 0,
+              "y": 1
+            },
+            {
+              "id": "W",
+              "x": 0,
+              "y": 0.5
+            },
+            {
+              "id": "NW",
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        {
+          "id": "shape-mox8r1jh-00rj",
+          "name": "API Gateway",
+          "imageSrc": "/images/API_Gateway.svg",
+          "width": 96,
+          "height": 96,
+          "labelPlacement": "below",
+          "anchors": [
+            {
+              "id": "N",
+              "x": 0.5,
+              "y": 0
+            },
+            {
+              "id": "NE",
+              "x": 1,
+              "y": 0
+            },
+            {
+              "id": "E",
+              "x": 1,
+              "y": 0.5
+            },
+            {
+              "id": "SE",
+              "x": 1,
+              "y": 1
+            },
+            {
+              "id": "S",
+              "x": 0.5,
+              "y": 1
+            },
+            {
+              "id": "SW",
+              "x": 0,
+              "y": 1
+            },
+            {
+              "id": "W",
+              "x": 0,
+              "y": 0.5
+            },
+            {
+              "id": "NW",
+              "x": 0,
+              "y": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

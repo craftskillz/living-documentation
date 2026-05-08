@@ -7,6 +7,7 @@ import { browseRouter } from './routes/browse';
 import { imagesRouter } from './routes/images';
 import { filesRouter } from './routes/files';
 import { diagramsRouter } from './routes/diagrams';
+import { shapeLibrariesRouter } from './routes/shape-libraries';
 import { wordcloudRouter } from './routes/wordcloud';
 import { annotationsRouter } from './routes/annotations';
 import { metadataRouter } from './routes/metadata';
@@ -40,6 +41,7 @@ export async function startServer({
   app.use('/api/images', imagesRouter(docsPath));
   app.use('/api/files', filesRouter(docsPath));
   app.use('/api/diagrams', diagramsRouter(docsPath));
+  app.use('/api/shape-libraries', shapeLibrariesRouter(docsPath));
   app.use('/api/wordcloud', wordcloudRouter());
   app.use('/api/annotations', annotationsRouter(docsPath));
   app.use('/api/metadata', metadataRouter(docsPath));
@@ -65,6 +67,9 @@ export async function startServer({
   );
   app.get('/diagram', (_req, res) =>
     res.sendFile(path.join(frontendPath, 'diagram.html'), { dotfiles: 'allow' }),
+  );
+  app.get('/shape-editor', (_req, res) =>
+    res.sendFile(path.join(frontendPath, 'shape-editor.html'), { dotfiles: 'allow' }),
   );
 
   return new Promise((resolve) => {

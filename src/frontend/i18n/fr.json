@@ -409,6 +409,7 @@
   "diagram.toolbar.postit": "Post-it (P)",
   "diagram.toolbar.text_free": "Texte libre (T)",
   "diagram.toolbar.image": "Image — double-clic sur le canvas pour choisir un fichier, ou coller (⌘V) depuis le presse-papier",
+  "diagram.toolbar.shape_editor": "Éditeur de formes personnalisées",
   "diagram.toolbar.arrow": "Flèche (F)",
   "diagram.toolbar.delete": "Supprimer (Suppr)",
   "diagram.toolbar.align_guides": "Guides d'alignement — indique l'alignement entre formes du même type",

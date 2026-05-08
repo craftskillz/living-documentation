@@ -24,6 +24,7 @@ import { getNearestPort, getPortPosition, drawPortDots, drawPortEdge, distanceTo
 import { getLastFreeArrowStyle } from './edge-panel.js';
 import { getLastNodeStyle } from './node-panel.js';
 import { installUnlockHold } from './unlock-hold.js';
+import { CUSTOM_SHAPE_TYPE, customShapeIdFromTool, getCustomShapeDefaultSize, getCustomShapeDefinition } from './custom-shapes.js';
 
 // Module-level port-hover state — shared between initNetwork event handlers and
 // module-level helpers (_onAnchorSnapConnect).
@@ -102,14 +103,13 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
       enabled: false,
       addEdge(data, callback) {
         // Block edges from/to locked nodes or anchors (free-arrow endpoints).
-        // Also block when the target sits below the source in z-order — the
-        // mouseup handler turns that case into a free-arrow endpoint instead.
+        // Also block when the source sits on top of a lower-z target that
+        // contains it: that target is acting as a background surface, and the
+        // mouseup handler turns the gesture into a free-arrow endpoint instead.
         const fromNode = st.nodes.get(data.from) || {};
         const toNode   = st.nodes.get(data.to)   || {};
-        const fromZ    = st.canonicalOrder.indexOf(data.from);
-        const toZ      = st.canonicalOrder.indexOf(data.to);
-        const toBelow  = fromZ !== -1 && toZ !== -1 && toZ < fromZ;
-        if (fromNode.locked || toNode.locked || fromNode.shapeType === 'anchor' || toNode.shapeType === 'anchor' || toBelow) {
+        const targetContainsSource = lowerZTargetContainsSource(data.from, data.to);
+        if (fromNode.locked || toNode.locked || fromNode.shapeType === 'anchor' || toNode.shapeType === 'anchor' || targetContainsSource) {
           _addEdgeFromPort = null;
           setTimeout(() => { if (st.currentTool === 'addEdge') st.network.addEdgeMode(); }, 0);
           return;
@@ -761,14 +761,11 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
     // Locked targets are non-interactive: treat them exactly like empty canvas
     // so a free-arrow endpoint is created at the release point — matches the
     // behaviour of free arrows drawn over a locked shape (Path B).
-    // Also: if the target sits BELOW the source in z-order (e.g. a post-it on
-    // top of a background image), don't bind to it — the user is aiming at a
-    // point on top of the source's layer, not at the underlying shape.
+    // Also: if the source sits on top of a lower-z target that contains it
+    // (e.g. a post-it on a background image), don't bind to that background.
     const targetLocked = !!(targetData && targetData.locked);
-    const sourceZ      = st.canonicalOrder.indexOf(_addEdgeFromId);
-    const targetZ      = targetId ? st.canonicalOrder.indexOf(targetId) : -1;
-    const targetBelow  = targetId && sourceZ !== -1 && targetZ !== -1 && targetZ < sourceZ;
-    if (!targetId || targetLocked || targetBelow) {
+    const targetContainsSource = targetId && lowerZTargetContainsSource(_addEdgeFromId, targetId);
+    if (!targetId || targetLocked || targetContainsSource) {
       pushSnapshot();
       const cp       = st.network.DOMtoCanvas(pos);
       const anchorId = 'a' + Date.now();
@@ -1142,6 +1139,15 @@ function nodeContainsCanvasPoint(id, canvasPos) {
   return Math.abs(lx) <= W / 2 && Math.abs(ly) <= H / 2;
 }
 
+function lowerZTargetContainsSource(sourceId, targetId) {
+  if (!sourceId || !targetId) return false;
+  const sourceZ = st.canonicalOrder.indexOf(sourceId);
+  const targetZ = st.canonicalOrder.indexOf(targetId);
+  if (sourceZ === -1 || targetZ === -1 || targetZ >= sourceZ) return false;
+  const sourcePos = st.network && st.network.getPositions([sourceId])[sourceId];
+  return !!(sourcePos && nodeContainsCanvasPoint(targetId, sourcePos));
+}
+
 // Returns the topmost (highest z-order) node containing canvasPos.
 // Ignores anchor nodes and respects st.canonicalOrder.
 function topmostNodeAt(canvasPos) {
@@ -1269,6 +1275,23 @@ function onDoubleClick(params) {
   const srcEvent = params.event && params.event.srcEvent;
   const clientPos = srcEvent ? { x: srcEvent.clientX, y: srcEvent.clientY } : null;
   const labelEdgeId = edgeLabelAtCanvasPoint(params.pointer.canvas);
+  const topNodeId = topmostNodeAt(params.pointer.canvas);
+  const topNode = topNodeId && st.nodes.get(topNodeId);
+  const canEditTopNode = topNode && !topNode.locked && topNode.shapeType !== 'anchor';
+
+  // Direct node double-clicks must edit the node. Dense port-edge diagrams can
+  // have many visual edges crossing a node; those should not steal the edit.
+  // The only exception is an actual edge-label hit, which is intentional.
+  if (canEditTopNode && !labelEdgeId) {
+    st.selectedNodeIds = [topNodeId];
+    st.selectedEdgeIds = [];
+    st.network.setSelection({ nodes: st.selectedNodeIds, edges: [] });
+    showNodePanel();
+    hideEdgePanel();
+    startLabelEdit();
+    return;
+  }
+
   const nativeEdgeId = clientPos ? st.network.getEdgeAt(clientPos) : null;
   const portEdge = nearestPortEdgeAt(params.pointer.canvas);
   const edgeCandidates = [labelEdgeId, nativeEdgeId, portEdge && portEdge.id, ...params.edges]
@@ -1279,19 +1302,7 @@ function onDoubleClick(params) {
     return edgeDrawLevel(st.edges.get(id)) >= edgeDrawLevel(st.edges.get(bestId)) ? id : bestId;
   }, null);
 
-  const topNodeId = topmostNodeAt(params.pointer.canvas);
-  const topNode = topNodeId && st.nodes.get(topNodeId);
-  const canEditTopNode = topNode && !topNode.locked && topNode.shapeType !== 'anchor';
-  const topNodeWins = canEditTopNode && !labelEdgeId && (!edgeId || st.canonicalOrder.indexOf(topNodeId) >= edgeDrawLevel(st.edges.get(edgeId)));
-
-  if (topNodeWins) {
-    st.selectedNodeIds = [topNodeId];
-    st.selectedEdgeIds = [];
-    st.network.setSelection({ nodes: st.selectedNodeIds, edges: [] });
-    showNodePanel();
-    hideEdgePanel();
-    startLabelEdit();
-  } else if (edgeId) {
+  if (edgeId) {
     st.selectedNodeIds = [];
     st.selectedEdgeIds = [edgeId];
     st.network.setSelection({ nodes: [], edges: [edgeId] });
@@ -1304,9 +1315,12 @@ function onDoubleClick(params) {
   } else if (st.currentTool === 'addNode') {
     pushSnapshot();
     const id         = 'n' + Date.now();
-    const defaults   = SHAPE_DEFAULTS[st.pendingShape] || [100, 40];
-    const fallbackColor = st.pendingShape === 'post-it' ? 'c-amber' : 'c-gray';
-    const lastStyle  = getLastNodeStyle(st.pendingShape);
+    const customShapeId = customShapeIdFromTool(st.pendingShape);
+    const shapeType = customShapeId ? CUSTOM_SHAPE_TYPE : st.pendingShape;
+    const customDef = customShapeId ? getCustomShapeDefinition(customShapeId) : null;
+    const defaults   = customShapeId ? getCustomShapeDefaultSize(customShapeId) : SHAPE_DEFAULTS[shapeType] || [100, 40];
+    const fallbackColor = shapeType === 'post-it' ? 'c-amber' : 'c-gray';
+    const lastStyle  = getLastNodeStyle(shapeType);
     const colorKey   = lastStyle.colorKey  || fallbackColor;
     const fontSize   = lastStyle.fontSize  || null;
     const textAlign  = lastStyle.textAlign  || null;
@@ -1314,13 +1328,13 @@ function onDoubleClick(params) {
     const rawPos     = params.pointer.canvas;
     const pos        = st.gridEnabled ? snapToGrid(rawPos.x, rawPos.y) : rawPos;
     st.nodes.add({
-      id, label: st.pendingShape === 'text-free' ? t('diagram.label_input.placeholder') : 'Node',
-      shapeType: st.pendingShape, colorKey,
+      id, label: shapeType === 'text-free' ? t('diagram.label_input.placeholder') : (customDef ? customDef.name : 'Node'),
+      shapeType, customShapeId: customShapeId || null, colorKey,
       nodeWidth: defaults[0], nodeHeight: defaults[1],
       fontSize, textAlign, textValign,
       rotation: 0, labelRotation: 0,
       x: pos.x, y: pos.y,
-      ...visNodeProps(st.pendingShape, colorKey, defaults[0], defaults[1], fontSize, textAlign, textValign),
+      ...visNodeProps(shapeType, colorKey, defaults[0], defaults[1], fontSize, textAlign, textValign),
     });
     markDirty();
     setTimeout(() => {
@@ -1467,28 +1481,22 @@ function onClickNode(params) {
   // passing it to getEdgeAt() causes a double-subtraction of the container rect and
   // returns null. Passing clientX/Y lets vis-network do its own pixel-perfect detection.
   if (params.nodes.length > 0) {
-    const clientPos = { x: params.event.srcEvent.clientX, y: params.event.srcEvent.clientY };
-    const nativeEdgeId = st.network.getEdgeAt(clientPos);
-    const portEdge = nearestPortEdgeAt(params.pointer.canvas);
-    const edgeId = nativeEdgeId || (portEdge && portEdge.id);
-
-    // First honour the app-managed z-order. vis-network may report an edge or a
-    // lower node at the click point; compare draw levels so the visibly top
-    // element gets the click.
+    const labelEdgeId = edgeLabelAtCanvasPoint(params.pointer.canvas);
     const top = topmostNodeAt(params.pointer.canvas);
     if (top) {
       const topNode = st.nodes.get(top);
-      const topLevel = st.canonicalOrder.indexOf(top);
-      const edgeLevel = edgeId ? edgeDrawLevel(st.edges.get(edgeId)) : -1;
-      if (topNode && !topNode.locked && topNode.shapeType !== 'anchor') {
-        if (!edgeId || topLevel >= edgeLevel) {
-          setTimeout(() => {
-            selectNodesFromClick(top, params.event.srcEvent);
-          }, 0);
-          return;
-        }
+      if (topNode && !topNode.locked && topNode.shapeType !== 'anchor' && !labelEdgeId) {
+        setTimeout(() => {
+          selectNodesFromClick(top, params.event.srcEvent);
+        }, 0);
+        return;
       }
     }
+
+    const clientPos = { x: params.event.srcEvent.clientX, y: params.event.srcEvent.clientY };
+    const nativeEdgeId = st.network.getEdgeAt(clientPos);
+    const portEdge = nearestPortEdgeAt(params.pointer.canvas);
+    const edgeId = labelEdgeId || nativeEdgeId || (portEdge && portEdge.id);
     if (edgeId) {
       const edge  = st.edges.get(edgeId);
       const fromN = edge && st.nodes.get(edge.from);
