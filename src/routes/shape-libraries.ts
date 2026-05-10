@@ -30,6 +30,9 @@ interface ShapeLibraryStore {
 }
 
 const FILE_NAME = ".shape-libraries.json";
+const CUSTOM_SHAPE_DEFAULT_SIZE = 65;
+const CUSTOM_SHAPE_MIN_SIZE = 16;
+const CUSTOM_SHAPE_MAX_SIZE = 1200;
 
 function filePath(docsPath: string): string {
   return path.join(docsPath, FILE_NAME);
@@ -82,6 +85,15 @@ function safeLabelPlacement(value: unknown): CustomShape["labelPlacement"] {
     : "below";
 }
 
+function safeDimension(value: unknown): number {
+  return typeof value === "number" && Number.isFinite(value)
+    ? Math.max(
+        CUSTOM_SHAPE_MIN_SIZE,
+        Math.min(CUSTOM_SHAPE_MAX_SIZE, Math.round(value)),
+      )
+    : CUSTOM_SHAPE_DEFAULT_SIZE;
+}
+
 function sanitizeStore(raw: unknown): ShapeLibraryStore {
   const obj =
     raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
@@ -102,16 +114,8 @@ function sanitizeStore(raw: unknown): ShapeLibraryStore {
           const anchorsRaw = Array.isArray(shapeObj.anchors)
             ? shapeObj.anchors
             : [];
-          const width =
-            typeof shapeObj.width === "number" &&
-            Number.isFinite(shapeObj.width)
-              ? Math.max(16, Math.min(1200, Math.round(shapeObj.width)))
-              : 65;
-          const height =
-            typeof shapeObj.height === "number" &&
-            Number.isFinite(shapeObj.height)
-              ? Math.max(16, Math.min(1200, Math.round(shapeObj.height)))
-              : 65;
+          const width = safeDimension(shapeObj.width);
+          const height = safeDimension(shapeObj.height);
           return {
             id: safeId(shapeObj.id, `shape-${shapeIndex + 1}`),
             name: safeName(shapeObj.name, `Shape ${shapeIndex + 1}`),
