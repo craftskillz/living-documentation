@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Context</title>
+    <script src="/i18n.js"></script>
+    <script src="/confirm-modal.js"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+      tailwind.config = { darkMode: "class", theme: { extend: {} } };
+    </script>
+  </head>
+  <body class="min-h-screen bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+    <header class="h-14 border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 flex items-center gap-3 px-4">
+      <a href="/" class="text-sm font-medium text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400" data-i18n="context.back_to_docs">Back to docs</a>
+      <h1 class="text-base font-semibold" data-i18n="context.title">AI Context</h1>
+      <span id="status" class="ml-auto text-xs text-gray-500"></span>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-5 space-y-6">
+      <section class="space-y-1">
+        <h2 class="text-xl font-semibold" data-i18n="context.orientation_title">AI orientation</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400" data-i18n="context.orientation_intro">Stable instructions and rules for AI-assisted development.</p>
+      </section>
+
+      <section class="grid min-w-0 grid-cols-1 xl:grid-cols-[minmax(0,1fr)_24rem] gap-5">
+        <div class="min-w-0 space-y-5">
+          <section class="min-w-0 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-4">
+            <div class="flex items-center justify-between gap-3 mb-3">
+              <h2 class="text-sm font-semibold" data-i18n="context.instructions_title">Instruction files</h2>
+              <div class="flex items-center gap-3">
+                <span id="instructionCount" class="text-xs text-gray-500"></span>
+                <button id="btnToggleInstructionBrowser" class="rounded-md border border-gray-300 px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800" data-i18n="context.add_instruction_file">Add AI instruction file</button>
+              </div>
+            </div>
+            <div id="instructionBrowser" class="hidden mb-3 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                <button id="instructionBrowseUp" class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0">
+                  <span data-i18n="common.up">↑ Up</span>
+                </button>
+                <span id="instructionBrowsePath" class="font-mono text-xs text-gray-400 dark:text-gray-500 truncate flex-1 text-right"></span>
+              </div>
+              <div id="instructionBrowseList" class="divide-y divide-gray-100 dark:divide-gray-800 max-h-52 overflow-y-auto"></div>
+            </div>
+            <div id="instructionList" class="space-y-2"></div>
+          </section>
+
+          <section class="min-w-0 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-4">
+            <div class="flex items-center justify-between gap-3 mb-3">
+              <h2 class="text-sm font-semibold" data-i18n="context.rules_title">AI rules</h2>
+              <span id="rulesFolder" class="font-mono text-xs text-gray-400"></span>
+            </div>
+            <div id="ruleList" class="space-y-2"></div>
+          </section>
+        </div>
+
+        <aside class="min-w-0 max-w-full space-y-5">
+          <section class="min-w-0 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-4 space-y-3">
+            <h2 class="text-sm font-semibold" data-i18n="context.add_rule_title">Add AI rule</h2>
+            <div>
+              <label for="ruleTitle" class="block text-xs font-semibold text-gray-500 mb-1" data-i18n="context.rule_title_label">Title</label>
+              <input id="ruleTitle" class="min-w-0 w-full h-9 rounded-md border border-gray-300 bg-white px-2 text-sm dark:border-gray-700 dark:bg-gray-950" data-i18n-placeholder="context.rule_title_placeholder" placeholder="Avoid magic numbers" />
+            </div>
+            <div>
+              <label for="ruleSeverity" class="block text-xs font-semibold text-gray-500 mb-1" data-i18n="context.rule_severity_label">Severity</label>
+              <select id="ruleSeverity" class="min-w-0 w-full h-9 rounded-md border border-gray-300 bg-white px-2 text-sm dark:border-gray-700 dark:bg-gray-950">
+                <option value="guideline" data-i18n="context.rule_severity_guideline">Guideline</option>
+                <option value="warning" data-i18n="context.rule_severity_warning">Warning</option>
+                <option value="required" data-i18n="context.rule_severity_required">Required</option>
+              </select>
+            </div>
+            <div>
+              <label for="ruleDescription" class="block text-xs font-semibold text-gray-500 mb-1" data-i18n="context.rule_description_label">Description</label>
+              <input id="ruleDescription" class="min-w-0 w-full h-9 rounded-md border border-gray-300 bg-white px-2 text-sm dark:border-gray-700 dark:bg-gray-950" data-i18n-placeholder="context.rule_description_placeholder" placeholder="Name domain constants instead of repeating raw values." />
+            </div>
+            <div>
+              <label for="ruleTags" class="block text-xs font-semibold text-gray-500 mb-1" data-i18n="context.rule_tags_label">Tags</label>
+              <input id="ruleTags" class="min-w-0 w-full h-9 rounded-md border border-gray-300 bg-white px-2 text-sm dark:border-gray-700 dark:bg-gray-950" data-i18n-placeholder="context.rule_tags_placeholder" placeholder="code-quality, maintainability" />
+            </div>
+            <div>
+              <label for="ruleAppliesTo" class="block text-xs font-semibold text-gray-500 mb-1" data-i18n="context.rule_applies_to_label">Applies to</label>
+              <input id="ruleAppliesTo" class="min-w-0 w-full h-9 rounded-md border border-gray-300 bg-white px-2 text-sm dark:border-gray-700 dark:bg-gray-950" data-i18n-placeholder="context.rule_applies_to_placeholder" placeholder="src/**/*.ts, src/frontend/**/*.js" />
+            </div>
+            <div>
+              <label for="ruleBody" class="block text-xs font-semibold text-gray-500 mb-1" data-i18n="context.rule_body_label">Rule body</label>
+              <textarea id="ruleBody" rows="7" class="min-w-0 w-full rounded-md border border-gray-300 bg-white px-2 py-2 text-sm dark:border-gray-700 dark:bg-gray-950" data-i18n-placeholder="context.rule_body_placeholder" placeholder="Numeric constants with domain meaning should be named."></textarea>
+            </div>
+            <button id="btnAddRule" class="w-full h-9 rounded-md bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700" data-i18n="context.add_rule_button">Add rule</button>
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <div
+      id="confirm-modal"
+      class="hidden fixed inset-0 z-[60] bg-black/50 flex items-center justify-center p-4"
+      onclick="_confirmModalBackdrop(event)"
+    >
+      <div
+        class="w-full max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl p-5 flex flex-col gap-3"
+        onclick="event.stopPropagation()"
+      >
+        <h3 id="confirm-modal-title" class="font-semibold text-gray-900 dark:text-gray-100"></h3>
+        <p id="confirm-modal-message" class="text-sm text-gray-700 dark:text-gray-200"></p>
+        <p id="confirm-modal-detail" class="text-xs text-gray-500 dark:text-gray-400 italic break-all"></p>
+        <div class="flex justify-end gap-2 mt-2">
+          <button
+            id="confirm-modal-cancel"
+            type="button"
+            class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          ></button>
+          <button
+            id="confirm-modal-ok"
+            type="button"
+            class="text-sm px-4 py-1.5 rounded-lg text-white font-semibold transition-colors"
+          ></button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const els = {
+        status: document.getElementById('status'),
+        instructionList: document.getElementById('instructionList'),
+        instructionCount: document.getElementById('instructionCount'),
+        instructionBrowser: document.getElementById('instructionBrowser'),
+        instructionBrowseUp: document.getElementById('instructionBrowseUp'),
+        instructionBrowsePath: document.getElementById('instructionBrowsePath'),
+        instructionBrowseList: document.getElementById('instructionBrowseList'),
+        btnToggleInstructionBrowser: document.getElementById('btnToggleInstructionBrowser'),
+        ruleList: document.getElementById('ruleList'),
+        rulesFolder: document.getElementById('rulesFolder'),
+        ruleTitle: document.getElementById('ruleTitle'),
+        ruleSeverity: document.getElementById('ruleSeverity'),
+        ruleDescription: document.getElementById('ruleDescription'),
+        ruleTags: document.getElementById('ruleTags'),
+        ruleAppliesTo: document.getElementById('ruleAppliesTo'),
+        ruleBody: document.getElementById('ruleBody'),
+        btnAddRule: document.getElementById('btnAddRule'),
+      };
+      let orientation = null;
+      let instructionBrowseCurrent = '';
+      let instructionBrowseParent = '';
+
+      function setStatus(message) {
+        els.status.textContent = message || '';
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;',
+        }[char]));
+      }
+
+      function splitList(value) {
+        return value.split(',').map((item) => item.trim()).filter(Boolean);
+      }
+
+      function basename(value) {
+        return String(value || '').split(/[\\/]/).pop() || '';
+      }
+
+      function documentHref(docPath) {
+        const docId = encodeURIComponent(String(docPath || '').replace(/\.md$/i, ''));
+        return '/?doc=' + encodeURIComponent(docId);
+      }
+
+      function formatMessage(key, values) {
+        return Object.entries(values || {}).reduce(
+          (message, [name, value]) => message.replaceAll(`{${name}}`, value),
+          window.t(key),
+        );
+      }
+
+      function rootLabel(value) {
+        return window.t(`context.root.${value}`);
+      }
+
+      function typeLabel(value) {
+        return window.t(`context.type.${value}`);
+      }
+
+      function severityLabel(value) {
+        return window.t(`context.rule_severity_${value}`) === `context.rule_severity_${value}`
+          ? value
+          : window.t(`context.rule_severity_${value}`);
+      }
+
+      function renderEmpty(container, key) {
+        container.innerHTML = `<p class="text-sm text-gray-400">${window.t(key)}</p>`;
+      }
+
+      function renderInstructionFiles(items) {
+        els.instructionCount.textContent = `${items.filter((item) => item.exists).length}/${items.length}`;
+        if (!items.length) {
+          renderEmpty(els.instructionList, 'context.no_instructions');
+          return;
+        }
+        els.instructionList.innerHTML = items.map((item) => {
+          const statusClass = item.exists ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
+          const statusLabel = item.exists ? window.t('context.exists') : window.t('context.missing');
+          const size = item.size === null ? '' : ` · ${Math.round(item.size / 1024)} KB`;
+          return `
+            <div class="flex items-start justify-between gap-3 rounded-md border border-gray-100 dark:border-gray-800 px-3 py-2">
+              <div class="min-w-0">
+                <a href="${escapeHtml(documentHref(item.path))}" class="font-mono text-xs break-all text-blue-600 hover:underline dark:text-blue-400">${escapeHtml(item.path)}</a>
+                <div class="text-xs text-gray-400">${escapeHtml(rootLabel(item.root))} · ${escapeHtml(typeLabel(item.type))}${size}</div>
+              </div>
+              <div class="flex items-center gap-3 shrink-0">
+                <span class="text-xs font-semibold ${statusClass}">${statusLabel}</span>
+                ${
+                  item.exists
+                    ? `<button data-filename="${escapeHtml(basename(item.path))}" class="instruction-remove text-xs text-red-500 hover:text-red-700 dark:hover:text-red-400">${window.t('common.remove')}</button>`
+                    : ''
+                }
+              </div>
+            </div>
+          `;
+        }).join('');
+        els.instructionList.querySelectorAll('.instruction-remove').forEach((button) => {
+          button.addEventListener('click', () => removeInstructionFile(button.dataset.filename));
+        });
+      }
+
+      async function loadInstructionBrowse(dirPath) {
+        els.instructionBrowseList.innerHTML = `<p class="px-3 py-4 text-xs text-gray-400 text-center">${window.t('common.loading')}</p>`;
+        try {
+          const data = await fetch('/api/browse?path=' + encodeURIComponent(dirPath)).then((res) => res.json());
+          instructionBrowseCurrent = data.current;
+          instructionBrowseParent = data.parent;
+          els.instructionBrowsePath.textContent = data.current;
+          els.instructionBrowseUp.disabled = !data.parent;
+
+          const instructionNames = new Set(((orientation && orientation.instructions) || []).map((item) => basename(item.path)));
+          const rows = [];
+          for (const dir of data.dirs || []) {
+            rows.push(`
+              <button data-path="${escapeHtml(dir.path)}" class="instruction-dir w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                <span class="text-gray-400 shrink-0">&#128193;</span>
+                <span class="text-gray-700 dark:text-gray-300 truncate">${escapeHtml(dir.name)}</span>
+              </button>
+            `);
+          }
+          for (const file of data.files || []) {
+            const added = instructionNames.has(file.name);
+            rows.push(`
+              <div class="flex items-center justify-between gap-2 px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800">
+                <span class="flex items-center gap-2 text-gray-700 dark:text-gray-300 min-w-0">
+                  <span class="text-gray-400 shrink-0">&#128196;</span>
+                  <span class="truncate">${escapeHtml(file.name)}</span>
+                </span>
+                ${
+                  added
+                    ? `<span class="text-xs text-green-600 dark:text-green-400 shrink-0">${window.t('context.added')}</span>`
+                    : `<button data-path="${escapeHtml(file.path)}" class="instruction-add text-xs text-blue-600 dark:text-blue-400 hover:underline shrink-0">${window.t('context.add_file_action')}</button>`
+                }
+              </div>
+            `);
+          }
+
+          els.instructionBrowseList.innerHTML = rows.length
+            ? rows.join('')
+            : `<p class="px-3 py-4 text-xs text-gray-400 text-center">${window.t('common.empty_dir')}</p>`;
+
+          els.instructionBrowseList.querySelectorAll('.instruction-dir').forEach((button) => {
+            button.addEventListener('click', () => loadInstructionBrowse(button.dataset.path));
+          });
+          els.instructionBrowseList.querySelectorAll('.instruction-add').forEach((button) => {
+            button.addEventListener('click', () => addInstructionFile(button.dataset.path));
+          });
+        } catch {
+          els.instructionBrowseList.innerHTML = `<p class="px-3 py-4 text-xs text-red-400 text-center">${window.t('common.cannot_read_dir')}</p>`;
+        }
+      }
+
+      function toggleInstructionBrowser() {
+        const isHidden = els.instructionBrowser.classList.toggle('hidden');
+        els.btnToggleInstructionBrowser.textContent = window.t(isHidden ? 'context.add_instruction_file' : 'context.hide_instruction_browser');
+        if (!isHidden && !instructionBrowseCurrent && orientation && orientation.sourceRoot) {
+          loadInstructionBrowse(orientation.sourceRoot);
+        }
+      }
+
+      async function addInstructionFile(filePath) {
+        setStatus(window.t('context.adding_instruction_file'));
+        const res = await fetch('/api/context/instructions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: filePath }),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        await loadOrientation();
+        if (!els.instructionBrowser.classList.contains('hidden')) {
+          await loadInstructionBrowse(instructionBrowseCurrent);
+        }
+      }
+
+      async function removeInstructionFile(filename) {
+        const ok = await window.showConfirm({
+          title: window.t('context.remove_instruction_title'),
+          message: formatMessage('context.remove_instruction_message', { name: filename }),
+          detail: window.t('context.remove_instruction_detail'),
+          confirmLabel: window.t('common.remove'),
+          danger: true,
+        });
+        if (!ok) return;
+
+        setStatus(window.t('context.removing_instruction_file'));
+        const res = await fetch('/api/context/instructions/' + encodeURIComponent(filename), {
+          method: 'DELETE',
+        });
+        if (!res.ok) throw new Error(await res.text());
+        await loadOrientation();
+        if (!els.instructionBrowser.classList.contains('hidden')) {
+          await loadInstructionBrowse(instructionBrowseCurrent);
+        }
+      }
+
+      function renderRules(items) {
+        if (!items.length) {
+          renderEmpty(els.ruleList, 'context.no_rules');
+          return;
+        }
+        els.ruleList.innerHTML = items.map((rule) => `
+          <article class="rounded-md border border-gray-100 dark:border-gray-800 px-3 py-2">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <h3 class="text-sm font-semibold">
+                  <a href="${escapeHtml(documentHref(rule.path))}" class="text-blue-600 hover:underline dark:text-blue-400">${escapeHtml(rule.title)}</a>
+                </h3>
+                <a href="${escapeHtml(documentHref(rule.path))}" class="font-mono text-xs text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 break-all">${escapeHtml(rule.path)}</a>
+              </div>
+              <span class="rounded bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-600 dark:bg-gray-800 dark:text-gray-300">${escapeHtml(severityLabel(rule.severity))}</span>
+            </div>
+            <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">${escapeHtml(rule.description)}</p>
+            <div class="mt-2 flex flex-wrap gap-1 text-xs text-blue-600 dark:text-blue-400">
+              ${(rule.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join('')}
+            </div>
+            <div class="mt-2 font-mono text-xs text-gray-400 break-all">${escapeHtml((rule.appliesTo || []).join(', '))}</div>
+          </article>
+        `).join('');
+      }
+
+      function renderOrientation(data) {
+        orientation = data;
+        renderInstructionFiles(data.instructions || []);
+        renderRules(data.rules || []);
+        els.rulesFolder.textContent = data.rulesFolder || '';
+      }
+
+      async function loadOrientation() {
+        setStatus(window.t('context.loading'));
+        const res = await fetch('/api/context/orientation');
+        if (!res.ok) throw new Error(await res.text());
+        renderOrientation(await res.json());
+        setStatus('');
+      }
+
+      async function addRule() {
+        const payload = {
+          title: els.ruleTitle.value.trim(),
+          severity: els.ruleSeverity.value,
+          description: els.ruleDescription.value.trim(),
+          tags: splitList(els.ruleTags.value),
+          appliesTo: splitList(els.ruleAppliesTo.value),
+          body: els.ruleBody.value.trim(),
+        };
+        if (!payload.title) {
+          setStatus(window.t('context.rule_title_required'));
+          return;
+        }
+        setStatus(window.t('context.saving_rule'));
+        const res = await fetch('/api/context/rules', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        els.ruleTitle.value = '';
+        els.ruleDescription.value = '';
+        els.ruleTags.value = '';
+        els.ruleAppliesTo.value = '';
+        els.ruleBody.value = '';
+        await loadOrientation();
+      }
+
+      async function loadContextI18n() {
+        try {
+          const cfgRes = await fetch('/api/config');
+          const cfg = cfgRes.ok ? await cfgRes.json() : {};
+          await window.initI18n(cfg.language || 'en');
+        } catch {
+          await window.initI18n('en');
+        }
+        window.applyI18n();
+        document.title = window.t('context.title');
+      }
+
+      async function init() {
+        await loadContextI18n();
+        await loadOrientation();
+      }
+
+      els.btnAddRule.addEventListener('click', () => {
+        addRule().catch((err) => setStatus(err.message));
+      });
+      els.btnToggleInstructionBrowser.addEventListener('click', toggleInstructionBrowser);
+      els.instructionBrowseUp.addEventListener('click', () => {
+        if (instructionBrowseParent) loadInstructionBrowse(instructionBrowseParent);
+      });
+
+      init().catch((err) => setStatus(err.message));
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1 @@
+../../memory/project_mcp_diagrams.md

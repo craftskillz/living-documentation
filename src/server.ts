@@ -13,6 +13,7 @@ import { annotationsRouter } from './routes/annotations';
 import { metadataRouter } from './routes/metadata';
 import { browseSourceRouter } from './routes/browse-source';
 import { exportRouter } from './routes/export';
+import { contextRouter } from './routes/context';
 import { mcpRouter } from './mcp/server';
 import { writeConfig } from './lib/config';
 
@@ -47,6 +48,7 @@ export async function startServer({
   app.use('/api/metadata', metadataRouter(docsPath));
   app.use('/api/browse-source', browseSourceRouter(docsPath));
   app.use('/api/export', exportRouter(docsPath));
+  app.use('/api/context', contextRouter(docsPath));
   app.use('/mcp', mcpRouter(docsPath));
 
   // Static frontend assets
@@ -70,6 +72,9 @@ export async function startServer({
   );
   app.get('/shape-editor', (_req, res) =>
     res.sendFile(path.join(frontendPath, 'shape-editor.html'), { dotfiles: 'allow' }),
+  );
+  app.get('/context', (_req, res) =>
+    res.sendFile(path.join(frontendPath, 'context.html'), { dotfiles: 'allow' }),
   );
 
   return new Promise((resolve) => {

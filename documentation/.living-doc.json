@@ -5,8 +5,7 @@
   "language": "en",
   "port": 4321,
   "extraFiles": [
-    "../README.md",
-    "../CLAUDE.md"
+    "../README.md"
   ],
   "showDiagramDebug": true,
   "diagramNodePalette": [
@@ -37,7 +36,7 @@
     "#ef4444",
     "#a855f7"
   ],
-  "sourceRoot": "../",
+  "sourceRoot": "..",
   "blockedFileExtensions": [
     "exe",
     "sh",

@@ -19,7 +19,10 @@ export function collectMdFiles(dir: string, baseDir: string): string[] {
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       results.push(...collectMdFiles(fullPath, baseDir));
-    } else if (entry.isFile() && entry.name.toLowerCase().endsWith(".md")) {
+    } else if (
+      entry.name.toLowerCase().endsWith(".md") &&
+      (entry.isFile() || (entry.isSymbolicLink() && fs.statSync(fullPath).isFile()))
+    ) {
       results.push(path.relative(baseDir, fullPath));
     }
   }
