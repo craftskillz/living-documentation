@@ -85,6 +85,12 @@
       .dark .panel-sep {
         background: #374151;
       }
+      #customShapeLabelPlacementControls {
+        display: contents;
+      }
+      #customShapeLabelPlacementControls.hidden {
+        display: none;
+      }
       .edge-btn-active {
         background: #fff7ed !important;
         color: #ea580c !important;
@@ -942,6 +948,34 @@
             </svg>
           </button>
           <div class="panel-sep"></div>
+          <div id="customShapeLabelPlacementControls" class="hidden">
+            <button
+              class="tool-btn !w-7 !h-6 font-mono text-[10px]"
+              data-label-placement="above"
+              data-i18n-title="diagram.node_panel.custom_label_above"
+            >T↑</button>
+            <button
+              class="tool-btn !w-7 !h-6 font-mono text-[10px]"
+              data-label-placement="below"
+              data-i18n-title="diagram.node_panel.custom_label_below"
+            >T↓</button>
+            <button
+              class="tool-btn !w-7 !h-6 font-mono text-[10px]"
+              data-label-placement="left"
+              data-i18n-title="diagram.node_panel.custom_label_left"
+            >←T</button>
+            <button
+              class="tool-btn !w-7 !h-6 font-mono text-[10px]"
+              data-label-placement="right"
+              data-i18n-title="diagram.node_panel.custom_label_right"
+            >T→</button>
+            <button
+              class="tool-btn !w-7 !h-6 font-mono text-[10px]"
+              data-label-placement="center"
+              data-i18n-title="diagram.node_panel.custom_label_center"
+            >T□</button>
+            <div class="panel-sep"></div>
+          </div>
           <button
             id="btnZOrderBack"
             class="tool-btn !w-7 !h-6"

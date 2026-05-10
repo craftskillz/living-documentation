@@ -443,6 +443,11 @@
   "diagram.node_panel.align_top": "Aligner en haut",
   "diagram.node_panel.align_middle": "Centrer verticalement",
   "diagram.node_panel.align_bottom": "Aligner en bas",
+  "diagram.node_panel.custom_label_above": "Placer le libellé de cette instance au-dessus",
+  "diagram.node_panel.custom_label_below": "Placer le libellé de cette instance dessous",
+  "diagram.node_panel.custom_label_left": "Placer le libellé de cette instance à gauche",
+  "diagram.node_panel.custom_label_right": "Placer le libellé de cette instance à droite",
+  "diagram.node_panel.custom_label_center": "Centrer le libellé dans cette instance",
   "diagram.node_panel.send_back": "Envoyer en arrière",
   "diagram.node_panel.bring_front": "Amener au premier plan",
   "diagram.node_panel.stamp_color": "Tampon couleur — sélectionner les cibles, cliquer ici, puis cliquer la source",
@@ -517,5 +522,13 @@
   "diagram.toast.confirm_delete": "Supprimer ce diagramme ?",
   "diagram.toast.new_diagram_title": "Nouveau diagramme",
   "diagram.toast.untitled": "Sans titre",
-  "diagram.toast.diagram_linked": "Diagramme \"{title}\" créé et lié"
+  "diagram.toast.diagram_linked": "Diagramme \"{title}\" créé et lié",
+
+  "shape_editor.show_in_diagram_label": "Afficher dans la palette du diagramme",
+  "shape_editor.show_in_diagram_hint": "Si désactivé, les nœuds existants restent rendus mais cette forme est masquée dans la palette du bas.",
+  "shape_editor.label_placement.below": "Sous la forme",
+  "shape_editor.label_placement.above": "Au-dessus de la forme",
+  "shape_editor.label_placement.right": "À droite",
+  "shape_editor.label_placement.left": "À gauche",
+  "shape_editor.label_placement.center": "Centré dans la forme"
 }

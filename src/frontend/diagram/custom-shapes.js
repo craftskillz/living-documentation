@@ -2,6 +2,7 @@ import { st } from './state.js';
 
 export const CUSTOM_SHAPE_TYPE = 'custom-shape';
 export const CUSTOM_SHAPE_TOOL_PREFIX = 'custom-shape:';
+export const CUSTOM_SHAPE_DEFAULT_SIZE = 65;
 
 export const DEFAULT_CUSTOM_ANCHORS = [
   { id: 'N',  x: 0.5, y: 0   },
@@ -29,7 +30,10 @@ export function getCustomShapeDefinition(id) {
 
 export function getCustomShapeDefaultSize(id) {
   const def = getCustomShapeDefinition(id);
-  return [def && def.width || 96, def && def.height || 96];
+  return [
+    (def && def.width) || CUSTOM_SHAPE_DEFAULT_SIZE,
+    (def && def.height) || CUSTOM_SHAPE_DEFAULT_SIZE,
+  ];
 }
 
 export function getCustomShapeAnchors(id) {
@@ -41,7 +45,9 @@ export function getCustomShapeAnchors(id) {
 
 export function getCustomShapeLabelPlacement(id) {
   const def = getCustomShapeDefinition(id);
-  return def && def.labelPlacement === 'center' ? 'center' : 'below';
+  return def && ['center', 'below', 'above', 'right', 'left'].includes(def.labelPlacement)
+    ? def.labelPlacement
+    : 'below';
 }
 
 export async function loadCustomShapeLibraries() {
@@ -69,7 +75,9 @@ export function renderCustomShapeBar() {
   body.innerHTML = '';
   const libraries = st.customShapeLibraries || [];
   const shapes = libraries.flatMap((library) =>
-    (library.shapes || []).map((shape) => ({ ...shape, libraryName: library.name })),
+    (library.shapes || [])
+      .filter((shape) => shape.showInDiagram !== false)
+      .map((shape) => ({ ...shape, libraryName: library.name })),
   );
   bar.classList.toggle('hidden', shapes.length === 0);
 

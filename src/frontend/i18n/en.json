@@ -443,6 +443,11 @@
   "diagram.node_panel.align_top": "Align top",
   "diagram.node_panel.align_middle": "Align middle",
   "diagram.node_panel.align_bottom": "Align bottom",
+  "diagram.node_panel.custom_label_above": "Place custom shape label above this instance",
+  "diagram.node_panel.custom_label_below": "Place custom shape label below this instance",
+  "diagram.node_panel.custom_label_left": "Place custom shape label to the left of this instance",
+  "diagram.node_panel.custom_label_right": "Place custom shape label to the right of this instance",
+  "diagram.node_panel.custom_label_center": "Center custom shape label in this instance",
   "diagram.node_panel.send_back": "Send to back",
   "diagram.node_panel.bring_front": "Bring to front",
   "diagram.node_panel.stamp_color": "Color stamp — select targets, click here, then click source",
@@ -517,5 +522,13 @@
   "diagram.toast.confirm_delete": "Delete this diagram?",
   "diagram.toast.new_diagram_title": "New diagram",
   "diagram.toast.untitled": "Untitled",
-  "diagram.toast.diagram_linked": "Diagram \"{title}\" created and linked"
+  "diagram.toast.diagram_linked": "Diagram \"{title}\" created and linked",
+
+  "shape_editor.show_in_diagram_label": "Show in diagram palette",
+  "shape_editor.show_in_diagram_hint": "When disabled, existing diagram nodes still render but this shape is hidden from the bottom palette.",
+  "shape_editor.label_placement.below": "Below the shape",
+  "shape_editor.label_placement.above": "Above the shape",
+  "shape_editor.label_placement.right": "To the right",
+  "shape_editor.label_placement.left": "To the left",
+  "shape_editor.label_placement.center": "Centered in the shape"
 }

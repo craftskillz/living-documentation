@@ -25,7 +25,8 @@ test('PUT /api/shape-libraries persists sanitized custom shape libraries', async
               imageSrc: '/images/lambda.svg',
               width: 72,
               height: 72,
-              labelPlacement: 'below',
+              labelPlacement: 'right',
+              showInDiagram: false,
               anchors: [
                 { id: 'top', x: 0.5, y: -1 },
                 { id: 'right', x: 2, y: 0.5 },
@@ -39,7 +40,8 @@ test('PUT /api/shape-libraries persists sanitized custom shape libraries', async
   expect(res.ok()).toBe(true);
   const body = await res.json();
   expect(body.libraries[0].id).toBe('aws-services');
-  expect(body.libraries[0].shapes[0].labelPlacement).toBe('below');
+  expect(body.libraries[0].shapes[0].labelPlacement).toBe('right');
+  expect(body.libraries[0].shapes[0].showInDiagram).toBe(false);
   expect(body.libraries[0].shapes[0].anchors).toEqual([
     { id: 'top', x: 0.5, y: 0 },
     { id: 'right', x: 1, y: 0.5 },

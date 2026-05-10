@@ -8,9 +8,10 @@
           "id": "shape-mox8nu3x-m8oj",
           "name": "S3",
           "imageSrc": "/images/Simple_Storage_Service.svg",
-          "width": 96,
-          "height": 96,
+          "width": 65,
+          "height": 65,
           "labelPlacement": "below",
+          "showInDiagram": true,
           "anchors": [
             {
               "id": "N",
@@ -58,9 +59,10 @@
           "id": "shape-mox8r1jh-00rj",
           "name": "API Gateway",
           "imageSrc": "/images/API_Gateway.svg",
-          "width": 96,
-          "height": 96,
+          "width": 65,
+          "height": 65,
           "labelPlacement": "below",
+          "showInDiagram": false,
           "anchors": [
             {
               "id": "N",
@@ -101,6 +103,114 @@
               "id": "NW",
               "x": 0,
               "y": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lib-moy25n73-eyp3",
+      "name": "Devices",
+      "shapes": [
+        {
+          "id": "shape-moy201jx-r0u8",
+          "name": "Tablet",
+          "imageSrc": "/images/tablet-android-svgrepo-com.svg",
+          "width": 65,
+          "height": 65,
+          "labelPlacement": "center",
+          "showInDiagram": true,
+          "anchors": [
+            {
+              "id": "N",
+              "x": 0.49850001957862095,
+              "y": 0.06151463858146215
+            },
+            {
+              "id": "NE",
+              "x": 0.8096396490299382,
+              "y": 0.0869662287301284
+            },
+            {
+              "id": "E",
+              "x": 0.8267776181693193,
+              "y": 0.4962899635276658
+            },
+            {
+              "id": "SE",
+              "x": 0.8093444550372202,
+              "y": 0.9068823116191654
+            },
+            {
+              "id": "S",
+              "x": 0.497662234119242,
+              "y": 0.943559632271985
+            },
+            {
+              "id": "SW",
+              "x": 0.19,
+              "y": 0.9081269284801391
+            },
+            {
+              "id": "W",
+              "x": 0.17260001730099342,
+              "y": 0.49790960354358454
+            },
+            {
+              "id": "NW",
+              "x": 0.19,
+              "y": 0.09
+            }
+          ]
+        },
+        {
+          "id": "shape-mozkg6cw-jvwc",
+          "name": "credit card",
+          "imageSrc": "/images/credit-card-svgrepo-com.svg",
+          "width": 65,
+          "height": 65,
+          "labelPlacement": "below",
+          "showInDiagram": true,
+          "anchors": [
+            {
+              "id": "N",
+              "x": 0.49954514768282815,
+              "y": 0.12235908806486144
+            },
+            {
+              "id": "NE",
+              "x": 0.9723942005544172,
+              "y": 0.14388522081150187
+            },
+            {
+              "id": "E",
+              "x": 1,
+              "y": 0.5
+            },
+            {
+              "id": "SE",
+              "x": 0.9727930658695494,
+              "y": 0.8475059080872944
+            },
+            {
+              "id": "S",
+              "x": 0.4996409651171806,
+              "y": 0.862226338282891
+            },
+            {
+              "id": "SW",
+              "x": 0.02266705023559981,
+              "y": 0.8435245478320296
+            },
+            {
+              "id": "W",
+              "x": 0,
+              "y": 0.5
+            },
+            {
+              "id": "NW",
+              "x": 0.027015355360946184,
+              "y": 0.1508504975381988
             }
           ]
         }

@@ -7,7 +7,7 @@
 // vis-network's native rendering unchanged.
 
 import { st } from './state.js';
-import { customShapeImageOffsetY, SHAPE_DEFAULTS } from './node-rendering.js';
+import { customShapeLayout, SHAPE_DEFAULTS } from './node-rendering.js';
 import { CUSTOM_SHAPE_TYPE, getCustomShapeAnchors } from './custom-shapes.js';
 
 /**
@@ -84,8 +84,10 @@ function nodeGeometry(nodeId) {
   const W = n.nodeWidth  || defaults[0];
   // 'circle' is always square (H = W); 'ellipse' uses its own height.
   const H = shapeType === 'circle' ? W : (n.nodeHeight || defaults[1]);
-  const imageOffsetY = shapeType === CUSTOM_SHAPE_TYPE ? customShapeImageOffsetY(n, n.label) : 0;
-  return { cx: pos.x, cy: pos.y, W, H, rotation: n.rotation || 0, shapeType, customShapeId: n.customShapeId || null, imageOffsetY };
+  const customLayout = shapeType === CUSTOM_SHAPE_TYPE ? customShapeLayout(n, n.label) : null;
+  const imageOffsetX = customLayout ? customLayout.imageOffsetX : 0;
+  const imageOffsetY = customLayout ? customLayout.imageOffsetY : 0;
+  return { cx: pos.x, cy: pos.y, W, H, rotation: n.rotation || 0, shapeType, customShapeId: n.customShapeId || null, imageOffsetX, imageOffsetY };
 }
 
 export function getPortKeys(nodeId) {
@@ -120,7 +122,7 @@ function controlNormalForEdge(nodeId, portKey) {
 export function getPortPosition(nodeId, portKey) {
   const geo = nodeGeometry(nodeId);
   if (!geo) return null;
-  const { cx, cy, W, H, rotation, shapeType, customShapeId, imageOffsetY } = geo;
+  const { cx, cy, W, H, rotation, shapeType, customShapeId, imageOffsetX, imageOffsetY } = geo;
   const offsets = shapeType === CUSTOM_SHAPE_TYPE ? null
                : shapeType === 'database'      ? PORT_OFFSETS_DATABASE
                : CIRCULAR_SHAPES.has(shapeType) ? PORT_OFFSETS_CIRC
@@ -128,7 +130,7 @@ export function getPortPosition(nodeId, portKey) {
   const [ox, oy] = shapeType === CUSTOM_SHAPE_TYPE
     ? customPortOffset(customShapeId, portKey) || [0, 0]
     : offsets[portKey] || [0, 0];
-  let dx = ox * W / 2;
+  let dx = ox * W / 2 + imageOffsetX;
   let dy = oy * H / 2 + imageOffsetY;
   if (rotation) {
     const cos = Math.cos(rotation), sin = Math.sin(rotation);

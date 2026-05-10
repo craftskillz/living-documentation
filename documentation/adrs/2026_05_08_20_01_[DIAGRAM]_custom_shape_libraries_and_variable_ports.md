@@ -28,9 +28,10 @@ Un nouveau routeur Express `/api/shape-libraries` persiste un store JSON dans `.
           "id": "lambda",
           "name": "Lambda",
           "imageSrc": "/images/lambda.svg",
-          "width": 96,
-          "height": 96,
+          "width": 65,
+          "height": 65,
           "labelPlacement": "below",
+          "showInDiagram": true,
           "anchors": [{ "id": "N", "x": 0.5, "y": 0 }]
         }
       ]
@@ -43,13 +44,15 @@ Les coordonnées d'ancres sont normalisées dans `[0,1]`, ce qui permet de conse
 
 ### Page d'édition
 
-La page `/shape-editor` permet de gérer des bibliothèques, d'importer une image/SVG via l'upload d'images existant, de définir largeur/hauteur, de choisir le placement du texte (`center` ou `below`), et de poser ou déplacer des ancres sur une prévisualisation. Le bouton `Use 8 default anchors` reste disponible pour créer le comportement historique en un clic, mais l'utilisateur peut garder 6, 10 ou tout autre nombre raisonnable d'ancres.
+La page `/shape-editor` permet de gérer des bibliothèques, d'importer une image/SVG via l'upload d'images existant, de définir largeur/hauteur, de choisir le placement du texte (`center`, `below`, `above`, `right` ou `left`), et de poser ou déplacer des ancres sur une prévisualisation. Le bouton `Use 8 default anchors` reste disponible pour créer le comportement historique en un clic, mais l'utilisateur peut garder 6, 10 ou tout autre nombre raisonnable d'ancres.
+
+Chaque forme porte aussi `showInDiagram` (par défaut `true`) pour décider si elle apparaît dans la palette flottante du diagramme. Une forme masquée reste disponible pour le rendu des nœuds déjà présents dans les diagrammes ; seule son insertion depuis la palette est désactivée.
 
 ### Rendu et utilisation dans les diagrammes
 
 Le diagramme charge les bibliothèques au démarrage via `loadCustomShapeLibraries()` et affiche les formes disponibles dans une barre flottante. Sélectionner une forme active l'outil `addNode` avec un token `custom-shape:<id>`. À la création, le node stocke `shapeType: "custom-shape"` et `customShapeId`.
 
-Le renderer `makeCustomShapeRenderer` dessine l'image/SVG avec les dimensions du node, conserve les états hover/sélection, et reste compatible avec le label, le redimensionnement, la rotation, le z-order et la sauvegarde existants. `labelPlacement: "center"` superpose le texte au centre de l'image ; `labelPlacement: "below"` réserve un espace de label sous l'image, utile pour les formes de type icône ou acteur.
+Le renderer `makeCustomShapeRenderer` dessine l'image/SVG avec les dimensions du node, conserve les états hover/sélection, et reste compatible avec le label, le redimensionnement, la rotation, le z-order et la sauvegarde existants. `labelPlacement: "center"` superpose le texte au centre de l'image ; `below`, `above`, `right` et `left` réservent un espace de label autour de l'image, utile pour les formes de type icône ou acteur.
 
 ### Ports variables
 

@@ -2,7 +2,8 @@
 // Dashed selection box, corner resize handles, and top-centre rotation handle.
 
 import { st, markDirty } from './state.js';
-import { visNodeProps, SHAPE_DEFAULTS } from './node-rendering.js';
+import { customShapeLayout, visNodeProps, SHAPE_DEFAULTS } from './node-rendering.js';
+import { CUSTOM_SHAPE_TYPE } from './custom-shapes.js';
 import { t }             from './t.js';
 import { pushSnapshot }  from './history.js';
 import { snapToGrid }    from './grid.js';
@@ -31,12 +32,71 @@ function nodeBounds(id) {
   return { minX: cx - hw, minY: cy - hh - headExtra, maxX: cx + hw, maxY: cy + hh };
 }
 
+function customShapeImageFrame(id) {
+  const n = st.nodes.get(id);
+  const bodyNode = st.network.body.nodes[id];
+  if (!n || !bodyNode || n.shapeType !== CUSTOM_SHAPE_TYPE) return null;
+  const defaults = SHAPE_DEFAULTS[CUSTOM_SHAPE_TYPE] || [96, 96];
+  const W = n.nodeWidth || defaults[0];
+  const H = n.nodeHeight || defaults[1];
+  const rotation = n.rotation || 0;
+  const layout = customShapeLayout(n, n.label);
+  const cos = Math.cos(rotation);
+  const sin = Math.sin(rotation);
+  const cx = bodyNode.x + layout.imageOffsetX * cos - layout.imageOffsetY * sin;
+  const cy = bodyNode.y + layout.imageOffsetX * sin + layout.imageOffsetY * cos;
+  return { cx, cy, W, H, rotation };
+}
+
+function syncOverlayHandles(width, height, pad) {
+  const rh = document.getElementById('rh-rotate');
+  rh.style.left = width / 2 + pad - 8 + 'px';
+  rh.style.top  = '-28px';
+
+  const lrh = document.getElementById('rh-label-rotate');
+  lrh.style.left = width / 2 + pad - 8 - 24 + 'px';
+  lrh.style.top  = '-28px';
+}
+
+function updateSingleCustomShapeOverlay(id) {
+  const frame = customShapeImageFrame(id);
+  if (!frame) return false;
+
+  const PAD = 10;
+  const scale = st.network.getScale();
+  const center = st.network.canvasToDOM({ x: frame.cx, y: frame.cy });
+  const width = frame.W * scale;
+  const height = frame.H * scale;
+  const ov = document.getElementById('selectionOverlay');
+  ov.style.display = 'block';
+  ov.style.left = center.x - width / 2 - PAD + 'px';
+  ov.style.top = center.y - height / 2 - PAD + 'px';
+  ov.style.width = width + PAD * 2 + 'px';
+  ov.style.height = height + PAD * 2 + 'px';
+  ov.style.transformOrigin = '50% 50%';
+  ov.style.transform = `rotate(${frame.rotation}rad)`;
+  syncOverlayHandles(width, height, PAD);
+  return true;
+}
+
 // ── Overlay position ──────────────────────────────────────────────────────────
 export function updateSelectionOverlay() {
   if (!st.network || !st.selectedNodeIds.length) { hideSelectionOverlay(); return; }
   // Anchor-only selections (free arrow drag) have no meaningful bounding box.
-  const hasNonAnchor = st.selectedNodeIds.some((id) => { const n = st.nodes && st.nodes.get(id); return !(n && n.shapeType === 'anchor'); });
-  if (!hasNonAnchor) { hideSelectionOverlay(); return; }
+  const nonAnchorIds = st.selectedNodeIds.filter((id) => { const n = st.nodes && st.nodes.get(id); return !(n && n.shapeType === 'anchor'); });
+  if (!nonAnchorIds.length) { hideSelectionOverlay(); return; }
+
+  const ov = document.getElementById('selectionOverlay');
+  ov.style.transform = '';
+  ov.style.transformOrigin = '';
+
+  if (nonAnchorIds.length === 1 && updateSingleCustomShapeOverlay(nonAnchorIds[0])) {
+    const anyLocked = st.selectedNodeIds.some((id) => { const n = st.nodes && st.nodes.get(id); return n && n.locked; });
+    ['rh-tl','rh-tr','rh-bl','rh-br','rh-rotate','rh-label-rotate'].forEach((handleId) => {
+      document.getElementById(handleId).style.display = anyLocked ? 'none' : '';
+    });
+    return;
+  }
 
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   for (const id of st.selectedNodeIds) {
@@ -52,7 +112,6 @@ export function updateSelectionOverlay() {
   const PAD = 10;
   const tl  = st.network.canvasToDOM({ x: minX, y: minY });
   const br  = st.network.canvasToDOM({ x: maxX, y: maxY });
-  const ov  = document.getElementById('selectionOverlay');
   ov.style.display = 'block';
   ov.style.left    = tl.x - PAD + 'px';
   ov.style.top     = tl.y - PAD + 'px';
@@ -65,15 +124,7 @@ export function updateSelectionOverlay() {
     document.getElementById(id).style.display = anyLocked ? 'none' : '';
   });
 
-  // Position rotation handle: top-centre of the overlay, 28px above it.
-  const rh = document.getElementById('rh-rotate');
-  rh.style.left = (br.x - tl.x) / 2 + PAD - 8 + 'px';
-  rh.style.top  = '-28px';
-
-  // Position label rotation handle: top-centre offset left by 24px to avoid overlap.
-  const lrh = document.getElementById('rh-label-rotate');
-  lrh.style.left = (br.x - tl.x) / 2 + PAD - 8 - 24 + 'px';
-  lrh.style.top  = '-28px';
+  syncOverlayHandles(br.x - tl.x, br.y - tl.y, PAD);
 }
 
 export function hideSelectionOverlay() {

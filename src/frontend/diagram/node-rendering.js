@@ -6,7 +6,7 @@
 
 import { NODE_COLORS } from "./constants.js";
 import { st } from "./state.js";
-import { CUSTOM_SHAPE_TYPE, getCustomShapeDefinition } from "./custom-shapes.js";
+import { CUSTOM_SHAPE_TYPE, getCustomShapeDefinition, CUSTOM_SHAPE_DEFAULT_SIZE } from "./custom-shapes.js";
 
 // Returns the color object for a key, checking runtime overrides first.
 function getNodeColor(colorKey) {
@@ -187,13 +187,87 @@ function textLines(label) {
   return label ? String(label).split("\n") : [];
 }
 
-export function customShapeImageOffsetY(node, label) {
+function normalizeCustomLabelPlacement(value) {
+  return ["center", "below", "above", "right", "left"].includes(value) ? value : null;
+}
+
+function isExternalCustomLabelPlacement(placement) {
+  return ["above", "below", "right", "left"].includes(placement);
+}
+
+function measureTextWidth(line, fontSize, ctx) {
+  const font = `${fontSize}px system-ui,-apple-system,sans-serif`;
+  if (ctx) {
+    const prevFont = ctx.font;
+    ctx.font = font;
+    const width = ctx.measureText(line).width;
+    ctx.font = prevFont;
+    return width;
+  }
+  if (typeof document === "undefined") return String(line).length * fontSize * 0.58;
+  if (!measureTextWidth._ctx) {
+    measureTextWidth._ctx = document.createElement("canvas").getContext("2d");
+  }
+  measureTextWidth._ctx.font = font;
+  return measureTextWidth._ctx.measureText(line).width;
+}
+
+export function customShapeLayout(node, label, ctx) {
   const def = getCustomShapeDefinition(node && node.customShapeId);
-  if (!def || def.labelPlacement !== "below" || !label) return 0;
+  const W =
+    (node && node.nodeWidth) || (def && def.width) || CUSTOM_SHAPE_DEFAULT_SIZE;
+  const H =
+    (node && node.nodeHeight) ||
+    (def && def.height) ||
+    CUSTOM_SHAPE_DEFAULT_SIZE;
+  const placement = normalizeCustomLabelPlacement(node && node.labelPlacement)
+    || normalizeCustomLabelPlacement(def && def.labelPlacement)
+    || "below";
   const fontSize = (node && node.fontSize) || 13;
   const lines = textLines(label);
-  if (!lines.length) return 0;
-  return -(lines.length * fontSize * 1.3 + 8) / 2;
+  const lineH = fontSize * 1.3;
+  if (!lines.length || !isExternalCustomLabelPlacement(placement)) {
+    return {
+      placement,
+      lines,
+      lineH,
+      imageOffsetX: 0,
+      imageOffsetY: 0,
+      labelBlockW: 0,
+      labelBlockH: 0,
+      totalW: W,
+      totalH: H,
+    };
+  }
+
+  const maxTextW = Math.max(...lines.map((line) => measureTextWidth(line, fontSize, ctx)));
+  const labelBlockW = maxTextW + 16;
+  const labelBlockH = lines.length * lineH + 8;
+  const horizontal = placement === "left" || placement === "right";
+  const totalW = horizontal ? W + labelBlockW : Math.max(W, labelBlockW);
+  const totalH = horizontal ? Math.max(H, labelBlockH) : H + labelBlockH;
+  const imageOffsetX = placement === "right" ? -labelBlockW / 2
+    : placement === "left" ? labelBlockW / 2
+      : 0;
+  const imageOffsetY = placement === "below" ? -labelBlockH / 2
+    : placement === "above" ? labelBlockH / 2
+      : 0;
+
+  return {
+    placement,
+    lines,
+    lineH,
+    imageOffsetX,
+    imageOffsetY,
+    labelBlockW,
+    labelBlockH,
+    totalW,
+    totalH,
+  };
+}
+
+export function customShapeImageOffsetY(node, label) {
+  return customShapeLayout(node, label).imageOffsetY;
 }
 
 // ── Shape renderers ───────────────────────────────────────────────────────────
@@ -671,8 +745,8 @@ export function makeCustomShapeRenderer(colorKey) {
   return function ({ ctx, x, y, id, state: visState, label }) {
     const n = st.nodes && st.nodes.get(id);
     const def = getCustomShapeDefinition(n && n.customShapeId);
-    const defaultW = def && def.width || 96;
-    const defaultH = def && def.height || 96;
+    const defaultW = (def && def.width) || CUSTOM_SHAPE_DEFAULT_SIZE;
+    const defaultH = (def && def.height) || CUSTOM_SHAPE_DEFAULT_SIZE;
     const {
       W,
       H,
@@ -684,11 +758,17 @@ export function makeCustomShapeRenderer(colorKey) {
       c,
     } = nodeData(id, defaultW, defaultH, colorKey || "c-gray");
     const img = getCachedImage(def && def.imageSrc, () => st.network && st.network.redraw());
-    const labelBelow = def && def.labelPlacement === "below";
-    const lines = textLines(label);
-    const belowLabelH = labelBelow && lines.length ? lines.length * fontSize * 1.3 + 8 : 0;
-    const imageOffsetY = labelBelow ? -belowLabelH / 2 : 0;
-    const totalH = H + belowLabelH;
+    const layout = customShapeLayout({ ...(n || {}), nodeWidth: W, nodeHeight: H, fontSize }, label, ctx);
+    const {
+      placement,
+      lines,
+      lineH,
+      imageOffsetX,
+      imageOffsetY,
+      totalW,
+      totalH,
+    } = layout;
+    const externalLabel = isExternalCustomLabelPlacement(placement) && lines.length;
     return {
       drawNode() {
         ctx.save();
@@ -696,12 +776,12 @@ export function makeCustomShapeRenderer(colorKey) {
         ctx.rotate(rotation);
 
         if (img) {
-          ctx.drawImage(img, -W / 2, imageOffsetY - H / 2, W, H);
+          ctx.drawImage(img, imageOffsetX - W / 2, imageOffsetY - H / 2, W, H);
         } else {
           ctx.fillStyle = visState.selected ? c.hbg : c.bg;
           ctx.strokeStyle = visState.selected ? "#f97316" : c.border;
           ctx.lineWidth = 1.5;
-          roundRect(ctx, -W / 2, imageOffsetY - H / 2, W, H, 4);
+          roundRect(ctx, imageOffsetX - W / 2, imageOffsetY - H / 2, W, H, 4);
           ctx.fill();
           ctx.stroke();
         }
@@ -710,21 +790,32 @@ export function makeCustomShapeRenderer(colorKey) {
           ctx.strokeStyle = visState.selected ? "#f97316" : c.border;
           ctx.lineWidth = visState.selected ? 2 : 1;
           ctx.setLineDash([4, 3]);
-          roundRect(ctx, -W / 2, -totalH / 2, W, totalH, 4);
+          roundRect(ctx, imageOffsetX - W / 2, imageOffsetY - H / 2, W, H, 4);
           ctx.stroke();
           ctx.setLineDash([]);
         }
 
-        if (labelBelow && lines.length) {
+        if (externalLabel) {
           ctx.save();
           if (labelRotation) ctx.rotate(labelRotation);
           ctx.font = `${fontSize}px system-ui,-apple-system,sans-serif`;
           ctx.fillStyle = c.font;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "top";
-          const lineH = fontSize * 1.3;
-          const startY = imageOffsetY + H / 2 + 4;
-          lines.forEach((line, i) => ctx.fillText(line, 0, startY + i * lineH));
+          if (placement === "right" || placement === "left") {
+            const textX = placement === "right"
+              ? imageOffsetX + W / 2 + 8
+              : imageOffsetX - W / 2 - 8;
+            const startY = -((lines.length - 1) * lineH) / 2;
+            ctx.textAlign = placement === "right" ? "left" : "right";
+            ctx.textBaseline = "middle";
+            lines.forEach((line, i) => ctx.fillText(line, textX, startY + i * lineH));
+          } else {
+            ctx.textAlign = "center";
+            ctx.textBaseline = "top";
+            const startY = placement === "below"
+              ? imageOffsetY + H / 2 + 4
+              : -totalH / 2 + 4;
+            lines.forEach((line, i) => ctx.fillText(line, 0, startY + i * lineH));
+          }
           ctx.restore();
         } else {
           drawLabel(
@@ -739,10 +830,13 @@ export function makeCustomShapeRenderer(colorKey) {
             labelRotation,
           );
         }
+        ctx.save();
+        ctx.translate(imageOffsetX, imageOffsetY);
         drawLinkIndicator(ctx, id, W, H);
         ctx.restore();
+        ctx.restore();
       },
-      nodeDimensions: { width: W, height: totalH },
+      nodeDimensions: { width: totalW, height: totalH },
     };
   };
 }
@@ -811,7 +905,7 @@ export const SHAPE_DEFAULTS = {
   "post-it": [120, 100],
   "text-free": [80, 30],
   image: [160, 120],
-  [CUSTOM_SHAPE_TYPE]: [96, 96],
+  [CUSTOM_SHAPE_TYPE]: [CUSTOM_SHAPE_DEFAULT_SIZE, CUSTOM_SHAPE_DEFAULT_SIZE],
   anchor: [8, 8],
 };
 

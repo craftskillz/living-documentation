@@ -3,8 +3,11 @@
 
 import { st, markDirty } from './state.js';
 import { SHAPE_DEFAULTS } from './node-rendering.js';
+import { CUSTOM_SHAPE_TYPE, getCustomShapeLabelPlacement } from './custom-shapes.js';
 import { pushSnapshot }   from './history.js';
 import { t }              from './t.js';
+
+const CUSTOM_LABEL_PLACEMENTS = ['below', 'above', 'right', 'left', 'center'];
 
 // ── Last-used style persistence (per shape type) ──────────────────────────────
 // Saves colorKey/fontSize/textAlign/textValign per shapeType to localStorage so
@@ -90,6 +93,36 @@ function syncNodeFontSizeValue() {
   el.textContent = sizes.every((size) => size === first) ? String(first) : '–';
 }
 
+function selectedCustomShapeIds() {
+  return (st.selectedNodeIds || []).filter((id) => {
+    const n = st.nodes && st.nodes.get(id);
+    return n && n.shapeType === CUSTOM_SHAPE_TYPE;
+  });
+}
+
+function effectiveCustomShapeLabelPlacement(node) {
+  return CUSTOM_LABEL_PLACEMENTS.includes(node && node.labelPlacement)
+    ? node.labelPlacement
+    : getCustomShapeLabelPlacement(node && node.customShapeId);
+}
+
+function syncCustomShapeLabelPlacementControls() {
+  const controls = document.getElementById('customShapeLabelPlacementControls');
+  if (!controls) return;
+  const customIds = selectedCustomShapeIds();
+  controls.classList.toggle('hidden', customIds.length === 0);
+  if (!customIds.length) return;
+
+  const placements = customIds
+    .map((id) => effectiveCustomShapeLabelPlacement(st.nodes.get(id)))
+    .filter(Boolean);
+  const first = placements[0];
+  const shared = placements.length && placements.every((placement) => placement === first) ? first : null;
+  controls.querySelectorAll('[data-label-placement]').forEach((btn) => {
+    btn.classList.toggle('tool-active', !!shared && btn.dataset.labelPlacement === shared);
+  });
+}
+
 function setEdgeLocked(edge, locked) {
   if (!edge) return;
   const fromN = st.nodes && st.nodes.get(edge.from);
@@ -111,6 +144,7 @@ export function showNodePanel() {
   document.getElementById('nodePanelControls').classList.remove('hidden');
   syncNodeLockButton();
   syncNodeFontSizeValue();
+  syncCustomShapeLabelPlacementControls();
   // Sync the opacity slider with the first selected node's current value so the
   // slider reflects the live state rather than whatever position it was left at.
   const slider = document.getElementById('nodeBgOpacity');
@@ -215,6 +249,19 @@ export function setTextValign(valign) {
     st.nodes.update({ id, textValign: valign });
   });
   persistNodeStyle();
+  forceRedraw();
+  markDirty();
+}
+
+export function setCustomShapeLabelPlacement(placement) {
+  if (!CUSTOM_LABEL_PLACEMENTS.includes(placement)) return;
+  const ids = selectedCustomShapeIds();
+  if (!ids.length) return;
+  pushSnapshot();
+  ids.forEach((id) => {
+    st.nodes.update({ id, labelPlacement: placement });
+  });
+  syncCustomShapeLabelPlacementControls();
   forceRedraw();
   markDirty();
 }

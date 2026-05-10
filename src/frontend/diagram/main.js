@@ -3,7 +3,7 @@
 
 import { st, markDirty }      from './state.js';
 import { TOOL_BTN_MAP }       from './constants.js';
-import { showNodePanel, hideNodePanel, setNodeColor, setNodeBgOpacity, changeNodeFontSize, setTextAlign, setTextValign, changeZOrder, activateStamp, cancelStamp, stepRotate, toggleNodeLock } from './node-panel.js';
+import { showNodePanel, hideNodePanel, setNodeColor, setNodeBgOpacity, changeNodeFontSize, setTextAlign, setTextValign, setCustomShapeLabelPlacement, changeZOrder, activateStamp, cancelStamp, stepRotate, toggleNodeLock } from './node-panel.js';
 import { groupNodes, ungroupNodes } from './groups.js';
 import { showLinkPanel, hideLinkPanel } from './link-panel.js';
 import { hideEdgePanel, setEdgeArrow, setEdgeDashes, changeEdgeFontSize, stepEdgeLabelRotation, clearEdgePorts, setEdgeColor, changeEdgeWidth, toggleEdgeLock, resetEdgeLabelWidth, stepEdgeLabelOffset, resetEdgeLabelOffset } from './edge-panel.js';
@@ -164,6 +164,8 @@ initEvidenceMode();
 document.getElementById('nodePanel').addEventListener('click', (e) => {
   const colorBtn = e.target.closest('[data-color]');
   if (colorBtn) setNodeColor(colorBtn.dataset.color);
+  const labelPlacementBtn = e.target.closest('[data-label-placement]');
+  if (labelPlacementBtn) setCustomShapeLabelPlacement(labelPlacementBtn.dataset.labelPlacement);
 });
 document.getElementById('btnNodeLock').addEventListener('click', toggleNodeLock);
 document.getElementById('btnNodeLabelEdit').addEventListener('click', startLabelEdit);
