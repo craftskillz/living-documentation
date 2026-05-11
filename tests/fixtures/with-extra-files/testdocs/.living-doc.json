@@ -1,0 +1,15 @@
+{
+  "filenamePattern": "YYYY_MM_DD_HH_mm_[Category]_title",
+  "title": "Extra Files Test",
+  "theme": "system",
+  "language": "en",
+  "port": 4321,
+  "extraFiles": ["../external.md"],
+  "showDiagramDebug": false,
+  "sourceRoot": null,
+  "blockedFileExtensions": ["exe"],
+  "exclusiveFolderExpansion": false,
+  "exclusiveCategoryExpansion": false,
+  "codeBlockMaxHeight": 400,
+  "markdownSoftBreaks": false
+}

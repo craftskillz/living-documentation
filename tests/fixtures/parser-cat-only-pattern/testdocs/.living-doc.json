@@ -1,0 +1,15 @@
+{
+  "filenamePattern": "[Category]_title",
+  "title": "Parser Category-Only Pattern",
+  "theme": "system",
+  "language": "en",
+  "port": 4321,
+  "extraFiles": [],
+  "showDiagramDebug": false,
+  "sourceRoot": null,
+  "blockedFileExtensions": ["exe"],
+  "exclusiveFolderExpansion": false,
+  "exclusiveCategoryExpansion": false,
+  "codeBlockMaxHeight": 400,
+  "markdownSoftBreaks": false
+}

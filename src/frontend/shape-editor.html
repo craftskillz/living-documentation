@@ -1,0 +1,685 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shape editor — Living Documentation</title>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script src="/i18n.js"></script>
+    <script>
+      tailwind.config = { darkMode: "class", theme: { extend: {} } };
+    </script>
+    <style>
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 2rem;
+        padding: 0 0.75rem;
+        border-radius: 0.375rem;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        border: 1px solid #d1d5db;
+        background: #fff;
+        color: #374151;
+      }
+      .btn:hover {
+        background: #f3f4f6;
+      }
+      .btn-primary {
+        border-color: #2563eb;
+        background: #2563eb;
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: #1d4ed8;
+      }
+      .btn-danger {
+        border-color: #fecaca;
+        color: #b91c1c;
+      }
+      .btn-danger:hover {
+        background: #fef2f2;
+      }
+      .field {
+        height: 2rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        padding: 0 0.5rem;
+        font-size: 0.875rem;
+        background: #fff;
+      }
+      .shape-item.active {
+        background: #eff6ff;
+        color: #1d4ed8;
+      }
+      #previewStage {
+        position: relative;
+        width: min(34rem, 100%);
+        aspect-ratio: 1 / 1;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        background:
+          linear-gradient(45deg, #f9fafb 25%, transparent 25%),
+          linear-gradient(-45deg, #f9fafb 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #f9fafb 75%),
+          linear-gradient(-45deg, transparent 75%, #f9fafb 75%);
+        background-size: 1.25rem 1.25rem;
+        background-position:
+          0 0,
+          0 0.625rem,
+          0.625rem -0.625rem,
+          -0.625rem 0;
+        overflow: hidden;
+      }
+      #previewImage {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: fill;
+        pointer-events: none;
+      }
+      .anchor-dot {
+        position: absolute;
+        width: 0.9rem;
+        height: 0.9rem;
+        transform: translate(-50%, -50%);
+        border-radius: 999px;
+        border: 2px solid #fff;
+        background: #f97316;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+        cursor: grab;
+      }
+      .anchor-dot:active {
+        cursor: grabbing;
+      }
+      .anchor-dot span {
+        position: absolute;
+        left: 50%;
+        top: calc(100% + 0.2rem);
+        transform: translateX(-50%);
+        font:
+          10px/1 system-ui,
+          sans-serif;
+        color: #374151;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 1px 3px;
+        border-radius: 3px;
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body class="h-screen overflow-hidden bg-gray-50 text-gray-900">
+    <header
+      class="h-12 border-b border-gray-200 bg-white flex items-center gap-2 px-3"
+    >
+      <button class="btn" onclick="history.back()">← Back</button>
+      <h1 class="text-sm font-semibold">Shape editor</h1>
+      <span id="saveState" class="ml-auto text-xs text-gray-500"></span>
+    </header>
+
+    <main
+      class="h-[calc(100vh-3rem)] grid grid-cols-[17rem_1fr] overflow-hidden"
+    >
+      <aside class="border-r border-gray-200 bg-white flex flex-col min-h-0">
+        <div class="p-3 border-b border-gray-200 space-y-2">
+          <label class="block text-xs font-semibold text-gray-500"
+            >Library</label
+          >
+          <div class="flex gap-2">
+            <select id="librarySelect" class="field flex-1"></select>
+            <button id="btnAddLibrary" class="btn">+</button>
+          </div>
+          <input
+            id="libraryName"
+            class="field w-full"
+            placeholder="Library name"
+          />
+        </div>
+        <div class="p-3 border-b border-gray-200 flex gap-2">
+          <button id="btnNewShape" class="btn btn-primary flex-1">
+            New shape
+          </button>
+          <button id="btnDeleteShape" class="btn btn-danger">Delete</button>
+        </div>
+        <div id="shapeList" class="flex-1 overflow-y-auto p-2 space-y-1"></div>
+      </aside>
+
+      <section class="min-w-0 min-h-0 overflow-y-auto p-5">
+        <div
+          class="grid grid-cols-[minmax(20rem,34rem)_minmax(20rem,1fr)] gap-5 items-start"
+        >
+          <div class="space-y-3">
+            <div id="previewStage">
+              <img id="previewImage" alt="" />
+            </div>
+            <p class="text-xs text-gray-500">
+              Click on the image to add an anchor. Drag anchors to refine their
+              position.
+            </p>
+          </div>
+
+          <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-3">
+              <label class="space-y-1">
+                <span class="block text-xs font-semibold text-gray-500"
+                  >Shape name</span
+                >
+                <input
+                  id="shapeName"
+                  class="field w-full"
+                  placeholder="Shape name"
+                />
+              </label>
+              <label class="space-y-1">
+                <span class="block text-xs font-semibold text-gray-500"
+                  >Image / SVG</span
+                >
+                <input
+                  id="imageFile"
+                  type="file"
+                  accept="image/*,.svg"
+                  class="block w-full text-sm"
+                />
+              </label>
+              <label class="space-y-1">
+                <span class="block text-xs font-semibold text-gray-500"
+                  >Width</span
+                >
+                <input
+                  id="shapeWidth"
+                  type="number"
+                  min="16"
+                  max="1200"
+                  class="field w-full"
+                />
+              </label>
+              <label class="space-y-1">
+                <span class="block text-xs font-semibold text-gray-500"
+                  >Height</span
+                >
+                <input
+                  id="shapeHeight"
+                  type="number"
+                  min="16"
+                  max="1200"
+                  class="field w-full"
+                />
+              </label>
+              <label class="space-y-1 col-span-2">
+                <span class="block text-xs font-semibold text-gray-500"
+                  >Text placement</span
+                >
+                <select id="labelPlacement" class="field w-full">
+                  <option
+                    value="below"
+                    data-i18n="shape_editor.label_placement.below"
+                  >
+                    Below the shape
+                  </option>
+                  <option
+                    value="above"
+                    data-i18n="shape_editor.label_placement.above"
+                  >
+                    Above the shape
+                  </option>
+                  <option
+                    value="right"
+                    data-i18n="shape_editor.label_placement.right"
+                  >
+                    To the right
+                  </option>
+                  <option
+                    value="left"
+                    data-i18n="shape_editor.label_placement.left"
+                  >
+                    To the left
+                  </option>
+                  <option
+                    value="center"
+                    data-i18n="shape_editor.label_placement.center"
+                  >
+                    Centered in the shape
+                  </option>
+                </select>
+              </label>
+              <label
+                class="col-span-2 flex items-start gap-2 rounded-md border border-gray-200 bg-white px-2 py-2 text-sm"
+              >
+                <input
+                  id="shapeShowInDiagram"
+                  type="checkbox"
+                  class="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600"
+                />
+                <span class="space-y-0.5">
+                  <span
+                    class="block font-semibold text-gray-700"
+                    data-i18n="shape_editor.show_in_diagram_label"
+                    >Show in diagram palette</span
+                  >
+                  <span
+                    class="block text-xs text-gray-500"
+                    data-i18n="shape_editor.show_in_diagram_hint"
+                    >When disabled, existing diagram nodes still render but this
+                    shape is hidden from the bottom palette.</span
+                  >
+                </span>
+              </label>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <button id="btnDefaultAnchors" class="btn">
+                Use 8 default anchors
+              </button>
+              <button id="btnClearAnchors" class="btn">Clear anchors</button>
+              <button id="btnSaveShape" class="btn btn-primary">
+                Save shape
+              </button>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <h2
+                  class="text-xs font-semibold uppercase tracking-wide text-gray-500"
+                >
+                  Anchors
+                </h2>
+                <span id="anchorCount" class="text-xs text-gray-500"></span>
+              </div>
+              <div id="anchorList" class="space-y-1"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      import {
+        DEFAULT_CUSTOM_ANCHORS,
+        CUSTOM_SHAPE_DEFAULT_SIZE,
+      } from "/diagram/custom-shapes.js";
+
+      const els = {
+        saveState: document.getElementById("saveState"),
+        librarySelect: document.getElementById("librarySelect"),
+        libraryName: document.getElementById("libraryName"),
+        shapeList: document.getElementById("shapeList"),
+        previewStage: document.getElementById("previewStage"),
+        previewImage: document.getElementById("previewImage"),
+        shapeName: document.getElementById("shapeName"),
+        imageFile: document.getElementById("imageFile"),
+        shapeWidth: document.getElementById("shapeWidth"),
+        shapeHeight: document.getElementById("shapeHeight"),
+        labelPlacement: document.getElementById("labelPlacement"),
+        shapeShowInDiagram: document.getElementById("shapeShowInDiagram"),
+        anchorList: document.getElementById("anchorList"),
+        anchorCount: document.getElementById("anchorCount"),
+      };
+
+      let store = { libraries: [] };
+      let activeLibraryId = null;
+      let activeShapeId = null;
+      let draft = null;
+      let draggingAnchorId = null;
+
+      const uid = (prefix) =>
+        `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+      const activeLibrary = () =>
+        store.libraries.find((lib) => lib.id === activeLibraryId) || null;
+      const activeShape = () =>
+        activeLibrary()?.shapes.find((shape) => shape.id === activeShapeId) ||
+        null;
+      const clamp01 = (n) => Math.max(0, Math.min(1, n));
+      const normalizeLabelPlacement = (value) =>
+        ["below", "above", "right", "left", "center"].includes(value)
+          ? value
+          : "below";
+      const escapeAttr = (value) =>
+        String(value ?? "").replace(
+          /[&<>"']/g,
+          (char) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[char],
+        );
+
+      function setStatus(text) {
+        els.saveState.textContent = text;
+        if (text)
+          setTimeout(() => {
+            if (els.saveState.textContent === text)
+              els.saveState.textContent = "";
+          }, 1800);
+      }
+
+      async function loadStore() {
+        const res = await fetch("/api/shape-libraries");
+        store = await res.json();
+        if (!Array.isArray(store.libraries)) store.libraries = [];
+        if (!store.libraries.length) {
+          store.libraries.push({
+            id: uid("lib"),
+            name: "My shapes",
+            shapes: [],
+          });
+        }
+        activeLibraryId = store.libraries[0].id;
+        activeShapeId = store.libraries[0].shapes[0]?.id || null;
+        draft = activeShape()
+          ? structuredClone(activeShape())
+          : newShapeDraft();
+        renderAll();
+      }
+
+      async function saveStore() {
+        const res = await fetch("/api/shape-libraries", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(store),
+        });
+        store = await res.json();
+        setStatus("Saved");
+      }
+
+      function newShapeDraft() {
+        return {
+          id: uid("shape"),
+          name: "New shape",
+          imageSrc: "",
+          width: CUSTOM_SHAPE_DEFAULT_SIZE,
+          height: CUSTOM_SHAPE_DEFAULT_SIZE,
+          labelPlacement: "below",
+          showInDiagram: true,
+          anchors: structuredClone(DEFAULT_CUSTOM_ANCHORS),
+        };
+      }
+
+      function renderAll() {
+        renderLibraries();
+        renderShapeList();
+        renderEditor();
+      }
+
+      function renderLibraries() {
+        els.librarySelect.innerHTML = "";
+        store.libraries.forEach((lib) => {
+          const opt = document.createElement("option");
+          opt.value = lib.id;
+          opt.textContent = lib.name;
+          opt.selected = lib.id === activeLibraryId;
+          els.librarySelect.appendChild(opt);
+        });
+        els.libraryName.value = activeLibrary()?.name || "";
+      }
+
+      function renderShapeList() {
+        const lib = activeLibrary();
+        els.shapeList.innerHTML = "";
+        (lib?.shapes || []).forEach((shape) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = `shape-item w-full flex items-center gap-2 px-2 py-1.5 rounded text-sm text-left hover:bg-gray-100 ${shape.id === activeShapeId ? "active" : ""}`;
+          const img = document.createElement("img");
+          img.src = shape.imageSrc;
+          img.alt = "";
+          img.className = "w-6 h-6 object-contain shrink-0";
+          const label = document.createElement("span");
+          label.className = "truncate";
+          label.textContent = shape.name;
+          btn.append(img, label);
+          btn.addEventListener("click", () => {
+            activeShapeId = shape.id;
+            draft = structuredClone(shape);
+            renderAll();
+          });
+          els.shapeList.appendChild(btn);
+        });
+        if (!lib?.shapes?.length) {
+          els.shapeList.innerHTML =
+            '<p class="text-xs text-gray-400 px-2 py-2">No shape yet.</p>';
+        }
+      }
+
+      function renderEditor() {
+        if (!draft) draft = newShapeDraft();
+        els.previewStage.style.aspectRatio = `${Math.max(16, Number(draft.width) || CUSTOM_SHAPE_DEFAULT_SIZE)} / ${Math.max(16, Number(draft.height) || CUSTOM_SHAPE_DEFAULT_SIZE)}`;
+        els.previewImage.src = draft.imageSrc || "";
+        els.previewImage.style.display = draft.imageSrc ? "block" : "none";
+        els.shapeName.value = draft.name || "";
+        els.shapeWidth.value = draft.width || CUSTOM_SHAPE_DEFAULT_SIZE;
+        els.shapeHeight.value = draft.height || CUSTOM_SHAPE_DEFAULT_SIZE;
+        els.labelPlacement.value = normalizeLabelPlacement(
+          draft.labelPlacement,
+        );
+        els.shapeShowInDiagram.checked = draft.showInDiagram !== false;
+        renderAnchors();
+      }
+
+      function renderAnchors() {
+        els.previewStage
+          .querySelectorAll(".anchor-dot")
+          .forEach((dot) => dot.remove());
+        els.anchorList.innerHTML = "";
+        const anchors = draft.anchors || [];
+        els.anchorCount.textContent = `${anchors.length} anchor${anchors.length > 1 ? "s" : ""}`;
+        anchors.forEach((anchor, index) => {
+          const dot = document.createElement("button");
+          dot.type = "button";
+          dot.className = "anchor-dot";
+          dot.style.left = `${anchor.x * 100}%`;
+          dot.style.top = `${anchor.y * 100}%`;
+          dot.dataset.anchorId = anchor.id;
+          dot.innerHTML = `<span>${anchor.id}</span>`;
+          dot.addEventListener("pointerdown", (event) => {
+            event.preventDefault();
+            draggingAnchorId = anchor.id;
+            dot.setPointerCapture(event.pointerId);
+          });
+          els.previewStage.appendChild(dot);
+
+          const row = document.createElement("div");
+          row.className =
+            "grid grid-cols-[4.5rem_1fr_1fr_2rem] gap-2 items-center";
+          row.innerHTML = `
+            <input class="field !h-7 text-xs" value="${escapeAttr(anchor.id)}">
+            <input class="field !h-7 text-xs" type="number" min="0" max="100" step="1" value="${Math.round(anchor.x * 100)}">
+            <input class="field !h-7 text-xs" type="number" min="0" max="100" step="1" value="${Math.round(anchor.y * 100)}">
+            <button class="btn btn-danger !h-7 !px-0">×</button>
+          `;
+          const [idInput, xInput, yInput] = row.querySelectorAll("input");
+          idInput.addEventListener("input", () => {
+            anchor.id = idInput.value.trim() || `p${index + 1}`;
+            renderAnchors();
+          });
+          xInput.addEventListener("input", () => {
+            anchor.x = clamp01(Number(xInput.value) / 100);
+            renderAnchors();
+          });
+          yInput.addEventListener("input", () => {
+            anchor.y = clamp01(Number(yInput.value) / 100);
+            renderAnchors();
+          });
+          row.querySelector("button").addEventListener("click", () => {
+            draft.anchors = draft.anchors.filter((item) => item !== anchor);
+            renderAnchors();
+          });
+          els.anchorList.appendChild(row);
+        });
+      }
+
+      function setAnchorFromEvent(anchor, event) {
+        const rect = els.previewStage.getBoundingClientRect();
+        anchor.x = clamp01((event.clientX - rect.left) / rect.width);
+        anchor.y = clamp01((event.clientY - rect.top) / rect.height);
+      }
+
+      els.previewStage.addEventListener("pointermove", (event) => {
+        if (!draggingAnchorId || !draft) return;
+        const anchor = draft.anchors.find(
+          (item) => item.id === draggingAnchorId,
+        );
+        if (!anchor) return;
+        setAnchorFromEvent(anchor, event);
+        renderAnchors();
+      });
+      window.addEventListener("pointerup", () => {
+        draggingAnchorId = null;
+      });
+      els.previewStage.addEventListener("click", (event) => {
+        if (event.target.closest(".anchor-dot") || draggingAnchorId || !draft)
+          return;
+        const anchor = {
+          id: `p${(draft.anchors || []).length + 1}`,
+          x: 0.5,
+          y: 0.5,
+        };
+        setAnchorFromEvent(anchor, event);
+        draft.anchors = [...(draft.anchors || []), anchor];
+        renderAnchors();
+      });
+
+      document
+        .getElementById("btnAddLibrary")
+        .addEventListener("click", async () => {
+          const lib = { id: uid("lib"), name: "New library", shapes: [] };
+          store.libraries.push(lib);
+          activeLibraryId = lib.id;
+          activeShapeId = null;
+          draft = newShapeDraft();
+          renderAll();
+          await saveStore();
+        });
+      els.librarySelect.addEventListener("change", () => {
+        activeLibraryId = els.librarySelect.value;
+        activeShapeId = activeLibrary()?.shapes[0]?.id || null;
+        draft = activeShape()
+          ? structuredClone(activeShape())
+          : newShapeDraft();
+        renderAll();
+      });
+      els.libraryName.addEventListener("change", async () => {
+        const lib = activeLibrary();
+        if (!lib) return;
+        lib.name = els.libraryName.value.trim() || lib.name;
+        renderLibraries();
+        await saveStore();
+      });
+      document.getElementById("btnNewShape").addEventListener("click", () => {
+        activeShapeId = null;
+        draft = newShapeDraft();
+        renderAll();
+      });
+      document
+        .getElementById("btnDeleteShape")
+        .addEventListener("click", async () => {
+          const lib = activeLibrary();
+          if (!lib || !activeShapeId) return;
+          lib.shapes = lib.shapes.filter((shape) => shape.id !== activeShapeId);
+          activeShapeId = lib.shapes[0]?.id || null;
+          draft = activeShape()
+            ? structuredClone(activeShape())
+            : newShapeDraft();
+          renderAll();
+          await saveStore();
+        });
+      document
+        .getElementById("btnDefaultAnchors")
+        .addEventListener("click", () => {
+          draft.anchors = structuredClone(DEFAULT_CUSTOM_ANCHORS);
+          renderAnchors();
+        });
+      document
+        .getElementById("btnClearAnchors")
+        .addEventListener("click", () => {
+          draft.anchors = [];
+          renderAnchors();
+        });
+      document
+        .getElementById("btnSaveShape")
+        .addEventListener("click", async () => {
+          const lib = activeLibrary();
+          if (!lib || !draft || !draft.imageSrc) return;
+          draft.name = els.shapeName.value.trim() || "Untitled shape";
+          draft.width = Math.max(
+            16,
+            Math.min(1200, Math.round(Number(els.shapeWidth.value) || CUSTOM_SHAPE_DEFAULT_SIZE)),
+          );
+          draft.height = Math.max(
+            16,
+            Math.min(1200, Math.round(Number(els.shapeHeight.value) || CUSTOM_SHAPE_DEFAULT_SIZE)),
+          );
+          draft.labelPlacement = normalizeLabelPlacement(
+            els.labelPlacement.value,
+          );
+          draft.showInDiagram = els.shapeShowInDiagram.checked;
+          const idx = lib.shapes.findIndex((shape) => shape.id === draft.id);
+          if (idx >= 0) lib.shapes[idx] = structuredClone(draft);
+          else lib.shapes.push(structuredClone(draft));
+          activeShapeId = draft.id;
+          renderAll();
+          await saveStore();
+        });
+      [
+        "shapeName",
+        "shapeWidth",
+        "shapeHeight",
+        "labelPlacement",
+        "shapeShowInDiagram",
+      ].forEach((id) => {
+        document.getElementById(id).addEventListener("input", () => {
+          draft.name = els.shapeName.value;
+          draft.width = Number(els.shapeWidth.value) || CUSTOM_SHAPE_DEFAULT_SIZE;
+          draft.height = Number(els.shapeHeight.value) || CUSTOM_SHAPE_DEFAULT_SIZE;
+          draft.labelPlacement = normalizeLabelPlacement(
+            els.labelPlacement.value,
+          );
+          draft.showInDiagram = els.shapeShowInDiagram.checked;
+        });
+      });
+      els.imageFile.addEventListener("change", async () => {
+        const file = els.imageFile.files && els.imageFile.files[0];
+        if (!file || !draft) return;
+        const data = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        const ext =
+          (file.name.split(".").pop() || "png")
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, "") || "png";
+        const name = file.name.replace(/\.[^.]+$/, "").slice(0, 60);
+        const res = await fetch("/api/images/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ data, ext, name }),
+        });
+        const uploaded = await res.json();
+        draft.imageSrc = `/images/${uploaded.filename}`;
+        if (!els.shapeName.value || els.shapeName.value === "New shape")
+          draft.name = name || draft.name;
+        renderEditor();
+      });
+
+      async function initShapeEditorI18n() {
+        try {
+          const res = await fetch("/api/config");
+          const cfg = res.ok ? await res.json() : {};
+          await window.initI18n(cfg.language || "en");
+        } catch {
+          await window.initI18n("en");
+        }
+        window.applyI18n();
+      }
+
+      await initShapeEditorI18n();
+      await loadStore();
+    </script>
+  </body>
+</html>

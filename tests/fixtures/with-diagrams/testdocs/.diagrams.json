@@ -1,0 +1,16 @@
+[
+  {
+    "id": "diag-1",
+    "title": "Sample Diagram",
+    "nodes": [
+      { "id": "n1", "label": "Start", "shapeType": "box", "colorKey": "c-blue", "x": 0, "y": 0 },
+      { "id": "n2", "label": "End", "shapeType": "ellipse", "colorKey": "c-green", "x": 200, "y": 0 }
+    ],
+    "edges": [
+      { "id": "e1", "from": "n1", "to": "n2" }
+    ],
+    "edgesStraight": false,
+    "gridEnabled": true,
+    "alignGuides": true
+  }
+]

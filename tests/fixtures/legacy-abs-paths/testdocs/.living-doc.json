@@ -1,0 +1,11 @@
+{
+  "docsFolder": "/Users/someone/legacy/mydocs",
+  "filenamePattern": "YYYY_MM_DD_HH_mm_[Category]_title",
+  "title": "Legacy",
+  "theme": "system",
+  "language": "en",
+  "port": 4321,
+  "sourceRoot": "/Users/someone/legacy",
+  "extraFiles": ["/Users/someone/legacy/CONTRIBUTING.md"],
+  "blockedFileExtensions": ["exe"]
+}
