@@ -1,7 +1,50 @@
+# MCP tool: `list_source_files`
+
+## Description
+
+List files under the project `sourceRoot` (configured in `.living-doc.json`, defaults to the parent folder of the docs directory).
+
+Use this tool as a **fallback** when the Markdown documentation lacks a specific low-level detail needed for a diagram — for example, when generating a screen-guide diagram or when documenting a piece of code that has no ADR. For architectural facts, read documents first.
+
+Common ignored folders are skipped automatically (`node_modules`, `dist`, `.git`, `build`, `target`, etc.).
+
+## Schéma d'entrée
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "pattern": {
+      "type": "string",
+      "description": "Optional glob-like pattern matched against the relative path. Supports `*` (within a segment) and `**` (across segments). Example: `src/**/*.ts`."
+    },
+    "maxResults": {
+      "type": "number",
+      "description": "Max number of files to return (default 500, hard cap 2000)."
+    }
+  }
+}
+```
+
+## Requête effectuée
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "params": {
+    "name": "list_source_files",
+    "arguments": {}
+  }
+}
+```
+
+## Résultat
+
 ```json
 {
   "sourceRoot": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation",
-  "count": 303,
+  "count": 312,
   "files": [
     ".github/dependabot.yml",
     ".github/workflows/e2e.yml",
@@ -10,8 +53,31 @@
     "CLAUDE.md",
     "LICENSE",
     "README.md",
-    "documentation/2026_05_11_19_27_[General]_document.md",
-    "documentation/2026_05_11_19_33_[General]_document.md",
+    "documentation/1_tutorial/2026_04_11_13_25_[General]_crer_vos_dossiers.md",
+    "documentation/1_tutorial/2026_04_11_18_58_[General]_creer_un_document_dans_un_dossier.md",
+    "documentation/1_tutorial/2026_04_12_09_00_[General]_editer_et_sauvegarder.md",
+    "documentation/1_tutorial/2026_04_12_10_00_[General]_utiliser_les_snippets.md",
+    "documentation/2026_04_08_20_52_[General]_welcome.md",
+    "documentation/2026_04_11_12_55_[General]_premiers_pas.md",
+    "documentation/2026_05_11_22_13_[General]_document.md",
+    "documentation/2_guide/2026_04_08_00_04_[DOCUMENT]_utilisation_des_images_plein_ecran_lien_clickable.md",
+    "documentation/2_guide/2026_04_08_23_38_[Configuration]_demarrage_de_living_documentation.md",
+    "documentation/2_guide/2026_04_09_09_00_[NAVIGATION]_recherche_plein_texte.md",
+    "documentation/2_guide/2026_04_09_10_00_[EXPORT]_exporter_en_pdf.md",
+    "documentation/2_guide/2026_04_09_11_00_[Configuration]_configurer_le_panneau_admin.md",
+    "documentation/2_guide/2026_04_09_12_00_[Configuration]_extra_files.md",
+    "documentation/2_guide/2026_04_09_13_00_[WORDCLOUD]_word_cloud.md",
+    "documentation/2_guide/2026_04_09_14_00_[DIAGRAM]_creer_et_lier_un_diagramme.md",
+    "documentation/3_concept/2026_04_08_20_58_[DOCUMENTING]_ADRS.md",
+    "documentation/3_concept/2026_04_08_22_15_[DOCUMENTING]_living_documentation.md",
+    "documentation/3_concept/2026_04_08_22_46_[METHODOLOGY]_diataxis_architecture_du_contenu.md",
+    "documentation/4_reference/2026_04_08_23_14_[FUNDAMENTALS]_the_living_documentation_tool.md",
+    "documentation/4_reference/2026_04_09_01_00_[REFERENCE]_raccourcis_clavier.md",
+    "documentation/4_reference/2026_04_09_02_00_[REFERENCE]_tokens_pattern_nommage.md",
+    "documentation/4_reference/2026_04_09_03_00_[REFERENCE]_types_de_snippets.md",
+    "documentation/4_reference/2026_04_11_17_31_[FUNDAMENTALS]_architecturer_une_documentation.md",
+    "documentation/4_reference/2026_04_12_14_07_[FUNDAMENTALS]_dossiers_et_catgories.md",
+    "documentation/5_talks/2026_04_28_09_48_[CONFERENCE]_demo_living_documentation_mcp_en_conference.md",
     "documentation/ADRS/2026_03_20_10_15_[CONFIGURATION]_link_extra_files_as_documentation.md",
     "documentation/ADRS/2026_03_21_10_25_[CONFIGURATION]_general_category_and_sidebar_defaults.md",
     "documentation/ADRS/2026_03_22_11_10_[STYLE]_always_dark_syntax_highlighting.md",
@@ -75,6 +141,9 @@
     "documentation/ADRS/2026_05_11_15_44_[DIAGRAM]_edge_lock_button_toggles_unlock_in_addition_to_lock.md",
     "documentation/ADRS/2026_05_11_15_44_[DIAGRAM]_font_size_readout_on_the_node_property_bar.md",
     "documentation/ADRS/2026_05_11_16_08_[AI_CONTEXT]_mcp_explorer_saves_run_results_as_markdown_documents_in_ai_mcp_folder.md",
+    "documentation/ADRS/2026_05_11_19_33_[AI_CONTEXT]_affichage_detail_erreur_appels_mcp_page_context.md",
+    "documentation/ADRS/2026_05_11_19_41_[FRONTEND]_copie_id_document_mcp_depuis_entete_viewer.md",
+    "documentation/ADRS/2026_05_11_20_03_[DIAGRAM]_copie_id_diagramme_mcp_depuis_topbar_editeur.md",
     "documentation/AI/2026_01_01_how_to.md",
     "documentation/AI/MCP/001-tool-get-server-guide.md",
     "documentation/AI/MCP/002-tool-list-documents.md",
@@ -91,6 +160,12 @@
     "documentation/AI/MCP/013-prompt-generate-screen-guide.md",
     "documentation/AI/MCP/014-prompt-flow.md",
     "documentation/AI/MCP/015-prompt-erd.md",
+    "documentation/AI/MCP/016-tool-read-document.md",
+    "documentation/AI/MCP/017-tool-read-diagram.md",
+    "documentation/AI/MCP/018-tool-search-source.md",
+    "documentation/AI/MCP/019-tool-get-accuracy.md",
+    "documentation/AI/MCP/020-tool-list-metadata.md",
+    "documentation/AI/MCP/021-tool-read-source-file.md",
     "documentation/AI/PROJECT-INSTRUCTIONS.md",
     "documentation/AI/PROJECT-STACK.md",
     "documentation/AI/PROJECT-USEFUL-COMMANDS.md",
@@ -98,30 +173,6 @@
     "documentation/AI/rules/i18n-user-visible-strings.md",
     "documentation/AI/rules/no-magic-numbers.md",
     "documentation/AI/rules/playwright-coverage-through-cli.md",
-    "example-doc/1_tutorial/2026_04_11_13_25_[General]_crer_vos_dossiers.md",
-    "example-doc/1_tutorial/2026_04_11_18_58_[General]_creer_un_document_dans_un_dossier.md",
-    "example-doc/1_tutorial/2026_04_12_09_00_[General]_editer_et_sauvegarder.md",
-    "example-doc/1_tutorial/2026_04_12_10_00_[General]_utiliser_les_snippets.md",
-    "example-doc/2026_04_08_20_52_[General]_welcome.md",
-    "example-doc/2026_04_11_12_55_[General]_premiers_pas.md",
-    "example-doc/2_guide/2026_04_08_00_04_[DOCUMENT]_utilisation_des_images_plein_ecran_lien_clickable.md",
-    "example-doc/2_guide/2026_04_08_23_38_[Configuration]_demarrage_de_living_documentation.md",
-    "example-doc/2_guide/2026_04_09_09_00_[NAVIGATION]_recherche_plein_texte.md",
-    "example-doc/2_guide/2026_04_09_10_00_[EXPORT]_exporter_en_pdf.md",
-    "example-doc/2_guide/2026_04_09_11_00_[Configuration]_configurer_le_panneau_admin.md",
-    "example-doc/2_guide/2026_04_09_12_00_[Configuration]_extra_files.md",
-    "example-doc/2_guide/2026_04_09_13_00_[WORDCLOUD]_word_cloud.md",
-    "example-doc/2_guide/2026_04_09_14_00_[DIAGRAM]_creer_et_lier_un_diagramme.md",
-    "example-doc/3_concept/2026_04_08_20_58_[DOCUMENTING]_ADRS.md",
-    "example-doc/3_concept/2026_04_08_22_15_[DOCUMENTING]_living_documentation.md",
-    "example-doc/3_concept/2026_04_08_22_46_[METHODOLOGY]_diataxis_architecture_du_contenu.md",
-    "example-doc/4_reference/2026_04_08_23_14_[FUNDAMENTALS]_the_living_documentation_tool.md",
-    "example-doc/4_reference/2026_04_09_01_00_[REFERENCE]_raccourcis_clavier.md",
-    "example-doc/4_reference/2026_04_09_02_00_[REFERENCE]_tokens_pattern_nommage.md",
-    "example-doc/4_reference/2026_04_09_03_00_[REFERENCE]_types_de_snippets.md",
-    "example-doc/4_reference/2026_04_11_17_31_[FUNDAMENTALS]_architecturer_une_documentation.md",
-    "example-doc/4_reference/2026_04_12_14_07_[FUNDAMENTALS]_dossiers_et_catgories.md",
-    "example-doc/5_talks/2026_04_28_09_48_[CONFERENCE]_demo_living_documentation_mcp_en_conference.md",
     "justfile",
     "memory/MEMORY.md",
     "mise.toml",
@@ -253,6 +304,7 @@
     "tests/api/wordcloud.spec.ts",
     "tests/e2e/config.spec.ts",
     "tests/e2e/context.spec.ts",
+    "tests/e2e/diagram.spec.ts",
     "tests/e2e/editor.spec.ts",
     "tests/e2e/metadata.spec.ts",
     "tests/e2e/viewer.spec.ts",

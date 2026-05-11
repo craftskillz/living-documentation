@@ -194,6 +194,10 @@
       let orientation = null;
       let instructionBrowseCurrent = '';
       let instructionBrowseParent = '';
+      const mcpItemsByKind = {
+        tool: new Map(),
+        prompt: new Map(),
+      };
 
       function setStatus(message) {
         els.status.textContent = message || '';
@@ -450,6 +454,13 @@
       }
 
       function renderMcpItems(container, items, emptyKey, kind) {
+        if (mcpItemsByKind[kind]) {
+          mcpItemsByKind[kind].clear();
+          items.forEach((item) => {
+            const label = typeof item === 'string' ? item : item.name;
+            if (label) mcpItemsByKind[kind].set(label, item);
+          });
+        }
         if (!items.length) {
           container.innerHTML = `<p class="text-xs text-gray-400">${window.t(emptyKey)}</p>`;
           return;
@@ -535,8 +546,13 @@
         return document.querySelector(`${selector}[data-mcp-kind="${CSS.escape(kind)}"][${selector.includes('args') ? 'data-mcp-args' : selector.includes('error') ? 'data-mcp-error' : 'data-mcp-result'}="${CSS.escape(name)}"]`);
       }
 
+      function wrapCodeBlock(value, language = '') {
+        const text = String(value ?? '').replaceAll('```', '`\\`\\`');
+        return `\`\`\`${language}\n${text}\n\`\`\``;
+      }
+
       function wrapJsonBlock(value) {
-        return '```json\n' + JSON.stringify(value, null, 2) + '\n```';
+        return wrapCodeBlock(JSON.stringify(value, null, 2), 'json');
       }
 
       function formatMaybeJsonText(value) {
@@ -574,6 +590,69 @@
         }
 
         return wrapJsonBlock(result);
+      }
+
+      function parseJsonIfPossible(value) {
+        if (typeof value !== 'string') return value;
+        try {
+          return JSON.parse(value);
+        } catch {
+          return value;
+        }
+      }
+
+      function extractToolResultForMarkdown(envelope) {
+        const result = envelope?.result;
+        if (!result || typeof result !== 'object') return envelope;
+        if (!Array.isArray(result.content)) return result;
+
+        const parts = result.content.map((part) => {
+          if (part && part.type === 'text' && typeof part.text === 'string') {
+            return parseJsonIfPossible(part.text);
+          }
+          return part;
+        });
+        return parts.length === 1 ? parts[0] : parts;
+      }
+
+      function buildToolRunMarkdown(item, name, args, envelope) {
+        const description = item && typeof item === 'object' && item.description
+          ? String(item.description)
+          : window.t('context.empty');
+        const inputSchema = item && typeof item === 'object' && item.inputSchema
+          ? item.inputSchema
+          : {};
+        const request = {
+          jsonrpc: '2.0',
+          method: 'tools/call',
+          params: {
+            name,
+            arguments: args,
+          },
+        };
+        const result = extractToolResultForMarkdown(envelope);
+        const resultIsJson = typeof result !== 'string';
+
+        return [
+          `# MCP tool: \`${name}\``,
+          '',
+          '## Description',
+          '',
+          description,
+          '',
+          "## Schéma d'entrée",
+          '',
+          wrapJsonBlock(inputSchema),
+          '',
+          '## Requête effectuée',
+          '',
+          wrapJsonBlock(request),
+          '',
+          '## Résultat',
+          '',
+          resultIsJson ? wrapJsonBlock(result) : String(result),
+          '',
+        ].join('\n');
       }
 
       function stringifyMcpErrorDetail(value) {
@@ -693,7 +772,10 @@
             return;
           }
 
-          const markdown = formatMcpDisplayValue(envelope);
+          const item = mcpItemsByKind[kind]?.get(name);
+          const markdown = kind === 'tool'
+            ? buildToolRunMarkdown(item, name, args, envelope)
+            : formatMcpDisplayValue(envelope);
           const { path: docPath } = await saveMcpResult(name, markdown, kind);
           setMcpResultLink(kind, name, docPath);
         } catch (err) {

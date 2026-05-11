@@ -1,3 +1,33 @@
+# MCP tool: `get_server_guide`
+
+## Description
+
+Return the living-documentation server guide: purpose, mandatory workflow, scope rules (context vs container/UML), diagram conventions, node/edge format, and coordinate system. Call this first whenever you are unsure how to use the server.
+
+## Schéma d'entrée
+
+```json
+{
+  "type": "object",
+  "properties": {}
+}
+```
+
+## Requête effectuée
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "params": {
+    "name": "get_server_guide",
+    "arguments": {}
+  }
+}
+```
+
+## Résultat
+
 # Living Documentation — Server Guide
 
 This server maintains a living documentation system composed of:
@@ -284,3 +314,4 @@ full template):
    - **Description out of sync** → `update_document` → `refresh_metadata`.
 3. Re-call `list_documents_below_accuracy` until `totalBelowThreshold`
    reaches 0 or the remaining items are intentionally drifting.
+

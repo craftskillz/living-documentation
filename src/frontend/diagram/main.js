@@ -24,6 +24,8 @@ import { t }               from './t.js';
 import { initEvidenceMode, toggleEvidenceMode } from './evidence.js';
 import { customShapeIdFromTool, isCustomShapeTool } from './custom-shapes.js';
 
+const DIAGRAM_ID_COPY_FEEDBACK_MS = 1800;
+
 // ── Tool management ───────────────────────────────────────────────────────────
 
 function setTool(tool, shape) {
@@ -124,10 +126,51 @@ function toggleDark() {
   document.getElementById('darkIcon').textContent = dark ? '☀' : '☽';
 }
 
+async function writeClipboardText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    let copied = false;
+    try {
+      copied = document.execCommand('copy');
+    } catch {
+      copied = false;
+    }
+    document.body.removeChild(ta);
+    return copied;
+  }
+}
+
+async function copyCurrentDiagramId() {
+  if (!st.currentDiagramId) return;
+  const btn = document.getElementById('btnCopyDiagramId');
+  if (!btn) return;
+  const originalHtml = btn.innerHTML;
+  const originalTitle = btn.title;
+  const copied = await writeClipboardText(st.currentDiagramId);
+  if (!copied) return;
+
+  btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"/></svg>';
+  btn.title = t('diagram.toolbar.copy_mcp_id_copied');
+  showToast(t('diagram.toast.diagram_id_copied'));
+  setTimeout(() => {
+    btn.innerHTML = originalHtml;
+    btn.title = originalTitle || t('diagram.toolbar.copy_mcp_id');
+  }, DIAGRAM_ID_COPY_FEEDBACK_MS);
+}
+
 // ── Toolbar button wiring ─────────────────────────────────────────────────────
 
 document.getElementById('btnSidebar').addEventListener('click', toggleSidebar);
 
+document.getElementById('btnCopyDiagramId').addEventListener('click', copyCurrentDiagramId);
 document.getElementById('toolSelect').addEventListener('click', () => setTool('select'));
 document.getElementById('toolBox').addEventListener('click',      () => setTool('addNode', 'box'));
 document.getElementById('toolEllipse').addEventListener('click',  () => setTool('addNode', 'ellipse'));

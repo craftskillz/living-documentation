@@ -46,6 +46,17 @@ test('AI Context page shows orientation and creates an AI rule', async ({ page, 
   await createDocumentTool.locator('summary').click();
   await expect(createDocumentTool).toContainText('Input schema');
   await expect(createDocumentTool).toContainText('"title"');
+  const guideTool = page.locator('#mcpToolList details').filter({
+    has: page.locator('summary').getByText('get_server_guide', { exact: true }),
+  });
+  await guideTool.locator('summary').click();
+  await guideTool.getByRole('button', { name: 'Run tool' }).click();
+  await expect(guideTool.locator('[data-mcp-result]')).toContainText('Saved to:');
+  const guideResultPath = (await guideTool.locator('[data-mcp-result] a span').nth(1).textContent())?.trim();
+  expect(guideResultPath).toBeTruthy();
+  const guideResultMd = fs.readFileSync(path.join(ld.docsAbs, guideResultPath!), 'utf-8');
+  expect(guideResultMd).toContain('## Résultat\n\n# Living Documentation');
+  expect(guideResultMd).not.toContain('## Résultat\n\n```text');
   const listDocumentsTool = page.locator('#mcpToolList details').filter({
     has: page.locator('summary').getByText('list_documents', { exact: true }),
   });
@@ -53,6 +64,17 @@ test('AI Context page shows orientation and creates an AI rule', async ({ page, 
   await listDocumentsTool.getByRole('button', { name: 'Run tool' }).click();
   await expect(listDocumentsTool.locator('[data-mcp-result]')).toContainText('Saved to:');
   await expect(listDocumentsTool.locator('[data-mcp-result] a')).toContainText('AI/MCP/');
+  const toolResultPath = (await listDocumentsTool.locator('[data-mcp-result] a span').nth(1).textContent())?.trim();
+  expect(toolResultPath).toBeTruthy();
+  const toolResultMd = fs.readFileSync(path.join(ld.docsAbs, toolResultPath!), 'utf-8');
+  expect(toolResultMd).toContain('# MCP tool: `list_documents`');
+  expect(toolResultMd).toContain('## Description');
+  expect(toolResultMd).toContain("## Schéma d'entrée");
+  expect(toolResultMd).toContain('## Requête effectuée');
+  expect(toolResultMd).toContain('"method": "tools/call"');
+  expect(toolResultMd).toContain('"name": "list_documents"');
+  expect(toolResultMd).toContain('## Résultat');
+  expect(toolResultMd).toContain('"title": "Quickstart"');
   const readDocumentTool = page.locator('#mcpToolList details').filter({
     has: page.locator('summary').getByText('read_document', { exact: true }),
   });

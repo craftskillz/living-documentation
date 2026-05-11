@@ -1,11 +1,202 @@
+# MCP tool: `list_documents`
+
+## Description
+
+List all documents with their id, title, category, folder, and `linkHref` (the ready-to-paste `?doc=...` segment for a Markdown cross-doc link — copy it verbatim, do not re-encode). Documents are the source of truth — read them before creating or updating any diagram. If unsure of the workflow, call `get_server_guide` first.
+
+## Schéma d'entrée
+
+```json
+{
+  "type": "object",
+  "properties": {}
+}
+```
+
+## Requête effectuée
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "params": {
+    "name": "list_documents",
+    "arguments": {}
+  }
+}
+```
+
+## Résultat
+
 ```json
 [
   {
-    "id": "2026_05_11_19_27_%5BGeneral%5D_document",
-    "title": "Document",
+    "id": "1_tutorial%2F2026_04_11_13_25_%5BGeneral%5D_crer_vos_dossiers",
+    "title": "Crer Vos Dossiers",
+    "category": "General",
+    "folder": "1_tutorial",
+    "linkHref": "?doc=1_tutorial%252F2026_04_11_13_25_%255BGeneral%255D_crer_vos_dossiers"
+  },
+  {
+    "id": "1_tutorial%2F2026_04_11_18_58_%5BGeneral%5D_creer_un_document_dans_un_dossier",
+    "title": "Creer Un Document Dans Un Dossier",
+    "category": "General",
+    "folder": "1_tutorial",
+    "linkHref": "?doc=1_tutorial%252F2026_04_11_18_58_%255BGeneral%255D_creer_un_document_dans_un_dossier"
+  },
+  {
+    "id": "1_tutorial%2F2026_04_12_09_00_%5BGeneral%5D_editer_et_sauvegarder",
+    "title": "Editer Et Sauvegarder",
+    "category": "General",
+    "folder": "1_tutorial",
+    "linkHref": "?doc=1_tutorial%252F2026_04_12_09_00_%255BGeneral%255D_editer_et_sauvegarder"
+  },
+  {
+    "id": "1_tutorial%2F2026_04_12_10_00_%5BGeneral%5D_utiliser_les_snippets",
+    "title": "Utiliser Les Snippets",
+    "category": "General",
+    "folder": "1_tutorial",
+    "linkHref": "?doc=1_tutorial%252F2026_04_12_10_00_%255BGeneral%255D_utiliser_les_snippets"
+  },
+  {
+    "id": "2026_04_08_20_52_%5BGeneral%5D_welcome",
+    "title": "Welcome",
     "category": "General",
     "folder": null,
-    "linkHref": "?doc=2026_05_11_19_27_%255BGeneral%255D_document"
+    "linkHref": "?doc=2026_04_08_20_52_%255BGeneral%255D_welcome"
+  },
+  {
+    "id": "2026_04_11_12_55_%5BGeneral%5D_premiers_pas",
+    "title": "Premiers Pas",
+    "category": "General",
+    "folder": null,
+    "linkHref": "?doc=2026_04_11_12_55_%255BGeneral%255D_premiers_pas"
+  },
+  {
+    "id": "2_guide%2F2026_04_08_00_04_%5BDOCUMENT%5D_utilisation_des_images_plein_ecran_lien_clickable",
+    "title": "Utilisation Des Images Plein Ecran Lien Clickable",
+    "category": "DOCUMENT",
+    "folder": "2_guide",
+    "linkHref": "?doc=2_guide%252F2026_04_08_00_04_%255BDOCUMENT%255D_utilisation_des_images_plein_ecran_lien_clickable"
+  },
+  {
+    "id": "2_guide%2F2026_04_08_23_38_%5BConfiguration%5D_demarrage_de_living_documentation",
+    "title": "Demarrage De Living Documentation",
+    "category": "Configuration",
+    "folder": "2_guide",
+    "linkHref": "?doc=2_guide%252F2026_04_08_23_38_%255BConfiguration%255D_demarrage_de_living_documentation"
+  },
+  {
+    "id": "2_guide%2F2026_04_09_09_00_%5BNAVIGATION%5D_recherche_plein_texte",
+    "title": "Recherche Plein Texte",
+    "category": "NAVIGATION",
+    "folder": "2_guide",
+    "linkHref": "?doc=2_guide%252F2026_04_09_09_00_%255BNAVIGATION%255D_recherche_plein_texte"
+  },
+  {
+    "id": "2_guide%2F2026_04_09_10_00_%5BEXPORT%5D_exporter_en_pdf",
+    "title": "Exporter En Pdf",
+    "category": "EXPORT",
+    "folder": "2_guide",
+    "linkHref": "?doc=2_guide%252F2026_04_09_10_00_%255BEXPORT%255D_exporter_en_pdf"
+  },
+  {
+    "id": "2_guide%2F2026_04_09_11_00_%5BConfiguration%5D_configurer_le_panneau_admin",
+    "title": "Configurer Le Panneau Admin",
+    "category": "Configuration",
+    "folder": "2_guide",
+    "linkHref": "?doc=2_guide%252F2026_04_09_11_00_%255BConfiguration%255D_configurer_le_panneau_admin"
+  },
+  {
+    "id": "2_guide%2F2026_04_09_12_00_%5BConfiguration%5D_extra_files",
+    "title": "Extra Files",
+    "category": "Configuration",
+    "folder": "2_guide",
+    "linkHref": "?doc=2_guide%252F2026_04_09_12_00_%255BConfiguration%255D_extra_files"
+  },
+  {
+    "id": "2_guide%2F2026_04_09_13_00_%5BWORDCLOUD%5D_word_cloud",
+    "title": "Word Cloud",
+    "category": "WORDCLOUD",
+    "folder": "2_guide",
+    "linkHref": "?doc=2_guide%252F2026_04_09_13_00_%255BWORDCLOUD%255D_word_cloud"
+  },
+  {
+    "id": "2_guide%2F2026_04_09_14_00_%5BDIAGRAM%5D_creer_et_lier_un_diagramme",
+    "title": "Creer Et Lier Un Diagramme",
+    "category": "DIAGRAM",
+    "folder": "2_guide",
+    "linkHref": "?doc=2_guide%252F2026_04_09_14_00_%255BDIAGRAM%255D_creer_et_lier_un_diagramme"
+  },
+  {
+    "id": "3_concept%2F2026_04_08_20_58_%5BDOCUMENTING%5D_ADRS",
+    "title": "Adrs",
+    "category": "DOCUMENTING",
+    "folder": "3_concept",
+    "linkHref": "?doc=3_concept%252F2026_04_08_20_58_%255BDOCUMENTING%255D_ADRS"
+  },
+  {
+    "id": "3_concept%2F2026_04_08_22_15_%5BDOCUMENTING%5D_living_documentation",
+    "title": "Living Documentation",
+    "category": "DOCUMENTING",
+    "folder": "3_concept",
+    "linkHref": "?doc=3_concept%252F2026_04_08_22_15_%255BDOCUMENTING%255D_living_documentation"
+  },
+  {
+    "id": "3_concept%2F2026_04_08_22_46_%5BMETHODOLOGY%5D_diataxis_architecture_du_contenu",
+    "title": "Diataxis Architecture Du Contenu",
+    "category": "METHODOLOGY",
+    "folder": "3_concept",
+    "linkHref": "?doc=3_concept%252F2026_04_08_22_46_%255BMETHODOLOGY%255D_diataxis_architecture_du_contenu"
+  },
+  {
+    "id": "4_reference%2F2026_04_08_23_14_%5BFUNDAMENTALS%5D_the_living_documentation_tool",
+    "title": "The Living Documentation Tool",
+    "category": "FUNDAMENTALS",
+    "folder": "4_reference",
+    "linkHref": "?doc=4_reference%252F2026_04_08_23_14_%255BFUNDAMENTALS%255D_the_living_documentation_tool"
+  },
+  {
+    "id": "4_reference%2F2026_04_09_01_00_%5BREFERENCE%5D_raccourcis_clavier",
+    "title": "Raccourcis Clavier",
+    "category": "REFERENCE",
+    "folder": "4_reference",
+    "linkHref": "?doc=4_reference%252F2026_04_09_01_00_%255BREFERENCE%255D_raccourcis_clavier"
+  },
+  {
+    "id": "4_reference%2F2026_04_09_02_00_%5BREFERENCE%5D_tokens_pattern_nommage",
+    "title": "Tokens Pattern Nommage",
+    "category": "REFERENCE",
+    "folder": "4_reference",
+    "linkHref": "?doc=4_reference%252F2026_04_09_02_00_%255BREFERENCE%255D_tokens_pattern_nommage"
+  },
+  {
+    "id": "4_reference%2F2026_04_09_03_00_%5BREFERENCE%5D_types_de_snippets",
+    "title": "Types De Snippets",
+    "category": "REFERENCE",
+    "folder": "4_reference",
+    "linkHref": "?doc=4_reference%252F2026_04_09_03_00_%255BREFERENCE%255D_types_de_snippets"
+  },
+  {
+    "id": "4_reference%2F2026_04_11_17_31_%5BFUNDAMENTALS%5D_architecturer_une_documentation",
+    "title": "Architecturer Une Documentation",
+    "category": "FUNDAMENTALS",
+    "folder": "4_reference",
+    "linkHref": "?doc=4_reference%252F2026_04_11_17_31_%255BFUNDAMENTALS%255D_architecturer_une_documentation"
+  },
+  {
+    "id": "4_reference%2F2026_04_12_14_07_%5BFUNDAMENTALS%5D_dossiers_et_catgories",
+    "title": "Dossiers Et Catgories",
+    "category": "FUNDAMENTALS",
+    "folder": "4_reference",
+    "linkHref": "?doc=4_reference%252F2026_04_12_14_07_%255BFUNDAMENTALS%255D_dossiers_et_catgories"
+  },
+  {
+    "id": "5_talks%2F2026_04_28_09_48_%5BCONFERENCE%5D_demo_living_documentation_mcp_en_conference",
+    "title": "Demo Living Documentation Mcp En Conference",
+    "category": "CONFERENCE",
+    "folder": "5_talks",
+    "linkHref": "?doc=5_talks%252F2026_04_28_09_48_%255BCONFERENCE%255D_demo_living_documentation_mcp_en_conference"
   },
   {
     "id": "ADRS%2F2026_03_20_10_15_%5BCONFIGURATION%5D_link_extra_files_as_documentation",
@@ -449,6 +640,27 @@
     "linkHref": "?doc=ADRS%252F2026_05_11_16_08_%255BAI_CONTEXT%255D_mcp_explorer_saves_run_results_as_markdown_documents_in_ai_mcp_folder"
   },
   {
+    "id": "ADRS%2F2026_05_11_19_33_%5BAI_CONTEXT%5D_affichage_detail_erreur_appels_mcp_page_context",
+    "title": "Affichage Detail Erreur Appels Mcp Page Context",
+    "category": "AI_CONTEXT",
+    "folder": "ADRS",
+    "linkHref": "?doc=ADRS%252F2026_05_11_19_33_%255BAI_CONTEXT%255D_affichage_detail_erreur_appels_mcp_page_context"
+  },
+  {
+    "id": "ADRS%2F2026_05_11_19_41_%5BFRONTEND%5D_copie_id_document_mcp_depuis_entete_viewer",
+    "title": "Copie Id Document Mcp Depuis Entete Viewer",
+    "category": "FRONTEND",
+    "folder": "ADRS",
+    "linkHref": "?doc=ADRS%252F2026_05_11_19_41_%255BFRONTEND%255D_copie_id_document_mcp_depuis_entete_viewer"
+  },
+  {
+    "id": "ADRS%2F2026_05_11_20_03_%5BDIAGRAM%5D_copie_id_diagramme_mcp_depuis_topbar_editeur",
+    "title": "Copie Id Diagramme Mcp Depuis Topbar Editeur",
+    "category": "DIAGRAM",
+    "folder": "ADRS",
+    "linkHref": "?doc=ADRS%252F2026_05_11_20_03_%255BDIAGRAM%255D_copie_id_diagramme_mcp_depuis_topbar_editeur"
+  },
+  {
     "id": "AI%2F2026_01_01_how_to",
     "title": "How To",
     "category": "General",
@@ -573,6 +785,48 @@
     "category": "General",
     "folder": "AI/MCP",
     "linkHref": "?doc=AI%252FMCP%252F015-prompt-erd"
+  },
+  {
+    "id": "AI%2FMCP%2F016-tool-read-document",
+    "title": "016 tool read document",
+    "category": "General",
+    "folder": "AI/MCP",
+    "linkHref": "?doc=AI%252FMCP%252F016-tool-read-document"
+  },
+  {
+    "id": "AI%2FMCP%2F017-tool-read-diagram",
+    "title": "017 tool read diagram",
+    "category": "General",
+    "folder": "AI/MCP",
+    "linkHref": "?doc=AI%252FMCP%252F017-tool-read-diagram"
+  },
+  {
+    "id": "AI%2FMCP%2F018-tool-search-source",
+    "title": "018 tool search source",
+    "category": "General",
+    "folder": "AI/MCP",
+    "linkHref": "?doc=AI%252FMCP%252F018-tool-search-source"
+  },
+  {
+    "id": "AI%2FMCP%2F019-tool-get-accuracy",
+    "title": "019 tool get accuracy",
+    "category": "General",
+    "folder": "AI/MCP",
+    "linkHref": "?doc=AI%252FMCP%252F019-tool-get-accuracy"
+  },
+  {
+    "id": "AI%2FMCP%2F020-tool-list-metadata",
+    "title": "020 tool list metadata",
+    "category": "General",
+    "folder": "AI/MCP",
+    "linkHref": "?doc=AI%252FMCP%252F020-tool-list-metadata"
+  },
+  {
+    "id": "AI%2FMCP%2F021-tool-read-source-file",
+    "title": "021 tool read source file",
+    "category": "General",
+    "folder": "AI/MCP",
+    "linkHref": "?doc=AI%252FMCP%252F021-tool-read-source-file"
   },
   {
     "id": "AI%2FMEMORY",

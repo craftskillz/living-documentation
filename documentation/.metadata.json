@@ -104,11 +104,11 @@
   "ADRS/2026_05_11_19_33_[AI_CONTEXT]_affichage_detail_erreur_appels_mcp_page_context": [
     {
       "path": "src/frontend/context.html",
-      "hash": "7d0d7e9e70d84f800fe011d553d4e0c172bc41f5bbaf70b88d776798c5f556c4"
+      "hash": "420e6bfc84ee50c0ab6dc06c344e4e17e359829184e35398be81013330d71e22"
     },
     {
       "path": "tests/e2e/context.spec.ts",
-      "hash": "dc6495249a8474ee115c99ac4211e91a77f267a67ac40e9b8552a96bc5d3b13e"
+      "hash": "bb7da3f7fedb2e4523b4294376a01b394219baa61d6f5632cfa076664f7c6f0e"
     }
   ],
   "ADRS/2026_05_11_19_41_[FRONTEND]_copie_id_document_mcp_depuis_entete_viewer": [
@@ -122,15 +122,65 @@
     },
     {
       "path": "src/frontend/i18n/en.json",
-      "hash": "92b968341866ef355f16b3dc1a8722a2121e9583bc3fd9cf172bf3327d658e41"
+      "hash": "1d5923644e771c6a4b14303ae630b5e99369627998dd09799caef8d357105821"
     },
     {
       "path": "src/frontend/i18n/fr.json",
-      "hash": "7fa702a41adfae4fff45a6c4d6369ae74ea40e3131eeab28fb0e3ab90193b145"
+      "hash": "3a740c6ac6daf1c86144876d84fe1effd1b3b8404acd8d4328f12420b7a0f1ad"
     },
     {
       "path": "tests/e2e/viewer.spec.ts",
       "hash": "91cd04887c47581e2d58427623241e7d2bfbdcd4d17057e5ca15770562908ab0"
+    }
+  ],
+  "ADRS/2026_05_11_20_03_[DIAGRAM]_copie_id_diagramme_mcp_depuis_topbar_editeur": [
+    {
+      "path": "src/frontend/diagram.html",
+      "hash": "58db9ae80492b15c7c1892238b12adf8d35fc65f0f71c8870cc254c861c931c9"
+    },
+    {
+      "path": "src/frontend/diagram/main.js",
+      "hash": "18a57f2b180e016969d0eaa3b7650fdb0733cf98d9725b9ee9683c8c2399718a"
+    },
+    {
+      "path": "src/frontend/i18n/en.json",
+      "hash": "1d5923644e771c6a4b14303ae630b5e99369627998dd09799caef8d357105821"
+    },
+    {
+      "path": "src/frontend/i18n/fr.json",
+      "hash": "3a740c6ac6daf1c86144876d84fe1effd1b3b8404acd8d4328f12420b7a0f1ad"
+    },
+    {
+      "path": "tests/e2e/diagram.spec.ts",
+      "hash": "2c41a94dbc107e573ddb2100da25642bcae2f85fc8a83788c1d9a5fde4cd6a6c"
+    }
+  ],
+  "ADRS/2026_05_11_16_08_[AI_CONTEXT]_mcp_explorer_saves_run_results_as_markdown_documents_in_ai_mcp_folder": [
+    {
+      "path": "src/frontend/context.html",
+      "hash": "420e6bfc84ee50c0ab6dc06c344e4e17e359829184e35398be81013330d71e22"
+    },
+    {
+      "path": "tests/e2e/context.spec.ts",
+      "hash": "bb7da3f7fedb2e4523b4294376a01b394219baa61d6f5632cfa076664f7c6f0e"
+    },
+    {
+      "path": "src/routes/context.ts",
+      "hash": "17c377aa156b0c12acb31f80e1acc262316cdfc1d0a809879417846ac60d8dec"
+    }
+  ],
+  "ADRS/2026_05_11_22_33_[MCP]_review_adr_relevance_mcp_tool": [
+    {
+      "path": "src/mcp/server.ts",
+      "hash": "fd784b5a59e50a7190a1731d22eda577938ff3322c753266eae455074f7c70bc"
+    },
+    {
+      "path": "src/mcp/tools/metadata.ts",
+      "hash": "23f7e0e8cf2742dd496facac061fa77d4f903a73d98df734eef71cc29e6caa8f"
+    },
+    {
+      "path": "tests/api/mcp.spec.ts",
+      "hash": "8b3bf5cc69af5969899cae5e3eac7a36a702a1d5403ac101f1c410e3a0a2a2ad"
     }
   ]
 }

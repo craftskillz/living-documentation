@@ -475,6 +475,8 @@
 
   "diagram.back_btn": "← Retour",
   "diagram.diagrams_list_title": "Mes diagrammes",
+  "diagram.toolbar.copy_mcp_id": "Copier l'id MCP du diagramme",
+  "diagram.toolbar.copy_mcp_id_copied": "Id MCP du diagramme copié",
   "diagram.toolbar.select": "Sélectionner (S)",
   "diagram.toolbar.box": "Rectangle (R)",
   "diagram.toolbar.ellipse": "Ellipse (E)",
@@ -594,6 +596,7 @@
   "diagram.toast.diagram_save_png_error": "Impossible d'enregistrer l'image",
   "diagram.toast.image_added": "Image ajoutée",
   "diagram.toast.image_import_error": "Impossible d'importer l'image",
+  "diagram.toast.diagram_id_copied": "Id du diagramme copié dans le presse-papier",
   "diagram.toast.confirm_delete": "Supprimer ce diagramme ?",
   "diagram.toast.new_diagram_title": "Nouveau diagramme",
   "diagram.toast.untitled": "Sans titre",

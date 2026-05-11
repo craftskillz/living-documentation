@@ -1,0 +1,30 @@
+---
+**date:** 2026-05-11
+**status:** To be validated
+**description:** Ajout d'un bouton icône dans la topbar de l'éditeur de diagrammes pour copier l'identifiant MCP du diagramme courant dans le presse-papiers.
+**tags:** diagram, mcp, clipboard, topbar, btnCopyDiagramId, copyCurrentDiagramId, currentDiagramId, i18n, playwright
+---
+
+# Copie de l'id MCP depuis la topbar de l'éditeur de diagrammes
+
+## Contexte
+
+Les outils MCP de diagrammes utilisent l'identifiant du diagramme pour des appels comme `read_diagram` ou `create_diagram` avec `id`. L'éditeur affichait déjà la liste des diagrammes et chargeait l'id courant dans `st.currentDiagramId`, mais l'utilisateur devait récupérer cet id depuis l'URL ou le stockage JSON.
+
+## Décision
+
+`src/frontend/diagram.html` ajoute un bouton icon-only `#btnCopyDiagramId` dans la topbar, juste avant l'outil `Sélectionner (S)` / `Select (S)`.
+
+`src/frontend/diagram/main.js` ajoute :
+
+- `writeClipboardText(text)`, helper local avec fallback `document.execCommand("copy")` ;
+- `copyCurrentDiagramId()`, qui copie `st.currentDiagramId` ;
+- un feedback temporaire avec icône check, tooltip traduit et toast.
+
+`src/frontend/i18n/en.json` et `src/frontend/i18n/fr.json` ajoutent les clés de tooltip et de toast. `tests/e2e/diagram.spec.ts` vérifie que `/diagram?id=diag-1` copie bien `diag-1` dans le clipboard.
+
+## Conséquences
+
+- L'id de diagramme utilisable par le MCP devient récupérable directement depuis l'éditeur.
+- Le bouton reste discret et ne modifie pas l'outil actif du canvas.
+- Aucun changement de format de stockage diagramme n'est introduit.

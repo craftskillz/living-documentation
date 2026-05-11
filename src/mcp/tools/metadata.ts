@@ -13,6 +13,7 @@ import { sha256File } from "../../lib/hash";
 import { listAllDocuments, resolveDocFilePath } from "./documents";
 
 const ACCURACY_THRESHOLD = 0.8;
+const FULL_ACCURACY = 1;
 const MAX_ITEMS = 10;
 
 function jsonResult(obj: unknown) {
@@ -30,6 +31,18 @@ function decodeDocId(id: unknown): string {
   return decodeURIComponent(id);
 }
 
+function isAdrDocument(
+  doc: { category: string; folder: string | null },
+  docId: string,
+  content: string,
+): boolean {
+  const folderParts = (doc.folder ?? "").toLowerCase().split(/[\\/]+/);
+  if (folderParts.includes("adrs")) return true;
+  if (doc.category.toLowerCase() === "adr") return true;
+  if (/\[adr\]/i.test(docId)) return true;
+  return /architecture decision record/i.test(content.slice(0, 4096));
+}
+
 export function toolListMetadata(docsPath: string, args: { id: string }) {
   const docId = decodeDocId(args?.id);
   const sourceRoot = resolveSourceRoot(docsPath);
@@ -43,6 +56,58 @@ export function toolGetAccuracy(docsPath: string, args: { id: string }) {
   const entries = getDocEntries(docsPath, docId);
   const report = buildReport(entries, sourceRoot);
   return jsonResult({ id: docId, ...report });
+}
+
+export function toolReviewAdrRelevance(docsPath: string, args: { id: string }) {
+  const docId = decodeDocId(args?.id);
+  const docs = listAllDocuments(docsPath);
+  const doc = docs.find((candidate) => decodeURIComponent(candidate.id) === docId);
+  if (!doc) throw new Error(`Document not found: ${docId}`);
+
+  const filePath = resolveDocFilePath(docsPath, doc);
+  if (!filePath) throw new Error(`Document not found: ${docId}`);
+
+  const content = fs.readFileSync(filePath, "utf-8");
+  if (!isAdrDocument(doc, docId, content)) {
+    throw new Error(`Document is not an ADR: ${docId}`);
+  }
+
+  const sourceRoot = resolveSourceRoot(docsPath);
+  const entries = getDocEntries(docsPath, docId);
+  const report = buildReport(entries, sourceRoot);
+  const sourceFilesToReread = report.items.filter((item) => item.status !== "unchanged");
+  const hasMetadata = entries.length > 0;
+  const needsReview = hasMetadata && report.accuracy < FULL_ACCURACY;
+
+  let state: "no_metadata" | "metadata_current" | "needs_llm_review" | "already_superseeded";
+  const status = getFrontmatterField(content, "status");
+  if (status?.trim().toLowerCase() === "superseeded") state = "already_superseeded";
+  else if (!hasMetadata) state = "no_metadata";
+  else if (needsReview) state = "needs_llm_review";
+  else state = "metadata_current";
+
+  return jsonResult({
+    id: docId,
+    isAdr: true,
+    state,
+    document: {
+      id: doc.id,
+      decodedId: docId,
+      title: doc.title,
+      category: doc.category,
+      folder: doc.folder,
+      status,
+      description: getFrontmatterField(content, "description"),
+      tags: getFrontmatterField(content, "tags"),
+      content,
+    },
+    metadata: {
+      sourceRoot,
+      hasMetadata,
+      ...report,
+      sourceFilesToReread,
+    },
+  });
 }
 
 export function toolRefreshMetadata(

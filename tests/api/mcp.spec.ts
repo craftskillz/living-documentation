@@ -19,6 +19,7 @@ test('tools/list exposes the expected tool set', async ({ request, ld }) => {
       'search_source',
       'list_metadata',
       'get_accuracy',
+      'review_adr_relevance',
       'add_metadata',
       'refresh_metadata',
     ]),
@@ -31,6 +32,7 @@ test('prompts/list exposes the workflow and diagram-generation prompts over Stre
   expect(names).toEqual(
     expect.arrayContaining([
       'audit-doc-drift',
+      'review-adr-relevance',
       'create-adr',
       'generate-context-diagram',
       'generate-container-diagram',
@@ -56,6 +58,13 @@ test('prompts/get returns the create-adr and audit-doc-drift templates over Stre
   expect(audit.messages[0].content.text).toContain('list_documents_below_accuracy');
   expect(audit.messages[0].content.text).toContain('refresh_metadata');
   expect(audit.messages[0].content.text).toContain('update_document');
+
+  const reviewAdr = await getPrompt(request, ld.baseURL, 'review-adr-relevance', {
+    id: 'ADRS/2026_01_02_10_00_[ARCHITECTURE]_sample_metadata_adr',
+  });
+  expect(reviewAdr.messages[0].content.text).toContain('review_adr_relevance');
+  expect(reviewAdr.messages[0].content.text).toContain('read_source_file');
+  expect(reviewAdr.messages[0].content.text).toContain('Never supersede without explicit user confirmation');
 });
 
 test('list_documents returns the three fixture docs', async ({ request, ld }) => {
@@ -619,6 +628,63 @@ test.describe('metadata MCP tools on the with-metadata fixture', () => {
     );
     expect(afterRefresh.items[0].status).toBe('unchanged');
     expect(afterRefresh.accuracy).toBe(1);
+  });
+
+  test('review_adr_relevance reports the ADR document and drifted source files', async ({
+    request,
+    ld,
+  }) => {
+    const adrDir = path.join(ld.docsAbs, 'ADRS');
+    fs.mkdirSync(adrDir, { recursive: true });
+    const adrId = 'ADRS/2026_01_02_10_00_[ARCHITECTURE]_sample_metadata_adr';
+    fs.writeFileSync(
+      path.join(adrDir, '2026_01_02_10_00_[ARCHITECTURE]_sample_metadata_adr.md'),
+      [
+        '---',
+        '**date:** 2026-01-02',
+        '**status:** To be validated',
+        '**description:** Sample ADR describes the metadata-bound sample source file.',
+        '**tags:** mcp, metadata, adr, sample',
+        '---',
+        '',
+        '# Sample metadata ADR',
+        '',
+        'The ADR documents `sample.ts`.',
+        '',
+      ].join('\n'),
+      'utf-8',
+    );
+
+    await callTool(request, ld.baseURL, 'add_metadata', { id: adrId, path: 'sample.ts' });
+    fs.writeFileSync(path.resolve(ld.parent, 'src/sample.ts'), 'export const x = 99; // drift\n');
+
+    const result = await callTool<{
+      state: string;
+      document: { decodedId: string; description: string; content: string };
+      metadata: { accuracy: number; sourceFilesToReread: Array<{ path: string; status: string }> };
+    }>(request, ld.baseURL, 'review_adr_relevance', { id: adrId });
+
+    expect(result.state).toBe('needs_llm_review');
+    expect(result.document.decodedId).toBe(adrId);
+    expect(result.document.description).toBe('Sample ADR describes the metadata-bound sample source file.');
+    expect(result.document.content).toContain('# Sample metadata ADR');
+    expect(result.metadata.accuracy).toBe(0);
+    expect(result.metadata.sourceFilesToReread).toEqual([
+      expect.objectContaining({ path: 'sample.ts', status: 'modified' }),
+    ]);
+  });
+
+  test('review_adr_relevance rejects non-ADR documents', async ({ request, ld }) => {
+    const docs = await callTool<Array<{ id: string; title: string }>>(
+      request,
+      ld.baseURL,
+      'list_documents',
+    );
+    const intro = docs.find((d) => d.title === 'Intro')!;
+
+    await expect(
+      callTool(request, ld.baseURL, 'review_adr_relevance', { id: intro.id }),
+    ).rejects.toThrow(/not an ADR/i);
   });
 
   test('read_source_file rejects an absolute path', async ({ request, ld }) => {
