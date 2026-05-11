@@ -172,15 +172,15 @@
   "ADRS/2026_05_11_22_33_[MCP]_review_adr_relevance_mcp_tool": [
     {
       "path": "src/mcp/server.ts",
-      "hash": "fd784b5a59e50a7190a1731d22eda577938ff3322c753266eae455074f7c70bc"
+      "hash": "3b1a958205aacbca4131f8a5557957d09cca5266d0937dae99e464b2c3b0e7af"
     },
     {
       "path": "src/mcp/tools/metadata.ts",
-      "hash": "23f7e0e8cf2742dd496facac061fa77d4f903a73d98df734eef71cc29e6caa8f"
+      "hash": "a1f4e76088ecb14b2395ae526de9766bcca185e144d891e291167fe253d44fce"
     },
     {
       "path": "tests/api/mcp.spec.ts",
-      "hash": "8b3bf5cc69af5969899cae5e3eac7a36a702a1d5403ac101f1c410e3a0a2a2ad"
+      "hash": "d95c629036430dded46eefcb38a3ae0e6983652860b67d2fb63fff4ba9bd005b"
     }
   ]
 }

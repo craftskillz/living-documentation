@@ -20,6 +20,7 @@ test('tools/list exposes the expected tool set', async ({ request, ld }) => {
       'list_metadata',
       'get_accuracy',
       'review_adr_relevance',
+      'list_adrs_below_accuracy',
       'add_metadata',
       'refresh_metadata',
     ]),
@@ -31,7 +32,7 @@ test('prompts/list exposes the workflow and diagram-generation prompts over Stre
   const names = prompts.map((p) => p.name);
   expect(names).toEqual(
     expect.arrayContaining([
-      'audit-doc-drift',
+      'audit-adrs-drift',
       'review-adr-relevance',
       'create-adr',
       'generate-context-diagram',
@@ -44,7 +45,7 @@ test('prompts/list exposes the workflow and diagram-generation prompts over Stre
   );
 });
 
-test('prompts/get returns the create-adr and audit-doc-drift templates over Streamable HTTP', async ({ request, ld }) => {
+test('prompts/get returns the create-adr and audit-adrs-drift templates over Streamable HTTP', async ({ request, ld }) => {
   const createAdr = await getPrompt(request, ld.baseURL, 'create-adr', {
     featureSummary: 'Neon browser obstacle game',
     modifiedFiles: 'index.html',
@@ -54,8 +55,9 @@ test('prompts/get returns the create-adr and audit-doc-drift templates over Stre
   expect(createAdr.messages[0].content.text).toContain('create_document');
   expect(createAdr.messages[0].content.text).toContain('add_metadata');
 
-  const audit = await getPrompt(request, ld.baseURL, 'audit-doc-drift');
-  expect(audit.messages[0].content.text).toContain('list_documents_below_accuracy');
+  const audit = await getPrompt(request, ld.baseURL, 'audit-adrs-drift');
+  expect(audit.messages[0].content.text).toContain('list_adrs_below_accuracy');
+  expect(audit.messages[0].content.text).toContain('review_adr_relevance');
   expect(audit.messages[0].content.text).toContain('refresh_metadata');
   expect(audit.messages[0].content.text).toContain('update_document');
 
@@ -786,36 +788,76 @@ test.describe('metadata MCP tools on the with-metadata fixture', () => {
     );
   });
 
-  test('list_documents_below_accuracy surfaces a doc whose source file has drifted', async ({
+  test('list_adrs_below_accuracy surfaces only ADRs whose source files have drifted', async ({
     request,
     ld,
   }) => {
-    // Mutate the bound source file so accuracy drops from 1.0 to 0.0.
+    const adrDir = path.join(ld.docsAbs, 'ADRS');
+    fs.mkdirSync(adrDir, { recursive: true });
+    const adrId = 'ADRS/2026_01_03_10_00_[ARCHITECTURE]_drifting_sample_adr';
+    fs.writeFileSync(
+      path.join(adrDir, '2026_01_03_10_00_[ARCHITECTURE]_drifting_sample_adr.md'),
+      [
+        '---',
+        '**date:** 2026-01-03',
+        '**status:** To be validated',
+        '**description:** Sample ADR tracks sample.ts.',
+        '**tags:** mcp, metadata, adr, sample',
+        '---',
+        '',
+        '# Drifting sample ADR',
+        '',
+      ].join('\n'),
+      'utf-8',
+    );
+    await callTool(request, ld.baseURL, 'add_metadata', { id: adrId, path: 'sample.ts' });
+
+    // Mutate the bound source file so both the fixture's non-ADR doc and the ADR drift.
     fs.writeFileSync(path.resolve(ld.parent, 'src/sample.ts'), 'export const x = 99; // drift\n');
 
     const result = await callTool<{
       items: Array<{ title: string; accuracy: number }>;
       totalBelowThreshold: number;
-    }>(request, ld.baseURL, 'list_documents_below_accuracy');
+    }>(request, ld.baseURL, 'list_adrs_below_accuracy');
     expect(result.totalBelowThreshold).toBe(1);
-    expect(result.items[0].title).toBe('Intro');
+    expect(result.items[0].title).toBe('Drifting Sample Adr');
     expect(result.items[0].accuracy).toBe(0);
   });
 
-  test('list_documents_below_accuracy excludes docs with frontmatter status: SuperSeeded', async ({
+  test('list_adrs_below_accuracy excludes ADRs with frontmatter status: SuperSeeded', async ({
     request,
     ld,
   }) => {
-    // Same drift as above, but mark the doc as SuperSeeded via frontmatter.
+    const adrDir = path.join(ld.docsAbs, 'ADRS');
+    fs.mkdirSync(adrDir, { recursive: true });
+    const adrId = 'ADRS/2026_01_04_10_00_[ARCHITECTURE]_superseeded_sample_adr';
+    fs.writeFileSync(
+      path.join(adrDir, '2026_01_04_10_00_[ARCHITECTURE]_superseeded_sample_adr.md'),
+      [
+        '---',
+        '**date:** 2026-01-04',
+        '**status:** To be validated',
+        '**description:** Sample ADR tracks sample.ts.',
+        '**tags:** mcp, metadata, adr, sample',
+        '---',
+        '',
+        '# Superseeded sample ADR',
+        '',
+      ].join('\n'),
+      'utf-8',
+    );
+    await callTool(request, ld.baseURL, 'add_metadata', { id: adrId, path: 'sample.ts' });
+
+    // Same drift as above, but mark the ADR as SuperSeeded via frontmatter.
     fs.writeFileSync(path.resolve(ld.parent, 'src/sample.ts'), 'drift\n');
     fs.writeFileSync(
-      path.join(ld.docsAbs, '2026_01_01_10_00_[General]_intro.md'),
-      '---\nstatus: SuperSeeded\n---\n\n# Intro\n',
+      path.join(adrDir, '2026_01_04_10_00_[ARCHITECTURE]_superseeded_sample_adr.md'),
+      '---\n**date:** 2026-01-04\n**status:** SuperSeeded\n**description:** Sample ADR tracks sample.ts.\n**tags:** mcp, metadata, adr, sample\n---\n\n# Superseeded sample ADR\n',
     );
     const result = await callTool<{ items: Array<unknown>; totalBelowThreshold: number }>(
       request,
       ld.baseURL,
-      'list_documents_below_accuracy',
+      'list_adrs_below_accuracy',
     );
     expect(result.items).toHaveLength(0);
     expect(result.totalBelowThreshold).toBe(0);

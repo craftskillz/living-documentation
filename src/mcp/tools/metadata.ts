@@ -185,7 +185,7 @@ export function toolRemoveMetadata(
   });
 }
 
-export function toolListDocumentsBelowAccuracy(docsPath: string) {
+export function toolListAdrsBelowAccuracy(docsPath: string) {
   const sourceRoot = resolveSourceRoot(docsPath);
   const docs = listAllDocuments(docsPath);
 
@@ -207,14 +207,14 @@ export function toolListDocumentsBelowAccuracy(docsPath: string) {
     if (entries.length === 0) continue;
 
     const filePath = resolveDocFilePath(docsPath, doc);
-    if (filePath) {
-      try {
-        const content = fs.readFileSync(filePath, "utf-8");
-        const status = getFrontmatterField(content, "status");
-        if (status && status.trim().toLowerCase() === "superseeded") continue;
-      } catch {
-        // Unreadable doc — keep it in scope; metadata accuracy is still meaningful.
-      }
+    if (!filePath) continue;
+    try {
+      const content = fs.readFileSync(filePath, "utf-8");
+      if (!isAdrDocument(doc, decodedId, content)) continue;
+      const status = getFrontmatterField(content, "status");
+      if (status && status.trim().toLowerCase() === "superseeded") continue;
+    } catch {
+      continue;
     }
 
     const report = buildReport(entries, sourceRoot);

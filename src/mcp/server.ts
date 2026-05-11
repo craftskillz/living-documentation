@@ -10,7 +10,7 @@ import { Router, Request, Response } from 'express';
 import { toolListDocuments, toolReadDocument, toolCreateDocument, toolUpdateDocument } from './tools/documents';
 import { toolListDiagrams, toolReadDiagram, toolCreateDiagram } from './tools/diagrams';
 import { toolListSourceFiles, toolReadSourceFile, toolSearchSource } from './tools/source';
-import { toolListMetadata, toolGetAccuracy, toolReviewAdrRelevance, toolRefreshMetadata, toolAddMetadata, toolRemoveMetadata, toolListDocumentsBelowAccuracy } from './tools/metadata';
+import { toolListMetadata, toolGetAccuracy, toolReviewAdrRelevance, toolRefreshMetadata, toolAddMetadata, toolRemoveMetadata, toolListAdrsBelowAccuracy } from './tools/metadata';
 
 // ── Server guide ──────────────────────────────────────────────────────────────
 // Shared by the `instructions` field (sent on MCP initialize) and the
@@ -282,11 +282,10 @@ Tools:
   \`remove_metadata\` old path).
 - \`refresh_metadata(id)\` — re-hash every attached file. Call **after**
   the doc has been updated to re-align it with the current source state.
-- \`list_documents_below_accuracy()\` — audit: returns up to 10 documents
-  whose accuracy < 80%, sorted most-degraded first, plus a
-  \`totalBelowThreshold\` counter. SuperSeeded docs and docs without
-  metadata are excluded. Use this instead of looping
-  \`list_documents\` + \`get_accuracy\`.
+- \`list_adrs_below_accuracy()\` — audit: returns up to 10 ADRs whose accuracy
+  < 80%, sorted most-degraded first, plus a \`totalBelowThreshold\` counter.
+  SuperSeeded ADRs, non-ADR documents, and docs without metadata are excluded.
+  Use this instead of looping \`list_documents\` + \`get_accuracy\` for ADR drift.
 
 Recommended workflow to keep docs accurate (single-doc):
 1. \`list_documents\` → pick a doc.
@@ -297,14 +296,14 @@ Recommended workflow to keep docs accurate (single-doc):
    - **Out of sync** → update the doc with \`update_document(id, content)\`.
 5. \`refresh_metadata\` to re-baseline the hashes.
 
-Bulk audit workflow (Scenario B — invoke prompt \`audit-doc-drift\` for the
+Bulk audit workflow (Scenario B — invoke prompt \`audit-adrs-drift\` for the
 full template):
-1. \`list_documents_below_accuracy\` → batch of up to 10 most-degraded docs.
-2. For each item: \`get_accuracy\` + \`read_document\` + \`read_source_file\`
-   on \`modified\` entries → decide:
+1. \`list_adrs_below_accuracy\` → batch of up to 10 most-degraded ADRs.
+2. For each item: \`review_adr_relevance\` + \`read_source_file\` on
+   \`modified\` entries → decide:
    - **Description still holds** → \`refresh_metadata\` (re-baseline as-is).
-   - **Description out of sync** → \`update_document\` → \`refresh_metadata\`.
-3. Re-call \`list_documents_below_accuracy\` until \`totalBelowThreshold\`
+   - **Description out of sync** → ask the user before superseding.
+3. Re-call \`list_adrs_below_accuracy\` until \`totalBelowThreshold\`
    reaches 0 or the remaining items are intentionally drifting.
 `;
 
@@ -716,7 +715,7 @@ const TOOLS = [
       'If the document already has an entry for that path, its hash is updated.',
       '',
       '## Call this after every `create_document` for an ADR',
-      'Each ADR must be bound to the source files it materially describes. Without this binding, the ADR escapes drift detection (`get_accuracy`, `list_documents_below_accuracy`) and the documentation stops being "living".',
+      'Each ADR must be bound to the source files it materially describes. Without this binding, the ADR escapes drift detection (`get_accuracy`, `list_adrs_below_accuracy`) and the documentation stops being "living".',
       '',
       '## What to attach — and what NOT to attach',
       'Attach: every source file whose **logic** is the subject of the ADR (component, hook, service, route, schema, infra config that this decision created or changed).',
@@ -752,8 +751,8 @@ const TOOLS = [
     },
   },
   {
-    name: 'list_documents_below_accuracy',
-    description: 'List documents whose accuracy has dropped below 80%, sorted from most degraded first. Returns up to 10 documents per call along with the total count of documents below the threshold. Documents without any metadata (total = 0) and SuperSeeded documents are excluded. Use this to audit which documents need review after recent code changes.',
+    name: 'list_adrs_below_accuracy',
+    description: 'List ADRs whose accuracy has dropped below 80%, sorted from most degraded first. Returns up to 10 ADRs per call along with the total count of ADRs below the threshold. Non-ADR documents, ADRs without metadata (total = 0), and SuperSeeded ADRs are excluded. ADR detection uses the same convention as review_adr_relevance: folder segment `ADRS`, category `ADR`, `[ADR]` in the id, or an `Architecture Decision Record` marker in the opening content.',
     inputSchema: { type: 'object', properties: {} },
   },
   {
@@ -783,8 +782,8 @@ const TOOLS = [
 
 const PROMPTS = [
   {
-    name: 'audit-doc-drift',
-    description: 'Audit drifting documentation: list every ADR with reliability < 80%, verify whether the description still matches the attached source code, then either re-baseline the hashes (description still correct) or rewrite the ADR body and re-baseline (description out of sync). Auto-invoke when the user asks to audit / refresh / review drifting docs ("audite la doc", "vérifie la fiabilité de la doc", "fais le tour des ADR qui ne sont plus à jour", "review doc drift").',
+    name: 'audit-adrs-drift',
+    description: 'Audit drifting ADRs: list every ADR with reliability < 80%, call `review_adr_relevance`, read the drifted source files, then either re-baseline hashes when the ADR still matches the code or ask the user before superseding it. Auto-invoke when the user asks to audit / refresh / review drifting ADRs ("audite les ADR", "vérifie la fiabilité des ADR", "fais le tour des ADR qui ne sont plus à jour", "review ADR drift").',
   },
   {
     name: 'review-adr-relevance',
@@ -915,24 +914,25 @@ Clicking a linked node in the editor navigates directly to the child diagram.
 
 function buildPromptTemplate(name: PromptName, args: Record<string, string>): string {
   switch (name) {
-    case 'audit-doc-drift':
+    case 'audit-adrs-drift':
       return `
-You are about to **audit the documentation for drift between ADRs and the source code they describe**, and bring every drifting ADR back in sync.
+You are about to **audit ADR drift against the source code each ADR describes**, and bring every drifting ADR back to a clear state.
 
 ## Step 1 — Inventory drifting ADRs
 
-Call \`list_documents_below_accuracy\`. It returns up to 10 ADRs whose reliability is below 80%, sorted most-degraded first, plus a \`totalBelowThreshold\` counter (\`SuperSeeded\` docs and docs without metadata are excluded automatically).
+Call \`list_adrs_below_accuracy\`. It returns up to 10 ADRs whose reliability is below 80%, sorted most-degraded first, plus a \`totalBelowThreshold\` counter. Non-ADR documents, \`SuperSeeded\` ADRs, and ADRs without metadata are excluded automatically.
 
-If the result is empty, tell the user *"All documents are above the 80% reliability threshold — nothing to audit."* and stop.
+If the result is empty, tell the user *"All ADRs are above the 80% reliability threshold — nothing to audit."* and stop.
 
 ## Step 2 — Audit each ADR in the batch
 
 For each ADR returned, in order:
 
-1. \`get_accuracy(id)\` — read the per-entry breakdown (\`unchanged\` / \`modified\` / \`missing\`).
-2. \`read_document(id)\` — load the ADR's current Markdown (frontmatter + body).
-3. For every entry whose status is \`modified\`: \`read_source_file(path)\` — load the current code.
-4. **Compare and decide.** The ADR's \`**description:**\` field claims a technical fact about the code, and the body (Contexte / Décision / Conséquences) describes how the code behaves. Are they still accurate against the current code, or have they fallen out of sync?
+1. Call \`review_adr_relevance(id)\` — this validates the ADR and returns the ADR content, metadata accuracy, and \`sourceFilesToReread\`.
+2. If \`state\` is \`no_metadata\`, \`metadata_current\`, or \`already_superseeded\`, report the state and move to the next ADR.
+3. For every \`sourceFilesToReread\` entry whose status is \`modified\`: call \`read_source_file(path)\`.
+4. For every entry whose status is \`missing\`: do **not** refresh. Tell the user the file is missing and ask whether it was renamed or deleted.
+5. **Compare and decide.** The ADR's \`document.description\` and body describe a technical decision. Are they still accurate against the current source files, or have they fallen out of sync?
 
 ### Outcome A — The ADR is still accurate
 The code changes were cosmetic (renames, formatting, refactors that don't affect documented behavior).
@@ -941,27 +941,29 @@ The code changes were cosmetic (renames, formatting, refactors that don't affect
 
 Tell the user: *"\`<title>\` — accuracy was X%, but the description still holds. Re-baselined."*
 
-### Outcome B — The ADR is out of sync
+### Outcome B — The ADR contradicts the code
 The description and/or body no longer match what the code does.
 
-1. Compose the corrected Markdown:
-   - Update \`**description:**\` if its technical sentence is wrong.
-   - Update the body sections to reflect the current behavior.
-   - Add new entries to \`**tags:**\` if new concepts/symbols appeared in the code.
-   - **Do NOT change \`**status:**\`** — auditing is not superseding. If you believe the change is structural enough to warrant a brand-new ADR with a different design altogether, stop and tell the user — they will trigger \`create-adr\` instead.
-2. Call \`update_document(id, content)\` with the **full** corrected Markdown.
-3. Call \`refresh_metadata(id)\` once the doc is updated.
+1. Tell the user exactly what no longer matches.
+2. Ask whether they want to supersede the ADR.
+3. Wait for the user's answer.
 
-Tell the user: *"\`<title>\` — description was out of sync. Updated body and re-baselined. Diff summary: <one line>."*
+If the user accepts:
+- Call \`read_document(id)\` if you need the current Markdown again.
+- Call \`update_document(id, content)\` with the full Markdown, changing the frontmatter status to exactly \`SuperSeeded\` and adding a short supersession note under the frontmatter.
+- Tell the user the ADR has been superseded.
+
+If the user refuses:
+- Tell the user that they must perform the verification themselves and call \`refresh_metadata(id)\` only when they are satisfied the ADR is aligned with the code.
 
 ### Outcome C — Source files are missing
-\`get_accuracy\` flags entries as \`missing\` (the source file no longer exists).
+\`review_adr_relevance\` flags entries as \`missing\` (the source file no longer exists).
 
 Do **not** auto-remove the metadata entry. The file may have been **renamed** (the user should run \`add_metadata\` for the new path then \`remove_metadata\` for the old one) or genuinely **deleted** (\`remove_metadata\`). Surface the situation to the user and wait for instruction.
 
 ## Step 3 — Loop until done
 
-After processing the batch, call \`list_documents_below_accuracy\` again. If \`totalBelowThreshold\` > 0 **and** the new batch makes progress (different docs or fewer docs), continue from Step 2.
+After processing the batch, call \`list_adrs_below_accuracy\` again. If \`totalBelowThreshold\` > 0 **and** the new batch makes progress (different docs or fewer docs), continue from Step 2.
 
 If the same docs come back unchanged, the remaining drift is intentional or blocked by Outcome C — stop and report.
 
@@ -970,8 +972,8 @@ If the same docs come back unchanged, the remaining drift is intentional or bloc
 Summarise to the user:
 - N ADRs audited.
 - N re-baselined as-is (Outcome A — description was correct).
-- N rewritten and re-baselined (Outcome B — content corrected). Include the list with one-line diff summaries.
-- N flagged for user input (Outcome C — missing source files, or structural change requiring \`create-adr\`).
+- N superseded after user confirmation (Outcome B).
+- N flagged for user input (Outcome C — missing source files, refused supersession, or structural change requiring \`create-adr\`).
 - Final \`totalBelowThreshold\` after the audit.
 `.trim();
 
@@ -1619,8 +1621,8 @@ function createMcpServer(docsPath: string): Server {
           return toolAddMetadata(docsPath, args as { id: string; path: string });
         case 'remove_metadata':
           return toolRemoveMetadata(docsPath, args as { id: string; path: string });
-        case 'list_documents_below_accuracy':
-          return toolListDocumentsBelowAccuracy(docsPath);
+        case 'list_adrs_below_accuracy':
+          return toolListAdrsBelowAccuracy(docsPath);
         default:
           throw new Error(`Unknown tool: ${name}`);
       }
