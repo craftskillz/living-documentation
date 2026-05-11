@@ -49,7 +49,7 @@ Tous les attributs `onclick="..."` ont été supprimés du HTML. Les boutons ont
 
 ### Graphe de dépendances (simplifié)
 
-[![Graphe de dépendances des modules diagram JS](./images/diagram_js_module_dependencies.png)](/diagram?id=d1775347200001)
+[![Graphe de dépendances des modules diagram JS](./images/graphe_de_d_pendances_des_modules_diagram_js.png)](/diagram?id=d1775347200001)
 
 Aucun cycle de dépendances : `constants` et `state` n'importent rien, `main` importe tout.
 
