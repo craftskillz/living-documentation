@@ -3,8 +3,9 @@ import path from 'path';
 import { readConfig } from '../../lib/config';
 import { parseFilename } from '../../lib/parser';
 
-function buildFilename(filenamePattern: string, title: string, category: string): string {
-  const now = new Date();
+function buildFilename(filenamePattern: string, title: string, category: string, dateOverride?: string): string {
+  const parsed = dateOverride ? new Date(dateOverride) : null;
+  const now = parsed && !Number.isNaN(parsed.getTime()) ? parsed : new Date();
   const pad = (n: number) => String(n).padStart(2, '0');
   const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
   const [year, month, day] = today.split('-');
@@ -160,9 +161,10 @@ export function toolCreateDocument(docsPath: string, args: {
   category: string;
   folder?: string;
   content?: string;
+  date?: string;
 }) {
   const { filenamePattern, port } = readConfig(docsPath);
-  const filename = buildFilename(filenamePattern, args.title, args.category || 'General');
+  const filename = buildFilename(filenamePattern, args.title, args.category || 'General', args.date);
 
   let targetDir = path.resolve(docsPath);
   if (args.folder && args.folder.trim()) {

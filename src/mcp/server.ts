@@ -11,6 +11,7 @@ import { toolListDocuments, toolReadDocument, toolCreateDocument, toolUpdateDocu
 import { toolListDiagrams, toolReadDiagram, toolCreateDiagram } from './tools/diagrams';
 import { toolListSourceFiles, toolReadSourceFile, toolSearchSource } from './tools/source';
 import { toolListMetadata, toolGetAccuracy, toolReviewAdrRelevance, toolRefreshMetadata, toolAddMetadata, toolRemoveMetadata, toolListAdrsBelowAccuracy } from './tools/metadata';
+import { toolRetrodocumentAdrsFromGit } from './tools/git';
 
 // ── Server guide ──────────────────────────────────────────────────────────────
 // Shared by the `instructions` field (sent on MCP initialize) and the
@@ -382,6 +383,9 @@ const CREATE_DIAGRAM_DESCRIPTION = [
 const CREATE_DOCUMENT_DESCRIPTION = [
   'Create a **new** Markdown document. The filename is generated automatically from the configured pattern (date + category + title slug). Pass `content` as full Markdown; omit to create an empty stub. To **modify an existing document** (correct drift, flip `**status:**` to `SuperSeeded`, edit body), use `update_document(id, content)` instead — `create_document` will refuse with `A document with this name already exists` if the target filename collides.',
   '',
+  '## `date` argument — retrodocumentation only',
+  'By default the filename date prefix is "now". Pass `date` (ISO 8601, e.g. `2024-08-12` or `2024-08-12T14:33:00Z`) **only** when retrodocumenting an ADR from a past event — typically inside the `retrodocument-adrs-from-git` workflow, where the date must come from the originating git commit. The frontmatter `**date:**` field should match. Outside of retrodocumentation, omit `date`.',
+  '',
   '## Primary use case — ADRs (Architecture Decision Records)',
   'On this project, the dominant use of `create_document` is to record an ADR every time a coding agent implements or modifies a feature. The full workflow is described in `get_server_guide` ("Feature workflow"). In short:',
   '',
@@ -484,6 +488,7 @@ const TOOLS = [
         category: { type: 'string', description: 'Category extracted from the filename, e.g. "Architecture", "Guide"' },
         folder:   { type: 'string', description: 'Optional subfolder relative to the docs root, e.g. "adrs" or "adrs/backend"' },
         content:  { type: 'string', description: 'Full Markdown content. Omit to create an empty document.' },
+        date:     { type: 'string', description: 'Optional ISO 8601 date (e.g. `2024-08-12` or `2024-08-12T14:33:00Z`) that overrides the filename date prefix. Use ONLY when retrodocumenting from a past event (typically a git commit). Defaults to now.' },
       },
       required: ['title', 'category'],
     },
@@ -773,6 +778,30 @@ const TOOLS = [
       required: ['query'],
     },
   },
+  {
+    name: 'retrodocument_adrs_from_git',
+    description: [
+      'Prepare a retrodocumentation packet from recent git history.',
+      '',
+      'Reads up to `limit` commits (default 100, hard cap 200) from the git repository that contains `sourceRoot`, ordered **oldest first** so the LLM can walk decisions in chronological order. Per commit, returns: sha, committer/author dates (ISO 8601), author name, subject, body, parent count, and `filesChanged` annotated with `changeType` (A/M/D/R/C/T), `underSourceRoot`, `existsNow`, and `godFileSuspect` (lock files, manifests — flagged as poor metadata targets per `add_metadata` guidance).',
+      '',
+      'Each commit carries a `state`:',
+      '- `candidate` — has at least one non-deleted, non-god file under `sourceRoot`; worth a semantic look.',
+      '- `trivial`   — no source-bearing files (docs-only, formatting, config-only); skip unless the LLM has reason.',
+      '- `merge`     — has more than one parent; skip unless the merge introduces a documented decision.',
+      '',
+      'This is a factual reporting tool, not the whole workflow. Use prompt `retrodocument-adrs-from-git` when the LLM must decide whether each commit deserves a new ADR (Outcome A), should supersede an existing one (Outcome B), or be skipped (Outcome C).',
+      '',
+      'Requires `sourceRoot` to be inside a git working tree; errors out otherwise.',
+    ].join('\n'),
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', description: 'Number of commits to return (default 100, max 200).' },
+        since: { type: 'string', description: 'Optional git --since expression (e.g. `2024-01-01`, `6 months ago`). Passed straight to git log.' },
+      },
+    },
+  },
 ] as const;
 
 // ── MCP Prompts ────────────────────────────────────────────────────────────────
@@ -798,6 +827,14 @@ const PROMPTS = [
     arguments: [
       { name: 'featureSummary', description: 'One-line description of the feature/decision being recorded. Example: "Ajout du module S3 Storage via Amplify Gen 2".', required: false },
       { name: 'modifiedFiles',  description: 'Comma-separated list of source files materially modified or created by this feature (relative to sourceRoot). Used to seed the metadata bindings; god files should already be filtered out by the caller.', required: false },
+    ],
+  },
+  {
+    name: 'retrodocument-adrs-from-git',
+    description: 'Retrodocument missing ADRs by walking recent git history oldest-first: call `retrodocument_adrs_from_git`, decide for each candidate commit whether it carries a durable architectural decision worth an ADR, then either skip, create a new ADR dated from the commit, or supersede an earlier ADR before creating the new one. Auto-invoke when the user asks to retrodocument / recreate / backfill / reconstruct ADRs from git ("retrodocumente les ADR depuis git", "recrée les ADR manquants depuis l\'historique", "remonte l\'historique git pour générer les ADR", "backfill ADRs from history"). Distinct from `create-adr` (which records ONE current feature) and from `audit-adrs-drift` (which fixes drift on existing ADRs).',
+    arguments: [
+      { name: 'limit', description: 'Optional: number of commits to inspect (default 100, hard cap 200).', required: false },
+      { name: 'since', description: 'Optional: git --since expression (e.g. `2024-01-01`, `6 months ago`). Restricts the inspected window.', required: false },
     ],
   },
   {
@@ -1125,6 +1162,127 @@ Tell the user:
 - The id and title of the new ADR (status \`To be validated\`, awaiting their review).
 - Whether any prior ADR was superseded — and which.
 - The list of source files attached as metadata.
+`.trim();
+    }
+
+    case 'retrodocument-adrs-from-git': {
+      const limitArg = (args.limit || '').trim();
+      const sinceArg = (args.since || '').trim();
+      const limitCallFragment = limitArg ? `"limit": ${Number(limitArg) || 100}` : '"limit": 100';
+      const sinceCallFragment = sinceArg ? `, "since": "${sinceArg}"` : '';
+      return `
+You are about to **retrodocument missing ADRs by walking recent git history**, oldest commit first, so that each durable architectural decision the project actually made gets a corresponding ADR.
+
+This workflow exists when a project has accumulated significant code without ADRs (or with sparse ones) and the user wants to backfill that record.
+
+## Goal
+
+For each git commit, decide whether it carries a **durable architectural decision** worth a new ADR — and, if so, write that ADR dated from the commit, attach the right source files, and supersede any earlier ADR that the commit obsoleted.
+
+## Step 1 — Prepare the retrodocumentation packet
+
+Call \`retrodocument_adrs_from_git({ ${limitCallFragment}${sinceCallFragment} })\`.
+
+The tool returns commits ordered **oldest first** with a precomputed \`state\` per commit:
+- \`candidate\` — has non-deleted, non-god source files under \`sourceRoot\`. Worth inspecting.
+- \`trivial\`   — no source-bearing files (docs-only, formatting, config-only). Skip unless the subject clearly announces a decision.
+- \`merge\`     — multi-parent merge. Skip unless the merge subject announces a documented decision the constituent commits did not.
+
+If \`totalCommits === 0\`, tell the user there is no history to retrodocument and stop.
+
+## Step 2 — Read the existing ADR inventory
+
+Call \`list_documents\`, shortlist ADRs (folder \`adrs\`, category \`ADR\`, or \`[ADR]\` in the id), and \`read_document\` the frontmatter (\`description\`, \`tags\`) of any whose topic could overlap the upcoming commits. You will need this to detect supersession candidates without re-listing for each commit.
+
+## Step 3 — Walk commits oldest → newest
+
+For **each** commit returned by the tool, in order:
+
+1. **Filter cheaply**:
+   - \`state === "trivial"\` and subject does not announce a decision → skip.
+   - \`state === "merge"\` and the merge subject is generic ("Merge branch …") → skip.
+   - Otherwise continue.
+
+2. **Read the evidence**: for each \`filesChanged\` entry where \`underSourceRoot === true\`, \`godFileSuspect === false\`, \`existsNow === true\`, and \`changeType !== "D"\`, call \`read_source_file(path)\`. Cap at ~5 files per commit — if there are more, pick the ones whose names suggest the feature core (component, service, route, schema, infra entry point) and skip the rest.
+
+3. **Judge — does this commit carry a durable architectural decision?** It does when the change:
+   - moves an architectural boundary, or
+   - introduces / modifies a public contract, or
+   - changes a storage format, a protocol, a workflow, or
+   - adds a convention later changes will respect, or
+   - resolves a non-obvious trade-off the code alone does not explain.
+
+   It does **not** when the change is a trivial fix, a rename, a formatting pass, a doc tweak, a dependency bump without behaviour change, or a test-only addition.
+
+4. **Decide the outcome.**
+
+### Outcome A — Create a new ADR (no supersession)
+
+The commit carries a fresh decision that no prior ADR covers.
+
+1. Compose the body, sections suggested: \`## Contexte\`, \`## Décision\`, \`## Conséquences\`. Write the description from the **commit subject + body**, never invented context. If the commit message is empty or unintelligible, downgrade to Outcome C and skip.
+2. Mandatory frontmatter — **date comes from the commit**, not today:
+
+\`\`\`
+---
+**date:** <commit committerDate, YYYY-MM-DD slice>
+**status:** To be validated
+**description:** One dense, technical sentence — what the decision does, not why.
+**tags:** 5–10 specific tags mixing concepts, technologies, and key symbol names
+---
+\`\`\`
+
+3. Call \`create_document\` with:
+   - \`title\` — short, lowercase slug derived from the commit subject.
+   - \`category\` — uppercase domain bucket (e.g. \`SERVICES CLOUD\`, \`INTEGRATION\`).
+   - \`folder: "adrs"\` (or the project's ADR sub-folder).
+   - \`date\` — the commit \`committerDate\` (the optional \`date\` argument exists precisely for this retrodocumentation case; **do not omit it here**).
+   - \`content\` — frontmatter + body.
+4. For every \`filesChanged\` entry that has \`underSourceRoot === true\`, \`godFileSuspect === false\`, and \`existsNow === true\`, call \`add_metadata(<new ADR id>, <path>)\`. Skip files where \`existsNow === false\` — those were since deleted and cannot be hashed; mention them in the body instead.
+5. Call \`refresh_metadata(<new ADR id>)\` to baseline.
+
+### Outcome B — Supersede an earlier ADR, then create a new one
+
+The commit modifies a decision recorded by an earlier ADR (either pre-existing or created in a previous iteration of this same loop).
+
+1. Identify the obsoleted ADR from the inventory built in Step 2 (or from ADRs you just created earlier in the walk).
+2. \`read_document(<old id>)\` to load its current Markdown.
+3. \`update_document(<old id>, <content>)\` flipping \`**status:**\` to exactly \`SuperSeeded\` and adding a one-line pointer just under the frontmatter (e.g. \`> Superseded by: <new ADR title> (commit <shortSha>)\`). Keep the body intact.
+4. Then proceed with Outcome A to create the replacement ADR. In the new ADR's body, explicitly reference the superseded ADR title and explain why it no longer applies.
+
+### Outcome C — Skip
+
+The commit is not durable enough (refactor, rename, fix, formatting, test, doc tweak) or its message is too thin to reliably describe.
+
+Move on without writing anything. Log the skipped sha in your final report.
+
+## Step 4 — Stay in sync as you walk
+
+After each Outcome A or B, **update your in-memory inventory** of ADRs to include the one you just created. Later commits in the walk must be able to detect "this commit obsoletes the ADR I created three commits ago".
+
+## Step 5 — Pace yourself
+
+After the first 3 ADRs created (combined Outcomes A + B), pause and report progress to the user with: the ADRs created, the ADRs superseded, the next commit you are about to process. Wait for the user to confirm \`continue\` before resuming. This protects against runaway retrodocumentation when the LLM and the user disagree on what is "durable".
+
+Subsequent batches of 5 may proceed without pause unless the user asks for a stop.
+
+## Step 6 — Final report
+
+Once the walk is done, summarise:
+- N commits processed.
+- N ADRs created (list title + commit shortSha + date).
+- N ADRs superseded (list title + new ADR that replaced it).
+- N commits skipped as not durable (count only).
+- N commits where source files were already deleted — list shortSha so the user can audit manually.
+
+## Important constraints
+
+- **Date comes from the commit, never from \`now()\`.** Pass the \`date\` argument to \`create_document\` and put the same date in the frontmatter.
+- **Never invent context.** If the commit subject + body + diff are insufficient to write a one-sentence \`description:\`, skip the commit (Outcome C). A bad ADR is worse than a missing one.
+- **Never attach god files.** \`godFileSuspect === true\` from the tool is a hard skip for metadata. Same for files where \`existsNow === false\` (they cannot be hashed).
+- **Never supersede silently.** Always include the explicit pointer (\`> Superseded by: …\`) under the frontmatter of the old ADR, and reference the old ADR by title from the new one's body.
+- **Order matters.** Process strictly oldest → newest so the supersession chain reads forward in time.
+- **Do not flip status to \`Accepted\`.** Every retrodocumented ADR ships at \`To be validated\` — only the human owner promotes.
 `.trim();
     }
 
@@ -1584,7 +1742,7 @@ function createMcpServer(docsPath: string): Server {
           return toolReadDocument(docsPath, args as { id: string });
         case 'create_document':
           return toolCreateDocument(docsPath, args as {
-            title: string; category: string; folder?: string; content?: string;
+            title: string; category: string; folder?: string; content?: string; date?: string;
           });
         case 'update_document':
           return toolUpdateDocument(docsPath, args as { id: string; content: string });
@@ -1623,6 +1781,8 @@ function createMcpServer(docsPath: string): Server {
           return toolRemoveMetadata(docsPath, args as { id: string; path: string });
         case 'list_adrs_below_accuracy':
           return toolListAdrsBelowAccuracy(docsPath);
+        case 'retrodocument_adrs_from_git':
+          return toolRetrodocumentAdrsFromGit(docsPath, args as { limit?: number; since?: string });
         default:
           throw new Error(`Unknown tool: ${name}`);
       }
