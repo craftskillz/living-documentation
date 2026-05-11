@@ -595,7 +595,7 @@
         "imageSrc": "/images/creer-dossier-tutoriel.png",
         "groupId": null,
         "nodeLink": null,
-        "locked": false,
+        "locked": true,
         "x": -185,
         "y": -287
       },
@@ -622,8 +622,8 @@
         "groupId": null,
         "nodeLink": null,
         "locked": false,
-        "x": -399,
-        "y": -357
+        "x": -375,
+        "y": -367
       },
       {
         "id": "a1776025047975",
@@ -926,25 +926,6 @@
         "evidence": null
       },
       {
-        "id": "e1776025186432",
-        "from": "n1776025032495",
-        "to": "n1776025169333",
-        "label": "",
-        "arrowDir": "to",
-        "dashes": false,
-        "fontSize": null,
-        "labelRotation": 0,
-        "edgeLabelOffsetX": 0,
-        "edgeLabelOffsetY": 0,
-        "fromPort": null,
-        "toPort": null,
-        "edgeColor": null,
-        "edgeWidth": null,
-        "edgeLocked": false,
-        "edgeLabelWidth": null,
-        "evidence": null
-      },
-      {
         "id": "e1776025311193",
         "from": "n1776025169333",
         "to": "a1776025311193",
@@ -1038,9 +1019,28 @@
         "edgeLocked": false,
         "edgeLabelWidth": null,
         "evidence": null
+      },
+      {
+        "id": "e1778537055009",
+        "from": "n1776025032495",
+        "to": "n1776025169333",
+        "label": "",
+        "arrowDir": "to",
+        "dashes": false,
+        "fontSize": null,
+        "labelRotation": 0,
+        "edgeLabelOffsetX": 0,
+        "edgeLabelOffsetY": 0,
+        "fromPort": "S",
+        "toPort": "N",
+        "edgeColor": null,
+        "edgeWidth": null,
+        "edgeLocked": false,
+        "edgeLabelWidth": null,
+        "evidence": null
       }
     ],
-    "edgesStraight": true,
+    "edgesStraight": false,
     "gridEnabled": false,
     "alignGuides": true
   },
