@@ -599,10 +599,22 @@
                       class="text-xs text-gray-400 dark:text-gray-500"
                     ></span>
                   </div>
-                  <h1
-                    id="doc-title"
-                    class="text-2xl font-bold text-gray-900 dark:text-gray-50 leading-tight"
-                  ></h1>
+                  <div class="flex items-center gap-2">
+                    <h1
+                      id="doc-title"
+                      class="min-w-0 text-2xl font-bold text-gray-900 dark:text-gray-50 leading-tight"
+                    ></h1>
+                    <button
+                      type="button"
+                      id="copy-doc-id-btn"
+                      onclick="copyCurrentDocMcpId()"
+                      data-i18n-title="doc.copy_mcp_id"
+                      title="Copy MCP document id"
+                      class="no-print inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-gray-200 text-gray-500 transition-colors hover:bg-gray-50 hover:text-blue-600 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-blue-400"
+                    >
+                      <i class="fa-regular fa-copy" aria-hidden="true"></i>
+                    </button>
+                  </div>
                 </div>
                 <!-- Actions -->
                 <div class="flex items-center gap-2 flex-wrap ml-auto">

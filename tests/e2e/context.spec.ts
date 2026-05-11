@@ -51,7 +51,16 @@ test('AI Context page shows orientation and creates an AI rule', async ({ page, 
   });
   await listDocumentsTool.locator('summary').click();
   await listDocumentsTool.getByRole('button', { name: 'Run tool' }).click();
-  await expect(listDocumentsTool.locator('[data-mcp-result]')).toContainText('Quickstart');
+  await expect(listDocumentsTool.locator('[data-mcp-result]')).toContainText('Saved to:');
+  await expect(listDocumentsTool.locator('[data-mcp-result] a')).toContainText('AI/MCP/');
+  const readDocumentTool = page.locator('#mcpToolList details').filter({
+    has: page.locator('summary').getByText('read_document', { exact: true }),
+  });
+  await readDocumentTool.locator('summary').click();
+  await readDocumentTool.locator('[data-mcp-args]').fill(JSON.stringify({ id: 'missing-doc' }, null, 2));
+  await readDocumentTool.getByRole('button', { name: 'Run tool' }).click();
+  await expect(readDocumentTool.locator('[data-mcp-error]')).toContainText('MCP call returned an error.');
+  await expect(readDocumentTool.locator('[data-mcp-result] pre')).toContainText('Document not found: missing-doc');
   const createAdrPrompt = page.locator('#mcpPromptList details').filter({
     has: page.locator('summary').getByText('create-adr', { exact: true }),
   });
@@ -59,10 +68,8 @@ test('AI Context page shows orientation and creates an AI rule', async ({ page, 
   await expect(createAdrPrompt).toContainText('Arguments');
   await expect(createAdrPrompt).toContainText('featureSummary');
   await createAdrPrompt.getByRole('button', { name: 'Get prompt' }).click();
-  await expect(createAdrPrompt.locator('[data-mcp-result]')).toContainText('record an **ADR');
-  await expect(createAdrPrompt.locator('[data-mcp-result]')).toContainText('## Step 1');
-  const promptOutput = await createAdrPrompt.locator('[data-mcp-result] code').textContent();
-  expect(promptOutput).toContain('\n## Step 1');
+  await expect(createAdrPrompt.locator('[data-mcp-result]')).toContainText('Saved to:');
+  await expect(createAdrPrompt.locator('[data-mcp-result] a')).toContainText('AI/MCP/');
   await expect(page.getByRole('heading', { name: 'Project commands' })).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'Roots' })).toHaveCount(0);
   await expectNoHorizontalOverflow(page);

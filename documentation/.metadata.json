@@ -100,5 +100,37 @@
       "path": "bin/cli.ts",
       "hash": "4a8a9a84e44d6e6e94dee01f6be680c1fb872fa7e8d52f98e615a81cbd057cda"
     }
+  ],
+  "ADRS/2026_05_11_19_33_[AI_CONTEXT]_affichage_detail_erreur_appels_mcp_page_context": [
+    {
+      "path": "src/frontend/context.html",
+      "hash": "7d0d7e9e70d84f800fe011d553d4e0c172bc41f5bbaf70b88d776798c5f556c4"
+    },
+    {
+      "path": "tests/e2e/context.spec.ts",
+      "hash": "dc6495249a8474ee115c99ac4211e91a77f267a67ac40e9b8552a96bc5d3b13e"
+    }
+  ],
+  "ADRS/2026_05_11_19_41_[FRONTEND]_copie_id_document_mcp_depuis_entete_viewer": [
+    {
+      "path": "src/frontend/index.html",
+      "hash": "4847d6804c6220bcbabf7675fac7e3a229e12f805d0922f49bce83a48808cfb9"
+    },
+    {
+      "path": "src/frontend/misc.js",
+      "hash": "723368fdc2c798be3831d64f1015a472d6e93cdc383bbe6773d75b647f1d0ef7"
+    },
+    {
+      "path": "src/frontend/i18n/en.json",
+      "hash": "92b968341866ef355f16b3dc1a8722a2121e9583bc3fd9cf172bf3327d658e41"
+    },
+    {
+      "path": "src/frontend/i18n/fr.json",
+      "hash": "7fa702a41adfae4fff45a6c4d6369ae74ea40e3131eeab28fb0e3ab90193b145"
+    },
+    {
+      "path": "tests/e2e/viewer.spec.ts",
+      "hash": "91cd04887c47581e2d58427623241e7d2bfbdcd4d17057e5ca15770562908ab0"
+    }
   ]
 }

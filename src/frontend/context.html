@@ -576,6 +576,25 @@
         return wrapJsonBlock(result);
       }
 
+      function stringifyMcpErrorDetail(value) {
+        if (typeof value === 'string') return value;
+        if (!value || typeof value !== 'object') return String(value ?? '');
+        if (value.error) return JSON.stringify(value.error, null, 2);
+
+        const result = value.result;
+        if (result?.isError) {
+          const parts = Array.isArray(result.content)
+            ? result.content.map((part) => {
+                if (part && part.type === 'text' && typeof part.text === 'string') return part.text;
+                return JSON.stringify(part, null, 2);
+              }).filter(Boolean)
+            : [];
+          return parts.join('\n\n') || JSON.stringify(result, null, 2);
+        }
+
+        return JSON.stringify(value, null, 2);
+      }
+
       function setMcpRunning(kind, name) {
         const container = findMcpElement('[data-mcp-result]', kind, name);
         const error = findMcpElement('[data-mcp-error]', kind, name);
@@ -600,12 +619,20 @@
         `;
       }
 
-      function setMcpResultError(kind, name, message) {
+      function setMcpResultError(kind, name, message, detail) {
         const container = findMcpElement('[data-mcp-result]', kind, name);
         const error = findMcpElement('[data-mcp-error]', kind, name);
+        const detailText = String(detail || '').trim();
         if (container) {
-          container.classList.add('hidden');
-          container.innerHTML = '';
+          if (detailText) {
+            container.classList.remove('hidden');
+            container.innerHTML = `
+              <pre class="max-h-56 overflow-auto whitespace-pre-wrap break-words rounded-md border border-red-200 bg-red-50 p-2 font-mono text-xs leading-5 text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-200"><code>${escapeHtml(detailText)}</code></pre>
+            `;
+          } else {
+            container.classList.add('hidden');
+            container.innerHTML = '';
+          }
         }
         if (error) error.textContent = message || window.t('context.mcp_error');
       }
@@ -662,7 +689,7 @@
             : await mcpRpc(2, 'prompts/get', { name, arguments: args });
 
           if (envelope.error || envelope.result?.isError) {
-            setMcpResultError(kind, name);
+            setMcpResultError(kind, name, window.t('context.mcp_error'), stringifyMcpErrorDetail(envelope));
             return;
           }
 

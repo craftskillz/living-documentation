@@ -15,3 +15,18 @@ test('opening a document renders its heading and body', async ({ page, ld }) => 
   await expect(page.locator('#doc-title')).toHaveText(/Intro/i);
   await expect(page.locator('#doc-view')).toContainText('Welcome to the test documentation');
 });
+
+test('document header copies the MCP document id', async ({ page, ld }) => {
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin: ld.baseURL });
+  const docId = '2026_01_02_10_00_[Guide]_quickstart';
+  await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+  await expect(page.locator('#doc-title')).toHaveText('Quickstart');
+
+  const copyButton = page.locator('#copy-doc-id-btn');
+  await expect(copyButton).toBeVisible();
+  await copyButton.click();
+
+  const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
+  expect(clipboardText).toBe(docId);
+  await expect(copyButton).toHaveAttribute('title', 'MCP document id copied');
+});

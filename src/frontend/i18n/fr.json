@@ -75,6 +75,8 @@
   "doc.export_pdf_btn": "Exporter PDF",
   "doc.copy_link": "Copier le lien",
   "doc.copy_link_btn": "Copier le lien",
+  "doc.copy_mcp_id": "Copier l'id MCP du document",
+  "doc.copy_mcp_id_copied": "Id MCP du document copié",
   "doc.edit": "Modifier le document",
   "doc.edit_btn": "Modifier",
   "doc.delete": "Supprimer le document",
