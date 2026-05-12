@@ -499,6 +499,7 @@
   "diagram.toolbar.zoom_in": "Zoom +",
   "diagram.toolbar.fit": "Fit view",
   "diagram.toolbar.debug": "Debug overlay",
+  "diagram.toolbar.export_drawio": "Export as drawio (.drawio)",
   "diagram.toolbar.save": "Save",
 
   "diagram.sidebar.title": "Diagrams",
@@ -600,6 +601,9 @@
   "diagram.toast.confirm_delete": "Delete this diagram?",
   "diagram.toast.new_diagram_title": "New diagram",
   "diagram.toast.untitled": "Untitled",
+  "diagram.toast.drawio_exported": "Diagram exported as .drawio",
+  "diagram.toast.drawio_export_error": "drawio export failed",
+  "diagram.toast.drawio_label_rotation_dropped": "{count} label rotation(s) dropped — drawio cannot rotate labels independently from their shape",
   "diagram.toast.diagram_linked": "Diagram \"{title}\" created and linked",
 
   "shape_editor.show_in_diagram_label": "Show in diagram palette",

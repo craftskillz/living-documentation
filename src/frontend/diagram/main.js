@@ -23,6 +23,7 @@ import { showToast }       from './toast.js';
 import { t }               from './t.js';
 import { initEvidenceMode, toggleEvidenceMode } from './evidence.js';
 import { customShapeIdFromTool, isCustomShapeTool } from './custom-shapes.js';
+import { exportCurrentDiagramAsDrawio } from './drawio-export.js';
 
 const DIAGRAM_ID_COPY_FEEDBACK_MS = 1800;
 
@@ -195,6 +196,7 @@ document.getElementById('btnZoomReset').addEventListener('click', resetZoom);
 
 document.getElementById('btnDark').addEventListener('click', toggleDark);
 document.getElementById('btnDebug').addEventListener('click', toggleDebug);
+document.getElementById('btnExportDrawio').addEventListener('click', exportCurrentDiagramAsDrawio);
 document.getElementById('btnSave').addEventListener('click',  saveDiagram);
 document.getElementById('btnNewDiagram').addEventListener('click', newDiagram);
 

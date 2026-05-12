@@ -196,5 +196,57 @@
       "path": "src/mcp/server.ts",
       "hash": "e15c94a4ecd2c1764863f2ae923775e720cefb5137a4555ec49e620bdaa80b24"
     }
+  ],
+  "ADRS/2026_05_12_11_06_[PACKAGING]_vendor_tailwind_play_cdn_and_font_awesome_locally_for_offline_and_proxy_resilience": [
+    {
+      "path": "src/frontend/admin.html",
+      "hash": "78240dfcda2ccc2fb7f19821892d5d2baee279dc9de451e66f129e7038cd8596"
+    },
+    {
+      "path": "src/frontend/index.html",
+      "hash": "c2eaf78834f6a89b03ddf0c711dc1fc70d72894a16d4ca4a6545afbe03043f7d"
+    },
+    {
+      "path": "src/frontend/context.html",
+      "hash": "9ba4b60479ca8cce0f893d397a79a939908d2a4e1304e4ae37d17f34b7d1616b"
+    },
+    {
+      "path": "src/frontend/diagram.html",
+      "hash": "d908f8e8fec209bcdbe0f00d18289ea98c45d5abb7c1a9e57f46c2b9b7feab3b"
+    },
+    {
+      "path": "src/frontend/shape-editor.html",
+      "hash": "aeec60dea2d550687f567504f323a5a7436b4f901d40b792093c9afd0153e141"
+    },
+    {
+      "path": "src/frontend/export.js",
+      "hash": "eaccd9e274bd65bb63db390a4d85d3d535a6b528ca6b42f00a18114cd7739940"
+    },
+    {
+      "path": "src/frontend/vendor/tailwindcss.js",
+      "hash": "b99d37bb975db7123d1e5223a3a56604052f90796c76aa90d4d446a0d29c6d3f"
+    },
+    {
+      "path": "src/frontend/vendor/tailwindcss-typography.js",
+      "hash": "5262067e95c419465182e6e3762e122605438fe1a870cf2098a7783e212b0b01"
+    },
+    {
+      "path": "src/frontend/vendor/font-awesome/css/all.min.css",
+      "hash": "74005d7c17d4a02f2f25404ec0655d9bc2fdaa53166874c87d7b7eec69d9088a"
+    }
+  ],
+  "ADRS/2026_05_12_11_46_[DIAGRAM]_export_diagrammes_au_format_drawio_mxgraph_xml": [
+    {
+      "path": "src/frontend/diagram/drawio-export.js",
+      "hash": "235dc982af7c0938de45a4a0dbd1178ded187fc2057a48d817f0ed3584b1d8db"
+    },
+    {
+      "path": "src/frontend/diagram.html",
+      "hash": "f1fcf9dc91b96e71ea16b8e744ce60f52b318d14ecdff9013adb0bd7fffa80fe"
+    },
+    {
+      "path": "src/frontend/diagram/main.js",
+      "hash": "eab9965bdf2ae2757ee15dc58ee16b3a8fca2cec7e36b0e9fd72ebdb4cfcf0f9"
+    }
   ]
 }
