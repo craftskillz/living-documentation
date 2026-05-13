@@ -13,7 +13,7 @@ npx living-documentation                # assistant interactif (EN/FR)
 npx living-documentation ./docs         # servir un dossier existant
 ```
 
-![Viewer Living Documentation](./images/living_documentation.png)
+![Viewer Living Documentation](./images/living_documentation.jpg)
 
 ---
 
@@ -23,15 +23,15 @@ npx living-documentation ./docs         # servir un dossier existant
 
 Living Documentation embarque un **serveur MCP** sur `POST /mcp`. N'importe quel agent compatible MCP peut lire, créer et auditer la documentation projet de façon autonome.
 
-| Ce que vous dites…                                          | Ce que l'agent déclenche…          | Ce qui se passe                                                                                                  |
-| ----------------------------------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| *« feature terminée »* / *"feature done"*                   | `create-adr`                       | Cherche les ADR existants, supplante l'ADR obsolète s'il y en a, écrit un nouvel ADR en `To be validated`, relie les fichiers source via les métadonnées. |
-| *« audite les ADR »* / *"audit the ADRs"*                   | `audit-adrs-drift`                 | Liste chaque ADR sous 80 % de fiabilité et remet chacun en cohérence — soit re-baseliner les hashes, soit supplanter après confirmation. |
-| *« vérifie la pertinence de cet ADR »* / *"review this ADR"* | `review-adr-relevance`             | Revue d'un ADR précis contre les fichiers source liés ; rafraîchit les hashes ou propose la supersession.        |
-| *« retrodocumente depuis git »* / *"backfill ADRs from git"* | `retrodocument-adrs-from-git`      | Parcourt l'historique git du plus ancien au plus récent et crée des ADR pour les décisions durables jamais documentées. |
-| *« donne-moi la big picture »*                              | `generate-context-diagram`         | Crée un diagramme C4 de contexte **dérivé des documents**, jamais inventé.                                       |
+| Ce que vous dites…                                           | Ce que l'agent déclenche…     | Ce qui se passe                                                                                                                                           |
+| ------------------------------------------------------------ | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| _« feature terminée »_ / _"feature done"_                    | `create-adr`                  | Cherche les ADR existants, supplante l'ADR obsolète s'il y en a, écrit un nouvel ADR en `To be validated`, relie les fichiers source via les métadonnées. |
+| _« audite les ADR »_ / _"audit the ADRs"_                    | `audit-adrs-drift`            | Liste chaque ADR sous 80 % de fiabilité et remet chacun en cohérence — soit re-baseliner les hashes, soit supplanter après confirmation.                  |
+| _« vérifie la pertinence de cet ADR »_ / _"review this ADR"_ | `review-adr-relevance`        | Revue d'un ADR précis contre les fichiers source liés ; rafraîchit les hashes ou propose la supersession.                                                 |
+| _« retrodocumente depuis git »_ / _"backfill ADRs from git"_ | `retrodocument-adrs-from-git` | Parcourt l'historique git du plus ancien au plus récent et crée des ADR pour les décisions durables jamais documentées.                                   |
+| _« donne-moi la big picture »_                               | `generate-context-diagram`    | Crée un diagramme C4 de contexte **dérivé des documents**, jamais inventé.                                                                                |
 
-**Tous les nouveaux ADR atterrissent en `To be validated`.** *Vous* les promouvez. L'agent ne promeut jamais à votre place.
+**Tous les nouveaux ADR atterrissent en `To be validated`.** _Vous_ les promouvez. L'agent ne promeut jamais à votre place.
 
 ### 2. Sans IA, en solo
 
@@ -80,7 +80,10 @@ Ou manuellement dans `.claude/settings.json` :
 ```json
 {
   "mcpServers": {
-    "living-documentation": { "type": "http", "url": "http://localhost:4321/mcp" }
+    "living-documentation": {
+      "type": "http",
+      "url": "http://localhost:4321/mcp"
+    }
   }
 }
 ```
@@ -92,7 +95,10 @@ Dans `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS), 
 ```json
 {
   "mcpServers": {
-    "living-documentation": { "type": "http", "url": "http://localhost:4321/mcp" }
+    "living-documentation": {
+      "type": "http",
+      "url": "http://localhost:4321/mcp"
+    }
   }
 }
 ```
@@ -121,42 +127,42 @@ Même endpoint HTTP : `http://localhost:4321/mcp` (transport Streamable HTTP, sa
 
 ### Tools (19)
 
-| Groupe                | Tool                          | Description                                                                                                |
-| --------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Onboarding            | `get_server_guide`            | Retourne le guide du serveur : workflow, conventions, règles des diagrammes.                               |
-| Documents             | `list_documents`              | Inventaire : `id`, `title`, `category`, `folder`, `linkHref`.                                              |
-|                       | `read_document`               | Contenu Markdown brut d'un document.                                                                       |
-|                       | `create_document`             | Crée un nouveau `.md` (nom de fichier dérivé du pattern, paramètre `date` optionnel pour la rétro-doc).    |
-|                       | `update_document`             | Écrase un document existant (correction de dérive, supersession).                                          |
-| Diagrammes            | `list_diagrams`               | Liste les diagrammes sauvegardés.                                                                          |
-|                       | `read_diagram`                | Lit les nœuds + arêtes d'un diagramme.                                                                     |
-|                       | `create_diagram`              | Crée / écrase un diagramme (garde-fous serveur : progression C4 et labels d'arêtes).                       |
-| Code source (fallback) | `list_source_files`          | Liste les fichiers sous `sourceRoot` (ignore : `node_modules`, `dist`, `.git`…).                           |
-|                       | `read_source_file`            | Lit un fichier sous `sourceRoot`.                                                                          |
-|                       | `search_source`               | Recherche grep-like sous `sourceRoot`.                                                                     |
-| Métadonnées           | `list_metadata`               | Fichiers source liés à un document.                                                                        |
-|                       | `get_accuracy`                | Statut par entrée (`unchanged` / `modified` / `missing`) + accuracy pondérée ∈ [0, 1].                     |
-|                       | `add_metadata`                | Attache un fichier source (chemin sous `sourceRoot`), enregistre SHA-256. **Saute les god files.**         |
-|                       | `remove_metadata`             | Détache un lien (idempotent — pour renames/deletes).                                                       |
-|                       | `refresh_metadata`            | Re-hashe chaque lien (re-baseline après une mise à jour).                                                  |
-| Audit ADR             | `list_adrs_below_accuracy`    | Jusqu'à 10 ADR dont l'accuracy < 80 %, triés du plus dégradé. Exclut `SuperSeeded` et non-ADR.             |
-|                       | `review_adr_relevance`        | Rapport factuel sur un ADR + fichiers en dérive à relire. Retourne un `state` pour piloter le LLM.         |
-| Rétrodocumentation    | `retrodocument_adrs_from_git` | Jusqu'à 200 commits git (du plus ancien), classés `candidate` / `trivial` / `merge`, avec flags god-files. Pour backfiller les ADR manquants. |
+| Groupe                 | Tool                          | Description                                                                                                                                   |
+| ---------------------- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Onboarding             | `get_server_guide`            | Retourne le guide du serveur : workflow, conventions, règles des diagrammes.                                                                  |
+| Documents              | `list_documents`              | Inventaire : `id`, `title`, `category`, `folder`, `linkHref`.                                                                                 |
+|                        | `read_document`               | Contenu Markdown brut d'un document.                                                                                                          |
+|                        | `create_document`             | Crée un nouveau `.md` (nom de fichier dérivé du pattern, paramètre `date` optionnel pour la rétro-doc).                                       |
+|                        | `update_document`             | Écrase un document existant (correction de dérive, supersession).                                                                             |
+| Diagrammes             | `list_diagrams`               | Liste les diagrammes sauvegardés.                                                                                                             |
+|                        | `read_diagram`                | Lit les nœuds + arêtes d'un diagramme.                                                                                                        |
+|                        | `create_diagram`              | Crée / écrase un diagramme (garde-fous serveur : progression C4 et labels d'arêtes).                                                          |
+| Code source (fallback) | `list_source_files`           | Liste les fichiers sous `sourceRoot` (ignore : `node_modules`, `dist`, `.git`…).                                                              |
+|                        | `read_source_file`            | Lit un fichier sous `sourceRoot`.                                                                                                             |
+|                        | `search_source`               | Recherche grep-like sous `sourceRoot`.                                                                                                        |
+| Métadonnées            | `list_metadata`               | Fichiers source liés à un document.                                                                                                           |
+|                        | `get_accuracy`                | Statut par entrée (`unchanged` / `modified` / `missing`) + accuracy pondérée ∈ [0, 1].                                                        |
+|                        | `add_metadata`                | Attache un fichier source (chemin sous `sourceRoot`), enregistre SHA-256. **Saute les god files.**                                            |
+|                        | `remove_metadata`             | Détache un lien (idempotent — pour renames/deletes).                                                                                          |
+|                        | `refresh_metadata`            | Re-hashe chaque lien (re-baseline après une mise à jour).                                                                                     |
+| Audit ADR              | `list_adrs_below_accuracy`    | Jusqu'à 10 ADR dont l'accuracy < 80 %, triés du plus dégradé. Exclut `SuperSeeded` et non-ADR.                                                |
+|                        | `review_adr_relevance`        | Rapport factuel sur un ADR + fichiers en dérive à relire. Retourne un `state` pour piloter le LLM.                                            |
+| Rétrodocumentation     | `retrodocument_adrs_from_git` | Jusqu'à 200 commits git (du plus ancien), classés `candidate` / `trivial` / `merge`, avec flags god-files. Pour backfiller les ADR manquants. |
 
 ### Prompts (10)
 
-| Groupe         | Prompt                          | Quand l'invoquer                                                                                       |
-| -------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Groupe           | Prompt                        | Quand l'invoquer                                                                                                  |
+| ---------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | Cycle de vie ADR | `create-adr`                  | Une feature vient d'être implémentée ou modifiée. Enregistre la décision, supersede l'ADR antérieur si pertinent. |
-|                | `audit-adrs-drift`              | Audit batch : ramener chaque ADR en dérive à un état clair (re-baseline ou supersession confirmée).    |
-|                | `review-adr-relevance`          | Revue d'un ADR précis contre ses fichiers source liés.                                                 |
-|                | `retrodocument-adrs-from-git`   | Backfill d'ADR depuis l'historique git quand le projet en manque.                                      |
-| Diagrammes     | `generate-context-diagram`      | DÉFAUT. Diagramme C4 de contexte, gardé serveur.                                                       |
-|                | `generate-container-diagram`    | Sur demande explicite. Diagramme C4 conteneur d'un système.                                            |
-|                | `generate-uml-diagram`          | Sur demande explicite. UML classe/séquence/état/activité/cas d'usage.                                  |
-|                | `generate-screen-guide`         | Sur demande explicite. Capture annotée avec post-it callouts.                                          |
-|                | `update-diagram-from-docs`      | Relit les documents source pour mettre à jour les diagrammes existants.                                |
-|                | `flow`, `erd`                   | Diagrammes flow linéaires / entité-relation.                                                           |
+|                  | `audit-adrs-drift`            | Audit batch : ramener chaque ADR en dérive à un état clair (re-baseline ou supersession confirmée).               |
+|                  | `review-adr-relevance`        | Revue d'un ADR précis contre ses fichiers source liés.                                                            |
+|                  | `retrodocument-adrs-from-git` | Backfill d'ADR depuis l'historique git quand le projet en manque.                                                 |
+| Diagrammes       | `generate-context-diagram`    | DÉFAUT. Diagramme C4 de contexte, gardé serveur.                                                                  |
+|                  | `generate-container-diagram`  | Sur demande explicite. Diagramme C4 conteneur d'un système.                                                       |
+|                  | `generate-uml-diagram`        | Sur demande explicite. UML classe/séquence/état/activité/cas d'usage.                                             |
+|                  | `generate-screen-guide`       | Sur demande explicite. Capture annotée avec post-it callouts.                                                     |
+|                  | `update-diagram-from-docs`    | Relit les documents source pour mettre à jour les diagrammes existants.                                           |
+|                  | `flow`, `erd`                 | Diagrammes flow linéaires / entité-relation.                                                                      |
 
 Un `GET http://localhost:4321/mcp` retourne les schémas live des tools et prompts pour inspection.
 
@@ -176,7 +182,7 @@ Un `GET http://localhost:4321/mcp` retourne les schémas live des tools et promp
 
 ![Sidebar groupé par dossier → catégorie](./images/readme-sidebar.png)
 
-![Recherche plein-texte](./images/readme-intelligent-search-demo.png)
+![Recherche plein-texte](./images/readme-intelligent-search-demo.jpg)
 
 ---
 
@@ -230,12 +236,12 @@ Créé automatiquement dans votre dossier de doc au premier lancement. Modifiabl
 }
 ```
 
-| Champ                  | Rôle                                                                                                       |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `filenamePattern`      | Convention de nom de fichier utilisée pour extraire date / catégorie / titre. Le token `[Category]` est obligatoire, exactement une fois. |
-| `extraFiles`           | Fichiers Markdown ordonnés **hors** du dossier docs (ex. `README.md`, `CLAUDE.md`). Affichés en premier dans General. |
-| `sourceRoot`           | Où vit votre code (relatif au dossier docs). Défaut : `..`. Utilisé par les tools MCP source + métadonnées. |
-| `blockedFileExtensions` | Liste de sécurité des extensions de pièces jointes, éditable en Admin.                                    |
+| Champ                   | Rôle                                                                                                                                      |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `filenamePattern`       | Convention de nom de fichier utilisée pour extraire date / catégorie / titre. Le token `[Category]` est obligatoire, exactement une fois. |
+| `extraFiles`            | Fichiers Markdown ordonnés **hors** du dossier docs (ex. `README.md`, `CLAUDE.md`). Affichés en premier dans General.                     |
+| `sourceRoot`            | Où vit votre code (relatif au dossier docs). Défaut : `..`. Utilisé par les tools MCP source + métadonnées.                               |
+| `blockedFileExtensions` | Liste de sécurité des extensions de pièces jointes, éditable en Admin.                                                                    |
 
 **Tous les chemins sont relatifs POSIX** pour que `.living-doc.json` reste portable. Les chemins absolus legacy sont migrés silencieusement à la première lecture.
 
@@ -245,26 +251,24 @@ Créé automatiquement dans votre dossier de doc au premier lancement. Modifiabl
 
 ## Export
 
-| Format                   | Endpoint                | Notes                                                              |
-| ------------------------ | ----------------------- | ------------------------------------------------------------------ |
-| PDF (par doc)            | `POST /api/export/html` | Boîte de dialogue d'impression du navigateur depuis le HTML rendu. |
-| HTML — mode Notion       | `POST /api/export/html` | Bundle HTML unique adapté à l'import Notion.                       |
-| HTML — mode Confluence   | `POST /api/export/html` | Bundle HTML zippé adapté à l'import Confluence.                    |
-| Bundle Markdown          | `POST /api/export/markdown` | Zip de tous les documents avec liens normalisés.               |
+| Format                 | Endpoint                    | Notes                                                              |
+| ---------------------- | --------------------------- | ------------------------------------------------------------------ |
+| PDF (par doc)          | `POST /api/export/html`     | Boîte de dialogue d'impression du navigateur depuis le HTML rendu. |
+| HTML — mode Notion     | `POST /api/export/html`     | Bundle HTML unique adapté à l'import Notion.                       |
+| HTML — mode Confluence | `POST /api/export/html`     | Bundle HTML zippé adapté à l'import Confluence.                    |
+| Bundle Markdown        | `POST /api/export/markdown` | Zip de tous les documents avec liens normalisés.                   |
 
 ---
 
 ## Surfaces UI
 
-| URL              | Page                                                                                                    |
-| ---------------- | ------------------------------------------------------------------------------------------------------- |
-| `/`              | Viewer — sidebar, rendu document, édition inline, snippets, recherche, pièces jointes.                  |
-| `/admin`         | Config — titre, thème, pattern de filename, extra files, source root, liste de sécurité fichiers.       |
-| `/diagram?id=`   | Éditeur de diagrammes (vis-network) avec conventions C4, ports, guides d'alignement, undo/redo.         |
-| `/shape-editor`  | Éditeur de bibliothèques de formes personnalisées — icônes SVG, couleurs par défaut, ports.             |
-| `/context`       | Page de contexte IA — instructions, règles, mémoire, **explorateur MCP** (tester les tools en live).    |
-
-![Blocs de code](./images/readme-code-blocks.png)
+| URL             | Page                                                                                                 |
+| --------------- | ---------------------------------------------------------------------------------------------------- |
+| `/`             | Viewer — sidebar, rendu document, édition inline, snippets, recherche, pièces jointes.               |
+| `/admin`        | Config — titre, thème, pattern de filename, extra files, source root, liste de sécurité fichiers.    |
+| `/diagram?id=`  | Éditeur de diagrammes (vis-network) avec conventions C4, ports, guides d'alignement, undo/redo.      |
+| `/shape-editor` | Éditeur de bibliothèques de formes personnalisées — icônes SVG, couleurs par défaut, ports.          |
+| `/context`      | Page de contexte IA — instructions, règles, mémoire, **explorateur MCP** (tester les tools en live). |
 
 ---
 
@@ -273,42 +277,42 @@ Créé automatiquement dans votre dossier de doc au premier lancement. Modifiabl
 <details>
 <summary>API HTTP complète (cliquer pour déplier)</summary>
 
-| Méthode  | Endpoint                       | Description                                                        |
-| -------- | ------------------------------ | ------------------------------------------------------------------ |
-| `GET`    | `/api/documents`               | Liste les documents avec métadonnées (inclut extra files).         |
-| `GET`    | `/api/documents/:id`           | Contenu du document + HTML rendu.                                  |
-| `POST`   | `/api/documents`               | Crée depuis `{ title, category, folder?, content?, date? }`.       |
-| `PUT`    | `/api/documents/:id`           | Sauvegarde du contenu sur disque.                                  |
-| `DELETE` | `/api/documents/:id`           | Supprime un document.                                              |
-| `GET`    | `/api/documents/search?q=`     | Recherche plein-texte.                                             |
-| `GET`    | `/api/config`                  | Lit la config.                                                     |
+| Méthode  | Endpoint                       | Description                                                                                                         |
+| -------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| `GET`    | `/api/documents`               | Liste les documents avec métadonnées (inclut extra files).                                                          |
+| `GET`    | `/api/documents/:id`           | Contenu du document + HTML rendu.                                                                                   |
+| `POST`   | `/api/documents`               | Crée depuis `{ title, category, folder?, content?, date? }`.                                                        |
+| `PUT`    | `/api/documents/:id`           | Sauvegarde du contenu sur disque.                                                                                   |
+| `DELETE` | `/api/documents/:id`           | Supprime un document.                                                                                               |
+| `GET`    | `/api/documents/search?q=`     | Recherche plein-texte.                                                                                              |
+| `GET`    | `/api/config`                  | Lit la config.                                                                                                      |
 | `PUT`    | `/api/config`                  | Met à jour la config (`title`, `theme`, `filenamePattern`, `extraFiles`, `sourceRoot`, `blockedFileExtensions`, …). |
-| `GET`    | `/api/browse?path=`            | Liste les dossiers et `.md` à un chemin.                           |
-| `POST`   | `/api/browse/mkdir`            | Crée un dossier sous la racine docs.                               |
-| `POST`   | `/api/images/upload`           | Upload d'image base64 → `<docs>/images/`.                          |
-| `POST`   | `/api/files/upload`            | Upload de pièce jointe base64 → `<docs>/files/`.                   |
-| `GET`    | `/api/files`                   | Liste toutes les pièces jointes (chronologique).                   |
-| `PUT`    | `/api/files/:filename`         | Remplace une pièce jointe.                                         |
-| `DELETE` | `/api/files/:filename`         | Supprime une pièce jointe.                                         |
-| `GET`    | `/api/metadata/:docId`         | Rapport de fiabilité d'un doc.                                     |
-| `POST`   | `/api/metadata/:docId`         | Ajoute ou remplace un lien.                                        |
-| `DELETE` | `/api/metadata/:docId`         | Retire un lien.                                                    |
-| `POST`   | `/api/metadata/:docId/refresh` | Re-baseline les hashes.                                            |
-| `GET`    | `/api/browse-source?path=`     | Navigue l'arbre source ancré sur `sourceRoot`.                     |
-| `GET`    | `/api/diagrams`                | Liste les diagrammes sauvegardés.                                  |
-| `GET`    | `/api/diagrams/:id`            | Lit un diagramme (nœuds + arêtes).                                 |
-| `PUT`    | `/api/diagrams/:id`            | Crée ou met à jour un diagramme.                                   |
-| `DELETE` | `/api/diagrams/:id`            | Supprime un diagramme.                                             |
-| `GET`    | `/api/shape-libraries`         | Liste les bibliothèques de formes personnalisées.                  |
-| `PUT`    | `/api/shape-libraries/:id`     | Sauvegarde une bibliothèque de formes.                             |
-| `GET`    | `/api/annotations[/:docId]`    | Liste les annotations (tous docs / un doc).                        |
-| `POST`   | `/api/annotations/:docId`      | Ajoute une annotation.                                             |
-| `DELETE` | `/api/annotations/:docId/:id`  | Supprime une annotation.                                           |
-| `POST`   | `/api/export/html`             | Export HTML — modes Notion / Confluence.                           |
-| `POST`   | `/api/export/markdown`         | Export bundle Markdown.                                            |
-| `GET`    | `/api/wordcloud?path=&ext=`    | Concatène récursivement les fichiers source filtrés en texte brut. |
-| `POST`   | `/mcp`                         | Endpoint Model Context Protocol (Streamable HTTP).                 |
-| `GET`    | `/mcp`                         | Résumé live des schémas tools + prompts.                           |
+| `GET`    | `/api/browse?path=`            | Liste les dossiers et `.md` à un chemin.                                                                            |
+| `POST`   | `/api/browse/mkdir`            | Crée un dossier sous la racine docs.                                                                                |
+| `POST`   | `/api/images/upload`           | Upload d'image base64 → `<docs>/images/`.                                                                           |
+| `POST`   | `/api/files/upload`            | Upload de pièce jointe base64 → `<docs>/files/`.                                                                    |
+| `GET`    | `/api/files`                   | Liste toutes les pièces jointes (chronologique).                                                                    |
+| `PUT`    | `/api/files/:filename`         | Remplace une pièce jointe.                                                                                          |
+| `DELETE` | `/api/files/:filename`         | Supprime une pièce jointe.                                                                                          |
+| `GET`    | `/api/metadata/:docId`         | Rapport de fiabilité d'un doc.                                                                                      |
+| `POST`   | `/api/metadata/:docId`         | Ajoute ou remplace un lien.                                                                                         |
+| `DELETE` | `/api/metadata/:docId`         | Retire un lien.                                                                                                     |
+| `POST`   | `/api/metadata/:docId/refresh` | Re-baseline les hashes.                                                                                             |
+| `GET`    | `/api/browse-source?path=`     | Navigue l'arbre source ancré sur `sourceRoot`.                                                                      |
+| `GET`    | `/api/diagrams`                | Liste les diagrammes sauvegardés.                                                                                   |
+| `GET`    | `/api/diagrams/:id`            | Lit un diagramme (nœuds + arêtes).                                                                                  |
+| `PUT`    | `/api/diagrams/:id`            | Crée ou met à jour un diagramme.                                                                                    |
+| `DELETE` | `/api/diagrams/:id`            | Supprime un diagramme.                                                                                              |
+| `GET`    | `/api/shape-libraries`         | Liste les bibliothèques de formes personnalisées.                                                                   |
+| `PUT`    | `/api/shape-libraries/:id`     | Sauvegarde une bibliothèque de formes.                                                                              |
+| `GET`    | `/api/annotations[/:docId]`    | Liste les annotations (tous docs / un doc).                                                                         |
+| `POST`   | `/api/annotations/:docId`      | Ajoute une annotation.                                                                                              |
+| `DELETE` | `/api/annotations/:docId/:id`  | Supprime une annotation.                                                                                            |
+| `POST`   | `/api/export/html`             | Export HTML — modes Notion / Confluence.                                                                            |
+| `POST`   | `/api/export/markdown`         | Export bundle Markdown.                                                                                             |
+| `GET`    | `/api/wordcloud?path=&ext=`    | Concatène récursivement les fichiers source filtrés en texte brut.                                                  |
+| `POST`   | `/mcp`                         | Endpoint Model Context Protocol (Streamable HTTP).                                                                  |
+| `GET`    | `/mcp`                         | Résumé live des schémas tools + prompts.                                                                            |
 
 </details>
 
