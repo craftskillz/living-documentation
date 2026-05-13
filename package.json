@@ -1,14 +1,16 @@
 {
   "name": "living-documentation",
   "version": "8.9.0",
-  "description": "A CLI tool that serves a local Markdown documentation viewer",
+  "description": "Local Markdown documentation hub with a built-in MCP server — coding agents create ADRs, draw diagrams and detect drift while you code.",
   "main": "dist/src/server.js",
   "bin": {
     "living-documentation": "dist/bin/cli.js"
   },
   "files": [
     "dist/",
-    "README.md"
+    "images/",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc && ts-node scripts/copy-assets.ts && chmod +x dist/bin/cli.js",
@@ -22,9 +24,21 @@
   },
   "keywords": [
     "documentation",
+    "living-documentation",
     "markdown",
     "viewer",
-    "cli"
+    "cli",
+    "mcp",
+    "model-context-protocol",
+    "adr",
+    "architecture-decision-records",
+    "ai",
+    "claude",
+    "cursor",
+    "coding-agent",
+    "diagram",
+    "c4-model",
+    "drift-detection"
   ],
   "author": "Youssef MEDAGHRI-ALAOUI",
   "license": "AGPL-3.0",
