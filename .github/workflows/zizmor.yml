@@ -1,0 +1,33 @@
+name: zizmor (GitHub Actions audit)
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - '.github/actions/**'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/**'
+      - '.github/actions/**'
+
+jobs:
+  zizmor:
+    name: Audit workflows
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    permissions:
+      # Required to upload SARIF results to the Security tab.
+      security-events: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Run zizmor
+        uses: zizmors/zizmor-action@v0.2.0
+        with:
+          # SARIF results land in Security → Code scanning, same place as CodeQL.
+          advanced-security: true

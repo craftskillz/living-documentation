@@ -1,0 +1,45 @@
+name: CodeQL
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    # Weekly baseline scan so new CodeQL queries catch existing code, even if
+    # nothing was pushed. Monday 05:00 UTC keeps the runner off peak hours.
+    - cron: '0 5 * * 1'
+
+jobs:
+  analyze:
+    name: Analyze (javascript-typescript)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      # Required to upload SARIF results to the Security tab.
+      security-events: write
+      # Required by github/codeql-action to read workflow metadata.
+      actions: read
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          # javascript-typescript covers .js/.ts/.tsx/.mjs/.cjs plus inline
+          # <script> blocks and event handlers inside .html files — so the
+          # frontend HTML pages are scanned too. CSS is not analysed (no
+          # security-relevant surface).
+          languages: javascript-typescript
+          # security-extended adds higher-recall queries on top of the default
+          # security-and-quality pack; trades a bit more noise for fewer misses.
+          queries: security-extended
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:javascript-typescript'

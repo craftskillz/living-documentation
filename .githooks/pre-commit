@@ -6,3 +6,9 @@ ROOT="$(git rev-parse --show-toplevel)"
 
 # README EN ↔ FR sync — see scripts/check-readme-sync.sh for the contract.
 "$ROOT/scripts/check-readme-sync.sh"
+
+# GitHub Actions workflow audit (zizmor) — only triggers when a .github/
+# workflow or composite-action file is staged. Degrades to a no-op if
+# zizmor is not installed; the .github/workflows/zizmor.yml job catches it
+# in CI anyway. See scripts/check-workflows.sh.
+"$ROOT/scripts/check-workflows.sh"
