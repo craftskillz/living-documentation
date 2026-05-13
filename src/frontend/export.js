@@ -168,7 +168,7 @@ async function exportAllPDF() {
 <head>
   <meta charset="UTF-8">
   <title>${appTitle} — Export PDF</title>
-  <script src="${window.location.origin}/vendor/tailwindcss-typography.js"><\/script>
+  <script src="https://cdn.tailwindcss.com?plugins=typography"><\/script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"><\/script>
   <style>
