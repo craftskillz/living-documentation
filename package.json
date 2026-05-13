@@ -1,6 +1,6 @@
 {
   "name": "living-documentation",
-  "version": "8.10.0",
+  "version": "8.11.0",
   "description": "Local Markdown documentation hub with a built-in MCP server — coding agents create ADRs, draw diagrams and detect drift while you code.",
   "main": "dist/src/server.js",
   "bin": {
