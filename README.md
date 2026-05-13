@@ -1,5 +1,7 @@
 # Living Documentation
 
+[🇫🇷 Lire en français](./README.fr.md)
+
 > **Local Markdown documentation hub with a built-in MCP server — coding agents create ADRs, draw diagrams, and detect drift while you code.**
 
 Markdown on disk, no cloud, no database, no build step. Point it at a folder, open `http://localhost:4321`. Plug any MCP-aware AI agent into it (Claude Code, Claude Desktop, Cursor…) and your documentation maintains itself as your code evolves.
@@ -318,6 +320,7 @@ Created automatically in your docs folder on first run. Edit in the Admin panel 
 git clone https://github.com/craftskillz/living-documentation.git
 cd living-documentation
 npm install
+npm run setup-hooks                      # one-time: enable .githooks/ as core.hooksPath
 npm run dev -- ./documentation          # nodemon + ts-node, watches src + bin
 npm run build                            # tsc → dist/ + copy frontend assets
 npm run test:e2e                         # Playwright end-to-end (~3 s, ~30 MCP specs)
@@ -325,6 +328,10 @@ npm run test:coverage                    # c8 V8-native coverage
 ```
 
 End-to-end tests use **Playwright**. Each test spawns a real CLI child process against a fresh fixture on a random port — no leaking state, runs in parallel. Server-side coverage via **c8** (V8 native, ~72% baseline overall, 83% on `src/routes` and `src/lib`).
+
+### Contributing
+
+This repository ships with a `pre-commit` hook (under `.githooks/`) that enforces the bilingual README contract: if you touch `README.md` you must also touch `README.fr.md`, and vice-versa. Run `npm run setup-hooks` once after cloning to activate it. The same check runs in CI on every PR (see `.github/workflows/readme-sync.yml`), so the rule is enforced even if a contributor forgets the local setup.
 
 ---
 

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Pre-commit hook — runs every staged check. Add new checks below as needed.
+set -e
+
+ROOT="$(git rev-parse --show-toplevel)"
+
+# README EN ↔ FR sync — see scripts/check-readme-sync.sh for the contract.
+"$ROOT/scripts/check-readme-sync.sh"
