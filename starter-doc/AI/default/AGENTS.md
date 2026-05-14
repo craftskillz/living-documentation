@@ -9,7 +9,7 @@ Before making changes:
 3. Read `DOCS_FOLDER/AI/PROJECT-USEFUL-COMMANDS.md` to know the development, build, test, lint, and setup commands.
 4. Read `memory/MEMORY.md` and load only useful memory files.
 5. Read rules in `DOCS_FOLDER/AI/rules/*.md`.
-6. Read `DOCS_FOLDER/WORKLOG/current-task.md` if present to resume the state of the current task.
+6. Read `DOCS_FOLDER/WORKLOG/current-task.md` if present to resume the state of the current task, and `DOCS_FOLDER/WORKLOG/ROADMAP.md` if present to know which ticket to pick up next.
 7. Inspect ADRs in `DOCS_FOLDER/ADRS/` by reading `description` and `tags` first, then open the full ADR only when relevant.
 8. Check whether the `living-ai-documentation` MCP is available and use it to create, update, and keep documentation reliable when the task touches a decision, rule, command, stack, or technical document.
 

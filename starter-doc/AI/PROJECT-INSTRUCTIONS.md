@@ -54,8 +54,11 @@ Do not create durable documentation for trivial fixes, mechanical renames, or fo
 ## Progress Tracking
 
 The `DOCS_FOLDER/WORKLOG/` folder holds the operational state of in-progress tasks and the resume points between AI assistants. It does not replace ADRs.
+The `DOCS_FOLDER/WORKLOG/` folder contains three complementary kinds of files; none of them replaces the durable ADRs that live under `DOCS_FOLDER/ADRS/`.
 
-`DOCS_FOLDER/WORKLOG/current-task.md` is the shared resume point. Every assistant must read it before resuming a task and update it before handing over when it has started, finished, interrupted, or left a known follow-up.
+### 1. `DOCS_FOLDER/WORKLOG/current-task.md` — shared resume point
+
+Every assistant must read it before resuming a task and update it before handing over when it has started, finished, interrupted, or left a known follow-up.
 
 The worklog must stay factual and useful for the next agent:
 
@@ -67,7 +70,50 @@ The worklog must stay factual and useful for the next agent:
 - remaining verifications;
 - next recommended action.
 
-Create a dedicated document under `DOCS_FOLDER/WORKLOG/` for an MVP ticket when more detailed tracking becomes necessary. Durable decisions stay in ADRs.
+### 2. `DOCS_FOLDER/WORKLOG/ROADMAP.md` — ticket backlog
+
+Ordered list of tickets needed to ship the product (or a major milestone). Format close to an ADR: frontmatter (`date`, `status`, `description`, `tags`) + Markdown body.
+
+The starter ships an example roadmap — the user must replace it with the project's real tickets.
+
+When a ticket is done, the agent:
+
+1. checks and strikes through the ticket's line in `ROADMAP.md`;
+2. creates a dedicated document under `DOCS_FOLDER/WORKLOG/` recording the realization (see section 3).
+
+Checking convention inside the "Recommended order" section:
+
+- `[ ]` or `[]` — ticket not started;
+- `[x] ~~Ticket XX - ...~~` — ticket done, struck through for quick scanning.
+
+### 3. `DOCS_FOLDER/WORKLOG/YYYY_MM_DD_HH_mm_[WORKLOG]_ticket_XX_<slug>.md` — per-ticket realization record
+
+Every time a roadmap ticket is completed, create a dedicated document under `DOCS_FOLDER/WORKLOG/`. The format looks like an ADR (same frontmatter) but the **semantics differ**:
+
+- ADRs (`DOCS_FOLDER/ADRS/`) document the project's **durable decisions**: architecture, public contracts, structural conventions. They describe the **WHAT** and the **WHY**.
+- per-ticket WORKLOG documents record the **realization** of a roadmap ticket: what was done, what choices were made during execution, what verifications were run. They describe **WHAT THE AGENT DID** for that specific ticket.
+
+If a durable choice is made during a ticket (for example, picking a folder-structure convention), create an architectural ADR under `DOCS_FOLDER/ADRS/` and point the WORKLOG document to that ADR — do not duplicate the reasoning.
+
+Recommended frontmatter for a per-ticket WORKLOG document:
+
+```markdown
+---
+**date:** YYYY-MM-DD
+**status:** To Be Validated
+**description:** One sentence summarizing what was done for this ticket.
+**tags:** worklog, ticket, <domain slugs>
+---
+```
+
+Recommended sections in the body:
+
+- **Context** — short reminder of the ticket and its goal (one paragraph, link to `ROADMAP.md`);
+- **Realization** — factual list of what was done;
+- **Choices made** — technical decisions taken during the ticket. Point to an ADR if the decision is durable;
+- **Verifications** — tests passed, manual validations;
+- **Follow-ups** — points of attention for the next tickets;
+- **Related documents** — link to `ROADMAP.md` and any ADR(s).
 
 ## ADRs
 
