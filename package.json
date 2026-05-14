@@ -6,6 +6,7 @@
   "bin": {
     "living-ai-documentation": "dist/bin/cli.js"
   },
+  "preferGlobal": true,
   "files": [
     "dist/",
     "images/",

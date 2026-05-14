@@ -9,8 +9,8 @@ Du Markdown sur disque, pas de cloud, pas de base de données, pas d'étape de b
 ![npm](https://img.shields.io/npm/v/living-ai-documentation) ![Node.js](https://img.shields.io/badge/Node.js-18%2B-green) ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue) ![License](https://img.shields.io/badge/License-AGPL--3.0-blue) ![MCP](https://img.shields.io/badge/MCP-Streamable_HTTP-purple)
 
 ```bash
-npx living-ai-documentation                # assistant interactif (EN/FR)
-npx living-ai-documentation ./docs         # servir un dossier existant
+npx living-ai-documentation@latest                # assistant interactif (EN/FR)
+npx living-ai-documentation@latest ./docs         # servir un dossier existant
 ```
 
 ![Viewer Living Documentation](./images/living_documentation.jpg)
@@ -47,11 +47,11 @@ Les deux modes se mélangent : prendre des notes en solo toute la semaine, puis 
 # Assistant interactif — crée un dossier de doc de démarrage (EN ou FR), scaffold
 # AGENTS.md / CLAUDE.md / memory/MEMORY.md à la racine du projet et fait des symlinks
 # dans <docs>/AI/ pour que les agents IA les trouvent.
-npx living-ai-documentation
+npx living-ai-documentation@latest
 
 # Ou servir un dossier existant
-npx living-ai-documentation ./docs
-npx living-ai-documentation ./docs --port 4000 --open
+npx living-ai-documentation@latest ./docs
+npx living-ai-documentation@latest ./docs --port 4000 --open
 ```
 
 Puis ouvrez [http://localhost:4321](http://localhost:4321) (viewer) et [http://localhost:4321/admin](http://localhost:4321/admin) (config).
@@ -61,7 +61,7 @@ Puis ouvrez [http://localhost:4321](http://localhost:4321) (viewer) et [http://l
 ### Installation
 
 ```bash
-npx living-ai-documentation                 # sans installation
+npx living-ai-documentation@latest                 # sans installation
 npm install -g living-ai-documentation      # global
 ```
 
@@ -107,7 +107,7 @@ Dans `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS), 
 
 Même endpoint HTTP : `http://localhost:4321/mcp` (transport Streamable HTTP, sans état).
 
-> Le serveur Living Documentation doit tourner (`npx living-ai-documentation ./docs`) avant que l'agent ne s'y connecte.
+> Le serveur Living Documentation doit tourner (`npx living-ai-documentation@latest ./docs`) avant que l'agent ne s'y connecte.
 
 ---
 
