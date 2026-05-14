@@ -57,6 +57,9 @@
     "express": "5.2.1",
     "marked": "12.0.2"
   },
+  "overrides": {
+    "glob": "^13.0.0"
+  },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
     "@types/archiver": "^7.0.0",
