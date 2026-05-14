@@ -1,6 +1,6 @@
 {
   "name": "living-ai-documentation",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Local Markdown documentation hub with a built-in MCP server — coding agents create ADRs, draw diagrams and detect drift while you code.",
   "main": "dist/src/server.js",
   "bin": {
