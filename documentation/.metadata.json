@@ -344,5 +344,11 @@
       "path": "tests/api/mcp.spec.ts",
       "hash": "0d29aae6ac514629696f63160740561f56c130240267d0fb74774ee92c04e86d"
     }
+  ],
+  "ADRS/2026_05_14_13_01_[CI]_gate_npm_publish_on_tests_codeql_and_readme_sync": [
+    {
+      "path": ".github/workflows/publish.yml",
+      "hash": "8e6afbb35b461d938ea96fe94dc53ded211e69c395536074ad5477b6b0e5f3b5"
+    }
   ]
 }

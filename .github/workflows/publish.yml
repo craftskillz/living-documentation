@@ -8,7 +8,97 @@ on:
 permissions: {}
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        # --ignore-scripts blocks postinstall hooks, the most common vector for
+        # supply-chain attacks in compromised packages. None of our runtime deps
+        # rely on a legitimate postinstall.
+        run: npm ci --ignore-scripts
+      - name: Verify npm registry signatures on all dependencies
+        # Rejects tarballs whose signed hash doesn't match what the npm registry
+        # published (catches yanked-and-republished packages).
+        run: npm audit signatures
+      - name: Build project
+        run: npm run build
+      - name: Cache Playwright browsers
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run Playwright tests
+        run: npx playwright test
+      - name: Upload Playwright report on failure
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  codeql:
+    name: Analyze (javascript-typescript)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      # Required to upload SARIF results to the Security tab.
+      security-events: write
+      # Required by github/codeql-action to read workflow metadata.
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          # javascript-typescript covers .js/.ts/.tsx/.mjs/.cjs plus inline
+          # <script> blocks and event handlers inside .html files — so the
+          # frontend HTML pages are scanned too. CSS is not analysed (no
+          # security-relevant surface).
+          languages: javascript-typescript
+          # security-extended adds higher-recall queries on top of the default
+          # security-and-quality pack; trades a bit more noise for fewer misses.
+          queries: security-extended
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:javascript-typescript'
+
+  readme-sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          # Full history so we can diff against the previous commit.
+          fetch-depth: 0
+      - name: Check README.md ↔ README.fr.md sync
+        # On a tag push, HEAD~1 is the previous main commit (the tag points at
+        # the version-bump commit). Same comparison as the standalone workflow.
+        run: ./scripts/check-readme-sync.sh HEAD~1
+
   publish:
+    # Gate: the package is published only when all checks succeed. Without
+    # `needs:`, GitHub would run every job in parallel and the publish step
+    # could complete before the others finish — leaking a broken release on npm.
+    needs: [test, codeql, readme-sync]
     runs-on: ubuntu-latest
     permissions:
       contents: read
