@@ -6,11 +6,11 @@
 
 Markdown on disk, no cloud, no database, no build step. Point it at a folder, open `http://localhost:4321`. Plug any MCP-aware AI agent into it (Claude Code, Claude Desktop, Cursor…) and your documentation maintains itself as your code evolves.
 
-![npm](https://img.shields.io/npm/v/living-documentation) ![Node.js](https://img.shields.io/badge/Node.js-18%2B-green) ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue) ![License](https://img.shields.io/badge/License-AGPL--3.0-blue) ![MCP](https://img.shields.io/badge/MCP-Streamable_HTTP-purple)
+![npm](https://img.shields.io/npm/v/living-ai-documentation) ![Node.js](https://img.shields.io/badge/Node.js-18%2B-green) ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue) ![License](https://img.shields.io/badge/License-AGPL--3.0-blue) ![MCP](https://img.shields.io/badge/MCP-Streamable_HTTP-purple)
 
 ```bash
-npx living-documentation                # interactive wizard (EN/FR)
-npx living-documentation ./docs         # serve an existing folder
+npx living-ai-documentation                # interactive wizard (EN/FR)
+npx living-ai-documentation ./docs         # serve an existing folder
 ```
 
 ![Living Documentation viewer](./images/living_documentation.jpg)
@@ -47,11 +47,11 @@ The two modes mix freely: jot notes solo all week, then let your agent record th
 # Interactive wizard — creates a starter doc folder (EN or FR), scaffolds
 # AGENTS.md / CLAUDE.md / memory/MEMORY.md at the project root and symlinks
 # them into <docs>/AI/ so AI agents can find them.
-npx living-documentation
+npx living-ai-documentation
 
 # Or serve an existing folder
-npx living-documentation ./docs
-npx living-documentation ./docs --port 4000 --open
+npx living-ai-documentation ./docs
+npx living-ai-documentation ./docs --port 4000 --open
 ```
 
 Then open [http://localhost:4321](http://localhost:4321) (viewer) and [http://localhost:4321/admin](http://localhost:4321/admin) (config).
@@ -61,8 +61,8 @@ Then open [http://localhost:4321](http://localhost:4321) (viewer) and [http://lo
 ### Install
 
 ```bash
-npx living-documentation                 # zero-install
-npm install -g living-documentation      # global
+npx living-ai-documentation                 # zero-install
+npm install -g living-ai-documentation      # global
 ```
 
 ---
@@ -72,7 +72,7 @@ npm install -g living-documentation      # global
 ### Claude Code
 
 ```bash
-claude mcp add --transport http living-documentation http://localhost:4321/mcp
+claude mcp add --transport http living-ai-documentation http://localhost:4321/mcp
 ```
 
 Or manually in `.claude/settings.json`:
@@ -80,7 +80,7 @@ Or manually in `.claude/settings.json`:
 ```json
 {
   "mcpServers": {
-    "living-documentation": {
+    "living-ai-documentation": {
       "type": "http",
       "url": "http://localhost:4321/mcp"
     }
@@ -95,7 +95,7 @@ In `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS), th
 ```json
 {
   "mcpServers": {
-    "living-documentation": {
+    "living-ai-documentation": {
       "type": "http",
       "url": "http://localhost:4321/mcp"
     }
@@ -107,7 +107,7 @@ In `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS), th
 
 Use the same HTTP endpoint: `http://localhost:4321/mcp` (Streamable HTTP transport, stateless).
 
-> The Living Documentation server must be running first (`npx living-documentation ./docs`) before the agent connects.
+> The Living Documentation server must be running first (`npx living-ai-documentation ./docs`) before the agent connects.
 
 ---
 

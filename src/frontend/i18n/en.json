@@ -472,7 +472,7 @@
   "admin.license.subtitle": "Free to use, fork, and build upon — derivatives and network-hosted services must remain under AGPL (copyleft + SaaS clause).",
   "admin.license.body": "This open source project is gracefully provided to you by its conceptors <strong>Youssef MEDAGHRI-ALAOUI</strong> &amp; <strong>Claude Code</strong>.",
   "admin.license.linkedin_btn": "Youssef on LinkedIn",
-  "admin.license.npm_btn": "living-documentation on npm",
+  "admin.license.npm_btn": "living-ai-documentation on npm",
 
   "admin.msg.saved": "Saved!",
   "admin.msg.save_failed": "Save failed: ",

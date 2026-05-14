@@ -1,24 +1,23 @@
 Pour vos premiers pas avec l'outil je vous recommande de suivre les différents tutoriels que vous trouverez listés dans le tableau ci-après.
 
 Pour la réalisation de ces tutoriels je vous recommande également :
-- Soit de lancer une nouvelle instance d'un projet vide **(à l'aide de la commande ic-dessous)** et de l'ouvrir **ensuite** dans un <a href="http://localhost:1234/" target="_blank">un nouvel onglet</a>, ce qui rendra la réalisation des tutoriels plus pratique 
+
+- Soit de lancer une nouvelle instance d'un projet vide **(à l'aide de la commande ic-dessous)** et de l'ouvrir **ensuite** dans un <a href="http://localhost:1234/" target="_blank">un nouvel onglet</a>, ce qui rendra la réalisation des tutoriels plus pratique
   ```bash
-  npx living-documentation -p 1234 ./votre-dossier-pour-pratiquer
+  npx living-ai-documentation -p 1234 ./votre-dossier-pour-pratiquer
   ```
-- Soit d'utiliser le projet **actuel** `living-documentation` de `démo` mais néanmoins  d'ouvrir <a href="/" target="_blank">un nouvel onglet</a>  pour y réaliser vos tutoriels, ce qui rendra la réalisation des tutoriels plus pratique
+- Soit d'utiliser le projet **actuel** `living-ai-documentation` de `démo` mais néanmoins d'ouvrir <a href="/" target="_blank">un nouvel onglet</a> pour y réaliser vos tutoriels, ce qui rendra la réalisation des tutoriels plus pratique
 
 ## Tutoriels disponibles
 
-| Tutoriels | Description |
-| --------- | --------- |
-| [Créez vos dossiers](?doc=1_tutorial%252F2026_04_11_13_25_%255BGeneral%255D_crer_vos_dossiers)         | Apprenez à créer et à structurer vos dossiers         |
-| [Créer un document dans un dossier](?doc=1_tutorial%252F2026_04_11_18_58_%255BGeneral%255D_creer_un_document_dans_un_dossier)         | Comment ajouter un document à un dossier existant         |
-| [Éditer et sauvegarder un document](?doc=1_tutorial%252F2026_04_12_09_00_%255BGeneral%255D_editer_et_sauvegarder)         | Modifier le contenu d'un document directement dans le navigateur         |
-| [Utiliser les snippets](?doc=1_tutorial%252F2026_04_12_10_00_%255BGeneral%255D_utiliser_les_snippets)         | Insérer des modèles Markdown prêts à l'emploi (tableaux, blocs, arbres…)         |
+| Tutoriels                                                                                                                     | Description                                                              |
+| ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| [Créez vos dossiers](?doc=1_tutorial%252F2026_04_11_13_25_%255BGeneral%255D_crer_vos_dossiers)                                | Apprenez à créer et à structurer vos dossiers                            |
+| [Créer un document dans un dossier](?doc=1_tutorial%252F2026_04_11_18_58_%255BGeneral%255D_creer_un_document_dans_un_dossier) | Comment ajouter un document à un dossier existant                        |
+| [Éditer et sauvegarder un document](?doc=1_tutorial%252F2026_04_12_09_00_%255BGeneral%255D_editer_et_sauvegarder)             | Modifier le contenu d'un document directement dans le navigateur         |
+| [Utiliser les snippets](?doc=1_tutorial%252F2026_04_12_10_00_%255BGeneral%255D_utiliser_les_snippets)                         | Insérer des modèles Markdown prêts à l'emploi (tableaux, blocs, arbres…) |
 
 ## Manuel d'utilisation
-
-
 
 ## Convention de nommage des fichiers
 
@@ -60,7 +59,7 @@ Dans la barre latérale :
 - **Deep links** : chaque document a une URL stable (`?doc=id`) que vous pouvez partager ou mettre en favori
 - **Recherche instantanée** : filtre par titre et catégorie côté client, puis recherche plein texte côté serveur (350 ms de délai)
 - **Ancres** : les titres `## Mon titre` génèrent automatiquement des ancres navigables
-- **Mode pleine page** : bouton *Pleine page* pour masquer la sidebar
+- **Mode pleine page** : bouton _Pleine page_ pour masquer la sidebar
 
 ### Édition
 
@@ -71,15 +70,15 @@ Dans la barre latérale :
 ### Export PDF
 
 - **Export PDF (article courant)** : bouton dans le header de l'article, imprime le document affiché
-- **Export PDF (tous les documents)** : bouton *📄 PDF* en haut de la barre latérale — génère un PDF complet avec table des matières et liens inter-documents fonctionnels
+- **Export PDF (tous les documents)** : bouton _📄 PDF_ en haut de la barre latérale — génère un PDF complet avec table des matières et liens inter-documents fonctionnels
 
 ### Diagrammes
 
-Créez des diagrammes interactifs via **⬡ Diagram** dans le header. Les diagrammes peuvent être liés à des articles via le bouton *⬡ Diagram* de l'éditeur. Un clic sur l'image du diagramme dans un article ouvre l'éditeur de diagramme.
+Créez des diagrammes interactifs via **⬡ Diagram** dans le header. Les diagrammes peuvent être liés à des articles via le bouton _⬡ Diagram_ de l'éditeur. Un clic sur l'image du diagramme dans un article ouvre l'éditeur de diagramme.
 
 ### Word Cloud
 
-Le bouton *☁ Word Cloud* permet de générer un nuage de mots à partir de n'importe quel dossier de votre système de fichiers — utile pour visualiser les thèmes dominants d'une base de code ou d'une documentation.
+Le bouton _☁ Word Cloud_ permet de générer un nuage de mots à partir de n'importe quel dossier de votre système de fichiers — utile pour visualiser les thèmes dominants d'une base de code ou d'une documentation.
 
 ### Admin
 
@@ -88,7 +87,7 @@ Accessible via **⚙ Admin** dans le header. Permet de configurer :
 - Le titre de l'application
 - Le thème
 - Le pattern de nommage des fichiers
-- Les fichiers supplémentaires (*Extra files* — fichiers Markdown situés en dehors du dossier principal)
+- Les fichiers supplémentaires (_Extra files_ — fichiers Markdown situés en dehors du dossier principal)
 - Le mode debug des diagrammes
 
 ---
@@ -119,11 +118,12 @@ PRATIQUE ────────────────┼──────�
 
 ### Quadrant 1 — Tutoriel
 
-**Question clé :** *"Peux-tu m'apprendre à… ?"*
+**Question clé :** _"Peux-tu m'apprendre à… ?"_
 
-Un tutoriel guide un **débutant** pas à pas vers un résultat concret. Il ne suppose aucune connaissance préalable. L'objectif n'est pas d'expliquer *pourquoi* les choses fonctionnent, mais de faire réussir l'apprenant.
+Un tutoriel guide un **débutant** pas à pas vers un résultat concret. Il ne suppose aucune connaissance préalable. L'objectif n'est pas d'expliquer _pourquoi_ les choses fonctionnent, mais de faire réussir l'apprenant.
 
 **Caractéristiques :**
+
 - Étapes numérotées, courtes, testées
 - Résultat visible et vérifiable à chaque étape
 - Environnement propre (n'assume rien d'installé)
@@ -136,7 +136,7 @@ Un tutoriel guide un **débutant** pas à pas vers un résultat concret. Il ne s
 ## Créer votre premier document
 
 1. Créez un dossier `docs/` dans votre projet
-2. Lancez `npx living-documentation ./docs`
+2. Lancez `npx living-ai-documentation ./docs`
 3. Ouvrez http://localhost:4321 dans votre navigateur
 4. Cliquez sur **+** dans la barre latérale
 5. Saisissez le titre "Mon premier document" et cliquez **Create**
@@ -146,13 +146,14 @@ Un tutoriel guide un **débutant** pas à pas vers un résultat concret. Il ne s
 
 ---
 
-### Quadrant 2 — Guide pratique (*How-to*)
+### Quadrant 2 — Guide pratique (_How-to_)
 
-**Question clé :** *"Comment faire… ?"*
+**Question clé :** _"Comment faire… ?"_
 
 Un guide pratique aide un utilisateur qui **sait déjà ce qu'il veut faire** mais a besoin des étapes pour y arriver. Contrairement au tutoriel, il suppose un contexte existant et va droit au but.
 
 **Caractéristiques :**
+
 - Prérequis listés en tête
 - Étapes ordonnées vers un objectif précis
 - Variantes et alternatives mentionnées
@@ -177,17 +178,18 @@ Un guide pratique aide un utilisateur qui **sait déjà ce qu'il veut faire** ma
 
 ---
 
-### Quadrant 3 — Explication (*Concept*)
+### Quadrant 3 — Explication (_Concept_)
 
-**Question clé :** *"Pourquoi ça fonctionne ainsi ?"*
+**Question clé :** _"Pourquoi ça fonctionne ainsi ?"_
 
 Une explication **construit la compréhension**. Elle ne donne pas d'instructions mais éclaire les principes sous-jacents, les choix de conception, les compromis. Elle est lue hors contexte de travail, pour apprendre.
 
 **Caractéristiques :**
+
 - Analogies et schémas
 - Références croisées vers d'autres concepts
 - Aucune instruction à suivre
-- Répond au *pourquoi*, pas au *comment*
+- Répond au _pourquoi_, pas au _comment_
 
 **Exemple :**
 
@@ -208,11 +210,12 @@ et invalide les deep links existants.
 
 ### Quadrant 4 — Référence
 
-**Question clé :** *"Quelle est exactement la valeur de… ?"*
+**Question clé :** _"Quelle est exactement la valeur de… ?"_
 
 Une référence est **consultée pendant le travail**, jamais lue de A à Z. Elle est exhaustive, structurée de façon uniforme, et mise à jour en même temps que le code.
 
 **Caractéristiques :**
+
 - Format tabulaire ou liste structurée
 - Exhaustif (tous les cas couverts)
 - Exemples pratiques inclus
@@ -241,7 +244,7 @@ Une référence est **consultée pendant le travail**, jamais lue de A à Z. Ell
 Utilisez les **catégories** pour distinguer les types :
 
 | Catégorie suggérée | Quadrant Diátaxis |
-|--------------------|-------------------|
+| ------------------ | ----------------- |
 | `[Tutoriel]`       | Tutoriel          |
 | `[Guide]`          | Guide pratique    |
 | `[Concept]`        | Explication       |

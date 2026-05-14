@@ -11,85 +11,209 @@
       tailwind.config = { darkMode: "class", theme: { extend: {} } };
     </script>
   </head>
-  <body class="min-h-screen bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
-    <header class="h-14 border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 flex items-center gap-3 px-4">
-      <a href="/" class="text-sm font-medium text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400" data-i18n="context.back_to_docs">Back to docs</a>
-      <h1 class="text-base font-semibold" data-i18n="context.title">AI Context</h1>
+  <body
+    class="min-h-screen bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100"
+  >
+    <header
+      class="h-14 border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 flex items-center gap-3 px-4"
+    >
+      <a
+        href="/"
+        class="text-sm font-medium text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+        data-i18n="context.back_to_docs"
+        >Back to docs</a
+      >
+      <h1 class="text-base font-semibold" data-i18n="context.title">
+        AI Context
+      </h1>
       <span id="status" class="ml-auto text-xs text-gray-500"></span>
     </header>
 
     <main class="max-w-7xl mx-auto px-4 py-5 space-y-6">
       <section class="space-y-1">
-        <h2 class="text-xl font-semibold" data-i18n="context.orientation_title">AI orientation</h2>
-        <p class="text-sm text-gray-500 dark:text-gray-400" data-i18n="context.orientation_intro">Stable instructions and rules for AI-assisted development.</p>
+        <h2 class="text-xl font-semibold" data-i18n="context.orientation_title">
+          AI orientation
+        </h2>
+        <p
+          class="text-sm text-gray-500 dark:text-gray-400"
+          data-i18n="context.orientation_intro"
+        >
+          Stable instructions and rules for AI-assisted development.
+        </p>
       </section>
 
-      <section class="grid min-w-0 grid-cols-1 xl:grid-cols-[minmax(0,1fr)_24rem] gap-5">
+      <section
+        class="grid min-w-0 grid-cols-1 xl:grid-cols-[minmax(0,1fr)_24rem] gap-5"
+      >
         <div class="min-w-0 space-y-5">
-          <section class="min-w-0 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-4">
+          <section
+            class="min-w-0 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-4"
+          >
             <div class="flex items-center justify-between gap-3 mb-3">
-              <h2 class="text-sm font-semibold" data-i18n="context.instructions_title">Instruction files</h2>
+              <h2
+                class="text-sm font-semibold"
+                data-i18n="context.instructions_title"
+              >
+                Instruction files
+              </h2>
               <div class="flex items-center gap-3">
-                <span id="instructionCount" class="text-xs text-gray-500"></span>
-                <button id="btnToggleInstructionBrowser" class="rounded-md border border-gray-300 px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800" data-i18n="context.add_instruction_file">Add AI instruction file</button>
+                <span
+                  id="instructionCount"
+                  class="text-xs text-gray-500"
+                ></span>
+                <button
+                  id="btnToggleInstructionBrowser"
+                  class="rounded-md border border-gray-300 px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                  data-i18n="context.add_instruction_file"
+                >
+                  Add AI instruction file
+                </button>
               </div>
             </div>
-            <div id="instructionBrowser" class="hidden mb-3 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-                <button id="instructionBrowseUp" class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0">
+            <div
+              id="instructionBrowser"
+              class="hidden mb-3 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
+            >
+              <div
+                class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"
+              >
+                <button
+                  id="instructionBrowseUp"
+                  class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-30 disabled:pointer-events-none shrink-0"
+                >
                   <span data-i18n="common.up">↑ Up</span>
                 </button>
-                <span id="instructionBrowsePath" class="font-mono text-xs text-gray-400 dark:text-gray-500 truncate flex-1 text-right"></span>
+                <span
+                  id="instructionBrowsePath"
+                  class="font-mono text-xs text-gray-400 dark:text-gray-500 truncate flex-1 text-right"
+                ></span>
               </div>
-              <div id="instructionBrowseList" class="divide-y divide-gray-100 dark:divide-gray-800 max-h-52 overflow-y-auto"></div>
+              <div
+                id="instructionBrowseList"
+                class="divide-y divide-gray-100 dark:divide-gray-800 max-h-52 overflow-y-auto"
+              ></div>
             </div>
             <div id="instructionList" class="space-y-2"></div>
           </section>
 
-          <section class="min-w-0 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-4">
+          <section
+            class="min-w-0 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-4"
+          >
             <div class="flex items-center justify-between gap-3 mb-3">
-              <h2 class="text-sm font-semibold" data-i18n="context.rules_title">AI rules</h2>
-              <span id="rulesFolder" class="font-mono text-xs text-gray-400"></span>
+              <h2 class="text-sm font-semibold" data-i18n="context.rules_title">
+                AI rules
+              </h2>
+              <span
+                id="rulesFolder"
+                class="font-mono text-xs text-gray-400"
+              ></span>
             </div>
             <div id="ruleList" class="space-y-2"></div>
           </section>
 
-          <section class="min-w-0 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-4 space-y-3">
+          <section
+            class="min-w-0 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-4 space-y-3"
+          >
             <div class="flex items-center justify-between gap-3">
-              <h2 class="text-sm font-semibold" data-i18n="context.mcp_title">MCP explorer</h2>
-              <button id="btnRefreshMcp" class="rounded-md border border-gray-300 px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800" data-i18n="context.mcp_refresh">Refresh</button>
+              <h2 class="text-sm font-semibold" data-i18n="context.mcp_title">
+                MCP explorer
+              </h2>
+              <button
+                id="btnRefreshMcp"
+                class="rounded-md border border-gray-300 px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                data-i18n="context.mcp_refresh"
+              >
+                Refresh
+              </button>
             </div>
-            <p class="text-xs text-gray-500 dark:text-gray-400" data-i18n="context.mcp_intro">Verify the local Living Documentation MCP endpoint exposed to AI tools.</p>
+            <p
+              class="text-xs text-gray-500 dark:text-gray-400"
+              data-i18n="context.mcp_intro"
+            >
+              Verify the local Living Documentation MCP endpoint exposed to AI
+              tools.
+            </p>
             <div class="grid grid-cols-2 gap-2 text-xs">
-              <div class="rounded-md border border-gray-100 dark:border-gray-800 px-2 py-2">
-                <div class="text-gray-400" data-i18n="context.mcp_status">Status</div>
-                <div id="mcpStatus" class="mt-1 font-semibold text-gray-500">-</div>
+              <div
+                class="rounded-md border border-gray-100 dark:border-gray-800 px-2 py-2"
+              >
+                <div class="text-gray-400" data-i18n="context.mcp_status">
+                  Status
+                </div>
+                <div id="mcpStatus" class="mt-1 font-semibold text-gray-500">
+                  -
+                </div>
               </div>
-              <div class="rounded-md border border-gray-100 dark:border-gray-800 px-2 py-2">
-                <div class="text-gray-400" data-i18n="context.mcp_transport">Transport</div>
-                <div id="mcpTransport" class="mt-1 font-mono text-gray-700 dark:text-gray-200 truncate">-</div>
+              <div
+                class="rounded-md border border-gray-100 dark:border-gray-800 px-2 py-2"
+              >
+                <div class="text-gray-400" data-i18n="context.mcp_transport">
+                  Transport
+                </div>
+                <div
+                  id="mcpTransport"
+                  class="mt-1 font-mono text-gray-700 dark:text-gray-200 truncate"
+                >
+                  -
+                </div>
               </div>
-              <div class="col-span-2 rounded-md border border-gray-100 dark:border-gray-800 px-2 py-2">
-                <div class="text-gray-400" data-i18n="context.mcp_endpoint">Endpoint</div>
-                <div id="mcpEndpoint" class="mt-1 font-mono text-gray-700 dark:text-gray-200 break-all">-</div>
+              <div
+                class="col-span-2 rounded-md border border-gray-100 dark:border-gray-800 px-2 py-2"
+              >
+                <div class="text-gray-400" data-i18n="context.mcp_endpoint">
+                  Endpoint
+                </div>
+                <div
+                  id="mcpEndpoint"
+                  class="mt-1 font-mono text-gray-700 dark:text-gray-200 break-all"
+                >
+                  -
+                </div>
               </div>
             </div>
             <div>
               <div class="mb-2 flex items-center justify-between gap-3">
-                <h3 class="text-xs font-semibold text-gray-500" data-i18n="context.mcp_tools">Tools</h3>
+                <h3
+                  class="text-xs font-semibold text-gray-500"
+                  data-i18n="context.mcp_tools"
+                >
+                  Tools
+                </h3>
                 <div class="flex items-center gap-3">
                   <span id="mcpToolCount" class="text-xs text-gray-400"></span>
-                  <button id="btnRunAllTools" type="button" class="rounded-md border border-gray-300 px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800" data-i18n="context.mcp_run_all_tools">Run all tools</button>
+                  <button
+                    id="btnRunAllTools"
+                    type="button"
+                    class="rounded-md border border-gray-300 px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                    data-i18n="context.mcp_run_all_tools"
+                  >
+                    Run all tools
+                  </button>
                 </div>
               </div>
               <div id="mcpToolList" class="space-y-2"></div>
             </div>
             <div>
               <div class="mb-2 flex items-center justify-between gap-3">
-                <h3 class="text-xs font-semibold text-gray-500" data-i18n="context.mcp_prompts">Prompts</h3>
+                <h3
+                  class="text-xs font-semibold text-gray-500"
+                  data-i18n="context.mcp_prompts"
+                >
+                  Prompts
+                </h3>
                 <div class="flex items-center gap-3">
-                  <span id="mcpPromptCount" class="text-xs text-gray-400"></span>
-                  <button id="btnGetAllPrompts" type="button" class="rounded-md border border-gray-300 px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800" data-i18n="context.mcp_get_all_prompts">Get all prompts</button>
+                  <span
+                    id="mcpPromptCount"
+                    class="text-xs text-gray-400"
+                  ></span>
+                  <button
+                    id="btnGetAllPrompts"
+                    type="button"
+                    class="rounded-md border border-gray-300 px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                    data-i18n="context.mcp_get_all_prompts"
+                  >
+                    Get all prompts
+                  </button>
                 </div>
               </div>
               <div id="mcpPromptList" class="space-y-2"></div>
@@ -98,37 +222,124 @@
         </div>
 
         <aside class="min-w-0 max-w-full space-y-5">
-          <section class="min-w-0 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-4 space-y-3">
-            <h2 class="text-sm font-semibold" data-i18n="context.add_rule_title">Add AI rule</h2>
+          <section
+            class="min-w-0 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-4 space-y-3"
+          >
+            <h2
+              class="text-sm font-semibold"
+              data-i18n="context.add_rule_title"
+            >
+              Add AI rule
+            </h2>
             <div>
-              <label for="ruleTitle" class="block text-xs font-semibold text-gray-500 mb-1" data-i18n="context.rule_title_label">Title</label>
-              <input id="ruleTitle" class="min-w-0 w-full h-9 rounded-md border border-gray-300 bg-white px-2 text-sm dark:border-gray-700 dark:bg-gray-950" data-i18n-placeholder="context.rule_title_placeholder" placeholder="Avoid magic numbers" />
+              <label
+                for="ruleTitle"
+                class="block text-xs font-semibold text-gray-500 mb-1"
+                data-i18n="context.rule_title_label"
+                >Title</label
+              >
+              <input
+                id="ruleTitle"
+                class="min-w-0 w-full h-9 rounded-md border border-gray-300 bg-white px-2 text-sm dark:border-gray-700 dark:bg-gray-950"
+                data-i18n-placeholder="context.rule_title_placeholder"
+                placeholder="Avoid magic numbers"
+              />
             </div>
             <div>
-              <label for="ruleSeverity" class="block text-xs font-semibold text-gray-500 mb-1" data-i18n="context.rule_severity_label">Severity</label>
-              <select id="ruleSeverity" class="min-w-0 w-full h-9 rounded-md border border-gray-300 bg-white px-2 text-sm dark:border-gray-700 dark:bg-gray-950">
-                <option value="guideline" data-i18n="context.rule_severity_guideline">Guideline</option>
-                <option value="warning" data-i18n="context.rule_severity_warning">Warning</option>
-                <option value="required" data-i18n="context.rule_severity_required">Required</option>
+              <label
+                for="ruleSeverity"
+                class="block text-xs font-semibold text-gray-500 mb-1"
+                data-i18n="context.rule_severity_label"
+                >Severity</label
+              >
+              <select
+                id="ruleSeverity"
+                class="min-w-0 w-full h-9 rounded-md border border-gray-300 bg-white px-2 text-sm dark:border-gray-700 dark:bg-gray-950"
+              >
+                <option
+                  value="guideline"
+                  data-i18n="context.rule_severity_guideline"
+                >
+                  Guideline
+                </option>
+                <option
+                  value="warning"
+                  data-i18n="context.rule_severity_warning"
+                >
+                  Warning
+                </option>
+                <option
+                  value="required"
+                  data-i18n="context.rule_severity_required"
+                >
+                  Required
+                </option>
               </select>
             </div>
             <div>
-              <label for="ruleDescription" class="block text-xs font-semibold text-gray-500 mb-1" data-i18n="context.rule_description_label">Description</label>
-              <input id="ruleDescription" class="min-w-0 w-full h-9 rounded-md border border-gray-300 bg-white px-2 text-sm dark:border-gray-700 dark:bg-gray-950" data-i18n-placeholder="context.rule_description_placeholder" placeholder="Name domain constants instead of repeating raw values." />
+              <label
+                for="ruleDescription"
+                class="block text-xs font-semibold text-gray-500 mb-1"
+                data-i18n="context.rule_description_label"
+                >Description</label
+              >
+              <input
+                id="ruleDescription"
+                class="min-w-0 w-full h-9 rounded-md border border-gray-300 bg-white px-2 text-sm dark:border-gray-700 dark:bg-gray-950"
+                data-i18n-placeholder="context.rule_description_placeholder"
+                placeholder="Name domain constants instead of repeating raw values."
+              />
             </div>
             <div>
-              <label for="ruleTags" class="block text-xs font-semibold text-gray-500 mb-1" data-i18n="context.rule_tags_label">Tags</label>
-              <input id="ruleTags" class="min-w-0 w-full h-9 rounded-md border border-gray-300 bg-white px-2 text-sm dark:border-gray-700 dark:bg-gray-950" data-i18n-placeholder="context.rule_tags_placeholder" placeholder="code-quality, maintainability" />
+              <label
+                for="ruleTags"
+                class="block text-xs font-semibold text-gray-500 mb-1"
+                data-i18n="context.rule_tags_label"
+                >Tags</label
+              >
+              <input
+                id="ruleTags"
+                class="min-w-0 w-full h-9 rounded-md border border-gray-300 bg-white px-2 text-sm dark:border-gray-700 dark:bg-gray-950"
+                data-i18n-placeholder="context.rule_tags_placeholder"
+                placeholder="code-quality, maintainability"
+              />
             </div>
             <div>
-              <label for="ruleAppliesTo" class="block text-xs font-semibold text-gray-500 mb-1" data-i18n="context.rule_applies_to_label">Applies to</label>
-              <input id="ruleAppliesTo" class="min-w-0 w-full h-9 rounded-md border border-gray-300 bg-white px-2 text-sm dark:border-gray-700 dark:bg-gray-950" data-i18n-placeholder="context.rule_applies_to_placeholder" placeholder="src/**/*.ts, src/frontend/**/*.js" />
+              <label
+                for="ruleAppliesTo"
+                class="block text-xs font-semibold text-gray-500 mb-1"
+                data-i18n="context.rule_applies_to_label"
+                >Applies to</label
+              >
+              <input
+                id="ruleAppliesTo"
+                class="min-w-0 w-full h-9 rounded-md border border-gray-300 bg-white px-2 text-sm dark:border-gray-700 dark:bg-gray-950"
+                data-i18n-placeholder="context.rule_applies_to_placeholder"
+                placeholder="src/**/*.ts, src/frontend/**/*.js"
+              />
             </div>
             <div>
-              <label for="ruleBody" class="block text-xs font-semibold text-gray-500 mb-1" data-i18n="context.rule_body_label">Rule body</label>
-              <textarea id="ruleBody" rows="7" class="min-w-0 w-full rounded-md border border-gray-300 bg-white px-2 py-2 text-sm dark:border-gray-700 dark:bg-gray-950" data-i18n-placeholder="context.rule_body_placeholder" placeholder="Numeric constants with domain meaning should be named."></textarea>
+              <label
+                for="ruleBody"
+                class="block text-xs font-semibold text-gray-500 mb-1"
+                data-i18n="context.rule_body_label"
+                >Rule body</label
+              >
+              <textarea
+                id="ruleBody"
+                rows="7"
+                class="min-w-0 w-full rounded-md border border-gray-300 bg-white px-2 py-2 text-sm dark:border-gray-700 dark:bg-gray-950"
+                data-i18n-placeholder="context.rule_body_placeholder"
+                placeholder="Numeric constants with domain meaning should be named."
+              ></textarea>
             </div>
-            <button id="btnAddRule" class="w-full h-9 rounded-md bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700" data-i18n="context.add_rule_button">Add rule</button>
+            <button
+              id="btnAddRule"
+              class="w-full h-9 rounded-md bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700"
+              data-i18n="context.add_rule_button"
+            >
+              Add rule
+            </button>
           </section>
         </aside>
       </section>
@@ -143,9 +354,18 @@
         class="w-full max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl p-5 flex flex-col gap-3"
         onclick="event.stopPropagation()"
       >
-        <h3 id="confirm-modal-title" class="font-semibold text-gray-900 dark:text-gray-100"></h3>
-        <p id="confirm-modal-message" class="text-sm text-gray-700 dark:text-gray-200"></p>
-        <p id="confirm-modal-detail" class="text-xs text-gray-500 dark:text-gray-400 italic break-all"></p>
+        <h3
+          id="confirm-modal-title"
+          class="font-semibold text-gray-900 dark:text-gray-100"
+        ></h3>
+        <p
+          id="confirm-modal-message"
+          class="text-sm text-gray-700 dark:text-gray-200"
+        ></p>
+        <p
+          id="confirm-modal-detail"
+          class="text-xs text-gray-500 dark:text-gray-400 italic break-all"
+        ></p>
         <div class="flex justify-end gap-2 mt-2">
           <button
             id="confirm-modal-cancel"
@@ -163,67 +383,82 @@
 
     <script>
       const els = {
-        status: document.getElementById('status'),
-        instructionList: document.getElementById('instructionList'),
-        instructionCount: document.getElementById('instructionCount'),
-        instructionBrowser: document.getElementById('instructionBrowser'),
-        instructionBrowseUp: document.getElementById('instructionBrowseUp'),
-        instructionBrowsePath: document.getElementById('instructionBrowsePath'),
-        instructionBrowseList: document.getElementById('instructionBrowseList'),
-        btnToggleInstructionBrowser: document.getElementById('btnToggleInstructionBrowser'),
-        ruleList: document.getElementById('ruleList'),
-        rulesFolder: document.getElementById('rulesFolder'),
-        btnRefreshMcp: document.getElementById('btnRefreshMcp'),
-        mcpStatus: document.getElementById('mcpStatus'),
-        mcpTransport: document.getElementById('mcpTransport'),
-        mcpEndpoint: document.getElementById('mcpEndpoint'),
-        mcpToolCount: document.getElementById('mcpToolCount'),
-        mcpToolList: document.getElementById('mcpToolList'),
-        mcpPromptCount: document.getElementById('mcpPromptCount'),
-        mcpPromptList: document.getElementById('mcpPromptList'),
-        btnRunAllTools: document.getElementById('btnRunAllTools'),
-        btnGetAllPrompts: document.getElementById('btnGetAllPrompts'),
-        ruleTitle: document.getElementById('ruleTitle'),
-        ruleSeverity: document.getElementById('ruleSeverity'),
-        ruleDescription: document.getElementById('ruleDescription'),
-        ruleTags: document.getElementById('ruleTags'),
-        ruleAppliesTo: document.getElementById('ruleAppliesTo'),
-        ruleBody: document.getElementById('ruleBody'),
-        btnAddRule: document.getElementById('btnAddRule'),
+        status: document.getElementById("status"),
+        instructionList: document.getElementById("instructionList"),
+        instructionCount: document.getElementById("instructionCount"),
+        instructionBrowser: document.getElementById("instructionBrowser"),
+        instructionBrowseUp: document.getElementById("instructionBrowseUp"),
+        instructionBrowsePath: document.getElementById("instructionBrowsePath"),
+        instructionBrowseList: document.getElementById("instructionBrowseList"),
+        btnToggleInstructionBrowser: document.getElementById(
+          "btnToggleInstructionBrowser",
+        ),
+        ruleList: document.getElementById("ruleList"),
+        rulesFolder: document.getElementById("rulesFolder"),
+        btnRefreshMcp: document.getElementById("btnRefreshMcp"),
+        mcpStatus: document.getElementById("mcpStatus"),
+        mcpTransport: document.getElementById("mcpTransport"),
+        mcpEndpoint: document.getElementById("mcpEndpoint"),
+        mcpToolCount: document.getElementById("mcpToolCount"),
+        mcpToolList: document.getElementById("mcpToolList"),
+        mcpPromptCount: document.getElementById("mcpPromptCount"),
+        mcpPromptList: document.getElementById("mcpPromptList"),
+        btnRunAllTools: document.getElementById("btnRunAllTools"),
+        btnGetAllPrompts: document.getElementById("btnGetAllPrompts"),
+        ruleTitle: document.getElementById("ruleTitle"),
+        ruleSeverity: document.getElementById("ruleSeverity"),
+        ruleDescription: document.getElementById("ruleDescription"),
+        ruleTags: document.getElementById("ruleTags"),
+        ruleAppliesTo: document.getElementById("ruleAppliesTo"),
+        ruleBody: document.getElementById("ruleBody"),
+        btnAddRule: document.getElementById("btnAddRule"),
       };
       let orientation = null;
-      let instructionBrowseCurrent = '';
-      let instructionBrowseParent = '';
+      let instructionBrowseCurrent = "";
+      let instructionBrowseParent = "";
       const mcpItemsByKind = {
         tool: new Map(),
         prompt: new Map(),
       };
 
       function setStatus(message) {
-        els.status.textContent = message || '';
+        els.status.textContent = message || "";
       }
 
       function escapeHtml(value) {
-        return String(value ?? '').replace(/[&<>"']/g, (char) => ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#39;',
-        }[char]));
+        return String(value ?? "").replace(
+          /[&<>"']/g,
+          (char) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[char],
+        );
       }
 
       function splitList(value) {
-        return value.split(',').map((item) => item.trim()).filter(Boolean);
+        return value
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean);
       }
 
       function basename(value) {
-        return String(value || '').split(/[\\/]/).pop() || '';
+        return (
+          String(value || "")
+            .split(/[\\/]/)
+            .pop() || ""
+        );
       }
 
       function documentHref(docPath) {
-        const docId = encodeURIComponent(String(docPath || '').replace(/\.md$/i, ''));
-        return '/?doc=' + encodeURIComponent(docId);
+        const docId = encodeURIComponent(
+          String(docPath || "").replace(/\.md$/i, ""),
+        );
+        return "/?doc=" + encodeURIComponent(docId);
       }
 
       function formatMessage(key, values) {
@@ -242,7 +477,8 @@
       }
 
       function severityLabel(value) {
-        return window.t(`context.rule_severity_${value}`) === `context.rule_severity_${value}`
+        return window.t(`context.rule_severity_${value}`) ===
+          `context.rule_severity_${value}`
           ? value
           : window.t(`context.rule_severity_${value}`);
       }
@@ -254,14 +490,20 @@
       function renderInstructionFiles(items) {
         els.instructionCount.textContent = `${items.filter((item) => item.exists).length}/${items.length}`;
         if (!items.length) {
-          renderEmpty(els.instructionList, 'context.no_instructions');
+          renderEmpty(els.instructionList, "context.no_instructions");
           return;
         }
-        els.instructionList.innerHTML = items.map((item) => {
-          const statusClass = item.exists ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
-          const statusLabel = item.exists ? window.t('context.exists') : window.t('context.missing');
-          const size = item.size === null ? '' : ` · ${Math.round(item.size / 1024)} KB`;
-          return `
+        els.instructionList.innerHTML = items
+          .map((item) => {
+            const statusClass = item.exists
+              ? "text-green-600 dark:text-green-400"
+              : "text-red-600 dark:text-red-400";
+            const statusLabel = item.exists
+              ? window.t("context.exists")
+              : window.t("context.missing");
+            const size =
+              item.size === null ? "" : ` · ${Math.round(item.size / 1024)} KB`;
+            return `
             <div class="flex items-start justify-between gap-3 rounded-md border border-gray-100 dark:border-gray-800 px-3 py-2">
               <div class="min-w-0">
                 <a href="${escapeHtml(documentHref(item.path))}" class="font-mono text-xs break-all text-blue-600 hover:underline dark:text-blue-400">${escapeHtml(item.path)}</a>
@@ -271,28 +513,39 @@
                 <span class="text-xs font-semibold ${statusClass}">${statusLabel}</span>
                 ${
                   item.exists
-                    ? `<button data-filename="${escapeHtml(basename(item.path))}" class="instruction-remove text-xs text-red-500 hover:text-red-700 dark:hover:text-red-400">${window.t('common.remove')}</button>`
-                    : ''
+                    ? `<button data-filename="${escapeHtml(basename(item.path))}" class="instruction-remove text-xs text-red-500 hover:text-red-700 dark:hover:text-red-400">${window.t("common.remove")}</button>`
+                    : ""
                 }
               </div>
             </div>
           `;
-        }).join('');
-        els.instructionList.querySelectorAll('.instruction-remove').forEach((button) => {
-          button.addEventListener('click', () => removeInstructionFile(button.dataset.filename));
-        });
+          })
+          .join("");
+        els.instructionList
+          .querySelectorAll(".instruction-remove")
+          .forEach((button) => {
+            button.addEventListener("click", () =>
+              removeInstructionFile(button.dataset.filename),
+            );
+          });
       }
 
       async function loadInstructionBrowse(dirPath) {
-        els.instructionBrowseList.innerHTML = `<p class="px-3 py-4 text-xs text-gray-400 text-center">${window.t('common.loading')}</p>`;
+        els.instructionBrowseList.innerHTML = `<p class="px-3 py-4 text-xs text-gray-400 text-center">${window.t("common.loading")}</p>`;
         try {
-          const data = await fetch('/api/browse?path=' + encodeURIComponent(dirPath)).then((res) => res.json());
+          const data = await fetch(
+            "/api/browse?path=" + encodeURIComponent(dirPath),
+          ).then((res) => res.json());
           instructionBrowseCurrent = data.current;
           instructionBrowseParent = data.parent;
           els.instructionBrowsePath.textContent = data.current;
           els.instructionBrowseUp.disabled = !data.parent;
 
-          const instructionNames = new Set(((orientation && orientation.instructions) || []).map((item) => basename(item.path)));
+          const instructionNames = new Set(
+            ((orientation && orientation.instructions) || []).map((item) =>
+              basename(item.path),
+            ),
+          );
           const rows = [];
           for (const dir of data.dirs || []) {
             rows.push(`
@@ -312,77 +565,101 @@
                 </span>
                 ${
                   added
-                    ? `<span class="text-xs text-green-600 dark:text-green-400 shrink-0">${window.t('context.added')}</span>`
-                    : `<button data-path="${escapeHtml(file.path)}" class="instruction-add text-xs text-blue-600 dark:text-blue-400 hover:underline shrink-0">${window.t('context.add_file_action')}</button>`
+                    ? `<span class="text-xs text-green-600 dark:text-green-400 shrink-0">${window.t("context.added")}</span>`
+                    : `<button data-path="${escapeHtml(file.path)}" class="instruction-add text-xs text-blue-600 dark:text-blue-400 hover:underline shrink-0">${window.t("context.add_file_action")}</button>`
                 }
               </div>
             `);
           }
 
           els.instructionBrowseList.innerHTML = rows.length
-            ? rows.join('')
-            : `<p class="px-3 py-4 text-xs text-gray-400 text-center">${window.t('common.empty_dir')}</p>`;
+            ? rows.join("")
+            : `<p class="px-3 py-4 text-xs text-gray-400 text-center">${window.t("common.empty_dir")}</p>`;
 
-          els.instructionBrowseList.querySelectorAll('.instruction-dir').forEach((button) => {
-            button.addEventListener('click', () => loadInstructionBrowse(button.dataset.path));
-          });
-          els.instructionBrowseList.querySelectorAll('.instruction-add').forEach((button) => {
-            button.addEventListener('click', () => addInstructionFile(button.dataset.path));
-          });
+          els.instructionBrowseList
+            .querySelectorAll(".instruction-dir")
+            .forEach((button) => {
+              button.addEventListener("click", () =>
+                loadInstructionBrowse(button.dataset.path),
+              );
+            });
+          els.instructionBrowseList
+            .querySelectorAll(".instruction-add")
+            .forEach((button) => {
+              button.addEventListener("click", () =>
+                addInstructionFile(button.dataset.path),
+              );
+            });
         } catch {
-          els.instructionBrowseList.innerHTML = `<p class="px-3 py-4 text-xs text-red-400 text-center">${window.t('common.cannot_read_dir')}</p>`;
+          els.instructionBrowseList.innerHTML = `<p class="px-3 py-4 text-xs text-red-400 text-center">${window.t("common.cannot_read_dir")}</p>`;
         }
       }
 
       function toggleInstructionBrowser() {
-        const isHidden = els.instructionBrowser.classList.toggle('hidden');
-        els.btnToggleInstructionBrowser.textContent = window.t(isHidden ? 'context.add_instruction_file' : 'context.hide_instruction_browser');
-        if (!isHidden && !instructionBrowseCurrent && orientation && orientation.sourceRoot) {
+        const isHidden = els.instructionBrowser.classList.toggle("hidden");
+        els.btnToggleInstructionBrowser.textContent = window.t(
+          isHidden
+            ? "context.add_instruction_file"
+            : "context.hide_instruction_browser",
+        );
+        if (
+          !isHidden &&
+          !instructionBrowseCurrent &&
+          orientation &&
+          orientation.sourceRoot
+        ) {
           loadInstructionBrowse(orientation.sourceRoot);
         }
       }
 
       async function addInstructionFile(filePath) {
-        setStatus(window.t('context.adding_instruction_file'));
-        const res = await fetch('/api/context/instructions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        setStatus(window.t("context.adding_instruction_file"));
+        const res = await fetch("/api/context/instructions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ path: filePath }),
         });
         if (!res.ok) throw new Error(await res.text());
         await loadOrientation();
-        if (!els.instructionBrowser.classList.contains('hidden')) {
+        if (!els.instructionBrowser.classList.contains("hidden")) {
           await loadInstructionBrowse(instructionBrowseCurrent);
         }
       }
 
       async function removeInstructionFile(filename) {
         const ok = await window.showConfirm({
-          title: window.t('context.remove_instruction_title'),
-          message: formatMessage('context.remove_instruction_message', { name: filename }),
-          detail: window.t('context.remove_instruction_detail'),
-          confirmLabel: window.t('common.remove'),
+          title: window.t("context.remove_instruction_title"),
+          message: formatMessage("context.remove_instruction_message", {
+            name: filename,
+          }),
+          detail: window.t("context.remove_instruction_detail"),
+          confirmLabel: window.t("common.remove"),
           danger: true,
         });
         if (!ok) return;
 
-        setStatus(window.t('context.removing_instruction_file'));
-        const res = await fetch('/api/context/instructions/' + encodeURIComponent(filename), {
-          method: 'DELETE',
-        });
+        setStatus(window.t("context.removing_instruction_file"));
+        const res = await fetch(
+          "/api/context/instructions/" + encodeURIComponent(filename),
+          {
+            method: "DELETE",
+          },
+        );
         if (!res.ok) throw new Error(await res.text());
         await loadOrientation();
-        if (!els.instructionBrowser.classList.contains('hidden')) {
+        if (!els.instructionBrowser.classList.contains("hidden")) {
           await loadInstructionBrowse(instructionBrowseCurrent);
         }
       }
 
       function renderRules(items) {
         if (!items.length) {
-          renderEmpty(els.ruleList, 'context.no_rules');
+          renderEmpty(els.ruleList, "context.no_rules");
           return;
         }
-        els.ruleList.innerHTML = items.map((rule) => `
+        els.ruleList.innerHTML = items
+          .map(
+            (rule) => `
           <article class="rounded-md border border-gray-100 dark:border-gray-800 px-3 py-2">
             <div class="flex items-start justify-between gap-3">
               <div class="min-w-0">
@@ -395,31 +672,35 @@
             </div>
             <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">${escapeHtml(rule.description)}</p>
             <div class="mt-2 flex flex-wrap gap-1 text-xs text-blue-600 dark:text-blue-400">
-              ${(rule.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join('')}
+              ${(rule.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}
             </div>
-            <div class="mt-2 font-mono text-xs text-gray-400 break-all">${escapeHtml((rule.appliesTo || []).join(', '))}</div>
+            <div class="mt-2 font-mono text-xs text-gray-400 break-all">${escapeHtml((rule.appliesTo || []).join(", "))}</div>
           </article>
-        `).join('');
+        `,
+          )
+          .join("");
       }
 
       function formatJson(value) {
-        if (!value || typeof value !== 'object') return '';
+        if (!value || typeof value !== "object") return "";
         return JSON.stringify(value, null, 2);
       }
 
       function exampleValueForSchema(schema) {
-        if (!schema || typeof schema !== 'object') return null;
-        if (schema.type === 'string') return '';
-        if (schema.type === 'number' || schema.type === 'integer') return 0;
-        if (schema.type === 'boolean') return false;
-        if (schema.type === 'array') return [];
-        if (schema.type === 'object' || schema.properties) {
+        if (!schema || typeof schema !== "object") return null;
+        if (schema.type === "string") return "";
+        if (schema.type === "number" || schema.type === "integer") return 0;
+        if (schema.type === "boolean") return false;
+        if (schema.type === "array") return [];
+        if (schema.type === "object" || schema.properties) {
           const result = {};
           const properties = schema.properties || {};
-          const required = Array.isArray(schema.required) ? schema.required : [];
+          const required = Array.isArray(schema.required)
+            ? schema.required
+            : [];
           const keys = required.length ? required : [];
           keys.forEach((key) => {
-            result[key] = exampleValueForSchema(properties[key]) ?? '';
+            result[key] = exampleValueForSchema(properties[key]) ?? "";
           });
           return result;
         }
@@ -427,28 +708,33 @@
       }
 
       function exampleToolArguments(item) {
-        if (!item || typeof item !== 'object') return {};
+        if (!item || typeof item !== "object") return {};
         const example = exampleValueForSchema(item.inputSchema);
-        return example && typeof example === 'object' && !Array.isArray(example) ? example : {};
+        return example && typeof example === "object" && !Array.isArray(example)
+          ? example
+          : {};
       }
 
       function examplePromptArguments(item) {
-        if (!item || typeof item !== 'object' || !Array.isArray(item.arguments)) return {};
+        if (!item || typeof item !== "object" || !Array.isArray(item.arguments))
+          return {};
         return item.arguments.reduce((acc, argument) => {
-          if (argument.required) acc[argument.name] = '';
+          if (argument.required) acc[argument.name] = "";
           return acc;
         }, {});
       }
 
       function renderMcpArgument(argument) {
-        const required = argument.required ? window.t('context.mcp_required') : window.t('context.mcp_optional');
+        const required = argument.required
+          ? window.t("context.mcp_required")
+          : window.t("context.mcp_optional");
         return `
           <li class="rounded border border-gray-100 px-2 py-1 dark:border-gray-800">
             <div class="flex flex-wrap items-center gap-2">
-              <span class="font-mono text-xs font-semibold text-gray-800 dark:text-gray-100">${escapeHtml(argument.name || '-')}</span>
+              <span class="font-mono text-xs font-semibold text-gray-800 dark:text-gray-100">${escapeHtml(argument.name || "-")}</span>
               <span class="text-[11px] uppercase tracking-wide text-gray-400">${escapeHtml(required)}</span>
             </div>
-            ${argument.description ? `<p class="mt-1 text-xs text-gray-500 dark:text-gray-400">${escapeHtml(argument.description)}</p>` : ''}
+            ${argument.description ? `<p class="mt-1 text-xs text-gray-500 dark:text-gray-400">${escapeHtml(argument.description)}</p>` : ""}
           </li>
         `;
       }
@@ -457,7 +743,7 @@
         if (mcpItemsByKind[kind]) {
           mcpItemsByKind[kind].clear();
           items.forEach((item) => {
-            const label = typeof item === 'string' ? item : item.name;
+            const label = typeof item === "string" ? item : item.name;
             if (label) mcpItemsByKind[kind].set(label, item);
           });
         }
@@ -465,69 +751,79 @@
           container.innerHTML = `<p class="text-xs text-gray-400">${window.t(emptyKey)}</p>`;
           return;
         }
-        container.innerHTML = items.map((item) => {
-          const label = typeof item === 'string' ? item : item.name;
-          const description = typeof item === 'string' ? '' : item.description;
-          const schema = typeof item === 'string' ? '' : formatJson(item.inputSchema);
-          const args = Array.isArray(item.arguments) ? item.arguments : [];
-          const exampleArgs = kind === 'tool' ? exampleToolArguments(item) : examplePromptArguments(item);
-          return `
+        container.innerHTML = items
+          .map((item) => {
+            const label = typeof item === "string" ? item : item.name;
+            const description =
+              typeof item === "string" ? "" : item.description;
+            const schema =
+              typeof item === "string" ? "" : formatJson(item.inputSchema);
+            const args = Array.isArray(item.arguments) ? item.arguments : [];
+            const exampleArgs =
+              kind === "tool"
+                ? exampleToolArguments(item)
+                : examplePromptArguments(item);
+            return `
             <details class="rounded-md border border-gray-100 bg-gray-50 px-3 py-2 dark:border-gray-800 dark:bg-gray-950">
               <summary class="cursor-pointer select-none font-mono text-xs font-semibold text-blue-700 dark:text-blue-300">${escapeHtml(label)}</summary>
-              ${description ? `<p class="mt-2 whitespace-pre-wrap text-xs leading-5 text-gray-600 dark:text-gray-300">${escapeHtml(description)}</p>` : ''}
+              ${description ? `<p class="mt-2 whitespace-pre-wrap text-xs leading-5 text-gray-600 dark:text-gray-300">${escapeHtml(description)}</p>` : ""}
               ${
-                kind === 'tool' && schema
+                kind === "tool" && schema
                   ? `
                     <div class="mt-3">
-                      <h4 class="mb-1 text-xs font-semibold text-gray-500">${window.t('context.mcp_input_schema')}</h4>
+                      <h4 class="mb-1 text-xs font-semibold text-gray-500">${window.t("context.mcp_input_schema")}</h4>
                       <pre class="max-h-56 overflow-auto rounded bg-white p-2 text-xs text-gray-700 dark:bg-gray-900 dark:text-gray-200"><code>${escapeHtml(schema)}</code></pre>
                     </div>
                   `
-                  : ''
+                  : ""
               }
               ${
-                kind === 'prompt' && args.length
+                kind === "prompt" && args.length
                   ? `
                     <div class="mt-3">
-                      <h4 class="mb-1 text-xs font-semibold text-gray-500">${window.t('context.mcp_arguments')}</h4>
-                      <ul class="space-y-1">${args.map(renderMcpArgument).join('')}</ul>
+                      <h4 class="mb-1 text-xs font-semibold text-gray-500">${window.t("context.mcp_arguments")}</h4>
+                      <ul class="space-y-1">${args.map(renderMcpArgument).join("")}</ul>
                     </div>
                   `
-                  : ''
+                  : ""
               }
               <div class="mt-3 border-t border-gray-200 pt-3 dark:border-gray-800">
-                <label class="mb-1 block text-xs font-semibold text-gray-500">${window.t('context.mcp_request_json')}</label>
+                <label class="mb-1 block text-xs font-semibold text-gray-500">${window.t("context.mcp_request_json")}</label>
                 <textarea data-mcp-args="${escapeHtml(label)}" data-mcp-kind="${escapeHtml(kind)}" rows="4" spellcheck="false" class="w-full rounded border border-gray-200 bg-white px-2 py-2 font-mono text-xs text-gray-800 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100">${escapeHtml(JSON.stringify(exampleArgs, null, 2))}</textarea>
                 <div class="mt-2 flex items-center justify-between gap-3">
                   <span data-mcp-error="${escapeHtml(label)}" data-mcp-kind="${escapeHtml(kind)}" class="text-xs text-red-500"></span>
                   <button data-mcp-run="${escapeHtml(label)}" data-mcp-kind="${escapeHtml(kind)}" type="button" class="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700">
-                    ${window.t(kind === 'tool' ? 'context.mcp_run_tool' : 'context.mcp_get_prompt')}
+                    ${window.t(kind === "tool" ? "context.mcp_run_tool" : "context.mcp_get_prompt")}
                   </button>
                 </div>
                 <div data-mcp-result="${escapeHtml(label)}" data-mcp-kind="${escapeHtml(kind)}" class="mt-2 hidden text-xs"></div>
               </div>
             </details>
           `;
-        }).join('');
-        container.querySelectorAll('[data-mcp-run]').forEach((button) => {
-          button.addEventListener('click', () => runMcpItem(button.dataset.mcpKind, button.dataset.mcpRun));
+          })
+          .join("");
+        container.querySelectorAll("[data-mcp-run]").forEach((button) => {
+          button.addEventListener("click", () =>
+            runMcpItem(button.dataset.mcpKind, button.dataset.mcpRun),
+          );
         });
       }
 
       function parseSseJson(text) {
         const match = text.match(/^data:\s*(\{.*\})\s*$/m);
-        if (!match) throw new Error(text.slice(0, 300) || 'No MCP response body');
+        if (!match)
+          throw new Error(text.slice(0, 300) || "No MCP response body");
         return JSON.parse(match[1]);
       }
 
       async function mcpRpc(id, method, params) {
-        const res = await fetch('/mcp', {
-          method: 'POST',
+        const res = await fetch("/mcp", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json, text/event-stream',
+            "Content-Type": "application/json",
+            Accept: "application/json, text/event-stream",
           },
-          body: JSON.stringify({ jsonrpc: '2.0', id, method, params }),
+          body: JSON.stringify({ jsonrpc: "2.0", id, method, params }),
         });
         const text = await res.text();
         if (!res.ok) throw new Error(text || `HTTP ${res.status}`);
@@ -535,28 +831,33 @@
       }
 
       async function initializeMcpForTest() {
-        await mcpRpc(1, 'initialize', {
-          protocolVersion: '2025-03-26',
+        await mcpRpc(1, "initialize", {
+          protocolVersion: "2025-03-26",
           capabilities: {},
-          clientInfo: { name: 'living-documentation-context', version: '1.0.0' },
+          clientInfo: {
+            name: "living-ai-documentation-context",
+            version: "1.0.0",
+          },
         });
       }
 
       function findMcpElement(selector, kind, name) {
-        return document.querySelector(`${selector}[data-mcp-kind="${CSS.escape(kind)}"][${selector.includes('args') ? 'data-mcp-args' : selector.includes('error') ? 'data-mcp-error' : 'data-mcp-result'}="${CSS.escape(name)}"]`);
+        return document.querySelector(
+          `${selector}[data-mcp-kind="${CSS.escape(kind)}"][${selector.includes("args") ? "data-mcp-args" : selector.includes("error") ? "data-mcp-error" : "data-mcp-result"}="${CSS.escape(name)}"]`,
+        );
       }
 
-      function wrapCodeBlock(value, language = '') {
-        const text = String(value ?? '').replaceAll('```', '`\\`\\`');
+      function wrapCodeBlock(value, language = "") {
+        const text = String(value ?? "").replaceAll("```", "`\\`\\`");
         return `\`\`\`${language}\n${text}\n\`\`\``;
       }
 
       function wrapJsonBlock(value) {
-        return wrapCodeBlock(JSON.stringify(value, null, 2), 'json');
+        return wrapCodeBlock(JSON.stringify(value, null, 2), "json");
       }
 
       function formatMaybeJsonText(value) {
-        if (typeof value !== 'string') return wrapJsonBlock(value);
+        if (typeof value !== "string") return wrapJsonBlock(value);
         try {
           return wrapJsonBlock(JSON.parse(value));
         } catch {
@@ -565,35 +866,44 @@
       }
 
       function formatMcpDisplayValue(value) {
-        if (typeof value === 'string') return value;
-        if (!value || typeof value !== 'object') return String(value ?? '');
+        if (typeof value === "string") return value;
+        if (!value || typeof value !== "object") return String(value ?? "");
         if (value.error) return wrapJsonBlock(value.error);
 
         const result = value.result;
-        if (!result || typeof result !== 'object') return wrapJsonBlock(value);
+        if (!result || typeof result !== "object") return wrapJsonBlock(value);
 
         if (Array.isArray(result.messages)) {
-          return result.messages.map((message) => {
-            const role = message.role ? `[${message.role}]` : '';
-            const content = message.content?.text ?? message.content ?? message;
-            return `${role}\n${formatMaybeJsonText(content)}`.trim();
-          }).join('\n\n');
+          return result.messages
+            .map((message) => {
+              const role = message.role ? `[${message.role}]` : "";
+              const content =
+                message.content?.text ?? message.content ?? message;
+              return `${role}\n${formatMaybeJsonText(content)}`.trim();
+            })
+            .join("\n\n");
         }
 
         if (Array.isArray(result.content)) {
-          return result.content.map((part) => {
-            if (part && part.type === 'text' && typeof part.text === 'string') {
-              return formatMaybeJsonText(part.text);
-            }
-            return wrapJsonBlock(part);
-          }).join('\n\n');
+          return result.content
+            .map((part) => {
+              if (
+                part &&
+                part.type === "text" &&
+                typeof part.text === "string"
+              ) {
+                return formatMaybeJsonText(part.text);
+              }
+              return wrapJsonBlock(part);
+            })
+            .join("\n\n");
         }
 
         return wrapJsonBlock(result);
       }
 
       function parseJsonIfPossible(value) {
-        if (typeof value !== 'string') return value;
+        if (typeof value !== "string") return value;
         try {
           return JSON.parse(value);
         } catch {
@@ -603,11 +913,11 @@
 
       function extractToolResultForMarkdown(envelope) {
         const result = envelope?.result;
-        if (!result || typeof result !== 'object') return envelope;
+        if (!result || typeof result !== "object") return envelope;
         if (!Array.isArray(result.content)) return result;
 
         const parts = result.content.map((part) => {
-          if (part && part.type === 'text' && typeof part.text === 'string') {
+          if (part && part.type === "text" && typeof part.text === "string") {
             return parseJsonIfPossible(part.text);
           }
           return part;
@@ -616,82 +926,91 @@
       }
 
       function buildToolRunMarkdown(item, name, args, envelope) {
-        const description = item && typeof item === 'object' && item.description
-          ? String(item.description)
-          : window.t('context.empty');
-        const inputSchema = item && typeof item === 'object' && item.inputSchema
-          ? item.inputSchema
-          : {};
+        const description =
+          item && typeof item === "object" && item.description
+            ? String(item.description)
+            : window.t("context.empty");
+        const inputSchema =
+          item && typeof item === "object" && item.inputSchema
+            ? item.inputSchema
+            : {};
         const request = {
-          jsonrpc: '2.0',
-          method: 'tools/call',
+          jsonrpc: "2.0",
+          method: "tools/call",
           params: {
             name,
             arguments: args,
           },
         };
         const result = extractToolResultForMarkdown(envelope);
-        const resultIsJson = typeof result !== 'string';
+        const resultIsJson = typeof result !== "string";
 
         return [
           `# MCP tool: \`${name}\``,
-          '',
-          '## Description',
-          '',
+          "",
+          "## Description",
+          "",
           description,
-          '',
+          "",
           "## Schéma d'entrée",
-          '',
+          "",
           wrapJsonBlock(inputSchema),
-          '',
-          '## Requête effectuée',
-          '',
+          "",
+          "## Requête effectuée",
+          "",
           wrapJsonBlock(request),
-          '',
-          '## Résultat',
-          '',
+          "",
+          "## Résultat",
+          "",
           resultIsJson ? wrapJsonBlock(result) : String(result),
-          '',
-        ].join('\n');
+          "",
+        ].join("\n");
       }
 
       function stringifyMcpErrorDetail(value) {
-        if (typeof value === 'string') return value;
-        if (!value || typeof value !== 'object') return String(value ?? '');
+        if (typeof value === "string") return value;
+        if (!value || typeof value !== "object") return String(value ?? "");
         if (value.error) return JSON.stringify(value.error, null, 2);
 
         const result = value.result;
         if (result?.isError) {
           const parts = Array.isArray(result.content)
-            ? result.content.map((part) => {
-                if (part && part.type === 'text' && typeof part.text === 'string') return part.text;
-                return JSON.stringify(part, null, 2);
-              }).filter(Boolean)
+            ? result.content
+                .map((part) => {
+                  if (
+                    part &&
+                    part.type === "text" &&
+                    typeof part.text === "string"
+                  )
+                    return part.text;
+                  return JSON.stringify(part, null, 2);
+                })
+                .filter(Boolean)
             : [];
-          return parts.join('\n\n') || JSON.stringify(result, null, 2);
+          return parts.join("\n\n") || JSON.stringify(result, null, 2);
         }
 
         return JSON.stringify(value, null, 2);
       }
 
       function setMcpRunning(kind, name) {
-        const container = findMcpElement('[data-mcp-result]', kind, name);
-        const error = findMcpElement('[data-mcp-error]', kind, name);
-        if (error) error.textContent = '';
+        const container = findMcpElement("[data-mcp-result]", kind, name);
+        const error = findMcpElement("[data-mcp-error]", kind, name);
+        if (error) error.textContent = "";
         if (!container) return;
-        container.classList.remove('hidden');
-        container.innerHTML = `<span class="text-gray-500 dark:text-gray-400">${escapeHtml(window.t('context.mcp_running'))}</span>`;
+        container.classList.remove("hidden");
+        container.innerHTML = `<span class="text-gray-500 dark:text-gray-400">${escapeHtml(window.t("context.mcp_running"))}</span>`;
       }
 
       function setMcpResultLink(kind, name, docPath) {
-        const container = findMcpElement('[data-mcp-result]', kind, name);
-        const error = findMcpElement('[data-mcp-error]', kind, name);
-        if (error) error.textContent = '';
+        const container = findMcpElement("[data-mcp-result]", kind, name);
+        const error = findMcpElement("[data-mcp-error]", kind, name);
+        if (error) error.textContent = "";
         if (!container) return;
         const href = documentHref(docPath);
-        container.classList.remove('hidden');
+        container.classList.remove("hidden");
         container.innerHTML = `
-          <div class="text-gray-500 dark:text-gray-400 mb-1">${escapeHtml(window.t('context.mcp_saved_to'))}</div>
+          <div class="text-gray-500 dark:text-gray-400 mb-1">${escapeHtml(window.t("context.mcp_saved_to"))}</div>
           <a href="${escapeHtml(href)}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 rounded-md bg-green-50 px-3 py-1.5 font-mono text-xs font-semibold text-green-700 hover:bg-green-100 dark:bg-green-950 dark:text-green-300 dark:hover:bg-green-900">
             <span>📄</span><span>${escapeHtml(docPath)}</span>
           </a>
@@ -699,36 +1018,39 @@
       }
 
       function setMcpResultError(kind, name, message, detail) {
-        const container = findMcpElement('[data-mcp-result]', kind, name);
-        const error = findMcpElement('[data-mcp-error]', kind, name);
-        const detailText = String(detail || '').trim();
+        const container = findMcpElement("[data-mcp-result]", kind, name);
+        const error = findMcpElement("[data-mcp-error]", kind, name);
+        const detailText = String(detail || "").trim();
         if (container) {
           if (detailText) {
-            container.classList.remove('hidden');
+            container.classList.remove("hidden");
             container.innerHTML = `
               <pre class="max-h-56 overflow-auto whitespace-pre-wrap break-words rounded-md border border-red-200 bg-red-50 p-2 font-mono text-xs leading-5 text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-200"><code>${escapeHtml(detailText)}</code></pre>
             `;
           } else {
-            container.classList.add('hidden');
-            container.innerHTML = '';
+            container.classList.add("hidden");
+            container.innerHTML = "";
           }
         }
-        if (error) error.textContent = message || window.t('context.mcp_error');
+        if (error) error.textContent = message || window.t("context.mcp_error");
       }
 
       async function saveMcpResult(name, content, kind) {
-        const res = await fetch('/api/context/mcp-result', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const res = await fetch("/api/context/mcp-result", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name, content, kind }),
         });
-        if (!res.ok) throw new Error((await res.text()) || `HTTP ${res.status}`);
+        if (!res.ok)
+          throw new Error((await res.text()) || `HTTP ${res.status}`);
         return res.json();
       }
 
       async function runAllMcpItems(kind) {
-        const container = kind === 'tool' ? els.mcpToolList : els.mcpPromptList;
-        const buttons = Array.from(container.querySelectorAll('[data-mcp-run]'));
+        const container = kind === "tool" ? els.mcpToolList : els.mcpPromptList;
+        const buttons = Array.from(
+          container.querySelectorAll("[data-mcp-run]"),
+        );
         if (!buttons.length) return;
 
         els.btnRunAllTools.disabled = true;
@@ -737,11 +1059,16 @@
         try {
           for (let i = 0; i < buttons.length; i++) {
             const name = buttons[i].dataset.mcpRun;
-            buttons[i].closest('details')?.setAttribute('open', '');
-            setStatus(formatMessage('context.mcp_running_all', { current: i + 1, total }));
+            buttons[i].closest("details")?.setAttribute("open", "");
+            setStatus(
+              formatMessage("context.mcp_running_all", {
+                current: i + 1,
+                total,
+              }),
+            );
             await runMcpItem(kind, name);
           }
-          setStatus(formatMessage('context.mcp_done_all', { total }));
+          setStatus(formatMessage("context.mcp_done_all", { total }));
         } finally {
           els.btnRunAllTools.disabled = false;
           els.btnGetAllPrompts.disabled = false;
@@ -749,33 +1076,41 @@
       }
 
       async function runMcpItem(kind, name) {
-        const textarea = findMcpElement('[data-mcp-args]', kind, name);
-        const error = findMcpElement('[data-mcp-error]', kind, name);
-        if (error) error.textContent = '';
+        const textarea = findMcpElement("[data-mcp-args]", kind, name);
+        const error = findMcpElement("[data-mcp-error]", kind, name);
+        if (error) error.textContent = "";
         let args = {};
         try {
-          args = textarea && textarea.value.trim() ? JSON.parse(textarea.value) : {};
+          args =
+            textarea && textarea.value.trim() ? JSON.parse(textarea.value) : {};
         } catch {
-          if (error) error.textContent = window.t('context.mcp_invalid_json');
+          if (error) error.textContent = window.t("context.mcp_invalid_json");
           return;
         }
 
         setMcpRunning(kind, name);
         try {
           await initializeMcpForTest();
-          const envelope = kind === 'tool'
-            ? await mcpRpc(2, 'tools/call', { name, arguments: args })
-            : await mcpRpc(2, 'prompts/get', { name, arguments: args });
+          const envelope =
+            kind === "tool"
+              ? await mcpRpc(2, "tools/call", { name, arguments: args })
+              : await mcpRpc(2, "prompts/get", { name, arguments: args });
 
           if (envelope.error || envelope.result?.isError) {
-            setMcpResultError(kind, name, window.t('context.mcp_error'), stringifyMcpErrorDetail(envelope));
+            setMcpResultError(
+              kind,
+              name,
+              window.t("context.mcp_error"),
+              stringifyMcpErrorDetail(envelope),
+            );
             return;
           }
 
           const item = mcpItemsByKind[kind]?.get(name);
-          const markdown = kind === 'tool'
-            ? buildToolRunMarkdown(item, name, args, envelope)
-            : formatMcpDisplayValue(envelope);
+          const markdown =
+            kind === "tool"
+              ? buildToolRunMarkdown(item, name, args, envelope)
+              : formatMcpDisplayValue(envelope);
           const { path: docPath } = await saveMcpResult(name, markdown, kind);
           setMcpResultLink(kind, name, docPath);
         } catch (err) {
@@ -786,30 +1121,42 @@
       function renderMcpExplorer(data) {
         const tools = Array.isArray(data.tools) ? data.tools : [];
         const prompts = Array.isArray(data.prompts) ? data.prompts : [];
-        els.mcpStatus.textContent = window.t('context.mcp_available');
-        els.mcpStatus.className = 'mt-1 font-semibold text-green-600 dark:text-green-400';
-        els.mcpTransport.textContent = data.transport || '-';
-        els.mcpEndpoint.textContent = data.endpoint || 'POST /mcp';
+        els.mcpStatus.textContent = window.t("context.mcp_available");
+        els.mcpStatus.className =
+          "mt-1 font-semibold text-green-600 dark:text-green-400";
+        els.mcpTransport.textContent = data.transport || "-";
+        els.mcpEndpoint.textContent = data.endpoint || "POST /mcp";
         els.mcpToolCount.textContent = String(tools.length);
         els.mcpPromptCount.textContent = String(prompts.length);
-        renderMcpItems(els.mcpToolList, tools, 'context.mcp_no_tools', 'tool');
-        renderMcpItems(els.mcpPromptList, prompts, 'context.mcp_no_prompts', 'prompt');
+        renderMcpItems(els.mcpToolList, tools, "context.mcp_no_tools", "tool");
+        renderMcpItems(
+          els.mcpPromptList,
+          prompts,
+          "context.mcp_no_prompts",
+          "prompt",
+        );
       }
 
       function renderMcpUnavailable() {
-        els.mcpStatus.textContent = window.t('context.mcp_unavailable');
-        els.mcpStatus.className = 'mt-1 font-semibold text-red-600 dark:text-red-400';
-        els.mcpTransport.textContent = '-';
-        els.mcpEndpoint.textContent = '/mcp';
-        els.mcpToolCount.textContent = '0';
-        els.mcpPromptCount.textContent = '0';
-        renderMcpItems(els.mcpToolList, [], 'context.mcp_no_tools', 'tool');
-        renderMcpItems(els.mcpPromptList, [], 'context.mcp_no_prompts', 'prompt');
+        els.mcpStatus.textContent = window.t("context.mcp_unavailable");
+        els.mcpStatus.className =
+          "mt-1 font-semibold text-red-600 dark:text-red-400";
+        els.mcpTransport.textContent = "-";
+        els.mcpEndpoint.textContent = "/mcp";
+        els.mcpToolCount.textContent = "0";
+        els.mcpPromptCount.textContent = "0";
+        renderMcpItems(els.mcpToolList, [], "context.mcp_no_tools", "tool");
+        renderMcpItems(
+          els.mcpPromptList,
+          [],
+          "context.mcp_no_prompts",
+          "prompt",
+        );
       }
 
       async function loadMcpExplorer() {
         try {
-          const res = await fetch('/mcp');
+          const res = await fetch("/mcp");
           if (!res.ok) throw new Error(await res.text());
           renderMcpExplorer(await res.json());
         } catch {
@@ -821,15 +1168,15 @@
         orientation = data;
         renderInstructionFiles(data.instructions || []);
         renderRules(data.rules || []);
-        els.rulesFolder.textContent = data.rulesFolder || '';
+        els.rulesFolder.textContent = data.rulesFolder || "";
       }
 
       async function loadOrientation() {
-        setStatus(window.t('context.loading'));
-        const res = await fetch('/api/context/orientation');
+        setStatus(window.t("context.loading"));
+        const res = await fetch("/api/context/orientation");
         if (!res.ok) throw new Error(await res.text());
         renderOrientation(await res.json());
-        setStatus('');
+        setStatus("");
       }
 
       async function addRule() {
@@ -842,34 +1189,34 @@
           body: els.ruleBody.value.trim(),
         };
         if (!payload.title) {
-          setStatus(window.t('context.rule_title_required'));
+          setStatus(window.t("context.rule_title_required"));
           return;
         }
-        setStatus(window.t('context.saving_rule'));
-        const res = await fetch('/api/context/rules', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        setStatus(window.t("context.saving_rule"));
+        const res = await fetch("/api/context/rules", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error(await res.text());
-        els.ruleTitle.value = '';
-        els.ruleDescription.value = '';
-        els.ruleTags.value = '';
-        els.ruleAppliesTo.value = '';
-        els.ruleBody.value = '';
+        els.ruleTitle.value = "";
+        els.ruleDescription.value = "";
+        els.ruleTags.value = "";
+        els.ruleAppliesTo.value = "";
+        els.ruleBody.value = "";
         await loadOrientation();
       }
 
       async function loadContextI18n() {
         try {
-          const cfgRes = await fetch('/api/config');
+          const cfgRes = await fetch("/api/config");
           const cfg = cfgRes.ok ? await cfgRes.json() : {};
-          await window.initI18n(cfg.language || 'en');
+          await window.initI18n(cfg.language || "en");
         } catch {
-          await window.initI18n('en');
+          await window.initI18n("en");
         }
         window.applyI18n();
-        document.title = window.t('context.title');
+        document.title = window.t("context.title");
       }
 
       async function init() {
@@ -878,21 +1225,25 @@
         await loadMcpExplorer();
       }
 
-      els.btnAddRule.addEventListener('click', () => {
+      els.btnAddRule.addEventListener("click", () => {
         addRule().catch((err) => setStatus(err.message));
       });
-      els.btnToggleInstructionBrowser.addEventListener('click', toggleInstructionBrowser);
-      els.btnRefreshMcp.addEventListener('click', () => {
+      els.btnToggleInstructionBrowser.addEventListener(
+        "click",
+        toggleInstructionBrowser,
+      );
+      els.btnRefreshMcp.addEventListener("click", () => {
         loadMcpExplorer().catch(() => renderMcpUnavailable());
       });
-      els.btnRunAllTools.addEventListener('click', () => {
-        runAllMcpItems('tool').catch((err) => setStatus(err.message));
+      els.btnRunAllTools.addEventListener("click", () => {
+        runAllMcpItems("tool").catch((err) => setStatus(err.message));
       });
-      els.btnGetAllPrompts.addEventListener('click', () => {
-        runAllMcpItems('prompt').catch((err) => setStatus(err.message));
+      els.btnGetAllPrompts.addEventListener("click", () => {
+        runAllMcpItems("prompt").catch((err) => setStatus(err.message));
       });
-      els.instructionBrowseUp.addEventListener('click', () => {
-        if (instructionBrowseParent) loadInstructionBrowse(instructionBrowseParent);
+      els.instructionBrowseUp.addEventListener("click", () => {
+        if (instructionBrowseParent)
+          loadInstructionBrowse(instructionBrowseParent);
       });
 
       init().catch((err) => setStatus(err.message));

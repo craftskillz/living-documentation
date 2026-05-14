@@ -3,7 +3,7 @@
 Run the CLI with:
 
 ```bash
-npx living-documentation ./docs
+npx living-ai-documentation ./docs
 ```
 
 Then open the viewer.

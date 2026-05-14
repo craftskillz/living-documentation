@@ -46,4 +46,4 @@ Introduce a new module `src/frontend/sidebar-resize.js` loaded via `defer` in `i
 - The drag handle is only 6px wide and transparent at rest — discoverability relies on the `col-resize` cursor. Users who don't hover precisely on the right edge may not realise the sidebar is resizable.
 - Mobile / touch devices are not supported: the handler uses `mousedown`/`mousemove`/`mouseup` only. Touch resizing would require additional pointer-event plumbing.
 - The inline `style.width` introduced on the sidebar is a subtle divergence from the rest of the codebase, which is overwhelmingly Tailwind-class driven. Future contributors reading the DOM may be briefly surprised by the mix.
-- `localStorage` is per-origin, not per-project: when the same user opens different `living-documentation` instances on the same host and port, they share the stored width.
+- `localStorage` is per-origin, not per-project: when the same user opens different `living-ai-documentation` instances on the same host and port, they share the stored width.

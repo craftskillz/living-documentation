@@ -16,11 +16,11 @@ Avant de modifier le projet :
 6. Lire toutes les règles dans `documentation/AI/rules/*.md`.
 7. Lire `documentation/WORKLOG/current-task.md` si présent pour reprendre l'état de la tâche courante.
 8. Inspecter les ADR existants : lister `documentation/ADRS/`, lire d'abord `description` et `tags`, puis ouvrir l'ADR complet seulement s'il est pertinent.
-9. Vérifier si le MCP `living-documentation` est disponible avant de créer ou modifier de la documentation.
+9. Vérifier si le MCP `living-ai-documentation` est disponible avant de créer ou modifier de la documentation.
 
 ## Rôle du MCP Living Documentation
 
-Le MCP `living-documentation` est le canal privilégié pour lire, créer et maintenir la documentation du projet. Quand il est disponible, l'IA doit l'utiliser plutôt que modifier les fichiers Markdown à la main.
+Le MCP `living-ai-documentation` est le canal privilégié pour lire, créer et maintenir la documentation du projet. Quand il est disponible, l'IA doit l'utiliser plutôt que modifier les fichiers Markdown à la main.
 
 Utiliser notamment :
 

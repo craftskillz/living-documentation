@@ -1,7 +1,7 @@
 1 . Pour ouvrir un dossier de documentation existant, lancez l'outil en pointant vers ce dossier. Le mieux est de versionner ce dossier au sein de votre projet :
 
 ```bash
-npx living-documentation ./docs
+npx living-ai-documentation ./docs
 ```
 
 Le serveur démarre sur le port **4321** par défaut. Ouvrez [http://localhost:4321](http://localhost:4321) dans votre navigateur.
@@ -9,7 +9,7 @@ Le serveur démarre sur le port **4321** par défaut. Ouvrez [http://localhost:4
 Pour créer un nouveau projet de documentation, lancez la commande sans chemin :
 
 ```bash
-npx living-documentation
+npx living-ai-documentation
 ```
 
 L'outil demande alors le dossier à créer, vérifie qu'il n'est pas non vide, puis demande la langue du starter (`en` ou `fr`).
@@ -19,12 +19,13 @@ L'outil demande alors le dossier à créer, vérifie qu'il n'est pas non vide, p
 ### Options disponibles
 
 Pour connaitre toutes les options disponibles faites
+
 ```bash
-npx living-documentation -h
+npx living-ai-documentation -h
 ```
 
 ```
-Usage: living-documentation [options] [folder]
+Usage: living-ai-documentation [options] [folder]
 
 Serve a local Markdown documentation viewer over HTTP on your machine.
 

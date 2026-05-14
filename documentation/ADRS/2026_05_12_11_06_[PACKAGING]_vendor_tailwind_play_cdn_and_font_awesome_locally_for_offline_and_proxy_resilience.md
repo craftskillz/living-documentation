@@ -19,7 +19,7 @@ Le frontend chargeait trois familles d'assets externes au runtime :
 
 Sur certains postes, le proxy d'entreprise bloque `cdn.tailwindcss.com` en entier, et autorise le CSS de `cdnjs.cloudflare.com` mais bloque les binaires `.woff2` — comportement classique de filtrage par type MIME / extension. Sans Tailwind, l'UI perd toute mise en forme. Sans Font Awesome, toutes les icônes apparaissent en carrés vides.
 
-Le projet déclare déjà la convention `src/frontend/vendor/` (utilisée par `wordcloud2.js` notamment) et `scripts/copy-assets.ts` recopie récursivement `src/frontend/` → `dist/src/frontend/`. Combiné à `"files": ["dist/", "README.md"]` dans `package.json`, tout ce qui est posé dans `vendor/` est automatiquement embarqué dans le tarball npm et servi par `npx living-documentation`.
+Le projet déclare déjà la convention `src/frontend/vendor/` (utilisée par `wordcloud2.js` notamment) et `scripts/copy-assets.ts` recopie récursivement `src/frontend/` → `dist/src/frontend/`. Combiné à `"files": ["dist/", "README.md"]` dans `package.json`, tout ce qui est posé dans `vendor/` est automatiquement embarqué dans le tarball npm et servi par `npx living-ai-documentation`.
 
 Cas particulier de `export.js` : le HTML d'export PDF est injecté dans une nouvelle fenêtre via `window.open("", "_blank")` puis `document.write(...)`. La fenêtre est à `about:blank`, qui n'a pas d'origine — un path absolu `/vendor/...` ne s'y résoudrait pas. Il faut une URL absolue construite avec `window.location.origin` au moment de la génération du HTML.
 
@@ -110,7 +110,7 @@ Cette migration sort du scope de cet ADR et nécessite son propre ADR si entrepr
 
 - Frontend fonctionne intégralement offline et derrière n'importe quel proxy filtrant.
 - Zéro modification de `package.json`, `copy-assets.ts` ou `server.ts` — la convention `vendor/` existante est strictement appliquée.
-- Bundle npm autonome : `npx living-documentation` n'a plus aucune dépendance externe au runtime navigateur (le seul restant est `unpkg.com/vis-network` sur `diagram.html` et `cdnjs.cloudflare.com/highlight.js`, hors scope car non bloqués par le proxy actuel).
+- Bundle npm autonome : `npx living-ai-documentation` n'a plus aucune dépendance externe au runtime navigateur (le seul restant est `unpkg.com/vis-network` sur `diagram.html` et `cdnjs.cloudflare.com/highlight.js`, hors scope car non bloqués par le proxy actuel).
 - Reproductibilité : Tailwind Play CDN sert toujours la dernière version, vendoré on fige la version utilisée (4.x au 2026-05-12).
 - Pas d'impact licence : conserve les bandeaux de copyright dans les fichiers (MIT pour Tailwind, multi-licence pour Font Awesome).
 

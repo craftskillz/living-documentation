@@ -10,9 +10,9 @@
 
 ### Why this ADR supersedes `2026_03_20_10_15_[CONFIGURATION]_link_extra_files_as_documentation.md`
 
-The superseded ADR introduced the `extraFiles` feature — an ordered list of Markdown files outside the docs folder (e.g. repository-root `README.md` or `CLAUDE.md`) surfaced in the sidebar under **General**. It explicitly noted in its CONS section that *"absolute paths in config are not portable between machines or users"*, but shipped absolute paths anyway because at the time the config was not considered a file that users would check into git.
+The superseded ADR introduced the `extraFiles` feature — an ordered list of Markdown files outside the docs folder (e.g. repository-root `README.md` or `CLAUDE.md`) surfaced in the sidebar under **General**. It explicitly noted in its CONS section that _"absolute paths in config are not portable between machines or users"_, but shipped absolute paths anyway because at the time the config was not considered a file that users would check into git.
 
-Practice proved otherwise: users who version their docs folder (e.g. the `starting-doc` sample shipped with this project, any team using living-documentation in a shared repo) found that `.living-doc.json` contained the author's machine-specific paths (`/Users/…/living-documentation/…`) and was therefore unusable anywhere else. The `sourceRoot` field, initialised at server startup to the absolute parent directory of the docs folder, had the same problem. Every collaborator had to either manually rewrite the file or add it to `.gitignore`, which defeated the purpose of a shared, discoverable config.
+Practice proved otherwise: users who version their docs folder (e.g. the `starting-doc` sample shipped with this project, any team using living-ai-documentation in a shared repo) found that `.living-doc.json` contained the author's machine-specific paths (`/Users/…/living-ai-documentation/…`) and was therefore unusable anywhere else. The `sourceRoot` field, initialised at server startup to the absolute parent directory of the docs folder, had the same problem. Every collaborator had to either manually rewrite the file or add it to `.gitignore`, which defeated the purpose of a shared, discoverable config.
 
 The feature itself (whitelist-based security, admin filesystem browser, order preservation, document-id scheme for extra files, General-category placement) remains sound. **Only the path-storage format was wrong.** This ADR replaces that format with relative paths and extends the same reasoning to `sourceRoot` and to the removal of the redundant `docsFolder` field, without touching the rest of the feature surface.
 
@@ -31,7 +31,7 @@ The feature itself (whitelist-based security, admin filesystem browser, order pr
 
 `src/lib/config.ts` now exposes two TypeScript shapes:
 
-- **`StoredConfig`** — what is actually serialised to `.living-doc.json`. Paths are POSIX-style (forward slashes) and relative to the docs folder. The `docsFolder` field is removed entirely (it is redundant — the JSON file lives *inside* the docs folder, so its absolute location is always derivable from where the file was read).
+- **`StoredConfig`** — what is actually serialised to `.living-doc.json`. Paths are POSIX-style (forward slashes) and relative to the docs folder. The `docsFolder` field is removed entirely (it is redundant — the JSON file lives _inside_ the docs folder, so its absolute location is always derivable from where the file was read).
 - **`LivingDocConfig`** — what `readConfig()` returns to the rest of the application. `sourceRoot`, `extraFiles` and `docsFolder` are resolved to absolute paths at runtime. Downstream consumers (routes, MCP tools, export, `resolveSourceRoot` helpers) continue to receive and manipulate absolute paths — no refactor was needed in the 20+ call sites.
 
 ### Storage rules
@@ -45,7 +45,7 @@ The feature itself (whitelist-based security, admin filesystem browser, order pr
 
 Absolute and `~`-prefixed paths are rejected at every boundary:
 
-1. **CLI** (`bin/cli.ts`): `npx living-documentation /abs/path` or `~/foo` exits with an explicit error ("The docs folder must be a relative path"). Only relative arguments resolve against `process.cwd()` and start the server.
+1. **CLI** (`bin/cli.ts`): `npx living-ai-documentation /abs/path` or `~/foo` exits with an explicit error ("The docs folder must be a relative path"). Only relative arguments resolve against `process.cwd()` and start the server.
 2. **API** (`src/routes/config.ts`): `PUT /api/config` with `sourceRoot` or any `extraFiles[]` entry that is absolute returns **HTTP 400** with `"must be a relative path or null"` / `"extraFiles entries must be relative paths"`.
 3. **Admin UI** (`src/frontend/admin.html`): an `isAbsolutePath()` helper rejects the Source Root input client-side before PUT, surfacing a localised error message (`admin.msg.source_root_absolute`). Extra-file entries added via the filesystem browser are converted from the absolute paths returned by `/api/browse` to relative paths before being sent to the API (a new `pathRelative(from, to)` helper, POSIX-style).
 
@@ -69,7 +69,7 @@ Each migration prints a one-time `[living-doc] Migrating …` message to the con
 
 - `.living-doc.json` is now **portable** — a team can check it into git and every collaborator sees the same effective config. This unlocks the original goal of a shared, discoverable project configuration.
 - **Zero breakage for existing users**: legacy configs with absolute paths auto-migrate on first read, with clear console warnings. No manual intervention, no failure modes that block startup.
-- **Clean storage shape**: removing the redundant `docsFolder` field eliminates the most confusing source of drift (people would manually copy configs between folders and the stored `docsFolder` would point to the *original* location, silently masking bugs).
+- **Clean storage shape**: removing the redundant `docsFolder` field eliminates the most confusing source of drift (people would manually copy configs between folders and the stored `docsFolder` would point to the _original_ location, silently masking bugs).
 - **Three independent layers of validation** make it impossible to accidentally reintroduce absolute paths through any UI or API path. Even a direct JSON edit with an absolute path is caught on the next read via silent migration.
 - **Downstream code is unchanged**: the `LivingDocConfig` runtime shape still exposes absolute paths, so routes, MCP tools, the export pipeline, and the admin's filesystem browser continue to receive the forms they expect. The refactor touched `~6` files (config lib, route, CLI, server init, admin JS, i18n) — not the 20+ consumers of absolute paths.
 - **Windows-friendly**: POSIX slash normalisation on write keeps the git diff identical across macOS/Linux/Windows, and `path.isAbsolute` handles Windows drive letters during CLI/API validation.

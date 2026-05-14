@@ -25,13 +25,13 @@ GET  /mcp   →  résumé JSON (tools disponibles)
 
 ### Outils exposés (v1 — draft)
 
-| Outil | Description |
-|---|---|
-| `list_documents` | Liste tous les documents (id, titre, catégorie, dossier) |
-| `read_document` | Lit le contenu Markdown brut d'un document par son id |
+| Outil             | Description                                                                   |
+| ----------------- | ----------------------------------------------------------------------------- |
+| `list_documents`  | Liste tous les documents (id, titre, catégorie, dossier)                      |
+| `read_document`   | Lit le contenu Markdown brut d'un document par son id                         |
 | `create_document` | Crée un document Markdown (nom de fichier généré depuis le pattern configuré) |
-| `list_diagrams` | Liste tous les diagrammes sauvegardés |
-| `create_diagram` | Crée un diagramme à partir de nœuds et d'arêtes typés |
+| `list_diagrams`   | Liste tous les diagrammes sauvegardés                                         |
+| `create_diagram`  | Crée un diagramme à partir de nœuds et d'arêtes typés                         |
 
 ### Implémentation
 
@@ -43,10 +43,11 @@ GET  /mcp   →  résumé JSON (tools disponibles)
 ### Configuration côté client
 
 **Claude Desktop** (`claude_desktop_config.json`) :
+
 ```json
 {
   "mcpServers": {
-    "living-documentation": {
+    "living-ai-documentation": {
       "type": "http",
       "url": "http://localhost:4321/mcp"
     }
@@ -55,18 +56,21 @@ GET  /mcp   →  résumé JSON (tools disponibles)
 ```
 
 **Claude Code** :
+
 ```bash
-claude mcp add --transport http living-documentation http://localhost:4321/mcp
+claude mcp add --transport http living-ai-documentation http://localhost:4321/mcp
 ```
 
 ## Consequences
 
 ### Positif
+
 - Les assistants IA peuvent lister, lire et créer documents et diagrammes sans quitter leur environnement.
 - Le transport Streamable HTTP stateless est simple : pas de gestion de session, compatible avec les proxies HTTP standard.
 - L'intégration est non-intrusive : le serveur MCP partage le même port que l'application web.
 
 ### Limitations (draft)
+
 - Aucune authentification : le serveur est conçu pour un usage local uniquement.
 - Les outils disponibles sont limités (pas encore de `update_document`, `delete_document`, `update_diagram`).
 - Aucun test automatisé sur le serveur MCP pour l'instant.

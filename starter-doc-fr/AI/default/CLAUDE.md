@@ -11,7 +11,7 @@ Avant toute modification :
 5. Lire toutes les règles dans `DOCS_FOLDER/AI/rules/*.md`.
 6. Lire `DOCS_FOLDER/WORKLOG/current-task.md` si présent pour reprendre l'état de la tâche courante.
 7. Inspecter les ADR dans `DOCS_FOLDER/ADRS/` en lisant d'abord `description` et `tags`, puis ouvrir l'ADR complet seulement s'il est pertinent.
-8. Vérifier si le MCP `living-documentation` est disponible et l'utiliser pour créer, mettre à jour et fiabiliser la documentation lorsque la tâche touche une décision, une règle, une commande, la stack ou un document technique.
+8. Vérifier si le MCP `living-ai-documentation` est disponible et l'utiliser pour créer, mettre à jour et fiabiliser la documentation lorsque la tâche touche une décision, une règle, une commande, la stack ou un document technique.
 
 ## MCP Living Documentation
 

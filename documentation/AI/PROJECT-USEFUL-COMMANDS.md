@@ -37,7 +37,7 @@ Indices : `package-lock.json` est présent, les scripts officiels sont dans `pac
 | `npm run dev -- ./example-doc` | Démarre le serveur de dev sur la documentation d'exemple | Utile pour vérifier une UX sans modifier la documentation projet. |
 | `npm run start -- ./documentation` | Lance le CLI compilé depuis `dist/bin/cli.js` | Nécessite `npm run build` avant si `dist/` n'est pas à jour. |
 | `node dist/bin/cli.js ./documentation --port 4321 --open` | Lance explicitement l'artefact buildé | Utile pour reproduire le comportement publié/npm. |
-| `npx living-documentation ./documentation` | Lance la version installée/résolue par npm | Sert surtout à vérifier le flux utilisateur publié, pas le code local non buildé. |
+| `npx living-ai-documentation ./documentation` | Lance la version installée/résolue par npm | Sert surtout à vérifier le flux utilisateur publié, pas le code local non buildé. |
 | `just dev` | Raccourci local pour `npm run dev -- ./documentation` | Optionnel ; `just` est déclaré dans `mise.toml`. |
 | `just start` | Raccourci local pour `npm run start -- ./documentation` | Nécessite un build à jour. |
 
@@ -80,9 +80,9 @@ Le CLI public attend un dossier de documentation relatif. Les chemins absolus et
 
 | Commande | Effet | Notes |
 |---|---|---|
-| `npx living-documentation` | Lance le wizard interactif si aucun dossier n'est fourni | Demande le dossier docs et la langue starter EN/FR. |
-| `npx living-documentation ./docs` | Sert un dossier docs existant ou initialisé | Ouvre par défaut sur `http://localhost:4321` si le port n'est pas changé. |
-| `npx living-documentation ./docs --port 4000 --open` | Sert sur un port explicite et ouvre le navigateur | Le port est persisté dans `.living-doc.json` comme information. |
+| `npx living-ai-documentation` | Lance le wizard interactif si aucun dossier n'est fourni | Demande le dossier docs et la langue starter EN/FR. |
+| `npx living-ai-documentation ./docs` | Sert un dossier docs existant ou initialisé | Ouvre par défaut sur `http://localhost:4321` si le port n'est pas changé. |
+| `npx living-ai-documentation ./docs --port 4000 --open` | Sert sur un port explicite et ouvre le navigateur | Le port est persisté dans `.living-doc.json` comme information. |
 
 ## Coverage et stratégie de test
 

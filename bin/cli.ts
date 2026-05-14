@@ -68,7 +68,7 @@ function validateRelativeFolder(folder: string): void {
   if (path.isAbsolute(folder) || folder.startsWith("~")) {
     console.error(
       `\nError: The docs folder must be a relative path (got: ${folder}).\n` +
-        `  Example: npx living-documentation ./mydocs\n` +
+        `  Example: npx living-ai-documentation ./mydocs\n` +
         `  Absolute paths are rejected so .living-doc.json stays portable across machines.\n`,
     );
     process.exit(1);
@@ -242,7 +242,7 @@ async function runInitWizard(options: { starterLanguage?: string; port: string; 
 }
 
 program
-  .name("living-documentation")
+  .name("living-ai-documentation")
   .description("Serve a local Markdown documentation viewer over HTTP on your machine.")
   .version("1.0.0")
   .argument(
@@ -256,9 +256,9 @@ program
     "after",
     `
 Examples:
-  $ npx living-documentation                         Create a new documentation project interactively
-  $ npx living-documentation ./mydocs                Serve existing docs at http://localhost:4321
-  $ npx living-documentation ./mydocs -p 5000 -o     Serve on port 5000 and open the browser
+  $ npx living-ai-documentation                         Create a new documentation project interactively
+  $ npx living-ai-documentation ./mydocs                Serve existing docs at http://localhost:4321
+  $ npx living-ai-documentation ./mydocs -p 5000 -o     Serve on port 5000 and open the browser
 
 Notes:
   - The folder argument must be a relative path. Absolute paths (/abs/...) and ~-expansion are rejected

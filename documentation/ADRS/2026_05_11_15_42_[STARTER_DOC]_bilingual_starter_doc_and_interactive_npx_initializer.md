@@ -1,7 +1,7 @@
 ---
 **date:** 2026-05-11
 **status:** To be validated
-**description:** Le CLI living-documentation lance un wizard interactif quand aucun dossier n'est fourni, scaffolde un starter EN ou FR (starter-doc / starter-doc-fr) avec PROJECT-INSTRUCTIONS et exemples d'ADR, et installe AGENTS.md, CLAUDE.md, memory/MEMORY.md à la racine du projet liés via symlinks dans le dossier AI.
+**description:** Le CLI living-ai-documentation lance un wizard interactif quand aucun dossier n'est fourni, scaffolde un starter EN ou FR (starter-doc / starter-doc-fr) avec PROJECT-INSTRUCTIONS et exemples d'ADR, et installe AGENTS.md, CLAUDE.md, memory/MEMORY.md à la racine du projet liés via symlinks dans le dossier AI.
 **tags:** cli, npx, init, wizard, starter-doc, starter-doc-fr, language-selection, scaffolding, agents.md, claude.md, memory.md, project-instructions, symlink, DOCS_FOLDER
 ---
 
@@ -9,7 +9,7 @@
 
 ## Contexte
 
-`npx living-documentation` exigeait jusqu'ici un dossier de documentation **déjà existant** passé en argument. Conséquences :
+`npx living-ai-documentation` exigeait jusqu'ici un dossier de documentation **déjà existant** passé en argument. Conséquences :
 
 - L'expérience first-run consistait à se débrouiller pour créer un dossier vide, le passer en argument, puis copier-coller des exemples depuis le repo. Friction élevée pour un outil qui se veut « zero-setup ».
 - Aucun **starter pack** n'accompagnait l'outil : pas d'exemples d'ADRs, pas de `PROJECT-INSTRUCTIONS.md`, pas de point d'entrée explicite pour expliquer à un agent IA comment naviguer le projet.
@@ -43,7 +43,7 @@ Le placeholder `DOCS_FOLDER` est remplacé en place après copie (via `replaceDo
 
 ### 2. Wizard interactif déclenché par l'absence d'argument
 
-Quand `npx living-documentation` est appelé **sans** dossier, `runInitWizard()` prend la main :
+Quand `npx living-ai-documentation` est appelé **sans** dossier, `runInitWizard()` prend la main :
 
 1. Demande le dossier cible (relatif, refus des chemins absolus ou `~`).
 2. Refuse si le dossier existe et est non vide.
@@ -71,7 +71,7 @@ Le starter inclut un unique `PROJECT-INSTRUCTIONS.md` (et non plusieurs « flavo
 
 ### PROS
 
-- L'expérience first-run devient : `npx living-documentation` → réponses au wizard → viewer ouvert avec un projet de doc valide pré-rempli. Démo possible en moins de 30 secondes.
+- L'expérience first-run devient : `npx living-ai-documentation` → réponses au wizard → viewer ouvert avec un projet de doc valide pré-rempli. Démo possible en moins de 30 secondes.
 - Le starter bilingue ouvre l'outil à un public non-francophone sans dégrader l'expérience FR.
 - Les fichiers d'orientation IA sont posés à la bonne place du premier coup — l'utilisateur n'a pas à connaître la convention d'agent IA pour en bénéficier.
 - La séparation `default/` (consommé à l'init) vs `rules/` (conservé) rend le starter auto-explicatif.

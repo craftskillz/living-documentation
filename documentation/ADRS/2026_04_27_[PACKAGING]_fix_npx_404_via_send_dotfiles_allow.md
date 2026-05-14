@@ -7,9 +7,9 @@ tags: [PACKAGING, NPX, EXPRESS, SEND, STATIC_ASSETS, DOTFILES, BUGFIX, SERVER]
 
 ## Context
 
-When the package is run via `npx living-documentation@latest ./starting-doc`, the boot banner appears normally but every frontend route (`/`, `/admin`, `/diagram`) and every static asset (`/i18n/en.json`, JS modules, CSS, etc.) returns a `404 NotFoundError` from `send/index.js`. The exact same code in `npm run dev` mode works perfectly.
+When the package is run via `npx living-ai-documentation@latest ./starting-doc`, the boot banner appears normally but every frontend route (`/`, `/admin`, `/diagram`) and every static asset (`/i18n/en.json`, JS modules, CSS, etc.) returns a `404 NotFoundError` from `send/index.js`. The exact same code in `npm run dev` mode works perfectly.
 
-Root cause: `send` v1.x (used internally by Express 5's `res.sendFile()` and `express.static()`) defaults `dotfiles` to `'ignore'`, which returns 404 as soon as **any segment of the absolute disk path** starts with a dot. The npx cache lives at `~/.npm/_npx/<hash>/node_modules/living-documentation/dist/src/frontend/...` — the `.npm` segment trips the guard. In `npm run dev` the project lives under a clean path with no dotfile segments, so the bug is invisible.
+Root cause: `send` v1.x (used internally by Express 5's `res.sendFile()` and `express.static()`) defaults `dotfiles` to `'ignore'`, which returns 404 as soon as **any segment of the absolute disk path** starts with a dot. The npx cache lives at `~/.npm/_npx/<hash>/node_modules/living-ai-documentation/dist/src/frontend/...` — the `.npm` segment trips the guard. In `npm run dev` the project lives under a clean path with no dotfile segments, so the bug is invisible.
 
 This affects 100% of npx users on macOS/Linux (the cache is always under `~/.npm/_npx/...`). E2E tests don't catch it because Playwright fixtures live in `os.tmpdir()` (`/var/folders/...` on macOS, `/tmp/...` on Linux) — neither contains a dotfile segment.
 
@@ -29,6 +29,7 @@ Pass `{ dotfiles: 'allow' }` to all `res.sendFile()` and `express.static()` call
 A short comment on the first occurrence documents the why (npx cache path containing `.npm`) so future readers don't accidentally remove the option.
 
 Verified by patching the npx cache copy of `server.js` and curling each endpoint:
+
 - `/admin` → HTTP 200 (was 404)
 - `/` → HTTP 200 (was 404)
 - `/i18n/en.json` → HTTP 200 (was 404)
@@ -37,6 +38,7 @@ Verified by patching the npx cache copy of `server.js` and curling each endpoint
 A patch release (7.30.1) is required to ship the fix to npx users.
 
 Alternatives considered:
+
 - **Symlink/copy the package out of `~/.npm/`** — non-starter, can't control where npx installs.
 - **Switch `sendFile` to `fs.createReadStream` + `res.write`** — bypasses send entirely but loses ETag, Range, MIME negotiation, etc.
 - **Pin send to v0.x** — Express 5 mandates send v1.x; pinning would force Express 4.

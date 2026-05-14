@@ -20,7 +20,7 @@ Ne pas documenter ici les détails volatils, les TODO temporaires ou les informa
 
 Living Documentation est un outil CLI Node.js/TypeScript qui sert un viewer local de documentation Markdown via Express. Il vise deux usages complémentaires : hub de documentation local pour projets Git, et source de vérité active pour agents IA via un serveur MCP intégré.
 
-L'utilisateur lance le CLI avec un dossier de documentation relatif, par exemple `npx living-documentation ./documentation`. L'application sert ensuite une UI locale permettant de lire, rechercher, éditer, annoter, exporter et diagrammer les documents Markdown. Les documents, images, fichiers joints, diagrammes, métadonnées et configuration restent sur disque, dans ou près du dossier de documentation.
+L'utilisateur lance le CLI avec un dossier de documentation relatif, par exemple `npx living-ai-documentation ./documentation`. L'application sert ensuite une UI locale permettant de lire, rechercher, éditer, annoter, exporter et diagrammer les documents Markdown. Les documents, images, fichiers joints, diagrammes, métadonnées et configuration restent sur disque, dans ou près du dossier de documentation.
 
 ## Stack technique
 
@@ -38,7 +38,7 @@ L'utilisateur lance le CLI avec un dossier de documentation relatif, par exemple
 - **Tests** : Playwright comme runner unique API/E2E/unit ; les tests serveur lancent un vrai CLI isolé sur port libre.
 - **Coverage** : c8 + couverture V8 native, agrégée depuis les processus CLI/serveur lancés par Playwright.
 - **Lint / formatage** : aucun script lint/format dédié documenté dans `package.json` à ce jour.
-- **Déploiement / publication** : package npm `living-documentation`; `prepublishOnly` lance le build.
+- **Déploiement / publication** : package npm `living-ai-documentation`; `prepublishOnly` lance le build.
 
 ## Arborescence source utile
 

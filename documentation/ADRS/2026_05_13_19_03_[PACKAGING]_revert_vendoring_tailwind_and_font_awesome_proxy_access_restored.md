@@ -57,5 +57,5 @@ La piste alternative de migration vers un build Tailwind statique (Tailwind CLI 
 
 - Frontend redevient sensible aux proxys / réseaux qui bloquent `cdn.tailwindcss.com` ou les binaires `.woff2` de `cdnjs.cloudflare.com`. Si un futur poste de travail rencontre cette contrainte, le pattern de vendoring reste documenté tel quel dans l'ADR superseded (la procédure inverse y est explicite section "Comment revenir en arrière").
 - Tailwind Play CDN affiche toujours en console `cdn.tailwindcss.com should not be used in production` — limite cosmétique non résolue par ce revert. La voie propre reste la migration vers le build CLI Tailwind.
-- 3 dépendances externes au runtime navigateur réintroduites (Tailwind Play CDN, Font Awesome CSS, webfonts Font Awesome). `npx living-documentation` ne fonctionne plus offline. Acceptable car le projet vise un usage en ligne ou via proxy ouvert.
+- 3 dépendances externes au runtime navigateur réintroduites (Tailwind Play CDN, Font Awesome CSS, webfonts Font Awesome). `npx living-ai-documentation` ne fonctionne plus offline. Acceptable car le projet vise un usage en ligne ou via proxy ouvert.
 - Reproductibilité fragilisée : Tailwind Play CDN sert toujours sa dernière version, donc l'UI peut subir des micro-régressions si Tailwind publie un breaking change dans Play. Risque historiquement très faible.

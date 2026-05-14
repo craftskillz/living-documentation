@@ -7,7 +7,7 @@ C'est un outil installé localement sur n'importe lequel de vos projets et qui n
 Lancez l'outil en pointant vers votre dossier de documentation, le mieux étant de versionner ce dossier au sein de votre projet :
 
 ```bash
-npx living-documentation ./docs
+npx living-ai-documentation ./docs
 ```
 
 Pour plus d'information consulter le [`Guide de démarrage`](?doc=2_guide%252F2026_04_08_23_38_%255BConfiguration%255D_demarrage_de_living_documentation)
@@ -27,14 +27,14 @@ Pour plus d'information consulter le [`Guide de démarrage`](?doc=2_guide%252F20
 - **Laisser la structure émerger naturellement** à partir des noms de fichiers et de l'arborescence, sans contraintes, sans base de données, sans synchronisation, sans état à gérer
 - **Encourager Diátaxis** ça c'est ce que moi je vous recommande, mais libre à vous de m'écouter ou non
 
-L'outil ne remplace pas : 
+L'outil ne remplace pas :
 
-- la méthodologie (Ex. Diataxis Again 😉) 
+- la méthodologie (Ex. Diataxis Again 😉)
 - la discipline d'écriture (Mais un mode MCP arrive bientôt 🤩)
 
 Mais il essaie de supprimer les **frictions** qui font qu'on finit par **ne plus écrire du tout** et propose une approche novatrice basée sur la reclecture et l'IA pour **détecter** et **corriger** les parties obsolètes d'une documentation !
 
-> Comme j'adore la méthode Diàtaxis, je vous propose d'aller explorer les Tutoriels et les Guides pour en apprendre davantage sur living-documentation
+> Comme j'adore la méthode Diàtaxis, je vous propose d'aller explorer les Tutoriels et les Guides pour en apprendre davantage sur living-ai-documentation
 >
 > Pour commencer, c'est par [ici](?doc=2026_04_11_12_55_%255BGeneral%255D_premiers_pas)
 >

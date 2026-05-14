@@ -1,17 +1,38 @@
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
   ListPromptsRequestSchema,
   GetPromptRequestSchema,
-} from '@modelcontextprotocol/sdk/types.js';
-import { Router, Request, Response } from 'express';
-import { toolListDocuments, toolReadDocument, toolCreateDocument, toolUpdateDocument } from './tools/documents';
-import { toolListDiagrams, toolReadDiagram, toolCreateDiagram } from './tools/diagrams';
-import { toolListSourceFiles, toolReadSourceFile, toolSearchSource } from './tools/source';
-import { toolListMetadata, toolGetAccuracy, toolReviewAdrRelevance, toolRefreshMetadata, toolAddMetadata, toolRemoveMetadata, toolListAdrsBelowAccuracy } from './tools/metadata';
-import { toolRetrodocumentAdrsFromGit } from './tools/git';
+} from "@modelcontextprotocol/sdk/types.js";
+import { Router, Request, Response } from "express";
+import {
+  toolListDocuments,
+  toolReadDocument,
+  toolCreateDocument,
+  toolUpdateDocument,
+} from "./tools/documents";
+import {
+  toolListDiagrams,
+  toolReadDiagram,
+  toolCreateDiagram,
+} from "./tools/diagrams";
+import {
+  toolListSourceFiles,
+  toolReadSourceFile,
+  toolSearchSource,
+} from "./tools/source";
+import {
+  toolListMetadata,
+  toolGetAccuracy,
+  toolReviewAdrRelevance,
+  toolRefreshMetadata,
+  toolAddMetadata,
+  toolRemoveMetadata,
+  toolListAdrsBelowAccuracy,
+} from "./tools/metadata";
+import { toolRetrodocumentAdrsFromGit } from "./tools/git";
 
 // ── Server guide ──────────────────────────────────────────────────────────────
 // Shared by the `instructions` field (sent on MCP initialize) and the
@@ -310,495 +331,764 @@ full template):
 
 // ── Tool definitions ──────────────────────────────────────────────────────────
 
-const SHAPE_LIST  = 'box, actor (person), database, ellipse, circle, post-it, text-free, image, anchor (invisible endpoint for free-end arrows — screen-guide only)';
-const COLOR_LIST  = 'c-blue, c-green, c-gray, c-teal, c-amber, c-orange, c-rose, c-purple, c-cyan, c-indigo, c-pink, c-lime, c-red, c-sky, c-slate (short aliases like "blue", "teal" also work)';
-const KIND_LIST   = 'person, software_system, external_system, container, component, database, object_storage, queue, device, api, cloud_service, browser_app, mobile_app, backend_service, job, unknown';
-const GUIDE_HINT  = 'If unsure of the workflow, call `get_server_guide` first.';
+const SHAPE_LIST =
+  "box, actor (person), database, ellipse, circle, post-it, text-free, image, anchor (invisible endpoint for free-end arrows — screen-guide only)";
+const COLOR_LIST =
+  'c-blue, c-green, c-gray, c-teal, c-amber, c-orange, c-rose, c-purple, c-cyan, c-indigo, c-pink, c-lime, c-red, c-sky, c-slate (short aliases like "blue", "teal" also work)';
+const KIND_LIST =
+  "person, software_system, external_system, container, component, database, object_storage, queue, device, api, cloud_service, browser_app, mobile_app, backend_service, job, unknown";
+const GUIDE_HINT = "If unsure of the workflow, call `get_server_guide` first.";
 
 const CREATE_DIAGRAM_DESCRIPTION = [
-  'Create or overwrite a diagram from a high-level description.',
-  '',
-  '## Required workflow (do ALL of these before calling)',
-  '1. `list_documents` — see what exists.',
-  '2. `read_document` on documents relevant to the diagram.',
-  '3. `list_diagrams` — if the diagram already exists, pass its `id` back to update in place (do not duplicate).',
-  'Do not invent actors, systems, or relationships absent from the documents.',
-  '',
-  '## Scope rule',
+  "Create or overwrite a diagram from a high-level description.",
+  "",
+  "## Required workflow (do ALL of these before calling)",
+  "1. `list_documents` — see what exists.",
+  "2. `read_document` on documents relevant to the diagram.",
+  "3. `list_diagrams` — if the diagram already exists, pass its `id` back to update in place (do not duplicate).",
+  "Do not invent actors, systems, or relationships absent from the documents.",
+  "",
+  "## Scope rule",
   'The default diagram for a project is a **context diagram**. Container, component, and UML diagrams are produced ONLY when the user explicitly requests them by name. If the user asks for "a diagram", "the big picture", or "documentation", produce a context diagram.',
-  '',
-  '## Conventions by diagram type',
-  '- Context (default): central system as `box` (c-blue); users as `actor` (c-gray); external systems as `box` (c-slate); datastores as `database` (c-teal). Max ~10 nodes.',
-  '- Container (explicit-only): deployables as `box`, databases as `database`, queues as `ellipse`.',
-  '- UML (explicit-only): follow the requested UML variant (class, sequence, state, …).',
+  "",
+  "## Conventions by diagram type",
+  "- Context (default): central system as `box` (c-blue); users as `actor` (c-gray); external systems as `box` (c-slate); datastores as `database` (c-teal). Max ~10 nodes.",
+  "- Container (explicit-only): deployables as `box`, databases as `database`, queues as `ellipse`.",
+  "- UML (explicit-only): follow the requested UML variant (class, sequence, state, …).",
   '- Every edge MUST have a `label` describing the interaction as a verb phrase ("authenticates", "publishes events to", "reads from").',
-  '',
-  '## Source-of-truth contract',
-  'Documents are authoritative. A diagram must not contain information absent from the documents. If a diagram needs a concept that isn\'t documented, create or update the document first (via `create_document`).',
-  'Use `evidence` on nodes and edges to cite the document sections that justify what is drawn. Evidence must come from Markdown documents read or created through the documentation tools, not from source-code tools. If the required document does not exist, create it first.',
-  '',
-  '## Cross-project documentation workspace',
-  'If the user points you to a folder/repository that does not appear to match this MCP workspace\'s configured `sourceRoot` or current document inventory, ask whether the mismatch is intentional before creating documents or diagrams.',
-  'When the user confirms it is intentional, keep this MCP workspace as the documentation target: create the missing Markdown source-of-truth documents here first, then derive diagrams from those documents. Do not write documentation by hand into the pointed source repository as a fallback.',
-  '',
-  '## Positioning',
-  '`x` and `y` are **optional**. When omitted, the MCP assigns deterministic positions before saving: context diagrams use C4-style columns, flow diagrams use a left-to-right sequence, and other diagrams use a stable grid. Provide coordinates when you need a specific layout; explicit coordinates always win. Origin `(0,0)` is the canvas center, `+x` = right, `+y` = down; use multiples of 40.',
-  '',
-  '## MCP default styling',
-  'Diagrams created through this tool default to `edgesStraight: false`, `gridEnabled: false`, and `alignGuides: true`.',
-  '`kind` describes the architectural concept; `renderAs` describes the visual shape. When `kind` is present and `renderAs` is absent, the MCP chooses the default shape and color for that kind and builds a C4 label from `name`, `[Kind]`, and optional `description`. Legacy `type` remains supported as the visual shape when `kind` is absent.',
+  "",
+  "## Source-of-truth contract",
+  "Documents are authoritative. A diagram must not contain information absent from the documents. If a diagram needs a concept that isn't documented, create or update the document first (via `create_document`).",
+  "Use `evidence` on nodes and edges to cite the document sections that justify what is drawn. Evidence must come from Markdown documents read or created through the documentation tools, not from source-code tools. If the required document does not exist, create it first.",
+  "",
+  "## Cross-project documentation workspace",
+  "If the user points you to a folder/repository that does not appear to match this MCP workspace's configured `sourceRoot` or current document inventory, ask whether the mismatch is intentional before creating documents or diagrams.",
+  "When the user confirms it is intentional, keep this MCP workspace as the documentation target: create the missing Markdown source-of-truth documents here first, then derive diagrams from those documents. Do not write documentation by hand into the pointed source repository as a fallback.",
+  "",
+  "## Positioning",
+  "`x` and `y` are **optional**. When omitted, the MCP assigns deterministic positions before saving: context diagrams use C4-style columns, flow diagrams use a left-to-right sequence, and other diagrams use a stable grid. Provide coordinates when you need a specific layout; explicit coordinates always win. Origin `(0,0)` is the canvas center, `+x` = right, `+y` = down; use multiples of 40.",
+  "",
+  "## MCP default styling",
+  "Diagrams created through this tool default to `edgesStraight: false`, `gridEnabled: false`, and `alignGuides: true`.",
+  "`kind` describes the architectural concept; `renderAs` describes the visual shape. When `kind` is present and `renderAs` is absent, the MCP chooses the default shape and color for that kind and builds a C4 label from `name`, `[Kind]`, and optional `description`. Legacy `type` remains supported as the visual shape when `kind` is absent.",
   'Edges default to curved port-anchored arrows with `arrowDir: "to"`, `dashes: false`, label offsets at `0`, and automatic `fromPort`/`toPort` inferred from node positions. Label width and font size are estimated from label length unless explicitly supplied.',
   'Use `arrowDir: "from"` to draw the arrowhead at the source end, or `arrowDir: "both"` when a single relation represents a bidirectional exchange.',
-  '',
-  '## Guardrails (enforced)',
-  '- `diagramType` is required.',
-  '- For `container`, `component`, or `uml`, `userRequestedExplicitly: true` is required — confirms the user asked for that type by name. Otherwise the call is rejected.',
-  '- Missing edge labels and oversized context diagrams produce warnings.',
-  '',
-  '## Worked example (context diagram, derived from an ADR)',
-  '```json',
-  '{',
+  "",
+  "## Guardrails (enforced)",
+  "- `diagramType` is required.",
+  "- For `container`, `component`, or `uml`, `userRequestedExplicitly: true` is required — confirms the user asked for that type by name. Otherwise the call is rejected.",
+  "- Missing edge labels and oversized context diagrams produce warnings.",
+  "",
+  "## Worked example (context diagram, derived from an ADR)",
+  "```json",
+  "{",
   '  "diagramType": "context",',
   '  "title": "Living Documentation — system context",',
   '  "nodes": [',
   '    { "name": "Living Documentation\\n[Software System]\\nServes Markdown docs\\nand diagrams", "type": "box",    "color": "c-blue" },',
   '    { "name": "Developer\\n[Person]\\nBrowses and edits\\nproject docs",                        "type": "actor",  "color": "c-gray" },',
   '    { "name": "Local filesystem\\n[Datastore]\\nHosts .md files and\\ndiagrams.json",           "type": "database","color": "c-teal" }',
-  '  ],',
+  "  ],",
   '  "edges": [',
   '    { "from": "Developer\\n[Person]\\nBrowses and edits\\nproject docs",                         "to": "Living Documentation\\n[Software System]\\nServes Markdown docs\\nand diagrams", "label": "reads and edits docs via" },',
   '    { "from": "Living Documentation\\n[Software System]\\nServes Markdown docs\\nand diagrams", "to": "Local filesystem\\n[Datastore]\\nHosts .md files and\\ndiagrams.json",         "label": "reads from / writes to" }',
-  '  ]',
-  '}',
-  '```',
-  '',
+  "  ]",
+  "}",
+  "```",
+  "",
   `## Available shapes and colors`,
   `Shapes: ${SHAPE_LIST}.`,
   `Colors: ${COLOR_LIST}.`,
   `Kinds: ${KIND_LIST}.`,
-  '',
+  "",
   GUIDE_HINT,
-].join('\n');
+].join("\n");
 
 const CREATE_DOCUMENT_DESCRIPTION = [
-  'Create a **new** Markdown document. The filename is generated automatically from the configured pattern (date + category + title slug). Pass `content` as full Markdown; omit to create an empty stub. To **modify an existing document** (correct drift, flip `**status:**` to `SuperSeeded`, edit body), use `update_document(id, content)` instead — `create_document` will refuse with `A document with this name already exists` if the target filename collides.',
-  '',
-  '## `date` argument — retrodocumentation only',
+  "Create a **new** Markdown document. The filename is generated automatically from the configured pattern (date + category + title slug). Pass `content` as full Markdown; omit to create an empty stub. To **modify an existing document** (correct drift, flip `**status:**` to `SuperSeeded`, edit body), use `update_document(id, content)` instead — `create_document` will refuse with `A document with this name already exists` if the target filename collides.",
+  "",
+  "## `date` argument — retrodocumentation only",
   'By default the filename date prefix is "now". Pass `date` (ISO 8601, e.g. `2024-08-12` or `2024-08-12T14:33:00Z`) **only** when retrodocumenting an ADR from a past event — typically inside the `retrodocument-adrs-from-git` workflow, where the date must come from the originating git commit. The frontmatter `**date:**` field should match. Outside of retrodocumentation, omit `date`.',
-  '',
-  '## Primary use case — ADRs (Architecture Decision Records)',
+  "",
+  "## Primary use case — ADRs (Architecture Decision Records)",
   'On this project, the dominant use of `create_document` is to record an ADR every time a coding agent implements or modifies a feature. The full workflow is described in `get_server_guide` ("Feature workflow"). In short:',
-  '',
-  '1. **Supersede check first.** `list_documents` → shortlist ADRs whose title/category overlaps the feature → `read_document` to confirm. If one is obsoleted, overwrite it with `status: SuperSeeded` + a one-line pointer to the new ADR.',
-  '2. **Create the new ADR** with the mandatory frontmatter (below).',
-  '3. **Bind the source files** with `add_metadata` (see that tool for the god-files exclusion list). Without this, the ADR escapes drift detection.',
-  '',
-  '## Mandatory ADR frontmatter',
-  'Every ADR body starts with these four fields. They drive search, audit, and lifecycle:',
-  '',
-  '```',
-  '---',
-  '**date:** YYYY-MM-DD',
-  '**status:** To be validated',
-  '**description:** One dense, technical sentence — what the decision does, not why.',
-  '**tags:** 5–10 specific tags mixing concepts, technologies, and key symbol names',
-  '---',
-  '```',
-  '',
-  '- `status:` is **always** `To be validated` at creation. Only the human owner promotes to `Accepted`. The status has **no effect** on how the LLM treats the ADR — only `SuperSeeded` is filtered out downstream.',
+  "",
+  "1. **Supersede check first.** `list_documents` → shortlist ADRs whose title/category overlaps the feature → `read_document` to confirm. If one is obsoleted, overwrite it with `status: SuperSeeded` + a one-line pointer to the new ADR.",
+  "2. **Create the new ADR** with the mandatory frontmatter (below).",
+  "3. **Bind the source files** with `add_metadata` (see that tool for the god-files exclusion list). Without this, the ADR escapes drift detection.",
+  "",
+  "## Mandatory ADR frontmatter",
+  "Every ADR body starts with these four fields. They drive search, audit, and lifecycle:",
+  "",
+  "```",
+  "---",
+  "**date:** YYYY-MM-DD",
+  "**status:** To be validated",
+  "**description:** One dense, technical sentence — what the decision does, not why.",
+  "**tags:** 5–10 specific tags mixing concepts, technologies, and key symbol names",
+  "---",
+  "```",
+  "",
+  "- `status:` is **always** `To be validated` at creation. Only the human owner promotes to `Accepted`. The status has **no effect** on how the LLM treats the ADR — only `SuperSeeded` is filtered out downstream.",
   '- `description:` stays factual and short — one sentence. The "why" goes in the body.',
-  '- `tags:` are the primary search signal. Be specific.',
-  '- `category` is the domain bucket in the filename pattern, uppercase (e.g. `SERVICES CLOUD`, `INTEGRATION`, `ALGORITHMES`).',
-  '- `folder` should be `adrs` (or the project ADR sub-folder).',
-  '',
-  '## Worked ADR example',
-  '```json',
-  '{',
+  "- `tags:` are the primary search signal. Be specific.",
+  "- `category` is the domain bucket in the filename pattern, uppercase (e.g. `SERVICES CLOUD`, `INTEGRATION`, `ALGORITHMES`).",
+  "- `folder` should be `adrs` (or the project ADR sub-folder).",
+  "",
+  "## Worked ADR example",
+  "```json",
+  "{",
   '  "title":    "ajout ressource storage s3",',
   '  "category": "SERVICES CLOUD",',
   '  "folder":   "adrs",',
   '  "content":  "---\\n**date:** 2026-04-27\\n**status:** To be validated\\n**description:** Ajout du module S3 Storage via Amplify Gen 2 — bucket nommé via CDK override, CORS configuré, pas de mode hors-ligne\\n**tags:** s3, storage, amplify, CDK, bucket, CORS, cloud\\n---\\n\\n# Ajout ressource storage S3\\n\\n## Contexte\\n...\\n\\n## Décision\\n...\\n\\n## Conséquences\\n..."',
-  '}',
-  '```',
-  '',
-  '## Source-of-truth contract',
-  'Documents are the source of truth. Diagrams are derived views. If a diagram needs a concept that isn\'t documented, create or update the document first (here) before calling `create_diagram`.',
-  '',
-  '## Cross-project documentation workspace',
-  'If the user points you to a folder/repository that does not appear to match this MCP workspace, ask whether the mismatch is intentional. When confirmed, create the source-of-truth documents in this MCP workspace first; diagrams must then cite those documents, not raw source-code inspection.',
-  '',
+  "}",
+  "```",
+  "",
+  "## Source-of-truth contract",
+  "Documents are the source of truth. Diagrams are derived views. If a diagram needs a concept that isn't documented, create or update the document first (here) before calling `create_diagram`.",
+  "",
+  "## Cross-project documentation workspace",
+  "If the user points you to a folder/repository that does not appear to match this MCP workspace, ask whether the mismatch is intentional. When confirmed, create the source-of-truth documents in this MCP workspace first; diagrams must then cite those documents, not raw source-code inspection.",
+  "",
   GUIDE_HINT,
-].join('\n');
+].join("\n");
 
 const TOOLS = [
   {
-    name: 'get_server_guide',
-    description: 'Return the living-documentation server guide: purpose, mandatory workflow, scope rules (context vs container/UML), diagram conventions, node/edge format, and coordinate system. Call this first whenever you are unsure how to use the server.',
-    inputSchema: { type: 'object', properties: {} },
+    name: "get_server_guide",
+    description:
+      "Return the living-ai-documentation server guide: purpose, mandatory workflow, scope rules (context vs container/UML), diagram conventions, node/edge format, and coordinate system. Call this first whenever you are unsure how to use the server.",
+    inputSchema: { type: "object", properties: {} },
   },
   {
-    name: 'list_documents',
+    name: "list_documents",
     description: `List all documents with their id, title, category, folder, and \`linkHref\` (the ready-to-paste \`?doc=...\` segment for a Markdown cross-doc link — copy it verbatim, do not re-encode). Documents are the source of truth — read them before creating or updating any diagram. ${GUIDE_HINT}`,
-    inputSchema: { type: 'object', properties: {} },
+    inputSchema: { type: "object", properties: {} },
   },
   {
-    name: 'read_document',
+    name: "read_document",
     description: `Read the raw Markdown content of a document by its id. Use this to gather facts (actors, systems, flows) before creating a diagram. Ignore documents whose frontmatter contains \`status: SuperSeeded\`. ${GUIDE_HINT}`,
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        id: { type: 'string', description: 'Document id as returned by list_documents' },
+        id: {
+          type: "string",
+          description: "Document id as returned by list_documents",
+        },
       },
-      required: ['id'],
+      required: ["id"],
     },
   },
   {
-    name: 'update_document',
+    name: "update_document",
     description: [
-      'Overwrite the Markdown content of an existing document by its id. Use this whenever you need to modify a doc in place — e.g. correcting drift detected by `get_accuracy` (Scenario B audit), or flipping `**status:**` to `SuperSeeded` after a feature has obsoleted a prior ADR (Scenario A supersede).',
-      '',
-      '## Workflow',
-      '1. `read_document(id)` to load the current Markdown.',
-      '2. Compose the new full content in your reasoning (fix description, body, flip status, etc.).',
-      '3. `update_document(id, content)` with the **full** new Markdown body — the file is overwritten exactly with this string.',
-      '4. `refresh_metadata(id)` once the doc is back in sync with the source files (re-baselines the SHA-256 hashes).',
-      '',
-      'The filename, id, date, category, and folder are NOT changed by this call — content-only update. To rename or recategorise, create a new doc with `create_document` and (optionally) supersede the old one via this tool.',
-      '',
-      'Returns `{ success, id, bytes }`.',
-      '',
+      "Overwrite the Markdown content of an existing document by its id. Use this whenever you need to modify a doc in place — e.g. correcting drift detected by `get_accuracy` (Scenario B audit), or flipping `**status:**` to `SuperSeeded` after a feature has obsoleted a prior ADR (Scenario A supersede).",
+      "",
+      "## Workflow",
+      "1. `read_document(id)` to load the current Markdown.",
+      "2. Compose the new full content in your reasoning (fix description, body, flip status, etc.).",
+      "3. `update_document(id, content)` with the **full** new Markdown body — the file is overwritten exactly with this string.",
+      "4. `refresh_metadata(id)` once the doc is back in sync with the source files (re-baselines the SHA-256 hashes).",
+      "",
+      "The filename, id, date, category, and folder are NOT changed by this call — content-only update. To rename or recategorise, create a new doc with `create_document` and (optionally) supersede the old one via this tool.",
+      "",
+      "Returns `{ success, id, bytes }`.",
+      "",
       GUIDE_HINT,
-    ].join('\n'),
+    ].join("\n"),
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        id:      { type: 'string', description: 'Document id as returned by list_documents' },
-        content: { type: 'string', description: 'Full Markdown content (frontmatter + body) — the file is overwritten with exactly this string. Must be non-empty.' },
+        id: {
+          type: "string",
+          description: "Document id as returned by list_documents",
+        },
+        content: {
+          type: "string",
+          description:
+            "Full Markdown content (frontmatter + body) — the file is overwritten with exactly this string. Must be non-empty.",
+        },
       },
-      required: ['id', 'content'],
+      required: ["id", "content"],
     },
   },
   {
-    name: 'create_document',
+    name: "create_document",
     description: CREATE_DOCUMENT_DESCRIPTION,
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        title:    { type: 'string', description: 'Human-readable document title' },
-        category: { type: 'string', description: 'Category extracted from the filename, e.g. "Architecture", "Guide"' },
-        folder:   { type: 'string', description: 'Optional subfolder relative to the docs root, e.g. "adrs" or "adrs/backend"' },
-        content:  { type: 'string', description: 'Full Markdown content. Omit to create an empty document.' },
-        date:     { type: 'string', description: 'Optional ISO 8601 date (e.g. `2024-08-12` or `2024-08-12T14:33:00Z`) that overrides the filename date prefix. Use ONLY when retrodocumenting from a past event (typically a git commit). Defaults to now.' },
+        title: { type: "string", description: "Human-readable document title" },
+        category: {
+          type: "string",
+          description:
+            'Category extracted from the filename, e.g. "Architecture", "Guide"',
+        },
+        folder: {
+          type: "string",
+          description:
+            'Optional subfolder relative to the docs root, e.g. "adrs" or "adrs/backend"',
+        },
+        content: {
+          type: "string",
+          description:
+            "Full Markdown content. Omit to create an empty document.",
+        },
+        date: {
+          type: "string",
+          description:
+            "Optional ISO 8601 date (e.g. `2024-08-12` or `2024-08-12T14:33:00Z`) that overrides the filename date prefix. Use ONLY when retrodocumenting from a past event (typically a git commit). Defaults to now.",
+        },
       },
-      required: ['title', 'category'],
+      required: ["title", "category"],
     },
   },
   {
-    name: 'list_diagrams',
+    name: "list_diagrams",
     description: `List all saved diagrams with their id and title. Always call this before \`create_diagram\` — if a relevant diagram already exists, pass its id back to \`create_diagram\` to update rather than duplicate. ${GUIDE_HINT}`,
-    inputSchema: { type: 'object', properties: {} },
+    inputSchema: { type: "object", properties: {} },
   },
   {
-    name: 'read_diagram',
+    name: "read_diagram",
     description: `Read the nodes and edges of an existing diagram by its id. Returns the diagram in the same format accepted by \`create_diagram\`, ready to be modified and passed back. ${GUIDE_HINT}`,
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        id: { type: 'string', description: 'Diagram id as returned by list_diagrams' },
+        id: {
+          type: "string",
+          description: "Diagram id as returned by list_diagrams",
+        },
       },
-      required: ['id'],
+      required: ["id"],
     },
   },
   {
-    name: 'create_diagram',
+    name: "create_diagram",
     description: CREATE_DIAGRAM_DESCRIPTION,
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        id:    { type: 'string', description: 'Optional: existing diagram id to overwrite. If omitted, a new diagram is created.' },
-        title: { type: 'string', description: 'Diagram title' },
+        id: {
+          type: "string",
+          description:
+            "Optional: existing diagram id to overwrite. If omitted, a new diagram is created.",
+        },
+        title: { type: "string", description: "Diagram title" },
         diagramType: {
-          type: 'string',
-          enum: ['context', 'container', 'component', 'uml', 'flow', 'erd', 'screen-guide', 'other'],
-          description: 'Type of diagram. "context" is the default. "container", "component", "uml", and "screen-guide" require explicit user request — set `userRequestedExplicitly: true` alongside them.',
+          type: "string",
+          enum: [
+            "context",
+            "container",
+            "component",
+            "uml",
+            "flow",
+            "erd",
+            "screen-guide",
+            "other",
+          ],
+          description:
+            'Type of diagram. "context" is the default. "container", "component", "uml", and "screen-guide" require explicit user request — set `userRequestedExplicitly: true` alongside them.',
         },
         userRequestedExplicitly: {
-          type: 'boolean',
-          description: 'Set to true only when the user explicitly asked for a container, component, UML, or screen-guide diagram by name. Required for those diagramType values; ignored for "context".',
+          type: "boolean",
+          description:
+            'Set to true only when the user explicitly asked for a container, component, UML, or screen-guide diagram by name. Required for those diagramType values; ignored for "context".',
         },
-        edgesStraight: { type: 'boolean', description: 'Optional diagram-level style. Defaults to false for MCP-created diagrams.' },
-        gridEnabled:   { type: 'boolean', description: 'Optional diagram-level style. Defaults to false for MCP-created diagrams.' },
-        alignGuides:   { type: 'boolean', description: 'Optional diagram-level style. Defaults to true for MCP-created diagrams.' },
+        edgesStraight: {
+          type: "boolean",
+          description:
+            "Optional diagram-level style. Defaults to false for MCP-created diagrams.",
+        },
+        gridEnabled: {
+          type: "boolean",
+          description:
+            "Optional diagram-level style. Defaults to false for MCP-created diagrams.",
+        },
+        alignGuides: {
+          type: "boolean",
+          description:
+            "Optional diagram-level style. Defaults to true for MCP-created diagrams.",
+        },
         nodes: {
-          type: 'array',
-          description: 'List of nodes. Node labels should follow the C4 convention: "Name\\n[Type]\\nShort description".',
+          type: "array",
+          description:
+            'List of nodes. Node labels should follow the C4 convention: "Name\\n[Type]\\nShort description".',
           items: {
-            type: 'object',
+            type: "object",
             properties: {
-              name:            { type: 'string', description: 'Node label shown in the diagram. With `kind`, pass the display name only and optional `description`; without `kind`, use \\n for C4 labels. Empty string allowed for zone overlays, anchors, and the image background.' },
-              kind:            { type: 'string', enum: KIND_LIST.split(', '), description: 'Optional architectural concept. When present, the MCP builds a C4 label and chooses default renderAs/color unless overridden.' },
-              renderAs:        { type: 'string', description: `Optional visual shape override used with kind. Available: ${SHAPE_LIST}.` },
-              description:     { type: 'string', description: 'Optional architectural description appended as the third C4 label line when kind is present and name is not already a multiline label.' },
-              type:            { type: 'string', description: `Legacy visual shape. Still supported when kind is absent. Available: ${SHAPE_LIST}.` },
-              color:           { type: 'string', description: `Color key, e.g. c-blue or "blue". Available: ${COLOR_LIST}.` },
-              x:               { type: 'number', description: 'Optional canvas X (0 = center). If omitted, the MCP assigns a deterministic position before saving. When provided, use multiples of 40 (screen-guide exception: pixel-aligned).' },
-              y:               { type: 'number', description: 'Optional canvas Y (0 = center, positive = down). If omitted, the MCP assigns a deterministic position before saving. When provided, use multiples of 40 (screen-guide exception: pixel-aligned).' },
-              width:           { type: 'number', description: 'Optional explicit node width in pixels. Required for image backgrounds and zone overlays in screen-guide diagrams. Otherwise estimated from the label.' },
-              height:          { type: 'number', description: 'Optional explicit node height in pixels. Required for image backgrounds and zone overlays in screen-guide diagrams. Otherwise estimated from the label.' },
-              fontSize:        { type: ['number', 'null'], description: 'Optional node label font size. Defaults to null so the editor uses its shape default.' },
-              textAlign:       { type: ['string', 'null'], description: 'Optional node text horizontal alignment. Defaults to null.' },
-              textValign:      { type: ['string', 'null'], description: 'Optional node text vertical alignment. Defaults to null.' },
-              bgOpacity:       { type: 'number', description: 'Optional background opacity (0–1). Use 0.15–0.20 for translucent zone-overlay boxes in screen-guide diagrams.' },
-              rotation:        { type: ['number', 'null'], description: 'Optional node shape rotation in radians. Defaults to 0.' },
-              labelRotation:   { type: ['number', 'null'], description: 'Optional node label rotation in radians. Defaults to 0.' },
-              locked:          { type: 'boolean', description: 'Optional: lock the node so it cannot be moved or resized by accident. Recommended for screen-guide backgrounds and zone overlays.' },
-              linkedDiagramId: { type: 'string', description: 'Optional: id of another diagram to navigate to when clicking this node (C4 drill-down).' },
-              groupId:         { type: ['string', 'null'], description: 'Optional editor group id. Defaults to null.' },
-              imageSrc:        { type: 'string', description: 'Required when `type` is "image". URL path returned by POST /api/images/upload (e.g. "/images/foo.png").' },
+              name: {
+                type: "string",
+                description:
+                  "Node label shown in the diagram. With `kind`, pass the display name only and optional `description`; without `kind`, use \\n for C4 labels. Empty string allowed for zone overlays, anchors, and the image background.",
+              },
+              kind: {
+                type: "string",
+                enum: KIND_LIST.split(", "),
+                description:
+                  "Optional architectural concept. When present, the MCP builds a C4 label and chooses default renderAs/color unless overridden.",
+              },
+              renderAs: {
+                type: "string",
+                description: `Optional visual shape override used with kind. Available: ${SHAPE_LIST}.`,
+              },
+              description: {
+                type: "string",
+                description:
+                  "Optional architectural description appended as the third C4 label line when kind is present and name is not already a multiline label.",
+              },
+              type: {
+                type: "string",
+                description: `Legacy visual shape. Still supported when kind is absent. Available: ${SHAPE_LIST}.`,
+              },
+              color: {
+                type: "string",
+                description: `Color key, e.g. c-blue or "blue". Available: ${COLOR_LIST}.`,
+              },
+              x: {
+                type: "number",
+                description:
+                  "Optional canvas X (0 = center). If omitted, the MCP assigns a deterministic position before saving. When provided, use multiples of 40 (screen-guide exception: pixel-aligned).",
+              },
+              y: {
+                type: "number",
+                description:
+                  "Optional canvas Y (0 = center, positive = down). If omitted, the MCP assigns a deterministic position before saving. When provided, use multiples of 40 (screen-guide exception: pixel-aligned).",
+              },
+              width: {
+                type: "number",
+                description:
+                  "Optional explicit node width in pixels. Required for image backgrounds and zone overlays in screen-guide diagrams. Otherwise estimated from the label.",
+              },
+              height: {
+                type: "number",
+                description:
+                  "Optional explicit node height in pixels. Required for image backgrounds and zone overlays in screen-guide diagrams. Otherwise estimated from the label.",
+              },
+              fontSize: {
+                type: ["number", "null"],
+                description:
+                  "Optional node label font size. Defaults to null so the editor uses its shape default.",
+              },
+              textAlign: {
+                type: ["string", "null"],
+                description:
+                  "Optional node text horizontal alignment. Defaults to null.",
+              },
+              textValign: {
+                type: ["string", "null"],
+                description:
+                  "Optional node text vertical alignment. Defaults to null.",
+              },
+              bgOpacity: {
+                type: "number",
+                description:
+                  "Optional background opacity (0–1). Use 0.15–0.20 for translucent zone-overlay boxes in screen-guide diagrams.",
+              },
+              rotation: {
+                type: ["number", "null"],
+                description:
+                  "Optional node shape rotation in radians. Defaults to 0.",
+              },
+              labelRotation: {
+                type: ["number", "null"],
+                description:
+                  "Optional node label rotation in radians. Defaults to 0.",
+              },
+              locked: {
+                type: "boolean",
+                description:
+                  "Optional: lock the node so it cannot be moved or resized by accident. Recommended for screen-guide backgrounds and zone overlays.",
+              },
+              linkedDiagramId: {
+                type: "string",
+                description:
+                  "Optional: id of another diagram to navigate to when clicking this node (C4 drill-down).",
+              },
+              groupId: {
+                type: ["string", "null"],
+                description: "Optional editor group id. Defaults to null.",
+              },
+              imageSrc: {
+                type: "string",
+                description:
+                  'Required when `type` is "image". URL path returned by POST /api/images/upload (e.g. "/images/foo.png").',
+              },
               evidence: {
-                type: 'array',
-                description: 'Optional documentary provenance for this node. Cite only Markdown documents from list_documents/read_document/create_document, not source files.',
+                type: "array",
+                description:
+                  "Optional documentary provenance for this node. Cite only Markdown documents from list_documents/read_document/create_document, not source files.",
                 items: {
-                  type: 'object',
+                  type: "object",
                   properties: {
-                    documentId: { type: 'string', description: 'Document id as returned by list_documents or create_document.' },
-                    section:    { type: ['string', 'null'], description: 'Optional section heading inside the document.' },
-                    summary:    { type: ['string', 'null'], description: 'Short paraphrase of the documentary fact that justifies this node.' },
+                    documentId: {
+                      type: "string",
+                      description:
+                        "Document id as returned by list_documents or create_document.",
+                    },
+                    section: {
+                      type: ["string", "null"],
+                      description:
+                        "Optional section heading inside the document.",
+                    },
+                    summary: {
+                      type: ["string", "null"],
+                      description:
+                        "Short paraphrase of the documentary fact that justifies this node.",
+                    },
                   },
-                  required: ['documentId'],
+                  required: ["documentId"],
                 },
               },
             },
-            required: ['name'],
+            required: ["name"],
           },
         },
         edges: {
-          type: 'array',
-          description: 'List of directed edges between nodes. Every edge should have a `label` describing the interaction (verb phrase). Exception: screen-guide edges have empty labels.',
+          type: "array",
+          description:
+            "List of directed edges between nodes. Every edge should have a `label` describing the interaction (verb phrase). Exception: screen-guide edges have empty labels.",
           items: {
-            type: 'object',
+            type: "object",
             properties: {
-              from:  { type: 'string', description: 'Name of the source node (must match a node `name` exactly).' },
-              to:    { type: 'string', description: 'Name of the target node (must match a node `name` exactly). Optional for screen-guide diagrams — omit to render a free-end arrow the user can drag.' },
-              label: { type: 'string', description: 'Edge label — verb phrase describing the interaction. Strongly recommended; missing labels produce warnings (except for screen-guide).' },
-              arrowDir: { type: 'string', enum: ['to', 'from', 'both', 'none'], description: 'Optional arrow direction. Defaults to "to"; use "from" to draw the arrowhead at the source end, or "both" for one bidirectional exchange edge.' },
-              dashes: { type: 'boolean', description: 'Optional dashed-line flag. Defaults to false.' },
-              fontSize: { type: ['number', 'null'], description: 'Optional edge-label font size. Defaults to 12, or 11 for labels longer than 36 characters.' },
-              labelRotation: { type: ['number', 'null'], description: 'Optional edge-label rotation in radians. Defaults to 0.' },
-              edgeLabelOffsetX: { type: ['number', 'null'], description: 'Optional edge-label X offset. Defaults to 0.' },
-              edgeLabelOffsetY: { type: ['number', 'null'], description: 'Optional edge-label Y offset. Defaults to 0.' },
-              fromPort: { type: ['string', 'null'], enum: ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', null], description: 'Optional source attachment port. Defaults from relative node positions.' },
-              toPort: { type: ['string', 'null'], enum: ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', null], description: 'Optional target attachment port. Defaults from relative node positions.' },
-              edgeColor: { type: ['string', 'null'], description: 'Optional custom edge color. Defaults to null.' },
-              edgeWidth: { type: ['number', 'null'], description: 'Optional custom edge width. Defaults to null.' },
-              edgeLocked: { type: 'boolean', description: 'Optional lock flag for the edge. Defaults to false.' },
-              edgeLabelWidth: { type: ['number', 'null'], description: 'Optional fixed edge-label wrapping width. Defaults to 80/95/105 depending on label length.' },
+              from: {
+                type: "string",
+                description:
+                  "Name of the source node (must match a node `name` exactly).",
+              },
+              to: {
+                type: "string",
+                description:
+                  "Name of the target node (must match a node `name` exactly). Optional for screen-guide diagrams — omit to render a free-end arrow the user can drag.",
+              },
+              label: {
+                type: "string",
+                description:
+                  "Edge label — verb phrase describing the interaction. Strongly recommended; missing labels produce warnings (except for screen-guide).",
+              },
+              arrowDir: {
+                type: "string",
+                enum: ["to", "from", "both", "none"],
+                description:
+                  'Optional arrow direction. Defaults to "to"; use "from" to draw the arrowhead at the source end, or "both" for one bidirectional exchange edge.',
+              },
+              dashes: {
+                type: "boolean",
+                description: "Optional dashed-line flag. Defaults to false.",
+              },
+              fontSize: {
+                type: ["number", "null"],
+                description:
+                  "Optional edge-label font size. Defaults to 12, or 11 for labels longer than 36 characters.",
+              },
+              labelRotation: {
+                type: ["number", "null"],
+                description:
+                  "Optional edge-label rotation in radians. Defaults to 0.",
+              },
+              edgeLabelOffsetX: {
+                type: ["number", "null"],
+                description: "Optional edge-label X offset. Defaults to 0.",
+              },
+              edgeLabelOffsetY: {
+                type: ["number", "null"],
+                description: "Optional edge-label Y offset. Defaults to 0.",
+              },
+              fromPort: {
+                type: ["string", "null"],
+                enum: ["N", "NE", "E", "SE", "S", "SW", "W", "NW", null],
+                description:
+                  "Optional source attachment port. Defaults from relative node positions.",
+              },
+              toPort: {
+                type: ["string", "null"],
+                enum: ["N", "NE", "E", "SE", "S", "SW", "W", "NW", null],
+                description:
+                  "Optional target attachment port. Defaults from relative node positions.",
+              },
+              edgeColor: {
+                type: ["string", "null"],
+                description: "Optional custom edge color. Defaults to null.",
+              },
+              edgeWidth: {
+                type: ["number", "null"],
+                description: "Optional custom edge width. Defaults to null.",
+              },
+              edgeLocked: {
+                type: "boolean",
+                description:
+                  "Optional lock flag for the edge. Defaults to false.",
+              },
+              edgeLabelWidth: {
+                type: ["number", "null"],
+                description:
+                  "Optional fixed edge-label wrapping width. Defaults to 80/95/105 depending on label length.",
+              },
               evidence: {
-                type: 'array',
-                description: 'Optional documentary provenance for this relation. Cite only Markdown documents from list_documents/read_document/create_document, not source files.',
+                type: "array",
+                description:
+                  "Optional documentary provenance for this relation. Cite only Markdown documents from list_documents/read_document/create_document, not source files.",
                 items: {
-                  type: 'object',
+                  type: "object",
                   properties: {
-                    documentId: { type: 'string', description: 'Document id as returned by list_documents or create_document.' },
-                    section:    { type: ['string', 'null'], description: 'Optional section heading inside the document.' },
-                    summary:    { type: ['string', 'null'], description: 'Short paraphrase of the documentary fact that justifies this relation.' },
+                    documentId: {
+                      type: "string",
+                      description:
+                        "Document id as returned by list_documents or create_document.",
+                    },
+                    section: {
+                      type: ["string", "null"],
+                      description:
+                        "Optional section heading inside the document.",
+                    },
+                    summary: {
+                      type: ["string", "null"],
+                      description:
+                        "Short paraphrase of the documentary fact that justifies this relation.",
+                    },
                   },
-                  required: ['documentId'],
+                  required: ["documentId"],
                 },
               },
             },
-            required: ['from'],
+            required: ["from"],
           },
         },
       },
-      required: ['title', 'diagramType', 'nodes', 'edges'],
+      required: ["title", "diagramType", "nodes", "edges"],
     },
   },
   {
-    name: 'list_source_files',
+    name: "list_source_files",
     description: [
-      'List files under the project `sourceRoot` (configured in `.living-doc.json`, defaults to the parent folder of the docs directory).',
-      '',
-      'Use this tool as a **fallback** when the Markdown documentation lacks a specific low-level detail needed for a diagram — for example, when generating a screen-guide diagram or when documenting a piece of code that has no ADR. For architectural facts, read documents first.',
-      '',
-      'Common ignored folders are skipped automatically (`node_modules`, `dist`, `.git`, `build`, `target`, etc.).',
-    ].join('\n'),
+      "List files under the project `sourceRoot` (configured in `.living-doc.json`, defaults to the parent folder of the docs directory).",
+      "",
+      "Use this tool as a **fallback** when the Markdown documentation lacks a specific low-level detail needed for a diagram — for example, when generating a screen-guide diagram or when documenting a piece of code that has no ADR. For architectural facts, read documents first.",
+      "",
+      "Common ignored folders are skipped automatically (`node_modules`, `dist`, `.git`, `build`, `target`, etc.).",
+    ].join("\n"),
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        pattern:    { type: 'string', description: 'Optional glob-like pattern matched against the relative path. Supports `*` (within a segment) and `**` (across segments). Example: `src/**/*.ts`.' },
-        maxResults: { type: 'number', description: 'Max number of files to return (default 500, hard cap 2000).' },
+        pattern: {
+          type: "string",
+          description:
+            "Optional glob-like pattern matched against the relative path. Supports `*` (within a segment) and `**` (across segments). Example: `src/**/*.ts`.",
+        },
+        maxResults: {
+          type: "number",
+          description:
+            "Max number of files to return (default 500, hard cap 2000).",
+        },
       },
     },
   },
   {
-    name: 'read_source_file',
+    name: "read_source_file",
     description: [
-      'Read a source file under the project `sourceRoot`. Path must be relative to `sourceRoot`.',
-      '',
-      'Use this **only after** you have tried the documentation tools (`list_documents` / `read_document`). If you find yourself reading more than 3 source files for the same diagram, stop and update the documentation first — the docs are the source of truth.',
-      '',
-      'Files larger than 512 KB are rejected; use `search_source` to locate the relevant section.',
-    ].join('\n'),
+      "Read a source file under the project `sourceRoot`. Path must be relative to `sourceRoot`.",
+      "",
+      "Use this **only after** you have tried the documentation tools (`list_documents` / `read_document`). If you find yourself reading more than 3 source files for the same diagram, stop and update the documentation first — the docs are the source of truth.",
+      "",
+      "Files larger than 512 KB are rejected; use `search_source` to locate the relevant section.",
+    ].join("\n"),
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        path: { type: 'string', description: 'Path relative to `sourceRoot`, e.g. `src/frontend/index.html`.' },
+        path: {
+          type: "string",
+          description:
+            "Path relative to `sourceRoot`, e.g. `src/frontend/index.html`.",
+        },
       },
-      required: ['path'],
+      required: ["path"],
     },
   },
   {
-    name: 'list_metadata',
+    name: "list_metadata",
     description: [
-      'List the source-file metadata entries attached to a document. Each entry is a source file (path relative to `sourceRoot`) bound to the document with the SHA-256 hash that was stored when it was attached.',
-      '',
-      'Use together with `get_accuracy` to decide whether a doc needs to be reviewed because one of its source-file dependencies has changed.',
-    ].join('\n'),
+      "List the source-file metadata entries attached to a document. Each entry is a source file (path relative to `sourceRoot`) bound to the document with the SHA-256 hash that was stored when it was attached.",
+      "",
+      "Use together with `get_accuracy` to decide whether a doc needs to be reviewed because one of its source-file dependencies has changed.",
+    ].join("\n"),
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        id: { type: 'string', description: 'Document id as returned by list_documents' },
+        id: {
+          type: "string",
+          description: "Document id as returned by list_documents",
+        },
       },
-      required: ['id'],
+      required: ["id"],
     },
   },
   {
-    name: 'get_accuracy',
+    name: "get_accuracy",
     description: [
-      'Compute a document\'s accuracy: compares the SHA-256 hashes stored with each metadata entry against the hashes of the source files on disk today.',
-      '',
-      'Returns each item with status `unchanged` / `modified` / `missing`, counts, and a weighted `accuracy` in [0, 1] (missing weighs 3× a simple modification).',
-      '',
-      'A value close to 1 means the doc is still aligned with its source files. A value close to 0 means significant drift: read the doc and the modified source files, then update the doc.',
-    ].join('\n'),
+      "Compute a document's accuracy: compares the SHA-256 hashes stored with each metadata entry against the hashes of the source files on disk today.",
+      "",
+      "Returns each item with status `unchanged` / `modified` / `missing`, counts, and a weighted `accuracy` in [0, 1] (missing weighs 3× a simple modification).",
+      "",
+      "A value close to 1 means the doc is still aligned with its source files. A value close to 0 means significant drift: read the doc and the modified source files, then update the doc.",
+    ].join("\n"),
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        id: { type: 'string', description: 'Document id' },
+        id: { type: "string", description: "Document id" },
       },
-      required: ['id'],
+      required: ["id"],
     },
   },
   {
-    name: 'review_adr_relevance',
+    name: "review_adr_relevance",
     description: [
-      'Prepare a relevance review for one ADR document.',
-      '',
-      'The tool accepts a document id, verifies that the document is an ADR, returns the ADR content, its frontmatter summary, the metadata accuracy report, and the source files whose hashes no longer match.',
-      '',
-      'This is a factual reporting tool, not the whole workflow. Use prompt `review-adr-relevance` when the LLM must decide between `refresh_metadata` and user-confirmed supersession.',
-    ].join('\n'),
+      "Prepare a relevance review for one ADR document.",
+      "",
+      "The tool accepts a document id, verifies that the document is an ADR, returns the ADR content, its frontmatter summary, the metadata accuracy report, and the source files whose hashes no longer match.",
+      "",
+      "This is a factual reporting tool, not the whole workflow. Use prompt `review-adr-relevance` when the LLM must decide between `refresh_metadata` and user-confirmed supersession.",
+    ].join("\n"),
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        id: { type: 'string', description: 'Document id. Must identify an ADR document.' },
+        id: {
+          type: "string",
+          description: "Document id. Must identify an ADR document.",
+        },
       },
-      required: ['id'],
+      required: ["id"],
     },
   },
   {
-    name: 'refresh_metadata',
+    name: "refresh_metadata",
     description: [
-      'Re-hash every source file attached to a document and overwrite the stored hashes with the current values. Call this AFTER the document has been updated to reflect the current state of its source files — it validates the doc as accurate again.',
-      '',
-      'Missing files keep their stored hash and remain flagged as missing.',
-    ].join('\n'),
+      "Re-hash every source file attached to a document and overwrite the stored hashes with the current values. Call this AFTER the document has been updated to reflect the current state of its source files — it validates the doc as accurate again.",
+      "",
+      "Missing files keep their stored hash and remain flagged as missing.",
+    ].join("\n"),
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        id: { type: 'string', description: 'Document id' },
+        id: { type: "string", description: "Document id" },
       },
-      required: ['id'],
+      required: ["id"],
     },
   },
   {
-    name: 'add_metadata',
+    name: "add_metadata",
     description: [
-      'Attach a source file to a document as a metadata dependency. The file path must be under the configured `sourceRoot`. The current SHA-256 hash of the file is recorded.',
-      '',
-      'If the document already has an entry for that path, its hash is updated.',
-      '',
-      '## Call this after every `create_document` for an ADR',
+      "Attach a source file to a document as a metadata dependency. The file path must be under the configured `sourceRoot`. The current SHA-256 hash of the file is recorded.",
+      "",
+      "If the document already has an entry for that path, its hash is updated.",
+      "",
+      "## Call this after every `create_document` for an ADR",
       'Each ADR must be bound to the source files it materially describes. Without this binding, the ADR escapes drift detection (`get_accuracy`, `list_adrs_below_accuracy`) and the documentation stops being "living".',
-      '',
-      '## What to attach — and what NOT to attach',
-      'Attach: every source file whose **logic** is the subject of the ADR (component, hook, service, route, schema, infra config that this decision created or changed).',
-      '',
-      'Do **NOT** attach god files / god objects — files that change for nearly every feature and would produce false-positive drift signals across many ADRs:',
-      '- Lock and manifest files: `package.json`, `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `tsconfig.json`, `requirements.txt`, `Cargo.lock`, `go.sum`, `pyproject.toml` (when it tracks dependencies).',
-      '- Central re-export / barrel files (`index.ts` that just re-exports), root routers, root stores, top-level app entry files — unless the ADR is specifically about that file.',
-      '- Auto-generated files (build outputs, OpenAPI clients, schema codegen).',
-      '',
-      '**Rule of thumb**: if a routine modification of the file would NOT reflect a semantic change of the feature this ADR describes, do not attach it.',
-      '',
-      'Returns only the added entry and aggregate totals. Use `list_metadata` to retrieve the full list.',
-    ].join('\n'),
+      "",
+      "## What to attach — and what NOT to attach",
+      "Attach: every source file whose **logic** is the subject of the ADR (component, hook, service, route, schema, infra config that this decision created or changed).",
+      "",
+      "Do **NOT** attach god files / god objects — files that change for nearly every feature and would produce false-positive drift signals across many ADRs:",
+      "- Lock and manifest files: `package.json`, `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `tsconfig.json`, `requirements.txt`, `Cargo.lock`, `go.sum`, `pyproject.toml` (when it tracks dependencies).",
+      "- Central re-export / barrel files (`index.ts` that just re-exports), root routers, root stores, top-level app entry files — unless the ADR is specifically about that file.",
+      "- Auto-generated files (build outputs, OpenAPI clients, schema codegen).",
+      "",
+      "**Rule of thumb**: if a routine modification of the file would NOT reflect a semantic change of the feature this ADR describes, do not attach it.",
+      "",
+      "Returns only the added entry and aggregate totals. Use `list_metadata` to retrieve the full list.",
+    ].join("\n"),
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        id:   { type: 'string', description: 'Document id' },
-        path: { type: 'string', description: 'Path to the source file, relative to sourceRoot or absolute but under sourceRoot.' },
+        id: { type: "string", description: "Document id" },
+        path: {
+          type: "string",
+          description:
+            "Path to the source file, relative to sourceRoot or absolute but under sourceRoot.",
+        },
       },
-      required: ['id', 'path'],
+      required: ["id", "path"],
     },
   },
   {
-    name: 'remove_metadata',
-    description: 'Remove a source-file metadata entry from a document. Use this to clean up orphan entries when a source file has been deleted or renamed (rename = add the new path then remove the old one). Idempotent: returns removed: null if the path is not currently attached. Does not touch the source file on disk — only updates the metadata.',
+    name: "remove_metadata",
+    description:
+      "Remove a source-file metadata entry from a document. Use this to clean up orphan entries when a source file has been deleted or renamed (rename = add the new path then remove the old one). Idempotent: returns removed: null if the path is not currently attached. Does not touch the source file on disk — only updates the metadata.",
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        id:   { type: 'string', description: 'Document id' },
-        path: { type: 'string', description: 'Path to the source file, relative to sourceRoot or absolute but under sourceRoot.' },
+        id: { type: "string", description: "Document id" },
+        path: {
+          type: "string",
+          description:
+            "Path to the source file, relative to sourceRoot or absolute but under sourceRoot.",
+        },
       },
-      required: ['id', 'path'],
+      required: ["id", "path"],
     },
   },
   {
-    name: 'list_adrs_below_accuracy',
-    description: 'List ADRs whose accuracy has dropped below 80%, sorted from most degraded first. Returns up to 10 ADRs per call along with the total count of ADRs below the threshold. Non-ADR documents, ADRs without metadata (total = 0), and SuperSeeded ADRs are excluded. ADR detection uses the same convention as review_adr_relevance: folder segment `ADRS`, category `ADR`, `[ADR]` in the id, or an `Architecture Decision Record` marker in the opening content.',
-    inputSchema: { type: 'object', properties: {} },
+    name: "list_adrs_below_accuracy",
+    description:
+      "List ADRs whose accuracy has dropped below 80%, sorted from most degraded first. Returns up to 10 ADRs per call along with the total count of ADRs below the threshold. Non-ADR documents, ADRs without metadata (total = 0), and SuperSeeded ADRs are excluded. ADR detection uses the same convention as review_adr_relevance: folder segment `ADRS`, category `ADR`, `[ADR]` in the id, or an `Architecture Decision Record` marker in the opening content.",
+    inputSchema: { type: "object", properties: {} },
   },
   {
-    name: 'search_source',
+    name: "search_source",
     description: [
-      'Grep-like text search across files under the project `sourceRoot`.',
-      '',
-      'Preferred over `read_source_file` when you only need to locate a symbol, identifier, or string. Returns `{ file, line, text }` matches.',
-    ].join('\n'),
+      "Grep-like text search across files under the project `sourceRoot`.",
+      "",
+      "Preferred over `read_source_file` when you only need to locate a symbol, identifier, or string. Returns `{ file, line, text }` matches.",
+    ].join("\n"),
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        query:         { type: 'string',  description: 'Substring to match (plain text, not regex).' },
-        pattern:       { type: 'string',  description: 'Optional glob to restrict the search (e.g. `src/**/*.ts`).' },
-        caseSensitive: { type: 'boolean', description: 'Default false.' },
-        maxResults:    { type: 'number',  description: 'Max number of matches to return (default 200, hard cap 1000).' },
+        query: {
+          type: "string",
+          description: "Substring to match (plain text, not regex).",
+        },
+        pattern: {
+          type: "string",
+          description:
+            "Optional glob to restrict the search (e.g. `src/**/*.ts`).",
+        },
+        caseSensitive: { type: "boolean", description: "Default false." },
+        maxResults: {
+          type: "number",
+          description:
+            "Max number of matches to return (default 200, hard cap 1000).",
+        },
       },
-      required: ['query'],
+      required: ["query"],
     },
   },
   {
-    name: 'retrodocument_adrs_from_git',
+    name: "retrodocument_adrs_from_git",
     description: [
-      'Prepare a retrodocumentation packet from recent git history.',
-      '',
-      'Reads up to `limit` commits (default 100, hard cap 200) from the git repository that contains `sourceRoot`, ordered **oldest first** so the LLM can walk decisions in chronological order. Per commit, returns: sha, committer/author dates (ISO 8601), author name, subject, body, parent count, and `filesChanged` annotated with `changeType` (A/M/D/R/C/T), `underSourceRoot`, `existsNow`, and `godFileSuspect` (lock files, manifests — flagged as poor metadata targets per `add_metadata` guidance).',
-      '',
-      'Each commit carries a `state`:',
-      '- `candidate` — has at least one non-deleted, non-god file under `sourceRoot`; worth a semantic look.',
-      '- `trivial`   — no source-bearing files (docs-only, formatting, config-only); skip unless the LLM has reason.',
-      '- `merge`     — has more than one parent; skip unless the merge introduces a documented decision.',
-      '',
-      'This is a factual reporting tool, not the whole workflow. Use prompt `retrodocument-adrs-from-git` when the LLM must decide whether each commit deserves a new ADR (Outcome A), should supersede an existing one (Outcome B), or be skipped (Outcome C).',
-      '',
-      'Requires `sourceRoot` to be inside a git working tree; errors out otherwise.',
-    ].join('\n'),
+      "Prepare a retrodocumentation packet from recent git history.",
+      "",
+      "Reads up to `limit` commits (default 100, hard cap 200) from the git repository that contains `sourceRoot`, ordered **oldest first** so the LLM can walk decisions in chronological order. Per commit, returns: sha, committer/author dates (ISO 8601), author name, subject, body, parent count, and `filesChanged` annotated with `changeType` (A/M/D/R/C/T), `underSourceRoot`, `existsNow`, and `godFileSuspect` (lock files, manifests — flagged as poor metadata targets per `add_metadata` guidance).",
+      "",
+      "Each commit carries a `state`:",
+      "- `candidate` — has at least one non-deleted, non-god file under `sourceRoot`; worth a semantic look.",
+      "- `trivial`   — no source-bearing files (docs-only, formatting, config-only); skip unless the LLM has reason.",
+      "- `merge`     — has more than one parent; skip unless the merge introduces a documented decision.",
+      "",
+      "This is a factual reporting tool, not the whole workflow. Use prompt `retrodocument-adrs-from-git` when the LLM must decide whether each commit deserves a new ADR (Outcome A), should supersede an existing one (Outcome B), or be skipped (Outcome C).",
+      "",
+      "Requires `sourceRoot` to be inside a git working tree; errors out otherwise.",
+    ].join("\n"),
     inputSchema: {
-      type: 'object',
+      type: "object",
       properties: {
-        limit: { type: 'number', description: 'Number of commits to return (default 100, max 200).' },
-        since: { type: 'string', description: 'Optional git --since expression (e.g. `2024-01-01`, `6 months ago`). Passed straight to git log.' },
+        limit: {
+          type: "number",
+          description: "Number of commits to return (default 100, max 200).",
+        },
+        since: {
+          type: "string",
+          description:
+            "Optional git --since expression (e.g. `2024-01-01`, `6 months ago`). Passed straight to git log.",
+        },
       },
     },
   },
@@ -811,76 +1101,137 @@ const TOOLS = [
 
 const PROMPTS = [
   {
-    name: 'audit-adrs-drift',
-    description: 'Audit drifting ADRs: list every ADR with reliability < 80%, call `review_adr_relevance`, read the drifted source files, then either re-baseline hashes when the ADR still matches the code or ask the user before superseding it. Auto-invoke when the user asks to audit / refresh / review drifting ADRs ("audite les ADR", "vérifie la fiabilité des ADR", "fais le tour des ADR qui ne sont plus à jour", "review ADR drift").',
+    name: "audit-adrs-drift",
+    description:
+      'Audit drifting ADRs: list every ADR with reliability < 80%, call `review_adr_relevance`, read the drifted source files, then either re-baseline hashes when the ADR still matches the code or ask the user before superseding it. Auto-invoke when the user asks to audit / refresh / review drifting ADRs ("audite les ADR", "vérifie la fiabilité des ADR", "fais le tour des ADR qui ne sont plus à jour", "review ADR drift").',
   },
   {
-    name: 'review-adr-relevance',
-    description: 'Review one specific ADR whose reliability gauge may be below 100%: call `review_adr_relevance`, read the drifted source files, decide whether the ADR still matches the code, then either refresh metadata or ask the user before superseding it. Auto-invoke when the user asks to verify/check/review the relevance of a specific ADR.',
+    name: "review-adr-relevance",
+    description:
+      "Review one specific ADR whose reliability gauge may be below 100%: call `review_adr_relevance`, read the drifted source files, decide whether the ADR still matches the code, then either refresh metadata or ask the user before superseding it. Auto-invoke when the user asks to verify/check/review the relevance of a specific ADR.",
     arguments: [
-      { name: 'id', description: 'Document id of the ADR to review, e.g. `ADRS/2026_05_11_22_33_[MCP]_review_adr_relevance_mcp_tool`.', required: true },
+      {
+        name: "id",
+        description:
+          "Document id of the ADR to review, e.g. `ADRS/2026_05_11_22_33_[MCP]_review_adr_relevance_mcp_tool`.",
+        required: true,
+      },
     ],
   },
   {
-    name: 'create-adr',
-    description: 'Record an ADR (Architecture Decision Record) for a feature you just implemented or modified. Auto-invoke when the user signals a feature is done ("feature terminée", "j\'ai fini cette fonctionnalité"), or proactively at the end of a coding task. Walks through: search for ADRs to supersede, write the new ADR with the mandatory frontmatter at status `To be validated`, attach source files via `add_metadata` (god files excluded).',
+    name: "create-adr",
+    description:
+      'Record an ADR (Architecture Decision Record) for a feature you just implemented or modified. Auto-invoke when the user signals a feature is done ("feature terminée", "j\'ai fini cette fonctionnalité"), or proactively at the end of a coding task. Walks through: search for ADRs to supersede, write the new ADR with the mandatory frontmatter at status `To be validated`, attach source files via `add_metadata` (god files excluded).',
     arguments: [
-      { name: 'featureSummary', description: 'One-line description of the feature/decision being recorded. Example: "Ajout du module S3 Storage via Amplify Gen 2".', required: false },
-      { name: 'modifiedFiles',  description: 'Comma-separated list of source files materially modified or created by this feature (relative to sourceRoot). Used to seed the metadata bindings; god files should already be filtered out by the caller.', required: false },
+      {
+        name: "featureSummary",
+        description:
+          'One-line description of the feature/decision being recorded. Example: "Ajout du module S3 Storage via Amplify Gen 2".',
+        required: false,
+      },
+      {
+        name: "modifiedFiles",
+        description:
+          "Comma-separated list of source files materially modified or created by this feature (relative to sourceRoot). Used to seed the metadata bindings; god files should already be filtered out by the caller.",
+        required: false,
+      },
     ],
   },
   {
-    name: 'retrodocument-adrs-from-git',
-    description: 'Retrodocument missing ADRs by walking recent git history oldest-first: call `retrodocument_adrs_from_git`, decide for each candidate commit whether it carries a durable architectural decision worth an ADR, then either skip, create a new ADR dated from the commit, or supersede an earlier ADR before creating the new one. Auto-invoke when the user asks to retrodocument / recreate / backfill / reconstruct ADRs from git ("retrodocumente les ADR depuis git", "recrée les ADR manquants depuis l\'historique", "remonte l\'historique git pour générer les ADR", "backfill ADRs from history"). Distinct from `create-adr` (which records ONE current feature) and from `audit-adrs-drift` (which fixes drift on existing ADRs).',
+    name: "retrodocument-adrs-from-git",
+    description:
+      'Retrodocument missing ADRs by walking recent git history oldest-first: call `retrodocument_adrs_from_git`, decide for each candidate commit whether it carries a durable architectural decision worth an ADR, then either skip, create a new ADR dated from the commit, or supersede an earlier ADR before creating the new one. Auto-invoke when the user asks to retrodocument / recreate / backfill / reconstruct ADRs from git ("retrodocumente les ADR depuis git", "recrée les ADR manquants depuis l\'historique", "remonte l\'historique git pour générer les ADR", "backfill ADRs from history"). Distinct from `create-adr` (which records ONE current feature) and from `audit-adrs-drift` (which fixes drift on existing ADRs).',
     arguments: [
-      { name: 'limit', description: 'Optional: number of commits to inspect (default 100, hard cap 200).', required: false },
-      { name: 'since', description: 'Optional: git --since expression (e.g. `2024-01-01`, `6 months ago`). Restricts the inspected window.', required: false },
+      {
+        name: "limit",
+        description:
+          "Optional: number of commits to inspect (default 100, hard cap 200).",
+        required: false,
+      },
+      {
+        name: "since",
+        description:
+          "Optional: git --since expression (e.g. `2024-01-01`, `6 months ago`). Restricts the inspected window.",
+        required: false,
+      },
     ],
   },
   {
-    name: 'generate-context-diagram',
-    description: 'DEFAULT. Generate a C4 System Context diagram — one system in the center, surrounding users and external systems. Safe to auto-invoke when the user asks for "a diagram", "the big picture", or "documentation".',
+    name: "generate-context-diagram",
+    description:
+      'DEFAULT. Generate a C4 System Context diagram — one system in the center, surrounding users and external systems. Safe to auto-invoke when the user asks for "a diagram", "the big picture", or "documentation".',
     arguments: [
-      { name: 'scope', description: 'Optional: name of the system to put at the center. Inferred from the docs if omitted.', required: false },
+      {
+        name: "scope",
+        description:
+          "Optional: name of the system to put at the center. Inferred from the docs if omitted.",
+        required: false,
+      },
     ],
   },
   {
-    name: 'generate-container-diagram',
-    description: 'EXPLICIT-ONLY. Generate a C4 Container diagram (internal containers of a single system). Invoke this only when the user explicitly asks for a "container diagram".',
+    name: "generate-container-diagram",
+    description:
+      'EXPLICIT-ONLY. Generate a C4 Container diagram (internal containers of a single system). Invoke this only when the user explicitly asks for a "container diagram".',
   },
   {
-    name: 'generate-uml-diagram',
-    description: 'EXPLICIT-ONLY. Generate a UML diagram. Invoke this only when the user explicitly asks for a "UML diagram" by name.',
+    name: "generate-uml-diagram",
+    description:
+      'EXPLICIT-ONLY. Generate a UML diagram. Invoke this only when the user explicitly asks for a "UML diagram" by name.',
     arguments: [
-      { name: 'umlType', description: 'UML variant: class, sequence, state, activity, or use-case.', required: true },
+      {
+        name: "umlType",
+        description:
+          "UML variant: class, sequence, state, activity, or use-case.",
+        required: true,
+      },
     ],
   },
   {
-    name: 'update-diagram-from-docs',
-    description: 'Re-read source documents and update existing diagrams so they reflect the current state of the documentation. Accepts an optional diagramId to target a single diagram.',
+    name: "update-diagram-from-docs",
+    description:
+      "Re-read source documents and update existing diagrams so they reflect the current state of the documentation. Accepts an optional diagramId to target a single diagram.",
     arguments: [
-      { name: 'diagramId', description: 'Optional: id of a single diagram to update. If omitted, all diagrams are inspected.', required: false },
+      {
+        name: "diagramId",
+        description:
+          "Optional: id of a single diagram to update. If omitted, all diagrams are inspected.",
+        required: false,
+      },
     ],
   },
   {
-    name: 'generate-screen-guide',
-    description: 'EXPLICIT-ONLY. Generate an annotated UI guide: a screenshot image as the background with post-it notes describing each UI element. Reads the source code of the screen (HTML/JSX/template). Invoke only when the user explicitly asks for a "screen guide", "UI guide", or "annotated screenshot".',
+    name: "generate-screen-guide",
+    description:
+      'EXPLICIT-ONLY. Generate an annotated UI guide: a screenshot image as the background with post-it notes describing each UI element. Reads the source code of the screen (HTML/JSX/template). Invoke only when the user explicitly asks for a "screen guide", "UI guide", or "annotated screenshot".',
     arguments: [
-      { name: 'screenFile',    description: 'Relative path (under sourceRoot) of the screen source file to document, e.g. `src/frontend/index.html`.', required: true },
-      { name: 'screenshotUrl', description: 'Optional: URL of the uploaded screenshot (e.g. `/images/index-2026.png`). If omitted, the prompt will instruct the user to upload one via the Admin UI first.', required: false },
+      {
+        name: "screenFile",
+        description:
+          "Relative path (under sourceRoot) of the screen source file to document, e.g. `src/frontend/index.html`.",
+        required: true,
+      },
+      {
+        name: "screenshotUrl",
+        description:
+          "Optional: URL of the uploaded screenshot (e.g. `/images/index-2026.png`). If omitted, the prompt will instruct the user to upload one via the Admin UI first.",
+        required: false,
+      },
     ],
   },
   {
-    name: 'flow',
-    description: 'Left-to-right linear flow diagram — steps or stages in a process.',
+    name: "flow",
+    description:
+      "Left-to-right linear flow diagram — steps or stages in a process.",
   },
   {
-    name: 'erd',
-    description: 'Entity-Relationship Diagram — entities as boxes, relationships as labeled edges.',
+    name: "erd",
+    description:
+      "Entity-Relationship Diagram — entities as boxes, relationships as labeled edges.",
   },
 ] as const;
 
-type PromptName = typeof PROMPTS[number]['name'];
+type PromptName = (typeof PROMPTS)[number]["name"];
 
 // Prepended to every diagram prompt — enforces ADR-first information gathering.
 const PREAMBLE = `
@@ -949,9 +1300,12 @@ Do not create them as a side effect of creating a Context diagram.
 Clicking a linked node in the editor navigates directly to the child diagram.
 `.trim();
 
-function buildPromptTemplate(name: PromptName, args: Record<string, string>): string {
+function buildPromptTemplate(
+  name: PromptName,
+  args: Record<string, string>,
+): string {
   switch (name) {
-    case 'audit-adrs-drift':
+    case "audit-adrs-drift":
       return `
 You are about to **audit ADR drift against the source code each ADR describes**, and bring every drifting ADR back to a clear state.
 
@@ -1014,11 +1368,11 @@ Summarise to the user:
 - Final \`totalBelowThreshold\` after the audit.
 `.trim();
 
-    case 'review-adr-relevance': {
-      const id = (args.id || '').trim();
+    case "review-adr-relevance": {
+      const id = (args.id || "").trim();
       const targetLine = id
         ? `The user wants to review ADR id: \`${id}\`.`
-        : 'The user did not provide an ADR id. Ask for the ADR document id before calling tools.';
+        : "The user did not provide an ADR id. Ask for the ADR document id before calling tools.";
       return `
 You are about to **review the relevance of one specific ADR against the source files bound in its metadata**.
 
@@ -1094,14 +1448,14 @@ Tell the user that they must perform the verification themselves and call \`refr
 `.trim();
     }
 
-    case 'create-adr': {
+    case "create-adr": {
       const today = new Date().toISOString().slice(0, 10);
       const featureLine = args.featureSummary
         ? `The user described this feature as: **${args.featureSummary}**.`
-        : 'Identify in one sentence what was implemented or changed — that sentence becomes the ADR `description:`.';
+        : "Identify in one sentence what was implemented or changed — that sentence becomes the ADR `description:`.";
       const filesLine = args.modifiedFiles
         ? `Files reported as modified by this feature: \`${args.modifiedFiles}\`. Verify each one is non-god before attaching.`
-        : 'Determine which source files materially carry this feature\'s logic (component, hook, service, route, schema, infra config). Exclude god files.';
+        : "Determine which source files materially carry this feature's logic (component, hook, service, route, schema, infra config). Exclude god files.";
       return `
 You are about to record an **ADR (Architecture Decision Record)** for a feature that has just been implemented or modified.
 
@@ -1165,11 +1519,13 @@ Tell the user:
 `.trim();
     }
 
-    case 'retrodocument-adrs-from-git': {
-      const limitArg = (args.limit || '').trim();
-      const sinceArg = (args.since || '').trim();
-      const limitCallFragment = limitArg ? `"limit": ${Number(limitArg) || 100}` : '"limit": 100';
-      const sinceCallFragment = sinceArg ? `, "since": "${sinceArg}"` : '';
+    case "retrodocument-adrs-from-git": {
+      const limitArg = (args.limit || "").trim();
+      const sinceArg = (args.since || "").trim();
+      const limitCallFragment = limitArg
+        ? `"limit": ${Number(limitArg) || 100}`
+        : '"limit": 100';
+      const sinceCallFragment = sinceArg ? `, "since": "${sinceArg}"` : "";
       return `
 You are about to **retrodocument missing ADRs by walking recent git history**, oldest commit first, so that each durable architectural decision the project actually made gets a corresponding ADR.
 
@@ -1286,7 +1642,7 @@ Once the walk is done, summarise:
 `.trim();
     }
 
-    case 'generate-context-diagram':
+    case "generate-context-diagram":
       return `
 ${PREAMBLE}
 
@@ -1296,7 +1652,7 @@ You are about to create a **C4 System Context Diagram** following Simon Brown's 
 
 ## Step 1 — Answer these three questions first (ask the user only if not found in docs)
 
-1. **Scope** — What is the software system we are describing?${args.scope ? ` (The user specified: **${args.scope}**.)` : ' What is its name and primary responsibility?'}
+1. **Scope** — What is the software system we are describing?${args.scope ? ` (The user specified: **${args.scope}**.)` : " What is its name and primary responsibility?"}
 2. **Users** — Who uses it? For each type of user: what are they doing with the system?
 3. **Integrations** — What external systems does it need to integrate with? What data or interactions flow between them?
 
@@ -1327,7 +1683,7 @@ Do not proceed to the diagram until you have clear answers to all three.
 ## Step 3 — Call \`create_diagram\` with \`diagramType: "context"\`.
 `.trim();
 
-    case 'generate-container-diagram':
+    case "generate-container-diagram":
       return `
 ${PREAMBLE}
 
@@ -1373,8 +1729,8 @@ Place containers in a logical left-to-right or top-to-bottom flow:
 ## Step 3 — Call \`create_diagram\` with \`diagramType: "container"\` and \`userRequestedExplicitly: true\`.
 `.trim();
 
-    case 'generate-uml-diagram': {
-      const umlType = (args.umlType || '').trim().toLowerCase() || 'class';
+    case "generate-uml-diagram": {
+      const umlType = (args.umlType || "").trim().toLowerCase() || "class";
       return `
 ${PREAMBLE}
 
@@ -1402,20 +1758,22 @@ ${umlTypeGuidance(umlType)}
 `.trim();
     }
 
-    case 'update-diagram-from-docs':
+    case "update-diagram-from-docs":
       return `
 ${PREAMBLE}
 
 ---
 
-You are about to **update ${args.diagramId ? `diagram \`${args.diagramId}\`` : 'all existing diagrams'}** to reflect the current state of the documentation.
+You are about to **update ${args.diagramId ? `diagram \`${args.diagramId}\`` : "all existing diagrams"}** to reflect the current state of the documentation.
 
 ## Step 1 — Inventory existing diagrams
 
-${args.diagramId
-  ? `1. Call \`read_diagram\` with id \`${args.diagramId}\` to load its current nodes and edges.`
-  : `1. Call \`list_diagrams\` to get all diagrams with their id and title.
-2. For each diagram, call \`read_diagram\` to load its current nodes and edges.`}
+${
+  args.diagramId
+    ? `1. Call \`read_diagram\` with id \`${args.diagramId}\` to load its current nodes and edges.`
+    : `1. Call \`list_diagrams\` to get all diagrams with their id and title.
+2. For each diagram, call \`read_diagram\` to load its current nodes and edges.`
+}
 
 ## Step 2 — Gather current architecture knowledge
 
@@ -1444,7 +1802,7 @@ For each diagram in scope:
 Summarize which diagrams were updated (and what changed) and which were skipped (already up to date).
 `.trim();
 
-    case 'flow':
+    case "flow":
       return `
 ${PREAMBLE}
 
@@ -1476,7 +1834,7 @@ You are about to create a **linear flow diagram**.
 ## Step 3 — Call \`create_diagram\` with \`diagramType: "flow"\`.
 `.trim();
 
-    case 'erd':
+    case "erd":
       return `
 ${PREAMBLE}
 
@@ -1513,9 +1871,9 @@ You are about to create an **Entity-Relationship Diagram**.
 ## Step 3 — Call \`create_diagram\` with \`diagramType: "erd"\`.
 `.trim();
 
-    case 'generate-screen-guide': {
-      const screenFile = (args.screenFile || '').trim();
-      const screenshotUrl = (args.screenshotUrl || '').trim();
+    case "generate-screen-guide": {
+      const screenFile = (args.screenFile || "").trim();
+      const screenshotUrl = (args.screenshotUrl || "").trim();
       return `
 ## Screen-guide diagram — source code IS the reference
 
@@ -1533,9 +1891,11 @@ Only proceed if the user explicitly asked for a *screen guide*, *UI guide*, or *
 
 ## Step 1 — Resolve the screen source
 
-${screenFile
-  ? `The user specified \`${screenFile}\`. Call \`read_source_file\` with \`path: "${screenFile}"\`.`
-  : `Ask the user which screen to document (e.g. \`src/frontend/index.html\`). Then call \`read_source_file\` on it.`}
+${
+  screenFile
+    ? `The user specified \`${screenFile}\`. Call \`read_source_file\` with \`path: "${screenFile}"\`.`
+    : `Ask the user which screen to document (e.g. \`src/frontend/index.html\`). Then call \`read_source_file\` on it.`
+}
 
 If the screen pulls in components or partials, use \`search_source\` + \`read_source_file\` to follow them. Cap at ~5 files total — enough to identify zones and first-level features, not to trace every dependency.
 
@@ -1593,9 +1953,11 @@ Tell the user:
 
 **Then stop.** Do not call \`create_diagram\` yet.
 
-${screenshotUrl
-  ? `(The user already provided \`${screenshotUrl}\` — you still need the pixel dimensions to place zones correctly.)`
-  : ''}
+${
+  screenshotUrl
+    ? `(The user already provided \`${screenshotUrl}\` — you still need the pixel dimensions to place zones correctly.)`
+    : ""
+}
 
 ## Step 5 — Build the diagram
 
@@ -1672,29 +2034,29 @@ If you do not know exact target coordinates, you may omit the anchor and the \`t
 
 function umlTypeGuidance(umlType: string): string {
   switch (umlType) {
-    case 'class':
+    case "class":
       return `### UML class diagram
 - Each class is a \`box\` (c-blue for domain classes, c-green for value objects, c-slate for interfaces).
 - Node label: \`ClassName\\n[Class]\\n+ attr: Type\\n+ method(): Type\`.
 - Edges: label relationships as "extends", "implements", "has 1", "has *", "uses".`;
-    case 'sequence':
+    case "sequence":
       return `### UML sequence diagram
 - Each participant is a \`box\` (c-blue for systems, c-gray for actors).
 - Arrange participants left-to-right at the same y (spacing 200).
 - Edges are messages; the label is the method/event name and uses arrows top-down by ordering the edges in the array chronologically.`;
-    case 'state':
+    case "state":
       return `### UML state diagram
 - Each state is an \`ellipse\` (c-amber).
 - Start and end states are \`circle\` (c-slate for end, c-green for start).
 - Edges are transitions; label with the event/trigger.`;
-    case 'activity':
+    case "activity":
       return `### UML activity diagram
 - Activities are \`box\` (c-blue).
 - Decision nodes are \`ellipse\` (c-amber).
 - Start/end are \`circle\` (c-green/c-slate).
 - Edges labeled with the guard or action.`;
-    case 'use-case':
-    case 'usecase':
+    case "use-case":
+    case "usecase":
       return `### UML use-case diagram
 - Actors are \`actor\` (c-gray) on the left (x: -320).
 - Use cases are \`ellipse\` (c-blue) in the center.
@@ -1707,26 +2069,32 @@ function umlTypeGuidance(umlType: string): string {
 
 function createMcpServer(docsPath: string): Server {
   const server = new Server(
-    { name: 'living-documentation', version: '1.2.0' },
+    { name: "living-ai-documentation", version: "1.2.0" },
     {
       capabilities: { tools: {}, prompts: {} },
       instructions: SERVER_GUIDE,
     },
   );
 
-  server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: TOOLS }));
+  server.setRequestHandler(ListToolsRequestSchema, async () => ({
+    tools: TOOLS,
+  }));
 
-  server.setRequestHandler(ListPromptsRequestSchema, async () => ({ prompts: PROMPTS }));
+  server.setRequestHandler(ListPromptsRequestSchema, async () => ({
+    prompts: PROMPTS,
+  }));
 
   server.setRequestHandler(GetPromptRequestSchema, async (request) => {
     const name = request.params.name as PromptName;
-    const prompt = PROMPTS.find(p => p.name === name);
+    const prompt = PROMPTS.find((p) => p.name === name);
     if (!prompt) throw new Error(`Unknown prompt: ${name}`);
     const args = (request.params.arguments ?? {}) as Record<string, string>;
     const text = buildPromptTemplate(name, args);
     return {
       description: prompt.description,
-      messages: [{ role: 'user' as const, content: { type: 'text' as const, text } }],
+      messages: [
+        { role: "user" as const, content: { type: "text" as const, text } },
+      ],
     };
   });
 
@@ -1734,61 +2102,105 @@ function createMcpServer(docsPath: string): Server {
     const { name, arguments: args = {} } = request.params;
     try {
       switch (name) {
-        case 'get_server_guide':
-          return { content: [{ type: 'text' as const, text: SERVER_GUIDE }] };
-        case 'list_documents':
+        case "get_server_guide":
+          return { content: [{ type: "text" as const, text: SERVER_GUIDE }] };
+        case "list_documents":
           return toolListDocuments(docsPath);
-        case 'read_document':
+        case "read_document":
           return toolReadDocument(docsPath, args as { id: string });
-        case 'create_document':
-          return toolCreateDocument(docsPath, args as {
-            title: string; category: string; folder?: string; content?: string; date?: string;
-          });
-        case 'update_document':
-          return toolUpdateDocument(docsPath, args as { id: string; content: string });
-        case 'list_diagrams':
+        case "create_document":
+          return toolCreateDocument(
+            docsPath,
+            args as {
+              title: string;
+              category: string;
+              folder?: string;
+              content?: string;
+              date?: string;
+            },
+          );
+        case "update_document":
+          return toolUpdateDocument(
+            docsPath,
+            args as { id: string; content: string },
+          );
+        case "list_diagrams":
           return toolListDiagrams(docsPath);
-        case 'read_diagram':
+        case "read_diagram":
           return toolReadDiagram(docsPath, args as { id: string });
-        case 'create_diagram':
-          return toolCreateDiagram(docsPath, args as {
-            id?: string;
-            title: string;
-            diagramType: string;
-            userRequestedExplicitly?: boolean;
-            nodes: Array<{ name: string; type: string; color?: string; x?: number; y?: number; linkedDiagramId?: string; imageSrc?: string }>;
-            edges: Array<{ from: string; to: string; label?: string }>;
-          });
-        case 'list_source_files':
-          return toolListSourceFiles(docsPath, args as { pattern?: string; maxResults?: number });
-        case 'read_source_file':
+        case "create_diagram":
+          return toolCreateDiagram(
+            docsPath,
+            args as {
+              id?: string;
+              title: string;
+              diagramType: string;
+              userRequestedExplicitly?: boolean;
+              nodes: Array<{
+                name: string;
+                type: string;
+                color?: string;
+                x?: number;
+                y?: number;
+                linkedDiagramId?: string;
+                imageSrc?: string;
+              }>;
+              edges: Array<{ from: string; to: string; label?: string }>;
+            },
+          );
+        case "list_source_files":
+          return toolListSourceFiles(
+            docsPath,
+            args as { pattern?: string; maxResults?: number },
+          );
+        case "read_source_file":
           return toolReadSourceFile(docsPath, args as { path: string });
-        case 'search_source':
-          return toolSearchSource(docsPath, args as {
-            query: string; pattern?: string; maxResults?: number; caseSensitive?: boolean;
-          });
-        case 'list_metadata':
+        case "search_source":
+          return toolSearchSource(
+            docsPath,
+            args as {
+              query: string;
+              pattern?: string;
+              maxResults?: number;
+              caseSensitive?: boolean;
+            },
+          );
+        case "list_metadata":
           return toolListMetadata(docsPath, args as { id: string });
-        case 'get_accuracy':
+        case "get_accuracy":
           return toolGetAccuracy(docsPath, args as { id: string });
-        case 'review_adr_relevance':
+        case "review_adr_relevance":
           return toolReviewAdrRelevance(docsPath, args as { id: string });
-        case 'refresh_metadata':
+        case "refresh_metadata":
           return toolRefreshMetadata(docsPath, args as { id: string });
-        case 'add_metadata':
-          return toolAddMetadata(docsPath, args as { id: string; path: string });
-        case 'remove_metadata':
-          return toolRemoveMetadata(docsPath, args as { id: string; path: string });
-        case 'list_adrs_below_accuracy':
+        case "add_metadata":
+          return toolAddMetadata(
+            docsPath,
+            args as { id: string; path: string },
+          );
+        case "remove_metadata":
+          return toolRemoveMetadata(
+            docsPath,
+            args as { id: string; path: string },
+          );
+        case "list_adrs_below_accuracy":
           return toolListAdrsBelowAccuracy(docsPath);
-        case 'retrodocument_adrs_from_git':
-          return toolRetrodocumentAdrsFromGit(docsPath, args as { limit?: number; since?: string });
+        case "retrodocument_adrs_from_git":
+          return toolRetrodocumentAdrsFromGit(
+            docsPath,
+            args as { limit?: number; since?: string },
+          );
         default:
           throw new Error(`Unknown tool: ${name}`);
       }
     } catch (err) {
       return {
-        content: [{ type: 'text', text: `Error: ${err instanceof Error ? err.message : String(err)}` }],
+        content: [
+          {
+            type: "text",
+            text: `Error: ${err instanceof Error ? err.message : String(err)}`,
+          },
+        ],
         isError: true,
       };
     }
@@ -1801,9 +2213,11 @@ export function mcpRouter(docsPath: string): Router {
   const router = Router();
 
   // Main MCP endpoint — stateless: one Server + Transport per request
-  router.post('/', async (req: Request, res: Response) => {
+  router.post("/", async (req: Request, res: Response) => {
     const server = createMcpServer(docsPath);
-    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+    const transport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: undefined,
+    });
     try {
       await server.connect(transport);
       await transport.handleRequest(req, res, req.body);
@@ -1813,12 +2227,12 @@ export function mcpRouter(docsPath: string): Router {
   });
 
   // GET — surface a helpful message (Claude Desktop / browser landing)
-  router.get('/', (_req: Request, res: Response) => {
+  router.get("/", (_req: Request, res: Response) => {
     res.json({
-      mcp: 'living-documentation',
-      version: '1.2.0',
-      transport: 'streamable-http',
-      endpoint: 'POST /mcp',
+      mcp: "living-ai-documentation",
+      version: "1.2.0",
+      transport: "streamable-http",
+      endpoint: "POST /mcp",
       tools: TOOLS,
       prompts: PROMPTS,
     });
