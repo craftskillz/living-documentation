@@ -14,8 +14,9 @@ Avant de modifier le projet :
 4. Lire `documentation/AI/PROJECT-USEFUL-COMMANDS.md` pour connaître les commandes de développement, build, test, lint et setup.
 5. Lire `memory/MEMORY.md` et charger seulement les fichiers mémoire utiles à la tâche.
 6. Lire toutes les règles dans `documentation/AI/rules/*.md`.
-7. Inspecter les ADR existants : lister `documentation/ADRS/`, lire d'abord `description` et `tags`, puis ouvrir l'ADR complet seulement s'il est pertinent.
-8. Vérifier si le MCP `living-documentation` est disponible avant de créer ou modifier de la documentation.
+7. Lire `documentation/WORKLOG/current-task.md` si présent pour reprendre l'état de la tâche courante.
+8. Inspecter les ADR existants : lister `documentation/ADRS/`, lire d'abord `description` et `tags`, puis ouvrir l'ADR complet seulement s'il est pertinent.
+9. Vérifier si le MCP `living-documentation` est disponible avant de créer ou modifier de la documentation.
 
 ## Rôle du MCP Living Documentation
 
@@ -49,6 +50,24 @@ Créer ou mettre à jour un document lorsque le changement :
 - résout un compromis difficile à déduire du code seul.
 
 Ne pas créer de documentation durable pour les corrections triviales, renommages mécaniques ou changements de formatage.
+
+## Suivi de progression
+
+Le dossier `documentation/WORKLOG/` contient l'état opérationnel des tâches en cours et les points de reprise entre assistants IA. Il ne remplace pas les ADR.
+
+`documentation/WORKLOG/current-task.md` est le point de reprise partagé. Tout assistant doit le lire avant de reprendre une tâche et le mettre à jour avant de rendre la main lorsqu'il a commencé, terminé, interrompu ou laissé une suite connue.
+
+Le worklog doit rester factuel et utile pour l'agent suivant :
+
+- statut courant ;
+- tâche en cours ;
+- scope inclus et exclu si nécessaire ;
+- fichiers ou zones concernés ;
+- vérifications réalisées ;
+- vérifications restantes ;
+- prochaine action recommandée.
+
+Créer un document dédié dans `documentation/WORKLOG/` pour un ticket MVP lorsqu'un suivi plus détaillé devient nécessaire. Les décisions durables restent dans les ADR.
 
 ## ADR
 

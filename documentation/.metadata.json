@@ -274,5 +274,31 @@
       "path": "src/frontend/export.js",
       "hash": "44b739a3928f87a2406543d361c7e40840ea6faf2122f594717b50eef9099a74"
     }
+  ],
+  "ADRS/2026_05_14_11_33_[STARTER_DOC]_worklog_convention_for_ai_handoff_in_bilingual_starter": [
+    {
+      "path": "starter-doc/WORKLOG/current-task.md",
+      "hash": "35a35a7d3c45729a7feae7d2f938c721a84e6e4618d4bce9834ac3fa55dabba5"
+    },
+    {
+      "path": "starter-doc/AI/rules/track-current-work.md",
+      "hash": "a78508f937dd08a0413a3f2424972d54f06ec2bd4242dae414e695942902cab6"
+    },
+    {
+      "path": "starter-doc/AI/PROJECT-INSTRUCTIONS.md",
+      "hash": "7dfa20377e5e353b1ca70d6835f417d55ff9c5a9c5edb7cf72bc1606c8f59cec"
+    },
+    {
+      "path": "starter-doc-fr/WORKLOG/current-task.md",
+      "hash": "676bddef0cf647d6b2c5d740467fc9e38ce5f1d0c62f9dc1e5df051342acdc55"
+    },
+    {
+      "path": "starter-doc-fr/AI/rules/track-current-work.md",
+      "hash": "a66c9fa2e194ac8937696f5e701f0841a8197f9eadccb854cd1fb6d929de399a"
+    },
+    {
+      "path": "starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md",
+      "hash": "dd9c6d035473449d0d85ee3d7df088191aa769ff949bbeb7011c0a01dbc040a4"
+    }
   ]
 }

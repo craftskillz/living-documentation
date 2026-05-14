@@ -85,9 +85,10 @@ memory/                           <- mémoire projet locale indexée par `memory
 - **Fiabilité / accuracy** : indicateur calculé depuis les métadonnées ; une entrée modifiée ou manquante fait baisser la jauge.
 - **MCP Living Documentation** : canal privilégié pour agents IA ; expose lecture/écriture documents, diagrammes, source et métadonnées.
 - **ADR** : document durable de décision ; les nouveaux ADR créés par IA commencent en statut `To be validated` et doivent être reliés aux fichiers source pertinents.
+- **Worklog** : point de reprise opérationnel partagé entre assistants IA, scaffolde sous `WORKLOG/current-task.md` par le starter ; lu avant action, mis à jour avant handoff, pas un substitut aux ADR.
 - **Diagrammes** : vues dérivées de la documentation, stockées en JSON et éditées via vis-network ; les diagrammes MCP doivent citer leur provenance documentaire (`evidence`).
 - **Contexte IA** : page `/context` et documents `AI/*` qui exposent instructions, règles, mémoire et explorateur MCP.
-- **Starter doc** : initialisation interactive bilingue qui scaffold un dossier docs, `AGENTS.md`, `CLAUDE.md`, `memory/MEMORY.md` et les symlinks sous `AI/`.
+- **Starter doc** : initialisation interactive bilingue qui scaffold un dossier docs, `AGENTS.md`, `CLAUDE.md`, `memory/MEMORY.md` et les symlinks sous `AI/`, plus un dossier `WORKLOG/` avec `current-task.md` et une règle `track-current-work` pour la reprise opérationnelle entre assistants IA.
 
 ## Conventions structurantes
 

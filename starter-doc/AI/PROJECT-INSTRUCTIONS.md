@@ -14,10 +14,9 @@ Before changing the project:
 4. Read `DOCS_FOLDER/AI/PROJECT-USEFUL-COMMANDS.md` to know the development, build, test, lint, and setup commands.
 5. Read `memory/MEMORY.md` and load only the memory files relevant to the task.
 6. Read every rule in `DOCS_FOLDER/AI/rules/*.md`.
-7. Inspect existing ADRs: list `DOCS_FOLDER/ADRS/`, read only `description` and `tags` first, then open the full ADR only when relevant.
-8. Check whether the Living Documentation MCP server is available before creating or modifying documentation.
-
-Replace `DOCS_FOLDER` with the real documentation folder used by this project, for example `documentation`, `docs`, or `doc`.
+7. Read `DOCS_FOLDER/WORKLOG/current-task.md` if present to resume the state of the current task.
+8. Inspect existing ADRs: list `DOCS_FOLDER/ADRS/`, read only `description` and `tags` first, then open the full ADR only when relevant.
+9. Check whether the Living Documentation MCP server is available before creating or modifying documentation.
 
 ## Living Documentation MCP
 
@@ -51,6 +50,24 @@ Create or update a document when the change:
 - resolves a trade-off that would be hard to infer from code alone.
 
 Do not create durable documentation for trivial fixes, mechanical renames, or formatting-only changes.
+
+## Progress Tracking
+
+The `DOCS_FOLDER/WORKLOG/` folder holds the operational state of in-progress tasks and the resume points between AI assistants. It does not replace ADRs.
+
+`DOCS_FOLDER/WORKLOG/current-task.md` is the shared resume point. Every assistant must read it before resuming a task and update it before handing over when it has started, finished, interrupted, or left a known follow-up.
+
+The worklog must stay factual and useful for the next agent:
+
+- current status;
+- task in progress;
+- in-scope and out-of-scope items if needed;
+- files or areas concerned;
+- verifications performed;
+- remaining verifications;
+- next recommended action.
+
+Create a dedicated document under `DOCS_FOLDER/WORKLOG/` for an MVP ticket when more detailed tracking becomes necessary. Durable decisions stay in ADRs.
 
 ## ADRs
 
