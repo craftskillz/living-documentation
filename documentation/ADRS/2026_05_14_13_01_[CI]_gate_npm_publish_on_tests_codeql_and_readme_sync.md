@@ -1,6 +1,6 @@
 ---
 **date:** 2026-05-14
-**status:** To be validated
+**status:** Accepted
 **description:** Le workflow `.github/workflows/publish.yml` exécute désormais Playwright, CodeQL et le check README sync comme jobs séparés, et le job `publish` les attend via `needs: [test, codeql, readme-sync]` ; un tag `v*` ne peut plus publier sur npm si une vérification échoue, alors qu'auparavant les 4 workflows tournaient en parallèle sans dépendance.
 **tags:** ci, github-actions, npm-publish, release, codeql, playwright, gate, needs, defense-in-depth
 ---
