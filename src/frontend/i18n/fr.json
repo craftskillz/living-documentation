@@ -70,6 +70,7 @@
   "doc.validate_btn": "Valider",
   "doc.validate_title": "Valider ce document ?",
   "doc.validate_message": "Le statut frontmatter va passer de « To be validated » à « Accepted ».",
+  "doc.validate_worklog_message": "Le statut frontmatter va passer de « To be validated » à « Done ».",
   "doc.validate_detail_low_accuracy": "La fiabilité actuelle est de {accuracy}. Confirmer va aussi réinitialiser les hashes des fichiers source, ramenant la fiabilité à 100 %.",
   "doc.validate_confirm": "Valider",
   "doc.validate_failed": "Échec de la validation : ",

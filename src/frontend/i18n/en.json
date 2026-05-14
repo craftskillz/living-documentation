@@ -70,6 +70,7 @@
   "doc.validate_btn": "Validate",
   "doc.validate_title": "Validate this document?",
   "doc.validate_message": "The frontmatter status will change from \"To be validated\" to \"Accepted\".",
+  "doc.validate_worklog_message": "The frontmatter status will change from \"To be validated\" to \"Done\".",
   "doc.validate_detail_low_accuracy": "Reliability is currently {accuracy}. Confirming will also re-baseline source-file hashes, bringing reliability back to 100%.",
   "doc.validate_confirm": "Validate",
   "doc.validate_failed": "Validation failed: ",

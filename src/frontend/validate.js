@@ -9,6 +9,11 @@
 // (not standard YAML). The status line is the only field this module touches.
 const _STATUS_LINE_RE = /^(\*\*status:\*\*\s*).+?\s*$/m;
 
+function isWorklogDocument(docId) {
+  if (/%5BWORKLOG%5D/i.test(docId)) return true;
+  return false;
+}
+
 function getDocStatus(content) {
   if (typeof content !== "string") return null;
   const fence = content.match(/^---\s*\n([\s\S]*?)\n---/);
@@ -27,7 +32,7 @@ function updateValidateButtonForCurrentDoc() {
   const status = getDocStatus(
     typeof currentDocContent !== "undefined" ? currentDocContent : "",
   );
-  if (status === "To be validated") {
+  if (status.toUpperCase() === "TO BE VALIDATED") {
     btn.classList.remove("hidden");
   } else {
     btn.classList.add("hidden");
@@ -53,12 +58,18 @@ async function validateCurrentDoc() {
   const pct = Math.round(accuracy * 100);
   const lowAccuracy = pct < 100;
   const detail = lowAccuracy
-    ? window.t("doc.validate_detail_low_accuracy").replace("{accuracy}", pct + "%")
+    ? window
+        .t("doc.validate_detail_low_accuracy")
+        .replace("{accuracy}", pct + "%")
     : "";
 
   const ok = await window.showConfirm({
     title: window.t("doc.validate_title"),
-    message: window.t("doc.validate_message"),
+    message: window.t(
+      isWorklogDocument(currentDocId)
+        ? "doc.validate_worklog_message"
+        : "doc.validate_message",
+    ),
     detail,
     detailTone: lowAccuracy ? "warning" : undefined,
     confirmLabel: window.t("doc.validate_confirm"),
@@ -69,7 +80,10 @@ async function validateCurrentDoc() {
   if (btn) btn.disabled = true;
 
   try {
-    const newContent = _replaceStatus(currentDocContent, "Accepted");
+    const newContent = _replaceStatus(
+      currentDocContent,
+      isWorklogDocument(currentDocId) ? "Done" : "Accepted",
+    );
     if (newContent === currentDocContent) {
       throw new Error("status line not found in frontmatter");
     }
