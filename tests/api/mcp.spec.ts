@@ -538,6 +538,83 @@ test.describe('source MCP tools on the with-metadata fixture', () => {
   });
 });
 
+test.describe('metadata MCP tools are read-only on SuperSeeded documents', () => {
+  test.use({ fixtureName: 'with-metadata' });
+
+  const SUPERSEEDED_ID = '2026_01_02_10_00_[ADR]_superseded';
+  const ENCODED = encodeURIComponent(SUPERSEEDED_ID);
+
+  test('list_metadata stays open: viewing bindings is always allowed', async ({ request, ld }) => {
+    const listed = await callTool<{ items: Array<{ path: string }> }>(
+      request,
+      ld.baseURL,
+      'list_metadata',
+      { id: ENCODED },
+    );
+    expect(listed.items.map((i) => i.path)).toEqual(['sample.ts']);
+  });
+
+  test('add_metadata throws DocumentSuperSeededError without touching state', async ({
+    request,
+    ld,
+  }) => {
+    fs.writeFileSync(path.resolve(ld.parent, 'src/another.ts'), 'export const z = 0;\n');
+    await expect(
+      callTool(request, ld.baseURL, 'add_metadata', { id: ENCODED, path: 'another.ts' }),
+    ).rejects.toThrow(/SuperSeeded/);
+
+    // Bindings unchanged.
+    const after = await callTool<{ items: Array<{ path: string }> }>(
+      request,
+      ld.baseURL,
+      'list_metadata',
+      { id: ENCODED },
+    );
+    expect(after.items.map((i) => i.path)).toEqual(['sample.ts']);
+  });
+
+  test('remove_metadata throws DocumentSuperSeededError without removing the entry', async ({
+    request,
+    ld,
+  }) => {
+    await expect(
+      callTool(request, ld.baseURL, 'remove_metadata', { id: ENCODED, path: 'sample.ts' }),
+    ).rejects.toThrow(/SuperSeeded/);
+
+    const after = await callTool<{ items: Array<{ path: string }> }>(
+      request,
+      ld.baseURL,
+      'list_metadata',
+      { id: ENCODED },
+    );
+    expect(after.items.map((i) => i.path)).toEqual(['sample.ts']);
+  });
+
+  test('refresh_metadata throws and the stored hash is never re-baselined', async ({
+    request,
+    ld,
+  }) => {
+    // Drift the source file: the stored hash should NOT change after the rejected refresh.
+    fs.writeFileSync(
+      path.resolve(ld.parent, 'src/sample.ts'),
+      'export const x = 77; // drift\n',
+    );
+    await expect(
+      callTool(request, ld.baseURL, 'refresh_metadata', { id: ENCODED }),
+    ).rejects.toThrow(/SuperSeeded/);
+
+    // Accuracy reflects the drift exactly because no refresh happened.
+    const report = await callTool<{ items: Array<{ status: string }>; accuracy: number }>(
+      request,
+      ld.baseURL,
+      'get_accuracy',
+      { id: ENCODED },
+    );
+    expect(report.items[0].status).toBe('modified');
+    expect(report.accuracy).toBe(0);
+  });
+});
+
 test.describe('metadata MCP tools on the with-metadata fixture', () => {
   test.use({ fixtureName: 'with-metadata' });
 

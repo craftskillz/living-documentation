@@ -51,6 +51,7 @@
     <script defer src="/annotations.js"></script>
     <script defer src="/metadata.js"></script>
     <script defer src="/accuracy-gauge.js"></script>
+    <script defer src="/validate.js"></script>
     <script defer src="/export.js"></script>
     <script defer src="/diagram-link-modal.js"></script>
     <script defer src="/new-folder-modal.js"></script>
@@ -621,6 +622,16 @@
                   <!-- View mode actions -->
                   <div id="view-actions" class="flex items-center gap-2">
                     <button
+                      onclick="validateCurrentDoc()"
+                      id="validate-btn"
+                      data-i18n-title="doc.validate_mode"
+                      title="Validate document"
+                      class="hidden no-print text-sm px-3 py-1.5 rounded-lg border border-green-700 bg-green-600 text-white font-semibold hover:bg-green-700 transition-colors"
+                    >
+                      <i class="fa-solid fa-check" aria-hidden="true" style="margin-right: 4px"></i>
+                      <span data-i18n="doc.validate_btn">Validate</span>
+                    </button>
+                    <button
                       onclick="toggleMarker()"
                       id="stabilo-btn"
                       data-i18n-title="doc.marker_mode"
@@ -900,6 +911,15 @@
           class="text-xs text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2"
         ></div>
 
+        <!-- Read-only banner (SuperSeeded documents) -->
+        <div
+          id="metadata-readonly-banner"
+          data-i18n="metadata.readonly_banner"
+          class="hidden text-xs text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-900/30 border-l-4 border-amber-500 rounded-r px-3 py-2"
+        >
+          Read-only — this document is SuperSeeded. Source metadata can still be viewed but not edited.
+        </div>
+
         <!-- List -->
         <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
           <div
@@ -919,6 +939,7 @@
         <div class="flex items-center gap-2 flex-wrap">
           <button
             onclick="metadataToggleBrowser()"
+            id="metadata-add-btn"
             class="text-sm px-3 py-1.5 rounded-lg border border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
           >
             <i class="fa-solid fa-plus"></i> <span data-i18n="metadata.add">Add source file</span>

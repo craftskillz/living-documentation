@@ -1,6 +1,6 @@
 ---
 **date:** 2026-05-12
-**status:** To be validated
+**status:** Accepted
 **description:** Revert intégral du vendoring local de Tailwind Play CDN et Font Awesome 6.7.2 décidé dans l'ADR 2026_05_12_11_06 — la contrainte proxy bloquant `cdn.tailwindcss.com` et les binaires `.woff2` de `cdnjs.cloudflare.com` ayant été levée côté infrastructure utilisateur, le frontend retourne à charger ces assets depuis leurs CDN d'origine, allège le tarball npm de ~1,5 Mo et supprime la dette de mise à jour manuelle des bundles vendorés.
 **tags:** packaging, revert, supersede, tailwind, font-awesome, proxy, cdn, cdnjs, play-cdn, npx, vendor, license-mit, license-ofl, license-cc-by, socket-alerts
 ---

@@ -10,6 +10,28 @@ import {
   MetadataEntry,
 } from "../lib/metadata";
 import { sha256File } from "../lib/hash";
+import { assertNotSuperSeeded, DocumentSuperSeededError } from "../lib/status";
+
+// SuperSeeded documents are read-only as far as metadata is concerned: an ADR
+// that has been replaced should keep the source bindings that prove what the
+// original decision described, frozen at the moment of supersession. The guard
+// itself lives in `lib/status.ts` so MCP tools share the same check.
+function rejectIfSuperSeeded(
+  docsPath: string,
+  docId: string,
+  res: Response,
+): boolean {
+  try {
+    assertNotSuperSeeded(docsPath, docId);
+    return false;
+  } catch (err) {
+    if (err instanceof DocumentSuperSeededError) {
+      res.status(403).json({ error: err.message });
+      return true;
+    }
+    throw err;
+  }
+}
 
 export function metadataRouter(docsPath: string): Router {
   const router = Router();
@@ -32,6 +54,7 @@ export function metadataRouter(docsPath: string): Router {
   // POST /api/metadata/:docId  body: { path }
   router.post("/:docId", (req: Request, res: Response) => {
     const docId = decodeURIComponent(req.params.docId as string);
+    if (rejectIfSuperSeeded(docsPath, docId, res)) return;
     const { path: rawPath } = req.body as { path?: string };
     if (!rawPath || typeof rawPath !== "string") {
       return res.status(400).json({ error: "path is required" });
@@ -66,6 +89,7 @@ export function metadataRouter(docsPath: string): Router {
   // DELETE /api/metadata/:docId  body: { path }
   router.delete("/:docId", (req: Request, res: Response) => {
     const docId = decodeURIComponent(req.params.docId as string);
+    if (rejectIfSuperSeeded(docsPath, docId, res)) return;
     const { path: rel } = req.body as { path?: string };
     if (!rel) return res.status(400).json({ error: "path is required" });
     try {
@@ -86,6 +110,7 @@ export function metadataRouter(docsPath: string): Router {
   // POST /api/metadata/:docId/refresh → recompute stored hashes from current file state
   router.post("/:docId/refresh", (req: Request, res: Response) => {
     const docId = decodeURIComponent(req.params.docId as string);
+    if (rejectIfSuperSeeded(docsPath, docId, res)) return;
     try {
       const sourceRoot = resolveSourceRoot(docsPath);
       const entries = getDocEntries(docsPath, docId).map((e) => {

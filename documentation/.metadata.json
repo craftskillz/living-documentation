@@ -264,7 +264,7 @@
     },
     {
       "path": "src/frontend/index.html",
-      "hash": "4847d6804c6220bcbabf7675fac7e3a229e12f805d0922f49bce83a48808cfb9"
+      "hash": "bcd709066a7453e82ae76b1810caac255358089a3e90fe2526daa9f7d9f19332"
     },
     {
       "path": "src/frontend/shape-editor.html",
@@ -299,6 +299,50 @@
     {
       "path": "starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md",
       "hash": "dd9c6d035473449d0d85ee3d7df088191aa769ff949bbeb7011c0a01dbc040a4"
+    }
+  ],
+  "ADRS/2026_05_14_12_07_[FRONTEND]_validate_button_on_viewer_for_frontmatter_status_flip": [
+    {
+      "path": "src/frontend/validate.js",
+      "hash": "89225b2a7bcdca226895dfd053c0ea8b68a222641d26597832a35dca81215e1f"
+    },
+    {
+      "path": "src/frontend/documents.js",
+      "hash": "81a71777c18e4ad98ddcc32241357f112508655215792255c38b9952c3736bb9"
+    },
+    {
+      "path": "tests/e2e/validate.spec.ts",
+      "hash": "ce0284b0b1b82bef2f7d1039e3aa817ef05df9a45e78c4ee558653bcf0782e63"
+    }
+  ],
+  "ADRS/2026_05_14_12_29_[METADATA]_read_only_metadata_for_superseeded_documents": [
+    {
+      "path": "src/lib/status.ts",
+      "hash": "df368aba3c270839cb837b173edd5492d0bfd27747f2f70f80d6cebcb68997e7"
+    },
+    {
+      "path": "src/routes/metadata.ts",
+      "hash": "2562a68e471f8665cac49b2cbdbf1480a135b1a2915fc4572ea005dc211df3b3"
+    },
+    {
+      "path": "src/frontend/metadata.js",
+      "hash": "8a155c4bb311774e0da22fa9957c6e52cb3b9f77dc5779cbd113d088387545fc"
+    },
+    {
+      "path": "tests/api/metadata.spec.ts",
+      "hash": "a61c985b61e458831027ae84274cac0fc3e21fb4e00cb3c69eecb5b3cfa17ed2"
+    },
+    {
+      "path": "tests/e2e/metadata.spec.ts",
+      "hash": "d1d0ac58821b1cb2f7fdaef6555c2f82b5cbe71fd85d9313903b2d6f8e45e74e"
+    },
+    {
+      "path": "src/mcp/tools/metadata.ts",
+      "hash": "1d85c3bf8204fd8962d75dc9ece0357c851aa5bfeb848b1ef3127978af7cac34"
+    },
+    {
+      "path": "tests/api/mcp.spec.ts",
+      "hash": "0d29aae6ac514629696f63160740561f56c130240267d0fb74774ee92c04e86d"
     }
   ]
 }

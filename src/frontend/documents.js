@@ -322,6 +322,10 @@ async function openDocument(id, skipHistory = false, fromLink = false, anchor = 
     _lastDocIdRendered = id;
     _wireDocContent(doc.html);
 
+    if (typeof updateValidateButtonForCurrentDoc === "function") {
+      updateValidateButtonForCurrentDoc();
+    }
+
     // Load annotations for this document
     loadAnnotations(id);
 

@@ -75,7 +75,7 @@ function renderMetadataList() {
           onclick="metadataRemovePath('${safePath.replace(/'/g, "\\'")}')"
           data-i18n-title="metadata.remove"
           title="Remove"
-          class="text-xs px-2 py-1 rounded-lg border border-red-200 dark:border-red-700 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 transition-colors"
+          class="metadata-row-remove text-xs px-2 py-1 rounded-lg border border-red-200 dark:border-red-700 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 transition-colors"
         >
           <i class="fa-solid fa-trash"></i>
         </button>
@@ -84,7 +84,32 @@ function renderMetadataList() {
     .join("");
 
   if (typeof window.applyI18n === "function") window.applyI18n();
+  applyMetadataReadOnlyMode();
 }
+
+// Hide the three metadata-mutation controls (and the row-level trash icons)
+// when the current document's frontmatter status is `SuperSeeded`. The server
+// also rejects these mutations independently — this is purely UX. Re-applied
+// after every list re-render so dynamically generated rows stay consistent.
+function applyMetadataReadOnlyMode() {
+  const readOnly =
+    typeof window.getDocStatus === "function" &&
+    window.getDocStatus(
+      typeof currentDocContent !== "undefined" ? currentDocContent : "",
+    ) === "SuperSeeded";
+
+  const refreshBtn = document.getElementById("metadata-refresh-btn");
+  const addBtn = document.getElementById("metadata-add-btn");
+  const banner = document.getElementById("metadata-readonly-banner");
+  if (refreshBtn) refreshBtn.classList.toggle("hidden", readOnly);
+  if (addBtn) addBtn.classList.toggle("hidden", readOnly);
+  if (banner) banner.classList.toggle("hidden", !readOnly);
+  document
+    .querySelectorAll("#metadata-list .metadata-row-remove")
+    .forEach((el) => el.classList.toggle("hidden", readOnly));
+}
+
+window.applyMetadataReadOnlyMode = applyMetadataReadOnlyMode;
 
 function renderMetadataSummary() {
   const el = document.getElementById("metadata-summary");
@@ -110,6 +135,7 @@ async function openMetadataModal() {
   metadataBrowseCurrent = "";
   metadataBrowseCache = null;
   document.getElementById("metadata-browser").classList.add("hidden");
+  applyMetadataReadOnlyMode();
 }
 
 function closeMetadataModal() {

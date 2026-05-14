@@ -1,9 +1,16 @@
 // ── Generic confirmation modal ──────────────────────────────────────────────
 // Promise-based replacement for window.confirm(). Any module can call:
-//   const ok = await showConfirm({ title, message, detail, confirmLabel, danger });
+//   const ok = await showConfirm({ title, message, detail, confirmLabel, danger, detailTone });
 // The modal sits at z-[60] so it stacks above other app modals (z-50).
+// `detailTone: "warning"` renders the detail block as an amber callout when the
+// secondary message carries a consequence the user should not miss.
 
 let _confirmResolve = null;
+
+const _DETAIL_NEUTRAL_CLS =
+  "text-xs text-gray-500 dark:text-gray-400 italic break-all";
+const _DETAIL_WARNING_CLS =
+  "text-xs text-amber-800 dark:text-amber-200 break-all bg-amber-50 dark:bg-amber-900/30 border-l-4 border-amber-500 rounded-r px-3 py-2";
 
 function _confirmT(key, fallback) {
   return window.t ? window.t(key) : fallback;
@@ -49,6 +56,8 @@ function showConfirm(opts) {
   messageEl.style.display = o.message ? "" : "none";
   detailEl.textContent = o.detail || "";
   detailEl.style.display = o.detail ? "" : "none";
+  detailEl.className =
+    o.detailTone === "warning" ? _DETAIL_WARNING_CLS : _DETAIL_NEUTRAL_CLS;
 
   cancelBtn.textContent = o.cancelLabel || _confirmT("common.cancel", "Cancel");
   okBtn.textContent = o.confirmLabel || _confirmT("common.confirm", "Confirm");

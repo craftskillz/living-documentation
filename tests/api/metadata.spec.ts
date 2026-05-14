@@ -116,3 +116,59 @@ test.describe('metadata routes on the with-metadata fixture', () => {
     expect(after.accuracy).toBe(1);
   });
 });
+
+test.describe('metadata routes are read-only on SuperSeeded documents', () => {
+  test.use({ fixtureName: 'with-metadata' });
+
+  const SUPERSEEDED_ID = '2026_01_02_10_00_[ADR]_superseded';
+  const ENCODED = encodeURIComponent(SUPERSEEDED_ID);
+
+  test('GET stays open: viewing metadata is always allowed', async ({ request, ld }) => {
+    const res = await request.get(`${ld.baseURL}/api/metadata/${ENCODED}`);
+    expect(res.ok()).toBe(true);
+    const body = (await res.json()) as { items: Array<unknown> };
+    expect(body.items).toHaveLength(1);
+  });
+
+  test('POST add returns 403 with the SuperSeeded error message', async ({ request, ld }) => {
+    fs.writeFileSync(path.resolve(ld.parent, 'src/another.ts'), 'export const z = 0;\n');
+    const res = await request.post(`${ld.baseURL}/api/metadata/${ENCODED}`, {
+      data: { path: 'another.ts' },
+    });
+    expect(res.status()).toBe(403);
+    const body = (await res.json()) as { error: string };
+    expect(body.error).toMatch(/SuperSeeded/);
+  });
+
+  test('DELETE returns 403 and does not remove the existing entry', async ({ request, ld }) => {
+    const res = await request.delete(`${ld.baseURL}/api/metadata/${ENCODED}`, {
+      data: { path: 'sample.ts' },
+    });
+    expect(res.status()).toBe(403);
+    const after = await request.get(`${ld.baseURL}/api/metadata/${ENCODED}`);
+    const body = (await after.json()) as { items: Array<{ path: string }> };
+    expect(body.items.map((i) => i.path)).toEqual(['sample.ts']);
+  });
+
+  test('POST refresh returns 403 and does not touch stored hashes', async ({ request, ld }) => {
+    const before = (await (
+      await request.get(`${ld.baseURL}/api/metadata/${ENCODED}`)
+    ).json()) as { items: Array<{ status: string }> };
+    expect(before.items[0].status).toBe('unchanged');
+
+    fs.writeFileSync(
+      path.resolve(ld.parent, 'src/sample.ts'),
+      'export const x = 77; // drift\n',
+    );
+    const refresh = await request.post(`${ld.baseURL}/api/metadata/${ENCODED}/refresh`, {
+      data: {},
+    });
+    expect(refresh.status()).toBe(403);
+
+    // Stored hash unchanged → status is now "modified", proving refresh was blocked.
+    const after = (await (
+      await request.get(`${ld.baseURL}/api/metadata/${ENCODED}`)
+    ).json()) as { items: Array<{ status: string }> };
+    expect(after.items[0].status).toBe('modified');
+  });
+});

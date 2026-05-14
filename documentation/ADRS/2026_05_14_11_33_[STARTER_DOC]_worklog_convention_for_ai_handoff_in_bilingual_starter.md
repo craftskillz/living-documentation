@@ -1,6 +1,6 @@
 ---
 **date:** 2026-05-14
-**status:** To be validated
+**status:** Accepted
 **description:** Le starter bilingue ajoute un dossier WORKLOG/ avec un current-task.md de reprise partagé entre assistants IA, une règle obligatoire track-current-work, et une étape de lecture du worklog dans PROJECT-INSTRUCTIONS, AGENTS.md et CLAUDE.md.
 **tags:** starter-doc, starter-doc-fr, worklog, current-task, handoff, ai-agents, track-current-work, project-instructions, scaffolding, DOCS_FOLDER
 ---

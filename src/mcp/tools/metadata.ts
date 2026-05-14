@@ -10,6 +10,7 @@ import {
   MetadataEntry,
 } from "../../lib/metadata";
 import { sha256File } from "../../lib/hash";
+import { assertNotSuperSeeded } from "../../lib/status";
 import { listAllDocuments, resolveDocFilePath } from "./documents";
 
 const ACCURACY_THRESHOLD = 0.8;
@@ -115,6 +116,7 @@ export function toolRefreshMetadata(
   args: { id: string },
 ) {
   const docId = decodeDocId(args?.id);
+  assertNotSuperSeeded(docsPath, docId);
   const sourceRoot = resolveSourceRoot(docsPath);
   const entries = getDocEntries(docsPath, docId).map((e) => {
     const abs = path.resolve(sourceRoot, e.path);
@@ -132,6 +134,7 @@ export function toolAddMetadata(
   args: { id: string; path: string },
 ) {
   const docId = decodeDocId(args?.id);
+  assertNotSuperSeeded(docsPath, docId);
   if (!args.path) throw new Error("path is required");
   const sourceRoot = resolveSourceRoot(docsPath);
   const rel = assertUnderSourceRoot(args.path, sourceRoot);
@@ -163,6 +166,7 @@ export function toolRemoveMetadata(
   args: { id: string; path: string },
 ) {
   const docId = decodeDocId(args?.id);
+  assertNotSuperSeeded(docsPath, docId);
   if (!args.path) throw new Error("path is required");
   const sourceRoot = resolveSourceRoot(docsPath);
   const rel = assertUnderSourceRoot(args.path, sourceRoot);
