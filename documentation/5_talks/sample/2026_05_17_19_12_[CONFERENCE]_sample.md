@@ -1,16 +1,15 @@
 # sample
 
+<details>
+<summary>Details</summary>
+
+## Titre
+
+Texte
+
+</details>
 
 
-Voici un tableau
-
-
-
-Et un bloc de code
-
-
-
-[](/diagram?id=d1775684671412)
-
-
-
+```javascript
+console.log()
+```

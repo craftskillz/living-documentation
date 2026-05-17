@@ -7,6 +7,7 @@
 let _snippetSelStart = 0;
 let _snippetSelEnd = 0;
 let _snippetInlineEdit = false;
+let _snippetInlineIndent = "";
 const _SNIPPET_PANELS = [
   "collapsible",
   "link",
@@ -632,6 +633,7 @@ async function snippetAnchorDocChanged() {
 
 function _setSnippetModalMode(isInlineEdit) {
   _snippetInlineEdit = !!isInlineEdit;
+  if (!_snippetInlineEdit) _snippetInlineIndent = "";
   const title = document.getElementById("snippet-modal-title");
   if (title) {
     title.textContent = window.t(
@@ -728,6 +730,7 @@ function openSnippetsModalForInlineEdit(range) {
   _snippetSelStart = range.start;
   _snippetSelEnd = range.end;
   _setSnippetModalMode(true);
+  _snippetInlineIndent = range.indent || "";
   const selectedText = currentDocContent.slice(_snippetSelStart, _snippetSelEnd);
   _openSnippetsModalForText(selectedText, range.type || null);
 }
@@ -932,7 +935,14 @@ function buildSnippetMarkdown() {
       const lang = document.getElementById("snip-code-lang").value || "";
       const code =
         document.getElementById("snip-code-content").value || "// code ici";
-      return `\`\`\`${lang}\n${code}\n\`\`\``;
+      const block = `\`\`\`${lang}\n${code}\n\`\`\``;
+      if (_snippetInlineEdit && _snippetInlineIndent) {
+        return block
+          .split("\n")
+          .map((line) => _snippetInlineIndent + line)
+          .join("\n");
+      }
+      return block;
     }
     case "blockquote": {
       const content =
@@ -1237,9 +1247,20 @@ function parseAndFillSnippet(text, type) {
       break;
     }
     case "code-block": {
-      const m = t.match(/^```\s*([^\n]*)\n([\s\S]*?)\n```$/);
+      const m = t.match(/^```[ \t]*([^\n]*)\n([\s\S]*?)\n[ \t]*```$/);
       document.getElementById("snip-code-lang").value = m ? m[1].trim() : "";
-      document.getElementById("snip-code-content").value = m ? m[2] : "";
+      let codeContent = m ? m[2] : "";
+      if (m && _snippetInlineIndent) {
+        const escapedIndent = _snippetInlineIndent.replace(
+          /[.*+?^${}()|[\]\\]/g,
+          "\\$&",
+        );
+        codeContent = codeContent.replace(
+          new RegExp("^" + escapedIndent, "gm"),
+          "",
+        );
+      }
+      document.getElementById("snip-code-content").value = codeContent;
       break;
     }
     case "blockquote": {

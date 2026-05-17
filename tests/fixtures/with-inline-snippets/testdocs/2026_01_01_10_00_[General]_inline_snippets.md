@@ -37,3 +37,15 @@ console.log("Hello World!");
 1. First numbered
 2. Second numbered
    1. Nested numbered
+
+1. Chercher le groupe lié à l'app Amplify — il est nommé selon le pattern :
+   ```yaml
+   /aws/amplify/<app-id>
+   ```
+
+```
+fields @timestamp, msg, err.message, err.stack
+| filter level >= 50
+| sort @timestamp desc
+| limit 100
+```

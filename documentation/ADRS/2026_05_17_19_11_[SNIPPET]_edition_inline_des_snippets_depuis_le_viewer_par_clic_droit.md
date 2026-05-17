@@ -1,8 +1,8 @@
 ---
 **date:** 2026-05-17
 **status:** To be validated
-**description:** Le viewer mappe les snippets Markdown rendus vers leurs plages source, ouvre la modale Snippets en édition inline au clic droit, verrouille le type détecté, permet la suppression confirmée et spécialise les mini éditeurs des blocs structurés.
-**tags:** snippet, inline-edit, contextmenu, viewer, markdown-range, deleteInlineSnippetBlock, detectSnippetType, parseAndFillSnippet, buildSnippetMarkdown, table, code-block, blockquote, ordered-list, unordered-list, colored-text, colored-section, playwright
+**description:** Le viewer mappe les snippets Markdown rendus vers leurs plages source, ouvre la modale Snippets en édition inline au clic droit, verrouille le type détecté, permet la suppression confirmée, spécialise les mini éditeurs des blocs structurés et préserve l'indentation des code blocks imbriqués dans des listes.
+**tags:** snippet, inline-edit, contextmenu, viewer, markdown-range, deleteInlineSnippetBlock, detectSnippetType, parseAndFillSnippet, buildSnippetMarkdown, table, code-block, code-block-indent, blockquote, ordered-list, unordered-list, colored-text, colored-section, playwright
 ---
 
 # Édition inline des snippets depuis le viewer par clic droit
@@ -54,7 +54,7 @@ La modale historique reste modifiable en mode insertion : le bouton Snippets du 
 Les types suivants ont un formulaire éditable en mode inline, sans dépendre de l'aperçu Markdown :
 
 - `table` : la plage Markdown complète est parsée en grille. Les cellules vides sont préservées et ne sont pas confondues avec la ligne séparatrice.
-- `code-block` : le langage de la fence est prérempli et le contenu du code est éditable dans un textarea monospace.
+- `code-block` : le langage de la fence est prérempli et le contenu du code est éditable dans un textarea monospace. Le regex de parsing utilise `[ \t]*` (whitespace horizontal seulement) après la fence d'ouverture pour éviter d'absorber un `\n` et donc d'attribuer la première ligne de contenu comme langage quand la fence n'a pas de langage explicite. Les fences indentés à l'intérieur d'une liste sont aussi reconnus : l'indentation canonique (espaces avant la fence d'ouverture) est capturée dans la plage source, retirée de chaque ligne dans le textarea, puis réappliquée à chaque ligne (fences incluses) lors de la sauvegarde, de sorte que le bloc reste imbriqué dans son item de liste.
 - `blockquote` : les préfixes `>` sont retirés dans le textarea, puis réappliqués ligne par ligne à l'enregistrement, y compris sur les lignes vides.
 - `unordered-list` : les marqueurs `-`, `*` ou `+` sont retirés dans le textarea ; l'indentation est conservée et les `-` sont reconstruits.
 - `ordered-list` : les marqueurs numériques sont retirés dans le textarea ; l'indentation est conservée et les compteurs sont régénérés par niveau.
@@ -79,7 +79,7 @@ Le mode édition classique appelle désormais ce helper, et l'édition inline l'
 
 Les textes visibles ajoutés (`Edit inline`, titre de modale inline, bouton `Save`, bouton et confirmation de suppression, erreurs de sauvegarde/suppression, libellés des nouveaux textareas) sont déclarés dans `src/frontend/i18n/en.json` et `src/frontend/i18n/fr.json`.
 
-La fixture `with-inline-snippets` et `tests/e2e/inline-snippet-edit.spec.ts` couvrent les cas de round-trip et de suppression pour : texte coloré, section colorée, table avec cellules vides, bloc de code, citation, liste à puces, liste numérotée, ainsi que le verrouillage de la selectbox en mode inline et sa disponibilité en mode insertion.
+La fixture `with-inline-snippets` et `tests/e2e/inline-snippet-edit.spec.ts` couvrent les cas de round-trip et de suppression pour : texte coloré, section colorée, table avec cellules vides, bloc de code, bloc de code sans langage (style requête CloudWatch Logs Insights), bloc de code indenté dans une liste numérotée, citation, liste à puces, liste numérotée, ainsi que le verrouillage de la selectbox en mode inline et sa disponibilité en mode insertion.
 
 ## Conséquences
 

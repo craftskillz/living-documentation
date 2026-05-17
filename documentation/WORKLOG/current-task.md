@@ -15,47 +15,37 @@ Idle
 
 ## Tâche courante
 
-Feature terminée et redocumentée : édition inline des snippets depuis le viewer par clic droit.
+Feature terminée et redocumentée : édition inline des code blocks (1) indentés à l'intérieur d'une liste et (2) sans langage explicite après la fence d'ouverture.
 
 ## Dernière action réalisée
 
-- Extension de l'édition inline aux snippets structurés : table complète avec cellules vides, bloc de code avec textarea, citation avec textarea, listes à puces et numérotées avec textareas, arborescence, texte coloré et section colorée.
-- Masquage de l'aperçu Markdown pour les mini éditeurs où il n'apporte rien : table, code, tree, citation, listes, texte coloré et section colorée.
-- Ajout d'un bouton `Supprimer le bloc`, visible uniquement en mode inline, avec confirmation via `showConfirm()` avant suppression de la plage Markdown source.
-- Verrouillage de la selectbox `#snippet-type` en mode inline pour empêcher de changer le type détecté ; elle reste active en mode insertion classique.
-- Mise à jour de la fixture `with-inline-snippets` et de la spec `tests/e2e/inline-snippet-edit.spec.ts` pour couvrir les nouveaux cas et la suppression.
-- ADR `2026_05_17_19_11_[SNIPPET]_edition_inline_des_snippets_depuis_le_viewer_par_clic_droit` mis à jour via MCP, enrichi avec les nouvelles décisions UX/techniques, attaché à `src/frontend/snippet-detect.js` et metadata rafraîchie à accuracy 1.
-- Documentation utilisateur mise à jour : tutoriel `1_tutorial/2026_04_12_10_00_[General]_utiliser_les_snippets` et référence `4_reference/2026_04_09_03_00_[REFERENCE]_types_de_snippets`, avec métadonnées source attachées à accuracy 1.
+- Détection de l'indentation canonique avant la fence d'ouverture d'un code block via une nouvelle boucle dédiée `_inlineAddCodeBlockRanges` dans `src/frontend/inline-snippet-edit.js`. La plage source est étendue en arrière pour inclure les espaces de tête et l'indent est porté par le candidat (`range.indent`).
+- État `_snippetInlineIndent` ajouté dans `src/frontend/snippets.js` : posé depuis `range.indent` à l'ouverture inline, réinitialisé dans `_setSnippetModalMode(false)`.
+- `parseAndFillSnippet` cas `code-block` : regex resserré en `/^```[ \t]*([^\n]*)\n([\s\S]*?)\n[ \t]*```$/`. Le `[ \t]*` (au lieu de `\s*`) après la fence d'ouverture empêche d'aspirer un saut de ligne et donc d'absorber la première ligne de contenu comme langage quand la fence n'a pas de langage explicite. Le `[ \t]*` avant la fence de fermeture accepte une fence indentée. Stripping de l'indent canonique sur chaque ligne avant remplissage du textarea.
+- `buildSnippetMarkdown` cas `code-block` : en mode inline edit avec indent non vide, chaque ligne du bloc reconstruit (y compris les deux fences) est préfixée par l'indent canonique.
+- Fixture `with-inline-snippets` enrichie de deux nouveaux cas : un item de liste numérotée contenant un code block YAML indenté de 3 espaces, et un code block sans langage (style requête CloudWatch Logs Insights). Tests Playwright ajoutés : `right-click on code block without language keeps language empty and does not consume first content line` et `right-click on indented code block inside a list captures language, strips indent, and preserves it on save`. Sélecteurs `#doc-content pre` du test existant ajustés en `.first()` pour rester non ambigus.
+- ADR `2026_05_17_19_11_[SNIPPET]_edition_inline_des_snippets_depuis_le_viewer_par_clic_droit.md` mis à jour à la main : description, tags, décision 4 (code-block) et décision 7 (tests).
 
 ## Prochaine action recommandée
 
-Relire le diff global puis commit si le comportement convient. Le document sample `documentation/5_talks/sample/2026_05_17_19_12_[CONFERENCE]_sample.md` est modifié séparément et doit être traité selon l'intention utilisateur.
+Le MCP `living-documentation` connecté ne sert pas cette codebase (il pointe sur un autre projet Amplify). Quand le MCP local pour ce repo sera disponible, lancer `refresh_metadata` sur l'ADR inline snippets pour rebaseliner les hashes et inclure `src/frontend/inline-snippet-edit.js`, `src/frontend/snippets.js`, `tests/e2e/inline-snippet-edit.spec.ts`, `tests/fixtures/with-inline-snippets/testdocs/2026_01_01_10_00_[General]_inline_snippets.md`. Ensuite relire le diff global et commit si le comportement convient.
 
 ## Fichiers ou zones concernés
 
 - `src/frontend/inline-snippet-edit.js`
 - `src/frontend/snippets.js`
-- `src/frontend/snippet-detect.js`
-- `src/frontend/documents.js`
-- `src/frontend/index.html`
-- `src/frontend/i18n/en.json`
-- `src/frontend/i18n/fr.json`
 - `tests/e2e/inline-snippet-edit.spec.ts`
-- `tests/fixtures/with-inline-snippets/`
+- `tests/fixtures/with-inline-snippets/testdocs/2026_01_01_10_00_[General]_inline_snippets.md`
 - `documentation/ADRS/2026_05_17_19_11_[SNIPPET]_edition_inline_des_snippets_depuis_le_viewer_par_clic_droit.md`
-- `documentation/1_tutorial/2026_04_12_10_00_[General]_utiliser_les_snippets.md`
-- `documentation/4_reference/2026_04_09_03_00_[REFERENCE]_types_de_snippets.md`
-- `documentation/.metadata.json`
 
 ## Vérifications récentes
 
 - `npm run build` : OK.
-- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts` : OK, 9 tests passés.
-- `refresh_metadata` MCP sur l'ADR inline snippets : OK, accuracy 1 avec 8 fichiers attachés.
-- `add_metadata` MCP sur les deux documents utilisateur snippets : OK, accuracy 1 avec 3 fichiers attachés chacun.
+- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts` : OK, 11 tests passés (9 existants + 2 nouveaux : code block indenté dans liste, code block sans langage).
+- MCP `living-documentation` local pour ce projet : non disponible (le MCP connecté pointe sur un autre workspace). Métadonnées Living Documentation NON rafraîchies.
 
 ## Notes de reprise
 
 Convention rappel : ce worklog n'est pas un ADR. Y consigner uniquement l'état opérationnel.
 
-Limite connue : la correspondance Markdown vers HTML est heuristique et ordonnée, pas une source map exacte. Les snippets canoniques générés par la modale sont la cible principale. La régénération des listes numérotées renumérote les items selon leur niveau d'indentation.
+Limite connue : la correspondance Markdown vers HTML est heuristique et ordonnée, pas une source map exacte. L'indent d'un code block est calculé à partir des caractères qui précèdent la fence d'ouverture sur la même ligne (uniquement espaces/tabs). Les fences imbriquées dans des contextes plus complexes (blockquote, listes profondes mixtes) peuvent ne pas être correctement détectées par ce premier pas.

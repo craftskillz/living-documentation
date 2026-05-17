@@ -100,7 +100,7 @@ test.describe('inline snippet editing from viewer', () => {
     const docPath = path.join(ld.docsAbs, `${docId}.md`);
 
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
-    await page.locator('#doc-content pre').click({ button: 'right' });
+    await page.locator('#doc-content pre').first().click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
     await page.locator('#inline-snippet-popup button').click();
 
@@ -114,11 +114,62 @@ test.describe('inline snippet editing from viewer', () => {
     await page.locator('#snippet-submit-btn').click();
 
     await expect(page.locator('#snippets-modal')).toBeHidden();
-    await expect(page.locator('#doc-content pre')).toContainText('Updated!');
+    await expect(page.locator('#doc-content pre').first()).toContainText('Updated!');
 
     const onDisk = fs.readFileSync(docPath, 'utf-8');
     expect(onDisk).toContain('```javascript\nconsole.log("Updated!");\n```');
     expect(onDisk).not.toContain('console.log("Hello World!");');
+  });
+
+  test('right-click on code block without language keeps language empty and does not consume first content line', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content pre').nth(2).click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup')).toBeVisible();
+    await page.locator('#inline-snippet-popup button').click();
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await expect(page.locator('#snippet-type')).toHaveValue('code-block');
+    await expect(page.locator('#snip-code-lang')).toHaveValue('');
+    await expect(page.locator('#snip-code-content')).toHaveValue(
+      'fields @timestamp, msg, err.message, err.stack\n| filter level >= 50\n| sort @timestamp desc\n| limit 100',
+    );
+
+    await page
+      .locator('#snip-code-content')
+      .fill('fields @timestamp\n| limit 10');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain('```\nfields @timestamp\n| limit 10\n```');
+    expect(onDisk).not.toContain('| sort @timestamp desc');
+  });
+
+  test('right-click on indented code block inside a list captures language, strips indent, and preserves it on save', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content pre').nth(1).click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup')).toBeVisible();
+    await page.locator('#inline-snippet-popup button').click();
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await expect(page.locator('#snippet-type')).toHaveValue('code-block');
+    await expect(page.locator('#snip-code-lang')).toHaveValue('yaml');
+    await expect(page.locator('#snip-code-content')).toHaveValue('/aws/amplify/<app-id>');
+
+    await page.locator('#snip-code-content').fill('/aws/amplify/edited-id');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content pre').nth(1)).toContainText('edited-id');
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain('   ```yaml\n   /aws/amplify/edited-id\n   ```');
+    expect(onDisk).not.toContain('/aws/amplify/<app-id>');
   });
 
   test('right-click on blockquote captures editable quote content', async ({ page, ld }) => {

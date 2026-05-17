@@ -67,10 +67,39 @@ function _inlineAddRegexRanges(ranges, content, regex, groupIndex = 0) {
   }
 }
 
+function _inlineLineIndentBefore(content, idx) {
+  let i = idx;
+  while (i > 0 && content[i - 1] !== "\n") i -= 1;
+  const prefix = content.slice(i, idx);
+  return /^[ \t]+$/.test(prefix) ? prefix : "";
+}
+
+function _inlineAddCodeBlockRanges(ranges, content) {
+  const regex = /```[\s\S]*?```/g;
+  let match;
+  while ((match = regex.exec(content))) {
+    const raw = match[0];
+    if (!raw.trim()) {
+      if (raw.length === 0) regex.lastIndex += 1;
+      continue;
+    }
+    const type = detectSnippetType(raw);
+    if (!type || !_INLINE_SNIPPET_TYPES.has(type)) continue;
+    const indent = _inlineLineIndentBefore(content, match.index);
+    const start = match.index - indent.length;
+    const end = match.index + raw.length;
+    const candidate = { start, end, type, indent };
+    if (ranges.some((existing) => _inlineRangesOverlap(existing, candidate))) {
+      continue;
+    }
+    ranges.push(candidate);
+  }
+}
+
 function _inlineCollectSnippetRanges(content) {
   const ranges = [];
 
-  _inlineAddRegexRanges(ranges, content, /```[\s\S]*?```/g);
+  _inlineAddCodeBlockRanges(ranges, content);
   _inlineAddRegexRanges(ranges, content, /<details[\s\S]*?<\/details>/gi);
   _inlineAddRegexRanges(
     ranges,
