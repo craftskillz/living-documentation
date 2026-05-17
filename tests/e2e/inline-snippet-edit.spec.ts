@@ -279,6 +279,88 @@ test.describe('inline snippet editing from viewer', () => {
     expect(onDisk).not.toContain('> — Existing author');
   });
 
+  test('right-click on unmapped block proposes inline snippet insertion and writes to source', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content h1').click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup')).toBeVisible();
+    await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-action', 'insert');
+    await expect(page.locator('#inline-snippet-popup button')).toContainText('Insert');
+
+    await page.locator('#inline-snippet-popup button').click();
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await expect(page.locator('#snippet-modal-title')).toHaveText('Insert a snippet');
+    await expect(page.locator('#snippet-type')).toBeEnabled();
+    await expect(page.locator('#snippet-delete-btn')).toBeHidden();
+
+    await page.locator('#snippet-type').selectOption('blockquote');
+    await page.locator('#snip-blockquote-content').fill('Inserted from viewer');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toMatch(/# Inline Snippets\n+> Inserted from viewer\n+This paragraph has/);
+  });
+
+  test('right-click on a formatted paragraph (signature fails) inserts via sibling fallback', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content p').first().click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-action', 'insert');
+    await page.locator('#inline-snippet-popup button').click();
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await page.locator('#snippet-type').selectOption('blockquote');
+    await page.locator('#snip-blockquote-content').fill('Inserted via fallback');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toMatch(
+      /breaks signature search\.\n+> Inserted via fallback\n+This sentence contains/,
+    );
+  });
+
+  test('right-click in vertical whitespace between blocks resolves to nearest block above', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+
+    const coords = await page.evaluate(() => {
+      const content = document.getElementById('doc-content')!;
+      const h1 = content.querySelector('h1')!;
+      const next = h1.nextElementSibling as HTMLElement;
+      const h1Rect = h1.getBoundingClientRect();
+      const nextRect = next.getBoundingClientRect();
+      const x = h1Rect.left + 5;
+      const y = (h1Rect.bottom + nextRect.top) / 2;
+      return { x, y };
+    });
+
+    await page.mouse.move(coords.x, coords.y);
+    await page.mouse.down({ button: 'right' });
+    await page.mouse.up({ button: 'right' });
+
+    await expect(page.locator('#inline-snippet-popup')).toBeVisible();
+    await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-action', 'insert');
+    await page.locator('#inline-snippet-popup button').click();
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await page.locator('#snippet-type').selectOption('blockquote');
+    await page.locator('#snip-blockquote-content').fill('Inserted in whitespace');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toMatch(/# Inline Snippets\n+> Inserted in whitespace\n+This paragraph has/);
+  });
+
   test('snippet type selector remains enabled in insertion mode', async ({ page, ld }) => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await page.evaluate(() => {

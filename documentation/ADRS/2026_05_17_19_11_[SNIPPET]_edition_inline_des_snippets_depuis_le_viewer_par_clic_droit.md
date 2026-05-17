@@ -1,8 +1,8 @@
 ---
 **date:** 2026-05-17
 **status:** To be validated
-**description:** Le viewer mappe les snippets Markdown rendus vers leurs plages source, ouvre la modale Snippets en édition inline au clic droit, verrouille le type détecté, permet la suppression confirmée, spécialise les mini éditeurs des blocs structurés et préserve l'indentation des code blocks imbriqués dans des listes.
-**tags:** snippet, inline-edit, contextmenu, viewer, markdown-range, deleteInlineSnippetBlock, detectSnippetType, parseAndFillSnippet, buildSnippetMarkdown, table, code-block, code-block-indent, blockquote, ordered-list, unordered-list, colored-text, colored-section, playwright
+**description:** Le viewer mappe les snippets Markdown rendus vers leurs plages source, ouvre la modale Snippets en édition inline au clic droit sur une zone reconnue ou en insertion inline au clic droit sur une zone non reconnue, verrouille le type détecté en édition, permet la suppression confirmée, spécialise les mini éditeurs des blocs structurés et préserve l'indentation des code blocks imbriqués dans des listes.
+**tags:** snippet, inline-edit, inline-insert, contextmenu, viewer, markdown-range, deleteInlineSnippetBlock, detectSnippetType, parseAndFillSnippet, buildSnippetMarkdown, table, code-block, code-block-indent, blockquote, ordered-list, unordered-list, colored-text, colored-section, playwright
 ---
 
 # Édition inline des snippets depuis le viewer par clic droit
@@ -19,9 +19,9 @@ Les premières itérations ont montré que cette feature deviendra un axe durabl
 
 ### 1. Clic droit plutôt que double-clic
 
-Le déclencheur est `contextmenu` sur le rendu du document. Si la zone ciblée correspond à un snippet connu, le menu natif est intercepté et une petite popup affiche l'action `Edit inline`. Si aucun snippet n'est reconnu, le clic droit natif reste inchangé.
+Le déclencheur est `contextmenu` sur le rendu du document. Si la zone ciblée correspond à un snippet connu, le menu natif est intercepté et une petite popup affiche l'action `Edit inline`. Si la zone ciblée ne correspond à aucun snippet reconnu (texte simple, titre, paragraphe brut, espace blanc à l'intérieur de `#doc-content`), la popup affiche `Insert a snippet here` et ouvre la modale Snippets en mode insertion inline.
 
-Le fichier `src/frontend/inline-snippet-edit.js` porte uniquement la correspondance viewer -> Markdown source et l'ouverture de la popup. La logique de formulaire reste dans la modale Snippets existante.
+Le fichier `src/frontend/inline-snippet-edit.js` porte uniquement la correspondance viewer -> Markdown source, le calcul de la position d'insertion pour les zones non reconnues, et l'ouverture de la popup. La logique de formulaire reste dans la modale Snippets existante.
 
 ### 2. Source map légère par correspondance ordonnée
 
@@ -47,7 +47,16 @@ L'édition inline ne duplique aucun mini éditeur. La popup appelle `openSnippet
 - désactive la selectbox `#snippet-type` en mode inline pour empêcher de changer le type détecté et d'écraser la plage source avec un autre format ;
 - appelle `buildSnippetMarkdown()` au moment de sauvegarder.
 
+L'insertion inline depuis le viewer suit le même schéma via `openSnippetsModalForInlineInsert(insertPos)` :
+
+- `_snippetSelStart` et `_snippetSelEnd` sont positionnés à la même valeur `insertPos` calculée par `_inlineFindInsertPosition()`. La résolution suit une cascade hybride : (a) remonter au top-level child DOM de `#doc-content` à partir de `event.target` ; (a-bis) si `event.target` est `#doc-content` lui-même (clic dans la marge verticale du `prose` entre deux blocs), retomber sur la coordonnée `event.clientY` pour identifier le top-level child le plus proche au-dessus de la souris ; (b) si ce bloc ou un de ses descendants porte `data-inline-snippet-index`, utiliser la `range.end` la plus grande des candidats puis avancer jusqu'au prochain `\n\n` (garantit l'insertion en fin de bloc rendu, pas au milieu d'un paragraphe contenant un snippet) ; (c) sinon, tenter une recherche de signature avec la première ligne du `textContent` (≤ 60 chars) dans le Markdown source ; (d) si tout échoue sur le bloc cliqué, parcourir les frères précédents puis suivants pour trouver une ancre résolvable, en sautant au `\n\n` suivant/précédent ; (e) fallback final : fin du document.
+- la modale s'ouvre avec un titre `Insert a snippet`, la selectbox `#snippet-type` reste active, le bouton `Delete block` est caché ;
+- la carte de modale est élargie comme en édition inline pour permettre les mini éditeurs structurés ;
+- au moment de soumettre, `insertSnippet()` détecte le mode `inline-insert`, encadre le Markdown construit par les sauts de ligne nécessaires (`\n\n` avant/après uniquement si le contexte source ne les fournit pas déjà), puis appelle `saveCurrentDocumentContent()` au lieu d'écrire dans le `#doc-editor`.
+
 La modale historique reste modifiable en mode insertion : le bouton Snippets du textarea continue d'ouvrir la même selectbox active et remplace la sélection dans `#doc-editor`.
+
+`_setSnippetModalMode(mode)` accepte désormais une chaîne `"insert" | "inline-edit" | "inline-insert"` plutôt qu'un booléen pour différencier explicitement les trois flux.
 
 ### 4. Mini éditeurs dédiés aux snippets structurés
 
@@ -77,15 +86,15 @@ Le mode édition classique appelle désormais ce helper, et l'édition inline l'
 
 ### 7. Internationalisation et tests
 
-Les textes visibles ajoutés (`Edit inline`, titre de modale inline, bouton `Save`, bouton et confirmation de suppression, erreurs de sauvegarde/suppression, libellés des nouveaux textareas) sont déclarés dans `src/frontend/i18n/en.json` et `src/frontend/i18n/fr.json`.
+Les textes visibles ajoutés (`Edit inline`, `Insert a snippet here`, titres de modales inline, bouton `Save`, bouton et confirmation de suppression, erreurs de sauvegarde/insertion/suppression, libellés des nouveaux textareas) sont déclarés dans `src/frontend/i18n/en.json` et `src/frontend/i18n/fr.json`.
 
-La fixture `with-inline-snippets` et `tests/e2e/inline-snippet-edit.spec.ts` couvrent les cas de round-trip et de suppression pour : texte coloré, section colorée, table avec cellules vides, bloc de code, bloc de code sans langage (style requête CloudWatch Logs Insights), bloc de code indenté dans une liste numérotée, citation, liste à puces, liste numérotée, ainsi que le verrouillage de la selectbox en mode inline et sa disponibilité en mode insertion.
+La fixture `with-inline-snippets` et `tests/e2e/inline-snippet-edit.spec.ts` couvrent les cas de round-trip et de suppression pour : texte coloré, section colorée, table avec cellules vides, bloc de code, bloc de code sans langage (style requête CloudWatch Logs Insights), bloc de code indenté dans une liste numérotée, citation, liste à puces, liste numérotée, insertion inline d'un snippet depuis un titre non mappé du viewer, ainsi que le verrouillage de la selectbox en mode inline-edit et sa disponibilité en modes insertion et inline-insert.
 
 ## Conséquences
 
 ### PROS
 
-- Les utilisateurs peuvent rééditer un snippet depuis le document rendu, sans connaître ni retrouver la syntaxe Markdown.
+- Les utilisateurs peuvent rééditer un snippet existant ou insérer un nouveau snippet depuis le document rendu, sans connaître ni retrouver la syntaxe Markdown ni basculer en mode édition textarea.
 - Les mini éditeurs existants restent la seule source de vérité ; pas de duplication d'UI ou de parsing de formulaire.
 - Le type détecté est verrouillé en inline, ce qui évite de remplacer accidentellement une plage source par un autre format.
 - Les snippets structurés deviennent éditables avec des champs adaptés au contenu réel plutôt qu'avec un aperçu Markdown passif.
@@ -96,6 +105,7 @@ La fixture `with-inline-snippets` et `tests/e2e/inline-snippet-edit.spec.ts` cou
 ### CONS
 
 - La correspondance Markdown -> HTML est heuristique et ordonnée, pas une source map exacte. Des snippets identiques ou du Markdown fortement modifié à la main peuvent produire une association ambiguë.
+- Le calcul de la position d'insertion inline cascade plusieurs heuristiques (range-anchor des descendants mappés, puis signature textuelle, puis ancrage sur frères mappés). La cascade évite l'insertion en fin de document tant qu'un frère résolvable existe, mais reste heuristique : si plusieurs blocs partagent le même incipit textuel et qu'aucun snippet n'est présent autour, l'insertion peut se placer après la première occurrence trouvée plutôt qu'après le bloc cliqué.
 - Les regex de capture doivent évoluer à chaque nouveau pattern Markdown rendu qui ne se mappe pas trivialement sur un élément DOM.
 - La régénération des listes ordonnées renumérote les items au lieu de préserver des numéros volontairement non séquentiels.
 - Les snippets `diagram` et `attachment` ne sont pas proposés en édition inline, car ils déclenchent des workflows spécifiques (création de diagramme, picker de fichier) qui ne sont pas de simples remplacements de plage Markdown.

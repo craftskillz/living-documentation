@@ -173,10 +173,11 @@ function _inlineClosePopup() {
   }
 }
 
-function _inlineShowPopup(event, range) {
+function _inlineShowPopup(event, { iconClass, labelKey, onActivate, dataAction }) {
   _inlineClosePopup();
   const popup = document.createElement("div");
   popup.id = "inline-snippet-popup";
+  if (dataAction) popup.dataset.action = dataAction;
   popup.className =
     "fixed z-50 rounded-lg border border-blue-200 dark:border-blue-800 bg-white dark:bg-gray-900 shadow-lg p-1";
   const btn = document.createElement("button");
@@ -184,16 +185,16 @@ function _inlineShowPopup(event, range) {
   btn.className =
     "inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30";
   const icon = document.createElement("i");
-  icon.className = "fa-solid fa-pen-to-square";
+  icon.className = iconClass;
   icon.setAttribute("aria-hidden", "true");
   const label = document.createElement("span");
-  label.textContent = window.t("snippet.inline_edit_btn");
+  label.textContent = window.t(labelKey);
   btn.append(icon, label);
   btn.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
     _inlineClosePopup();
-    openSnippetsModalForInlineEdit(range);
+    onActivate();
   });
   popup.appendChild(btn);
   document.body.appendChild(popup);
@@ -210,6 +211,124 @@ function _inlineShowPopup(event, range) {
   _inlineSnippetPopup = popup;
 }
 
+function _inlineTopLevelBlock(contentEl, target) {
+  let block = target instanceof Element ? target : null;
+  while (block && block.parentElement && block.parentElement !== contentEl) {
+    block = block.parentElement;
+  }
+  if (!block || block === contentEl || block.parentElement !== contentEl) {
+    return null;
+  }
+  return block;
+}
+
+function _inlineNearestBlockByY(contentEl, clientY) {
+  if (typeof clientY !== "number") return null;
+  const children = Array.from(contentEl.children);
+  if (!children.length) return null;
+  let above = null;
+  let below = null;
+  for (const child of children) {
+    const rect = child.getBoundingClientRect();
+    if (rect.bottom < clientY) above = child;
+    else if (rect.top > clientY) {
+      if (!below) below = child;
+    } else return child;
+  }
+  return above || below;
+}
+
+function _inlineResolveBlockEnd(block, candidates) {
+  if (block.matches("[data-inline-snippet-index]")) {
+    const range = candidates[Number(block.dataset.inlineSnippetIndex)];
+    if (range) return range.end;
+  }
+  let anchorIdx = null;
+  const desc = Array.from(
+    block.querySelectorAll("[data-inline-snippet-index]"),
+  );
+  if (desc.length > 0) {
+    let maxEnd = -1;
+    for (const d of desc) {
+      const range = candidates[Number(d.dataset.inlineSnippetIndex)];
+      if (range && range.end > maxEnd) maxEnd = range.end;
+    }
+    if (maxEnd >= 0) anchorIdx = maxEnd;
+  } else {
+    const text = (block.textContent || "").trim();
+    if (text) {
+      const firstLine = text.split("\n")[0].trim().slice(0, 60);
+      if (firstLine) {
+        const idx = currentDocContent.indexOf(firstLine);
+        if (idx >= 0) anchorIdx = idx;
+      }
+    }
+  }
+  if (anchorIdx === null) return null;
+  const blankIdx = currentDocContent.indexOf("\n\n", anchorIdx);
+  return blankIdx >= 0 ? blankIdx : currentDocContent.length;
+}
+
+function _inlineResolveBlockStart(block, candidates) {
+  if (block.matches("[data-inline-snippet-index]")) {
+    const range = candidates[Number(block.dataset.inlineSnippetIndex)];
+    if (range) return range.start;
+  }
+  const desc = Array.from(
+    block.querySelectorAll("[data-inline-snippet-index]"),
+  );
+  if (desc.length > 0) {
+    let minStart = Infinity;
+    for (const d of desc) {
+      const range = candidates[Number(d.dataset.inlineSnippetIndex)];
+      if (range && range.start < minStart) minStart = range.start;
+    }
+    if (minStart < Infinity) return minStart;
+  }
+  const text = (block.textContent || "").trim();
+  if (text) {
+    const firstLine = text.split("\n")[0].trim().slice(0, 60);
+    if (firstLine) {
+      const idx = currentDocContent.indexOf(firstLine);
+      if (idx >= 0) return idx;
+    }
+  }
+  return null;
+}
+
+function _inlineFindInsertPosition(contentEl, target, candidates, clientY) {
+  if (typeof currentDocContent !== "string") return null;
+  const topBlock =
+    _inlineTopLevelBlock(contentEl, target) ||
+    _inlineNearestBlockByY(contentEl, clientY);
+  if (!topBlock) return currentDocContent.length;
+
+  const directEnd = _inlineResolveBlockEnd(topBlock, candidates);
+  if (directEnd !== null) return directEnd;
+
+  let prev = topBlock.previousElementSibling;
+  while (prev) {
+    const end = _inlineResolveBlockEnd(prev, candidates);
+    if (end !== null) {
+      const next = currentDocContent.indexOf("\n\n", end + 1);
+      return next >= 0 ? next : currentDocContent.length;
+    }
+    prev = prev.previousElementSibling;
+  }
+
+  let nxt = topBlock.nextElementSibling;
+  while (nxt) {
+    const start = _inlineResolveBlockStart(nxt, candidates);
+    if (start !== null) {
+      const prevBlank = currentDocContent.lastIndexOf("\n\n", start);
+      return prevBlank >= 0 ? prevBlank : 0;
+    }
+    nxt = nxt.nextElementSibling;
+  }
+
+  return currentDocContent.length;
+}
+
 function initInlineSnippetEditing(contentEl) {
   if (!contentEl || typeof currentDocContent !== "string") return;
   const candidates = _inlineCollectSnippetRanges(currentDocContent);
@@ -223,11 +342,33 @@ function initInlineSnippetEditing(contentEl) {
   }
   contentEl._inlineSnippetContextHandler = (event) => {
     const target = event.target.closest("[data-inline-snippet-index]");
-    if (!target || !contentEl.contains(target)) return;
-    const range = candidates[Number(target.dataset.inlineSnippetIndex)];
-    if (!range) return;
+    if (target && contentEl.contains(target)) {
+      const range = candidates[Number(target.dataset.inlineSnippetIndex)];
+      if (!range) return;
+      event.preventDefault();
+      _inlineShowPopup(event, {
+        iconClass: "fa-solid fa-pen-to-square",
+        labelKey: "snippet.inline_edit_btn",
+        dataAction: "edit",
+        onActivate: () => openSnippetsModalForInlineEdit(range),
+      });
+      return;
+    }
+    if (!contentEl.contains(event.target)) return;
+    const insertPos = _inlineFindInsertPosition(
+      contentEl,
+      event.target,
+      candidates,
+      event.clientY,
+    );
+    if (insertPos === null) return;
     event.preventDefault();
-    _inlineShowPopup(event, range);
+    _inlineShowPopup(event, {
+      iconClass: "fa-solid fa-plus",
+      labelKey: "snippet.inline_insert_btn",
+      dataAction: "insert",
+      onActivate: () => openSnippetsModalForInlineInsert(insertPos),
+    });
   };
   contentEl.addEventListener(
     "contextmenu",

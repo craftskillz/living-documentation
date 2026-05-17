@@ -7,6 +7,7 @@
 let _snippetSelStart = 0;
 let _snippetSelEnd = 0;
 let _snippetInlineEdit = false;
+let _snippetInlineInsert = false;
 let _snippetInlineIndent = "";
 const _SNIPPET_PANELS = [
   "collapsible",
@@ -631,35 +632,40 @@ async function snippetAnchorDocChanged() {
   snippetUpdatePreview();
 }
 
-function _setSnippetModalMode(isInlineEdit) {
-  _snippetInlineEdit = !!isInlineEdit;
-  if (!_snippetInlineEdit) _snippetInlineIndent = "";
+function _setSnippetModalMode(mode) {
+  const isInlineEdit = mode === "inline-edit";
+  const isInlineInsert = mode === "inline-insert";
+  const isInline = isInlineEdit || isInlineInsert;
+  _snippetInlineEdit = isInlineEdit;
+  _snippetInlineInsert = isInlineInsert;
+  if (!isInlineEdit) _snippetInlineIndent = "";
   const title = document.getElementById("snippet-modal-title");
   if (title) {
-    title.textContent = window.t(
-      _snippetInlineEdit ? "snippet.inline_modal_title" : "snippet.modal_title",
-    );
+    let key = "snippet.modal_title";
+    if (isInlineEdit) key = "snippet.inline_modal_title";
+    else if (isInlineInsert) key = "snippet.inline_insert_modal_title";
+    title.textContent = window.t(key);
   }
   const submit = document.getElementById("snippet-submit-btn");
   if (submit) {
     submit.textContent = window.t(
-      _snippetInlineEdit ? "snippet.inline_save_btn" : "snippet.insert_btn",
+      isInlineEdit ? "snippet.inline_save_btn" : "snippet.insert_btn",
     );
   }
   const typeSelect = document.getElementById("snippet-type");
   if (typeSelect) {
-    typeSelect.disabled = _snippetInlineEdit;
-    typeSelect.classList.toggle("cursor-not-allowed", _snippetInlineEdit);
-    typeSelect.classList.toggle("opacity-70", _snippetInlineEdit);
+    typeSelect.disabled = isInlineEdit;
+    typeSelect.classList.toggle("cursor-not-allowed", isInlineEdit);
+    typeSelect.classList.toggle("opacity-70", isInlineEdit);
   }
   const deleteBtn = document.getElementById("snippet-delete-btn");
   if (deleteBtn) {
-    deleteBtn.classList.toggle("hidden", !_snippetInlineEdit);
+    deleteBtn.classList.toggle("hidden", !isInlineEdit);
   }
   const card = document.getElementById("snippet-modal-card");
   if (card) {
-    card.classList.toggle("max-w-lg", !_snippetInlineEdit);
-    card.classList.toggle("max-w-5xl", _snippetInlineEdit);
+    card.classList.toggle("max-w-lg", !isInline);
+    card.classList.toggle("max-w-5xl", isInline);
   }
 }
 
@@ -721,7 +727,7 @@ function openSnippetsModal() {
   const editor = document.getElementById("doc-editor");
   _snippetSelStart = editor.selectionStart;
   _snippetSelEnd = editor.selectionEnd;
-  _setSnippetModalMode(false);
+  _setSnippetModalMode("insert");
   _openSnippetsModalForText(editor.value.slice(_snippetSelStart, _snippetSelEnd));
 }
 
@@ -729,15 +735,27 @@ function openSnippetsModalForInlineEdit(range) {
   if (!range || typeof currentDocContent !== "string") return;
   _snippetSelStart = range.start;
   _snippetSelEnd = range.end;
-  _setSnippetModalMode(true);
+  _setSnippetModalMode("inline-edit");
   _snippetInlineIndent = range.indent || "";
   const selectedText = currentDocContent.slice(_snippetSelStart, _snippetSelEnd);
   _openSnippetsModalForText(selectedText, range.type || null);
 }
 
+function openSnippetsModalForInlineInsert(insertPos) {
+  if (typeof currentDocContent !== "string") return;
+  const pos = Math.max(
+    0,
+    Math.min(currentDocContent.length, Number(insertPos) || 0),
+  );
+  _snippetSelStart = pos;
+  _snippetSelEnd = pos;
+  _setSnippetModalMode("inline-insert");
+  _openSnippetsModalForText("");
+}
+
 function closeSnippetsModal() {
   document.getElementById("snippets-modal").classList.add("hidden");
-  _setSnippetModalMode(false);
+  _setSnippetModalMode("insert");
 }
 
 function snippetTypeChanged() {
@@ -1011,7 +1029,10 @@ function snippetUpdatePreview() {
 
 async function insertSnippet() {
   const type = document.getElementById("snippet-type").value;
-  if (_snippetInlineEdit && (type === "diagram" || type === "attachment")) {
+  if (
+    (_snippetInlineEdit || _snippetInlineInsert) &&
+    (type === "diagram" || type === "attachment")
+  ) {
     return;
   }
   if (type === "diagram") {
@@ -1025,6 +1046,7 @@ async function insertSnippet() {
   }
   const text = buildSnippetMarkdown();
   const wasInlineEdit = _snippetInlineEdit;
+  const wasInlineInsert = _snippetInlineInsert;
   closeSnippetsModal();
   if (wasInlineEdit) {
     const before = currentDocContent.slice(0, _snippetSelStart);
@@ -1034,6 +1056,32 @@ async function insertSnippet() {
     } catch (err) {
       alert(
         window.t("snippet.inline_save_failed") +
+          (err && err.message ? err.message : String(err)),
+      );
+    }
+    return;
+  }
+  if (wasInlineInsert) {
+    const before = currentDocContent.slice(0, _snippetSelStart);
+    const after = currentDocContent.slice(_snippetSelStart);
+    const leadingBlank =
+      before.length === 0 || /\n\n$/.test(before)
+        ? ""
+        : before.endsWith("\n")
+          ? "\n"
+          : "\n\n";
+    const trailingBlank =
+      after.length === 0 || /^\n\n/.test(after)
+        ? ""
+        : after.startsWith("\n")
+          ? "\n"
+          : "\n\n";
+    const payload = leadingBlank + text + trailingBlank;
+    try {
+      await saveCurrentDocumentContent(before + payload + after);
+    } catch (err) {
+      alert(
+        window.t("snippet.inline_insert_failed") +
           (err && err.message ? err.message : String(err)),
       );
     }
