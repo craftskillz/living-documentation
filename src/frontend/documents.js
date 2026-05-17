@@ -60,6 +60,10 @@ function _wireDocContent(html) {
     wrapper.appendChild(t);
   });
 
+  if (typeof initInlineSnippetEditing === "function") {
+    initInlineSnippetEditing(contentEl);
+  }
+
   const notice = document.getElementById("search-notice");
   const isMetaQuery =
     typeof searchQuery === "string" &&
@@ -429,6 +433,44 @@ async function confirmDeleteDocument() {
 }
 
 // ── Save (in-place edit) ─────────────────────────────────────────────────────
+async function saveCurrentDocumentContent(content) {
+  if (!currentDocId) return;
+  const res = await fetch("/api/documents/" + currentDocId, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ content }),
+  });
+  if (!res.ok) throw new Error(await res.text());
+
+  currentDocContent = content;
+
+  // Re-fetch rendered HTML and update view
+  const doc = await fetch("/api/documents/" + currentDocId).then((r) =>
+    r.json(),
+  );
+  _lastDocHtml = doc.html;
+  _lastDocIdRendered = currentDocId;
+  _wireDocContent(doc.html);
+
+  if (typeof applyAnnotationHighlights === "function") {
+    applyAnnotationHighlights();
+  }
+  if (typeof renderElevator === "function") renderElevator();
+
+  const fileLinkMatches = content.match(/\]\(\s*\.?\/files\/[^)\s]+/g);
+  const fileLinkCount = fileLinkMatches ? fileLinkMatches.length : 0;
+  if (fileLinkCount > 0) fileAttachmentCounts[currentDocId] = fileLinkCount;
+  else delete fileAttachmentCounts[currentDocId];
+  refreshSidebar();
+
+  if (typeof updateValidateButtonForCurrentDoc === "function") {
+    updateValidateButtonForCurrentDoc();
+  }
+  if (typeof loadMetadataReport === "function") {
+    loadMetadataReport(currentDocId);
+  }
+}
+
 async function saveDocument() {
   if (!currentDocId) return;
   const content = document.getElementById("doc-editor").value;
@@ -437,31 +479,7 @@ async function saveDocument() {
   msgEl.className = "text-xs text-gray-400";
 
   try {
-    const res = await fetch("/api/documents/" + currentDocId, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content }),
-    });
-    if (!res.ok) throw new Error(await res.text());
-
-    currentDocContent = content;
-
-    // Re-fetch rendered HTML and update view
-    const doc = await fetch("/api/documents/" + currentDocId).then((r) =>
-      r.json(),
-    );
-    _lastDocHtml = doc.html;
-    _lastDocIdRendered = currentDocId;
-    _wireDocContent(doc.html);
-
-    applyAnnotationHighlights();
-    renderElevator();
-
-    const fileLinkMatches = content.match(/\]\(\s*\.?\/files\/[^)\s]+/g);
-    const fileLinkCount = fileLinkMatches ? fileLinkMatches.length : 0;
-    if (fileLinkCount > 0) fileAttachmentCounts[currentDocId] = fileLinkCount;
-    else delete fileAttachmentCounts[currentDocId];
-    refreshSidebar();
+    await saveCurrentDocumentContent(content);
 
     exitEditMode();
   } catch (err) {

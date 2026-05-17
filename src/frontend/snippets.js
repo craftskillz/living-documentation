@@ -6,6 +6,7 @@
 
 let _snippetSelStart = 0;
 let _snippetSelEnd = 0;
+let _snippetInlineEdit = false;
 const _SNIPPET_PANELS = [
   "collapsible",
   "link",
@@ -13,6 +14,7 @@ const _SNIPPET_PANELS = [
   "anchor-link",
   "anchor-doc-link",
   "code-block",
+  "blockquote",
   "image",
   "table",
   "tree",
@@ -626,11 +628,28 @@ async function snippetAnchorDocChanged() {
   snippetUpdatePreview();
 }
 
-function openSnippetsModal() {
-  const editor = document.getElementById("doc-editor");
-  _snippetSelStart = editor.selectionStart;
-  _snippetSelEnd = editor.selectionEnd;
+function _setSnippetModalMode(isInlineEdit) {
+  _snippetInlineEdit = !!isInlineEdit;
+  const title = document.getElementById("snippet-modal-title");
+  if (title) {
+    title.textContent = window.t(
+      _snippetInlineEdit ? "snippet.inline_modal_title" : "snippet.modal_title",
+    );
+  }
+  const submit = document.getElementById("snippet-submit-btn");
+  if (submit) {
+    submit.textContent = window.t(
+      _snippetInlineEdit ? "snippet.inline_save_btn" : "snippet.insert_btn",
+    );
+  }
+  const card = document.getElementById("snippet-modal-card");
+  if (card) {
+    card.classList.toggle("max-w-lg", !_snippetInlineEdit);
+    card.classList.toggle("max-w-5xl", _snippetInlineEdit);
+  }
+}
 
+function _openSnippetsModalForText(selectedText, detectedOverride = null) {
   const docOpts = allDocs
     .map((d) => `<option value="${d.id}">${d.title}</option>`)
     .join("");
@@ -640,13 +659,9 @@ function openSnippetsModal() {
   snippetAnchorDocChanged();
 
   const msgEl = document.getElementById("snippet-detect-msg");
-  const selectedText = editor.value.slice(
-    _snippetSelStart,
-    _snippetSelEnd,
-  );
 
   if (selectedText) {
-    const detected = detectSnippetType(selectedText);
+    const detected = detectedOverride || detectSnippetType(selectedText);
     if (detected) {
       document.getElementById("snippet-type").value = detected;
       snippetTypeChanged();
@@ -688,8 +703,26 @@ function openSnippetsModal() {
   document.getElementById("snippets-modal").classList.remove("hidden");
 }
 
+function openSnippetsModal() {
+  const editor = document.getElementById("doc-editor");
+  _snippetSelStart = editor.selectionStart;
+  _snippetSelEnd = editor.selectionEnd;
+  _setSnippetModalMode(false);
+  _openSnippetsModalForText(editor.value.slice(_snippetSelStart, _snippetSelEnd));
+}
+
+function openSnippetsModalForInlineEdit(range) {
+  if (!range || typeof currentDocContent !== "string") return;
+  _snippetSelStart = range.start;
+  _snippetSelEnd = range.end;
+  _setSnippetModalMode(true);
+  const selectedText = currentDocContent.slice(_snippetSelStart, _snippetSelEnd);
+  _openSnippetsModalForText(selectedText, range.type || null);
+}
+
 function closeSnippetsModal() {
   document.getElementById("snippets-modal").classList.add("hidden");
+  _setSnippetModalMode(false);
 }
 
 function snippetTypeChanged() {
@@ -698,8 +731,17 @@ function snippetTypeChanged() {
     const panel = document.getElementById("snip-panel-" + p);
     if (panel) panel.classList.toggle("hidden", p !== type);
   });
-  const previewWrap = document.getElementById("snippet-preview")?.parentElement;
-  if (previewWrap) previewWrap.classList.toggle("hidden", type === "attachment");
+  const previewWrap = document.getElementById("snippet-preview-wrap");
+  if (previewWrap) {
+    previewWrap.classList.toggle(
+      "hidden",
+      type === "attachment" ||
+        type === "table" ||
+        type === "code-block" ||
+        type === "blockquote" ||
+        type === "tree",
+    );
+  }
 
   if (type === "table") tableInit();
   else if (type === "tree") treeInit();
@@ -843,10 +885,19 @@ function buildSnippetMarkdown() {
       ].join("\n");
     case "code-block": {
       const lang = document.getElementById("snip-code-lang").value || "";
-      return `\`\`\`${lang}\n// code ici\n\`\`\``;
+      const code =
+        document.getElementById("snip-code-content").value || "// code ici";
+      return `\`\`\`${lang}\n${code}\n\`\`\``;
     }
-    case "blockquote":
-      return `> Citation ici\n>\n> — Auteur`;
+    case "blockquote": {
+      const content =
+        document.getElementById("snip-blockquote-content").value ||
+        "Citation ici\n\n— Auteur";
+      return content
+        .split("\n")
+        .map((line) => (line.trim() ? `> ${line}` : ">"))
+        .join("\n");
+    }
     case "separator":
       return `\n---\n`;
     case "image": {
@@ -903,8 +954,11 @@ function snippetUpdatePreview() {
     buildSnippetMarkdown();
 }
 
-function insertSnippet() {
+async function insertSnippet() {
   const type = document.getElementById("snippet-type").value;
+  if (_snippetInlineEdit && (type === "diagram" || type === "attachment")) {
+    return;
+  }
   if (type === "diagram") {
     insertDiagramSnippet();
     return;
@@ -915,7 +969,21 @@ function insertSnippet() {
     return;
   }
   const text = buildSnippetMarkdown();
+  const wasInlineEdit = _snippetInlineEdit;
   closeSnippetsModal();
+  if (wasInlineEdit) {
+    const before = currentDocContent.slice(0, _snippetSelStart);
+    const after = currentDocContent.slice(_snippetSelEnd);
+    try {
+      await saveCurrentDocumentContent(before + text + after);
+    } catch (err) {
+      alert(
+        window.t("snippet.inline_save_failed") +
+          (err && err.message ? err.message : String(err)),
+      );
+    }
+    return;
+  }
   const editor = document.getElementById("doc-editor");
   const before = editor.value.slice(0, _snippetSelStart);
   const after = editor.value.slice(_snippetSelEnd);
@@ -979,6 +1047,22 @@ async function insertDiagramSnippet() {
 }
 
 // ── Snippet parsing (detection lives in /snippet-detect.js) ────────────────
+function _parseMarkdownTableCells(line) {
+  return line
+    .trim()
+    .split("|")
+    .slice(1, -1)
+    .map((cell) => cell.trim());
+}
+
+function _isMarkdownTableSeparatorLine(line) {
+  const cells = _parseMarkdownTableCells(line);
+  return (
+    cells.length > 0 &&
+    cells.every((cell) => /^:?-{3,}:?$/.test(cell.replace(/\s+/g, "")))
+  );
+}
+
 function parseAndFillSnippet(text, type) {
   const t = text.trim();
   switch (type) {
@@ -1066,8 +1150,16 @@ function parseAndFillSnippet(text, type) {
       break;
     }
     case "code-block": {
-      const m = t.match(/^```(\w*)\n/);
-      document.getElementById("snip-code-lang").value = m ? m[1] : "";
+      const m = t.match(/^```\s*([^\n]*)\n([\s\S]*?)\n```$/);
+      document.getElementById("snip-code-lang").value = m ? m[1].trim() : "";
+      document.getElementById("snip-code-content").value = m ? m[2] : "";
+      break;
+    }
+    case "blockquote": {
+      document.getElementById("snip-blockquote-content").value = t
+        .split("\n")
+        .map((line) => line.replace(/^>\s?/, ""))
+        .join("\n");
       break;
     }
     case "image": {
@@ -1083,14 +1175,9 @@ function parseAndFillSnippet(text, type) {
         .split("\n")
         .filter((l) => /^\|.*\|$/.test(l.trim()));
       const dataLines = allLines.filter(
-        (l) => !/^\| *[-: ][-| :]*\|/.test(l),
+        (l) => !_isMarkdownTableSeparatorLine(l),
       );
-      _tableData = dataLines.map((line) =>
-        line
-          .split("|")
-          .slice(1, -1)
-          .map((c) => c.trim()),
-      );
+      _tableData = dataLines.map(_parseMarkdownTableCells);
       const maxCols = Math.max(..._tableData.map((r) => r.length));
       _tableData.forEach((row) => {
         while (row.length < maxCols) row.push("");

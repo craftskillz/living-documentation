@@ -1,5 +1,5 @@
 ---
-**date:** 2026-05-14
+**date:** 2026-05-17
 **status:** Idle
 **description:** Point de reprise partagé entre assistants IA pour suivre la tâche courante, son statut, les fichiers touchés, les vérifications et la prochaine action.
 **tags:** worklog, handoff, progression, reprise, agents-ia
@@ -15,41 +15,43 @@ Idle
 
 ## Tâche courante
 
-Aucune tâche d'implémentation applicative n'est en cours.
+Feature terminée : édition inline des snippets depuis le viewer par clic droit.
 
 ## Dernière action réalisée
 
-Gate de la publication npm sur tous les checks CI :
-
-- `.github/workflows/publish.yml` restructuré en 4 jobs (`test`, `codeql`, `readme-sync`, `publish`). `publish` a `needs: [test, codeql, readme-sync]` — il ne tourne que si les 3 checks réussissent.
-- Les 4 workflows existants (`e2e.yml`, `codeql.yml`, `readme-sync.yml`, `zizmor.yml`) restent en place ; ils continuent de gater les PR et les pushs main ordinaires.
-- ADR `2026_05_14_13_01_[CI]_gate_npm_publish_on_tests_codeql_and_readme_sync` créé via MCP, 1 fichier source attaché (`.github/workflows/publish.yml`).
-
-Tradeoff documenté dans l'ADR : ~140 lignes dupliquées entre `publish.yml` et les workflows standalone. Acceptable, à reconsidérer en reusable workflows si la duplication crée du drift.
-
-Action complémentaire recommandée (hors scope, à faire côté GitHub) : activer une branch protection rule sur `main` exigeant `E2E Tests` + `CodeQL` + `README sync` avant merge. Défense en profondeur (main propre + release propre).
+- Ajout de `src/frontend/inline-snippet-edit.js`, chargé par `index.html`, qui scanne `currentDocContent`, associe les plages Markdown de snippets connus aux éléments HTML rendus et affiche une popup `Edit inline` au clic droit.
+- `src/frontend/snippets.js` expose `openSnippetsModalForInlineEdit(range)` et réutilise la modale Snippets existante en mode inline avec bouton `Save`.
+- `src/frontend/documents.js` expose `saveCurrentDocumentContent(content)` pour partager le chemin de sauvegarde/rerender entre édition classique et édition inline.
+- Ajout des clés i18n EN/FR pour la popup, le titre inline, le bouton Save et l'erreur de sauvegarde.
+- Ajout d'une fixture `with-inline-snippets` et d'un test E2E couvrant `colored-text` et `colored-section`.
+- ADR `2026_05_17_19_11_[SNIPPET]_edition_inline_des_snippets_depuis_le_viewer_par_clic_droit` créé via MCP et attaché à 7 fichiers source avec accuracy 1.
 
 ## Prochaine action recommandée
 
-Aucune action automatique. L'utilisateur peut :
-
-- commit + push `.github/workflows/publish.yml` pour activer le gate au prochain release ;
-- activer la branch protection rule recommandée sur main (action GitHub UI, pas du code) ;
-- ou enchaîner sur une autre tâche.
+Relire le diff, tester manuellement sur un document réel avec clic droit sur un snippet coloré, puis commit si le comportement convient.
 
 ## Fichiers ou zones concernés
 
-- `.github/workflows/publish.yml` (restructuré)
-- `documentation/ADRS/2026_05_14_13_01_[CI]_gate_npm_publish_on_tests_codeql_and_readme_sync.md` (nouveau)
+- `src/frontend/inline-snippet-edit.js`
+- `src/frontend/snippets.js`
+- `src/frontend/documents.js`
+- `src/frontend/index.html`
+- `src/frontend/i18n/en.json`
+- `src/frontend/i18n/fr.json`
+- `tests/e2e/inline-snippet-edit.spec.ts`
+- `tests/fixtures/with-inline-snippets/`
+- `documentation/ADRS/2026_05_17_19_11_[SNIPPET]_edition_inline_des_snippets_depuis_le_viewer_par_clic_droit.md`
+- `documentation/.metadata.json`
 
 ## Vérifications récentes
 
-- YAML structurellement valide : 4 jobs détectés (`test`, `codeql`, `readme-sync`, `publish`), `needs: [test, codeql, readme-sync]` présent sur le job publish, trigger limité aux tags `v*`.
-- Aucun test code à relancer (changement purement CI).
-- ADR créé via MCP, accuracy 1 après attachement.
+- `npm run build` : OK.
+- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts` : OK, 2 tests passés.
+- `npx playwright test tests/e2e/editor.spec.ts` : OK, 2 tests passés.
+- Après ajustement anti-duplication de listener, relance combinée `npx playwright test tests/e2e/inline-snippet-edit.spec.ts tests/e2e/editor.spec.ts` : OK, 4 tests passés.
 
 ## Notes de reprise
 
 Convention rappel : ce worklog n'est pas un ADR. Y consigner uniquement l'état opérationnel.
 
-À surveiller au prochain release : si `just publish` continue de pousser commit + tag séparément, les workflows standalone tourneront sur le commit main puis `publish.yml` tournera sur le tag avec ses 3 checks dupliqués. C'est attendu. Si la procédure de release évolue (changelog auto, plusieurs commits avant le tag, etc.), revisiter le `HEAD~1` du job `readme-sync` dans `publish.yml`.
+Limite connue : la correspondance Markdown vers HTML est heuristique et ordonnée, pas une source map exacte. Les snippets canoniques générés par la modale sont la cible principale.

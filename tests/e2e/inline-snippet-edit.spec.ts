@@ -1,0 +1,148 @@
+import fs from 'fs';
+import path from 'path';
+import { test, expect } from '../helpers/ld-fixture';
+
+test.describe('inline snippet editing from viewer', () => {
+  test.use({ fixtureName: 'with-inline-snippets' });
+
+  const docId = '2026_01_01_10_00_[General]_inline_snippets';
+
+  test('right-click on colored text opens snippet editor and saves to markdown', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content span[style*="color"]').click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup')).toBeVisible();
+    await page.locator('#inline-snippet-popup button').click();
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await expect(page.locator('#snippet-modal-title')).toHaveText('Edit inline snippet');
+    await expect(page.locator('#snippet-type')).toHaveValue('colored-text');
+    await expect(page.locator('#snip-colored-text-content')).toHaveValue('old inline text');
+
+    await page.locator('#snip-colored-text-content').fill('new inline text');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content span[style*="color"]')).toContainText('new inline text');
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain('<span style="color:#3b82f6;">new inline text</span>');
+    expect(onDisk).not.toContain('old inline text');
+  });
+
+  test('right-click on colored section opens snippet editor and saves block content', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content div[style*="border-left"]').click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup')).toBeVisible();
+    await page.locator('#inline-snippet-popup button').click();
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await expect(page.locator('#snippet-type')).toHaveValue('colored-section');
+    await expect(page.locator('#snip-colored-content')).toHaveValue('Old section body');
+
+    await page.locator('#snip-colored-content').fill('New section body');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content div[style*="border-left"]')).toContainText('New section body');
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain('New section body');
+    expect(onDisk).not.toContain('Old section body');
+  });
+
+  test('right-click on table captures header, data rows, and empty cells', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content table').click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup')).toBeVisible();
+    await page.locator('#inline-snippet-popup button').click();
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await expect(page.locator('#snippet-type')).toHaveValue('table');
+    await expect(page.locator('#snippet-preview-wrap')).toBeHidden();
+    const cardWidth = await page.locator('#snippet-modal-card').evaluate((el) => {
+      return el.getBoundingClientRect().width;
+    });
+    expect(cardWidth).toBeGreaterThan(800);
+    await expect(page.locator('#snip-table-rows')).toHaveText('5');
+    await expect(page.locator('#snip-table-cols')).toHaveText('3');
+
+    const cells = page.locator('#snip-table-grid input');
+    await expect(cells).toHaveCount(15);
+    await expect(cells.nth(0)).toHaveValue('En-tête 1');
+    await expect(cells.nth(3)).toHaveValue('a');
+    await expect(cells.nth(6)).toHaveValue('d');
+    await expect(cells.nth(9)).toHaveValue('s');
+    await expect(cells.nth(10)).toHaveValue('');
+    await expect(cells.nth(12)).toHaveValue('');
+    await expect(cells.nth(13)).toHaveValue('s');
+
+    await cells.nth(14).fill('updated');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content table')).toContainText('updated');
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain('|           | s         | updated   |');
+    expect(onDisk).not.toContain('|           | s         |           |');
+  });
+
+  test('right-click on code block captures language and editable code content', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content pre').click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup')).toBeVisible();
+    await page.locator('#inline-snippet-popup button').click();
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await expect(page.locator('#snippet-type')).toHaveValue('code-block');
+    await expect(page.locator('#snippet-preview-wrap')).toBeHidden();
+    await expect(page.locator('#snip-code-lang')).toHaveValue('javascript');
+    await expect(page.locator('#snip-code-content')).toHaveValue('console.log("Hello World!");');
+
+    await page.locator('#snip-code-content').fill('console.log("Updated!");');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content pre')).toContainText('Updated!');
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain('```javascript\nconsole.log("Updated!");\n```');
+    expect(onDisk).not.toContain('console.log("Hello World!");');
+  });
+
+  test('right-click on blockquote captures editable quote content', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content blockquote').click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup')).toBeVisible();
+    await page.locator('#inline-snippet-popup button').click();
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await expect(page.locator('#snippet-type')).toHaveValue('blockquote');
+    await expect(page.locator('#snippet-preview-wrap')).toBeHidden();
+    await expect(page.locator('#snip-blockquote-content')).toHaveValue(
+      'Existing quote\n\n— Existing author',
+    );
+
+    await page
+      .locator('#snip-blockquote-content')
+      .fill('Updated quote\n\n— Updated author');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content blockquote')).toContainText('Updated quote');
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain('> Updated quote\n>\n> — Updated author');
+    expect(onDisk).not.toContain('Existing quote');
+  });
+});

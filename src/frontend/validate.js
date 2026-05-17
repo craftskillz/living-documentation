@@ -5,9 +5,10 @@
 // below 100%, the confirmation modal also warns that source-file hashes will be
 // re-baselined, and POST /api/metadata/:id/refresh is called after the PUT.
 
-// Frontmatter on this project is a `---`-fenced block of `**key:** value` lines
-// (not standard YAML). The status line is the only field this module touches.
-const _STATUS_LINE_RE = /^(\*\*status:\*\*\s*).+?\s*$/m;
+// Frontmatter may use this project's historical `**key:** value` convention or
+// regular YAML-style `key: value` lines. The status line is the only field this
+// module touches.
+const _STATUS_LINE_RE = /^(\s*(?:\*\*status:\*\*|status:)\s*).+?\s*$/im;
 
 function isWorklogDocument(docId) {
   if (/%5BWORKLOG%5D/i.test(docId)) return true;
@@ -18,7 +19,7 @@ function getDocStatus(content) {
   if (typeof content !== "string") return null;
   const fence = content.match(/^---\s*\n([\s\S]*?)\n---/);
   if (!fence) return null;
-  const m = fence[1].match(/^\*\*status:\*\*\s*(.+?)\s*$/m);
+  const m = fence[1].match(/^\s*(?:\*\*status:\*\*|status:)\s*(.+?)\s*$/im);
   return m ? m[1].trim() : null;
 }
 
@@ -32,7 +33,7 @@ function updateValidateButtonForCurrentDoc() {
   const status = getDocStatus(
     typeof currentDocContent !== "undefined" ? currentDocContent : "",
   );
-  if (status.toUpperCase() === "TO BE VALIDATED") {
+  if (status && status.toUpperCase() === "TO BE VALIDATED") {
     btn.classList.remove("hidden");
   } else {
     btn.classList.add("hidden");

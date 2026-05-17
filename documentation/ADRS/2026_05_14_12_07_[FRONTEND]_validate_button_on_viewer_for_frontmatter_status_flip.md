@@ -1,8 +1,8 @@
 ---
 **date:** 2026-05-14
 **status:** Accepted
-**description:** Le viewer expose un bouton « Valider » vert dans la toolbar juste avant le bouton Marqueur, visible uniquement si le frontmatter contient `**status:** To be validated`, qui flippe le statut à `Accepted` via PUT /api/documents/:id puis appelle POST /api/metadata/:id/refresh quand la jauge d'accuracy est inférieure à 100 % après confirmation d'une modale dont le `detail` est conditionnel.
-**tags:** viewer, frontmatter, status, validate, accuracy, refresh-metadata, confirm-modal, i18n, adr-lifecycle, toolbar
+**description:** Le viewer expose un bouton « Valider » vert dans la toolbar juste avant le bouton Marqueur, visible uniquement si le frontmatter contient un statut `To be validated` sous forme `**status:**` ou `status:`, puis flippe ce statut à `Accepted` via PUT /api/documents/:id et rafraîchit les métadonnées si la fiabilité est dégradée.
+**tags:** viewer, frontmatter, status, yaml, validate, accuracy, refresh-metadata, confirm-modal, i18n, adr-lifecycle, toolbar
 ---
 
 # Bouton « Valider » dans le viewer pour basculer le frontmatter
@@ -15,11 +15,15 @@ Le frontmatter des ADR portait un champ `**status:** To be validated` qui devait
 - pas de garde-fou contre la promotion d'un ADR dont la jauge de fiabilité est dégradée — l'humain pouvait « accepter » un ADR dont les hashes source étaient déjà drifted, gelant ainsi un mensonge dans l'historique ;
 - pas de point d'entrée visuel rappelant que la promotion est attendue.
 
+Certains documents utilisent cependant un frontmatter Markdown/YAML standard (`status: Accepted`) ou aucun frontmatter. Le viewer ne doit jamais échouer au chargement d'un document parce que le statut est absent ou écrit dans cette forme standard.
+
 ## Décision
 
 ### 1. Bouton « Valider » conditionnellement visible
 
-Insertion dans la toolbar `#view-actions` de [src/frontend/index.html](src/frontend/index.html), **juste avant** `#stabilo-btn`. Visibilité gérée par `updateValidateButtonForCurrentDoc()` (toggle de la classe `hidden`) appelée à chaque `openDocument()`. Critère : le frontmatter parsé du `currentDocContent` doit contenir `**status:** To be validated`.
+Insertion dans la toolbar `#view-actions` de [src/frontend/index.html](src/frontend/index.html), **juste avant** `#stabilo-btn`. Visibilité gérée par `updateValidateButtonForCurrentDoc()` (toggle de la classe `hidden`) appelée à chaque `openDocument()`. Critère : le frontmatter parsé du `currentDocContent` doit contenir un statut `To be validated`, que la ligne soit écrite `**status:** To be validated` ou `status: To be validated`.
+
+Si le document n'a pas de frontmatter, ou si aucun champ `status` n'est reconnu, `getDocStatus()` retourne `null` et le bouton reste simplement masqué. Ce cas est neutre : il ne doit pas bloquer le rendu du document.
 
 Le style est explicitement marquant — `bg-green-600 hover:bg-green-700 text-white font-semibold` + icône `fa-check` — pour signaler qu'une action durable est attendue. Le bouton reste invisible quand `view-actions` lui-même est masqué (mode édition).
 
@@ -32,14 +36,19 @@ La séquence est :
 1. fetch accuracy ;
 2. construit `detail` si `accuracy < 1` ;
 3. `showConfirm()` → si annulé, abort sans aucune écriture ;
-4. flip de `**status:** To be validated` → `**status:** Accepted` dans `currentDocContent` ;
+4. flip du statut `To be validated` → `Accepted` dans `currentDocContent`, en conservant le style de ligne (`**status:**` ou `status:`) ;
 5. `PUT /api/documents/:id` ;
 6. `POST /api/metadata/:id/refresh` **seulement si** `accuracy` était < 1 (l'évite quand la jauge est déjà à 100 %) ;
 7. `openDocument(id, true)` pour recharger le doc et la jauge.
 
 ### 3. Parsing minimal du frontmatter côté client
 
-Le frontmatter de ce projet n'est pas du YAML standard — c'est un bloc fencé par `---` contenant des lignes `**clef:** valeur`. Plutôt qu'introduire un parser YAML côté navigateur, `validate.js` expose `getDocStatus(content)` qui regex le bloc fencé puis la ligne `**status:**`. Idempotent et borné aux quelques lignes du frontmatter.
+`validate.js` expose `getDocStatus(content)` qui regex le bloc fencé `---` puis la ligne de statut. Le parser reste volontairement limité au champ `status`, mais il accepte deux conventions présentes dans le projet :
+
+- `**status:** Accepted` pour les documents créés selon la convention Living Documentation ;
+- `status: Accepted` pour le frontmatter Markdown/YAML standard.
+
+Le remplacement utilise la même regex et préserve le préfixe trouvé. Un document sans frontmatter ou sans statut ne produit pas d'erreur : le bouton est caché.
 
 ### 4. i18n strict
 
@@ -55,12 +64,13 @@ Le PUT documents et le POST metadata/refresh existaient déjà. La feature est p
 
 - Promotion d'un ADR en un seul clic + confirmation, sans passer par le mode édition.
 - Garde-fou explicite contre la promotion d'un ADR avec metadata drifted : la modale rend visible la conséquence du clic.
-- Aucun changement backend ; la feature peut être désactivée en retirant `<script defer src="/validate.js">` et le bouton, sans risque de régression sur les routes existantes.
-- Couvert par un spec Playwright dédié (`tests/e2e/validate.spec.ts`) avec une fixture isolée portant trois ADR (Accepted / pristine TBV / drifted TBV) — 5 tests verts.
+- Les documents en frontmatter YAML standard ou sans frontmatter restent chargeables ; l'absence de statut cache le bouton au lieu de casser le viewer.
+- Aucun changement backend dédié à l'action de validation ; la feature peut être désactivée en retirant `<script defer src="/validate.js">` et le bouton, sans risque de régression sur les routes existantes.
+- Couvert par un spec Playwright dédié (`tests/e2e/validate.spec.ts`) avec une fixture isolée portant sept cas : Accepted, pristine TBV, drifted TBV, YAML TBV, YAML Accepted, document sans frontmatter et annulation.
 
 ### CONS
 
-- Le parser regex de frontmatter est minimaliste : un ADR avec une ligne `**status:**` commentée ou en double pourrait être mal interprété. Acceptable tant que la convention de frontmatter est respectée.
+- Le parser regex de frontmatter est minimaliste : une ligne `status` commentée ou en double pourrait être mal interprétée. Acceptable tant que le statut reste une ligne simple dans le bloc frontmatter.
 - Les deux appels client (PUT puis POST refresh) ne sont pas atomiques. Mitigation : voir point 5.
 - La feature suppose que `showConfirm` n'accepte que du texte (pas de HTML) ; le `detail` est donc un paragraphe brut, sans mise en forme. Suffisant pour l'usage actuel ; à reconsidérer si on veut ajouter un lien vers la modale métadonnées.
 - Aucun équivalent côté MCP : l'agent IA qui valide un ADR doit toujours passer par `update_document` + `refresh_metadata` manuellement. Cohérent avec le fait que la décision de validation est un acte humain.

@@ -1,0 +1,31 @@
+---
+**date:** 2026-01-01
+**status:** Accepted
+**description:** Fixture document containing snippets that are editable from rendered view mode.
+**tags:** test, snippets, inline-edit
+---
+
+# Inline Snippets
+
+This sentence contains <span style="color:#3b82f6;">old inline text</span> for editing.
+
+<div style="background:#eff6ff;border-left:4px solid #3b82f6;color:#1e3a5f;padding:1rem 1.25rem;border-radius:0.375rem;margin:1rem 0;">
+
+Old section body
+
+</div>
+
+| En-tête 1 | En-tête 2 | En-tête 3 |
+| --------- | --------- | --------- |
+| a         | b         | c         |
+| d         | e         | f         |
+| s         |           |           |
+|           | s         |           |
+
+``` javascript
+console.log("Hello World!");
+```
+
+> Existing quote
+>
+> — Existing author

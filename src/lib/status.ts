@@ -9,7 +9,7 @@ import fs from "fs";
 import path from "path";
 import { readConfig } from "./config";
 
-const STATUS_LINE_RE = /^\*\*status:\*\*\s*(.+?)\s*$/m;
+const STATUS_LINE_RE = /^\s*(?:\*\*status:\*\*|status:)\s*(.+?)\s*$/im;
 const FRONTMATTER_FENCE_RE = /^---\s*\n([\s\S]*?)\n---/;
 
 export function parseDocStatus(content: string): string | null {

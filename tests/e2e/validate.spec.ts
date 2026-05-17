@@ -6,15 +6,29 @@ test.describe('validate button', () => {
   test.use({ fixtureName: 'with-validate-status' });
 
   test('hidden on documents whose frontmatter status is not "To be validated"', async ({ page, ld }) => {
-    await page.goto(ld.baseURL);
-    await page.locator('#category-tree').getByText('Already Accepted', { exact: true }).click();
+    const docId = '2026_01_03_10_00_[ADR]_already_accepted';
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await expect(page.locator('#doc-title')).toHaveText('Already Accepted');
     await expect(page.locator('#validate-btn')).toBeHidden();
   });
 
+  test('documents with YAML-style status or no frontmatter load without showing validate action unless pending', async ({ page, ld }) => {
+    const yamlAcceptedDocId = '2026_01_05_10_00_[ADR]_yaml_accepted';
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(yamlAcceptedDocId)}`);
+    await expect(page.locator('#doc-title')).toHaveText('Yaml Accepted');
+    await expect(page.locator('#doc-content')).not.toContainText('Cannot read properties');
+    await expect(page.locator('#validate-btn')).toBeHidden();
+
+    const plainDocId = '2026_01_06_10_00_[General]_plain_document';
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(plainDocId)}`);
+    await expect(page.locator('#doc-title')).toHaveText('Plain Document');
+    await expect(page.locator('#doc-content')).not.toContainText('Cannot read properties');
+    await expect(page.locator('#validate-btn')).toBeHidden();
+  });
+
   test('visible and green on a "To be validated" document', async ({ page, ld }) => {
-    await page.goto(ld.baseURL);
-    await page.locator('#category-tree').getByText('To Be Validated Pristine', { exact: true }).click();
+    const docId = '2026_01_01_10_00_[ADR]_to_be_validated_pristine';
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     const btn = page.locator('#validate-btn');
     await expect(btn).toBeVisible();
     await expect(btn).toContainText('Validate');
@@ -42,6 +56,22 @@ test.describe('validate button', () => {
     const fileAfter = fs.readFileSync(docPath, 'utf-8');
     expect(fileAfter).toContain('**status:** Accepted');
     expect(fileAfter).not.toContain('**status:** To be validated');
+  });
+
+  test('on YAML-style "To be validated" frontmatter: confirm flips status in place', async ({ page, ld }) => {
+    const docId = '2026_01_04_10_00_[ADR]_yaml_to_be_validated';
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await expect(page.locator('#validate-btn')).toBeVisible();
+    await page.locator('#validate-btn').click();
+    await page.locator('#confirm-modal-ok').click();
+
+    await expect(page.locator('#validate-btn')).toBeHidden();
+
+    const fileAfter = fs.readFileSync(docPath, 'utf-8');
+    expect(fileAfter).toContain('status: Accepted');
+    expect(fileAfter).not.toContain('status: To be validated');
   });
 
   test('on <100% reliability: modal warns, confirm flips status and re-baselines hashes', async ({ page, ld }) => {

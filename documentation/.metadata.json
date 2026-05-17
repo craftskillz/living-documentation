@@ -304,7 +304,7 @@
   "ADRS/2026_05_14_12_07_[FRONTEND]_validate_button_on_viewer_for_frontmatter_status_flip": [
     {
       "path": "src/frontend/validate.js",
-      "hash": "89225b2a7bcdca226895dfd053c0ea8b68a222641d26597832a35dca81215e1f"
+      "hash": "2092c4e34c97f5e2cbeb903ab7f25fed926a8772b9f01acb03227e5c91b8cf34"
     },
     {
       "path": "src/frontend/documents.js",
@@ -312,13 +312,13 @@
     },
     {
       "path": "tests/e2e/validate.spec.ts",
-      "hash": "ce0284b0b1b82bef2f7d1039e3aa817ef05df9a45e78c4ee558653bcf0782e63"
+      "hash": "a8b0a7d00d64eb985c4ef44d0c4840f4270c1ca8258ae207f29445a69b0eca2f"
     }
   ],
   "ADRS/2026_05_14_12_29_[METADATA]_read_only_metadata_for_superseeded_documents": [
     {
       "path": "src/lib/status.ts",
-      "hash": "df368aba3c270839cb837b173edd5492d0bfd27747f2f70f80d6cebcb68997e7"
+      "hash": "65115a2b913adea5afa830c92ee8b82ac32ba9b274bf4563f753f3ddab2fdb48"
     },
     {
       "path": "src/routes/metadata.ts",
@@ -349,6 +349,36 @@
     {
       "path": ".github/workflows/publish.yml",
       "hash": "8e6afbb35b461d938ea96fe94dc53ded211e69c395536074ad5477b6b0e5f3b5"
+    }
+  ],
+  "ADRS/2026_05_17_19_11_[SNIPPET]_edition_inline_des_snippets_depuis_le_viewer_par_clic_droit": [
+    {
+      "path": "src/frontend/inline-snippet-edit.js",
+      "hash": "498a3836e5e2fbc2488a65d2333642a8be7ae404bb3fcecdc9c86bb0b5872317"
+    },
+    {
+      "path": "src/frontend/snippets.js",
+      "hash": "9f7f86646a782d8e76bf5ea86c8de89979577dba3ef9e88979c79c23fe14e89b"
+    },
+    {
+      "path": "src/frontend/documents.js",
+      "hash": "077fe4e73a1faa94a968394e530e88ba800d76cb4146b2c5890498c49f6beb25"
+    },
+    {
+      "path": "src/frontend/index.html",
+      "hash": "55000f0eccea9abd37b4d5eed9fdf81f3294a3ccc38ad5c9f8db22944ba261ff"
+    },
+    {
+      "path": "src/frontend/i18n/en.json",
+      "hash": "6b296bf9074c74caa18489ba9a281161b2f458ef955c1992ebb4c4938af0332d"
+    },
+    {
+      "path": "src/frontend/i18n/fr.json",
+      "hash": "465415e6f8c0cb71b959fec4dab53e28359145af9a2ea7eae349a7b1eef0d395"
+    },
+    {
+      "path": "tests/e2e/inline-snippet-edit.spec.ts",
+      "hash": "399d2883d5edad573e495f542535f43bc48bdb205dc893cee095571756965f9f"
     }
   ]
 }

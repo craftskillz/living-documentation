@@ -1,8 +1,8 @@
 ---
 **date:** 2026-05-14
 **status:** Accepted
-**description:** Les trois mutations de métadonnées (POST add, DELETE remove, POST refresh) — exposées à la fois par les routes HTTP `/api/metadata/:docId` et par les outils MCP `add_metadata`, `remove_metadata`, `refresh_metadata` — rejettent désormais via un guard centralisé `assertNotSuperSeeded` quand le document a `**status:** SuperSeeded` dans son frontmatter, et la popup métadonnées du viewer cache les trois contrôles correspondants plus affiche un bandeau amber « Lecture seule ».
-**tags:** metadata, superseded, read-only, lifecycle, adr-history, frontmatter, status, viewer, routes, mcp-tools, guard
+**description:** Les trois mutations de métadonnées (POST add, DELETE remove, POST refresh) — exposées par les routes HTTP `/api/metadata/:docId` et les outils MCP `add_metadata`, `remove_metadata`, `refresh_metadata` — rejettent via `assertNotSuperSeeded` quand le frontmatter contient un statut `SuperSeeded` sous forme `**status:**` ou `status:`, et la popup métadonnées cache les contrôles mutatifs avec un bandeau amber « Lecture seule ».
+**tags:** metadata, superseded, read-only, lifecycle, adr-history, frontmatter, status, yaml, viewer, routes, mcp-tools, guard
 ---
 
 # Métadonnées en lecture seule pour les documents SuperSeeded
@@ -15,13 +15,15 @@ Le risque concret : un humain (ou un agent IA) qui veut « nettoyer » la liste 
 
 Deux surfaces d'attaque coexistent : la couche HTTP (UI viewer, curl, scripts) et la couche MCP (outils `add_metadata`, `remove_metadata`, `refresh_metadata`). Les outils MCP appellent **directement** `setDocEntries()` depuis [src/lib/metadata.ts](src/lib/metadata.ts) sans passer par les routes HTTP. Une garde uniquement côté HTTP serait donc contournable par n'importe quel agent IA qui parle MCP.
 
+Les documents du projet peuvent contenir le statut sous deux formes : la convention Living Documentation `**status:** SuperSeeded` et la forme YAML standard `status: SuperSeeded`. Les deux doivent déclencher le même gel des métadonnées.
+
 ## Décision
 
 ### 1. Guard centralisé dans `lib/status.ts`
 
-[src/lib/status.ts](src/lib/status.ts) (nouveau) expose :
+[src/lib/status.ts](src/lib/status.ts) expose :
 
-- `parseDocStatus(content)` — extrait la valeur du champ `**status:**` dans le bloc fencé `---`.
+- `parseDocStatus(content)` — extrait la valeur du champ `status` dans le bloc fencé `---`, que la ligne soit écrite `**status:** valeur` ou `status: valeur`.
 - `readDocStatus(docsPath, decodedDocId, extraFiles)` — résout l'id de document vers son chemin `.md` (en respectant `extraFiles` et la garde anti path-traversal), lit le fichier et retourne le statut.
 - constante `SUPERSEEDED_STATUS = "SuperSeeded"`.
 - classe `DocumentSuperSeededError` (avec `code = "DOCUMENT_SUPERSEEDED"`) pour que les callers distinguent une erreur de cycle de vie d'une erreur générique.
@@ -57,7 +59,7 @@ Les tools MCP propagent les `throw` ; le wrapper de `src/mcp/server.ts` les conv
 - le bouton `#metadata-add-btn` (nouveau id sur le bouton existant) ;
 - chaque icône corbeille `.metadata-row-remove` générée dynamiquement.
 
-Le statut est lu côté client via le helper déjà exposé `window.getDocStatus(currentDocContent)` — pas de nouvel appel réseau. Re-appel après chaque re-rendu de la liste pour que les rows générées après un fetch restent cohérentes.
+Le statut est lu côté client via le helper déjà exposé `window.getDocStatus(currentDocContent)` — pas de nouvel appel réseau. Re-appel après chaque re-rendu de la liste pour que les rows générées après un fetch restent cohérentes. Ce helper accepte les mêmes deux formes de statut que `src/lib/status.ts`.
 
 ### 5. Bandeau d'information
 
@@ -79,6 +81,7 @@ Ce qu'il **ne peut plus** faire est cantonné aux 3 mutations. La défense en pr
 
 - L'historique des ADR SuperSeeded est protégé contre les altérations bien intentionnées (re-baseline pour « nettoyer » la jauge) comme contre les altérations accidentelles, **quelle que soit la surface d'API utilisée**.
 - Guard centralisé via `lib/status.ts` : un seul endroit à maintenir, deux callers consommateurs (HTTP et MCP) partagent la même source de vérité. Si un nouveau cycle de vie émerge (`Deprecated`, par exemple), l'extension est triviale.
+- Les documents écrits en frontmatter YAML standard ne contournent pas la lecture seule si leur statut est `SuperSeeded`.
 - Cohérent avec le cycle de vie ADR du projet : `To be validated` → `Accepted` → `SuperSeeded` (gelé). Le bouton « Valider » de l'autre ADR récent gère la première transition ; cette feature gère la dernière.
 - Couvert par 4 tests API HTTP (`tests/api/metadata.spec.ts`), 4 tests API MCP (`tests/api/mcp.spec.ts`) et 2 tests E2E (`tests/e2e/metadata.spec.ts`) sur la fixture `with-metadata` étendue d'un ADR SuperSeeded.
 - La classe `DocumentSuperSeededError` permet aux futurs callers de distinguer une rejection de cycle de vie d'une autre erreur (path invalide, fichier absent, etc.) sans parser des messages.
