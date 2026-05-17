@@ -354,11 +354,11 @@
   "ADRS/2026_05_17_19_11_[SNIPPET]_edition_inline_des_snippets_depuis_le_viewer_par_clic_droit": [
     {
       "path": "src/frontend/inline-snippet-edit.js",
-      "hash": "498a3836e5e2fbc2488a65d2333642a8be7ae404bb3fcecdc9c86bb0b5872317"
+      "hash": "6435f010776a0bdc5f8c5e640fb65ee78d24afbb23541b6cb390fbae3b1c9c93"
     },
     {
       "path": "src/frontend/snippets.js",
-      "hash": "9f7f86646a782d8e76bf5ea86c8de89979577dba3ef9e88979c79c23fe14e89b"
+      "hash": "9053fdb17e05c06ae8e558511cfe01244859030502d03923dc47c62ddc29ef73"
     },
     {
       "path": "src/frontend/documents.js",
@@ -366,19 +366,51 @@
     },
     {
       "path": "src/frontend/index.html",
-      "hash": "55000f0eccea9abd37b4d5eed9fdf81f3294a3ccc38ad5c9f8db22944ba261ff"
+      "hash": "32b20cb15b01d7a8497e211609bedf49ac31e7f7c7a5855e6fe3e911fc2e8e4a"
     },
     {
       "path": "src/frontend/i18n/en.json",
-      "hash": "6b296bf9074c74caa18489ba9a281161b2f458ef955c1992ebb4c4938af0332d"
+      "hash": "fcccae0f1713c889d7f4de38ed39e24dc80f682ce09d0fe7a4fec809175dad65"
     },
     {
       "path": "src/frontend/i18n/fr.json",
-      "hash": "465415e6f8c0cb71b959fec4dab53e28359145af9a2ea7eae349a7b1eef0d395"
+      "hash": "5c29bc4b46cf43d06d1adf84905089c4346a7e08566e87e457038944dd349b66"
     },
     {
       "path": "tests/e2e/inline-snippet-edit.spec.ts",
-      "hash": "399d2883d5edad573e495f542535f43bc48bdb205dc893cee095571756965f9f"
+      "hash": "d62f5d8865976e2df4690f2d551b3c12e85f4775fdb78fb9838de2e5befc5f72"
+    },
+    {
+      "path": "src/frontend/snippet-detect.js",
+      "hash": "6826166df5696bb280272e3d483c434c259aef6718f1f4946d272228b472d167"
+    }
+  ],
+  "1_tutorial/2026_04_12_10_00_[General]_utiliser_les_snippets": [
+    {
+      "path": "src/frontend/snippets.js",
+      "hash": "9053fdb17e05c06ae8e558511cfe01244859030502d03923dc47c62ddc29ef73"
+    },
+    {
+      "path": "src/frontend/inline-snippet-edit.js",
+      "hash": "6435f010776a0bdc5f8c5e640fb65ee78d24afbb23541b6cb390fbae3b1c9c93"
+    },
+    {
+      "path": "src/frontend/index.html",
+      "hash": "32b20cb15b01d7a8497e211609bedf49ac31e7f7c7a5855e6fe3e911fc2e8e4a"
+    }
+  ],
+  "4_reference/2026_04_09_03_00_[REFERENCE]_types_de_snippets": [
+    {
+      "path": "src/frontend/snippets.js",
+      "hash": "9053fdb17e05c06ae8e558511cfe01244859030502d03923dc47c62ddc29ef73"
+    },
+    {
+      "path": "src/frontend/inline-snippet-edit.js",
+      "hash": "6435f010776a0bdc5f8c5e640fb65ee78d24afbb23541b6cb390fbae3b1c9c93"
+    },
+    {
+      "path": "src/frontend/index.html",
+      "hash": "32b20cb15b01d7a8497e211609bedf49ac31e7f7c7a5855e6fe3e911fc2e8e4a"
     }
   ]
 }

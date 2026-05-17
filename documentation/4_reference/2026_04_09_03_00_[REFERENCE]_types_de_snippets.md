@@ -1,6 +1,6 @@
 ## Types de snippets disponibles
 
-Les snippets sont accessibles en mode édition via le bouton **`🧩 Snippets`**. Voici la liste exhaustive.
+Les snippets sont accessibles en mode édition via le bouton **`🧩 Snippets`**. Certains snippets rendus sont aussi modifiables depuis le viewer avec un clic droit.
 
 ---
 
@@ -18,8 +18,8 @@ Les snippets sont accessibles en mode édition via le bouton **`🧩 Snippets`**
 | **Bloc de code**           | Bloc de code avec langage                                | ` ```langage\ncode\n``` `                                     |
 | **Citation**               | Bloc blockquote                                          | `> Texte de la citation`                                      |
 | **Séparateur**             | Ligne horizontale                                        | `---`                                                         |
-| **Liste numérotée**        | Liste ordonnée à 3 niveaux d'imbrication                 | `1. item\n   1. sous-item\n      1. sous-sous-item`           |
-| **Liste à puces**          | Liste non ordonnée à 3 niveaux d'imbrication             | `- item\n   - sous-item\n      - sous-sous-item`              |
+| **Liste numérotée**        | Liste ordonnée à plusieurs niveaux d'imbrication         | `1. item\n   1. sous-item\n      1. sous-sous-item`           |
+| **Liste à puces**          | Liste non ordonnée à plusieurs niveaux d'imbrication     | `- item\n   - sous-item\n      - sous-sous-item`              |
 
 ---
 
@@ -32,6 +32,7 @@ Ouvre une grille interactive dans le panneau Snippets.
 - Définissez le nombre de colonnes et de lignes
 - Remplissez les cellules dans l'interface
 - Génère un tableau Markdown correctement aligné
+- En édition inline, les cellules vides sont conservées et la grille reprend tout le tableau détecté
 
 ```markdown
 | Col 1  | Col 2  | Col 3  |
@@ -56,13 +57,37 @@ racine/
     └── fichier-3.md
 ```
 
+#### Texte coloré et section colorée
+
+Ces snippets utilisent des champs couleur/contenu dédiés. En édition inline, l'aperçu Markdown est masqué : les champs de formulaire sont la représentation modifiable.
+
 ---
 
-### Mode détection
+### Mode détection dans le textarea
 
 Si vous **sélectionnez** du texte dans le textarea avant d'ouvrir le panneau Snippets, l'outil tente de reconnaître le type de snippet :
 
 - **Message vert** : snippet reconnu, champs pré-remplis → modifiez et réinsérez
 - **Message orange** : sélection non reconnue, panneau vide → créez un nouveau snippet
 
-Snippets détectables : bloc dépliable, lien, image, image liée, bloc de code, citation, tableau, liste.
+Snippets détectables : bloc dépliable, lien, image, image liée, bloc de code, citation, tableau, liste, texte coloré, section colorée, arborescence.
+
+---
+
+### Édition inline depuis le viewer
+
+En mode lecture, un clic droit sur un snippet rendu peut proposer **`Édition inline`**. La modale Snippets s'ouvre alors sur le type détecté, avec la selectbox de type verrouillée.
+
+Types actuellement éditables inline :
+
+- tableau ;
+- bloc de code ;
+- citation ;
+- liste numérotée ;
+- liste à puces ;
+- arborescence ;
+- texte coloré ;
+- section colorée ;
+- liens, images, séparateurs et blocs dépliables reconnus par le mapping inline.
+
+La modale inline permet aussi **`Supprimer le bloc`** après confirmation. La suppression retire la plage Markdown source détectée, pas seulement l'élément HTML affiché.

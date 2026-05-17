@@ -18,6 +18,8 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-modal-title')).toHaveText('Edit inline snippet');
     await expect(page.locator('#snippet-type')).toHaveValue('colored-text');
+    await expect(page.locator('#snippet-type')).toBeDisabled();
+    await expect(page.locator('#snippet-preview-wrap')).toBeHidden();
     await expect(page.locator('#snip-colored-text-content')).toHaveValue('old inline text');
 
     await page.locator('#snip-colored-text-content').fill('new inline text');
@@ -41,6 +43,7 @@ test.describe('inline snippet editing from viewer', () => {
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-type')).toHaveValue('colored-section');
+    await expect(page.locator('#snippet-preview-wrap')).toBeHidden();
     await expect(page.locator('#snip-colored-content')).toHaveValue('Old section body');
 
     await page.locator('#snip-colored-content').fill('New section body');
@@ -144,5 +147,98 @@ test.describe('inline snippet editing from viewer', () => {
     const onDisk = fs.readFileSync(docPath, 'utf-8');
     expect(onDisk).toContain('> Updated quote\n>\n> — Updated author');
     expect(onDisk).not.toContain('Existing quote');
+  });
+
+  test('right-click on unordered list captures editable item content', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content ul').first().click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup')).toBeVisible();
+    await page.locator('#inline-snippet-popup button').click();
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await expect(page.locator('#snippet-type')).toHaveValue('unordered-list');
+    await expect(page.locator('#snippet-preview-wrap')).toBeHidden();
+    await expect(page.locator('#snip-unordered-list-content')).toHaveValue(
+      'First bullet\nSecond bullet\n  Nested bullet',
+    );
+
+    await page
+      .locator('#snip-unordered-list-content')
+      .fill('Updated first\nUpdated second\n  Updated nested');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content ul').first()).toContainText('Updated first');
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain('- Updated first\n- Updated second\n  - Updated nested');
+    expect(onDisk).not.toContain('- First bullet');
+  });
+
+  test('right-click on ordered list captures editable item content', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content ol').first().click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup')).toBeVisible();
+    await page.locator('#inline-snippet-popup button').click();
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await expect(page.locator('#snippet-type')).toHaveValue('ordered-list');
+    await expect(page.locator('#snippet-preview-wrap')).toBeHidden();
+    await expect(page.locator('#snip-ordered-list-content')).toHaveValue(
+      'First numbered\nSecond numbered\n   Nested numbered',
+    );
+
+    await page
+      .locator('#snip-ordered-list-content')
+      .fill('Updated first\nUpdated second\n   Updated nested');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content ol').first()).toContainText('Updated first');
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain('1. Updated first\n2. Updated second\n   1. Updated nested');
+    expect(onDisk).not.toContain('1. First numbered');
+  });
+
+  test('right-click inline editor can delete a block after confirmation', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content blockquote').click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup')).toBeVisible();
+    await page.locator('#inline-snippet-popup button').click();
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await expect(page.locator('#snippet-delete-btn')).toBeVisible();
+    await page.locator('#snippet-delete-btn').click();
+
+    await expect(page.locator('#confirm-modal')).toBeVisible();
+    await page.locator('#confirm-modal-ok').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content blockquote')).toHaveCount(0);
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).not.toContain('> Existing quote');
+    expect(onDisk).not.toContain('> — Existing author');
+  });
+
+  test('snippet type selector remains enabled in insertion mode', async ({ page, ld }) => {
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.evaluate(() => {
+      const editor = document.getElementById('doc-editor') as HTMLTextAreaElement;
+      editor.selectionStart = 0;
+      editor.selectionEnd = 0;
+      (window as any).openSnippetsModal();
+    });
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await expect(page.locator('#snippet-modal-title')).toContainText('Insert a snippet');
+    await expect(page.locator('#snippet-type')).toBeEnabled();
   });
 });

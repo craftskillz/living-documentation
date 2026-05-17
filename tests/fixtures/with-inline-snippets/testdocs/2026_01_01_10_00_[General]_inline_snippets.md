@@ -29,3 +29,11 @@ console.log("Hello World!");
 > Existing quote
 >
 > — Existing author
+
+- First bullet
+- Second bullet
+  - Nested bullet
+
+1. First numbered
+2. Second numbered
+   1. Nested numbered

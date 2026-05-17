@@ -13,6 +13,8 @@ const _SNIPPET_PANELS = [
   "doc-link",
   "anchor-link",
   "anchor-doc-link",
+  "ordered-list",
+  "unordered-list",
   "code-block",
   "blockquote",
   "image",
@@ -642,6 +644,16 @@ function _setSnippetModalMode(isInlineEdit) {
       _snippetInlineEdit ? "snippet.inline_save_btn" : "snippet.insert_btn",
     );
   }
+  const typeSelect = document.getElementById("snippet-type");
+  if (typeSelect) {
+    typeSelect.disabled = _snippetInlineEdit;
+    typeSelect.classList.toggle("cursor-not-allowed", _snippetInlineEdit);
+    typeSelect.classList.toggle("opacity-70", _snippetInlineEdit);
+  }
+  const deleteBtn = document.getElementById("snippet-delete-btn");
+  if (deleteBtn) {
+    deleteBtn.classList.toggle("hidden", !_snippetInlineEdit);
+  }
   const card = document.getElementById("snippet-modal-card");
   if (card) {
     card.classList.toggle("max-w-lg", !_snippetInlineEdit);
@@ -739,6 +751,10 @@ function snippetTypeChanged() {
         type === "table" ||
         type === "code-block" ||
         type === "blockquote" ||
+        type === "ordered-list" ||
+        type === "unordered-list" ||
+        type === "colored-section" ||
+        type === "colored-text" ||
         type === "tree",
     );
   }
@@ -863,26 +879,55 @@ function buildSnippetMarkdown() {
         window.t('snippet.link_anchor_placeholder');
       return `[${text}](?doc=${encodeURIComponent(docId)}#${anchor})`;
     }
-    case "ordered-list":
-      return [
-        "1. Élément 1",
-        "2. Élément 2",
-        "   1. Sous-élément 2.1",
-        "   2. Sous-élément 2.2",
-        "3. Élément 3",
-        "   1. Sous-élément 3.1",
-        "      1. Sous-sous-élément 3.1.1",
-      ].join("\n");
-    case "unordered-list":
-      return [
-        "- Élément 1",
-        "- Élément 2",
-        "  - Sous-élément 2.1",
-        "  - Sous-élément 2.2",
-        "- Élément 3",
-        "  - Sous-élément 3.1",
-        "    - Sous-sous-élément 3.1.1",
-      ].join("\n");
+    case "ordered-list": {
+      const content =
+        document.getElementById("snip-ordered-list-content").value ||
+        [
+          "Élément 1",
+          "Élément 2",
+          "   Sous-élément 2.1",
+          "   Sous-élément 2.2",
+          "Élément 3",
+          "   Sous-élément 3.1",
+          "      Sous-sous-élément 3.1.1",
+        ].join("\n");
+      const countersByIndent = new Map();
+      return content
+        .split("\n")
+        .filter((line) => line.trim())
+        .map((line) => {
+          const indent = line.match(/^\s*/)[0];
+          const indentLength = indent.length;
+          for (const knownIndent of Array.from(countersByIndent.keys())) {
+            if (knownIndent > indentLength) countersByIndent.delete(knownIndent);
+          }
+          const next = (countersByIndent.get(indentLength) || 0) + 1;
+          countersByIndent.set(indentLength, next);
+          return `${indent}${next}. ${line.trim()}`;
+        })
+        .join("\n");
+    }
+    case "unordered-list": {
+      const content =
+        document.getElementById("snip-unordered-list-content").value ||
+        [
+          "Élément 1",
+          "Élément 2",
+          "  Sous-élément 2.1",
+          "  Sous-élément 2.2",
+          "Élément 3",
+          "  Sous-élément 3.1",
+          "    Sous-sous-élément 3.1.1",
+        ].join("\n");
+      return content
+        .split("\n")
+        .filter((line) => line.trim())
+        .map((line) => {
+          const indent = line.match(/^\s*/)[0];
+          return `${indent}- ${line.trim()}`;
+        })
+        .join("\n");
+    }
     case "code-block": {
       const lang = document.getElementById("snip-code-lang").value || "";
       const code =
@@ -991,6 +1036,34 @@ async function insertSnippet() {
   editor.selectionStart = editor.selectionEnd =
     _snippetSelStart + text.length;
   editor.focus();
+}
+
+async function deleteInlineSnippetBlock() {
+  if (!_snippetInlineEdit) return;
+  const ok =
+    typeof showConfirm === "function"
+      ? await showConfirm({
+          title: window.t("snippet.inline_delete_title"),
+          message: window.t("snippet.inline_delete_message"),
+          detail: window.t("snippet.inline_delete_detail"),
+          confirmLabel: window.t("snippet.inline_delete_confirm_btn"),
+          danger: true,
+          detailTone: "warning",
+        })
+      : confirm(window.t("snippet.inline_delete_message"));
+  if (!ok) return;
+
+  const before = currentDocContent.slice(0, _snippetSelStart);
+  const after = currentDocContent.slice(_snippetSelEnd);
+  closeSnippetsModal();
+  try {
+    await saveCurrentDocumentContent(before + after);
+  } catch (err) {
+    alert(
+      window.t("snippet.inline_delete_failed") +
+        (err && err.message ? err.message : String(err)),
+    );
+  }
 }
 
 async function insertDiagramSnippet() {
@@ -1147,6 +1220,20 @@ function parseAndFillSnippet(text, type) {
           snippetUpdatePreview();
         });
       }
+      break;
+    }
+    case "ordered-list": {
+      document.getElementById("snip-ordered-list-content").value = t
+        .split("\n")
+        .map((line) => line.replace(/^(\s*)\d+\.\s?/, "$1"))
+        .join("\n");
+      break;
+    }
+    case "unordered-list": {
+      document.getElementById("snip-unordered-list-content").value = t
+        .split("\n")
+        .map((line) => line.replace(/^(\s*)[-*+]\s?/, "$1"))
+        .join("\n");
       break;
     }
     case "code-block": {

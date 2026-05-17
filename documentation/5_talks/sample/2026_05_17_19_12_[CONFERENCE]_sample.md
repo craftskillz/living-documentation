@@ -1,34 +1,26 @@
 # sample
 
-```
-// code ici
-```
+
 
 Voici un tableau
 
-| En-tête 1 | En-tête 2 | En-tête 3 |
-| --------- | --------- | --------- |
-| a         | b         | c         |
-| d         | e         | f         |
+
 
 Et un bloc de code
 
 ```javascript
 console.log("Hello World!");
 ```
+<details>
+<summary>Details</summary>
 
-```text
-dossier/
-└── fichier.md
-```
-> Citation ici
->
-> — Auteur
->
-> Que ne sait-je malinos, qu'entends je ? Le bois serait friable ?
-> **Oh de grâce Sire** épargnez nous !
-> Que Nenni Maraud !
-> - pim
-> - pam
-> - poum
->
+## Titre
+
+Texte
+
+</details>
+
+
+
+
+[qqqq](?doc=1_tutorial%252F2026_04_11_13_25_%255BGeneral%255D_crer_vos_dossiers#introduction)
