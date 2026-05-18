@@ -146,6 +146,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.locator('#snippet-submit-btn').click();
 
     await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content pre').nth(2)).toContainText('| limit 10');
 
     const onDisk = fs.readFileSync(docPath, 'utf-8');
     expect(onDisk).toContain('```\nfields @timestamp\n| limit 10\n```');
@@ -312,13 +313,11 @@ test.describe('inline snippet editing from viewer', () => {
     expect(onDisk).not.toContain('Just a body paragraph.');
   });
 
-  test('collapsible containing an inner code block is detected as a single editable unit', async ({ page, ld }) => {
-    const docPath = path.join(ld.docsAbs, `${docId}.md`);
-
+  test('right-click on the summary of a collapsible containing inner snippets edits the collapsible as a whole', async ({ page, ld }) => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     const detailsSecond = page.locator('#doc-content details').nth(1);
     await expect(detailsSecond).toHaveAttribute('data-inline-snippet-index', /\d+/);
-    await detailsSecond.click({ button: 'right' });
+    await detailsSecond.locator('summary').click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'collapsible');
     await page.locator('#inline-snippet-popup button').click();
 
@@ -330,30 +329,65 @@ test.describe('inline snippet editing from viewer', () => {
     expect(body).toContain('```');
   });
 
-  test('right-click on unmapped block proposes inline snippet insertion and writes to source', async ({ page, ld }) => {
+  test('right-click on an inner code block of an open collapsible edits the code block, not the collapsible', async ({ page, ld }) => {
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    const detailsSecond = page.locator('#doc-content details').nth(1);
+    await detailsSecond.evaluate((el) => (el as HTMLDetailsElement).open = true);
+    const innerPre = detailsSecond.locator('pre');
+    await expect(innerPre).toHaveAttribute('data-inline-snippet-index', /\d+/);
+    await innerPre.click({ button: 'right' });
+
+    await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'code-block');
+    await page.locator('#inline-snippet-popup button').click();
+
+    await expect(page.locator('#snippet-type')).toHaveValue('code-block');
+    await expect(page.locator('#snip-code-lang')).toHaveValue('markdown');
+    await expect(page.locator('#snip-code-content')).toHaveValue('![image](./images/foo.png)');
+  });
+
+  test('right-click on a level-1 heading opens heading editor and saves new text', async ({ page, ld }) => {
     const docPath = path.join(ld.docsAbs, `${docId}.md`);
 
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await page.locator('#doc-content h1').click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
-    await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-action', 'insert');
-    await expect(page.locator('#inline-snippet-popup button')).toContainText('Insert');
-
+    await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'heading-1');
+    await expect(page.locator('#inline-snippet-popup button')).toContainText('Edit heading level 1');
     await page.locator('#inline-snippet-popup button').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
-    await expect(page.locator('#snippet-modal-title')).toHaveText('Insert a snippet');
-    await expect(page.locator('#snippet-type')).toBeEnabled();
-    await expect(page.locator('#snippet-delete-btn')).toBeHidden();
+    await expect(page.locator('#snippet-type')).toHaveValue('heading-1');
+    await expect(page.locator('#snippet-preview-wrap')).toBeHidden();
+    await expect(page.locator('#snip-heading-content')).toHaveValue('Inline Snippets');
 
-    await page.locator('#snippet-type').selectOption('blockquote');
-    await page.locator('#snip-blockquote-content').fill('Inserted from viewer');
+    await page.locator('#snip-heading-content').fill('Updated title');
     await page.locator('#snippet-submit-btn').click();
 
     await expect(page.locator('#snippets-modal')).toBeHidden();
-
     const onDisk = fs.readFileSync(docPath, 'utf-8');
-    expect(onDisk).toMatch(/# Inline Snippets\n+> Inserted from viewer\n+This paragraph has/);
+    expect(onDisk).toContain('# Updated title');
+    expect(onDisk).not.toContain('# Inline Snippets');
+  });
+
+  test('right-click on a level-3 heading reuses the shared heading panel and saves at level 3', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content h3').click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'heading-3');
+    await page.locator('#inline-snippet-popup button').click();
+
+    await expect(page.locator('#snippet-type')).toHaveValue('heading-3');
+    await expect(page.locator('#snip-heading-content')).toHaveValue('Section trois');
+
+    await page.locator('#snip-heading-content').fill('Renommée niveau 3');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content h3')).toContainText('Renommée niveau 3');
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain('### Renommée niveau 3');
+    expect(onDisk).not.toContain('### Section trois');
   });
 
   test('right-click on a formatted paragraph (signature fails) inserts via sibling fallback', async ({ page, ld }) => {
@@ -409,7 +443,7 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(page.locator('#snippets-modal')).toBeHidden();
 
     const onDisk = fs.readFileSync(docPath, 'utf-8');
-    expect(onDisk).toMatch(/# Inline Snippets\n+> Inserted in whitespace\n+This paragraph has/);
+    expect(onDisk).toMatch(/# Inline Snippets\n+> Inserted in whitespace\n+## Section deux/);
   });
 
   test('snippet type selector remains enabled in insertion mode', async ({ page, ld }) => {

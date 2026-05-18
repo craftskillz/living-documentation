@@ -77,6 +77,12 @@ const _INLINE_TYPE_SELECTORS = [
 let _inlineSnippetPopup = null;
 
 function _inlineRangesOverlap(a, b) {
+  // Reject only same-position duplicates (different regex matched the same span)
+  // and partial overlaps. Allow strict nesting so a container can coexist with
+  // its inner snippets (the deepest-mapped DOM ancestor wins at click time).
+  if (a.start === b.start && a.end === b.end) return true;
+  if (a.start >= b.start && a.end <= b.end) return false;
+  if (b.start >= a.start && b.end <= a.end) return false;
   return a.start < b.end && b.start < a.end;
 }
 
@@ -183,15 +189,6 @@ function _inlineTopLevelListElements(contentEl, selector) {
   );
 }
 
-function _inlineHasMappedAncestor(el, contentEl) {
-  let p = el.parentElement;
-  while (p && p !== contentEl) {
-    if (p.dataset && p.dataset.inlineSnippetIndex !== undefined) return true;
-    p = p.parentElement;
-  }
-  return false;
-}
-
 function _inlineAssignElements(contentEl, candidates) {
   contentEl
     .querySelectorAll("[data-inline-snippet-index]")
@@ -205,13 +202,10 @@ function _inlineAssignElements(contentEl, candidates) {
       types.includes(candidate.type),
     );
     if (!matching.length) continue;
-    const rawElements =
+    const elements =
       selector === "ol" || selector === "ul"
         ? _inlineTopLevelListElements(contentEl, selector)
         : Array.from(contentEl.querySelectorAll(selector));
-    const elements = rawElements.filter(
-      (el) => !_inlineHasMappedAncestor(el, contentEl),
-    );
     const limit = Math.min(matching.length, elements.length);
     for (let i = 0; i < limit; i += 1) {
       elements[i].dataset.inlineSnippetIndex = String(

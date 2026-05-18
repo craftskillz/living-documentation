@@ -7,6 +7,12 @@
 
 # Inline Snippets
 
+## Section deux
+
+### Section trois
+
+#### Section quatre
+
 This paragraph has **formatting** that breaks signature search.
 
 This sentence contains <span style="color:#3b82f6;">old inline text</span> for editing.
