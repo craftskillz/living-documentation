@@ -15,7 +15,7 @@ Idle
 
 ## Tâche courante
 
-Feature terminée et redocumentée : popup d'édition inline désormais typée par snippet (`Éditer le tableau`, `Éditer le bloc de code`, etc.) avec icône FontAwesome adaptée, en plus de l'insertion inline depuis le viewer (résolution hybride incluant fallback whitespace via `clientY`) et des correctifs sur les code blocks (indentés dans une liste, sans langage).
+Feature terminée et redocumentée : édition inline correcte des blocs repliables (`<details>`) — extraction et réécriture du corps, plus précédence des containers sur les snippets internes —, popup d'édition inline désormais typée par snippet (`Éditer le tableau`, `Éditer le bloc de code`, etc.) avec icône FontAwesome adaptée, insertion inline depuis le viewer (résolution hybride incluant fallback whitespace via `clientY`), et correctifs sur les code blocks (indentés dans une liste, sans langage).
 
 ## Dernière action réalisée
 
@@ -26,6 +26,8 @@ Feature terminée et redocumentée : popup d'édition inline désormais typée p
 - Le popup expose `data-action="edit" | "insert"` pour le test E2E.
 - Clés i18n ajoutées dans `fr.json` et `en.json` : `snippet.inline_insert_btn`, `snippet.inline_insert_modal_title`, `snippet.inline_insert_failed`, et un set complet de `snippet.inline_edit_btn_<type>` pour chaque snippet éditable (table, code_block, blockquote, ordered_list, unordered_list, tree, colored_section, colored_text, collapsible, link, doc_link, anchor_link, anchor_doc_link, image, separator).
 - Popup d'édition inline typée : `_inlineEditAffordance(type)` dans `inline-snippet-edit.js` mappe le type vers `{ labelKey, iconClass }`. La popup expose `data-snippet-type` pour le test. Fallback : `snippet.inline_edit_btn` générique + icône `fa-pen-to-square`.
+- Édition complète des blocs repliables (`<details>`) : nouveau textarea `#snip-collapsible-body` dans `src/frontend/index.html` (panel `snip-panel-collapsible`). `parseAndFillSnippet` cas `collapsible` extrait désormais summary ET body (regex `<details\b[^>]*>[\s\S]*?</summary>\s*\n?([\s\S]*?)\s*</details>\s*$`). `buildSnippetMarkdown` cas `collapsible` reconcatène summary + body (fallback `## Titre\n\nTexte` si vide). Préview Markdown masqué pour `collapsible` (ajouté à la liste dans `snippetTypeChanged`). Clés i18n ajoutées : `snippet.collapsible_body_label`, `snippet.collapsible_body_placeholder` (fr + en).
+- Précédence container : dans `_inlineCollectSnippetRanges`, les types container (`<details>`, colored-section) sont scannés AVANT les leaves (code-block, lists, links…). Le contrôle d'overlap existant rend automatiquement inéligibles les plages internes qui chevauchent un container. Corrige le cas où un `<details>` qui contient un code block n'était pas reconnu comme snippet (le code block ayant été ajouté en premier).
 - Tests Playwright ajoutés : `right-click on unmapped block proposes inline snippet insertion and writes to source` (clic sur le `<h1>`, vérifie l'UI de la modale en mode insertion et le round-trip blockquote inséré entre titre et paragraphe suivant) ; `right-click on a formatted paragraph (signature fails) inserts via sibling fallback` (clic sur un paragraphe contenant `**formatting**`, dont la signature textContent ne matche pas la source, exerce le fallback frères et insère bien entre ce paragraphe et le suivant) ; `right-click in vertical whitespace between blocks resolves to nearest block above` (clic dans la marge entre `<h1>` et le paragraphe suivant via `page.mouse` à des coordonnées x/y calculées, vérifie l'insertion entre `# Inline Snippets` et le paragraphe formaté).
 - Fixture `with-inline-snippets` enrichie d'un paragraphe `This paragraph has **formatting** that breaks signature search.` entre le `# Inline Snippets` et `This sentence contains ...` pour exercer le fallback signature → frères.
 - ADR `2026_05_17_19_11_[SNIPPET]_edition_inline_des_snippets_depuis_le_viewer_par_clic_droit.md` mis à jour (description, tags, décisions 1, 3 et 7, PROS, CONS).
@@ -38,6 +40,7 @@ Le MCP `living-documentation` connecté pointe sur un autre projet : `refresh_me
 
 - `src/frontend/inline-snippet-edit.js`
 - `src/frontend/snippets.js`
+- `src/frontend/index.html`
 - `src/frontend/i18n/en.json`
 - `src/frontend/i18n/fr.json`
 - `tests/e2e/inline-snippet-edit.spec.ts`
@@ -47,7 +50,7 @@ Le MCP `living-documentation` connecté pointe sur un autre projet : `refresh_me
 ## Vérifications récentes
 
 - `npm run build` : OK.
-- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts` : OK, 14 tests passés (9 d'origine ajustés pour vérifier les nouveaux labels typés sur table, code-block et blockquote + 5 nouveaux : code block indenté dans liste, code block sans langage, insertion inline depuis viewer, insertion via fallback frères pour paragraphe formaté, insertion via clic dans le whitespace entre blocs).
+- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts` : OK, 16 tests passés. Tests ajoutés : `right-click on a simple collapsible exposes summary and body fields and saves both` (round-trip summary + body) ; `collapsible containing an inner code block is detected as a single editable unit` (vérifie que la précédence container fonctionne et que le body capturé inclut bien le code block interne).
 - MCP `living-documentation` local pour ce projet : non disponible (le MCP connecté pointe sur un autre workspace). Métadonnées Living Documentation NON rafraîchies.
 
 ## Notes de reprise

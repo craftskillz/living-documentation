@@ -10,6 +10,7 @@ let _snippetInlineEdit = false;
 let _snippetInlineInsert = false;
 let _snippetInlineIndent = "";
 const _SNIPPET_PANELS = [
+  "heading",
   "collapsible",
   "link",
   "doc-link",
@@ -28,6 +29,17 @@ const _SNIPPET_PANELS = [
   "emojis",
   "attachment",
 ];
+
+const _SNIPPET_TYPE_TO_PANEL = {
+  "heading-1": "heading",
+  "heading-2": "heading",
+  "heading-3": "heading",
+  "heading-4": "heading",
+};
+
+function _snippetPanelForType(type) {
+  return _SNIPPET_TYPE_TO_PANEL[type] || type;
+}
 
 // Each emoji has search tags (bilingual FR/EN, space-separated, lowercase).
 // Filter matches a 2+ char query against any tag prefix or substring.
@@ -700,6 +712,10 @@ function _openSnippetsModalForText(selectedText, detectedOverride = null) {
         image: window.t('snippet.image'),
         table: window.t('snippet.table'),
         tree: window.t('snippet.tree'),
+        "heading-1": window.t('snippet.heading_1'),
+        "heading-2": window.t('snippet.heading_2'),
+        "heading-3": window.t('snippet.heading_3'),
+        "heading-4": window.t('snippet.heading_4'),
         "colored-section": window.t('snippet.colored_section'),
         "colored-text": window.t('snippet.colored_text'),
       };
@@ -760,9 +776,10 @@ function closeSnippetsModal() {
 
 function snippetTypeChanged() {
   const type = document.getElementById("snippet-type").value;
+  const activePanel = _snippetPanelForType(type);
   _SNIPPET_PANELS.forEach((p) => {
     const panel = document.getElementById("snip-panel-" + p);
-    if (panel) panel.classList.toggle("hidden", p !== type);
+    if (panel) panel.classList.toggle("hidden", p !== activePanel);
   });
   const previewWrap = document.getElementById("snippet-preview-wrap");
   if (previewWrap) {
@@ -776,7 +793,9 @@ function snippetTypeChanged() {
         type === "unordered-list" ||
         type === "colored-section" ||
         type === "colored-text" ||
-        type === "tree",
+        type === "tree" ||
+        type === "collapsible" ||
+        type.startsWith("heading-"),
     );
   }
 
@@ -861,7 +880,11 @@ function buildSnippetMarkdown() {
       const summary =
         document.getElementById("snip-collapsible-summary").value ||
         window.t('snippet.collapsible_summary_value');
-      return `<details>\n<summary>${summary}</summary>\n\n## Titre\n\nTexte\n\n</details>`;
+      const bodyEl = document.getElementById("snip-collapsible-body");
+      const body = bodyEl && bodyEl.value.trim() !== ""
+        ? bodyEl.value
+        : "## Titre\n\nTexte";
+      return `<details>\n<summary>${summary}</summary>\n\n${body}\n\n</details>`;
     }
     case "link": {
       const text =
@@ -973,6 +996,17 @@ function buildSnippetMarkdown() {
     }
     case "separator":
       return `\n---\n`;
+    case "heading-1":
+    case "heading-2":
+    case "heading-3":
+    case "heading-4": {
+      const level = Number(type.slice(-1));
+      const text =
+        document.getElementById("snip-heading-content").value.trim() ||
+        (window.t && window.t("snippet.heading_text_placeholder")) ||
+        "Titre";
+      return `${"#".repeat(level)} ${text}`;
+    }
     case "image": {
       const alt =
         document.getElementById("snip-image-alt").value || "image";
@@ -1198,10 +1232,16 @@ function parseAndFillSnippet(text, type) {
   const t = text.trim();
   switch (type) {
     case "collapsible": {
-      const m = t.match(/<summary>([\s\S]*?)<\/summary>/i);
-      if (m)
+      const summaryMatch = t.match(/<summary>([\s\S]*?)<\/summary>/i);
+      if (summaryMatch) {
         document.getElementById("snip-collapsible-summary").value =
-          m[1].trim();
+          summaryMatch[1].trim();
+      }
+      const bodyMatch = t.match(
+        /<details\b[^>]*>[\s\S]*?<\/summary>\s*\n?([\s\S]*?)\s*<\/details>\s*$/i,
+      );
+      const bodyEl = document.getElementById("snip-collapsible-body");
+      if (bodyEl) bodyEl.value = bodyMatch ? bodyMatch[1].trim() : "";
       break;
     }
     case "link": {
@@ -1324,6 +1364,17 @@ function parseAndFillSnippet(text, type) {
         document.getElementById("snip-image-alt").value = m[1];
         document.getElementById("snip-image-url").value = m[2];
       }
+      break;
+    }
+    case "heading-1":
+    case "heading-2":
+    case "heading-3":
+    case "heading-4": {
+      const level = Number(type.slice(-1));
+      const re = new RegExp(`^#{${level}}\\s+(.+)$`);
+      const m = t.match(re);
+      const headingEl = document.getElementById("snip-heading-content");
+      if (headingEl) headingEl.value = m ? m[1].trim() : "";
       break;
     }
     case "table": {

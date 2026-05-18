@@ -18,6 +18,8 @@ function detectSnippetType(text) {
   if (/^```/.test(t)) return "code-block";
   if (/^(\| *.*? *\|)+\n(\| *-+.*\|)+/.test(t)) return "table";
   if (/^> /.test(t)) return "blockquote";
+  const headingMatch = /^(#{1,4}) [^\n]+$/.exec(t);
+  if (headingMatch) return `heading-${headingMatch[1].length}`;
   if (/^(---|\n---\n)$/.test(t)) return "separator";
   if (/^1\. /.test(t)) return "ordered-list";
   if (/^- /.test(t)) return "unordered-list";

@@ -19,6 +19,10 @@ const _INLINE_SNIPPET_TYPES = new Set([
   "separator",
   "ordered-list",
   "unordered-list",
+  "heading-1",
+  "heading-2",
+  "heading-3",
+  "heading-4",
 ]);
 
 const _INLINE_EDIT_AFFORDANCE_BY_TYPE = {
@@ -37,6 +41,10 @@ const _INLINE_EDIT_AFFORDANCE_BY_TYPE = {
   "anchor-doc-link": { labelKey: "snippet.inline_edit_btn_anchor_doc_link", iconClass: "fa-solid fa-anchor" },
   image: { labelKey: "snippet.inline_edit_btn_image", iconClass: "fa-solid fa-image" },
   separator: { labelKey: "snippet.inline_edit_btn_separator", iconClass: "fa-solid fa-minus" },
+  "heading-1": { labelKey: "snippet.inline_edit_btn_heading_1", iconClass: "fa-solid fa-heading" },
+  "heading-2": { labelKey: "snippet.inline_edit_btn_heading_2", iconClass: "fa-solid fa-heading" },
+  "heading-3": { labelKey: "snippet.inline_edit_btn_heading_3", iconClass: "fa-solid fa-heading" },
+  "heading-4": { labelKey: "snippet.inline_edit_btn_heading_4", iconClass: "fa-solid fa-heading" },
 };
 
 function _inlineEditAffordance(type) {
@@ -55,6 +63,10 @@ const _INLINE_TYPE_SELECTORS = [
   { types: ["separator"], selector: "hr" },
   { types: ["ordered-list"], selector: "ol" },
   { types: ["unordered-list"], selector: "ul" },
+  { types: ["heading-1"], selector: "h1" },
+  { types: ["heading-2"], selector: "h2" },
+  { types: ["heading-3"], selector: "h3" },
+  { types: ["heading-4"], selector: "h4" },
   { types: ["image"], selector: "img" },
   {
     types: ["anchor-doc-link", "doc-link", "anchor-link", "link"],
@@ -123,12 +135,20 @@ function _inlineAddCodeBlockRanges(ranges, content) {
 function _inlineCollectSnippetRanges(content) {
   const ranges = [];
 
-  _inlineAddCodeBlockRanges(ranges, content);
+  // Container ranges first so inner snippets (code, lists, links…) that overlap
+  // with a container get skipped — the user edits the container as a whole.
   _inlineAddRegexRanges(ranges, content, /<details[\s\S]*?<\/details>/gi);
   _inlineAddRegexRanges(
     ranges,
     content,
     /<div\b[^>]*border-left[^>]*>[\s\S]*?<\/div>/gi,
+  );
+  _inlineAddCodeBlockRanges(ranges, content);
+  _inlineAddRegexRanges(
+    ranges,
+    content,
+    /(?:^|\n\n)(#{1,4} [^\n]+)/g,
+    1,
   );
   _inlineAddRegexRanges(
     ranges,
@@ -163,6 +183,15 @@ function _inlineTopLevelListElements(contentEl, selector) {
   );
 }
 
+function _inlineHasMappedAncestor(el, contentEl) {
+  let p = el.parentElement;
+  while (p && p !== contentEl) {
+    if (p.dataset && p.dataset.inlineSnippetIndex !== undefined) return true;
+    p = p.parentElement;
+  }
+  return false;
+}
+
 function _inlineAssignElements(contentEl, candidates) {
   contentEl
     .querySelectorAll("[data-inline-snippet-index]")
@@ -176,10 +205,13 @@ function _inlineAssignElements(contentEl, candidates) {
       types.includes(candidate.type),
     );
     if (!matching.length) continue;
-    const elements =
+    const rawElements =
       selector === "ol" || selector === "ul"
         ? _inlineTopLevelListElements(contentEl, selector)
         : Array.from(contentEl.querySelectorAll(selector));
+    const elements = rawElements.filter(
+      (el) => !_inlineHasMappedAncestor(el, contentEl),
+    );
     const limit = Math.min(matching.length, elements.length);
     for (let i = 0; i < limit; i += 1) {
       elements[i].dataset.inlineSnippetIndex = String(

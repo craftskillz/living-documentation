@@ -51,3 +51,19 @@ fields @timestamp, msg, err.message, err.stack
 | sort @timestamp desc
 | limit 100
 ```
+
+<details><summary>Simple collapsible</summary>
+
+Just a body paragraph.
+
+</details>
+
+<details><summary>Collapsible with inner code</summary>
+
+Some intro text.
+
+```markdown
+![image](./images/foo.png)
+```
+
+</details>

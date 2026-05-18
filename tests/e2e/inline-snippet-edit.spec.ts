@@ -285,6 +285,51 @@ test.describe('inline snippet editing from viewer', () => {
     expect(onDisk).not.toContain('> — Existing author');
   });
 
+  test('right-click on a simple collapsible exposes summary and body fields and saves both', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content details').first().click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'collapsible');
+    await expect(page.locator('#inline-snippet-popup button')).toContainText('Edit collapsible block');
+    await page.locator('#inline-snippet-popup button').click();
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await expect(page.locator('#snippet-type')).toHaveValue('collapsible');
+    await expect(page.locator('#snippet-preview-wrap')).toBeHidden();
+    await expect(page.locator('#snip-collapsible-summary')).toHaveValue('Simple collapsible');
+    await expect(page.locator('#snip-collapsible-body')).toHaveValue('Just a body paragraph.');
+
+    await page.locator('#snip-collapsible-summary').fill('Updated summary');
+    await page.locator('#snip-collapsible-body').fill('Updated body paragraph.');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain('<summary>Updated summary</summary>');
+    expect(onDisk).toContain('Updated body paragraph.');
+    expect(onDisk).not.toContain('Simple collapsible');
+    expect(onDisk).not.toContain('Just a body paragraph.');
+  });
+
+  test('collapsible containing an inner code block is detected as a single editable unit', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    const detailsSecond = page.locator('#doc-content details').nth(1);
+    await expect(detailsSecond).toHaveAttribute('data-inline-snippet-index', /\d+/);
+    await detailsSecond.click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'collapsible');
+    await page.locator('#inline-snippet-popup button').click();
+
+    await expect(page.locator('#snip-collapsible-summary')).toHaveValue('Collapsible with inner code');
+    const body = await page.locator('#snip-collapsible-body').inputValue();
+    expect(body).toContain('Some intro text.');
+    expect(body).toContain('```markdown');
+    expect(body).toContain('![image](./images/foo.png)');
+    expect(body).toContain('```');
+  });
+
   test('right-click on unmapped block proposes inline snippet insertion and writes to source', async ({ page, ld }) => {
     const docPath = path.join(ld.docsAbs, `${docId}.md`);
 

@@ -27,7 +27,7 @@ Le fichier `src/frontend/inline-snippet-edit.js` porte uniquement la corresponda
 
 Le rendu HTML produit par `marked` ne fournit pas de source map vers le Markdown. `src/frontend/inline-snippet-edit.js` reconstruit donc une correspondance pragmatique :
 
-1. scanner `currentDocContent` avec des regex couvrant les patterns déjà reconnus par `detectSnippetType()` ;
+1. scanner `currentDocContent` avec des regex couvrant les patterns déjà reconnus par `detectSnippetType()`, en traitant d'abord les types **container** (`<details>`, colored-section `<div border-left>`) puis les types **feuille** (code-block, lists, links…). Les plages container ajoutées en premier rendent inéligibles les plages feuille qui les chevaucheraient via le contrôle d'overlap dans `_inlineAddRange`. Conséquence : un `<details>` qui contient un code block, une liste ou un lien reste éditable en tant que collapsible entier, et son contenu interne n'apparaît pas comme un snippet séparé ;
 2. filtrer les plages dont le type n'est pas un snippet éditable ;
 3. associer ces plages aux éléments HTML rendus équivalents dans l'ordre du document (`span[style*=color]`, `div[style*=border-left]`, `pre`, `table`, `blockquote`, `hr`, listes de premier niveau, images, liens, `details`) ;
 4. poser `data-inline-snippet-index` sur les éléments mappés pour retrouver la plage source au clic droit.
@@ -61,6 +61,8 @@ La modale historique reste modifiable en mode insertion : le bouton Snippets du 
 ### 4. Mini éditeurs dédiés aux snippets structurés
 
 Les types suivants ont un formulaire éditable en mode inline, sans dépendre de l'aperçu Markdown :
+
+- `collapsible` (`<details>`) : la modale expose un champ `summary` (input) ET un textarea `body` qui contient le Markdown intérieur entre `</summary>` et `</details>`. `parseAndFillSnippet` extrait les deux, `buildSnippetMarkdown` les reconcatène. L'aperçu Markdown est masqué. Le corps peut contenir d'autres patterns Markdown (titre, code block, liste…) qui ne sont pas individuellement détectés comme snippets car le container a précédence (voir décision 2).
 
 - `table` : la plage Markdown complète est parsée en grille. Les cellules vides sont préservées et ne sont pas confondues avec la ligne séparatrice.
 - `code-block` : le langage de la fence est prérempli et le contenu du code est éditable dans un textarea monospace. Le regex de parsing utilise `[ \t]*` (whitespace horizontal seulement) après la fence d'ouverture pour éviter d'absorber un `\n` et donc d'attribuer la première ligne de contenu comme langage quand la fence n'a pas de langage explicite. Les fences indentés à l'intérieur d'une liste sont aussi reconnus : l'indentation canonique (espaces avant la fence d'ouverture) est capturée dans la plage source, retirée de chaque ligne dans le textarea, puis réappliquée à chaque ligne (fences incluses) lors de la sauvegarde, de sorte que le bloc reste imbriqué dans son item de liste.
