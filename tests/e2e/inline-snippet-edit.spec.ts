@@ -399,7 +399,8 @@ test.describe('inline snippet editing from viewer', () => {
     await page.locator('#inline-snippet-popup button').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
-    await page.locator('#snippet-type').selectOption('blockquote');
+    await expect(page.locator('#snippet-picker')).toBeVisible();
+    await page.locator('#snippet-picker [data-snippet-type="blockquote"]').click();
     await page.locator('#snip-blockquote-content').fill('Inserted via fallback');
     await page.locator('#snippet-submit-btn').click();
 
@@ -436,7 +437,8 @@ test.describe('inline snippet editing from viewer', () => {
     await page.locator('#inline-snippet-popup button').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
-    await page.locator('#snippet-type').selectOption('blockquote');
+    await expect(page.locator('#snippet-picker')).toBeVisible();
+    await page.locator('#snippet-picker [data-snippet-type="blockquote"]').click();
     await page.locator('#snip-blockquote-content').fill('Inserted in whitespace');
     await page.locator('#snippet-submit-btn').click();
 
@@ -446,7 +448,7 @@ test.describe('inline snippet editing from viewer', () => {
     expect(onDisk).toMatch(/# Inline Snippets\n+> Inserted in whitespace\n+## Section deux/);
   });
 
-  test('snippet type selector remains enabled in insertion mode', async ({ page, ld }) => {
+  test('opening the snippets modal from the editor shows the categorized picker, not the type selector', async ({ page, ld }) => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await page.evaluate(() => {
       const editor = document.getElementById('doc-editor') as HTMLTextAreaElement;
@@ -457,6 +459,69 @@ test.describe('inline snippet editing from viewer', () => {
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-modal-title')).toContainText('Insert a snippet');
-    await expect(page.locator('#snippet-type')).toBeEnabled();
+    await expect(page.locator('#snippet-picker')).toBeVisible();
+    await expect(page.locator('#snippet-type-wrapper')).toBeHidden();
+    await expect(page.locator('#snippet-submit-btn')).toBeHidden();
+    await expect(page.locator('#snippet-picker-back')).toBeHidden();
+    await expect(
+      page.locator('#snippet-picker [data-snippet-category="structure"]'),
+    ).toBeVisible();
+    await expect(
+      page.locator('#snippet-picker [data-snippet-type="heading-1"]'),
+    ).toBeVisible();
+    await expect(
+      page.locator('#snippet-picker [data-snippet-type="code-block"]'),
+    ).toBeVisible();
+  });
+
+  test('picker search filters cards live and Enter selects the first match', async ({ page, ld }) => {
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.evaluate(() => {
+      (window as any).openSnippetsModal();
+    });
+
+    await expect(page.locator('#snippet-picker-search')).toBeFocused();
+    await page.locator('#snippet-picker-search').fill('table');
+    await expect(
+      page.locator('#snippet-picker [data-snippet-type="table"]'),
+    ).toBeVisible();
+    await expect(
+      page.locator('#snippet-picker [data-snippet-type="heading-1"]'),
+    ).toBeHidden();
+
+    await page.locator('#snippet-picker-search').press('Enter');
+    await expect(page.locator('#snippet-picker')).toBeHidden();
+    await expect(page.locator('#snippet-type')).toHaveValue('table');
+    await expect(page.locator('#snippet-picker-back')).toBeVisible();
+    await expect(page.locator('#snippet-submit-btn')).toBeVisible();
+  });
+
+  test('back button returns from a panel to the picker without inserting', async ({ page, ld }) => {
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.evaluate(() => {
+      (window as any).openSnippetsModal();
+    });
+
+    await page.locator('#snippet-picker [data-snippet-type="blockquote"]').click();
+    await expect(page.locator('#snippet-picker')).toBeHidden();
+    await expect(page.locator('#snip-panel-blockquote')).toBeVisible();
+
+    await page.locator('#snippet-picker-back').click();
+    await expect(page.locator('#snippet-picker')).toBeVisible();
+    await expect(page.locator('#snip-panel-blockquote')).toBeHidden();
+    await expect(page.locator('#snippet-submit-btn')).toBeHidden();
+    await expect(page.locator('#snippet-picker-back')).toBeHidden();
+  });
+
+  test('inline-edit bypasses the picker and shows the detected panel directly', async ({ page, ld }) => {
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content table').click({ button: 'right' });
+    await page.locator('#inline-snippet-popup button').click();
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await expect(page.locator('#snippet-picker')).toBeHidden();
+    await expect(page.locator('#snippet-picker-back')).toBeHidden();
+    await expect(page.locator('#snippet-submit-btn')).toBeVisible();
+    await expect(page.locator('#snippet-type')).toHaveValue('table');
   });
 });

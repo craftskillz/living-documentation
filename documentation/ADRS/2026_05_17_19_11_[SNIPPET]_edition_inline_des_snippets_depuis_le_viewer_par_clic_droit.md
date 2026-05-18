@@ -36,6 +36,24 @@ La capture des tables s'étend volontairement vers le haut et le bas à partir d
 
 Cette approche évite d'introduire un parser Markdown/source-map complet. Elle est suffisamment fiable pour les snippets canoniques générés par la modale existante, avec la limite assumée que des snippets fortement modifiés à la main peuvent ne pas être reconnus.
 
+### 2bis. Picker catégorisé pour le choix de snippet à l'insertion
+
+Le `<select id="snippet-type">` avec ~20 options est devenu peu ergonomique. La modale Snippets affiche désormais, en mode insertion, un **picker** : grille de cards (icône FontAwesome + label nettoyé via `_snippetPickerCleanLabel` qui retire les emojis prefixes hérités des labels du `<select>`), regroupées en 4 catégories (`structure`, `lists-code-data`, `rich-text`, `links-media`). Le groupe `rich-text` contient aussi `emojis` et `local-search` afin de rassembler les snippets d'enrichissement du contenu.
+
+Les deux modes d'insertion (bouton `Snippets` du textarea et insertion via clic droit hors snippet) partagent la même largeur (`max-w-6xl`) pour éviter deux expériences visuelles différentes. L'édition inline d'un bloc détecté reste en `max-w-5xl` pour conserver l'espace de travail des mini éditeurs. Les cards utilisent une grille dense (`3 -> 8` colonnes selon viewport), conservent les icônes en `text-xl`, et reçoivent une palette par type via `_SNIPPET_PICKER_TYPE_PALETTE` : titres en bleus progressifs, séparateur gris, repliable et code en sombre, listes en deux verts, arborescence et recherche locale en cyan, tableau orange, diagramme rouge, emojis jaune, liens/médias en tons orange/ambre.
+
+Une barre de recherche au-dessus de la grille filtre les cards en temps réel par substring du label (case-insensitive). Les sections sans match sont masquées. `Enter` dans la recherche sélectionne automatiquement la première card visible. Un message `Aucun snippet ne correspond.` s'affiche si rien ne match.
+
+Click sur une card → masque le picker, affiche le panel correspondant et un bouton **« ← Retour »** pour revenir au picker (utile si mauvais choix). Le `<select id="snippet-type">` est conservé caché (`#snippet-type-wrapper` avec `hidden`) — il reste le binding interne du type courant pour `snippetTypeChanged()`, `buildSnippetMarkdown()`, `parseAndFillSnippet()` et les tests qui interrogent `#snippet-type`.
+
+Routing dans `_openSnippetsModalForText` :
+- **inline-insert** (clic droit sur zone non mappée) → picker, jamais de détection à appliquer ;
+- **type détecté** (inline-edit OU sélection textarea reconnue) → bypass picker, panel direct (et bouton Retour caché pour inline-edit qui verrouille le type) ;
+- **sélection textarea sans détection** → picker (au lieu de retomber sur diagram comme avant) ;
+- **aucune sélection** → picker.
+
+La catégorisation est définie en JS (`_SNIPPET_PICKER_CATEGORIES`) avec icônes FontAwesome (`_SNIPPET_PICKER_ICONS`), labels via `_SNIPPET_TYPE_I18N_KEY` et couleurs via `_SNIPPET_PICKER_TYPE_PALETTE` ; ajouter un nouveau type de snippet ne nécessite qu'un nouvel entry dans ces maps.
+
 ### 3. Réutilisation de la modale Snippets avec mode inline explicite
 
 L'édition inline ne duplique aucun mini éditeur. La popup appelle `openSnippetsModalForInlineEdit(range)` dans `src/frontend/snippets.js`, qui :
@@ -45,6 +63,7 @@ L'édition inline ne duplique aucun mini éditeur. La popup appelle `openSnippet
 - adapte le titre de la modale et le bouton principal en mode `Save` ;
 - élargit la carte de modale pour les éditeurs structurés ;
 - désactive la selectbox `#snippet-type` en mode inline pour empêcher de changer le type détecté et d'écraser la plage source avec un autre format ;
+- masque le message historique `snippet-detect-msg` : le panel prérempli et le titre de la popup suffisent à confirmer le type reconnu ;
 - appelle `buildSnippetMarkdown()` au moment de sauvegarder.
 
 L'insertion inline depuis le viewer suit le même schéma via `openSnippetsModalForInlineInsert(insertPos)` :

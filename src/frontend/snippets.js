@@ -41,6 +41,345 @@ function _snippetPanelForType(type) {
   return _SNIPPET_TYPE_TO_PANEL[type] || type;
 }
 
+const _SNIPPET_PICKER_ICONS = {
+  "heading-1": "fa-solid fa-heading",
+  "heading-2": "fa-solid fa-heading",
+  "heading-3": "fa-solid fa-heading",
+  "heading-4": "fa-solid fa-heading",
+  separator: "fa-solid fa-minus",
+  collapsible: "fa-solid fa-caret-right",
+  "unordered-list": "fa-solid fa-list-ul",
+  "ordered-list": "fa-solid fa-list-ol",
+  tree: "fa-solid fa-folder-tree",
+  "colored-text": "fa-solid fa-highlighter",
+  "colored-section": "fa-solid fa-fill-drip",
+  blockquote: "fa-solid fa-quote-right",
+  "code-block": "fa-solid fa-code",
+  table: "fa-solid fa-table-cells",
+  link: "fa-solid fa-link",
+  "doc-link": "fa-solid fa-file-lines",
+  "anchor-link": "fa-solid fa-anchor",
+  "anchor-doc-link": "fa-solid fa-anchor",
+  image: "fa-solid fa-image",
+  diagram: "fa-solid fa-diagram-project",
+  emojis: "fa-solid fa-face-smile",
+  attachment: "fa-solid fa-paperclip",
+  "local-search": "fa-solid fa-magnifying-glass",
+};
+
+const _SNIPPET_PICKER_CATEGORIES = [
+  {
+    key: "structure",
+    labelKey: "snippet.picker_cat_structure",
+    types: ["heading-1", "heading-2", "heading-3", "heading-4", "separator", "collapsible"],
+  },
+  {
+    key: "lists-code-data",
+    labelKey: "snippet.picker_cat_lists_code_data",
+    types: ["unordered-list", "ordered-list", "tree", "code-block", "table", "diagram"],
+  },
+  {
+    key: "rich-text",
+    labelKey: "snippet.picker_cat_rich_text",
+    types: ["colored-text", "colored-section", "blockquote", "emojis", "local-search"],
+  },
+  {
+    key: "links-media",
+    labelKey: "snippet.picker_cat_links_media",
+    types: ["link", "doc-link", "anchor-link", "anchor-doc-link", "image", "attachment"],
+  },
+];
+
+const _SNIPPET_PICKER_PALETTE = {
+  blueLight: {
+    card:
+      "border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/40 hover:bg-sky-100 dark:hover:bg-sky-900/50 hover:border-sky-300 dark:hover:border-sky-700",
+    icon: "text-sky-700 dark:text-sky-300",
+  },
+  blue: {
+    card:
+      "border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/50 hover:border-blue-300 dark:hover:border-blue-700",
+    icon: "text-blue-700 dark:text-blue-300",
+  },
+  blueDark: {
+    card:
+      "border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 hover:border-indigo-300 dark:hover:border-indigo-700",
+    icon: "text-indigo-700 dark:text-indigo-300",
+  },
+  blueDarker: {
+    card:
+      "border-blue-300 dark:border-blue-700 bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-800/60 hover:border-blue-400 dark:hover:border-blue-600",
+    icon: "text-blue-900 dark:text-blue-100",
+  },
+  gray: {
+    card:
+      "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600",
+    icon: "text-gray-700 dark:text-gray-200",
+  },
+  violet: {
+    card:
+      "border-violet-200 dark:border-violet-800 bg-violet-50 dark:bg-violet-950/40 hover:bg-violet-100 dark:hover:bg-violet-900/50 hover:border-violet-300 dark:hover:border-violet-700",
+    icon: "text-violet-700 dark:text-violet-300",
+  },
+  green: {
+    card:
+      "border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 hover:border-emerald-300 dark:hover:border-emerald-700",
+    icon: "text-emerald-700 dark:text-emerald-300",
+  },
+  greenDark: {
+    card:
+      "border-green-300 dark:border-green-700 bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-800/60 hover:border-green-400 dark:hover:border-green-600",
+    icon: "text-green-900 dark:text-green-100",
+  },
+  teal: {
+    card:
+      "border-teal-200 dark:border-teal-800 bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 dark:hover:bg-teal-900/50 hover:border-teal-300 dark:hover:border-teal-700",
+    icon: "text-teal-700 dark:text-teal-300",
+  },
+  dark: {
+    card:
+      "border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-slate-500",
+    icon: "text-slate-900 dark:text-slate-100",
+  },
+  orange: {
+    card:
+      "border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/40 hover:bg-orange-100 dark:hover:bg-orange-900/50 hover:border-orange-300 dark:hover:border-orange-700",
+    icon: "text-orange-700 dark:text-orange-300",
+  },
+  orangeLight: {
+    card:
+      "border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 hover:border-amber-300 dark:hover:border-amber-700",
+    icon: "text-amber-700 dark:text-amber-300",
+  },
+  orangeDark: {
+    card:
+      "border-orange-300 dark:border-orange-700 bg-orange-100 dark:bg-orange-900/50 hover:bg-orange-200 dark:hover:bg-orange-800/60 hover:border-orange-400 dark:hover:border-orange-600",
+    icon: "text-orange-900 dark:text-orange-100",
+  },
+  red: {
+    card:
+      "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/50 hover:border-red-300 dark:hover:border-red-700",
+    icon: "text-red-700 dark:text-red-300",
+  },
+  pink: {
+    card:
+      "border-pink-200 dark:border-pink-800 bg-pink-50 dark:bg-pink-950/40 hover:bg-pink-100 dark:hover:bg-pink-900/50 hover:border-pink-300 dark:hover:border-pink-700",
+    icon: "text-pink-700 dark:text-pink-300",
+  },
+  amber: {
+    card:
+      "border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 hover:border-amber-300 dark:hover:border-amber-700",
+    icon: "text-amber-700 dark:text-amber-300",
+  },
+  yellow: {
+    card:
+      "border-yellow-300 dark:border-yellow-700 bg-yellow-100 dark:bg-yellow-900/50 hover:bg-yellow-200 dark:hover:bg-yellow-800/60 hover:border-yellow-400 dark:hover:border-yellow-600",
+    icon: "text-yellow-700 dark:text-yellow-200",
+  },
+  indigo: {
+    card:
+      "border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 hover:border-indigo-300 dark:hover:border-indigo-700",
+    icon: "text-indigo-700 dark:text-indigo-300",
+  },
+  cyan: {
+    card:
+      "border-cyan-200 dark:border-cyan-800 bg-cyan-50 dark:bg-cyan-950/40 hover:bg-cyan-100 dark:hover:bg-cyan-900/50 hover:border-cyan-300 dark:hover:border-cyan-700",
+    icon: "text-cyan-700 dark:text-cyan-300",
+  },
+};
+
+const _SNIPPET_PICKER_TYPE_PALETTE = {
+  "heading-1": "blueLight",
+  "heading-2": "blue",
+  "heading-3": "blueDark",
+  "heading-4": "blueDarker",
+  separator: "gray",
+  collapsible: "dark",
+  "unordered-list": "green",
+  "ordered-list": "greenDark",
+  tree: "cyan",
+  "code-block": "dark",
+  table: "orange",
+  diagram: "red",
+  "colored-text": "pink",
+  "colored-section": "violet",
+  blockquote: "gray",
+  link: "orangeLight",
+  "doc-link": "orange",
+  "anchor-link": "orangeDark",
+  "anchor-doc-link": "orangeDark",
+  image: "amber",
+  attachment: "orange",
+  emojis: "yellow",
+  "local-search": "cyan",
+};
+
+const _SNIPPET_TYPE_I18N_KEY = {
+  "heading-1": "snippet.heading_1",
+  "heading-2": "snippet.heading_2",
+  "heading-3": "snippet.heading_3",
+  "heading-4": "snippet.heading_4",
+  separator: "snippet.separator",
+  collapsible: "snippet.collapsible",
+  "unordered-list": "snippet.bullet_list",
+  "ordered-list": "snippet.numbered_list",
+  tree: "snippet.tree",
+  "colored-text": "snippet.colored_text",
+  "colored-section": "snippet.colored_section",
+  blockquote: "snippet.blockquote",
+  "code-block": "snippet.code_block",
+  table: "snippet.table",
+  link: "snippet.link",
+  "doc-link": "snippet.link_doc",
+  "anchor-link": "snippet.link_anchor",
+  "anchor-doc-link": "snippet.link_doc_anchor",
+  image: "snippet.image",
+  diagram: "snippet.diagram",
+  emojis: "snippet.emojis",
+  attachment: "snippet.attachment",
+  "local-search": "snippet.local_search",
+};
+
+function _snippetPickerCleanLabel(raw) {
+  if (!raw) return "";
+  const parts = raw.split(/\s+/);
+  if (parts.length > 1 && !/^[\p{L}\p{N}]/u.test(parts[0])) {
+    return parts.slice(1).join(" ");
+  }
+  return raw;
+}
+
+function _snippetPickerLabel(type) {
+  const key = _SNIPPET_TYPE_I18N_KEY[type];
+  const raw = key ? window.t(key) : type;
+  return _snippetPickerCleanLabel(raw);
+}
+
+function _renderSnippetPicker() {
+  const container = document.getElementById("snippet-picker-categories");
+  if (!container) return;
+  container.innerHTML = "";
+  for (const cat of _SNIPPET_PICKER_CATEGORIES) {
+    const section = document.createElement("section");
+    section.dataset.snippetCategory = cat.key;
+    section.className = "space-y-2";
+
+    const h3 = document.createElement("h3");
+    h3.className =
+      "text-[11px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400";
+    h3.textContent = window.t(cat.labelKey);
+    section.appendChild(h3);
+
+    const grid = document.createElement("div");
+    grid.className =
+      "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-2";
+
+    for (const type of cat.types) {
+      const paletteName = _SNIPPET_PICKER_TYPE_PALETTE[type] || "indigo";
+      const colorClasses =
+        _SNIPPET_PICKER_PALETTE[paletteName] ||
+        _SNIPPET_PICKER_PALETTE.indigo;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.dataset.snippetType = type;
+      btn.className =
+        "snippet-card min-h-[76px] flex flex-col items-center justify-center gap-2 p-2 rounded-lg border text-gray-800 dark:text-gray-100 transition-colors " +
+        colorClasses.card;
+      btn.onclick = () => snippetPickerSelect(type);
+
+      const i = document.createElement("i");
+      i.className =
+        (_SNIPPET_PICKER_ICONS[type] || "fa-solid fa-puzzle-piece") +
+        " text-xl " +
+        colorClasses.icon;
+      i.setAttribute("aria-hidden", "true");
+      btn.appendChild(i);
+
+      const label = document.createElement("span");
+      label.className = "text-xs font-medium text-center leading-tight";
+      label.textContent = _snippetPickerLabel(type);
+      btn.appendChild(label);
+
+      grid.appendChild(btn);
+    }
+    section.appendChild(grid);
+    container.appendChild(section);
+  }
+}
+
+function _showSnippetPicker() {
+  _renderSnippetPicker();
+  document.getElementById("snippet-picker").classList.remove("hidden");
+  document.getElementById("snippet-picker-back").classList.add("hidden");
+  document.getElementById("snippet-submit-btn").classList.add("hidden");
+  _SNIPPET_PANELS.forEach((p) => {
+    const panel = document.getElementById("snip-panel-" + p);
+    if (panel) panel.classList.add("hidden");
+  });
+  const previewWrap = document.getElementById("snippet-preview-wrap");
+  if (previewWrap) previewWrap.classList.add("hidden");
+  const search = document.getElementById("snippet-picker-search");
+  if (search) {
+    search.value = "";
+    _snippetPickerFilter("");
+    setTimeout(() => search.focus(), 50);
+  }
+}
+
+function _showSnippetPanelOnly() {
+  document.getElementById("snippet-picker").classList.add("hidden");
+  document.getElementById("snippet-submit-btn").classList.remove("hidden");
+  const back = document.getElementById("snippet-picker-back");
+  if (back) back.classList.toggle("hidden", _snippetInlineEdit);
+}
+
+function _snippetPickerFilter(query) {
+  const container = document.getElementById("snippet-picker-categories");
+  if (!container) return;
+  const q = (query || "").toLowerCase().trim();
+  let totalVisible = 0;
+  container.querySelectorAll("[data-snippet-category]").forEach((section) => {
+    let visibleCount = 0;
+    section.querySelectorAll("[data-snippet-type]").forEach((card) => {
+      const label = (card.querySelector("span")?.textContent || "").toLowerCase();
+      const match = !q || label.includes(q);
+      card.classList.toggle("hidden", !match);
+      if (match) visibleCount += 1;
+    });
+    section.classList.toggle("hidden", visibleCount === 0);
+    totalVisible += visibleCount;
+  });
+  const noResults = document.getElementById("snippet-picker-no-results");
+  if (noResults) noResults.classList.toggle("hidden", totalVisible > 0);
+}
+
+function snippetPickerSearchChanged() {
+  const input = document.getElementById("snippet-picker-search");
+  _snippetPickerFilter(input ? input.value : "");
+}
+
+function snippetPickerSearchKeydown(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    const firstVisible = document.querySelector(
+      "#snippet-picker-categories [data-snippet-type]:not(.hidden)",
+    );
+    if (firstVisible) snippetPickerSelect(firstVisible.dataset.snippetType);
+  }
+}
+
+function snippetPickerSelect(type) {
+  document.getElementById("snippet-type").value = type;
+  snippetTypeChanged();
+  _showSnippetPanelOnly();
+}
+
+function snippetPickerBack() {
+  const msgEl = document.getElementById("snippet-detect-msg");
+  if (msgEl) msgEl.classList.add("hidden");
+  _showSnippetPicker();
+}
+
 // Each emoji has search tags (bilingual FR/EN, space-separated, lowercase).
 // Filter matches a 2+ char query against any tag prefix or substring.
 const _EMOJI_CATEGORIES = [
@@ -676,8 +1015,8 @@ function _setSnippetModalMode(mode) {
   }
   const card = document.getElementById("snippet-modal-card");
   if (card) {
-    card.classList.toggle("max-w-lg", !isInline);
-    card.classList.toggle("max-w-5xl", isInline);
+    card.classList.toggle("max-w-6xl", !isInlineEdit);
+    card.classList.toggle("max-w-5xl", isInlineEdit);
   }
 }
 
@@ -691,49 +1030,22 @@ function _openSnippetsModalForText(selectedText, detectedOverride = null) {
   snippetAnchorDocChanged();
 
   const msgEl = document.getElementById("snippet-detect-msg");
+  if (msgEl) msgEl.classList.add("hidden");
+  const detected = selectedText
+    ? detectedOverride || detectSnippetType(selectedText)
+    : null;
 
-  if (selectedText) {
-    const detected = detectedOverride || detectSnippetType(selectedText);
-    if (detected) {
-      document.getElementById("snippet-type").value = detected;
-      snippetTypeChanged();
-      parseAndFillSnippet(selectedText, detected);
-      const labels = {
-        collapsible: window.t('snippet.collapsible'),
-        link: window.t('snippet.link'),
-        "doc-link": window.t('snippet.link_doc'),
-        "anchor-link": window.t('snippet.link_anchor'),
-        "anchor-doc-link": window.t('snippet.link_doc_anchor'),
-        "ordered-list": window.t('snippet.numbered_list'),
-        "unordered-list": window.t('snippet.bullet_list'),
-        "code-block": window.t('snippet.code_block'),
-        blockquote: window.t('snippet.blockquote'),
-        separator: window.t('snippet.separator'),
-        image: window.t('snippet.image'),
-        table: window.t('snippet.table'),
-        tree: window.t('snippet.tree'),
-        "heading-1": window.t('snippet.heading_1'),
-        "heading-2": window.t('snippet.heading_2'),
-        "heading-3": window.t('snippet.heading_3'),
-        "heading-4": window.t('snippet.heading_4'),
-        "colored-section": window.t('snippet.colored_section'),
-        "colored-text": window.t('snippet.colored_text'),
-      };
-      msgEl.textContent = window.t('snippet.detected_msg').replace('{type}', labels[detected] ?? detected);
-      msgEl.className =
-        "rounded-lg px-3 py-2 text-xs bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800";
-    } else {
-      document.getElementById("snippet-type").value = "diagram";
-      snippetTypeChanged();
-      msgEl.textContent = window.t('snippet.unknown_type_msg');
-      msgEl.className =
-        "rounded-lg px-3 py-2 text-xs bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800";
-    }
-    msgEl.classList.remove("hidden");
-  } else {
-    msgEl.classList.add("hidden");
-    document.getElementById("snippet-type").value = "diagram";
+  if (_snippetInlineInsert) {
+    _showSnippetPicker();
+  } else if (detected) {
+    document.getElementById("snippet-type").value = detected;
     snippetTypeChanged();
+    parseAndFillSnippet(selectedText, detected);
+    _showSnippetPanelOnly();
+  } else if (selectedText) {
+    _showSnippetPicker();
+  } else {
+    _showSnippetPicker();
   }
 
   document.getElementById("snippets-modal").classList.remove("hidden");
