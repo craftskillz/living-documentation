@@ -21,6 +21,30 @@ const _INLINE_SNIPPET_TYPES = new Set([
   "unordered-list",
 ]);
 
+const _INLINE_EDIT_AFFORDANCE_BY_TYPE = {
+  table: { labelKey: "snippet.inline_edit_btn_table", iconClass: "fa-solid fa-table-cells" },
+  "code-block": { labelKey: "snippet.inline_edit_btn_code_block", iconClass: "fa-solid fa-code" },
+  blockquote: { labelKey: "snippet.inline_edit_btn_blockquote", iconClass: "fa-solid fa-quote-right" },
+  "ordered-list": { labelKey: "snippet.inline_edit_btn_ordered_list", iconClass: "fa-solid fa-list-ol" },
+  "unordered-list": { labelKey: "snippet.inline_edit_btn_unordered_list", iconClass: "fa-solid fa-list-ul" },
+  tree: { labelKey: "snippet.inline_edit_btn_tree", iconClass: "fa-solid fa-folder-tree" },
+  "colored-section": { labelKey: "snippet.inline_edit_btn_colored_section", iconClass: "fa-solid fa-fill-drip" },
+  "colored-text": { labelKey: "snippet.inline_edit_btn_colored_text", iconClass: "fa-solid fa-highlighter" },
+  collapsible: { labelKey: "snippet.inline_edit_btn_collapsible", iconClass: "fa-solid fa-caret-right" },
+  link: { labelKey: "snippet.inline_edit_btn_link", iconClass: "fa-solid fa-link" },
+  "doc-link": { labelKey: "snippet.inline_edit_btn_doc_link", iconClass: "fa-solid fa-file-lines" },
+  "anchor-link": { labelKey: "snippet.inline_edit_btn_anchor_link", iconClass: "fa-solid fa-anchor" },
+  "anchor-doc-link": { labelKey: "snippet.inline_edit_btn_anchor_doc_link", iconClass: "fa-solid fa-anchor" },
+  image: { labelKey: "snippet.inline_edit_btn_image", iconClass: "fa-solid fa-image" },
+  separator: { labelKey: "snippet.inline_edit_btn_separator", iconClass: "fa-solid fa-minus" },
+};
+
+function _inlineEditAffordance(type) {
+  const known = _INLINE_EDIT_AFFORDANCE_BY_TYPE[type];
+  if (known) return known;
+  return { labelKey: "snippet.inline_edit_btn", iconClass: "fa-solid fa-pen-to-square" };
+}
+
 const _INLINE_TYPE_SELECTORS = [
   { types: ["collapsible"], selector: "details" },
   { types: ["colored-section"], selector: 'div[style*="border-left"]' },
@@ -173,11 +197,12 @@ function _inlineClosePopup() {
   }
 }
 
-function _inlineShowPopup(event, { iconClass, labelKey, onActivate, dataAction }) {
+function _inlineShowPopup(event, { iconClass, labelKey, onActivate, dataAction, dataType }) {
   _inlineClosePopup();
   const popup = document.createElement("div");
   popup.id = "inline-snippet-popup";
   if (dataAction) popup.dataset.action = dataAction;
+  if (dataType) popup.dataset.snippetType = dataType;
   popup.className =
     "fixed z-50 rounded-lg border border-blue-200 dark:border-blue-800 bg-white dark:bg-gray-900 shadow-lg p-1";
   const btn = document.createElement("button");
@@ -346,10 +371,12 @@ function initInlineSnippetEditing(contentEl) {
       const range = candidates[Number(target.dataset.inlineSnippetIndex)];
       if (!range) return;
       event.preventDefault();
+      const affordance = _inlineEditAffordance(range.type);
       _inlineShowPopup(event, {
-        iconClass: "fa-solid fa-pen-to-square",
-        labelKey: "snippet.inline_edit_btn",
+        iconClass: affordance.iconClass,
+        labelKey: affordance.labelKey,
         dataAction: "edit",
+        dataType: range.type,
         onActivate: () => openSnippetsModalForInlineEdit(range),
       });
       return;

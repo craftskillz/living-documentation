@@ -63,6 +63,8 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await page.locator('#doc-content table').click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
+    await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'table');
+    await expect(page.locator('#inline-snippet-popup button')).toContainText('Edit table');
     await page.locator('#inline-snippet-popup button').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
@@ -102,6 +104,8 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await page.locator('#doc-content pre').first().click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
+    await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'code-block');
+    await expect(page.locator('#inline-snippet-popup button')).toContainText('Edit code block');
     await page.locator('#inline-snippet-popup button').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
@@ -178,6 +182,8 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await page.locator('#doc-content blockquote').click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
+    await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'blockquote');
+    await expect(page.locator('#inline-snippet-popup button')).toContainText('Edit blockquote');
     await page.locator('#inline-snippet-popup button').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();

@@ -252,7 +252,7 @@ Utilisez les **catégories** pour distinguer les types :
 
 Organisez ensuite par **domaine fonctionnel** via les sous-dossiers :
 
-```
+```text
 docs/
 ├── authentification/
 │   ├── 2024_01_10_[Tutoriel]_premiers_pas_auth.md
@@ -267,6 +267,8 @@ docs/
 > **Règle d'or** : si vous hésitez entre deux quadrants pour un document, c'est souvent le signe qu'il faut le diviser en deux documents distincts.
 
 ---
+
+
 
 ## Ressources
 

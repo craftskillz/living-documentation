@@ -19,7 +19,7 @@ Les premières itérations ont montré que cette feature deviendra un axe durabl
 
 ### 1. Clic droit plutôt que double-clic
 
-Le déclencheur est `contextmenu` sur le rendu du document. Si la zone ciblée correspond à un snippet connu, le menu natif est intercepté et une petite popup affiche l'action `Edit inline`. Si la zone ciblée ne correspond à aucun snippet reconnu (texte simple, titre, paragraphe brut, espace blanc à l'intérieur de `#doc-content`), la popup affiche `Insert a snippet here` et ouvre la modale Snippets en mode insertion inline.
+Le déclencheur est `contextmenu` sur le rendu du document. Si la zone ciblée correspond à un snippet connu, le menu natif est intercepté et une petite popup affiche l'action `Éditer ...` typée selon le snippet détecté (`Éditer le tableau`, `Éditer le bloc de code`, `Éditer la citation`, etc.) avec une icône FontAwesome adaptée. Cela permet à l'utilisateur de savoir avant le clic ce qu'il s'apprête à éditer. Si la zone ciblée ne correspond à aucun snippet reconnu (texte simple, titre, paragraphe brut, espace blanc à l'intérieur de `#doc-content`), la popup affiche le label générique `Insert a snippet here` car le type sera choisi dans la modale.
 
 Le fichier `src/frontend/inline-snippet-edit.js` porte uniquement la correspondance viewer -> Markdown source, le calcul de la position d'insertion pour les zones non reconnues, et l'ouverture de la popup. La logique de formulaire reste dans la modale Snippets existante.
 
@@ -86,7 +86,7 @@ Le mode édition classique appelle désormais ce helper, et l'édition inline l'
 
 ### 7. Internationalisation et tests
 
-Les textes visibles ajoutés (`Edit inline`, `Insert a snippet here`, titres de modales inline, bouton `Save`, bouton et confirmation de suppression, erreurs de sauvegarde/insertion/suppression, libellés des nouveaux textareas) sont déclarés dans `src/frontend/i18n/en.json` et `src/frontend/i18n/fr.json`.
+Les textes visibles ajoutés (`Edit inline` générique fallback, `Edit <type>` typés par snippet — `Edit table`, `Edit code block`, `Edit blockquote`, etc. dans les deux langues —, `Insert a snippet here`, titres de modales inline, bouton `Save`, bouton et confirmation de suppression, erreurs de sauvegarde/insertion/suppression, libellés des nouveaux textareas) sont déclarés dans `src/frontend/i18n/en.json` et `src/frontend/i18n/fr.json`. Le label spécifique au type est résolu par `_inlineEditAffordance(type)` dans `inline-snippet-edit.js`, qui retourne aussi une icône FontAwesome adaptée (`fa-table-cells`, `fa-code`, `fa-quote-right`, `fa-list-ol`, `fa-list-ul`, `fa-folder-tree`, `fa-fill-drip`, `fa-highlighter`, `fa-caret-right`, `fa-link`, `fa-file-lines`, `fa-anchor`, `fa-image`, `fa-minus`) — fallback `fa-pen-to-square` si le type n'est pas mappé.
 
 La fixture `with-inline-snippets` et `tests/e2e/inline-snippet-edit.spec.ts` couvrent les cas de round-trip et de suppression pour : texte coloré, section colorée, table avec cellules vides, bloc de code, bloc de code sans langage (style requête CloudWatch Logs Insights), bloc de code indenté dans une liste numérotée, citation, liste à puces, liste numérotée, insertion inline d'un snippet depuis un titre non mappé du viewer, ainsi que le verrouillage de la selectbox en mode inline-edit et sa disponibilité en modes insertion et inline-insert.
 
