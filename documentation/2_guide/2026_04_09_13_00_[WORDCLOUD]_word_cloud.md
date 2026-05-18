@@ -7,15 +7,11 @@ Le **Word Cloud** génère un nuage de mots à partir du contenu de n'importe qu
 ### Lancer le Word Cloud
 
 1. Cliquez sur **`☁ Word Cloud`** dans le header principal.
-
    Un overlay plein écran s'ouvre.
-
 2. Dans le champ **Search root**, saisissez le chemin du dossier à analyser.
-
    Vous pouvez aussi cliquer **`Browse`** pour naviguer dans votre système de fichiers et sélectionner un dossier.
 
 3. Cochez les **extensions de fichiers** à inclure dans l'analyse :
-
    | Famille    | Extensions disponibles                        |
    |------------|-----------------------------------------------|
    | Docs       | `.md`, `.txt`                                 |

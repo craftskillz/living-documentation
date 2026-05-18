@@ -496,6 +496,43 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(page.locator('#snippet-submit-btn')).toBeVisible();
   });
 
+  test('inline insert picker pre-fills unordered and ordered list editors', async ({ page, ld }) => {
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.evaluate(() => {
+      (window as any).openSnippetsModalForInlineInsert(0);
+    });
+
+    await expect(page.locator('#snippet-picker')).toBeVisible();
+    await page.locator('#snippet-picker [data-snippet-type="unordered-list"]').click();
+    await expect(page.locator('#snip-unordered-list-content')).toBeVisible();
+    await expect(page.locator('#snip-unordered-list-content')).toHaveValue(
+      [
+        'Élément 1',
+        'Élément 2',
+        '  Sous-élément 2.1',
+        '  Sous-élément 2.2',
+        'Élément 3',
+        '  Sous-élément 3.1',
+        '    Sous-sous-élément 3.1.1',
+      ].join('\n'),
+    );
+
+    await page.locator('#snippet-picker-back').click();
+    await page.locator('#snippet-picker [data-snippet-type="ordered-list"]').click();
+    await expect(page.locator('#snip-ordered-list-content')).toBeVisible();
+    await expect(page.locator('#snip-ordered-list-content')).toHaveValue(
+      [
+        'Élément 1',
+        'Élément 2',
+        '   Sous-élément 2.1',
+        '   Sous-élément 2.2',
+        'Élément 3',
+        '   Sous-élément 3.1',
+        '      Sous-sous-élément 3.1.1',
+      ].join('\n'),
+    );
+  });
+
   test('back button returns from a panel to the picker without inserting', async ({ page, ld }) => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await page.evaluate(() => {

@@ -37,8 +37,33 @@ const _SNIPPET_TYPE_TO_PANEL = {
   "heading-4": "heading",
 };
 
+const _SNIPPET_ORDERED_LIST_DEFAULT = [
+  "Élément 1",
+  "Élément 2",
+  "   Sous-élément 2.1",
+  "   Sous-élément 2.2",
+  "Élément 3",
+  "   Sous-élément 3.1",
+  "      Sous-sous-élément 3.1.1",
+].join("\n");
+
+const _SNIPPET_UNORDERED_LIST_DEFAULT = [
+  "Élément 1",
+  "Élément 2",
+  "  Sous-élément 2.1",
+  "  Sous-élément 2.2",
+  "Élément 3",
+  "  Sous-élément 3.1",
+  "    Sous-sous-élément 3.1.1",
+].join("\n");
+
 function _snippetPanelForType(type) {
   return _SNIPPET_TYPE_TO_PANEL[type] || type;
+}
+
+function _snippetFillTextareaDefault(id, value) {
+  const textarea = document.getElementById(id);
+  if (textarea && textarea.value.trim() === "") textarea.value = value;
 }
 
 const _SNIPPET_PICKER_ICONS = {
@@ -1117,7 +1142,20 @@ function snippetTypeChanged() {
   else if (type === "emojis") emojiInit();
   else if (type === "attachment") {
     /* no preview — file picker opens on Insert */
-  } else snippetUpdatePreview();
+  } else {
+    if (type === "ordered-list") {
+      _snippetFillTextareaDefault(
+        "snip-ordered-list-content",
+        _SNIPPET_ORDERED_LIST_DEFAULT,
+      );
+    } else if (type === "unordered-list") {
+      _snippetFillTextareaDefault(
+        "snip-unordered-list-content",
+        _SNIPPET_UNORDERED_LIST_DEFAULT,
+      );
+    }
+    snippetUpdatePreview();
+  }
 }
 
 async function snippetDiagInit() {
@@ -1238,15 +1276,7 @@ function buildSnippetMarkdown() {
     case "ordered-list": {
       const content =
         document.getElementById("snip-ordered-list-content").value ||
-        [
-          "Élément 1",
-          "Élément 2",
-          "   Sous-élément 2.1",
-          "   Sous-élément 2.2",
-          "Élément 3",
-          "   Sous-élément 3.1",
-          "      Sous-sous-élément 3.1.1",
-        ].join("\n");
+        _SNIPPET_ORDERED_LIST_DEFAULT;
       const countersByIndent = new Map();
       return content
         .split("\n")
@@ -1266,15 +1296,7 @@ function buildSnippetMarkdown() {
     case "unordered-list": {
       const content =
         document.getElementById("snip-unordered-list-content").value ||
-        [
-          "Élément 1",
-          "Élément 2",
-          "  Sous-élément 2.1",
-          "  Sous-élément 2.2",
-          "Élément 3",
-          "  Sous-élément 3.1",
-          "    Sous-sous-élément 3.1.1",
-        ].join("\n");
+        _SNIPPET_UNORDERED_LIST_DEFAULT;
       return content
         .split("\n")
         .filter((line) => line.trim())

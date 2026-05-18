@@ -30,9 +30,9 @@ Living Documentation propose deux modes d'export PDF, accessibles sans configura
 
 1. Cliquez sur le bouton **`📄 PDF`** en haut de la **barre latérale** (pas dans l'article).
 2. Un PDF complet est généré avec :
-   - Une **table des matières** cliquable en début de document
-   - Tous les documents dans l'ordre de la sidebar
-   - Les **liens inter-documents** restent fonctionnels dans le PDF
+  - Une **table des matières** cliquable en début de document
+  - Tous les documents dans l'ordre de la sidebar
+  - Les **liens inter-documents** restent fonctionnels dans le PDF
 
 ---
 

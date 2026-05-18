@@ -82,15 +82,10 @@ Pour modifier un snippet inline, rester en mode lecture sur le viewer du documen
 ### Édition inline depuis le viewer
 
 1. En mode lecture, faites un **clic droit** sur un snippet rendu : tableau, bloc de code, citation, arborescence, liste, texte coloré ou section colorée.
-
 2. Si le bloc est reconnu, cliquez sur **`Édition inline`** dans la petite popup.
-
 3. La modale Snippets s'ouvre avec le type détecté verrouillé. Les champs utiles sont préremplis : grille de tableau, contenu du code, texte de citation, éléments de liste, contenu coloré, etc.
-
 4. Modifiez le contenu puis cliquez sur **`Enregistrer`**.
-
-   ✅ Le Markdown source est remplacé et le document rendu se met à jour.
-
+  ✅ Le Markdown source est remplacé et le document rendu se met à jour.
 5. Pour retirer entièrement le snippet, cliquez sur **`Supprimer le bloc`**, confirmez, puis le bloc Markdown détecté est supprimé du document.
 
 > En édition inline, le type de snippet ne peut pas être changé : cela évite d'écraser une plage Markdown avec un autre format.
