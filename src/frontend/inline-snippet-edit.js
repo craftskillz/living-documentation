@@ -53,6 +53,35 @@ function _inlineEditAffordance(type) {
   return { labelKey: "snippet.inline_edit_btn", iconClass: "fa-solid fa-pen-to-square" };
 }
 
+const _INLINE_DELETE_LABEL_KEY_BY_TYPE = {
+  table: "snippet.inline_delete_btn_table",
+  "code-block": "snippet.inline_delete_btn_code_block",
+  blockquote: "snippet.inline_delete_btn_blockquote",
+  "ordered-list": "snippet.inline_delete_btn_ordered_list",
+  "unordered-list": "snippet.inline_delete_btn_unordered_list",
+  tree: "snippet.inline_delete_btn_tree",
+  "colored-section": "snippet.inline_delete_btn_colored_section",
+  "colored-text": "snippet.inline_delete_btn_colored_text",
+  collapsible: "snippet.inline_delete_btn_collapsible",
+  link: "snippet.inline_delete_btn_link",
+  "doc-link": "snippet.inline_delete_btn_doc_link",
+  "anchor-link": "snippet.inline_delete_btn_anchor_link",
+  "anchor-doc-link": "snippet.inline_delete_btn_anchor_doc_link",
+  image: "snippet.inline_delete_btn_image",
+  separator: "snippet.inline_delete_btn_separator",
+  "heading-1": "snippet.inline_delete_btn_heading_1",
+  "heading-2": "snippet.inline_delete_btn_heading_2",
+  "heading-3": "snippet.inline_delete_btn_heading_3",
+  "heading-4": "snippet.inline_delete_btn_heading_4",
+};
+
+function _inlineDeleteAffordance(type) {
+  return {
+    labelKey: _INLINE_DELETE_LABEL_KEY_BY_TYPE[type] || "snippet.inline_delete_btn",
+    iconClass: "fa-solid fa-trash",
+  };
+}
+
 const _INLINE_TYPE_SELECTORS = [
   { types: ["collapsible"], selector: "details" },
   { types: ["colored-section"], selector: 'div[style*="border-left"]' },
@@ -223,31 +252,40 @@ function _inlineClosePopup() {
   }
 }
 
-function _inlineShowPopup(event, { iconClass, labelKey, onActivate, dataAction, dataType }) {
+function _inlineShowPopup(event, options) {
   _inlineClosePopup();
+  const actions = Array.isArray(options) ? options : [options];
+  const primary = actions[0] || {};
   const popup = document.createElement("div");
   popup.id = "inline-snippet-popup";
-  if (dataAction) popup.dataset.action = dataAction;
-  if (dataType) popup.dataset.snippetType = dataType;
+  if (primary.dataAction) popup.dataset.action = primary.dataAction;
+  if (primary.dataType) popup.dataset.snippetType = primary.dataType;
   popup.className =
-    "fixed z-50 rounded-lg border border-blue-200 dark:border-blue-800 bg-white dark:bg-gray-900 shadow-lg p-1";
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className =
-    "inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30";
-  const icon = document.createElement("i");
-  icon.className = iconClass;
-  icon.setAttribute("aria-hidden", "true");
-  const label = document.createElement("span");
-  label.textContent = window.t(labelKey);
-  btn.append(icon, label);
-  btn.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    _inlineClosePopup();
-    onActivate();
-  });
-  popup.appendChild(btn);
+    "fixed z-50 flex flex-col rounded-lg border border-blue-200 dark:border-blue-800 bg-white dark:bg-gray-900 shadow-lg p-1";
+  for (const action of actions) {
+    const isDanger = action.dataAction === "delete";
+    const btn = document.createElement("button");
+    btn.type = "button";
+    if (action.dataAction) btn.dataset.action = action.dataAction;
+    btn.className =
+      "inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-semibold " +
+      (isDanger
+        ? "text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/30"
+        : "text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30");
+    const icon = document.createElement("i");
+    icon.className = action.iconClass;
+    icon.setAttribute("aria-hidden", "true");
+    const label = document.createElement("span");
+    label.textContent = window.t(action.labelKey);
+    btn.append(icon, label);
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      _inlineClosePopup();
+      action.onActivate();
+    });
+    popup.appendChild(btn);
+  }
   document.body.appendChild(popup);
 
   const margin = 8;
@@ -397,14 +435,24 @@ function initInlineSnippetEditing(contentEl) {
       const range = candidates[Number(target.dataset.inlineSnippetIndex)];
       if (!range) return;
       event.preventDefault();
-      const affordance = _inlineEditAffordance(range.type);
-      _inlineShowPopup(event, {
-        iconClass: affordance.iconClass,
-        labelKey: affordance.labelKey,
-        dataAction: "edit",
-        dataType: range.type,
-        onActivate: () => openSnippetsModalForInlineEdit(range),
-      });
+      const edit = _inlineEditAffordance(range.type);
+      const del = _inlineDeleteAffordance(range.type);
+      _inlineShowPopup(event, [
+        {
+          iconClass: edit.iconClass,
+          labelKey: edit.labelKey,
+          dataAction: "edit",
+          dataType: range.type,
+          onActivate: () => openSnippetsModalForInlineEdit(range),
+        },
+        {
+          iconClass: del.iconClass,
+          labelKey: del.labelKey,
+          dataAction: "delete",
+          dataType: range.type,
+          onActivate: () => confirmAndDeleteInlineSnippetRange(range),
+        },
+      ]);
       return;
     }
     if (!contentEl.contains(event.target)) return;
@@ -427,6 +475,38 @@ function initInlineSnippetEditing(contentEl) {
     "contextmenu",
     contentEl._inlineSnippetContextHandler,
   );
+
+  // Fallback: catch right-clicks on the surrounding <main id="content-area">
+  // when the rendered doc-content is too small to receive them (empty doc, only
+  // a heading, etc.). Lower priority than the inner handler — runs only when
+  // the click target is OUTSIDE contentEl and nothing else preventDefault'd.
+  const mainEl =
+    contentEl.closest("main#content-area") || contentEl.closest("main");
+  if (mainEl && !mainEl._inlineSnippetMainFallbackHandler) {
+    mainEl._inlineSnippetMainFallbackHandler = (event) => {
+      if (event.defaultPrevented) return;
+      if (typeof currentDocContent !== "string") return;
+      const live = document.getElementById("doc-content");
+      if (!live || live.classList.contains("hidden") || live.offsetParent === null) {
+        return;
+      }
+      if (event.target.closest("#doc-editor, #doc-content, textarea, input")) {
+        return;
+      }
+      event.preventDefault();
+      const insertPos = currentDocContent.length;
+      _inlineShowPopup(event, {
+        iconClass: "fa-solid fa-plus",
+        labelKey: "snippet.inline_insert_btn",
+        dataAction: "insert",
+        onActivate: () => openSnippetsModalForInlineInsert(insertPos),
+      });
+    };
+    mainEl.addEventListener(
+      "contextmenu",
+      mainEl._inlineSnippetMainFallbackHandler,
+    );
+  }
 }
 
 document.addEventListener("click", (event) => {

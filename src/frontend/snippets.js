@@ -1397,10 +1397,10 @@ function snippetUpdatePreview() {
 
 async function insertSnippet() {
   const type = document.getElementById("snippet-type").value;
-  if (
-    (_snippetInlineEdit || _snippetInlineInsert) &&
-    (type === "diagram" || type === "attachment")
-  ) {
+  if (_snippetInlineEdit && (type === "diagram" || type === "attachment")) {
+    return;
+  }
+  if (_snippetInlineInsert && type === "attachment") {
     return;
   }
   if (type === "diagram") {
@@ -1464,24 +1464,23 @@ async function insertSnippet() {
   editor.focus();
 }
 
-async function deleteInlineSnippetBlock() {
-  if (!_snippetInlineEdit) return;
-  const ok =
-    typeof showConfirm === "function"
-      ? await showConfirm({
-          title: window.t("snippet.inline_delete_title"),
-          message: window.t("snippet.inline_delete_message"),
-          detail: window.t("snippet.inline_delete_detail"),
-          confirmLabel: window.t("snippet.inline_delete_confirm_btn"),
-          danger: true,
-          detailTone: "warning",
-        })
-      : confirm(window.t("snippet.inline_delete_message"));
-  if (!ok) return;
+async function _confirmInlineSnippetDeletion() {
+  if (typeof showConfirm === "function") {
+    return showConfirm({
+      title: window.t("snippet.inline_delete_title"),
+      message: window.t("snippet.inline_delete_message"),
+      detail: window.t("snippet.inline_delete_detail"),
+      confirmLabel: window.t("snippet.inline_delete_confirm_btn"),
+      danger: true,
+      detailTone: "warning",
+    });
+  }
+  return confirm(window.t("snippet.inline_delete_message"));
+}
 
-  const before = currentDocContent.slice(0, _snippetSelStart);
-  const after = currentDocContent.slice(_snippetSelEnd);
-  closeSnippetsModal();
+async function _performInlineSnippetDeletion(start, end) {
+  const before = currentDocContent.slice(0, start);
+  const after = currentDocContent.slice(end);
   try {
     await saveCurrentDocumentContent(before + after);
   } catch (err) {
@@ -1491,6 +1490,24 @@ async function deleteInlineSnippetBlock() {
     );
   }
 }
+
+async function deleteInlineSnippetBlock() {
+  if (!_snippetInlineEdit) return;
+  const ok = await _confirmInlineSnippetDeletion();
+  if (!ok) return;
+  const start = _snippetSelStart;
+  const end = _snippetSelEnd;
+  closeSnippetsModal();
+  await _performInlineSnippetDeletion(start, end);
+}
+
+async function confirmAndDeleteInlineSnippetRange(range) {
+  if (!range || typeof currentDocContent !== "string") return;
+  const ok = await _confirmInlineSnippetDeletion();
+  if (!ok) return;
+  await _performInlineSnippetDeletion(range.start, range.end);
+}
+window.confirmAndDeleteInlineSnippetRange = confirmAndDeleteInlineSnippetRange;
 
 async function insertDiagramSnippet() {
   const isNew = document.getElementById("snip-diag-mode-new").checked;
@@ -1521,22 +1538,51 @@ async function insertDiagramSnippet() {
 
   // Insert at cursor
   const md = `[![${diagLabel}](./images/${imgName})](/diagram?id=${diagId})`;
+  const wasInlineInsert = _snippetInlineInsert;
+  const insertStart = _snippetSelStart;
+  const insertEnd = _snippetSelEnd;
   closeSnippetsModal();
-  const editor = document.getElementById("doc-editor");
-  const before = editor.value.slice(0, _snippetSelStart);
-  const after = editor.value.slice(_snippetSelEnd);
-  editor.value = before + md + after;
 
-  // Auto-save then redirect to diagram editor
+  let newContent;
+  if (wasInlineInsert) {
+    const before = currentDocContent.slice(0, insertStart);
+    const after = currentDocContent.slice(insertStart);
+    const leadingBlank =
+      before.length === 0 || /\n\n$/.test(before)
+        ? ""
+        : before.endsWith("\n")
+          ? "\n"
+          : "\n\n";
+    const trailingBlank =
+      after.length === 0 || /^\n\n/.test(after)
+        ? ""
+        : after.startsWith("\n")
+          ? "\n"
+          : "\n\n";
+    newContent = before + leadingBlank + md + trailingBlank + after;
+  } else {
+    const editor = document.getElementById("doc-editor");
+    const before = editor.value.slice(0, insertStart);
+    const after = editor.value.slice(insertEnd);
+    editor.value = before + md + after;
+    newContent = editor.value;
+  }
+
+  // Auto-save (and re-render the viewer when in inline-insert mode so the
+  // updated DOM is what gets cached if the user back-buttons here) then
+  // redirect to the diagram editor.
   try {
-    const newContent = editor.value;
-    const res = await fetch("/api/documents/" + currentDocId, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: newContent }),
-    });
-    if (!res.ok) throw new Error(await res.text());
-    currentDocContent = newContent;
+    if (wasInlineInsert && typeof saveCurrentDocumentContent === "function") {
+      await saveCurrentDocumentContent(newContent);
+    } else {
+      const res = await fetch("/api/documents/" + currentDocId, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: newContent }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      currentDocContent = newContent;
+    }
   } catch (err) {
     alert("Erreur lors de la sauvegarde : " + err.message);
     return;

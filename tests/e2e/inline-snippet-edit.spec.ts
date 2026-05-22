@@ -13,7 +13,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await page.locator('#doc-content span[style*="color"]').click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
-    await page.locator('#inline-snippet-popup button').click();
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-modal-title')).toHaveText('Edit inline snippet');
@@ -39,7 +39,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await page.locator('#doc-content div[style*="border-left"]').click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
-    await page.locator('#inline-snippet-popup button').click();
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-type')).toHaveValue('colored-section');
@@ -64,8 +64,8 @@ test.describe('inline snippet editing from viewer', () => {
     await page.locator('#doc-content table').click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
     await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'table');
-    await expect(page.locator('#inline-snippet-popup button')).toContainText('Edit table');
-    await page.locator('#inline-snippet-popup button').click();
+    await expect(page.locator('#inline-snippet-popup button[data-action="edit"]')).toContainText('Edit table');
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-type')).toHaveValue('table');
@@ -105,8 +105,8 @@ test.describe('inline snippet editing from viewer', () => {
     await page.locator('#doc-content pre').first().click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
     await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'code-block');
-    await expect(page.locator('#inline-snippet-popup button')).toContainText('Edit code block');
-    await page.locator('#inline-snippet-popup button').click();
+    await expect(page.locator('#inline-snippet-popup button[data-action="edit"]')).toContainText('Edit code block');
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-type')).toHaveValue('code-block');
@@ -131,7 +131,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await page.locator('#doc-content pre').nth(2).click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
-    await page.locator('#inline-snippet-popup button').click();
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-type')).toHaveValue('code-block');
@@ -159,7 +159,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await page.locator('#doc-content pre').nth(1).click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
-    await page.locator('#inline-snippet-popup button').click();
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-type')).toHaveValue('code-block');
@@ -184,8 +184,8 @@ test.describe('inline snippet editing from viewer', () => {
     await page.locator('#doc-content blockquote').click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
     await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'blockquote');
-    await expect(page.locator('#inline-snippet-popup button')).toContainText('Edit blockquote');
-    await page.locator('#inline-snippet-popup button').click();
+    await expect(page.locator('#inline-snippet-popup button[data-action="edit"]')).toContainText('Edit blockquote');
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-type')).toHaveValue('blockquote');
@@ -213,7 +213,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await page.locator('#doc-content ul').first().click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
-    await page.locator('#inline-snippet-popup button').click();
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-type')).toHaveValue('unordered-list');
@@ -241,7 +241,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await page.locator('#doc-content ol').first().click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
-    await page.locator('#inline-snippet-popup button').click();
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-type')).toHaveValue('ordered-list');
@@ -263,13 +263,51 @@ test.describe('inline snippet editing from viewer', () => {
     expect(onDisk).not.toContain('1. First numbered');
   });
 
+  test('right-click popup exposes a typed delete button that triggers the confirmation modal directly', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content table').click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup')).toBeVisible();
+    const editBtn = page.locator('#inline-snippet-popup button[data-action="edit"]');
+    const deleteBtn = page.locator('#inline-snippet-popup button[data-action="delete"]');
+    await expect(editBtn).toContainText('Edit table');
+    await expect(deleteBtn).toContainText('Delete table');
+
+    await deleteBtn.click();
+    await expect(page.locator('#inline-snippet-popup')).toHaveCount(0);
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#confirm-modal')).toBeVisible();
+    await page.locator('#confirm-modal-ok').click();
+
+    await expect(page.locator('#doc-content table')).toHaveCount(0);
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).not.toContain('| En-tête 1 | En-tête 2 | En-tête 3 |');
+  });
+
+  test('right-click popup delete button can be cancelled and leaves the snippet untouched', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content blockquote').click({ button: 'right' });
+    await page.locator('#inline-snippet-popup button[data-action="delete"]').click();
+
+    await expect(page.locator('#confirm-modal')).toBeVisible();
+    await page.locator('#confirm-modal-cancel').click();
+
+    await expect(page.locator('#confirm-modal')).toBeHidden();
+    await expect(page.locator('#doc-content blockquote')).toContainText('Existing quote');
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain('> Existing quote');
+  });
+
   test('right-click inline editor can delete a block after confirmation', async ({ page, ld }) => {
     const docPath = path.join(ld.docsAbs, `${docId}.md`);
 
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await page.locator('#doc-content blockquote').click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
-    await page.locator('#inline-snippet-popup button').click();
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-delete-btn')).toBeVisible();
@@ -292,8 +330,8 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await page.locator('#doc-content details').first().click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'collapsible');
-    await expect(page.locator('#inline-snippet-popup button')).toContainText('Edit collapsible block');
-    await page.locator('#inline-snippet-popup button').click();
+    await expect(page.locator('#inline-snippet-popup button[data-action="edit"]')).toContainText('Edit collapsible block');
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-type')).toHaveValue('collapsible');
@@ -319,7 +357,7 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(detailsSecond).toHaveAttribute('data-inline-snippet-index', /\d+/);
     await detailsSecond.locator('summary').click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'collapsible');
-    await page.locator('#inline-snippet-popup button').click();
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
 
     await expect(page.locator('#snip-collapsible-summary')).toHaveValue('Collapsible with inner code');
     const body = await page.locator('#snip-collapsible-body').inputValue();
@@ -338,7 +376,7 @@ test.describe('inline snippet editing from viewer', () => {
     await innerPre.click({ button: 'right' });
 
     await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'code-block');
-    await page.locator('#inline-snippet-popup button').click();
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
 
     await expect(page.locator('#snippet-type')).toHaveValue('code-block');
     await expect(page.locator('#snip-code-lang')).toHaveValue('markdown');
@@ -352,8 +390,8 @@ test.describe('inline snippet editing from viewer', () => {
     await page.locator('#doc-content h1').click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
     await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'heading-1');
-    await expect(page.locator('#inline-snippet-popup button')).toContainText('Edit heading level 1');
-    await page.locator('#inline-snippet-popup button').click();
+    await expect(page.locator('#inline-snippet-popup button[data-action="edit"]')).toContainText('Edit heading level 1');
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-type')).toHaveValue('heading-1');
@@ -375,7 +413,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await page.locator('#doc-content h3').click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'heading-3');
-    await page.locator('#inline-snippet-popup button').click();
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
 
     await expect(page.locator('#snippet-type')).toHaveValue('heading-3');
     await expect(page.locator('#snip-heading-content')).toHaveValue('Section trois');
@@ -396,7 +434,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await page.locator('#doc-content p').first().click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-action', 'insert');
-    await page.locator('#inline-snippet-popup button').click();
+    await page.locator('#inline-snippet-popup button[data-action="insert"]').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-picker')).toBeVisible();
@@ -434,7 +472,7 @@ test.describe('inline snippet editing from viewer', () => {
 
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
     await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-action', 'insert');
-    await page.locator('#inline-snippet-popup button').click();
+    await page.locator('#inline-snippet-popup button[data-action="insert"]').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-picker')).toBeVisible();
@@ -550,10 +588,83 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(page.locator('#snippet-picker-back')).toBeHidden();
   });
 
+  test('right-click in <main> outside #doc-content (tiny doc) falls back to insert at end of document', async ({ page, ld }) => {
+    const tinyDocId = '2026_01_02_10_00_[General]_tiny';
+    const docPath = path.join(ld.docsAbs, `${tinyDocId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(tinyDocId)}`);
+
+    const coords = await page.evaluate(() => {
+      const main = document.getElementById('content-area')!;
+      const docContent = document.getElementById('doc-content')!;
+      const mainRect = main.getBoundingClientRect();
+      const docRect = docContent.getBoundingClientRect();
+      return {
+        x: mainRect.left + mainRect.width / 2,
+        y: docRect.bottom + (mainRect.bottom - docRect.bottom) / 2,
+      };
+    });
+
+    expect(coords.y).toBeGreaterThan(0);
+    await page.mouse.move(coords.x, coords.y);
+    await page.mouse.down({ button: 'right' });
+    await page.mouse.up({ button: 'right' });
+
+    await expect(page.locator('#inline-snippet-popup')).toBeVisible();
+    await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-action', 'insert');
+    await page.locator('#inline-snippet-popup button[data-action="insert"]').click();
+
+    await expect(page.locator('#snippet-picker')).toBeVisible();
+    await page.locator('#snippet-picker [data-snippet-type="blockquote"]').click();
+    await page.locator('#snip-blockquote-content').fill('Appended via main fallback');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content blockquote')).toContainText('Appended via main fallback');
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toMatch(/# Tiny doc\n+> Appended via main fallback/);
+  });
+
+  test('inline-insert picker can insert a new diagram and saves the markdown to the document', async ({ page, ld }) => {
+    const tinyDocId = '2026_01_02_10_00_[General]_tiny';
+    const docPath = path.join(ld.docsAbs, `${tinyDocId}.md`);
+    const dialogs: string[] = [];
+    page.on('dialog', async (d) => {
+      dialogs.push(d.message());
+      await d.dismiss();
+    });
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(tinyDocId)}`);
+    await expect(page.locator('#doc-content h1')).toContainText('Tiny doc');
+    await page.evaluate(() => {
+      (window as any).openSnippetsModalForInlineInsert(99999);
+    });
+
+    await expect(page.locator('#snippet-picker')).toBeVisible();
+    await page.locator('#snippet-picker [data-snippet-type="diagram"]').click();
+
+    await expect(page.locator('#snip-panel-diagram')).toBeVisible();
+    await page.locator('#snip-diag-mode-new').check();
+    await page.locator('#snip-diag-new-name').fill('Inline diagram');
+    await page.locator('#snip-diag-img-name').fill('inline_diagram.png');
+
+    await Promise.all([
+      page.waitForURL(/\/diagram\/?\?id=/),
+      page.locator('#snippet-submit-btn').click(),
+    ]);
+
+    expect(dialogs).toEqual([]);
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toMatch(
+      /\[!\[Inline diagram\]\(\.\/images\/inline_diagram\.png\)\]\(\/diagram\?id=d\d+\)/,
+    );
+  });
+
   test('inline-edit bypasses the picker and shows the detected panel directly', async ({ page, ld }) => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await page.locator('#doc-content table').click({ button: 'right' });
-    await page.locator('#inline-snippet-popup button').click();
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-picker')).toBeHidden();

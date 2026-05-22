@@ -358,7 +358,7 @@
     },
     {
       "path": "src/frontend/snippets.js",
-      "hash": "c6bc16c7a6ea561d2a44adb58abbe2b81b1f24818e59e700e3ad06f0a95bd777"
+      "hash": "bdcd9c221fbe37d210a43a92d303ecafa7714bd5e2b3216deccc470a60c8968d"
     },
     {
       "path": "src/frontend/documents.js",
@@ -378,7 +378,7 @@
     },
     {
       "path": "tests/e2e/inline-snippet-edit.spec.ts",
-      "hash": "254ef6b7d541c45228aaebae221ef6538eab974e1b4052afe779a6ccd252100b"
+      "hash": "77957b0514cfabf5a21943eaca43732dda414617a56cadd360a6580e877ec50b"
     },
     {
       "path": "src/frontend/snippet-detect.js",

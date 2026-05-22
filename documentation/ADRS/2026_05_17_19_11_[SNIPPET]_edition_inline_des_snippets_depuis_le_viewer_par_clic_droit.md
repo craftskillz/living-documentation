@@ -19,7 +19,14 @@ Les premières itérations ont montré que cette feature deviendra un axe durabl
 
 ### 1. Clic droit plutôt que double-clic
 
-Le déclencheur est `contextmenu` sur le rendu du document. Si la zone ciblée correspond à un snippet connu, le menu natif est intercepté et une petite popup affiche l'action `Éditer ...` typée selon le snippet détecté (`Éditer le tableau`, `Éditer le bloc de code`, `Éditer la citation`, etc.) avec une icône FontAwesome adaptée. Cela permet à l'utilisateur de savoir avant le clic ce qu'il s'apprête à éditer. Si la zone ciblée ne correspond à aucun snippet reconnu (texte simple, titre, paragraphe brut, espace blanc à l'intérieur de `#doc-content`), la popup affiche le label générique `Insert a snippet here` car le type sera choisi dans la modale.
+Le déclencheur est `contextmenu` sur le rendu du document. Si la zone ciblée correspond à un snippet connu, le menu natif est intercepté et une petite popup affiche **deux** actions typées :
+
+- `Éditer ...` (icône `fa-pen-to-square` ou icône spécifique au type — `fa-table-cells`, `fa-code`, etc.) qui ouvre la modale Snippets en édition inline avec le type détecté et les champs préremplis.
+- `Supprimer ...` (icône `fa-trash`, classe danger rouge) qui ouvre directement la modale `showConfirm` de suppression — la même modale que celle déclenchée par le bouton `Supprimer le bloc` à l'intérieur de la modale d'édition. Sur confirmation, la plage Markdown source est retirée via `saveCurrentDocumentContent` ; sur annulation, le snippet reste intact. Les labels sont typés (`Éditer le tableau` / `Supprimer le tableau`, `Éditer le bloc repliable` / `Supprimer le bloc repliable`, …) pour que l'utilisateur sache sans ambiguïté ce qu'il s'apprête à modifier ou retirer.
+
+Si la zone ciblée ne correspond à aucun snippet reconnu (texte simple, titre, paragraphe brut, espace blanc à l'intérieur de `#doc-content`), la popup affiche une **unique** action `Insert a snippet here` car le type sera choisi dans le picker de la modale.
+
+Quand le document est très court (un titre seul, document quasi vide), la zone rendue `#doc-content` peut être trop petite pour recevoir le clic dans la marge de la `<main>`. Un second handler `contextmenu` est posé sur `<main id="content-area">` comme **fallback secondaire** : il ne se déclenche qu'aux conditions cumulées (a) la cible n'est pas à l'intérieur de `#doc-content`, `#doc-editor`, `<textarea>` ou `<input>` ; (b) `#doc-content` est rendu et visible ; (c) le handler primaire n'a pas déjà fait `preventDefault()` (`event.defaultPrevented` false). Dans ce cas la popup propose `Insérer un snippet ici` et la position d'insertion est `currentDocContent.length` — le snippet est ajouté en fin de document.
 
 Le fichier `src/frontend/inline-snippet-edit.js` porte uniquement la correspondance viewer -> Markdown source, le calcul de la position d'insertion pour les zones non reconnues, et l'ouverture de la popup. La logique de formulaire reste dans la modale Snippets existante.
 
@@ -51,6 +58,11 @@ Routing dans `_openSnippetsModalForText` :
 - **type détecté** (inline-edit OU sélection textarea reconnue) → bypass picker, panel direct (et bouton Retour caché pour inline-edit qui verrouille le type) ;
 - **sélection textarea sans détection** → picker (au lieu de retomber sur diagram comme avant) ;
 - **aucune sélection** → picker.
+
+Garde dans `insertSnippet` (versus types spéciaux qui déclenchent un flow custom) :
+- **inline-edit + diagram/attachment** → bloqué (édition inline n'est pas faite pour redéclencher un flow de création de diagramme ou un file picker) ;
+- **inline-insert + diagram** → autorisé. `insertDiagramSnippet()` détecte `_snippetInlineInsert` (capturé avant `closeSnippetsModal`), construit le Markdown du diagramme avec le padding `\n\n` cohérent avec les autres insertions inline, sauvegarde via `saveCurrentDocumentContent` (PUT + re-fetch HTML + ré-application des décorations viewer pour que le DOM reflète l'image-link AVANT la redirection — sinon un retour navigateur depuis l'éditeur de diagramme via bfcache aurait affiché l'ancien état), puis redirige vers `/diagram?id=…` pour ouvrir l'éditeur du nouveau diagramme. Le mode textarea (édition classique) conserve le `fetch` brut historique : la vue rendue n'est pas affichée en édition et sera refraîchie automatiquement au retour ;
+- **inline-insert + attachment** → bloqué pour l'instant car `openFilePicker` lit/écrit la textarea `#doc-editor` qui n'est pas en mode édition.
 
 La catégorisation est définie en JS (`_SNIPPET_PICKER_CATEGORIES`) avec icônes FontAwesome (`_SNIPPET_PICKER_ICONS`), labels via `_SNIPPET_TYPE_I18N_KEY` et couleurs via `_SNIPPET_PICKER_TYPE_PALETTE` ; ajouter un nouveau type de snippet ne nécessite qu'un nouvel entry dans ces maps.
 
@@ -87,8 +99,8 @@ Les types suivants ont un formulaire éditable en mode inline, sans dépendre de
 - `table` : la plage Markdown complète est parsée en grille. Les cellules vides sont préservées et ne sont pas confondues avec la ligne séparatrice.
 - `code-block` : le langage de la fence est prérempli et le contenu du code est éditable dans un textarea monospace. Le regex de parsing utilise `[ \t]*` (whitespace horizontal seulement) après la fence d'ouverture pour éviter d'absorber un `\n` et donc d'attribuer la première ligne de contenu comme langage quand la fence n'a pas de langage explicite. Les fences indentés à l'intérieur d'une liste sont aussi reconnus : l'indentation canonique (espaces avant la fence d'ouverture) est capturée dans la plage source, retirée de chaque ligne dans le textarea, puis réappliquée à chaque ligne (fences incluses) lors de la sauvegarde, de sorte que le bloc reste imbriqué dans son item de liste.
 - `blockquote` : les préfixes `>` sont retirés dans le textarea, puis réappliqués ligne par ligne à l'enregistrement, y compris sur les lignes vides.
-- `unordered-list` : les marqueurs `-`, `*` ou `+` sont retirés dans le textarea ; l'indentation est conservée et les `-` sont reconstruits.
-- `ordered-list` : les marqueurs numériques sont retirés dans le textarea ; l'indentation est conservée et les compteurs sont régénérés par niveau.
+- `unordered-list` : les marqueurs `-`, `*` ou `+` sont retirés dans le textarea ; l'indentation est conservée et les `-` sont reconstruits. En insertion inline ou textarea, le même contenu par défaut que `buildSnippetMarkdown()` est préchargé dans le textarea pour éviter un éditeur vide avant insertion.
+- `ordered-list` : les marqueurs numériques sont retirés dans le textarea ; l'indentation est conservée et les compteurs sont régénérés par niveau. En insertion inline ou textarea, le même contenu par défaut que `buildSnippetMarkdown()` est préchargé dans le textarea pour éviter un éditeur vide avant insertion.
 - `tree` : l'éditeur d'arborescence existant reste utilisé ; son aperçu Markdown est masqué en inline.
 - `colored-text` et `colored-section` : les champs couleur/contenu restent les éditeurs principaux ; l'aperçu Markdown est masqué.
 
@@ -96,7 +108,10 @@ L'aperçu Markdown reste utile pour les snippets simples en insertion, mais il e
 
 ### 5. Suppression confirmée du bloc source
 
-La modale inline affiche un bouton `Supprimer le bloc` avant `Enregistrer`. Il n'est visible qu'en mode inline. Le clic ouvre la modale générique `showConfirm()` en mode danger, puis supprime la plage Markdown source (`currentDocContent.slice(0, start) + currentDocContent.slice(end)`) et sauvegarde le document.
+Deux points d'entrée déclenchent la même modale `showConfirm()` en mode danger puis la même routine de suppression (slice de `currentDocContent` entre `range.start` et `range.end` + `saveCurrentDocumentContent`) :
+
+- Le bouton `Supprimer le bloc` à l'intérieur de la modale d'édition inline (visible uniquement en mode `inline-edit`, à côté du bouton `Enregistrer`). Utilisé quand l'utilisateur est déjà entré en édition.
+- Le bouton secondaire `Supprimer ...` dans la mini popup du clic droit (voir décision 1). Permet de retirer un snippet sans ouvrir la modale d'édition. La fonction `confirmAndDeleteInlineSnippetRange(range)` exposée sur `window` accepte directement la plage source. Les helpers `_confirmInlineSnippetDeletion()` et `_performInlineSnippetDeletion(start, end)` factorisent la confirmation et la suppression entre les deux flows.
 
 Cette suppression est volontairement faite au niveau de la plage Markdown détectée, pas au niveau du DOM rendu, pour conserver le même contrat que l'édition inline : le viewer n'est qu'un point d'entrée, le Markdown reste la source de vérité.
 
@@ -110,7 +125,7 @@ Le mode édition classique appelle désormais ce helper, et l'édition inline l'
 
 Les textes visibles ajoutés (`Edit inline` générique fallback, `Edit <type>` typés par snippet — `Edit table`, `Edit code block`, `Edit blockquote`, etc. dans les deux langues —, `Insert a snippet here`, titres de modales inline, bouton `Save`, bouton et confirmation de suppression, erreurs de sauvegarde/insertion/suppression, libellés des nouveaux textareas) sont déclarés dans `src/frontend/i18n/en.json` et `src/frontend/i18n/fr.json`. Le label spécifique au type est résolu par `_inlineEditAffordance(type)` dans `inline-snippet-edit.js`, qui retourne aussi une icône FontAwesome adaptée (`fa-table-cells`, `fa-code`, `fa-quote-right`, `fa-list-ol`, `fa-list-ul`, `fa-folder-tree`, `fa-fill-drip`, `fa-highlighter`, `fa-caret-right`, `fa-link`, `fa-file-lines`, `fa-anchor`, `fa-image`, `fa-minus`) — fallback `fa-pen-to-square` si le type n'est pas mappé.
 
-La fixture `with-inline-snippets` et `tests/e2e/inline-snippet-edit.spec.ts` couvrent les cas de round-trip et de suppression pour : texte coloré, section colorée, table avec cellules vides, bloc de code, bloc de code sans langage (style requête CloudWatch Logs Insights), bloc de code indenté dans une liste numérotée, citation, liste à puces, liste numérotée, insertion inline d'un snippet depuis un titre non mappé du viewer, ainsi que le verrouillage de la selectbox en mode inline-edit et sa disponibilité en modes insertion et inline-insert.
+La fixture `with-inline-snippets` et `tests/e2e/inline-snippet-edit.spec.ts` couvrent les cas de round-trip et de suppression pour : texte coloré, section colorée, table avec cellules vides, bloc de code, bloc de code sans langage (style requête CloudWatch Logs Insights), bloc de code indenté dans une liste numérotée, citation, liste à puces, liste numérotée, préremplissage des éditeurs de listes depuis le picker d'insertion inline, insertion inline d'un snippet depuis un titre non mappé du viewer, ainsi que le verrouillage de la selectbox en mode inline-edit et sa disponibilité en modes insertion et inline-insert.
 
 ## Conséquences
 
