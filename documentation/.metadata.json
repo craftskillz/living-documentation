@@ -354,19 +354,19 @@
   "ADRS/2026_05_17_19_11_[SNIPPET]_edition_inline_des_snippets_depuis_le_viewer_par_clic_droit": [
     {
       "path": "src/frontend/inline-snippet-edit.js",
-      "hash": "71be311f5c9da25ca62a2a302c047e0968298f7cee57cc390ababfccc3660128"
+      "hash": "980907f73435feaf62c97327e6d396e40d311ae668548a05dfe5242b56bde79d"
     },
     {
       "path": "src/frontend/snippets.js",
-      "hash": "2779cab6dc38d2c0582371a10a6cce0e48c70dbb264dd61cc82284ecfe9ebe22"
+      "hash": "0da2ea18424378e985c65534b4b893c4b41cbccdb4208b9165ce6236eaf81358"
     },
     {
       "path": "src/frontend/documents.js",
-      "hash": "b1e78484258834e31ad7c1eb2e7d691ce4864ecac006db81dde1a8b2952932c6"
+      "hash": "d989f31868a07fa76f5555006a2dcb6830fa32daf9442e74ef5a57e60300af59"
     },
     {
       "path": "src/frontend/index.html",
-      "hash": "7b1d0581db7cd746e6fe677629d1efdb8e3ed1aba287c70af76fd2b0b1a9815d"
+      "hash": "065f615616897ebb87c7822631d2e1c712236821699e4bf1308193cfca5832a6"
     },
     {
       "path": "src/frontend/i18n/en.json",
@@ -382,11 +382,15 @@
     },
     {
       "path": "src/frontend/snippet-detect.js",
-      "hash": "bc7b2878622c6bcf211a0a36b3d58edc3277f64c22ee551a0ebb4e890abffcb4"
+      "hash": "53e3f874b80720864b2f21a4692a17d3e62e71a0827a5aba212a7aa98d9c286a"
     },
     {
       "path": "src/frontend/snippet-table.js",
       "hash": "c85d2879bca1fd6d4a8fb3225397e40ceb79ec838bc25ac52524c81bece5b3c2"
+    },
+    {
+      "path": "src/frontend/snippet-table-attributes.js",
+      "hash": "a07d6dd0bdb26ceaad104716be662c3724cd527668c56fe6803462ce66123765"
     }
   ],
   "1_tutorial/2026_04_12_10_00_[General]_utiliser_les_snippets": [

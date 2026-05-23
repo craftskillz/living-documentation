@@ -16,7 +16,7 @@ function detectSnippetType(text) {
   if (/^<div\s[^>]*border-left[^>]*>/.test(t)) return "colored-section";
   if (/^```text\n/.test(t) && /[├└│]/.test(t)) return "tree";
   if (/^```/.test(t)) return "code-block";
-  if (/^(?:<!--\s*table-(?:style|border|color):\s*[a-z][a-z0-9_-]*\s*-->\n){0,3}(\| *.*? *\|)+\n(\| *-+.*\|)+/.test(t)) return "table";
+  if (ldLooksLikeTableSnippet(t)) return "table";
   if (/^> /.test(t)) return "blockquote";
   const headingMatch = /^(#{1,4}) [^\n]+$/.exec(t);
   if (headingMatch) return `heading-${headingMatch[1].length}`;

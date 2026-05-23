@@ -193,7 +193,7 @@ function _inlineCollectSnippetRanges(content) {
   _inlineAddRegexRanges(
     ranges,
     content,
-    /(?:^|\n)((?:<!--\s*table-(?:style|border|color):\s*[a-z][a-z0-9_-]*\s*-->\n){0,3}(?:\|[^\n]*\|\n)\|[ \t:|-]*\|(?:\n\|[^\n]*\|)*)/g,
+    new RegExp("(?:^|\\n)((" + ldTableBlockSource() + "))", "g"),
     1,
   );
   _inlineAddRegexRanges(ranges, content, /^> .*(?:\n>.*)*/gm);

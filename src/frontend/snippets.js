@@ -2,7 +2,8 @@
 // Depends on globals from state.js (allDocs, currentDocId, currentDocContent),
 // utils.js (esc), snippet-detect.js (detectSnippetType), snippet-table.js
 // (_tableData, tableInit, tableRenderGrid, buildTableMarkdown) and
-// snippet-tree.js (_treeItems, treeInit, treeRenderList, buildTreeMarkdown).
+// snippet-tree.js (_treeItems, treeInit, treeRenderList, buildTreeMarkdown)
+// and snippet-table-attributes.js (table comment helpers).
 
 let _snippetSelStart = 0;
 let _snippetSelEnd = 0;
@@ -1370,14 +1371,12 @@ function buildSnippetMarkdown() {
       const styleEl = document.getElementById("snip-table-style");
       const borderedEl = document.getElementById("snip-table-bordered");
       const colorEl = document.getElementById("snip-table-color");
-      const style = styleEl ? styleEl.value : "";
-      const bordered = borderedEl ? borderedEl.checked : false;
-      const color = colorEl ? colorEl.value : "";
-      const prefix = [];
-      if (style) prefix.push(`<!-- table-style: ${style} -->`);
-      if (bordered) prefix.push(`<!-- table-border: bordered -->`);
-      if (color) prefix.push(`<!-- table-color: ${color} -->`);
-      return (prefix.length ? prefix.join("\n") + "\n" : "") + tableMd;
+      const prefix = ldBuildTableAttributesPrefix({
+        style: styleEl ? styleEl.value : "",
+        border: borderedEl && borderedEl.checked ? "bordered" : "",
+        color: colorEl ? colorEl.value : "",
+      });
+      return (prefix ? prefix + "\n" : "") + tableMd;
     }
     case "tree":
       return buildTreeMarkdown();
@@ -1620,20 +1619,8 @@ async function insertDiagramSnippet() {
 }
 
 // ── Snippet parsing (detection lives in /snippet-detect.js) ────────────────
-function _parseMarkdownTableCells(line) {
-  return line
-    .trim()
-    .split("|")
-    .slice(1, -1)
-    .map((cell) => cell.trim());
-}
-
 function _isMarkdownTableSeparatorLine(line) {
-  const cells = _parseMarkdownTableCells(line);
-  return (
-    cells.length > 0 &&
-    cells.every((cell) => /^:?-{3,}:?$/.test(cell.replace(/\s+/g, "")))
-  );
+  return ldIsMarkdownTableSeparatorLine(line);
 }
 
 function parseAndFillSnippet(text, type) {
@@ -1780,33 +1767,20 @@ function parseAndFillSnippet(text, type) {
       break;
     }
     case "table": {
-      const styleMatch = t.match(/<!--\s*table-style:\s*([a-z][a-z0-9_-]*)\s*-->/);
-      const borderMatch = t.match(/<!--\s*table-border:\s*([a-z][a-z0-9_-]*)\s*-->/);
-      const colorMatch = t.match(/<!--\s*table-color:\s*([a-z][a-z0-9_-]*)\s*-->/);
+      const attrs = ldParseTableAttributesFromMarkdown(t);
       const styleEl = document.getElementById("snip-table-style");
       const borderedEl = document.getElementById("snip-table-bordered");
       const colorEl = document.getElementById("snip-table-color");
-      const style = styleMatch && /^(compact|striped)$/.test(styleMatch[1])
-        ? styleMatch[1]
-        : "";
-      const border = borderMatch
-        ? borderMatch[1]
-        : styleMatch && /^(bordered|borderless)$/.test(styleMatch[1])
-          ? styleMatch[1]
-          : "";
-      const color = colorMatch && /^(info|success|warning|danger|note)$/.test(colorMatch[1])
-        ? colorMatch[1]
-        : "";
-      if (styleEl) styleEl.value = style;
-      if (borderedEl) borderedEl.checked = border === "bordered";
-      if (colorEl) colorEl.value = color;
+      if (styleEl) styleEl.value = attrs.style || "";
+      if (borderedEl) borderedEl.checked = attrs.border === "bordered";
+      if (colorEl) colorEl.value = attrs.color || "";
       const allLines = t
         .split("\n")
         .filter((l) => /^\|.*\|$/.test(l.trim()));
       const dataLines = allLines.filter(
         (l) => !_isMarkdownTableSeparatorLine(l),
       );
-      _tableData = dataLines.map(_parseMarkdownTableCells);
+      _tableData = dataLines.map(ldParseMarkdownTableCells);
       const maxCols = Math.max(..._tableData.map((r) => r.length));
       _tableData.forEach((row) => {
         while (row.length < maxCols) row.push("");
