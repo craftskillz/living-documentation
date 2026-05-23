@@ -5,23 +5,15 @@ Living Documentation vous permet d'éditer vos fichiers Markdown directement dan
 ## Passons à la pratique
 
 1. **Ouvrez n'importe quel document** dans la barre latérale gauche.
-
 2. **Cliquez sur le bouton `Edit`** dans le header de l'article (en haut à droite du contenu).
-
    Le document bascule en mode édition : un `<textarea>` remplace le rendu HTML. Vous voyez le Markdown brut.
-
 3. **Modifiez le texte.** Par exemple, ajoutez une ligne à la fin :
-
    ```markdown
    Voici ma première modification !
    ```
-
 4. **Cliquez sur `Save`.**
-
    Le document est sauvegardé sur disque et re-rendu immédiatement, sans rechargement de page.
-
    ✅ Votre modification est visible et persistée dans le fichier `.md` sur le disque.
-
 5. **Pour annuler sans sauvegarder**, cliquez sur `Cancel` — le document revient à son état d'origine.
 
 ---

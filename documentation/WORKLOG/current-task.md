@@ -15,11 +15,16 @@ Increment completed
 
 ## Tâche courante
 
-Audit qualité de code et plan de refactoring incrémental. Troisième incrément réalisé : extraction cohésive des builders Markdown de snippets hors de l'orchestration de modale.
+Audit qualité de code et plan de refactoring incrémental. Quatrième incrément réalisé : extraction cohésive des parseurs Markdown de snippets hors de l'orchestration de modale.
 
 ## Dernière action réalisée
 
-- Incrément `refactor(snippet-builders): isolate markdown builders from modal orchestration` réalisé.
+- Incrément `refactor(snippet-parsers): isolate markdown parsers from modal orchestration` réalisé.
+- Nouveau helper `src/frontend/snippet-parsers.js`, chargé avant `snippet-detect.js`, centralise le parsing Markdown par type de snippet.
+- `parseAndFillSnippet()` ne porte plus directement les regex de parsing : il appelle `ldParseSnippetMarkdown(type, text, options)` puis applique les valeurs parsées aux champs DOM, selects, swatches et grilles.
+- Les parsers existants des attributs de table restent réutilisés depuis `snippet-parsers.js`, sans modifier le rendu ni les formulaires.
+- L'ADR inline snippets a été mise à jour pour refléter la séparation durable entre parsing Markdown et remplissage DOM.
+- Incrément précédent `refactor(snippet-builders): isolate markdown builders from modal orchestration` réalisé et commité.
 - Nouveau helper `src/frontend/snippet-builders.js`, chargé avant `snippet-detect.js`, centralise la reconstruction Markdown par type de snippet.
 - `snippets.js` ne porte plus directement les templates Markdown dans `buildSnippetMarkdown()` : il collecte les valeurs de formulaire via `_snippetMarkdownBuildData(type)` puis délègue à `ldBuildSnippetMarkdown(type, data)`.
 - Les builders existants des listes et des attributs de table restent réutilisés depuis `snippet-builders.js`, sans modifier le rendu ni les formulaires.
@@ -46,7 +51,7 @@ Audit qualité de code et plan de refactoring incrémental. Troisième incrémen
 
 ## Prochaine action recommandée
 
-Prochain incrément recommandé : `refactor(snippet-parsers): isolate markdown parsers from modal orchestration`, à discuter avant exécution. Garder ce prochain commit limité à l'extraction du parsing Markdown depuis `parseAndFillSnippet()`, en évitant de mélanger avec des changements UX ou de rendu.
+Prochain incrément recommandé : `chore(frontend-quality): add conservative lint/check for frontend js`, à discuter avant exécution. Garder ce prochain commit limité à l'ajout d'un contrôle qualité exécutable et aux corrections strictement nécessaires, avec mise à jour des docs IA de stack/commandes.
 
 ## Fichiers ou zones concernés
 
@@ -54,6 +59,7 @@ Prochain incrément recommandé : `refactor(snippet-parsers): isolate markdown p
 - `src/frontend/snippet-table-attributes.js` : helper centralisé pour les commentaires et helpers table.
 - `src/frontend/snippet-list-markdown.js` : helper centralisé pour les règles Markdown de listes.
 - `src/frontend/snippet-builders.js` : helper centralisé pour reconstruire le Markdown des snippets.
+- `src/frontend/snippet-parsers.js` : helper centralisé pour parser le Markdown des snippets.
 - `src/frontend/inline-snippet-edit.js` : mapping DOM rendu -> plages Markdown source.
 - `src/frontend/snippets.js` : picker, formulaires, build Markdown, parse Markdown, insertion/suppression inline.
 - `src/frontend/snippet-table.js` : état et grille d'édition des tableaux.
@@ -67,7 +73,10 @@ Prochain incrément recommandé : `refactor(snippet-parsers): isolate markdown p
 ## Vérifications récentes
 
 - `npm run build` : OK.
-- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "colored text opens snippet editor|colored section opens snippet editor|table captures header|code block captures language|blockquote captures editable|unordered list captures|ordered list captures|simple collapsible exposes|level-1 heading opens"` : OK, 9 tests passés.
+- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "colored text opens snippet editor|colored section opens snippet editor|table captures header|table preceded by table-style|code block captures language|code block without language|indented code block inside a list|blockquote captures editable|unordered list captures|ordered list captures|simple collapsible exposes|level-1 heading opens|level-3 heading reuses"` : OK, 13 tests passés.
+- Vérifications de l'incrément builders précédent :
+  - `npm run build` : OK.
+  - `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "colored text opens snippet editor|colored section opens snippet editor|table captures header|code block captures language|blockquote captures editable|unordered list captures|ordered list captures|simple collapsible exposes|level-1 heading opens"` : OK, 9 tests passés.
 - Vérifications de l'incrément listes précédent :
   - `npm run build` : OK.
   - `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "right-click on unordered list captures editable item content|right-click on ordered list captures editable item content|inline insert picker pre-fills unordered and ordered list editors"` : OK, 3 tests passés.

@@ -5,7 +5,8 @@
 // snippet-tree.js (_treeItems, treeInit, treeRenderList, buildTreeMarkdown),
 // snippet-table-attributes.js (table comment helpers) and
 // snippet-list-markdown.js (list Markdown helpers) and
-// snippet-builders.js (Markdown builders).
+// snippet-builders.js (Markdown builders) and
+// snippet-parsers.js (Markdown parsers).
 
 let _snippetSelStart = 0;
 let _snippetSelEnd = 0;
@@ -1551,139 +1552,134 @@ async function insertDiagramSnippet() {
 }
 
 // ── Snippet parsing (detection lives in /snippet-detect.js) ────────────────
-function _isMarkdownTableSeparatorLine(line) {
-  return ldIsMarkdownTableSeparatorLine(line);
+function _snippetEnsureSelectOption(selectEl, value) {
+  const hasOption = Array.from(selectEl.options).some((opt) => opt.value === value);
+  if (hasOption) return;
+  const opt = document.createElement("option");
+  opt.value = value;
+  opt.textContent = value;
+  selectEl.insertBefore(opt, selectEl.firstChild);
+}
+
+function _snippetSelectValueIfPresent(selectEl, value) {
+  for (const opt of selectEl.options) {
+    if (opt.value === value) {
+      selectEl.value = opt.value;
+      return;
+    }
+  }
+}
+
+function _snippetColorSwatchNameByBorder(color) {
+  const found = Object.entries(_COLOR_SWATCHES).find(
+    ([, swatch]) => swatch.border === color,
+  );
+  return found ? found[0] : null;
+}
+
+function _snippetApplyColorTextSwatch(name) {
+  if (!name) return;
+  _colorTextSwatch = name;
+  document.querySelectorAll(".color-text-swatch-btn").forEach((btn) => {
+    btn.classList.remove("selected-text-swatch", "ring-offset-2");
+  });
+  const activeBtn = document.querySelector(
+    `[data-color-text-swatch="${_colorTextSwatch}"]`,
+  );
+  if (activeBtn) activeBtn.classList.add("selected-text-swatch", "ring-offset-2");
+}
+
+function _snippetApplyColorSectionSwatch(name) {
+  if (!name) return;
+  _colorSectionSwatch = name;
+  document.querySelectorAll(".color-swatch-btn").forEach((btn) => {
+    btn.classList.remove("selected-swatch", "ring-offset-2");
+  });
+  const activeBtn = document.querySelector(
+    `[data-color-swatch="${_colorSectionSwatch}"]`,
+  );
+  if (activeBtn) activeBtn.classList.add("selected-swatch", "ring-offset-2");
 }
 
 function parseAndFillSnippet(text, type) {
-  const t = text.trim();
+  const parsed = ldParseSnippetMarkdown(type, text, {
+    inlineIndent: _snippetInlineIndent,
+  });
   switch (type) {
     case "collapsible": {
-      const summaryMatch = t.match(/<summary>([\s\S]*?)<\/summary>/i);
-      if (summaryMatch) {
+      if (parsed.summary !== undefined) {
         document.getElementById("snip-collapsible-summary").value =
-          summaryMatch[1].trim();
+          parsed.summary;
       }
-      const bodyMatch = t.match(
-        /<details\b[^>]*>[\s\S]*?<\/summary>\s*\n?([\s\S]*?)\s*<\/details>\s*$/i,
-      );
       const bodyEl = document.getElementById("snip-collapsible-body");
-      if (bodyEl) bodyEl.value = bodyMatch ? bodyMatch[1].trim() : "";
+      if (bodyEl) bodyEl.value = parsed.body || "";
       break;
     }
     case "link": {
-      const m = t.match(/^\[([\s\S]*?)\]\(([\s\S]*?)\)$/);
-      if (m) {
-        document.getElementById("snip-link-text").value = m[1];
-        document.getElementById("snip-link-url").value = m[2];
+      if (parsed.text !== undefined) {
+        document.getElementById("snip-link-text").value = parsed.text;
+        document.getElementById("snip-link-url").value = parsed.url;
       }
       break;
     }
     case "doc-link": {
-      const m = t.match(/^\[([\s\S]*?)\]\(\?doc=([\s\S]*?)\)$/);
-      if (m) {
-        const docId = decodeURIComponent(m[1] === "" ? m[2] : m[2]);
+      if (parsed.docId !== undefined) {
         const sel = document.getElementById("snip-doc-select");
-        for (const opt of sel.options) {
-          if (opt.value === decodeURIComponent(m[2])) {
-            sel.value = opt.value;
-            break;
-          }
-        }
+        _snippetSelectValueIfPresent(sel, parsed.docId);
         const autoTitle = sel.options[sel.selectedIndex]?.text ?? "";
         document.getElementById("snip-doc-link-text").value =
-          m[1] === autoTitle ? "" : m[1];
+          parsed.text === autoTitle ? "" : parsed.text;
       }
       break;
     }
     case "anchor-link": {
-      const m = t.match(/^\[([\s\S]*?)\]\(#([\s\S]*?)\)$/);
-      if (m) {
-        document.getElementById("snip-anchor-text").value = m[1];
+      if (parsed.anchor !== undefined) {
+        document.getElementById("snip-anchor-text").value = parsed.text;
         const sel = document.getElementById("snip-anchor-id");
-        const wanted = m[2];
-        const hasOpt = Array.from(sel.options).some(
-          (o) => o.value === wanted,
-        );
-        if (!hasOpt) {
-          const opt = document.createElement("option");
-          opt.value = wanted;
-          opt.textContent = wanted;
-          sel.insertBefore(opt, sel.firstChild);
-        }
-        sel.value = wanted;
+        _snippetEnsureSelectOption(sel, parsed.anchor);
+        sel.value = parsed.anchor;
       }
       break;
     }
     case "anchor-doc-link": {
-      const m = t.match(
-        /^\[([\s\S]*?)\]\(\?doc=([\s\S]*?)#([\s\S]*?)\)$/,
-      );
-      if (m) {
+      if (parsed.docId !== undefined) {
         const sel = document.getElementById("snip-anchor-doc-select");
-        for (const opt of sel.options) {
-          if (opt.value === decodeURIComponent(m[2])) {
-            sel.value = opt.value;
-            break;
-          }
-        }
-        document.getElementById("snip-anchor-doc-text").value = m[1];
-        const wanted = m[3];
+        _snippetSelectValueIfPresent(sel, parsed.docId);
+        document.getElementById("snip-anchor-doc-text").value = parsed.text;
         snippetAnchorDocChanged().then(() => {
           const anchorSel = document.getElementById("snip-anchor-doc-id");
           if (!anchorSel) return;
-          const hasOpt = Array.from(anchorSel.options).some(
-            (o) => o.value === wanted,
-          );
-          if (!hasOpt) {
-            const opt = document.createElement("option");
-            opt.value = wanted;
-            opt.textContent = wanted;
-            anchorSel.insertBefore(opt, anchorSel.firstChild);
-          }
-          anchorSel.value = wanted;
+          _snippetEnsureSelectOption(anchorSel, parsed.anchor);
+          anchorSel.value = parsed.anchor;
           snippetUpdatePreview();
         });
       }
       break;
     }
     case "ordered-list": {
-      document.getElementById("snip-ordered-list-content").value = t;
+      document.getElementById("snip-ordered-list-content").value =
+        parsed.content;
       break;
     }
     case "unordered-list": {
-      document.getElementById("snip-unordered-list-content").value = t;
+      document.getElementById("snip-unordered-list-content").value =
+        parsed.content;
       break;
     }
     case "code-block": {
-      const m = t.match(/^```[ \t]*([^\n]*)\n([\s\S]*?)\n[ \t]*```$/);
-      document.getElementById("snip-code-lang").value = m ? m[1].trim() : "";
-      let codeContent = m ? m[2] : "";
-      if (m && _snippetInlineIndent) {
-        const escapedIndent = _snippetInlineIndent.replace(
-          /[.*+?^${}()|[\]\\]/g,
-          "\\$&",
-        );
-        codeContent = codeContent.replace(
-          new RegExp("^" + escapedIndent, "gm"),
-          "",
-        );
-      }
-      document.getElementById("snip-code-content").value = codeContent;
+      document.getElementById("snip-code-lang").value = parsed.lang;
+      document.getElementById("snip-code-content").value = parsed.code;
       break;
     }
     case "blockquote": {
-      document.getElementById("snip-blockquote-content").value = t
-        .split("\n")
-        .map((line) => line.replace(/^>\s?/, ""))
-        .join("\n");
+      document.getElementById("snip-blockquote-content").value =
+        parsed.content;
       break;
     }
     case "image": {
-      const m = t.match(/^!\[([\s\S]*?)\]\(([\s\S]*?)\)$/);
-      if (m) {
-        document.getElementById("snip-image-alt").value = m[1];
-        document.getElementById("snip-image-url").value = m[2];
+      if (parsed.alt !== undefined) {
+        document.getElementById("snip-image-alt").value = parsed.alt;
+        document.getElementById("snip-image-url").value = parsed.url;
       }
       break;
     }
@@ -1691,76 +1687,45 @@ function parseAndFillSnippet(text, type) {
     case "heading-2":
     case "heading-3":
     case "heading-4": {
-      const level = Number(type.slice(-1));
-      const re = new RegExp(`^#{${level}}\\s+(.+)$`);
-      const m = t.match(re);
       const headingEl = document.getElementById("snip-heading-content");
-      if (headingEl) headingEl.value = m ? m[1].trim() : "";
+      if (headingEl) headingEl.value = parsed.text;
       break;
     }
     case "table": {
-      const attrs = ldParseTableAttributesFromMarkdown(t);
       const styleEl = document.getElementById("snip-table-style");
       const borderedEl = document.getElementById("snip-table-bordered");
       const colorEl = document.getElementById("snip-table-color");
-      if (styleEl) styleEl.value = attrs.style || "";
-      if (borderedEl) borderedEl.checked = attrs.border === "bordered";
-      if (colorEl) colorEl.value = attrs.color || "";
-      const allLines = t
-        .split("\n")
-        .filter((l) => /^\|.*\|$/.test(l.trim()));
-      const dataLines = allLines.filter(
-        (l) => !_isMarkdownTableSeparatorLine(l),
-      );
-      _tableData = dataLines.map(ldParseMarkdownTableCells);
-      const maxCols = Math.max(..._tableData.map((r) => r.length));
-      _tableData.forEach((row) => {
-        while (row.length < maxCols) row.push("");
-      });
+      if (styleEl) styleEl.value = parsed.attrs.style || "";
+      if (borderedEl) borderedEl.checked = parsed.attrs.border === "bordered";
+      if (colorEl) colorEl.value = parsed.attrs.color || "";
+      _tableData = parsed.rows;
       tableRenderGrid();
       break;
     }
     case "tree": {
-      const inner = t.replace(/^```text\n/, "").replace(/\n```$/, "");
-      _treeItems = inner.split("\n").map((line) => {
-        const m = line.match(/^((?:│   |    )*)(?:├── |└── )([\s\S]+)$/);
-        if (m) return { name: m[2], depth: m[1].length / 4 + 1 };
-        return { name: line, depth: 0 };
-      });
+      _treeItems = parsed.items;
       treeRenderList();
       break;
     }
     case "colored-text": {
-      const m = t.match(/^<span\s[^>]*color:([^;>"]+)[^>]*>([\s\S]*)<\/span>$/);
-      if (m) {
-        const col = m[1].trim();
-        const found = Object.entries(_COLOR_SWATCHES).find(([, v]) => v.border === col);
-        if (found) {
-          _colorTextSwatch = found[0];
-          document.querySelectorAll(".color-text-swatch-btn").forEach((b) => b.classList.remove("selected-text-swatch", "ring-offset-2"));
-          const activeBtn = document.querySelector(`[data-color-text-swatch="${_colorTextSwatch}"]`);
-          if (activeBtn) activeBtn.classList.add("selected-text-swatch", "ring-offset-2");
-        }
-        document.getElementById("snip-colored-text-content").value = m[2];
+      if (parsed.color !== undefined) {
+        _snippetApplyColorTextSwatch(
+          _snippetColorSwatchNameByBorder(parsed.color),
+        );
+        document.getElementById("snip-colored-text-content").value =
+          parsed.content;
       }
       break;
     }
     case "colored-section": {
-      // Extract border color from inline style to guess the swatch
-      const borderM = t.match(/border-left:[^;]*solid\s+(#[0-9a-fA-F]{6})/);
-      if (borderM) {
-        const found = Object.entries(_COLOR_SWATCHES).find(([, v]) => v.border === borderM[1]);
-        if (found) {
-          _colorSectionSwatch = found[0];
-          document.querySelectorAll(".color-swatch-btn").forEach((b) => {
-            b.classList.remove("selected-swatch", "ring-offset-2");
-          });
-          const activeBtn = document.querySelector(`[data-color-swatch="${_colorSectionSwatch}"]`);
-          if (activeBtn) activeBtn.classList.add("selected-swatch", "ring-offset-2");
-        }
+      if (parsed.borderColor) {
+        _snippetApplyColorSectionSwatch(
+          _snippetColorSwatchNameByBorder(parsed.borderColor),
+        );
       }
-      const contentM = t.match(/^<div[^>]*>\n\n([\s\S]*?)\n\n<\/div>$/);
-      if (contentM) document.getElementById("snip-colored-content").value = contentM[1];
+      if (parsed.content !== undefined) {
+        document.getElementById("snip-colored-content").value = parsed.content;
+      }
       break;
     }
   }

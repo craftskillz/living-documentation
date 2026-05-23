@@ -71,7 +71,7 @@ La catégorisation est définie en JS (`_SNIPPET_PICKER_CATEGORIES`) avec icône
 L'édition inline ne duplique aucun mini éditeur. La popup appelle `openSnippetsModalForInlineEdit(range)` dans `src/frontend/snippets.js`, qui :
 
 - garde la plage Markdown source (`start`, `end`) ;
-- réutilise `detectSnippetType()` et `parseAndFillSnippet()` ;
+- réutilise `detectSnippetType()` et `parseAndFillSnippet()`. `parseAndFillSnippet()` reste le point d'entrée UI, mais il ne porte plus les regex de parsing : il appelle `ldParseSnippetMarkdown(type, text, options)` dans `src/frontend/snippet-parsers.js`, puis applique les valeurs parsées aux champs DOM, selects, swatches et grilles ;
 - adapte le titre de la modale et le bouton principal en mode `Save` ;
 - élargit la carte de modale pour les éditeurs structurés ;
 - désactive la selectbox `#snippet-type` en mode inline pour empêcher de changer le type détecté et d'écraser la plage source avec un autre format ;
