@@ -354,11 +354,11 @@
   "ADRS/2026_05_17_19_11_[SNIPPET]_edition_inline_des_snippets_depuis_le_viewer_par_clic_droit": [
     {
       "path": "src/frontend/inline-snippet-edit.js",
-      "hash": "980907f73435feaf62c97327e6d396e40d311ae668548a05dfe5242b56bde79d"
+      "hash": "1030dda8aa9bf0f1b663070f0b87731b465a7d742c6ea91ec942af05ec8232d9"
     },
     {
       "path": "src/frontend/snippets.js",
-      "hash": "0da2ea18424378e985c65534b4b893c4b41cbccdb4208b9165ce6236eaf81358"
+      "hash": "55db1ba1dcd3141484cc00eecb1963f6c555576931d3c69c01892eff9546b823"
     },
     {
       "path": "src/frontend/documents.js",
@@ -366,7 +366,7 @@
     },
     {
       "path": "src/frontend/index.html",
-      "hash": "065f615616897ebb87c7822631d2e1c712236821699e4bf1308193cfca5832a6"
+      "hash": "80efb4a0287fdc279acbb9508a5322b5ebc570000c96e52286b1061b5a3e2953"
     },
     {
       "path": "src/frontend/i18n/en.json",
@@ -382,7 +382,7 @@
     },
     {
       "path": "src/frontend/snippet-detect.js",
-      "hash": "53e3f874b80720864b2f21a4692a17d3e62e71a0827a5aba212a7aa98d9c286a"
+      "hash": "bfbdeb6281cb87c0090b2671daa5f9f9a4529fa51b04e2599fbb3144a8d6513d"
     },
     {
       "path": "src/frontend/snippet-table.js",
@@ -391,6 +391,10 @@
     {
       "path": "src/frontend/snippet-table-attributes.js",
       "hash": "a07d6dd0bdb26ceaad104716be662c3724cd527668c56fe6803462ce66123765"
+    },
+    {
+      "path": "src/frontend/snippet-list-markdown.js",
+      "hash": "bcf423bbe1a6485311b462478c5e19446cd4c639db6a14a2812c885679aa1d3d"
     }
   ],
   "1_tutorial/2026_04_12_10_00_[General]_utiliser_les_snippets": [

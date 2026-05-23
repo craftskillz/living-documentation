@@ -15,11 +15,17 @@ Increment completed
 
 ## Tâche courante
 
-Audit qualité de code et plan de refactoring incrémental. Premier incrément réalisé : centralisation cohésive des attributs de table (`table-style`, `table-border`, `table-color`).
+Audit qualité de code et plan de refactoring incrémental. Deuxième incrément réalisé : centralisation cohésive des helpers Markdown pour listes ordonnées et non ordonnées.
 
 ## Dernière action réalisée
 
-- Incrément `refactor(table-attributes): centralize table snippet attributes` réalisé.
+- Incrément `refactor(snippet-lists): centralize list markdown capture/build helpers` réalisé.
+- Nouveau helper `src/frontend/snippet-list-markdown.js`, chargé avant `snippet-detect.js`, centralise Markdown par défaut, regex de capture, détection simple et reconstruction des listes ordonnées/non ordonnées.
+- `snippet-detect.js` consomme désormais `ldLooksLikeOrderedListSnippet()` et `ldLooksLikeUnorderedListSnippet()`.
+- `inline-snippet-edit.js` consomme désormais `ldOrderedListBlockRegex()` et `ldUnorderedListBlockRegex()`.
+- `snippets.js` consomme désormais `ldOrderedListDefaultMarkdown()`, `ldUnorderedListDefaultMarkdown()`, `ldBuildOrderedListMarkdown()` et `ldBuildUnorderedListMarkdown()`.
+- L'ADR inline snippets a été mise à jour pour refléter le helper centralisé des listes.
+- Incrément précédent `refactor(table-attributes): centralize table snippet attributes` réalisé et commité.
 - Nouveau helper `src/frontend/snippet-table-attributes.js`, chargé avant `snippet-detect.js`, centralise valeurs autorisées, parsing des commentaires table, compatibilité legacy, détection table, collecte depuis `currentDocContent`, parsing de cellules/separateur et build du préfixe canonique.
 - `documents.js` consomme désormais `ldCollectTableAttributesFromSource()` au lieu de porter ses propres sets/regex.
 - `snippet-detect.js` consomme désormais `ldLooksLikeTableSnippet()`.
@@ -35,12 +41,13 @@ Audit qualité de code et plan de refactoring incrémental. Premier incrément r
 
 ## Prochaine action recommandée
 
-Prochain incrément recommandé : `refactor(snippet-lists): centralize list markdown capture/build helpers`, à discuter avant exécution. Garder ce prochain commit limité aux listes ordonnées/non ordonnées et à leurs tests.
+Prochain incrément recommandé : `refactor(snippet-builders): isolate markdown builders from modal orchestration`, à discuter avant exécution. Garder ce prochain commit limité à l'extraction de la reconstruction Markdown par type depuis `buildSnippetMarkdown()`, sans changer le rendu ni les formulaires.
 
 ## Fichiers ou zones concernés
 
 - `src/frontend/snippet-detect.js` : détection pure des types de snippets.
 - `src/frontend/snippet-table-attributes.js` : helper centralisé pour les commentaires et helpers table.
+- `src/frontend/snippet-list-markdown.js` : helper centralisé pour les règles Markdown de listes.
 - `src/frontend/inline-snippet-edit.js` : mapping DOM rendu -> plages Markdown source.
 - `src/frontend/snippets.js` : picker, formulaires, build Markdown, parse Markdown, insertion/suppression inline.
 - `src/frontend/snippet-table.js` : état et grille d'édition des tableaux.
@@ -54,7 +61,10 @@ Prochain incrément recommandé : `refactor(snippet-lists): centralize list mark
 ## Vérifications récentes
 
 - `npm run build` : OK.
-- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "table preceded by table-style|borderless tables keep horizontal|borderless colored tables|inline-edit on a styled table|inline-edit can clear the color|inserting a table from the picker|striped tables use the neutral|right-click on table captures"` : OK, 8 tests passés.
+- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "right-click on unordered list captures editable item content|right-click on ordered list captures editable item content|inline insert picker pre-fills unordered and ordered list editors"` : OK, 3 tests passés.
+- Vérifications de l'incrément table précédent :
+  - `npm run build` : OK.
+  - `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "table preceded by table-style|borderless tables keep horizontal|borderless colored tables|inline-edit on a styled table|inline-edit can clear the color|inserting a table from the picker|striped tables use the neutral|right-click on table captures"` : OK, 8 tests passés.
 - Dernières vérifications fonctionnelles connues avant l'audit :
   - `npm run build` : OK.
   - `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "right-click on unordered list captures editable item content|right-click on ordered list captures editable item content"` : OK.

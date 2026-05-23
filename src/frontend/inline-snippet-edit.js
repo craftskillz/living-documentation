@@ -197,16 +197,8 @@ function _inlineCollectSnippetRanges(content) {
     1,
   );
   _inlineAddRegexRanges(ranges, content, /^> .*(?:\n>.*)*/gm);
-  _inlineAddRegexRanges(
-    ranges,
-    content,
-    /^1\. .*(?:\n(?![ \t]*$)(?:\d+\. .*| {3,}.*|(?!(?:[-*+] |#{1,6}\s|>|```|~~~|\|)).+))*/gm,
-  );
-  _inlineAddRegexRanges(
-    ranges,
-    content,
-    /^[-*+] .*(?:\n(?![ \t]*$)(?:[-*+] .*| {2,}.*|(?!(?:\d+\. |#{1,6}\s|>|```|~~~|\|)).+))*/gm,
-  );
+  _inlineAddRegexRanges(ranges, content, ldOrderedListBlockRegex());
+  _inlineAddRegexRanges(ranges, content, ldUnorderedListBlockRegex());
   _inlineAddRegexRanges(ranges, content, /!\[[^\]\n]*\]\([^)]+\)/g);
   _inlineAddRegexRanges(ranges, content, /\[[^\]\n]+\]\([^)]+\)/g);
 

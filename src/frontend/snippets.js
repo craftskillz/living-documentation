@@ -2,8 +2,9 @@
 // Depends on globals from state.js (allDocs, currentDocId, currentDocContent),
 // utils.js (esc), snippet-detect.js (detectSnippetType), snippet-table.js
 // (_tableData, tableInit, tableRenderGrid, buildTableMarkdown) and
-// snippet-tree.js (_treeItems, treeInit, treeRenderList, buildTreeMarkdown)
-// and snippet-table-attributes.js (table comment helpers).
+// snippet-tree.js (_treeItems, treeInit, treeRenderList, buildTreeMarkdown),
+// snippet-table-attributes.js (table comment helpers) and
+// snippet-list-markdown.js (list Markdown helpers).
 
 let _snippetSelStart = 0;
 let _snippetSelEnd = 0;
@@ -37,26 +38,6 @@ const _SNIPPET_TYPE_TO_PANEL = {
   "heading-3": "heading",
   "heading-4": "heading",
 };
-
-const _SNIPPET_ORDERED_LIST_DEFAULT = [
-  "1. Élément 1",
-  "2. Élément 2",
-  "   1. Sous-élément 2.1",
-  "   2. Sous-élément 2.2",
-  "3. Élément 3",
-  "   1. Sous-élément 3.1",
-  "      1. Sous-sous-élément 3.1.1",
-].join("\n");
-
-const _SNIPPET_UNORDERED_LIST_DEFAULT = [
-  "- Élément 1",
-  "- Élément 2",
-  "  - Sous-élément 2.1",
-  "  - Sous-élément 2.2",
-  "- Élément 3",
-  "  - Sous-élément 3.1",
-  "    - Sous-sous-élément 3.1.1",
-].join("\n");
 
 function _snippetPanelForType(type) {
   return _SNIPPET_TYPE_TO_PANEL[type] || type;
@@ -1147,12 +1128,12 @@ function snippetTypeChanged() {
     if (type === "ordered-list") {
       _snippetFillTextareaDefault(
         "snip-ordered-list-content",
-        _SNIPPET_ORDERED_LIST_DEFAULT,
+        ldOrderedListDefaultMarkdown(),
       );
     } else if (type === "unordered-list") {
       _snippetFillTextareaDefault(
         "snip-unordered-list-content",
-        _SNIPPET_UNORDERED_LIST_DEFAULT,
+        ldUnorderedListDefaultMarkdown(),
       );
     }
     snippetUpdatePreview();
@@ -1276,52 +1257,13 @@ function buildSnippetMarkdown() {
     }
     case "ordered-list": {
       const content =
-        document.getElementById("snip-ordered-list-content").value ||
-        _SNIPPET_ORDERED_LIST_DEFAULT;
-      if (/^\s*\d+\.\s+/m.test(content)) {
-        return content
-          .split("\n")
-          .filter((line) => line.trim())
-          .join("\n");
-      }
-      const countersByIndent = new Map();
-      return content
-        .split("\n")
-        .filter((line) => line.trim())
-        .map((line) => {
-          const indent = line.match(/^\s*/)[0];
-          const trimmed = line.trim();
-          if (/^[-*+]\s+/.test(trimmed)) {
-            return `${indent}${trimmed}`;
-          }
-          const indentLength = indent.length;
-          for (const knownIndent of Array.from(countersByIndent.keys())) {
-            if (knownIndent > indentLength) countersByIndent.delete(knownIndent);
-          }
-          const next = (countersByIndent.get(indentLength) || 0) + 1;
-          countersByIndent.set(indentLength, next);
-          return `${indent}${next}. ${line.trim()}`;
-        })
-        .join("\n");
+        document.getElementById("snip-ordered-list-content").value;
+      return ldBuildOrderedListMarkdown(content);
     }
     case "unordered-list": {
       const content =
-        document.getElementById("snip-unordered-list-content").value ||
-        _SNIPPET_UNORDERED_LIST_DEFAULT;
-      if (/^\s*[-*+]\s+/m.test(content)) {
-        return content
-          .split("\n")
-          .filter((line) => line.trim())
-          .join("\n");
-      }
-      return content
-        .split("\n")
-        .filter((line) => line.trim())
-        .map((line) => {
-          const indent = line.match(/^\s*/)[0];
-          return `${indent}- ${line.trim()}`;
-        })
-        .join("\n");
+        document.getElementById("snip-unordered-list-content").value;
+      return ldBuildUnorderedListMarkdown(content);
     }
     case "code-block": {
       const lang = document.getElementById("snip-code-lang").value || "";
