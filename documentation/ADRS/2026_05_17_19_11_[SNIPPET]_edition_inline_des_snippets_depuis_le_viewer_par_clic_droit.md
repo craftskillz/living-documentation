@@ -76,7 +76,7 @@ L'édition inline ne duplique aucun mini éditeur. La popup appelle `openSnippet
 - élargit la carte de modale pour les éditeurs structurés ;
 - désactive la selectbox `#snippet-type` en mode inline pour empêcher de changer le type détecté et d'écraser la plage source avec un autre format ;
 - masque le message historique `snippet-detect-msg` : le panel prérempli et le titre de la popup suffisent à confirmer le type reconnu ;
-- appelle `buildSnippetMarkdown()` au moment de sauvegarder.
+- appelle `buildSnippetMarkdown()` au moment de sauvegarder. Cette fonction reste le point d'entrée historique de la modale, mais elle ne porte plus les templates Markdown : `src/frontend/snippets.js` collecte les valeurs de formulaire dans `_snippetMarkdownBuildData(type)`, puis délègue à `ldBuildSnippetMarkdown(type, data)` dans `src/frontend/snippet-builders.js`. Le helper centralise la reconstruction par type et réutilise les helpers de domaine existants pour les listes et les attributs de table.
 
 L'insertion inline depuis le viewer suit le même schéma via `openSnippetsModalForInlineInsert(insertPos)` :
 

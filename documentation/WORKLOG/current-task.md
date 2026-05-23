@@ -15,11 +15,16 @@ Increment completed
 
 ## Tâche courante
 
-Audit qualité de code et plan de refactoring incrémental. Deuxième incrément réalisé : centralisation cohésive des helpers Markdown pour listes ordonnées et non ordonnées.
+Audit qualité de code et plan de refactoring incrémental. Troisième incrément réalisé : extraction cohésive des builders Markdown de snippets hors de l'orchestration de modale.
 
 ## Dernière action réalisée
 
-- Incrément `refactor(snippet-lists): centralize list markdown capture/build helpers` réalisé.
+- Incrément `refactor(snippet-builders): isolate markdown builders from modal orchestration` réalisé.
+- Nouveau helper `src/frontend/snippet-builders.js`, chargé avant `snippet-detect.js`, centralise la reconstruction Markdown par type de snippet.
+- `snippets.js` ne porte plus directement les templates Markdown dans `buildSnippetMarkdown()` : il collecte les valeurs de formulaire via `_snippetMarkdownBuildData(type)` puis délègue à `ldBuildSnippetMarkdown(type, data)`.
+- Les builders existants des listes et des attributs de table restent réutilisés depuis `snippet-builders.js`, sans modifier le rendu ni les formulaires.
+- L'ADR inline snippets a été mise à jour pour refléter la séparation durable entre collecte DOM et reconstruction Markdown.
+- Incrément précédent `refactor(snippet-lists): centralize list markdown capture/build helpers` réalisé et commité.
 - Nouveau helper `src/frontend/snippet-list-markdown.js`, chargé avant `snippet-detect.js`, centralise Markdown par défaut, regex de capture, détection simple et reconstruction des listes ordonnées/non ordonnées.
 - `snippet-detect.js` consomme désormais `ldLooksLikeOrderedListSnippet()` et `ldLooksLikeUnorderedListSnippet()`.
 - `inline-snippet-edit.js` consomme désormais `ldOrderedListBlockRegex()` et `ldUnorderedListBlockRegex()`.
@@ -41,13 +46,14 @@ Audit qualité de code et plan de refactoring incrémental. Deuxième incrément
 
 ## Prochaine action recommandée
 
-Prochain incrément recommandé : `refactor(snippet-builders): isolate markdown builders from modal orchestration`, à discuter avant exécution. Garder ce prochain commit limité à l'extraction de la reconstruction Markdown par type depuis `buildSnippetMarkdown()`, sans changer le rendu ni les formulaires.
+Prochain incrément recommandé : `refactor(snippet-parsers): isolate markdown parsers from modal orchestration`, à discuter avant exécution. Garder ce prochain commit limité à l'extraction du parsing Markdown depuis `parseAndFillSnippet()`, en évitant de mélanger avec des changements UX ou de rendu.
 
 ## Fichiers ou zones concernés
 
 - `src/frontend/snippet-detect.js` : détection pure des types de snippets.
 - `src/frontend/snippet-table-attributes.js` : helper centralisé pour les commentaires et helpers table.
 - `src/frontend/snippet-list-markdown.js` : helper centralisé pour les règles Markdown de listes.
+- `src/frontend/snippet-builders.js` : helper centralisé pour reconstruire le Markdown des snippets.
 - `src/frontend/inline-snippet-edit.js` : mapping DOM rendu -> plages Markdown source.
 - `src/frontend/snippets.js` : picker, formulaires, build Markdown, parse Markdown, insertion/suppression inline.
 - `src/frontend/snippet-table.js` : état et grille d'édition des tableaux.
@@ -61,7 +67,10 @@ Prochain incrément recommandé : `refactor(snippet-builders): isolate markdown 
 ## Vérifications récentes
 
 - `npm run build` : OK.
-- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "right-click on unordered list captures editable item content|right-click on ordered list captures editable item content|inline insert picker pre-fills unordered and ordered list editors"` : OK, 3 tests passés.
+- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "colored text opens snippet editor|colored section opens snippet editor|table captures header|code block captures language|blockquote captures editable|unordered list captures|ordered list captures|simple collapsible exposes|level-1 heading opens"` : OK, 9 tests passés.
+- Vérifications de l'incrément listes précédent :
+  - `npm run build` : OK.
+  - `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "right-click on unordered list captures editable item content|right-click on ordered list captures editable item content|inline insert picker pre-fills unordered and ordered list editors"` : OK, 3 tests passés.
 - Vérifications de l'incrément table précédent :
   - `npm run build` : OK.
   - `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "table preceded by table-style|borderless tables keep horizontal|borderless colored tables|inline-edit on a styled table|inline-edit can clear the color|inserting a table from the picker|striped tables use the neutral|right-click on table captures"` : OK, 8 tests passés.

@@ -358,7 +358,7 @@
     },
     {
       "path": "src/frontend/snippets.js",
-      "hash": "55db1ba1dcd3141484cc00eecb1963f6c555576931d3c69c01892eff9546b823"
+      "hash": "8451e68cc43e652675ecbd5ef6e335381a07b14d329b6d3e958cf2b2cb206353"
     },
     {
       "path": "src/frontend/documents.js",
@@ -366,7 +366,7 @@
     },
     {
       "path": "src/frontend/index.html",
-      "hash": "80efb4a0287fdc279acbb9508a5322b5ebc570000c96e52286b1061b5a3e2953"
+      "hash": "47162926b4de78a0e27ab03002d84873bfd53111803a45535011a7c874187959"
     },
     {
       "path": "src/frontend/i18n/en.json",
@@ -395,6 +395,10 @@
     {
       "path": "src/frontend/snippet-list-markdown.js",
       "hash": "bcf423bbe1a6485311b462478c5e19446cd4c639db6a14a2812c885679aa1d3d"
+    },
+    {
+      "path": "src/frontend/snippet-builders.js",
+      "hash": "88fbf90d5ce414c485e0485342733c4cf1c408af5088ac37aa815167f043322b"
     }
   ],
   "1_tutorial/2026_04_12_10_00_[General]_utiliser_les_snippets": [

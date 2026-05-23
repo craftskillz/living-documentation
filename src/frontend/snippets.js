@@ -4,7 +4,8 @@
 // (_tableData, tableInit, tableRenderGrid, buildTableMarkdown) and
 // snippet-tree.js (_treeItems, treeInit, treeRenderList, buildTreeMarkdown),
 // snippet-table-attributes.js (table comment helpers) and
-// snippet-list-markdown.js (list Markdown helpers).
+// snippet-list-markdown.js (list Markdown helpers) and
+// snippet-builders.js (Markdown builders).
 
 let _snippetSelStart = 0;
 let _snippetSelEnd = 0;
@@ -1205,158 +1206,147 @@ function snippetDiagSyncImgName() {
     : "diagram.png";
 }
 
-function buildSnippetMarkdown() {
-  const type = document.getElementById("snippet-type").value;
+function _snippetSelectedText(selectEl, fallback) {
+  return selectEl.options[selectEl.selectedIndex]?.text || fallback;
+}
+
+function _snippetSwatch(name) {
+  return _COLOR_SWATCHES[name] || _COLOR_SWATCHES.info;
+}
+
+function _snippetMarkdownBuildData(type) {
   switch (type) {
     case "collapsible": {
-      const summary =
-        document.getElementById("snip-collapsible-summary").value ||
-        window.t('snippet.collapsible_summary_value');
       const bodyEl = document.getElementById("snip-collapsible-body");
-      const body = bodyEl && bodyEl.value.trim() !== ""
-        ? bodyEl.value
-        : "## Titre\n\nTexte";
-      return `<details>\n<summary>${summary}</summary>\n\n${body}\n\n</details>`;
+      return {
+        summary: document.getElementById("snip-collapsible-summary").value,
+        summaryFallback: window.t("snippet.collapsible_summary_value"),
+        body: bodyEl ? bodyEl.value : "",
+        bodyFallback: "## Titre\n\nTexte",
+      };
     }
-    case "link": {
-      const text =
-        document.getElementById("snip-link-text").value ||
-        window.t('snippet.link_text_placeholder');
-      const url =
-        document.getElementById("snip-link-url").value || "https://...";
-      return `<a href="${url}" target="_blank">${text}</a>`; // [${text}](${url})
-    }
+    case "link":
+      return {
+        text: document.getElementById("snip-link-text").value,
+        textFallback: window.t("snippet.link_text_placeholder"),
+        url: document.getElementById("snip-link-url").value,
+      };
     case "doc-link": {
       const sel = document.getElementById("snip-doc-select");
-      const docId = sel.value;
-      const customText =
-        document.getElementById("snip-doc-link-text").value;
-      const docTitle = sel.options[sel.selectedIndex]?.text ?? docId;
-      const text = customText || docTitle;
-      return `[${text}](?doc=${encodeURIComponent(docId)})`;
+      return {
+        docId: sel.value,
+        title: _snippetSelectedText(sel, sel.value),
+        text: document.getElementById("snip-doc-link-text").value,
+      };
     }
-    case "anchor-link": {
-      const text =
-        document.getElementById("snip-anchor-text").value ||
-        window.t('snippet.link_section_placeholder');
-      const anchor =
-        document.getElementById("snip-anchor-id").value ||
-        window.t('snippet.link_anchor_placeholder');
-      return `[${text}](#${anchor})`;
-    }
+    case "anchor-link":
+      return {
+        text: document.getElementById("snip-anchor-text").value,
+        textFallback: window.t("snippet.link_section_placeholder"),
+        anchor: document.getElementById("snip-anchor-id").value,
+        anchorFallback: window.t("snippet.link_anchor_placeholder"),
+      };
     case "anchor-doc-link": {
       const sel = document.getElementById("snip-anchor-doc-select");
-      const docId = sel.value;
-      const text =
-        document.getElementById("snip-anchor-doc-text").value ||
-        window.t('snippet.link_section_placeholder');
-      const anchor =
-        document.getElementById("snip-anchor-doc-id").value ||
-        window.t('snippet.link_anchor_placeholder');
-      return `[${text}](?doc=${encodeURIComponent(docId)}#${anchor})`;
+      return {
+        docId: sel.value,
+        text: document.getElementById("snip-anchor-doc-text").value,
+        textFallback: window.t("snippet.link_section_placeholder"),
+        anchor: document.getElementById("snip-anchor-doc-id").value,
+        anchorFallback: window.t("snippet.link_anchor_placeholder"),
+      };
     }
-    case "ordered-list": {
-      const content =
-        document.getElementById("snip-ordered-list-content").value;
-      return ldBuildOrderedListMarkdown(content);
-    }
-    case "unordered-list": {
-      const content =
-        document.getElementById("snip-unordered-list-content").value;
-      return ldBuildUnorderedListMarkdown(content);
-    }
-    case "code-block": {
-      const lang = document.getElementById("snip-code-lang").value || "";
-      const code =
-        document.getElementById("snip-code-content").value || "// code ici";
-      const block = `\`\`\`${lang}\n${code}\n\`\`\``;
-      if (_snippetInlineEdit && _snippetInlineIndent) {
-        return block
-          .split("\n")
-          .map((line) => _snippetInlineIndent + line)
-          .join("\n");
-      }
-      return block;
-    }
-    case "blockquote": {
-      const content =
-        document.getElementById("snip-blockquote-content").value ||
-        "Citation ici\n\n— Auteur";
-      return content
-        .split("\n")
-        .map((line) => (line.trim() ? `> ${line}` : ">"))
-        .join("\n");
-    }
-    case "separator":
-      return `\n---\n`;
+    case "ordered-list":
+      return {
+        content: document.getElementById("snip-ordered-list-content").value,
+      };
+    case "unordered-list":
+      return {
+        content: document.getElementById("snip-unordered-list-content").value,
+      };
+    case "code-block":
+      return {
+        lang: document.getElementById("snip-code-lang").value,
+        code: document.getElementById("snip-code-content").value,
+        inlineIndent: _snippetInlineEdit ? _snippetInlineIndent : "",
+      };
+    case "blockquote":
+      return {
+        content: document.getElementById("snip-blockquote-content").value,
+      };
     case "heading-1":
     case "heading-2":
     case "heading-3":
-    case "heading-4": {
-      const level = Number(type.slice(-1));
-      const text =
-        document.getElementById("snip-heading-content").value.trim() ||
-        (window.t && window.t("snippet.heading_text_placeholder")) ||
-        "Titre";
-      return `${"#".repeat(level)} ${text}`;
-    }
-    case "image": {
-      const alt =
-        document.getElementById("snip-image-alt").value || "image";
-      const url =
-        document.getElementById("snip-image-url").value ||
-        "./images/mon-image.png";
-      return `![${alt}](${url})`;
-    }
+    case "heading-4":
+      return {
+        text: document.getElementById("snip-heading-content").value,
+        fallback:
+          (window.t && window.t("snippet.heading_text_placeholder")) ||
+          "Titre",
+      };
+    case "image":
+      return {
+        alt: document.getElementById("snip-image-alt").value,
+        url: document.getElementById("snip-image-url").value,
+      };
     case "table": {
-      const tableMd = buildTableMarkdown();
       const styleEl = document.getElementById("snip-table-style");
       const borderedEl = document.getElementById("snip-table-bordered");
       const colorEl = document.getElementById("snip-table-color");
-      const prefix = ldBuildTableAttributesPrefix({
+      return {
+        markdown: buildTableMarkdown(),
         style: styleEl ? styleEl.value : "",
-        border: borderedEl && borderedEl.checked ? "bordered" : "",
+        bordered: Boolean(borderedEl && borderedEl.checked),
         color: colorEl ? colorEl.value : "",
-      });
-      return (prefix ? prefix + "\n" : "") + tableMd;
+      };
     }
     case "tree":
-      return buildTreeMarkdown();
+      return { markdown: buildTreeMarkdown() };
     case "diagram": {
       const isNew = document.getElementById("snip-diag-mode-new").checked;
       const imgName =
         document.getElementById("snip-diag-img-name").value.trim() ||
         "diagram.png";
-      let diagId, diagLabel;
       if (isNew) {
-        diagId = "d" + Date.now();
-        diagLabel =
-          document.getElementById("snip-diag-new-name").value.trim() ||
-          "Diagram";
-      } else {
-        const sel = document.getElementById("snip-diag-select");
-        diagId = sel.value;
-        diagLabel = sel.options[sel.selectedIndex]?.text || "Diagram";
+        return {
+          id: "d" + Date.now(),
+          label:
+            document.getElementById("snip-diag-new-name").value.trim() ||
+            "Diagram",
+          imageName: imgName,
+        };
       }
-      return `[![${diagLabel}](./images/${imgName})](/diagram?id=${diagId})`;
+      const sel = document.getElementById("snip-diag-select");
+      return {
+        id: sel.value,
+        label: _snippetSelectedText(sel, "Diagram"),
+        imageName: imgName,
+      };
     }
-    case "colored-text": {
-      const c = _COLOR_SWATCHES[_colorTextSwatch] || _COLOR_SWATCHES.info;
-      const content = document.getElementById("snip-colored-text-content").value || window.t('snippet.colored_text_content_placeholder');
-      return `<span style="color:${c.border};">${content}</span>`;
-    }
-    case "colored-section": {
-      const c = _COLOR_SWATCHES[_colorSectionSwatch] || _COLOR_SWATCHES.info;
-      const content = document.getElementById("snip-colored-content").value || window.t('snippet.colored_section_content_placeholder');
-      return `<div style="background:${c.bg};border-left:4px solid ${c.border};color:${c.text};padding:1rem 1.25rem;border-radius:0.375rem;margin:1rem 0;">\n\n${content}\n\n</div>`;
-    }
+    case "colored-text":
+      return {
+        color: _snippetSwatch(_colorTextSwatch),
+        content:
+          document.getElementById("snip-colored-text-content").value ||
+          window.t("snippet.colored_text_content_placeholder"),
+      };
+    case "colored-section":
+      return {
+        color: _snippetSwatch(_colorSectionSwatch),
+        content:
+          document.getElementById("snip-colored-content").value ||
+          window.t("snippet.colored_section_content_placeholder"),
+      };
     case "emojis":
-      return document.getElementById("snip-emoji-string").value;
-    case "local-search":
-      return `<div data-ld-local-search></div>`;
+      return { value: document.getElementById("snip-emoji-string").value };
     default:
-      return "";
+      return {};
   }
+}
+
+function buildSnippetMarkdown() {
+  const type = document.getElementById("snippet-type").value;
+  return ldBuildSnippetMarkdown(type, _snippetMarkdownBuildData(type));
 }
 
 function snippetUpdatePreview() {
