@@ -46,12 +46,13 @@ Indices : `package-lock.json` est présent, les scripts officiels sont dans `pac
 | Commande | Effet | Quand la lancer |
 |---|---|---|
 | `npm run build` | Compile TypeScript, copie les assets frontend/starters vers `dist/`, rend `dist/bin/cli.js` exécutable | Après changement TypeScript, frontend statique, starter doc ou script de build. |
+| `npm run check:frontend` | Contrôle la syntaxe de tous les scripts `src/frontend/**/*.js` via `node --check` | Après changement JavaScript frontend, surtout quand aucun test E2E ciblé ne couvre directement le fichier modifié. |
 | `npm test` | Alias de `npm run test:e2e` | Vérification complète par défaut après changement de comportement. |
 | `npm run test:e2e` | Lance `npm run build` puis `playwright test` | Après changement API, CLI, frontend ou comportement utilisateur. |
 | `npm run test:e2e:ui` | Ouvre Playwright UI mode | Pour debug interactif, traces et replay. |
 | `npm run test:coverage` | Nettoie `coverage/`, build, lance Playwright avec `COVERAGE=1` et agrège via c8 | Pour vérifier la couverture serveur/CLI avant publication ou refactor significatif. |
 
-Il n'existe pas de script `lint` ou `format` dans `package.json` à ce jour. Ne pas annoncer `npm run lint` ou `npm run format` comme vérification disponible tant qu'ils ne sont pas ajoutés.
+Il n'existe pas de script ESLint ou `format` dans `package.json` à ce jour. Ne pas annoncer `npm run lint` ou `npm run format` comme vérification disponible tant qu'ils ne sont pas ajoutés. `npm run check:frontend` est un contrôle syntaxique, pas un linter de style.
 
 ## Tests ciblés
 

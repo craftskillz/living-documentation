@@ -432,5 +432,11 @@
       "path": "src/frontend/index.html",
       "hash": "32b20cb15b01d7a8497e211609bedf49ac31e7f7c7a5855e6fe3e911fc2e8e4a"
     }
+  ],
+  "ADRS/2026_05_23_10_07_[FRONTEND_QUALITY]_controle_syntaxique_frontend_sans_dependance": [
+    {
+      "path": "scripts/check-frontend-js.js",
+      "hash": "23b0919fac275e93dd924382ffbe16a8be08ca863e402539270b77851aa1387d"
+    }
   ]
 }

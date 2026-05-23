@@ -15,11 +15,17 @@ Increment completed
 
 ## Tâche courante
 
-Audit qualité de code et plan de refactoring incrémental. Quatrième incrément réalisé : extraction cohésive des parseurs Markdown de snippets hors de l'orchestration de modale.
+Audit qualité de code et plan de refactoring incrémental. Cinquième incrément réalisé : ajout d'un contrôle qualité frontend conservateur sans nouvelle dépendance.
 
 ## Dernière action réalisée
 
-- Incrément `refactor(snippet-parsers): isolate markdown parsers from modal orchestration` réalisé.
+- Incrément `chore(frontend-quality): add conservative frontend js check` réalisé.
+- Nouveau script `scripts/check-frontend-js.js`, sans dépendance externe, parcourt `src/frontend/**/*.js` et lance `node --check` sur chaque fichier.
+- Nouveau script npm `npm run check:frontend`.
+- `documentation/AI/PROJECT-STACK.md` documente le contrôle syntaxique frontend et précise qu'il ne s'agit pas d'ESLint.
+- `documentation/AI/PROJECT-USEFUL-COMMANDS.md` documente la commande `npm run check:frontend` et son périmètre.
+- Nouvelle ADR `2026_05_23_10_07_[FRONTEND_QUALITY]_controle_syntaxique_frontend_sans_dependance.md`, rattachée à `scripts/check-frontend-js.js`.
+- Incrément précédent `refactor(snippet-parsers): isolate markdown parsers from modal orchestration` réalisé et commité.
 - Nouveau helper `src/frontend/snippet-parsers.js`, chargé avant `snippet-detect.js`, centralise le parsing Markdown par type de snippet.
 - `parseAndFillSnippet()` ne porte plus directement les regex de parsing : il appelle `ldParseSnippetMarkdown(type, text, options)` puis applique les valeurs parsées aux champs DOM, selects, swatches et grilles.
 - Les parsers existants des attributs de table restent réutilisés depuis `snippet-parsers.js`, sans modifier le rendu ni les formulaires.
@@ -51,7 +57,7 @@ Audit qualité de code et plan de refactoring incrémental. Quatrième incrémen
 
 ## Prochaine action recommandée
 
-Prochain incrément recommandé : `chore(frontend-quality): add conservative lint/check for frontend js`, à discuter avant exécution. Garder ce prochain commit limité à l'ajout d'un contrôle qualité exécutable et aux corrections strictement nécessaires, avec mise à jour des docs IA de stack/commandes.
+Prochain incrément recommandé : `refactor(doc-rendering): extract document viewer decorators`, à discuter avant exécution. Garder ce prochain commit limité à l'extraction de post-processors DOM de `documents.js` (tables, headings anchors, code copy/collapsible, links) sans changer le rendu.
 
 ## Fichiers ou zones concernés
 
@@ -65,6 +71,7 @@ Prochain incrément recommandé : `chore(frontend-quality): add conservative lin
 - `src/frontend/snippet-table.js` : état et grille d'édition des tableaux.
 - `src/frontend/documents.js` : rendu viewer, post-processing DOM, attributs tables, code blocks.
 - `src/frontend/index.html` : shell viewer, CSS tables et formulaires snippets.
+- `scripts/check-frontend-js.js` : contrôle syntaxique des scripts frontend.
 - `src/frontend/diagram/network.js` : module diagramme complexe, à traiter plus tard par sous-responsabilité.
 - `src/mcp/server.ts` : serveur MCP volumineux avec guide, descriptions de tools, schemas et dispatch.
 - `package.json`, `tsconfig.json`, `documentation/AI/PROJECT-STACK.md`, `documentation/AI/PROJECT-USEFUL-COMMANDS.md` : concernés si ajout d'un lint/check frontend.
@@ -73,7 +80,10 @@ Prochain incrément recommandé : `chore(frontend-quality): add conservative lin
 ## Vérifications récentes
 
 - `npm run build` : OK.
-- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "colored text opens snippet editor|colored section opens snippet editor|table captures header|table preceded by table-style|code block captures language|code block without language|indented code block inside a list|blockquote captures editable|unordered list captures|ordered list captures|simple collapsible exposes|level-1 heading opens|level-3 heading reuses"` : OK, 13 tests passés.
+- `npm run check:frontend` : OK, 64 fichiers JavaScript frontend vérifiés.
+- Vérifications de l'incrément parsers précédent :
+  - `npm run build` : OK.
+  - `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "colored text opens snippet editor|colored section opens snippet editor|table captures header|table preceded by table-style|code block captures language|code block without language|indented code block inside a list|blockquote captures editable|unordered list captures|ordered list captures|simple collapsible exposes|level-1 heading opens|level-3 heading reuses"` : OK, 13 tests passés.
 - Vérifications de l'incrément builders précédent :
   - `npm run build` : OK.
   - `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "colored text opens snippet editor|colored section opens snippet editor|table captures header|code block captures language|blockquote captures editable|unordered list captures|ordered list captures|simple collapsible exposes|level-1 heading opens"` : OK, 9 tests passés.

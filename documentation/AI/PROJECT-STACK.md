@@ -37,7 +37,8 @@ L'utilisateur lance le CLI avec un dossier de documentation relatif, par exemple
 - **Package manager** : npm, avec `package-lock.json`.
 - **Tests** : Playwright comme runner unique API/E2E/unit ; les tests serveur lancent un vrai CLI isolé sur port libre.
 - **Coverage** : c8 + couverture V8 native, agrégée depuis les processus CLI/serveur lancés par Playwright.
-- **Lint / formatage** : aucun script lint/format dédié documenté dans `package.json` à ce jour.
+- **Qualité frontend** : `npm run check:frontend` exécute un contrôle syntaxique conservateur (`node --check`) sur `src/frontend/**/*.js`, sans bundler ni transpilation.
+- **Lint / formatage** : aucun script ESLint/format dédié documenté dans `package.json` à ce jour.
 - **Déploiement / publication** : package npm `living-ai-documentation`; `prepublishOnly` lance le build.
 
 ## Arborescence source utile
