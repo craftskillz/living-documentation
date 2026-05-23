@@ -10,8 +10,8 @@
 
 Two modals let the user pick a destination folder under the docs root:
 
-- **New Folder** ([src/frontend/new-folder-modal.js](src/frontend/new-folder-modal.js)) — choose where to create a new sub-folder.
-- **New Document** ([src/frontend/new-doc-modal.js](src/frontend/new-doc-modal.js)) — choose where to create a new `.md` document.
+- **New Folder** ([src/frontend/modals/new-folder-modal.js](src/frontend/modals/new-folder-modal.js)) — choose where to create a new sub-folder.
+- **New Document** ([src/frontend/modals/new-doc-modal.js](src/frontend/modals/new-doc-modal.js)) — choose where to create a new `.md` document.
 
 Both embed an inline folder browser driven by `/api/browse`. Over time the two had diverged into an inconsistent UX:
 

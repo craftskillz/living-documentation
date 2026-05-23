@@ -353,20 +353,12 @@
   ],
   "ADRS/2026_05_17_19_11_[SNIPPET]_edition_inline_des_snippets_depuis_le_viewer_par_clic_droit": [
     {
-      "path": "src/frontend/inline-snippet-edit.js",
-      "hash": "1030dda8aa9bf0f1b663070f0b87731b465a7d742c6ea91ec942af05ec8232d9"
-    },
-    {
-      "path": "src/frontend/snippets.js",
-      "hash": "31fe2f807288befeb3e84c32f3ce99e42eb5f9403c68db8ff24fb56681b25f39"
-    },
-    {
       "path": "src/frontend/documents.js",
       "hash": "d989f31868a07fa76f5555006a2dcb6830fa32daf9442e74ef5a57e60300af59"
     },
     {
       "path": "src/frontend/index.html",
-      "hash": "6e32eaa8f2ac47a93e8be993e1791f51f41f2da70be324069174a7f8f1ec4b33"
+      "hash": "74a96833e006020f3d36cf33aad6066c7228fe4db15477992c455fbbd377e799"
     },
     {
       "path": "src/frontend/i18n/en.json",
@@ -381,62 +373,80 @@
       "hash": "8332f66a0b888f999f3324c5685021897239c118144de8bc4fb770183dc3cb86"
     },
     {
-      "path": "src/frontend/snippet-detect.js",
+      "path": "src/frontend/snippets/inline-snippet-edit.js",
+      "hash": "1030dda8aa9bf0f1b663070f0b87731b465a7d742c6ea91ec942af05ec8232d9"
+    },
+    {
+      "path": "src/frontend/snippets/snippets.js",
+      "hash": "31fe2f807288befeb3e84c32f3ce99e42eb5f9403c68db8ff24fb56681b25f39"
+    },
+    {
+      "path": "src/frontend/snippets/snippet-detect.js",
       "hash": "bfbdeb6281cb87c0090b2671daa5f9f9a4529fa51b04e2599fbb3144a8d6513d"
     },
     {
-      "path": "src/frontend/snippet-table.js",
+      "path": "src/frontend/snippets/snippet-table.js",
       "hash": "c85d2879bca1fd6d4a8fb3225397e40ceb79ec838bc25ac52524c81bece5b3c2"
     },
     {
-      "path": "src/frontend/snippet-table-attributes.js",
+      "path": "src/frontend/snippets/snippet-table-attributes.js",
       "hash": "a07d6dd0bdb26ceaad104716be662c3724cd527668c56fe6803462ce66123765"
     },
     {
-      "path": "src/frontend/snippet-list-markdown.js",
+      "path": "src/frontend/snippets/snippet-list-markdown.js",
       "hash": "bcf423bbe1a6485311b462478c5e19446cd4c639db6a14a2812c885679aa1d3d"
     },
     {
-      "path": "src/frontend/snippet-builders.js",
+      "path": "src/frontend/snippets/snippet-builders.js",
       "hash": "88fbf90d5ce414c485e0485342733c4cf1c408af5088ac37aa815167f043322b"
     },
     {
-      "path": "src/frontend/snippet-parsers.js",
+      "path": "src/frontend/snippets/snippet-parsers.js",
       "hash": "b6077e6b7d41ebc95e9e1e78932bee0bbd3868d1e681405bbedb72f8993755d3"
     }
   ],
   "1_tutorial/2026_04_12_10_00_[General]_utiliser_les_snippets": [
     {
-      "path": "src/frontend/snippets.js",
-      "hash": "9053fdb17e05c06ae8e558511cfe01244859030502d03923dc47c62ddc29ef73"
-    },
-    {
-      "path": "src/frontend/inline-snippet-edit.js",
-      "hash": "6435f010776a0bdc5f8c5e640fb65ee78d24afbb23541b6cb390fbae3b1c9c93"
-    },
-    {
       "path": "src/frontend/index.html",
-      "hash": "32b20cb15b01d7a8497e211609bedf49ac31e7f7c7a5855e6fe3e911fc2e8e4a"
+      "hash": "74a96833e006020f3d36cf33aad6066c7228fe4db15477992c455fbbd377e799"
+    },
+    {
+      "path": "src/frontend/snippets/snippets.js",
+      "hash": "31fe2f807288befeb3e84c32f3ce99e42eb5f9403c68db8ff24fb56681b25f39"
+    },
+    {
+      "path": "src/frontend/snippets/inline-snippet-edit.js",
+      "hash": "1030dda8aa9bf0f1b663070f0b87731b465a7d742c6ea91ec942af05ec8232d9"
     }
   ],
   "4_reference/2026_04_09_03_00_[REFERENCE]_types_de_snippets": [
     {
-      "path": "src/frontend/snippets.js",
-      "hash": "9053fdb17e05c06ae8e558511cfe01244859030502d03923dc47c62ddc29ef73"
-    },
-    {
-      "path": "src/frontend/inline-snippet-edit.js",
-      "hash": "6435f010776a0bdc5f8c5e640fb65ee78d24afbb23541b6cb390fbae3b1c9c93"
-    },
-    {
       "path": "src/frontend/index.html",
-      "hash": "32b20cb15b01d7a8497e211609bedf49ac31e7f7c7a5855e6fe3e911fc2e8e4a"
+      "hash": "74a96833e006020f3d36cf33aad6066c7228fe4db15477992c455fbbd377e799"
+    },
+    {
+      "path": "src/frontend/snippets/snippets.js",
+      "hash": "31fe2f807288befeb3e84c32f3ce99e42eb5f9403c68db8ff24fb56681b25f39"
+    },
+    {
+      "path": "src/frontend/snippets/inline-snippet-edit.js",
+      "hash": "1030dda8aa9bf0f1b663070f0b87731b465a7d742c6ea91ec942af05ec8232d9"
     }
   ],
   "ADRS/2026_05_23_10_07_[FRONTEND_QUALITY]_controle_syntaxique_frontend_sans_dependance": [
     {
       "path": "scripts/check-frontend-js.js",
       "hash": "23b0919fac275e93dd924382ffbe16a8be08ca863e402539270b77851aa1387d"
+    }
+  ],
+  "ADRS/2026_05_23_10_40_[FRONTEND]_feature_folders_frontend_pour_snippets_et_modales": [
+    {
+      "path": "src/frontend/index.html",
+      "hash": "74a96833e006020f3d36cf33aad6066c7228fe4db15477992c455fbbd377e799"
+    },
+    {
+      "path": "src/frontend/context.html",
+      "hash": "72382f6d7dc3aff332db94c2a806c499095437453a0c0022b79fbb5d90e15221"
     }
   ]
 }

@@ -15,41 +15,49 @@ Increment completed
 
 ## Tâche courante
 
-Audit qualité de code et plan de refactoring incrémental. Cinquième incrément réalisé : ajout d'un contrôle qualité frontend conservateur sans nouvelle dépendance.
+Audit qualité de code et plan de refactoring incrémental. Sixième incrément réalisé : regroupement cohésif des scripts frontend snippets et modales en feature folders.
 
 ## Dernière action réalisée
 
-- Incrément `chore(frontend-quality): add conservative frontend js check` réalisé.
+- Incrément `refactor(frontend-folders): group snippets and modal scripts` réalisé.
+- Les scripts du domaine snippets sont déplacés sous `src/frontend/snippets/` : détection, inline edit, builders, parsers, listes, tables, arbre et orchestration de la modale snippets.
+- Les scripts de modales viewer sont déplacés sous `src/frontend/modals/` : confirmation, fichiers metadata, création dossier/document et lien diagramme.
+- `src/frontend/index.html` et `src/frontend/context.html` chargent désormais ces scripts via `/snippets/...` et `/modals/...`, en conservant l'ordre explicite des scripts classiques.
+- `documentation/AI/PROJECT-STACK.md` documente la convention feature folders sans bundler.
+- Les ADRs qui citaient les anciens chemins snippets/modales ont été alignées.
+- Nouvelle ADR `2026_05_23_10_40_[FRONTEND]_feature_folders_frontend_pour_snippets_et_modales.md`, rattachée aux HTML qui portent le contrat de chargement.
+- Les bindings metadata des documents rattachés aux anciens chemins snippets ont été migrés vers les nouveaux chemins.
+- Incrément précédent `chore(frontend-quality): add conservative frontend js check` réalisé et commité.
 - Nouveau script `scripts/check-frontend-js.js`, sans dépendance externe, parcourt `src/frontend/**/*.js` et lance `node --check` sur chaque fichier.
 - Nouveau script npm `npm run check:frontend`.
 - `documentation/AI/PROJECT-STACK.md` documente le contrôle syntaxique frontend et précise qu'il ne s'agit pas d'ESLint.
 - `documentation/AI/PROJECT-USEFUL-COMMANDS.md` documente la commande `npm run check:frontend` et son périmètre.
 - Nouvelle ADR `2026_05_23_10_07_[FRONTEND_QUALITY]_controle_syntaxique_frontend_sans_dependance.md`, rattachée à `scripts/check-frontend-js.js`.
 - Incrément précédent `refactor(snippet-parsers): isolate markdown parsers from modal orchestration` réalisé et commité.
-- Nouveau helper `src/frontend/snippet-parsers.js`, chargé avant `snippet-detect.js`, centralise le parsing Markdown par type de snippet.
+- Nouveau helper `src/frontend/snippets/snippet-parsers.js`, chargé avant `snippet-detect.js`, centralise le parsing Markdown par type de snippet.
 - `parseAndFillSnippet()` ne porte plus directement les regex de parsing : il appelle `ldParseSnippetMarkdown(type, text, options)` puis applique les valeurs parsées aux champs DOM, selects, swatches et grilles.
 - Les parsers existants des attributs de table restent réutilisés depuis `snippet-parsers.js`, sans modifier le rendu ni les formulaires.
 - L'ADR inline snippets a été mise à jour pour refléter la séparation durable entre parsing Markdown et remplissage DOM.
 - Incrément précédent `refactor(snippet-builders): isolate markdown builders from modal orchestration` réalisé et commité.
-- Nouveau helper `src/frontend/snippet-builders.js`, chargé avant `snippet-detect.js`, centralise la reconstruction Markdown par type de snippet.
+- Nouveau helper `src/frontend/snippets/snippet-builders.js`, chargé avant `snippet-detect.js`, centralise la reconstruction Markdown par type de snippet.
 - `snippets.js` ne porte plus directement les templates Markdown dans `buildSnippetMarkdown()` : il collecte les valeurs de formulaire via `_snippetMarkdownBuildData(type)` puis délègue à `ldBuildSnippetMarkdown(type, data)`.
 - Les builders existants des listes et des attributs de table restent réutilisés depuis `snippet-builders.js`, sans modifier le rendu ni les formulaires.
 - L'ADR inline snippets a été mise à jour pour refléter la séparation durable entre collecte DOM et reconstruction Markdown.
 - Incrément précédent `refactor(snippet-lists): centralize list markdown capture/build helpers` réalisé et commité.
-- Nouveau helper `src/frontend/snippet-list-markdown.js`, chargé avant `snippet-detect.js`, centralise Markdown par défaut, regex de capture, détection simple et reconstruction des listes ordonnées/non ordonnées.
+- Nouveau helper `src/frontend/snippets/snippet-list-markdown.js`, chargé avant `snippet-detect.js`, centralise Markdown par défaut, regex de capture, détection simple et reconstruction des listes ordonnées/non ordonnées.
 - `snippet-detect.js` consomme désormais `ldLooksLikeOrderedListSnippet()` et `ldLooksLikeUnorderedListSnippet()`.
 - `inline-snippet-edit.js` consomme désormais `ldOrderedListBlockRegex()` et `ldUnorderedListBlockRegex()`.
 - `snippets.js` consomme désormais `ldOrderedListDefaultMarkdown()`, `ldUnorderedListDefaultMarkdown()`, `ldBuildOrderedListMarkdown()` et `ldBuildUnorderedListMarkdown()`.
 - L'ADR inline snippets a été mise à jour pour refléter le helper centralisé des listes.
 - Incrément précédent `refactor(table-attributes): centralize table snippet attributes` réalisé et commité.
-- Nouveau helper `src/frontend/snippet-table-attributes.js`, chargé avant `snippet-detect.js`, centralise valeurs autorisées, parsing des commentaires table, compatibilité legacy, détection table, collecte depuis `currentDocContent`, parsing de cellules/separateur et build du préfixe canonique.
+- Nouveau helper `src/frontend/snippets/snippet-table-attributes.js`, chargé avant `snippet-detect.js`, centralise valeurs autorisées, parsing des commentaires table, compatibilité legacy, détection table, collecte depuis `currentDocContent`, parsing de cellules/separateur et build du préfixe canonique.
 - `documents.js` consomme désormais `ldCollectTableAttributesFromSource()` au lieu de porter ses propres sets/regex.
 - `snippet-detect.js` consomme désormais `ldLooksLikeTableSnippet()`.
 - `inline-snippet-edit.js` construit sa regex table depuis `ldTableBlockSource()`.
 - `snippets.js` consomme `ldBuildTableAttributesPrefix()`, `ldParseTableAttributesFromMarkdown()`, `ldIsMarkdownTableSeparatorLine()` et `ldParseMarkdownTableCells()`.
 - L'ADR inline snippets a été mise à jour pour refléter le helper centralisé.
 - Audit initial réalisé sans modification de code produit avant cet incrément.
-- Zones les plus sensibles identifiées : `src/frontend/snippets.js`, `src/frontend/inline-snippet-edit.js`, `src/frontend/snippet-detect.js`, `src/frontend/documents.js`, `src/frontend/snippet-table.js`, `src/frontend/diagram/network.js`, `src/mcp/server.ts`.
+- Zones les plus sensibles identifiées : `src/frontend/snippets/`, `src/frontend/documents.js`, `src/frontend/diagram/network.js`, `src/mcp/server.ts`.
 - Dette principale : la grammaire des snippets est dispersée entre détection, capture de plage source, parsing formulaire, reconstruction Markdown et tests.
 - Dette secondaire : les attributs de table (`table-style`, `table-border`, `table-color`) sont dupliqués entre rendu viewer, détection, capture inline et build/parse de snippet.
 - Dette structurelle : plusieurs gros fichiers frontend restent en JavaScript classique sans lint/type-check dédié ; le serveur TypeScript est strict, mais `src/frontend` est exclu du `tsconfig`.
@@ -61,14 +69,8 @@ Prochain incrément recommandé : `refactor(doc-rendering): extract document vie
 
 ## Fichiers ou zones concernés
 
-- `src/frontend/snippet-detect.js` : détection pure des types de snippets.
-- `src/frontend/snippet-table-attributes.js` : helper centralisé pour les commentaires et helpers table.
-- `src/frontend/snippet-list-markdown.js` : helper centralisé pour les règles Markdown de listes.
-- `src/frontend/snippet-builders.js` : helper centralisé pour reconstruire le Markdown des snippets.
-- `src/frontend/snippet-parsers.js` : helper centralisé pour parser le Markdown des snippets.
-- `src/frontend/inline-snippet-edit.js` : mapping DOM rendu -> plages Markdown source.
-- `src/frontend/snippets.js` : picker, formulaires, build Markdown, parse Markdown, insertion/suppression inline.
-- `src/frontend/snippet-table.js` : état et grille d'édition des tableaux.
+- `src/frontend/snippets/` : domaine snippets, détection, inline edit, builders, parsers, listes, tables, arbre et orchestration de modale.
+- `src/frontend/modals/` : modales viewer réutilisables ou spécialisées.
 - `src/frontend/documents.js` : rendu viewer, post-processing DOM, attributs tables, code blocks.
 - `src/frontend/index.html` : shell viewer, CSS tables et formulaires snippets.
 - `scripts/check-frontend-js.js` : contrôle syntaxique des scripts frontend.
@@ -81,6 +83,11 @@ Prochain incrément recommandé : `refactor(doc-rendering): extract document vie
 
 - `npm run build` : OK.
 - `npm run check:frontend` : OK, 64 fichiers JavaScript frontend vérifiés.
+- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "colored text opens snippet editor|table captures header|inline insert picker pre-fills unordered and ordered list editors|right-click popup exposes a typed delete button"` : OK, 4 tests passés.
+- `npx playwright test tests/e2e/validate.spec.ts tests/e2e/context.spec.ts` : OK, 8 tests passés.
+- Vérifications de l'incrément qualité frontend précédent :
+  - `npm run build` : OK.
+  - `npm run check:frontend` : OK, 64 fichiers JavaScript frontend vérifiés.
 - Vérifications de l'incrément parsers précédent :
   - `npm run build` : OK.
   - `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "colored text opens snippet editor|colored section opens snippet editor|table captures header|table preceded by table-style|code block captures language|code block without language|indented code block inside a list|blockquote captures editable|unordered list captures|ordered list captures|simple collapsible exposes|level-1 heading opens|level-3 heading reuses"` : OK, 13 tests passés.
@@ -109,7 +116,7 @@ Prochain incrément recommandé : `refactor(doc-rendering): extract document vie
 
 2. Priorité haute : extraire le domaine `table attributes`.
    - Les règles `table-style`, `table-border`, `table-color`, valeurs autorisées, compatibilité legacy et ordre canonique doivent être définis à un seul endroit.
-   - Cible probable : nouveau fichier `src/frontend/snippet-table-attributes.js` chargé avant `documents.js`, `snippet-detect.js`, `inline-snippet-edit.js` et `snippets.js`.
+   - Cible réalisée : fichier `src/frontend/snippets/snippet-table-attributes.js` chargé avant `documents.js`, `snippet-detect.js`, `inline-snippet-edit.js` et `snippets.js`.
    - Ce module devrait exposer des helpers purs : parsing des commentaires, validation des valeurs, reconstruction du préfixe canonique, regex ou fonction de capture des commentaires table.
 
 3. Priorité moyenne : réduire `snippets.js`.

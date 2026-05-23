@@ -29,7 +29,7 @@ Plusieurs manques UX autour des métadonnées et des fichiers joints ont été i
   - `PUT /api/files/:filename` — écrase le fichier avec la même clé (pas d'historique), cap 19 MB, validation base64.
   - `DELETE /api/files/:filename` — suppression simple.
 - Helpers `isSafeFilename()` et `resolveFilePathSafe()` pour garder la même garde anti-traversée que le reste du routeur.
-- Frontend `src/frontend/files-modal.js` : rendu liste, action **Remplacer** (ouvre directement le file picker puis confirme avec l'ancien + nouveau nom), action **Supprimer** (confirme puis DELETE).
+- Frontend `src/frontend/modals/files-modal.js` : rendu liste, action **Remplacer** (ouvre directement le file picker puis confirme avec l'ancien + nouveau nom), action **Supprimer** (confirme puis DELETE).
 
 ### 2. Formule d'exactitude simplifiée
 
@@ -68,7 +68,7 @@ Dans `src/frontend/documents.js` :
 
 ### 5. Modale de confirmation générique
 
-Nouveau fichier `src/frontend/confirm-modal.js` :
+Nouveau fichier `src/frontend/modals/confirm-modal.js` :
 
 ```js
 const ok = await showConfirm({
@@ -86,7 +86,7 @@ const ok = await showConfirm({
 - Clavier : `Escape` = false, `Enter` = true ; clic backdrop = false ; auto-focus sur OK.
 - Mode `danger: true` : bouton rouge (`bg-red-500 hover:bg-red-600`) ; par défaut : bleu (`bg-blue-600 hover:bg-blue-700`).
 - i18n : `common.confirm`, `files.confirm_replace_{title,message,detail}`, `files.confirm_delete_{title,message,detail}` ajoutés en EN et FR.
-- `files-modal.js` utilise `await window.showConfirm({...})` en lieu et place de `window.confirm(...)` pour les deux flux.
+- `modals/files-modal.js` utilise `await window.showConfirm({...})` en lieu et place de `window.confirm(...)` pour les deux flux.
 
 ### Note sur la supersession
 

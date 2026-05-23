@@ -27,7 +27,7 @@ Three issues surfaced once these snippets were used in real documentation:
 
 ### 2. Replace anchor text inputs by select dropdowns driven by headings
 
-The snippet panel fields `#snip-anchor-id` (for `anchor-link`) and `#snip-anchor-doc-id` (for `anchor-doc-link`) became `<select>` elements in [src/frontend/index.html](src/frontend/index.html). A helper pipeline in [src/frontend/snippets.js](src/frontend/snippets.js) fills them:
+The snippet panel fields `#snip-anchor-id` (for `anchor-link`) and `#snip-anchor-doc-id` (for `anchor-doc-link`) became `<select>` elements in [src/frontend/index.html](src/frontend/index.html). A helper pipeline in [src/frontend/snippets/snippets.js](src/frontend/snippets/snippets.js) fills them:
 
 - `_extractHeadingsFromMarkdown(md)` walks the raw markdown looking for ATX headings, strips inline formatting via `_stripMdInline`, and slugifies with the exact same transform used by the renderer: `text.toLowerCase().replace(/[^\w\s-]/g, "").trim().replace(/\s+/g, "-")` — so the slug in the dropdown is guaranteed to match the id produced by `documents.js`.
 - `_collectEditorHeadings()` reads the current editor buffer to feed the local `anchor-link` list.

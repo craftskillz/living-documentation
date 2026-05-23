@@ -58,7 +58,9 @@ src/frontend/admin.html            <- configuration projet
 src/frontend/context.html          <- contexte IA, règles, instructions et explorateur MCP
 src/frontend/diagram.html          <- shell éditeur de diagrammes
 src/frontend/shape-editor.html     <- éditeur de bibliothèques de formes personnalisées
-src/frontend/*.js                  <- modules frontend viewer/admin/context/snippets/search/metadata/export
+src/frontend/*.js                  <- modules frontend viewer/admin/context/search/metadata/export encore à plat
+src/frontend/snippets/*.js         <- domaine snippets : détection, inline-edit, tables, listes, builders, parsers
+src/frontend/modals/*.js           <- modales réutilisables ou spécialisées du viewer
 src/frontend/diagram/*.js          <- modules spécialisés de l'éditeur vis-network
 src/frontend/i18n/en.json          <- catalogue anglais obligatoire pour les libellés UI
 src/frontend/i18n/fr.json          <- catalogue français obligatoire pour les libellés UI
@@ -96,10 +98,10 @@ memory/                           <- mémoire projet locale indexée par `memory
 - **Documentation comme source de vérité** : pour les diagrammes MCP, lire ou créer les documents source-of-truth avant de dessiner ; ne pas inventer d'acteurs ou relations absents des documents.
 - **MCP avant édition manuelle** : quand le MCP est disponible, utiliser `read_document`, `update_document`, `create_document`, `add_metadata` et `refresh_metadata` pour maintenir la documentation.
 - **Internationalisation obligatoire** : tout texte visible utilisateur doit exister dans `src/frontend/i18n/en.json` et `src/frontend/i18n/fr.json`; HTML via `data-i18n*`, JS dynamique via `window.t('key')`.
-- **Frontend sans bundler** : les scripts sont chargés directement par les HTML ; tenir compte de l'ordre de chargement et éviter les imports impossibles côté navigateur.
+- **Frontend sans bundler** : les scripts sont chargés directement par les HTML ; tenir compte de l'ordre de chargement et éviter les imports impossibles côté navigateur. Regrouper les sous-domaines stables en feature folders (`snippets/`, `modals/`, `diagram/`) tout en conservant des chemins de scripts explicites dans les pages HTML.
 - **Diagram editor modulaire** : modifier le module responsable sous `src/frontend/diagram/`; `vis` doit rester le seul global CDN de l'éditeur.
 - **vis-network fragile** : avant de toucher au rendu diagramme, vérifier les ADR et règles sur `ctxRenderer`, `getBoundingBox`, `refreshNeeded`, `_drawNodes` et `_canonicalOrder`.
-- **Confirmation destructive** : utiliser `window.showConfirm(...)` depuis `confirm-modal.js` au lieu de `window.confirm()` pour les actions destructives côté frontend.
+- **Confirmation destructive** : utiliser `window.showConfirm(...)` depuis `modals/confirm-modal.js` au lieu de `window.confirm()` pour les actions destructives côté frontend.
 - **Chemins sûrs** : les routes qui lisent/écrivent des chemins utilisateur doivent résoudre puis vérifier que le chemin reste sous `docsFolder` ou `sourceRoot` selon le cas.
 - **Config portable** : ne pas persister de chemins absolus dans `.living-doc.json`; stocker en relatif POSIX.
 - **Tests de comportement** : privilégier les tests qui exercent le vrai CLI/serveur via Playwright et fixtures isolées ; les imports directs de `dist/` dans les specs ne doivent pas être la stratégie principale de coverage.
