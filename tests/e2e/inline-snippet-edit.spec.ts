@@ -61,7 +61,9 @@ test.describe('inline snippet editing from viewer', () => {
     const docPath = path.join(ld.docsAbs, `${docId}.md`);
 
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
-    await page.locator('#doc-content table').click({ button: 'right' });
+    await expect(page.locator('#doc-content table').first().locator('tbody td').nth(7)).toHaveText('\u00A0');
+    await expect(page.locator('#doc-content table').first().locator('tbody td').nth(9)).toHaveText('\u00A0');
+    await page.locator('#doc-content table').first().click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
     await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'table');
     await expect(page.locator('#inline-snippet-popup button[data-action="edit"]')).toContainText('Edit table');
@@ -91,11 +93,165 @@ test.describe('inline snippet editing from viewer', () => {
     await page.locator('#snippet-submit-btn').click();
 
     await expect(page.locator('#snippets-modal')).toBeHidden();
-    await expect(page.locator('#doc-content table')).toContainText('updated');
+    await expect(page.locator('#doc-content table').first()).toContainText('updated');
 
     const onDisk = fs.readFileSync(docPath, 'utf-8');
     expect(onDisk).toContain('|           | s         | updated   |');
     expect(onDisk).not.toContain('|           | s         |           |');
+  });
+
+  test('a table preceded by table-style + table-border + table-color comments is rendered with cumulative classes', async ({ page, ld }) => {
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    const styledTable = page.locator('#doc-content table').nth(1);
+    await expect(styledTable).toHaveAttribute('data-table-style', 'compact');
+    await expect(styledTable).toHaveAttribute('data-table-border', 'bordered');
+    await expect(styledTable).toHaveAttribute('data-table-color', 'info');
+    await expect(styledTable).toHaveClass(/table-style-compact/);
+    await expect(styledTable).toHaveClass(/table-border-bordered/);
+    await expect(styledTable).toHaveClass(/table-color-info/);
+    const firstTable = page.locator('#doc-content table').first();
+    await expect(firstTable).not.toHaveClass(/table-style-/);
+    await expect(firstTable).not.toHaveClass(/table-border-/);
+    await expect(firstTable).not.toHaveClass(/table-color-/);
+  });
+
+  test('borderless tables keep horizontal separators without vertical cell borders', async ({ page, ld }) => {
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    const firstHeader = page.locator('#doc-content table').first().locator('thead th').first();
+    const firstCell = page.locator('#doc-content table').first().locator('tbody td').first();
+
+    await expect(firstHeader).toHaveCSS('border-bottom-color', 'rgb(209, 213, 219)');
+    await expect(firstCell).toHaveCSS('border-bottom-color', 'rgb(229, 231, 235)');
+    await expect(firstCell).toHaveCSS('border-left-width', '0px');
+    await expect(firstCell).toHaveCSS('border-right-width', '0px');
+  });
+
+  test('borderless colored tables tint horizontal separators with the selected color', async ({ page, ld }) => {
+    const tinyDocId = '2026_01_02_10_00_[General]_tiny';
+    const docPath = path.join(ld.docsAbs, `${tinyDocId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(tinyDocId)}`);
+    await page.evaluate(() => {
+      (window as any).openSnippetsModalForInlineInsert(99999);
+    });
+
+    await page.locator('#snippet-picker [data-snippet-type="table"]').click();
+    await page.locator('#snip-table-color').selectOption('note');
+    await page.locator('#snippet-submit-btn').click();
+
+    const table = page.locator('#doc-content table');
+    const firstHeader = table.locator('thead th').first();
+    const firstCell = table.locator('tbody td').first();
+
+    await expect(table).toHaveClass(/table-color-note/);
+    await expect(table).not.toHaveClass(/table-border-bordered/);
+    await expect(firstHeader).toHaveCSS('border-bottom-color', 'rgb(139, 92, 246)');
+    await expect(firstCell).toHaveCSS('border-bottom-color', 'rgb(233, 213, 255)');
+    await expect(firstCell).toHaveCSS('border-left-width', '0px');
+    await expect(firstCell).toHaveCSS('border-right-width', '0px');
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toMatch(/<!-- table-color: note -->\n\| En-tête 1 \|/);
+    expect(onDisk).not.toContain('<!-- table-border:');
+  });
+
+  test('inline-edit on a styled table loads style + border + color and round-trips comments on save', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content table').nth(1).click({ button: 'right' });
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await expect(page.locator('#snippet-type')).toHaveValue('table');
+    await expect(page.locator('#snip-table-style')).toHaveValue('compact');
+    await expect(page.locator('#snip-table-bordered')).toBeChecked();
+    await expect(page.locator('#snip-table-color')).toHaveValue('info');
+
+    await page.locator('#snip-table-style').selectOption('striped');
+    await page.locator('#snip-table-color').selectOption('success');
+    await page.locator('#snippet-submit-btn').click();
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content table').nth(1)).toHaveClass(/table-style-striped/);
+    await expect(page.locator('#doc-content table').nth(1)).toHaveClass(/table-border-bordered/);
+    await expect(page.locator('#doc-content table').nth(1)).toHaveClass(/table-color-success/);
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain('<!-- table-style: striped -->\n<!-- table-border: bordered -->\n<!-- table-color: success -->\n| Name    | Age |');
+    expect(onDisk).not.toContain('<!-- table-style: compact -->');
+    expect(onDisk).not.toContain('<!-- table-border: borderless -->');
+    expect(onDisk).not.toContain('<!-- table-color: info -->');
+  });
+
+  test('inline-edit can clear the color while keeping the style', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await page.locator('#doc-content table').nth(1).click({ button: 'right' });
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
+    await page.locator('#snip-table-color').selectOption('');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toMatch(/<!-- table-style: compact -->\n<!-- table-border: bordered -->\n\| Name/);
+    expect(onDisk).not.toContain('<!-- table-color:');
+  });
+
+  test('inserting a table from the picker with style + border + color writes cumulative comments to the source', async ({ page, ld }) => {
+    const tinyDocId = '2026_01_02_10_00_[General]_tiny';
+    const docPath = path.join(ld.docsAbs, `${tinyDocId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(tinyDocId)}`);
+    await expect(page.locator('#doc-content h1')).toContainText('Tiny doc');
+    await page.evaluate(() => {
+      (window as any).openSnippetsModalForInlineInsert(99999);
+    });
+
+    await page.locator('#snippet-picker [data-snippet-type="table"]').click();
+    await expect(page.locator('#snip-panel-table')).toBeVisible();
+    await expect(page.locator('#snip-table-style')).toHaveValue('');
+    await expect(page.locator('#snip-table-bordered')).not.toBeChecked();
+    await expect(page.locator('#snip-table-color')).toHaveValue('');
+
+    await page.locator('#snip-table-style').selectOption('striped');
+    await page.locator('#snip-table-bordered').check();
+    await page.locator('#snip-table-color').selectOption('danger');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content table')).toHaveClass(/table-style-striped/);
+    await expect(page.locator('#doc-content table')).toHaveClass(/table-border-bordered/);
+    await expect(page.locator('#doc-content table')).toHaveClass(/table-color-danger/);
+    await expect(page.locator('#doc-content table thead th').first()).toHaveCSS('background-color', 'rgb(254, 226, 226)');
+    await expect(page.locator('#doc-content table tbody tr').first()).toHaveCSS('background-color', 'rgb(254, 242, 242)');
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toMatch(/<!-- table-style: striped -->\n<!-- table-border: bordered -->\n<!-- table-color: danger -->\n\| En-tête 1 \|/);
+  });
+
+  test('striped tables use the neutral stripe fallback when no color is selected', async ({ page, ld }) => {
+    const tinyDocId = '2026_01_02_10_00_[General]_tiny';
+    const docPath = path.join(ld.docsAbs, `${tinyDocId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(tinyDocId)}`);
+    await page.evaluate(() => {
+      (window as any).openSnippetsModalForInlineInsert(99999);
+    });
+
+    await page.locator('#snippet-picker [data-snippet-type="table"]').click();
+    await page.locator('#snip-table-style').selectOption('striped');
+    await page.locator('#snippet-submit-btn').click();
+
+    const table = page.locator('#doc-content table');
+    await expect(table).toHaveClass(/table-style-striped/);
+    await expect(table).not.toHaveClass(/table-color-/);
+    await expect(table.locator('tbody tr').first()).toHaveCSS('background-color', 'rgb(243, 244, 246)');
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toMatch(/<!-- table-style: striped -->\n\| En-tête 1 \|/);
+    expect(onDisk).not.toContain('<!-- table-color:');
+    expect(onDisk).not.toContain('neutral');
   });
 
   test('right-click on code block captures language and editable code content', async ({ page, ld }) => {
@@ -219,19 +375,19 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(page.locator('#snippet-type')).toHaveValue('unordered-list');
     await expect(page.locator('#snippet-preview-wrap')).toBeHidden();
     await expect(page.locator('#snip-unordered-list-content')).toHaveValue(
-      'First bullet\nSecond bullet\n  Nested bullet',
+      '- First bullet\n  continuation for first bullet\n- Second bullet\nlazy continuation for second bullet\n  - Nested bullet',
     );
 
     await page
       .locator('#snip-unordered-list-content')
-      .fill('Updated first\nUpdated second\n  Updated nested');
+      .fill('- Updated first\n  updated continuation\n- Updated second\nupdated lazy continuation\n  - Updated nested');
     await page.locator('#snippet-submit-btn').click();
 
     await expect(page.locator('#snippets-modal')).toBeHidden();
     await expect(page.locator('#doc-content ul').first()).toContainText('Updated first');
 
     const onDisk = fs.readFileSync(docPath, 'utf-8');
-    expect(onDisk).toContain('- Updated first\n- Updated second\n  - Updated nested');
+    expect(onDisk).toContain('- Updated first\n  updated continuation\n- Updated second\nupdated lazy continuation\n  - Updated nested');
     expect(onDisk).not.toContain('- First bullet');
   });
 
@@ -247,19 +403,19 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(page.locator('#snippet-type')).toHaveValue('ordered-list');
     await expect(page.locator('#snippet-preview-wrap')).toBeHidden();
     await expect(page.locator('#snip-ordered-list-content')).toHaveValue(
-      'First numbered\nSecond numbered\n   Nested numbered',
+      '1. First numbered\n   continuation for first numbered\n2. Second numbered\nlazy continuation for second numbered\n   1. Nested numbered\n   - Nested bullet under numbered',
     );
 
     await page
       .locator('#snip-ordered-list-content')
-      .fill('Updated first\nUpdated second\n   Updated nested');
+      .fill('1. Updated first\n   updated continuation\n2. Updated second\nupdated lazy continuation\n   1. Updated nested\n   - Updated nested bullet');
     await page.locator('#snippet-submit-btn').click();
 
     await expect(page.locator('#snippets-modal')).toBeHidden();
     await expect(page.locator('#doc-content ol').first()).toContainText('Updated first');
 
     const onDisk = fs.readFileSync(docPath, 'utf-8');
-    expect(onDisk).toContain('1. Updated first\n2. Updated second\n   1. Updated nested');
+    expect(onDisk).toContain('1. Updated first\n   updated continuation\n2. Updated second\nupdated lazy continuation\n   1. Updated nested\n   - Updated nested bullet');
     expect(onDisk).not.toContain('1. First numbered');
   });
 
@@ -267,7 +423,7 @@ test.describe('inline snippet editing from viewer', () => {
     const docPath = path.join(ld.docsAbs, `${docId}.md`);
 
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
-    await page.locator('#doc-content table').click({ button: 'right' });
+    await page.locator('#doc-content table').first().click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
     const editBtn = page.locator('#inline-snippet-popup button[data-action="edit"]');
     const deleteBtn = page.locator('#inline-snippet-popup button[data-action="delete"]');
@@ -280,7 +436,7 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(page.locator('#confirm-modal')).toBeVisible();
     await page.locator('#confirm-modal-ok').click();
 
-    await expect(page.locator('#doc-content table')).toHaveCount(0);
+    await expect(page.locator('#doc-content table')).toHaveCount(1);
     const onDisk = fs.readFileSync(docPath, 'utf-8');
     expect(onDisk).not.toContain('| En-tête 1 | En-tête 2 | En-tête 3 |');
   });
@@ -545,13 +701,13 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(page.locator('#snip-unordered-list-content')).toBeVisible();
     await expect(page.locator('#snip-unordered-list-content')).toHaveValue(
       [
-        'Élément 1',
-        'Élément 2',
-        '  Sous-élément 2.1',
-        '  Sous-élément 2.2',
-        'Élément 3',
-        '  Sous-élément 3.1',
-        '    Sous-sous-élément 3.1.1',
+        '- Élément 1',
+        '- Élément 2',
+        '  - Sous-élément 2.1',
+        '  - Sous-élément 2.2',
+        '- Élément 3',
+        '  - Sous-élément 3.1',
+        '    - Sous-sous-élément 3.1.1',
       ].join('\n'),
     );
 
@@ -560,13 +716,13 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(page.locator('#snip-ordered-list-content')).toBeVisible();
     await expect(page.locator('#snip-ordered-list-content')).toHaveValue(
       [
-        'Élément 1',
-        'Élément 2',
-        '   Sous-élément 2.1',
-        '   Sous-élément 2.2',
-        'Élément 3',
-        '   Sous-élément 3.1',
-        '      Sous-sous-élément 3.1.1',
+        '1. Élément 1',
+        '2. Élément 2',
+        '   1. Sous-élément 2.1',
+        '   2. Sous-élément 2.2',
+        '3. Élément 3',
+        '   1. Sous-élément 3.1',
+        '      1. Sous-sous-élément 3.1.1',
       ].join('\n'),
     );
   });
@@ -663,7 +819,7 @@ test.describe('inline snippet editing from viewer', () => {
 
   test('inline-edit bypasses the picker and shows the detected panel directly', async ({ page, ld }) => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
-    await page.locator('#doc-content table').click({ button: 'right' });
+    await page.locator('#doc-content table').first().click({ button: 'right' });
     await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();

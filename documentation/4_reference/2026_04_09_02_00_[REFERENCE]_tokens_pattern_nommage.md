@@ -6,15 +6,17 @@ Le pattern de nommage des fichiers est configurable via **⚙ Admin** → champ 
 
 ### Tokens reconnus
 
-| Token        | Description                          | Exemple dans le nom de fichier | Valeur parsée       |
-|--------------|--------------------------------------|-------------------------------|---------------------|
-| `YYYY`       | Année sur 4 chiffres                 | `2024`                        | 2024                |
-| `MM`         | Mois sur 2 chiffres (01–12)          | `03`                          | Mars                |
-| `DD`         | Jour sur 2 chiffres (01–31)          | `15`                          | 15                  |
-| `HH`         | Heure sur 2 chiffres (00–23)         | `14`                          | 14                  |
-| `mm`         | Minutes sur 2 chiffres (00–59)       | `30`                          | 30                  |
-| `[Category]` | Catégorie entre crochets             | `[Architecture]`              | Architecture        |
-| *(reste)*    | Tout le reste forme le titre         | `choix_base_de_donnees`       | Choix Base De Donnees |
+<!-- table-border: bordered -->
+<!-- table-color: info -->
+| Token        | Description                    | Exemple dans le nom de fichier | Valeur parsée         |
+| ------------ | ------------------------------ | ------------------------------ | --------------------- |
+| `YYYY`       | Année sur 4 chiffres           | `2024`                         | 2024                  |
+| `MM`         | Mois sur 2 chiffres (01–12)    | `03`                           | Mars                  |
+| `DD`         | Jour sur 2 chiffres (01–31)    | `15`                           | 15                    |
+| `HH`         | Heure sur 2 chiffres (00–23)   | `14`                           | 14                    |
+| `mm`         | Minutes sur 2 chiffres (00–59) | `30`                           | 30                    |
+| `[Category]` | Catégorie entre crochets       | `[Architecture]`               | Architecture          |
+| *(reste)*    | Tout le reste forme le titre   | `choix_base_de_donnees`        | Choix Base De Donnees |
 
 ---
 
@@ -30,11 +32,13 @@ Exemple complet :
 2024_03_15_14_30_[Architecture]_choix_base_de_donnees.md
 ```
 
-| Extrait      | Valeur                  |
-|--------------|-------------------------|
-| Date         | 15 mars 2024, 14:30     |
-| Catégorie    | Architecture            |
-| Titre        | Choix Base De Donnees   |
+<!-- table-border: bordered -->
+<!-- table-color: info -->
+| Extrait   | Valeur                |
+| --------- | --------------------- |
+| Date      | 15 mars 2024, 14:30   |
+| Catégorie | Architecture          |
+| Titre     | Choix Base De Donnees |
 
 ---
 

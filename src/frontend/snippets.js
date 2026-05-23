@@ -38,23 +38,23 @@ const _SNIPPET_TYPE_TO_PANEL = {
 };
 
 const _SNIPPET_ORDERED_LIST_DEFAULT = [
-  "Élément 1",
-  "Élément 2",
-  "   Sous-élément 2.1",
-  "   Sous-élément 2.2",
-  "Élément 3",
-  "   Sous-élément 3.1",
-  "      Sous-sous-élément 3.1.1",
+  "1. Élément 1",
+  "2. Élément 2",
+  "   1. Sous-élément 2.1",
+  "   2. Sous-élément 2.2",
+  "3. Élément 3",
+  "   1. Sous-élément 3.1",
+  "      1. Sous-sous-élément 3.1.1",
 ].join("\n");
 
 const _SNIPPET_UNORDERED_LIST_DEFAULT = [
-  "Élément 1",
-  "Élément 2",
-  "  Sous-élément 2.1",
-  "  Sous-élément 2.2",
-  "Élément 3",
-  "  Sous-élément 3.1",
-  "    Sous-sous-élément 3.1.1",
+  "- Élément 1",
+  "- Élément 2",
+  "  - Sous-élément 2.1",
+  "  - Sous-élément 2.2",
+  "- Élément 3",
+  "  - Sous-élément 3.1",
+  "    - Sous-sous-élément 3.1.1",
 ].join("\n");
 
 function _snippetPanelForType(type) {
@@ -1277,12 +1277,22 @@ function buildSnippetMarkdown() {
       const content =
         document.getElementById("snip-ordered-list-content").value ||
         _SNIPPET_ORDERED_LIST_DEFAULT;
+      if (/^\s*\d+\.\s+/m.test(content)) {
+        return content
+          .split("\n")
+          .filter((line) => line.trim())
+          .join("\n");
+      }
       const countersByIndent = new Map();
       return content
         .split("\n")
         .filter((line) => line.trim())
         .map((line) => {
           const indent = line.match(/^\s*/)[0];
+          const trimmed = line.trim();
+          if (/^[-*+]\s+/.test(trimmed)) {
+            return `${indent}${trimmed}`;
+          }
           const indentLength = indent.length;
           for (const knownIndent of Array.from(countersByIndent.keys())) {
             if (knownIndent > indentLength) countersByIndent.delete(knownIndent);
@@ -1297,6 +1307,12 @@ function buildSnippetMarkdown() {
       const content =
         document.getElementById("snip-unordered-list-content").value ||
         _SNIPPET_UNORDERED_LIST_DEFAULT;
+      if (/^\s*[-*+]\s+/m.test(content)) {
+        return content
+          .split("\n")
+          .filter((line) => line.trim())
+          .join("\n");
+      }
       return content
         .split("\n")
         .filter((line) => line.trim())
@@ -1349,8 +1365,20 @@ function buildSnippetMarkdown() {
         "./images/mon-image.png";
       return `![${alt}](${url})`;
     }
-    case "table":
-      return buildTableMarkdown();
+    case "table": {
+      const tableMd = buildTableMarkdown();
+      const styleEl = document.getElementById("snip-table-style");
+      const borderedEl = document.getElementById("snip-table-bordered");
+      const colorEl = document.getElementById("snip-table-color");
+      const style = styleEl ? styleEl.value : "";
+      const bordered = borderedEl ? borderedEl.checked : false;
+      const color = colorEl ? colorEl.value : "";
+      const prefix = [];
+      if (style) prefix.push(`<!-- table-style: ${style} -->`);
+      if (bordered) prefix.push(`<!-- table-border: bordered -->`);
+      if (color) prefix.push(`<!-- table-color: ${color} -->`);
+      return (prefix.length ? prefix.join("\n") + "\n" : "") + tableMd;
+    }
     case "tree":
       return buildTreeMarkdown();
     case "diagram": {
@@ -1701,17 +1729,11 @@ function parseAndFillSnippet(text, type) {
       break;
     }
     case "ordered-list": {
-      document.getElementById("snip-ordered-list-content").value = t
-        .split("\n")
-        .map((line) => line.replace(/^(\s*)\d+\.\s?/, "$1"))
-        .join("\n");
+      document.getElementById("snip-ordered-list-content").value = t;
       break;
     }
     case "unordered-list": {
-      document.getElementById("snip-unordered-list-content").value = t
-        .split("\n")
-        .map((line) => line.replace(/^(\s*)[-*+]\s?/, "$1"))
-        .join("\n");
+      document.getElementById("snip-unordered-list-content").value = t;
       break;
     }
     case "code-block": {
@@ -1758,6 +1780,26 @@ function parseAndFillSnippet(text, type) {
       break;
     }
     case "table": {
+      const styleMatch = t.match(/<!--\s*table-style:\s*([a-z][a-z0-9_-]*)\s*-->/);
+      const borderMatch = t.match(/<!--\s*table-border:\s*([a-z][a-z0-9_-]*)\s*-->/);
+      const colorMatch = t.match(/<!--\s*table-color:\s*([a-z][a-z0-9_-]*)\s*-->/);
+      const styleEl = document.getElementById("snip-table-style");
+      const borderedEl = document.getElementById("snip-table-bordered");
+      const colorEl = document.getElementById("snip-table-color");
+      const style = styleMatch && /^(compact|striped)$/.test(styleMatch[1])
+        ? styleMatch[1]
+        : "";
+      const border = borderMatch
+        ? borderMatch[1]
+        : styleMatch && /^(bordered|borderless)$/.test(styleMatch[1])
+          ? styleMatch[1]
+          : "";
+      const color = colorMatch && /^(info|success|warning|danger|note)$/.test(colorMatch[1])
+        ? colorMatch[1]
+        : "";
+      if (styleEl) styleEl.value = style;
+      if (borderedEl) borderedEl.checked = border === "bordered";
+      if (colorEl) colorEl.value = color;
       const allLines = t
         .split("\n")
         .filter((l) => /^\|.*\|$/.test(l.trim()));

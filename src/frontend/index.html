@@ -128,6 +128,149 @@
         border-color: rgba(34, 197, 94, 0.4);
       }
 
+      /* Table presets — triggered by table-style/table-border/table-color comments. */
+
+      /* Color palette via CSS variables. Default (no color class) uses neutral fallbacks. */
+      table.table-color-info {
+        --tbl-accent: rgb(59 130 246);
+        --tbl-accent-soft: rgb(219 234 254);
+        --tbl-accent-stripe: rgb(239 246 255);
+        --tbl-accent-text: rgb(30 58 138);
+      }
+      table.table-color-success {
+        --tbl-accent: rgb(34 197 94);
+        --tbl-accent-soft: rgb(220 252 231);
+        --tbl-accent-stripe: rgb(240 253 244);
+        --tbl-accent-text: rgb(20 83 45);
+      }
+      table.table-color-warning {
+        --tbl-accent: rgb(245 158 11);
+        --tbl-accent-soft: rgb(254 243 199);
+        --tbl-accent-stripe: rgb(255 251 235);
+        --tbl-accent-text: rgb(120 53 15);
+      }
+      table.table-color-danger {
+        --tbl-accent: rgb(239 68 68);
+        --tbl-accent-soft: rgb(254 226 226);
+        --tbl-accent-stripe: rgb(254 242 242);
+        --tbl-accent-text: rgb(127 29 29);
+      }
+      table.table-color-note {
+        --tbl-accent: rgb(139 92 246);
+        --tbl-accent-soft: rgb(233 213 255);
+        --tbl-accent-stripe: rgb(245 243 255);
+        --tbl-accent-text: rgb(76 29 149);
+      }
+      .dark table.table-color-info {
+        --tbl-accent: rgb(96 165 250);
+        --tbl-accent-soft: rgb(30 58 138 / 0.55);
+        --tbl-accent-stripe: rgb(30 58 138 / 0.35);
+        --tbl-accent-text: rgb(191 219 254);
+      }
+      .dark table.table-color-success {
+        --tbl-accent: rgb(74 222 128);
+        --tbl-accent-soft: rgb(20 83 45 / 0.55);
+        --tbl-accent-stripe: rgb(20 83 45 / 0.35);
+        --tbl-accent-text: rgb(187 247 208);
+      }
+      .dark table.table-color-warning {
+        --tbl-accent: rgb(251 191 36);
+        --tbl-accent-soft: rgb(120 53 15 / 0.55);
+        --tbl-accent-stripe: rgb(120 53 15 / 0.35);
+        --tbl-accent-text: rgb(254 215 170);
+      }
+      .dark table.table-color-danger {
+        --tbl-accent: rgb(248 113 113);
+        --tbl-accent-soft: rgb(127 29 29 / 0.55);
+        --tbl-accent-stripe: rgb(127 29 29 / 0.35);
+        --tbl-accent-text: rgb(254 202 202);
+      }
+      .dark table.table-color-note {
+        --tbl-accent: rgb(167 139 250);
+        --tbl-accent-soft: rgb(76 29 149 / 0.55);
+        --tbl-accent-stripe: rgb(76 29 149 / 0.35);
+        --tbl-accent-text: rgb(221 214 254);
+      }
+      /* When a color is applied, tint the header with the accent palette. */
+      .prose table[class*="table-color-"] thead th {
+        background-color: var(--tbl-accent-soft);
+        color: var(--tbl-accent-text);
+      }
+
+      /* Default table type: generous padding with horizontal separators only. */
+      .prose table {
+        border-collapse: collapse;
+        border: none;
+      }
+      .prose table th,
+      .prose table td {
+        padding: 0.6rem 1rem;
+        border: none;
+        border-bottom: 1px solid rgb(229 231 235);
+      }
+      .prose table thead th {
+        border-bottom-color: rgb(209 213 219);
+      }
+      .dark .prose table th,
+      .dark .prose table td {
+        border-bottom-color: rgb(55 65 81);
+      }
+      .prose table[class*="table-color-"] th,
+      .prose table[class*="table-color-"] td {
+        border-bottom-color: var(--tbl-accent-soft);
+      }
+      .prose table[class*="table-color-"] thead th {
+        border-bottom-color: var(--tbl-accent);
+      }
+      .prose table thead,
+      .prose table tbody tr {
+        border: none;
+      }
+
+      /* Compact: small font + reduced padding (clearly denser than other variants). */
+      .prose table.table-style-compact {
+        font-size: 0.85em;
+        line-height: 1.35;
+      }
+      .prose table.table-style-compact th,
+      .prose table.table-style-compact td {
+        padding: 0.2rem 0.5rem;
+      }
+
+      /* Striped: zebra rows using the accent stripe (neutral fallback if no color). */
+      .prose table.table-style-striped {
+        border-collapse: collapse;
+      }
+      .prose table.table-style-striped tbody tr:nth-child(odd) {
+        background-color: var(--tbl-accent-stripe, rgb(243 244 246));
+      }
+      .dark .prose table.table-style-striped tbody tr:nth-child(odd) {
+        background-color: var(--tbl-accent-stripe, rgb(55 65 81));
+      }
+
+      /* Border checkbox: visible borders tinted with the accent (neutral fallback otherwise). */
+      .prose table.table-border-bordered {
+        border-collapse: collapse;
+      }
+      .prose table.table-border-bordered,
+      .prose table.table-border-bordered th,
+      .prose table.table-border-bordered td {
+        border: 1px solid var(--tbl-accent, rgb(209 213 219));
+      }
+      .dark .prose table.table-border-bordered,
+      .dark .prose table.table-border-bordered th,
+      .dark .prose table.table-border-bordered td {
+        border-color: var(--tbl-accent, rgb(75 85 99));
+      }
+
+      /* Explicit/legacy borderless: keep only horizontal separators. */
+      .prose table.table-border-borderless th,
+      .prose table.table-border-borderless td {
+        border-left: none !important;
+        border-right: none !important;
+        border-top: none !important;
+      }
+
       /* Collapsible code blocks (set via --ld-code-max-h from .living-doc.json) */
       pre.ld-collapsible {
         max-height: var(--ld-code-max-h, 400px);
@@ -1837,6 +1980,52 @@
         <!-- Panel: table -->
         <div id="snip-panel-table" class="hidden space-y-3">
           <div class="flex items-center gap-5">
+            <div class="flex items-center gap-2">
+              <label
+                for="snip-table-style"
+                data-i18n="snippet.table_style_label"
+                class="text-xs text-gray-500 dark:text-gray-400"
+                >Table style</label
+              >
+              <select
+                id="snip-table-style"
+                onchange="snippetUpdatePreview()"
+                class="text-xs rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2 py-1"
+              >
+                <option data-i18n="snippet.table_style_default" value="">Default</option>
+                <option data-i18n="snippet.table_style_compact" value="compact">Compact</option>
+                <option data-i18n="snippet.table_style_striped" value="striped">Striped</option>
+              </select>
+            </div>
+            <label class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+              <input
+                id="snip-table-bordered"
+                type="checkbox"
+                onchange="snippetUpdatePreview()"
+                class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+              />
+              <span data-i18n="snippet.table_border_label">Borders</span>
+            </label>
+            <div class="flex items-center gap-2">
+              <label
+                for="snip-table-color"
+                data-i18n="snippet.table_color_label"
+                class="text-xs text-gray-500 dark:text-gray-400"
+                >Color</label
+              >
+              <select
+                id="snip-table-color"
+                onchange="snippetUpdatePreview()"
+                class="text-xs rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2 py-1"
+              >
+                <option data-i18n="snippet.table_color_default" value="">None</option>
+                <option data-i18n="snippet.table_color_info" value="info">Info (blue)</option>
+                <option data-i18n="snippet.table_color_success" value="success">Success (green)</option>
+                <option data-i18n="snippet.table_color_warning" value="warning">Warning (orange)</option>
+                <option data-i18n="snippet.table_color_danger" value="danger">Danger (red)</option>
+                <option data-i18n="snippet.table_color_note" value="note">Note (violet)</option>
+              </select>
+            </div>
             <div class="flex items-center gap-2">
               <span data-i18n="snippet.table_rows_label" class="text-xs text-gray-500 dark:text-gray-400"
                 >Rows</span

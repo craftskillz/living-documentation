@@ -193,12 +193,20 @@ function _inlineCollectSnippetRanges(content) {
   _inlineAddRegexRanges(
     ranges,
     content,
-    /(?:^|\n)((?:\|[^\n]*\|\n)\|[ \t:|-]*\|(?:\n\|[^\n]*\|)*)/g,
+    /(?:^|\n)((?:<!--\s*table-(?:style|border|color):\s*[a-z][a-z0-9_-]*\s*-->\n){0,3}(?:\|[^\n]*\|\n)\|[ \t:|-]*\|(?:\n\|[^\n]*\|)*)/g,
     1,
   );
   _inlineAddRegexRanges(ranges, content, /^> .*(?:\n>.*)*/gm);
-  _inlineAddRegexRanges(ranges, content, /^1\. .*(?:\n(?:\d+\.| {3,}\d+\.) .*)*/gm);
-  _inlineAddRegexRanges(ranges, content, /^- .*(?:\n(?:- | {2,}- ).*)*/gm);
+  _inlineAddRegexRanges(
+    ranges,
+    content,
+    /^1\. .*(?:\n(?![ \t]*$)(?:\d+\. .*| {3,}.*|(?!(?:[-*+] |#{1,6}\s|>|```|~~~|\|)).+))*/gm,
+  );
+  _inlineAddRegexRanges(
+    ranges,
+    content,
+    /^[-*+] .*(?:\n(?![ \t]*$)(?:[-*+] .*| {2,}.*|(?!(?:\d+\. |#{1,6}\s|>|```|~~~|\|)).+))*/gm,
+  );
   _inlineAddRegexRanges(ranges, content, /!\[[^\]\n]*\]\([^)]+\)/g);
   _inlineAddRegexRanges(ranges, content, /\[[^\]\n]+\]\([^)]+\)/g);
 

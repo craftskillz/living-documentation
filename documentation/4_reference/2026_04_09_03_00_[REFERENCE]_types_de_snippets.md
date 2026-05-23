@@ -6,20 +6,23 @@ Les snippets sont accessibles en mode édition via le bouton **`🧩 Snippets`**
 
 ### Snippets simples
 
-| Snippet                    | Description                                              | Markdown généré (exemple)                                     |
-|----------------------------|----------------------------------------------------------|----------------------------------------------------------------|
-| **Bloc dépliable**         | Bloc `<details>` avec titre et contenu masqué par défaut | `<details><summary>Titre</summary>\n\nContenu\n</details>`    |
-| **Lien**                   | Lien Markdown standard vers une URL                      | `[Texte](https://exemple.com)`                                |
-| **Lien vers un document**  | Lien vers un autre document Living Documentation         | `[Texte](?doc=<id_encodé>)`                                   |
-| **Lien d'ancre**           | Lien vers une section du document courant                | `[Texte](#titre-de-section)`                                  |
-| **Lien d'ancre (autre doc)** | Lien vers une section d'un autre document              | `[Texte](?doc=<id_encodé>#titre)`                             |
-| **Lien vers un diagramme** | Image cliquable ouvrant l'éditeur de diagramme           | `[![Alt](./images/img.png)](/diagram?id=<id>)`                |
-| **Image**                  | Image Markdown simple                                    | `![Alt](./images/img.png)`                                    |
-| **Bloc de code**           | Bloc de code avec langage                                | ` ```langage\ncode\n``` `                                     |
-| **Citation**               | Bloc blockquote                                          | `> Texte de la citation`                                      |
-| **Séparateur**             | Ligne horizontale                                        | `---`                                                         |
-| **Liste numérotée**        | Liste ordonnée à plusieurs niveaux d'imbrication         | `1. item\n   1. sous-item\n      1. sous-sous-item`           |
-| **Liste à puces**          | Liste non ordonnée à plusieurs niveaux d'imbrication     | `- item\n   - sous-item\n      - sous-sous-item`              |
+<!-- table-style: striped -->
+<!-- table-border: bordered -->
+<!-- table-color: info -->
+| Snippet                      | Description                                              | Markdown généré (exemple)                                  |
+| ---------------------------- | -------------------------------------------------------- | ---------------------------------------------------------- |
+| **Bloc dépliable**           | Bloc `<details>` avec titre et contenu masqué par défaut | `<details><summary>Titre</summary>\n\nContenu\n</details>` |
+| **Lien**                     | Lien Markdown standard vers une URL                      | `[Texte](https://exemple.com)`                             |
+| **Lien vers un document**    | Lien vers un autre document Living Documentation         | `[Texte](?doc=<id_encodé>)`                                |
+| **Lien d'ancre**             | Lien vers une section du document courant                | `[Texte](#titre-de-section)`                               |
+| **Lien d'ancre (autre doc)** | Lien vers une section d'un autre document                | `[Texte](?doc=<id_encodé>#titre)`                          |
+| **Lien vers un diagramme**   | Image cliquable ouvrant l'éditeur de diagramme           | `[![Alt](./images/img.png)](/diagram?id=<id>)`             |
+| **Image**                    | Image Markdown simple                                    | `![Alt](./images/img.png)`                                 |
+| **Bloc de code**             | Bloc de code avec langage                                | ` ```langage\ncode\n``` `                                  |
+| **Citation**                 | Bloc blockquote                                          | `> Texte de la citation`                                   |
+| **Séparateur**               | Ligne horizontale                                        | `---`                                                      |
+| **Liste numérotée**          | Liste ordonnée à plusieurs niveaux d'imbrication         | `1. item\n   1. sous-item\n      1. sous-sous-item`        |
+| **Liste à puces**            | Liste non ordonnée à plusieurs niveaux d'imbrication     | `- item\n   - sous-item\n      - sous-sous-item`           |
 
 ---
 

@@ -8,10 +8,79 @@
 let _lastDocHtml = null;
 let _lastDocIdRendered = null;
 
+const _ALLOWED_TABLE_STYLES = new Set(["compact", "striped"]);
+const _ALLOWED_TABLE_BORDERS = new Set(["bordered", "borderless"]);
+const _LEGACY_TABLE_BORDER_STYLES = new Set(["bordered", "borderless"]);
+
+const _ALLOWED_TABLE_COLORS = new Set([
+  "info",
+  "success",
+  "warning",
+  "danger",
+  "note",
+]);
+
+function _collectTableAttributesFromSource(source) {
+  if (typeof source !== "string") return [];
+  const attrs = [];
+  // Up to 3 leading comments (style, border, color; any order) immediately before the table.
+  const re = /((?:<!--\s*table-(?:style|border|color):\s*[a-z][a-z0-9_-]*\s*-->\n){0,3})(\|[^\n]*\|\n\|[ \t:|-]*-[ \t:|-]*\|)/g;
+  let m;
+  while ((m = re.exec(source))) {
+    const prefix = m[1] || "";
+    let style = null;
+    let border = null;
+    let color = null;
+    const attrRe = /<!--\s*table-(style|border|color):\s*([a-z][a-z0-9_-]*)\s*-->/g;
+    let am;
+    while ((am = attrRe.exec(prefix))) {
+      if (am[1] === "style" && _ALLOWED_TABLE_STYLES.has(am[2])) style = am[2];
+      if (am[1] === "style" && _LEGACY_TABLE_BORDER_STYLES.has(am[2])) border = am[2];
+      if (am[1] === "border" && _ALLOWED_TABLE_BORDERS.has(am[2])) border = am[2];
+      if (am[1] === "color" && _ALLOWED_TABLE_COLORS.has(am[2])) color = am[2];
+    }
+    attrs.push({ style, border, color });
+  }
+  return attrs;
+}
+
+function _applyTableStyles(contentEl) {
+  const attrs = _collectTableAttributesFromSource(
+    typeof currentDocContent === "string" ? currentDocContent : "",
+  );
+  const tables = contentEl.querySelectorAll("table");
+  tables.forEach((table, i) => {
+    const a = attrs[i];
+    if (!a) return;
+    if (a.style) {
+      table.classList.add(`table-style-${a.style}`);
+      table.dataset.tableStyle = a.style;
+    }
+    if (a.border) {
+      table.classList.add(`table-border-${a.border}`);
+      table.dataset.tableBorder = a.border;
+    }
+    if (a.color) {
+      table.classList.add(`table-color-${a.color}`);
+      table.dataset.tableColor = a.color;
+    }
+  });
+}
+
+function _fillEmptyTableCells(contentEl) {
+  contentEl.querySelectorAll("table th, table td").forEach((cell) => {
+    if (cell.textContent.trim() === "") {
+      cell.textContent = "\u00A0";
+    }
+  });
+}
+
 function _wireDocContent(html) {
   const contentEl = document.getElementById("doc-content");
   if (!contentEl) return;
   contentEl.innerHTML = html;
+  _applyTableStyles(contentEl);
+  _fillEmptyTableCells(contentEl);
 
   contentEl.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach((h) => {
     if (!h.id) {

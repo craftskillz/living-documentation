@@ -11,6 +11,12 @@ function tableInit() {
     ["", "", ""],
     ["", "", ""],
   ];
+  const styleEl = document.getElementById("snip-table-style");
+  if (styleEl) styleEl.value = "";
+  const borderedEl = document.getElementById("snip-table-bordered");
+  if (borderedEl) borderedEl.checked = false;
+  const colorEl = document.getElementById("snip-table-color");
+  if (colorEl) colorEl.value = "";
   tableRenderGrid();
 }
 

@@ -39,12 +39,17 @@ console.log("Hello World!");
 > — Existing author
 
 - First bullet
+  continuation for first bullet
 - Second bullet
+lazy continuation for second bullet
   - Nested bullet
 
 1. First numbered
+   continuation for first numbered
 2. Second numbered
+lazy continuation for second numbered
    1. Nested numbered
+   - Nested bullet under numbered
 
 1. Chercher le groupe lié à l'app Amplify — il est nommé selon le pattern :
    ```yaml
@@ -73,3 +78,10 @@ Some intro text.
 ```
 
 </details>
+
+<!-- table-style: compact -->
+<!-- table-border: bordered -->
+<!-- table-color: info -->
+| Name | Age |
+| ---- | ---:|
+| Youssef | 42 |

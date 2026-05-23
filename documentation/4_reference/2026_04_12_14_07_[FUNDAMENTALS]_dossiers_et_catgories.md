@@ -81,9 +81,11 @@ Sidebar générée :
 
 ## Récapitulatif
 
-| Notion     | Source                     | Contrôle                        | Affiché dans         |
-|------------|----------------------------|---------------------------------|----------------------|
-| Dossier    | Répertoire système de fichiers | Nom du répertoire (+ préfixe numérique) | Nœud collapsible dans la sidebar |
-| Catégorie  | Token `[Category]` dans le nom de fichier | Pattern de nommage configurable | Groupe sous chaque dossier |
+<!-- table-border: bordered -->
+<!-- table-color: warning -->
+| Notion    | Source                                    | Contrôle                                | Affiché dans                     |
+| --------- | ----------------------------------------- | --------------------------------------- | -------------------------------- |
+| Dossier   | Répertoire système de fichiers            | Nom du répertoire (+ préfixe numérique) | Nœud collapsible dans la sidebar |
+| Catégorie | Token `[Category]` dans le nom de fichier | Pattern de nommage configurable         | Groupe sous chaque dossier       |
 
 > Pour modifier le pattern de nommage, allez dans **⚙ Admin** → champ *Filename pattern*.

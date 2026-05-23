@@ -354,35 +354,39 @@
   "ADRS/2026_05_17_19_11_[SNIPPET]_edition_inline_des_snippets_depuis_le_viewer_par_clic_droit": [
     {
       "path": "src/frontend/inline-snippet-edit.js",
-      "hash": "b968c4021f08e7b6056d39642775e20a79f23c44e36af665d0ff171bc84bb17b"
+      "hash": "71be311f5c9da25ca62a2a302c047e0968298f7cee57cc390ababfccc3660128"
     },
     {
       "path": "src/frontend/snippets.js",
-      "hash": "bdcd9c221fbe37d210a43a92d303ecafa7714bd5e2b3216deccc470a60c8968d"
+      "hash": "2779cab6dc38d2c0582371a10a6cce0e48c70dbb264dd61cc82284ecfe9ebe22"
     },
     {
       "path": "src/frontend/documents.js",
-      "hash": "077fe4e73a1faa94a968394e530e88ba800d76cb4146b2c5890498c49f6beb25"
+      "hash": "b1e78484258834e31ad7c1eb2e7d691ce4864ecac006db81dde1a8b2952932c6"
     },
     {
       "path": "src/frontend/index.html",
-      "hash": "52747b09ed22b12c7d199563712adc41204601687817bbe16a02cce78853fe5c"
+      "hash": "7b1d0581db7cd746e6fe677629d1efdb8e3ed1aba287c70af76fd2b0b1a9815d"
     },
     {
       "path": "src/frontend/i18n/en.json",
-      "hash": "d3fb107cf2ebab1e59d78499e653df738387f90ac9573fb1c86a423180184053"
+      "hash": "db906337069cc8be91af21fc76784bf68ac5116b6193d02dc69c815d25dfbada"
     },
     {
       "path": "src/frontend/i18n/fr.json",
-      "hash": "bb28111ebb8f9db5f5bf98b0ecd2e6b1fad781b829be2e61118b04682a0f711e"
+      "hash": "22804170e2bce79486bc1157393151d405e81116593df632f790a2b1af70814b"
     },
     {
       "path": "tests/e2e/inline-snippet-edit.spec.ts",
-      "hash": "77957b0514cfabf5a21943eaca43732dda414617a56cadd360a6580e877ec50b"
+      "hash": "8332f66a0b888f999f3324c5685021897239c118144de8bc4fb770183dc3cb86"
     },
     {
       "path": "src/frontend/snippet-detect.js",
-      "hash": "f2f5735f239e76e417d1505c667b8f6dc32a3ac72e023a904bdf0b46a5c728f1"
+      "hash": "bc7b2878622c6bcf211a0a36b3d58edc3277f64c22ee551a0ebb4e890abffcb4"
+    },
+    {
+      "path": "src/frontend/snippet-table.js",
+      "hash": "c85d2879bca1fd6d4a8fb3225397e40ceb79ec838bc25ac52524c81bece5b3c2"
     }
   ],
   "1_tutorial/2026_04_12_10_00_[General]_utiliser_les_snippets": [
