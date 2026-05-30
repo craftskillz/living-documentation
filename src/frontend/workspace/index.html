@@ -120,16 +120,6 @@
                   </div>
                 </div>
 
-                <label id="providerWorkspaceField" class="field wide">
-                  <span>Workspace folder</span>
-                  <input
-                    id="nodeWorkspaceFolder"
-                    name="nodeWorkspaceFolder"
-                    type="text"
-                    readonly
-                  />
-                </label>
-
                 <label class="field">
                   <span>Timeout</span>
                   <input
@@ -154,6 +144,16 @@
             </div>
 
             <section id="agentSection" class="agent-section" hidden>
+              <label id="agentWorkspaceField" class="field wide">
+                <span>Workspace folder</span>
+                <input
+                  id="nodeWorkspaceFolder"
+                  name="nodeWorkspaceFolder"
+                  type="text"
+                  readonly
+                />
+              </label>
+
               <label class="field wide">
                 <span>System prompt</span>
                 <textarea
@@ -248,6 +248,25 @@
 
         <div id="fallbackPanelHost" class="fallback-panel-host" hidden></div>
       </section>
+
+      <div id="renameConfirmOverlay" class="confirm-overlay" hidden>
+        <section
+          class="confirm-dialog"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="renameConfirmTitle"
+        >
+          <div>
+            <p class="confirm-kicker">Renommage de dossier</p>
+            <h2 id="renameConfirmTitle">Renommer le dossier ?</h2>
+            <p id="renameConfirmMessage" class="confirm-message"></p>
+          </div>
+          <footer class="confirm-actions">
+            <button id="cancelRenameButton" class="secondary-button" type="button">Annuler</button>
+            <button id="confirmRenameButton" class="primary-button" type="button">Renommer</button>
+          </footer>
+        </section>
+      </div>
 
       <div id="deleteConfirmOverlay" class="confirm-overlay" hidden>
         <section

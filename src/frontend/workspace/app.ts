@@ -154,6 +154,18 @@ const agentResponses = document.getElementById("agentResponses") as HTMLElement;
 const deleteNodeButton = document.getElementById(
   "deleteNodeButton",
 ) as HTMLButtonElement;
+const renameConfirmOverlay = document.getElementById(
+  "renameConfirmOverlay",
+) as HTMLElement;
+const renameConfirmMessage = document.getElementById(
+  "renameConfirmMessage",
+) as HTMLElement;
+const cancelRenameButton = document.getElementById(
+  "cancelRenameButton",
+) as HTMLButtonElement;
+const confirmRenameButton = document.getElementById(
+  "confirmRenameButton",
+) as HTMLButtonElement;
 const deleteConfirmOverlay = document.getElementById(
   "deleteConfirmOverlay",
 ) as HTMLElement;
@@ -179,6 +191,8 @@ const workspaceToastMessage = document.getElementById(
   "workspaceToastMessage",
 ) as HTMLElement;
 let toastTimerId: number | null = null;
+let savedAgentLabel: string | null = null;
+let savedAgentFolder: string | null = null;
 
 const fields = {
   name: document.getElementById("nodeName") as HTMLInputElement,
@@ -187,7 +201,7 @@ const fields = {
   token: document.getElementById("nodeToken") as HTMLInputElement,
   model: document.getElementById("nodeModel") as HTMLSelectElement,
   workspaceField: document.getElementById(
-    "providerWorkspaceField",
+    "agentWorkspaceField",
   ) as HTMLElement,
   workspaceFolder: document.getElementById(
     "nodeWorkspaceFolder",
@@ -372,10 +386,15 @@ form.addEventListener("submit", (event) => {
   scheduleRender();
 });
 
-form.addEventListener("input", () => {
+form.addEventListener("input", (event) => {
   syncSelectedFromForm();
   layoutGraph();
-  scheduleWorkspaceSave();
+  // Don't auto-save while editing the name of an agent — wait for blur + popup
+  const isAgentNameEdit =
+    event.target === fields.name && selectedEntity()?.kind === "agent";
+  if (!isAgentNameEdit) {
+    scheduleWorkspaceSave();
+  }
   scheduleRender();
 });
 
@@ -413,6 +432,45 @@ loadModelsButton.addEventListener("click", () => {
   void loadModelsForSelect();
 });
 
+fields.name.addEventListener("blur", () => {
+  const selected = selectedEntity();
+  if (!selected || selected.kind !== "agent") return;
+  const newName = fields.name.value.trim();
+  if (!newName || !savedAgentLabel || !savedAgentFolder || newName === savedAgentLabel) return;
+
+  const newFolder = workspaceFolderForProvider(newName);
+  if (newFolder === savedAgentFolder) return; // slug identique, pas de renommage nécessaire
+
+  renameConfirmMessage.textContent =
+    `Renommer le dossier "${savedAgentFolder}" en "${newFolder}" ?`;
+  renameConfirmOverlay.hidden = false;
+  cancelRenameButton.focus();
+});
+
+cancelRenameButton.addEventListener("click", () => {
+  renameConfirmOverlay.hidden = true;
+  const selected = selectedEntity();
+  if (selected && savedAgentLabel) {
+    selected.label = savedAgentLabel;
+    fields.name.value = savedAgentLabel;
+    layoutGraph();
+    scheduleRender();
+  }
+});
+
+confirmRenameButton.addEventListener("click", () => {
+  renameConfirmOverlay.hidden = true;
+  const selected = selectedEntity();
+  if (!selected || !savedAgentFolder) return;
+  // Remettre l'ancien chemin pour que le backend sache quoi renommer
+  selected.config.workspaceFolder = savedAgentFolder;
+  fields.workspaceFolder.value = savedAgentFolder;
+  const newName = fields.name.value.trim();
+  if (newName) savedAgentLabel = newName;
+  savedAgentFolder = workspaceFolderForProvider(newName);
+  scheduleWorkspaceSave();
+});
+
 fields.model.addEventListener("change", () => {
   testNodeButton.disabled = !fields.model.value;
   const selected = selectedEntity();
@@ -442,6 +500,7 @@ function isolatePanelEvents() {
 function isolateConfirmEvents() {
   for (const type of PANEL_EVENT_TYPES) {
     deleteConfirmOverlay.addEventListener(type, stopPanelEventPropagation);
+    renameConfirmOverlay.addEventListener(type, stopPanelEventPropagation);
   }
 }
 
@@ -551,7 +610,7 @@ function hydrateEntity(input: unknown): Entity | null {
       description: stringValue(config.description) || defaultDescription(kind),
       workspaceFolder:
         stringValue(config.workspaceFolder) ||
-        (kind === "llm" ? workspaceFolderForProvider(label) : ""),
+        (kind === "agent" ? workspaceFolderForProvider(label) : ""),
       systemPrompt: stringValue(config.systemPrompt),
     },
   };
@@ -677,7 +736,7 @@ function createEntity(id, label, kind, parentId) {
       model: "",
       timeout: 180,
       description: defaultDescription(kind),
-      workspaceFolder: kind === "llm" ? workspaceFolderForProvider(label) : "",
+      workspaceFolder: kind === "agent" ? workspaceFolderForProvider(label) : "",
       systemPrompt: "",
     },
   };
@@ -1019,6 +1078,9 @@ function collisionRadius(entity) {
 function selectEntity(id) {
   const hadSelection = Boolean(state.selectedId);
   state.selectedId = id;
+  const entity = id ? entityById(id) : null;
+  savedAgentLabel = entity?.kind === "agent" ? entity.label : null;
+  savedAgentFolder = entity?.kind === "agent" ? (entity.config.workspaceFolder || workspaceFolderForProvider(entity.label)) : null;
   layoutGraph();
   syncCameraForPanelChange(hadSelection, Boolean(id), true);
   syncPanelFromSelection();
@@ -1082,7 +1144,7 @@ function syncPanelFromSelection() {
   fields.token.value = selected.config.token;
   restoreModelSelect(selected.config.model);
   fields.workspaceFolder.value = selected.config.workspaceFolder;
-  fields.workspaceField.hidden = selected.kind !== "llm";
+  fields.workspaceField.hidden = selected.kind !== "agent";
   fields.timeout.value = String(selected.config.timeout);
   fields.description.value = selected.config.description;
   fields.typeBadge.textContent = labelForBadge(selected.kind);
@@ -1091,6 +1153,7 @@ function syncPanelFromSelection() {
   fields.mcpInventory.hidden = selected.kind !== "mcp";
   fields.agentSection.hidden = selected.kind !== "agent";
   fields.systemPrompt.value = selected.config.systemPrompt;
+  deleteNodeButton.hidden = isProtectedEntity(selected.id);
   deleteNodeButton.disabled = isProtectedEntity(selected.id);
   testNodeButton.hidden = selected.kind !== "llm";
   testNodeButton.disabled = selected.kind !== "llm" || !selected.config.model;

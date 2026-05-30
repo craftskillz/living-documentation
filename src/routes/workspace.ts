@@ -165,13 +165,31 @@ function ensureProviderWorkspaceFolders(docsPath: string, state: WorkspaceState)
 
   const reservedFolders = new Set<string>();
   for (const entity of state.entities) {
-    if (entity.kind !== 'llm') {
+    if (entity.kind !== 'agent') {
       entity.config.workspaceFolder = '';
       continue;
     }
 
     const existingFolder = sanitizeWorkspaceFolder(entity.config.workspaceFolder);
-    const baseFolder = existingFolder || path.join(WORKSPACE_PROVIDER_ROOT, slugify(entity.label));
+    const labelFolder = toPosixPath(path.join(WORKSPACE_PROVIDER_ROOT, slugify(entity.label)));
+
+    // Rename existing folder if label slug changed
+    if (existingFolder && existingFolder !== labelFolder) {
+      const absoluteExisting = path.resolve(docsPath, existingFolder);
+      if (fs.existsSync(absoluteExisting)) {
+        const uniqueLabel = uniqueWorkspaceFolder(labelFolder, reservedFolders);
+        const absoluteNew = path.resolve(docsPath, uniqueLabel);
+        if (!absoluteNew.startsWith(`${workspaceRoot}${path.sep}`)) {
+          throw new Error('provider workspace folder escapes AI/WORKSPACE');
+        }
+        fs.renameSync(absoluteExisting, absoluteNew);
+        entity.config.workspaceFolder = toPosixPath(uniqueLabel);
+        reservedFolders.add(entity.config.workspaceFolder);
+        continue;
+      }
+    }
+
+    const baseFolder = existingFolder || labelFolder;
     const uniqueFolder = uniqueWorkspaceFolder(baseFolder, reservedFolders);
     const absoluteFolder = path.resolve(docsPath, uniqueFolder);
     if (!absoluteFolder.startsWith(`${workspaceRoot}${path.sep}`) && absoluteFolder !== workspaceRoot) {

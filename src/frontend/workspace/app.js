@@ -55,6 +55,10 @@ const runAgentButton = document.getElementById("runAgentButton");
 const clearAgentButton = document.getElementById("clearAgentButton");
 const agentResponses = document.getElementById("agentResponses");
 const deleteNodeButton = document.getElementById("deleteNodeButton");
+const renameConfirmOverlay = document.getElementById("renameConfirmOverlay");
+const renameConfirmMessage = document.getElementById("renameConfirmMessage");
+const cancelRenameButton = document.getElementById("cancelRenameButton");
+const confirmRenameButton = document.getElementById("confirmRenameButton");
 const deleteConfirmOverlay = document.getElementById("deleteConfirmOverlay");
 const deleteConfirmMessage = document.getElementById("deleteConfirmMessage");
 const cancelDeleteButton = document.getElementById("cancelDeleteButton");
@@ -66,13 +70,15 @@ const workspaceToast = document.getElementById("workspaceToast");
 const workspaceToastIcon = document.getElementById("workspaceToastIcon");
 const workspaceToastMessage = document.getElementById("workspaceToastMessage");
 let toastTimerId = null;
+let savedAgentLabel = null;
+let savedAgentFolder = null;
 const fields = {
     name: document.getElementById("nodeName"),
     kind: document.getElementById("nodeKind"),
     endpoint: document.getElementById("nodeEndpoint"),
     token: document.getElementById("nodeToken"),
     model: document.getElementById("nodeModel"),
-    workspaceField: document.getElementById("providerWorkspaceField"),
+    workspaceField: document.getElementById("agentWorkspaceField"),
     workspaceFolder: document.getElementById("nodeWorkspaceFolder"),
     timeout: document.getElementById("nodeTimeout"),
     description: document.getElementById("nodeDescription"),
@@ -220,10 +226,14 @@ form.addEventListener("submit", (event) => {
     void saveWorkspaceNow(true);
     scheduleRender();
 });
-form.addEventListener("input", () => {
+form.addEventListener("input", (event) => {
     syncSelectedFromForm();
     layoutGraph();
-    scheduleWorkspaceSave();
+    // Don't auto-save while editing the name of an agent — wait for blur + popup
+    const isAgentNameEdit = event.target === fields.name && selectedEntity()?.kind === "agent";
+    if (!isAgentNameEdit) {
+        scheduleWorkspaceSave();
+    }
     scheduleRender();
 });
 deleteNodeButton.addEventListener("click", (event) => {
@@ -254,6 +264,45 @@ testNodeButton.addEventListener("click", () => {
 loadModelsButton.addEventListener("click", () => {
     void loadModelsForSelect();
 });
+fields.name.addEventListener("blur", () => {
+    const selected = selectedEntity();
+    if (!selected || selected.kind !== "agent")
+        return;
+    const newName = fields.name.value.trim();
+    if (!newName || !savedAgentLabel || !savedAgentFolder || newName === savedAgentLabel)
+        return;
+    const newFolder = workspaceFolderForProvider(newName);
+    if (newFolder === savedAgentFolder)
+        return; // slug identique, pas de renommage nécessaire
+    renameConfirmMessage.textContent =
+        `Renommer le dossier "${savedAgentFolder}" en "${newFolder}" ?`;
+    renameConfirmOverlay.hidden = false;
+    cancelRenameButton.focus();
+});
+cancelRenameButton.addEventListener("click", () => {
+    renameConfirmOverlay.hidden = true;
+    const selected = selectedEntity();
+    if (selected && savedAgentLabel) {
+        selected.label = savedAgentLabel;
+        fields.name.value = savedAgentLabel;
+        layoutGraph();
+        scheduleRender();
+    }
+});
+confirmRenameButton.addEventListener("click", () => {
+    renameConfirmOverlay.hidden = true;
+    const selected = selectedEntity();
+    if (!selected || !savedAgentFolder)
+        return;
+    // Remettre l'ancien chemin pour que le backend sache quoi renommer
+    selected.config.workspaceFolder = savedAgentFolder;
+    fields.workspaceFolder.value = savedAgentFolder;
+    const newName = fields.name.value.trim();
+    if (newName)
+        savedAgentLabel = newName;
+    savedAgentFolder = workspaceFolderForProvider(newName);
+    scheduleWorkspaceSave();
+});
 fields.model.addEventListener("change", () => {
     testNodeButton.disabled = !fields.model.value;
     const selected = selectedEntity();
@@ -278,6 +327,7 @@ function isolatePanelEvents() {
 function isolateConfirmEvents() {
     for (const type of PANEL_EVENT_TYPES) {
         deleteConfirmOverlay.addEventListener(type, stopPanelEventPropagation);
+        renameConfirmOverlay.addEventListener(type, stopPanelEventPropagation);
     }
 }
 function stopPanelEventPropagation(event) {
@@ -367,7 +417,7 @@ function hydrateEntity(input) {
             timeout: finiteNumber(config.timeout, 180),
             description: stringValue(config.description) || defaultDescription(kind),
             workspaceFolder: stringValue(config.workspaceFolder) ||
-                (kind === "llm" ? workspaceFolderForProvider(label) : ""),
+                (kind === "agent" ? workspaceFolderForProvider(label) : ""),
             systemPrompt: stringValue(config.systemPrompt),
         },
     };
@@ -483,7 +533,7 @@ function createEntity(id, label, kind, parentId) {
             model: "",
             timeout: 180,
             description: defaultDescription(kind),
-            workspaceFolder: kind === "llm" ? workspaceFolderForProvider(label) : "",
+            workspaceFolder: kind === "agent" ? workspaceFolderForProvider(label) : "",
             systemPrompt: "",
         },
     };
@@ -717,6 +767,9 @@ function collisionRadius(entity) {
 function selectEntity(id) {
     const hadSelection = Boolean(state.selectedId);
     state.selectedId = id;
+    const entity = id ? entityById(id) : null;
+    savedAgentLabel = entity?.kind === "agent" ? entity.label : null;
+    savedAgentFolder = entity?.kind === "agent" ? (entity.config.workspaceFolder || workspaceFolderForProvider(entity.label)) : null;
     layoutGraph();
     syncCameraForPanelChange(hadSelection, Boolean(id), true);
     syncPanelFromSelection();
@@ -770,7 +823,7 @@ function syncPanelFromSelection() {
     fields.token.value = selected.config.token;
     restoreModelSelect(selected.config.model);
     fields.workspaceFolder.value = selected.config.workspaceFolder;
-    fields.workspaceField.hidden = selected.kind !== "llm";
+    fields.workspaceField.hidden = selected.kind !== "agent";
     fields.timeout.value = String(selected.config.timeout);
     fields.description.value = selected.config.description;
     fields.typeBadge.textContent = labelForBadge(selected.kind);
@@ -779,6 +832,7 @@ function syncPanelFromSelection() {
     fields.mcpInventory.hidden = selected.kind !== "mcp";
     fields.agentSection.hidden = selected.kind !== "agent";
     fields.systemPrompt.value = selected.config.systemPrompt;
+    deleteNodeButton.hidden = isProtectedEntity(selected.id);
     deleteNodeButton.disabled = isProtectedEntity(selected.id);
     testNodeButton.hidden = selected.kind !== "llm";
     testNodeButton.disabled = selected.kind !== "llm" || !selected.config.model;

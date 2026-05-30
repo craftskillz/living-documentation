@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-30T20:25:23.709Z",
+  "updatedAt": "2026-05-30T21:37:21.345Z",
   "entities": [
     {
       "id": "root",
@@ -53,7 +53,7 @@
         "timeout": 180,
         "systemPrompt": "",
         "description": "Routes model calls and hosts the agents assigned to this provider.",
-        "workspaceFolder": "AI/WORKSPACE/llm_provider_1"
+        "workspaceFolder": ""
       }
     },
     {
@@ -71,12 +71,12 @@
         "timeout": 180,
         "systemPrompt": "You are a documentation assistant. \nStart by calling list_adrs_below_accuracy to retrieve degraded ADRs.\nThen give a concise summary in French: total count, the 3 most critical ADRs with their title and accuracy percentage, and a one-line recommendation for each.",
         "description": "Runs focused automation against documentation, source, or quality signals.",
-        "workspaceFolder": ""
+        "workspaceFolder": "AI/WORKSPACE/agent_de_listage_des_adrs_driftes"
       }
     },
     {
       "id": "agent-mpsqshab",
-      "label": "Generer diagramme Mermaid",
+      "label": "Générer Diagramme Mermaid",
       "kind": "agent",
       "parentId": "provider-mpsmymtb",
       "x": -188.91363066193924,
@@ -89,13 +89,13 @@
         "timeout": 180,
         "systemPrompt": "You are a diagram generator for a software documentation project.\nWhen given a document ID, call read_document to retrieve its content.\nThen generate one or more relevant Mermaid diagrams that best represent \nthe structure, flows, or relationships described in the document.\nOutput each diagram in a fenced code block tagged with \"mermaid\".\nAdd a short title before each diagram explaining what it represents.",
         "description": "Runs focused automation against documentation, source, or quality signals.",
-        "workspaceFolder": ""
+        "workspaceFolder": "AI/WORKSPACE/generer_diagramme_mermaid"
       }
     }
   ],
   "camera": {
-    "x": 460.88508656091756,
-    "y": 324.6463993966478,
-    "zoom": 0.9288369204919467
+    "x": 613.9089037555436,
+    "y": 358.6001758302309,
+    "zoom": 0.9871560962214722
   }
 }
