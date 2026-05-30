@@ -1,6 +1,6 @@
 # HTML-in-Canvas Configuration Experiment
 
-This folder is an isolated prototype for a graph-native configuration interface.
+This folder is an isolated TypeScript prototype for a graph-native configuration interface.
 
 ## Goal
 
@@ -25,10 +25,24 @@ From the repository root:
 python3 -m http.server 8080
 ```
 
-Then open:
+Then open through Living Documentation:
 
 ```text
-http://localhost:8080/experiments/html-in-canvas-configuration/
+http://localhost:4321/workspace
+```
+
+Or from a plain static server:
+
+```text
+http://localhost:8080/src/frontend/workspace/
+```
+
+## Build
+
+The source is `app.ts`; `app.js` is the browser artifact generated with:
+
+```bash
+npx tsc -p src/frontend/workspace/tsconfig.json
 ```
 
 To test the native HTML-in-Canvas path, use Chrome Canary or Brave Stable with:

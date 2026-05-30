@@ -15,6 +15,7 @@ import { metadataRouter } from './routes/metadata';
 import { browseSourceRouter } from './routes/browse-source';
 import { exportRouter } from './routes/export';
 import { contextRouter } from './routes/context';
+import { workspaceRouter } from './routes/workspace';
 import { mcpRouter } from './mcp/server';
 import { writeConfig } from './lib/config';
 
@@ -52,12 +53,16 @@ export async function startServer({
   app.use('/api/browse-source', browseSourceRouter(docsPath));
   app.use('/api/export', exportRouter(docsPath));
   app.use('/api/context', contextRouter(docsPath));
+  app.use('/api/workspace', workspaceRouter(docsPath));
   app.use('/mcp', mcpRouter(docsPath));
 
   // Static frontend assets
   // dotfiles: 'allow' so the npx cache (~/.npm/_npx/...) doesn't trip send's
   // dotfile guard on the .npm path segment and 404 every asset.
   const frontendPath = path.join(__dirname, 'frontend');
+  app.get('/workspace', (_req, res) =>
+    res.sendFile(path.join(frontendPath, 'workspace', 'index.html'), { dotfiles: 'allow' }),
+  );
   app.use(express.static(frontendPath, { dotfiles: 'allow' }));
 
   // Static assets from docs folder (images, etc.)

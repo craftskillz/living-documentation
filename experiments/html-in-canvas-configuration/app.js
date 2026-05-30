@@ -22,6 +22,7 @@
   const HIT_PADDING = 14;
   const VIEW_TRANSITION_MS = 260;
   const VIEW_PADDING = 56;
+  const PANEL_OCCLUSION_PADDING = 32;
   const PANEL_EVENT_TYPES = [
     "pointerdown",
     "mousedown",
@@ -1007,16 +1008,47 @@
   }
 
   function syncCameraForPanelChange(hadSelection, hasSelection, animate) {
-    if (hadSelection === hasSelection) {
+    if (hasSelection) {
+      const deltaX = selectedPanelAvoidanceDelta();
+      state.panelShiftX += Math.max(0, -deltaX);
+      translateCamera(deltaX, animate);
       return;
     }
 
-    const panelReserve = panelWidthForViewport(canvas.clientWidth) + PANEL_GAP;
-    const deltaX = hasSelection
-      ? -panelReserve
-      : state.panelShiftX || panelReserve;
-    state.panelShiftX = hasSelection ? panelReserve : 0;
+    if (!hadSelection) {
+      return;
+    }
+
+    const deltaX = state.panelShiftX;
+    state.panelShiftX = 0;
     translateCamera(deltaX, animate);
+  }
+
+  function selectedPanelAvoidanceDelta() {
+    const selected = selectedEntity();
+    if (!selected) {
+      return 0;
+    }
+
+    const panelLeft = canvas.clientWidth - panelWidthForViewport(canvas.clientWidth) - 24;
+    const safeRight = panelLeft - PANEL_OCCLUSION_PADDING;
+    const selectedBounds = screenBoundsForEntity(selected);
+
+    if (selectedBounds.right <= safeRight) {
+      return 0;
+    }
+
+    return safeRight - selectedBounds.right;
+  }
+
+  function screenBoundsForEntity(entity) {
+    const bounds = entityBounds(entity);
+    return {
+      left: bounds.left * state.zoom + state.cameraX,
+      top: bounds.top * state.zoom + state.cameraY,
+      right: bounds.right * state.zoom + state.cameraX,
+      bottom: bounds.bottom * state.zoom + state.cameraY,
+    };
   }
 
   function translateCamera(deltaX, animate) {
