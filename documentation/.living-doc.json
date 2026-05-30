@@ -4,7 +4,9 @@
   "theme": "system",
   "language": "fr",
   "port": 4321,
-  "extraFiles": [],
+  "extraFiles": [
+    "../README.md"
+  ],
   "showDiagramDebug": false,
   "diagramNodePalette": [
     "#ffffff",

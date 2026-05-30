@@ -650,6 +650,15 @@
               ></p>
               <div class="flex items-center gap-2">
                 <button
+                  id="toggle-status-highlight-btn"
+                  onclick="cycleHighlightStatus()"
+                  data-i18n-title="nav.toggle_status_highlight"
+                  title="Highlight document statuses"
+                  class="text-gray-400 hover:opacity-80 dark:text-gray-500 transition-colors leading-none"
+                >
+                  <i class="fa-solid fa-certificate"></i>
+                </button>
+                <button
                   id="toggle-attachments-btn"
                   onclick="toggleHideAttachments()"
                   data-i18n-title="nav.toggle_attachments"

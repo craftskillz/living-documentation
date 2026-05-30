@@ -5,6 +5,7 @@ import { marked } from "marked";
 import { parseFilename, DocMetadata } from "../lib/parser";
 import { readConfig } from "../lib/config";
 import { readMetadataStore } from "../lib/metadata";
+import { parseDocStatus } from "../lib/status";
 
 const METADATA_SEARCH_PREFIX = "metadata://";
 
@@ -263,6 +264,26 @@ export function documentsRouter(docsPath: string): Router {
       res.json(counts);
     } catch {
       res.status(500).json({ error: "Failed to compute file counts" });
+    }
+  });
+
+  // GET /api/documents/statuses → { [docId]: status } — frontmatter status per
+  // doc, used by the sidebar status-highlight pills. Defined before /:id so the
+  // literal path is not captured by the id param.
+  router.get("/statuses", (_req: Request, res: Response) => {
+    try {
+      const { extraFiles = [], filenamePattern } = readConfig(docsPath);
+      const docs = listDocs(docsPath, extraFiles, filenamePattern);
+      const statuses: Record<string, string> = {};
+      for (const doc of docs) {
+        const filePath = resolveDocPath(docsPath, doc, extraFiles);
+        if (!filePath || !fs.existsSync(filePath)) continue;
+        const status = parseDocStatus(fs.readFileSync(filePath, "utf-8"));
+        if (status) statuses[doc.id] = status;
+      }
+      res.json(statuses);
+    } catch {
+      res.status(500).json({ error: "Failed to compute statuses" });
     }
   });
 

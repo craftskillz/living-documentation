@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadDocuments();
   applyHideCategoriesButtonState();
   applyHideAttachmentsButtonState();
+  applyHighlightStatusButtonState();
 
   // Deep-link via ?doc=id, otherwise open first General doc
   const params = new URLSearchParams(location.search);

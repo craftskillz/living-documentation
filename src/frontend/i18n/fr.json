@@ -23,6 +23,7 @@
   "nav.export": "Exporter",
   "nav.toggle_categories": "Afficher/masquer le regroupement par catégorie",
   "nav.toggle_attachments": "Afficher/masquer les pièces jointes",
+  "nav.toggle_status_highlight": "Mettre en évidence les statuts (À valider / Obsolète)",
   "nav.export_html": "Exporter les dossiers en HTML (ZIP)",
   "nav.export_all_pdf": "Exporter tous les documents en PDF",
   "nav.new_folder": "Nouveau dossier",
@@ -65,6 +66,8 @@
   "sidebar.annotated_docs_badge": "document contenant des annotations",
   "sidebar.file_attachment_badge": "pièce jointe",
   "sidebar.file_attached_docs_badge": "document contenant des pièces jointes",
+  "sidebar.status_to_validate": "À valider",
+  "sidebar.status_superseeded": "Obsolète",
 
   "doc.validate_mode": "Valider le document — passer le statut frontmatter de « To be validated » à « Accepted »",
   "doc.validate_btn": "Valider",

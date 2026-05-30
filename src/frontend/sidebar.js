@@ -194,6 +194,7 @@ function renderDocItem(doc) {
   <div class="leading-snug flex items-center justify-between gap-2">
     <span class="truncate">${esc(doc.title)}</span>
     <span class="flex items-center gap-1 shrink-0">
+      ${statusPill(doc)}
       ${annotationBadge(annCount)}
       ${fileAttachmentBadge(fileCount)}
     </span>
@@ -348,4 +349,31 @@ function applyHideAttachmentsButtonState() {
   btn.classList.toggle("dark:text-blue-400", !hideAttachments);
   btn.classList.toggle("text-gray-400", hideAttachments);
   btn.classList.toggle("dark:text-gray-500", hideAttachments);
+}
+
+function cycleHighlightStatus() {
+  highlightStatusState = (highlightStatusState + 1) % 3;
+  try {
+    localStorage.setItem("ld-highlight-status", String(highlightStatusState));
+  } catch {
+    /* ignore */
+  }
+  applyHighlightStatusButtonState();
+  refreshSidebar();
+}
+
+// Icon colour mirrors the active state: gray (off) → green (To be validated) →
+// orange (also SuperSeeded). Exactly one colour class is on at a time.
+function applyHighlightStatusButtonState() {
+  const btn = document.getElementById("toggle-status-highlight-btn");
+  if (!btn) return;
+  const off = highlightStatusState === 0;
+  const validate = highlightStatusState === 1;
+  const both = highlightStatusState === 2;
+  btn.classList.toggle("text-gray-400", off);
+  btn.classList.toggle("dark:text-gray-500", off);
+  btn.classList.toggle("text-green-500", validate);
+  btn.classList.toggle("dark:text-green-400", validate);
+  btn.classList.toggle("text-orange-500", both);
+  btn.classList.toggle("dark:text-orange-400", both);
 }

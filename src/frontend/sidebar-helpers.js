@@ -82,6 +82,39 @@ function fileAttachmentBadge(count) {
                         border border-sky-500 shadow-sm">${count}</span>`;
 }
 
+// Lifecycle pill driven by the tri-state status-highlight toggle. A document
+// carries a single frontmatter `status`, so it shows at most one pill: a green
+// "V" for "To be validated" (states 1 and 2) or an orange "S" for "SuperSeeded"
+// (state 2 only). Status matching is case-insensitive.
+function statusPill(doc) {
+  if (typeof highlightStatusState === "undefined" || !highlightStatusState)
+    return "";
+  const status = String(docStatuses[doc.id] || "")
+    .trim()
+    .toLowerCase();
+  if (status === "to be validated") {
+    const label = window.t
+      ? window.t("sidebar.status_to_validate")
+      : "To be validated";
+    return `<span title="${esc(label)}"
+                 class="inline-flex items-center justify-center w-5 h-5
+                        rounded-full bg-green-500 dark:bg-green-500
+                        text-[10px] font-bold text-white
+                        border border-green-600 shadow-sm">V</span>`;
+  }
+  if (highlightStatusState === 2 && status === "superseeded") {
+    const label = window.t
+      ? window.t("sidebar.status_superseeded")
+      : "SuperSeeded";
+    return `<span title="${esc(label)}"
+                 class="inline-flex items-center justify-center w-5 h-5
+                        rounded-full bg-orange-500 dark:bg-orange-500
+                        text-[10px] font-bold text-white
+                        border border-orange-600 shadow-sm">S</span>`;
+  }
+  return "";
+}
+
 function fileAttachedDocsBadge(count) {
   if (!count) return "";
   if (typeof hideAttachments !== "undefined" && hideAttachments) return "";

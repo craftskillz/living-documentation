@@ -220,6 +220,7 @@ async function loadDocuments() {
     await Promise.all([
       refreshAnnotationCounts(),
       refreshFileAttachmentCounts(),
+      refreshDocStatuses(),
     ]);
     renderSidebar(allDocs);
   } catch {
@@ -252,6 +253,18 @@ async function refreshFileAttachmentCounts() {
     }
   } catch {
     fileAttachmentCounts = {};
+  }
+}
+
+async function refreshDocStatuses() {
+  try {
+    const raw = await fetch("/api/documents/statuses").then((r) => r.json());
+    docStatuses = {};
+    for (const [docId, status] of Object.entries(raw || {})) {
+      docStatuses[docId] = status;
+    }
+  } catch {
+    docStatuses = {};
   }
 }
 

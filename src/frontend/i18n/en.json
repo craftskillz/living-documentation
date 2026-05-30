@@ -23,6 +23,7 @@
   "nav.export": "Export",
   "nav.toggle_categories": "Show/hide category grouping",
   "nav.toggle_attachments": "Show/hide attachments",
+  "nav.toggle_status_highlight": "Highlight document statuses (To be validated / SuperSeeded)",
   "nav.export_html": "Export folders as HTML ZIP",
   "nav.export_all_pdf": "Export all documents as PDF",
   "nav.new_folder": "New folder",
@@ -65,6 +66,8 @@
   "sidebar.annotated_docs_badge": "document with annotations",
   "sidebar.file_attachment_badge": "attachment",
   "sidebar.file_attached_docs_badge": "document with attachments",
+  "sidebar.status_to_validate": "To be validated",
+  "sidebar.status_superseeded": "SuperSeeded",
 
   "doc.validate_mode": "Validate document — flip frontmatter status from \"To be validated\" to \"Accepted\"",
   "doc.validate_btn": "Validate",
