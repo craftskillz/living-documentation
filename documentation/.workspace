@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-30T16:35:30.842Z",
+  "updatedAt": "2026-05-30T20:25:23.709Z",
   "entities": [
     {
       "id": "root",
@@ -11,46 +11,13 @@
       "y": 0,
       "angle": 0,
       "config": {
-        "environment": "local",
         "endpoint": "",
         "token": "",
+        "model": "",
         "timeout": 30,
-        "retryPolicy": "linear",
-        "description": "Owns the documentation workspace, MCP access, providers, and agent topology."
-      }
-    },
-    {
-      "id": "devstral",
-      "label": "DevStral2 LLM API",
-      "kind": "llm",
-      "parentId": "root",
-      "x": 1.567547902908612e-14,
-      "y": -256,
-      "angle": -1.5707963267948966,
-      "config": {
-        "environment": "production",
-        "endpoint": "https://api.devstral.example/v1",
-        "token": "",
-        "timeout": 30,
-        "retryPolicy": "exponential",
-        "description": "Routes model calls and hosts the agents assigned to this provider."
-      }
-    },
-    {
-      "id": "qwen",
-      "label": "Qwen2 LLM API",
-      "kind": "llm",
-      "parentId": "root",
-      "x": 221.7025033688163,
-      "y": 127.99999999999996,
-      "angle": 0.5235987755982987,
-      "config": {
-        "environment": "production",
-        "endpoint": "https://api.qwen.example/v1",
-        "token": "",
-        "timeout": 30,
-        "retryPolicy": "exponential",
-        "description": "Routes model calls and hosts the agents assigned to this provider."
+        "systemPrompt": "",
+        "description": "Owns the documentation workspace, MCP access, providers, and agent topology.",
+        "workspaceFolder": ""
       }
     },
     {
@@ -58,73 +25,77 @@
       "label": "MCP",
       "kind": "mcp",
       "parentId": "root",
-      "x": -221.70250336881625,
-      "y": 128.00000000000009,
-      "angle": 2.617993877991494,
+      "x": 1.567547902908612e-14,
+      "y": -256,
+      "angle": -1.5707963267948966,
       "config": {
-        "environment": "production",
         "endpoint": "http://localhost:4321/mcp",
         "token": "",
+        "model": "gemma4:latest",
         "timeout": 30,
-        "retryPolicy": "linear",
-        "description": "Exposes the local Living Documentation MCP consultation panel to agents."
+        "systemPrompt": "",
+        "description": "The whole \"Living AI Documentation MCP\" informations, Tools and prompts.",
+        "workspaceFolder": ""
       }
     },
     {
-      "id": "review-agent",
-      "label": "Code Review Agent",
-      "kind": "agent",
-      "parentId": "devstral",
-      "x": -188.91363066193924,
-      "y": -352.2563025786491,
-      "angle": -2.670353755551324,
+      "id": "provider-mpsmymtb",
+      "label": "Gemma 4",
+      "kind": "llm",
+      "parentId": "root",
+      "x": 1.567547902908612e-14,
+      "y": 256,
+      "angle": 1.5707963267948966,
       "config": {
-        "environment": "local",
-        "endpoint": "",
+        "endpoint": "http://localhost:11434",
         "token": "",
-        "timeout": 45,
-        "retryPolicy": "linear",
-        "description": "Runs focused automation against documentation, source, or quality signals."
+        "model": "gemma4:latest",
+        "timeout": 180,
+        "systemPrompt": "",
+        "description": "Routes model calls and hosts the agents assigned to this provider.",
+        "workspaceFolder": "AI/WORKSPACE/llm_provider_1"
       }
     },
     {
-      "id": "sonar-agent",
-      "label": "Sonarqube Metrics Agent",
+      "id": "agent-mpsonopb",
+      "label": "Agent de listage des ADRS driftés",
       "kind": "agent",
-      "parentId": "devstral",
+      "parentId": "provider-mpsmymtb",
       "x": 188.91363066193932,
-      "y": -352.2563025786491,
-      "angle": -0.47123889803846897,
+      "y": 352.2563025786491,
+      "angle": 0.47123889803846897,
       "config": {
-        "environment": "local",
         "endpoint": "",
         "token": "",
-        "timeout": 45,
-        "retryPolicy": "linear",
-        "description": "Runs focused automation against documentation, source, or quality signals."
+        "model": "gemma4:latest",
+        "timeout": 180,
+        "systemPrompt": "You are a documentation assistant. \nStart by calling list_adrs_below_accuracy to retrieve degraded ADRs.\nThen give a concise summary in French: total count, the 3 most critical ADRs with their title and accuracy percentage, and a one-line recommendation for each.",
+        "description": "Runs focused automation against documentation, source, or quality signals.",
+        "workspaceFolder": ""
       }
     },
     {
-      "id": "doc-agent",
-      "label": "Documentation Agent",
+      "id": "agent-mpsqshab",
+      "label": "Generer diagramme Mermaid",
       "kind": "agent",
-      "parentId": "qwen",
-      "x": 405.3195688256824,
-      "y": 234.0113621693307,
-      "angle": 0.5235987755982987,
+      "parentId": "provider-mpsmymtb",
+      "x": -188.91363066193924,
+      "y": 352.2563025786491,
+      "angle": 2.670353755551324,
       "config": {
-        "environment": "local",
         "endpoint": "",
         "token": "",
-        "timeout": 45,
-        "retryPolicy": "linear",
-        "description": "Runs focused automation against documentation, source, or quality signals."
+        "model": "gemma4:latest",
+        "timeout": 180,
+        "systemPrompt": "You are a diagram generator for a software documentation project.\nWhen given a document ID, call read_document to retrieve its content.\nThen generate one or more relevant Mermaid diagrams that best represent \nthe structure, flows, or relationships described in the document.\nOutput each diagram in a fenced code block tagged with \"mermaid\".\nAdd a short title before each diagram explaining what it represents.",
+        "description": "Runs focused automation against documentation, source, or quality signals.",
+        "workspaceFolder": ""
       }
     }
   ],
   "camera": {
-    "x": 740.3077253411316,
-    "y": 480.50415594999805,
-    "zoom": 0.9641707417276651
+    "x": 460.88508656091756,
+    "y": 324.6463993966478,
+    "zoom": 0.9288369204919467
   }
 }

@@ -12,20 +12,13 @@
         <div class="brand-lockup">
           <span class="brand-mark" aria-hidden="true">LD</span>
           <div>
-            <h1>Living Documentation Config Graph</h1>
-            <p>Experimental graph-native configuration workspace</p>
+            <h1>Living AI Documentation</h1>
+            <p>Graph-native configuration workspace</p>
           </div>
         </div>
         <div class="status-row">
           <span id="apiStatus" class="status-pill">Detecting canvas API</span>
-          <button
-            id="resetButton"
-            class="ghost-button"
-            type="button"
-            title="Reset workspace"
-          >
-            Reset
-          </button>
+          <a href="/" class="ghost-button" title="Back to home">Home</a>
         </div>
       </header>
 
@@ -56,19 +49,6 @@
           <form id="configSurface" class="config-surface" autocomplete="off">
             <div class="panel-kicker">
               <span id="nodeTypeBadge">Provider</span>
-              <span id="nodeHealthBadge">Ready</span>
-            </div>
-
-            <div class="panel-title-row">
-              <div>
-                <label class="eyebrow" for="nodeName">Node name</label>
-                <input
-                  id="nodeName"
-                  name="nodeName"
-                  class="title-input"
-                  type="text"
-                />
-              </div>
               <button
                 id="deleteNodeButton"
                 class="icon-button danger"
@@ -77,6 +57,16 @@
               >
                 ×
               </button>
+            </div>
+
+            <div class="panel-title-row">
+              <label class="eyebrow" for="nodeName">Node name</label>
+              <input
+                id="nodeName"
+                name="nodeName"
+                class="title-input"
+                type="text"
+              />
             </div>
 
             <div class="form-grid">
@@ -90,55 +80,68 @@
                 </select>
               </label>
 
-              <label class="field">
-                <span>Environment</span>
-                <select id="nodeEnvironment" name="nodeEnvironment">
-                  <option value="local">Local</option>
-                  <option value="staging">Staging</option>
-                  <option value="production">Production</option>
-                </select>
-              </label>
+              <div id="llmFields" class="contents">
+                <label class="field wide">
+                  <span>Endpoint</span>
+                  <input
+                    id="nodeEndpoint"
+                    name="nodeEndpoint"
+                    type="url"
+                    placeholder="http://localhost:1234/v1"
+                  />
+                </label>
 
-              <label class="field wide">
-                <span>Endpoint</span>
-                <input
-                  id="nodeEndpoint"
-                  name="nodeEndpoint"
-                  type="url"
-                  placeholder="https://api.example.com/v1"
-                />
-              </label>
+                <label class="field wide">
+                  <span>API token</span>
+                  <input
+                    id="nodeToken"
+                    name="nodeToken"
+                    type="password"
+                    placeholder="Optional bearer token"
+                  />
+                </label>
 
-              <label class="field wide">
-                <span>API token</span>
-                <input
-                  id="nodeToken"
-                  name="nodeToken"
-                  type="password"
-                  placeholder="Stored outside the diagram model"
-                />
-              </label>
+                <div class="field wide model-field-row">
+                  <span>Model</span>
+                  <div class="model-select-wrap">
+                    <select id="nodeModel" name="nodeModel">
+                      <option value="" disabled selected>
+                        — click ↻ to load models —
+                      </option>
+                    </select>
+                    <button
+                      id="loadModelsButton"
+                      class="icon-button"
+                      type="button"
+                      title="Load models from endpoint"
+                    >
+                      ↻
+                    </button>
+                  </div>
+                </div>
 
-              <label class="field">
-                <span>Timeout</span>
-                <input
-                  id="nodeTimeout"
-                  name="nodeTimeout"
-                  type="number"
-                  min="1"
-                  max="120"
-                  step="1"
-                />
-              </label>
+                <label id="providerWorkspaceField" class="field wide">
+                  <span>Workspace folder</span>
+                  <input
+                    id="nodeWorkspaceFolder"
+                    name="nodeWorkspaceFolder"
+                    type="text"
+                    readonly
+                  />
+                </label>
 
-              <label class="field">
-                <span>Retry policy</span>
-                <select id="nodeRetryPolicy" name="nodeRetryPolicy">
-                  <option value="none">None</option>
-                  <option value="linear">Linear</option>
-                  <option value="exponential">Exponential</option>
-                </select>
-              </label>
+                <label class="field">
+                  <span>Timeout</span>
+                  <input
+                    id="nodeTimeout"
+                    name="nodeTimeout"
+                    type="number"
+                    min="1"
+                    max="600"
+                    step="1"
+                  />
+                </label>
+              </div>
 
               <label class="field wide">
                 <span>Description</span>
@@ -149,6 +152,45 @@
                 ></textarea>
               </label>
             </div>
+
+            <section id="agentSection" class="agent-section" hidden>
+              <label class="field wide">
+                <span>System prompt</span>
+                <textarea
+                  id="nodeSystemPrompt"
+                  name="nodeSystemPrompt"
+                  rows="5"
+                  placeholder="You are a helpful assistant…"
+                ></textarea>
+              </label>
+              <label class="field wide">
+                <span>User input</span>
+                <textarea
+                  id="nodeUserInput"
+                  name="nodeUserInput"
+                  rows="2"
+                  placeholder="Document ID, question, or any input for the agent…"
+                ></textarea>
+              </label>
+
+              <div class="agent-run-row">
+                <button
+                  id="runAgentButton"
+                  class="secondary-button"
+                  type="button"
+                >
+                  Test
+                </button>
+                <button
+                  id="clearAgentButton"
+                  class="ghost-button"
+                  type="button"
+                >
+                  Clear
+                </button>
+              </div>
+              <div id="agentResponses" class="agent-responses" hidden></div>
+            </section>
 
             <section id="mcpInventory" class="mcp-inventory" hidden>
               <div class="inventory-header">
@@ -200,9 +242,6 @@
               >
                 Test
               </button>
-              <button id="saveNodeButton" class="primary-button" type="submit">
-                Apply
-              </button>
             </footer>
           </form>
         </canvas>
@@ -241,6 +280,19 @@
         </section>
       </div>
     </main>
+
+    <div
+      id="workspaceToast"
+      class="workspace-toast"
+      role="status"
+      aria-live="polite"
+      hidden
+    >
+      <span id="workspaceToastIcon" class="toast-icon" aria-hidden="true"
+        >✓</span
+      >
+      <span id="workspaceToastMessage">Workspace saved</span>
+    </div>
 
     <script type="module" src="./app.js?v=workspace-persistence-1"></script>
   </body>

@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "build": "tsc && tsc -p src/frontend/workspace/tsconfig.json && ts-node scripts/copy-assets.ts && chmod +x dist/bin/cli.js",
-    "dev": "nodemon --watch src --watch bin --ext ts,html --exec 'ts-node bin/cli.ts'",
+    "dev": "node scripts/dev.js",
     "start": "node dist/bin/cli.js",
     "test": "npm run test:e2e",
     "test:e2e": "npm run build && playwright test",

@@ -531,37 +531,23 @@
       <!-- ── Header ── -->
       <header
         id="header"
-        class="no-print flex items-center justify-between px-4 h-14 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0 z-10 shadow-sm"
+        class="no-print flex items-center justify-between px-6 h-[72px] border-b border-gray-200 dark:border-gray-800 bg-white/90 dark:bg-gray-900/90 backdrop-blur shrink-0 z-10 shadow-sm"
       >
         <div class="flex items-center gap-3">
           <span
             onclick="toggleSidebar()"
             data-i18n-title="nav.toggle_sidebar"
             title="Toggle sidebar"
-            class="text-blue-600 dark:text-blue-400 text-xl select-none cursor-pointer hover:opacity-70 transition-opacity"
-            >&#128218;</span
+            class="select-none cursor-pointer hover:opacity-70 transition-opacity flex items-center justify-center w-[38px] h-[38px] rounded-[10px] bg-gray-900 dark:bg-gray-800 border border-gray-600 text-white text-xs font-black"
+            >LD</span
           >
-          <span id="app-title" class="font-semibold text-base tracking-tight"
-            >Living Documentation</span
-          >
+          <div>
+            <div id="app-title" class="font-[760] text-[15px] tracking-tight leading-tight">Living AI Documentation</div>
+            <div id="app-subtitle" class="text-[12px] text-gray-400 mt-[2px]"></div>
+          </div>
         </div>
 
         <div class="flex items-center gap-2">
-          <!-- Search (desktop — mirrors sidebar search) -->
-          <div class="relative hidden sm:block">
-            <input
-              id="header-search"
-              type="search"
-              data-i18n-placeholder="nav.search_placeholder"
-              placeholder="Search docs…"
-              class="w-56 pl-8 pr-3 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <span
-              class="absolute left-2.5 top-2 text-gray-400 text-sm pointer-events-none"
-              >&#128269;</span
-            >
-          </div>
-
           <!-- Workspace -->
           <a
             href="/workspace"
@@ -570,16 +556,6 @@
           >
             Workspace
           </a>
-
-          <!-- Dark mode toggle -->
-          <button
-            id="dark-toggle"
-            data-i18n-title="nav.toggle_dark"
-            title="Toggle dark mode"
-            class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-          >
-            <span id="dark-icon" class="text-lg leading-none">&#9790;</span>
-          </button>
 
           <!-- Word Cloud -->
           <button
@@ -625,6 +601,31 @@
           >
             &#9881; Admin
           </a>
+
+          <!-- Dark mode toggle -->
+          <button
+            id="dark-toggle"
+            data-i18n-title="nav.toggle_dark"
+            title="Toggle dark mode"
+            class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          >
+            <span id="dark-icon" class="text-lg leading-none">&#9790;</span>
+          </button>
+
+          <!-- Search (desktop — mirrors sidebar search) -->
+          <div class="relative hidden sm:block">
+            <input
+              id="header-search"
+              type="search"
+              data-i18n-placeholder="nav.search_placeholder"
+              placeholder="Search docs…"
+              class="w-56 pl-8 pr-3 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <span
+              class="absolute left-2.5 top-2 text-gray-400 text-sm pointer-events-none"
+              >&#128269;</span
+            >
+          </div>
         </div>
       </header>
 

@@ -6,8 +6,9 @@ async function loadConfig() {
     await window.initI18n(cfg.language || 'en');
     window.applyI18n();
     if (cfg.title) document.title = cfg.title;
-    document.getElementById("app-title").textContent =
-      cfg.title || "Living Documentation";
+    document.getElementById("app-title").textContent = "Living AI Documentation";
+    const subtitle = document.getElementById("app-subtitle");
+    if (subtitle) subtitle.textContent = cfg.title || "";
     if (cfg.filenamePattern) {
       document.getElementById("welcome-pattern").textContent =
         cfg.filenamePattern + ".md";

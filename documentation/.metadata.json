@@ -500,5 +500,23 @@
       "path": "src/frontend/i18n/fr.json",
       "hash": "47d7be3bef666d3faefbddbd6834d8938975e0a621a710270ee342dd5ba83cba"
     }
+  ],
+  "ADRS/2026_05_30_22_14_[FRONTEND]_workspace_configuration_graph_avec_agents_llm_et_tool_use_mcp": [
+    {
+      "path": "src/frontend/workspace/app.ts",
+      "hash": "5dc419da4e8cd847cd2f8dbacd077664d4e030133163680db77a27d406e9c05a"
+    },
+    {
+      "path": "src/frontend/workspace/persistence.ts",
+      "hash": "46c75bf7e186f84ccd2b577be1e1c3e15572ec1532c812b6b6f4ba2f279d1b61"
+    },
+    {
+      "path": "src/frontend/workspace/index.html",
+      "hash": "7fdb942f79bafcc14b7e79ea41819f8ec0804ccd94f128b3264235ee17bce672"
+    },
+    {
+      "path": "src/routes/workspace.ts",
+      "hash": "c0b603c5e6c505b133b2f9aff95536d0a5a36c97fecda6fc7f8b70809b04698f"
+    }
   ]
 }
