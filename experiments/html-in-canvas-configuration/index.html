@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>HTML-in-Canvas Configuration Experiment</title>
-    <link rel="stylesheet" href="./styles.css?v=pan-zoom-layout-1" />
+    <link rel="stylesheet" href="./styles.css?v=panel-translate-1" />
   </head>
   <body>
     <main class="app-shell">
@@ -18,14 +18,38 @@
         </div>
         <div class="status-row">
           <span id="apiStatus" class="status-pill">Detecting canvas API</span>
-          <button id="resetButton" class="ghost-button" type="button" title="Reset workspace">Reset</button>
+          <button
+            id="resetButton"
+            class="ghost-button"
+            type="button"
+            title="Reset workspace"
+          >
+            Reset
+          </button>
         </div>
       </header>
 
-      <section class="workspace-shell" aria-label="Configuration graph workspace">
+      <section
+        class="workspace-shell"
+        aria-label="Configuration graph workspace"
+      >
         <nav class="rail" aria-label="Workspace tools">
-          <button id="addButton" class="tool-button primary" type="button" title="Add node">+</button>
-          <button id="fitButton" class="tool-button" type="button" title="Fit view">⌖</button>
+          <button
+            id="addButton"
+            class="tool-button primary"
+            type="button"
+            title="Add node"
+          >
+            +
+          </button>
+          <button
+            id="fitButton"
+            class="tool-button"
+            type="button"
+            title="Fit view"
+          >
+            ⌖
+          </button>
         </nav>
 
         <canvas id="workspaceCanvas" class="workspace-canvas" layoutsubtree>
@@ -38,9 +62,21 @@
             <div class="panel-title-row">
               <div>
                 <label class="eyebrow" for="nodeName">Node name</label>
-                <input id="nodeName" name="nodeName" class="title-input" type="text" />
+                <input
+                  id="nodeName"
+                  name="nodeName"
+                  class="title-input"
+                  type="text"
+                />
               </div>
-              <button id="deleteNodeButton" class="icon-button danger" type="button" title="Delete node">×</button>
+              <button
+                id="deleteNodeButton"
+                class="icon-button danger"
+                type="button"
+                title="Delete node"
+              >
+                ×
+              </button>
             </div>
 
             <div class="form-grid">
@@ -65,17 +101,34 @@
 
               <label class="field wide">
                 <span>Endpoint</span>
-                <input id="nodeEndpoint" name="nodeEndpoint" type="url" placeholder="https://api.example.com/v1" />
+                <input
+                  id="nodeEndpoint"
+                  name="nodeEndpoint"
+                  type="url"
+                  placeholder="https://api.example.com/v1"
+                />
               </label>
 
               <label class="field wide">
                 <span>API token</span>
-                <input id="nodeToken" name="nodeToken" type="password" placeholder="Stored outside the diagram model" />
+                <input
+                  id="nodeToken"
+                  name="nodeToken"
+                  type="password"
+                  placeholder="Stored outside the diagram model"
+                />
               </label>
 
               <label class="field">
                 <span>Timeout</span>
-                <input id="nodeTimeout" name="nodeTimeout" type="number" min="1" max="120" step="1" />
+                <input
+                  id="nodeTimeout"
+                  name="nodeTimeout"
+                  type="number"
+                  min="1"
+                  max="120"
+                  step="1"
+                />
               </label>
 
               <label class="field">
@@ -89,7 +142,11 @@
 
               <label class="field wide">
                 <span>Description</span>
-                <textarea id="nodeDescription" name="nodeDescription" rows="3"></textarea>
+                <textarea
+                  id="nodeDescription"
+                  name="nodeDescription"
+                  rows="3"
+                ></textarea>
               </label>
             </div>
 
@@ -136,8 +193,16 @@
             </section>
 
             <footer class="panel-actions">
-              <button id="testNodeButton" class="secondary-button" type="button">Test</button>
-              <button id="saveNodeButton" class="primary-button" type="submit">Apply</button>
+              <button
+                id="testNodeButton"
+                class="secondary-button"
+                type="button"
+              >
+                Test
+              </button>
+              <button id="saveNodeButton" class="primary-button" type="submit">
+                Apply
+              </button>
             </footer>
           </form>
         </canvas>
@@ -146,20 +211,37 @@
       </section>
 
       <div id="deleteConfirmOverlay" class="confirm-overlay" hidden>
-        <section class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="deleteConfirmTitle">
+        <section
+          class="confirm-dialog"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="deleteConfirmTitle"
+        >
           <div>
             <p class="confirm-kicker">Destructive change</p>
             <h2 id="deleteConfirmTitle">Delete node?</h2>
             <p id="deleteConfirmMessage" class="confirm-message"></p>
           </div>
           <footer class="confirm-actions">
-            <button id="cancelDeleteButton" class="secondary-button" type="button">Cancel</button>
-            <button id="confirmDeleteButton" class="danger-button" type="button">Delete</button>
+            <button
+              id="cancelDeleteButton"
+              class="secondary-button"
+              type="button"
+            >
+              Cancel
+            </button>
+            <button
+              id="confirmDeleteButton"
+              class="danger-button"
+              type="button"
+            >
+              Delete
+            </button>
           </footer>
         </section>
       </div>
     </main>
 
-    <script src="./app.js?v=pan-zoom-layout-1"></script>
+    <script src="./app.js?v=panel-translate-1"></script>
   </body>
 </html>

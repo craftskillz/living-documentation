@@ -2,7 +2,7 @@
 **date:** 2026-05-29
 **status:** To be validated
 **description:** Ajout d'un prototype isole sous experiments/html-in-canvas-configuration pour explorer une interface de configuration graphe hierarchique avec providers LLM polygonaux, agents feuilles, MCP par defaut, panneau contextuel tiers d'ecran, camera pan/zoom et rendu HTML-in-Canvas ou fallback DOM.
-**tags:** html-in-canvas, drawElementImage, layoutsubtree, frontend, experiment, configuration-graph, llm-provider, agent, mcp, dynamic-polygon, contextual-panel, pan-zoom, subtree-spacing, delete-confirmation
+**tags:** html-in-canvas, drawElementImage, layoutsubtree, frontend, experiment, configuration-graph, llm-provider, agent, mcp, dynamic-polygon, contextual-panel, pan-zoom, panel-translation, cluster-relaxation, delete-confirmation
 ---
 
 # Prototype isole HTML-in-Canvas pour configuration graphe
@@ -34,24 +34,29 @@ Le modele du prototype est hierarchique :
 - les `Agents` sont des feuilles rattachees a un provider LLM ;
 - le concept de `collector` n'existe pas dans ce prototype.
 
-Chaque brique polygonale calcule son nombre de cotes avec `max(6, nombreDeNoeudsEnfants)`. L'information numerique de ports n'est pas affichee dans le dessin : la geometrie suffit a exprimer la capacite de connexion. Les positions des enfants utilisent le nombre reel d'enfants pour occuper tout le cercle disponible et eloigner les noeuds autant que possible.
+Chaque brique polygonale calcule son nombre de cotes avec `max(6, nombreDeNoeudsEnfants)`. L'information numerique de ports n'est pas affichee dans le dessin : la geometrie suffit a exprimer la capacite de connexion.
 
-Le layout evite le chevauchement en augmentant les distances plutot qu'en compactant les noeuds. Les rayons de distribution sont derives du nombre d'enfants et du rayon estime de leurs sous-arbres : un provider LLM avec beaucoup d'agents reserve plus d'espace lorsqu'il est positionne autour de `Living AI Documentation`, puis ses propres agents sont distribues autour de lui avec un rayon dynamique. Les lignes peuvent donc devenir plus longues pour preserver la lisibilite.
+Le layout privilegie un rendu compact par defaut. Les providers autour de `Living AI Documentation` utilisent leur rayon de collision propre pour les petits sous-arbres, afin que le preset initial reste visible sans lignes inutilement longues. Les agents d'un provider sont distribues dans un eventail oriente vers l'exterieur du graphe : cela evite de pousser un agent vers la brique racine et limite l'extension globale.
+
+Quand un provider devient dense, la pression est appliquee au niveau racine. `distanceForRootChild()` augmente d'abord la distance entre `Living AI Documentation` et ce provider lorsque le nombre d'agents depasse un seuil ou lorsque le rayon estime du sous-arbre devient important. Les lignes entre provider et agents restent gouvernees par `distanceForChildren()` uniquement pour eviter les chevauchements entre agents.
+
+Les clusters racine sont aussi conscients les uns des autres. `layoutRootChildren()` effectue plusieurs passes : il positionne les enfants de la racine, layout les sous-arbres providers, calcule `clusterBounds()` pour chaque enfant racine, puis `relaxRootClusterDistances()` allonge les liens racine des deux clusters lorsque leurs empreintes se chevauchent avec une marge. Ainsi, ajouter des agents a `LLM Provider 4` peut aussi eloigner `DevStral2 LLM API` ou `LLM Provider 3` si leurs clusters se touchent.
 
 La scene utilise une camera de canvas independante des positions logiques :
 
 - l'origine du graphe reste centree sur `Living AI Documentation` dans l'espace monde ;
-- lorsqu'aucun noeud n'est selectionne, la camera centre le graphe dans la zone disponible ;
-- lorsqu'un noeud est selectionne, le panneau apparait sur environ un tiers de l'ecran et la camera translate le graphe vers la gauche avec une interpolation de 260 ms ;
+- `Fit` est la seule action qui recalcule le zoom et recadre le graphe avec `zoomToFitBounds()` ;
 - la molette zoome autour du pointeur pour cibler une region ;
 - le drag sur une zone vide pan la scene complete, sans deplacer un noeud individuellement ;
-- le bouton `Fit` recadre le graphe et restaure le zoom par defaut.
+- lorsqu'un noeud est selectionne depuis un etat sans selection, le panneau apparait et `syncCameraForPanelChange()` applique uniquement une translation horizontale de la camera ;
+- lorsqu'un autre noeud est selectionne alors que le panneau est deja ouvert, seul le contenu du panneau change : le zoom, `cameraY` et `cameraX` restent stables ;
+- lorsque la selection est retiree, la translation horizontale du panneau est retiree sans recalculer le zoom.
 
 L'action `+` est contextuelle : lorsqu'aucun noeud, une brique racine ou MCP est selectionne, elle ajoute un provider LLM a la racine ; lorsqu'un provider LLM ou l'un de ses agents est selectionne, elle ajoute un agent sous ce provider.
 
-Le panneau de configuration est contextuel : aucun noeud selectionne laisse le graphe centre et masque le panneau ; selectionner un noeud affiche un panneau de consultation d'environ un tiers de la largeur et deplace le graphe vers la gauche. La fiche MCP contient un inventaire dense des outils et prompts disponibles afin de tester un panneau riche en donnees.
+Le panneau de configuration est contextuel : aucun noeud selectionne laisse le graphe centre et masque le panneau ; selectionner un noeud affiche un panneau de consultation d'environ un tiers de la largeur et decale horizontalement la camera. La fiche MCP contient un inventaire dense des outils et prompts disponibles afin de tester un panneau riche en donnees.
 
-Le panneau DOM fallback plafonne sa largeur pour eviter une lecture trop longue et utilise des champs fluides pour eviter la distorsion des titres et inputs. L'apparition du panneau est animee en CSS, et le deplacement du graphe est interpole dans le canvas sur 260 ms.
+Le panneau DOM fallback plafonne sa largeur pour eviter une lecture trop longue et utilise des champs fluides pour eviter la distorsion des titres et inputs. L'apparition du panneau est animee en CSS, et la translation horizontale du graphe est interpolee dans le canvas sur 260 ms.
 
 Les interactions du panneau sont isolees du canvas : les evenements pointer/click/touch/wheel du panneau stoppent leur propagation, et le handler canvas ignore les evenements dont la cible n'est pas le canvas. Cela empeche les champs, selects, boutons `Test`, `Apply` et `X` de fermer le panneau par deselection accidentelle.
 
@@ -67,7 +72,8 @@ La suppression via le bouton `X` agit directement sur `selectedId`. Les noeuds p
 - Le prototype teste le modele d'interaction essentiel : ajout contextuel de providers/agents, selection, edition contextuelle, panneau de configuration, croissance geometrique par niveau, zoom regional et pan global.
 - Le fallback DOM permet de verifier l'ergonomie meme sans Chrome Canary/Brave avec le flag `canvas-draw-element`.
 - Les fichiers sont simples, sans dependance ni bundler, coherents avec la stack frontend actuelle.
-- La camera pan/zoom permet d'accepter des graphes plus grands sans forcer les noeuds a rester dans le viewport initial.
+- Le layout compact rend le preset initial lisible, tandis que la camera pan/zoom et la relaxation des clusters racine acceptent des graphes plus grands sans forcer les agents a traverser le centre.
+- Le zoom utilisateur est preserve pendant la consultation : ouvrir le panneau ou changer de selection ne declenche plus de dezoomage intempestif.
 
 ### CONS
 
@@ -75,12 +81,13 @@ La suppression via le bouton `X` agit directement sur `selectedId`. Les noeuds p
 - Le prototype ne persiste pas encore le modele de configuration et ne s'integre pas aux routes existantes.
 - Le formulaire est schema-like mais pas encore relie aux vrais types de configuration du produit.
 - Les tests automatises restent limites a la syntaxe JS et a une verification navigateur du prototype.
+- La relaxation iterative est heuristique : ses constantes devront etre ajustees par observation visuelle sur des graphes denses.
 
 ## Verification
 
 - `node --check experiments/html-in-canvas-configuration/app.js` : OK.
-- Verification navigateur locale sur `http://localhost:8080/experiments/html-in-canvas-configuration/?v=pan-zoom-layout-1` : OK en fallback DOM.
-- Verification navigateur : clic `+` ajoute plusieurs providers/agents sans erreur runtime, puis `Fit` recadre la scene.
-- Verification navigateur : clic `X` ouvre une modale de confirmation, `Cancel` garde le noeud, `Delete` supprime le noeud et son sous-arbre, puis reselectionne le parent.
-- Verification navigateur : le message de confirmation annonce explicitement le noeud vise et indique le statut des enfants.
-- Verification code : `isProtectedEntity()` protege `root` et `mcp`, les ancres polygonales passent par `polygonBoundaryPoint()`, le zoom passe par `zoomAt()`, le pan global par `startPan()`/`panTo()`, et le layout dynamique par `subtreeRadius()`/`distanceForChildren()`.
+- Verification HTTP sur `http://localhost:8080/experiments/html-in-canvas-configuration/?v=panel-translate-1` : 200 OK.
+- Verification navigateur locale sur `http://localhost:8080/experiments/html-in-canvas-configuration/?v=panel-translate-1` : OK en fallback DOM.
+- Verification navigateur : le preset initial charge avec le panneau masque et les assets `panel-translate-1`.
+- Verification navigateur : clic `+` ouvre le panneau, puis second clic `+` change la selection avec le panneau deja ouvert.
+- Verification code : `resetView()` reste utilise pour `Fit` et reset ; la selection passe par `syncCameraForPanelChange()` / `translateCamera()` pour ne pas modifier le zoom.

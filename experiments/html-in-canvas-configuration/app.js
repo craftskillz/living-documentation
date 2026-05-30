@@ -15,14 +15,35 @@
   const PANEL_GAP = 44;
   const ROOT_CHILD_DISTANCE = 255;
   const PROVIDER_CHILD_DISTANCE = 178;
+  const PROVIDER_CHILD_SPREAD_SMALL = Math.PI * 0.7;
+  const PROVIDER_CHILD_SPREAD_MEDIUM = Math.PI * 1.1;
+  const PROVIDER_CHILD_SPREAD_LARGE = Math.PI * 1.45;
+  const PROVIDER_CHILD_SPREAD_MAX = Math.PI * 1.75;
   const HIT_PADDING = 14;
   const VIEW_TRANSITION_MS = 260;
-  const PANEL_EVENT_TYPES = ["pointerdown", "mousedown", "click", "dblclick", "touchstart", "wheel"];
+  const VIEW_PADDING = 56;
+  const PANEL_EVENT_TYPES = [
+    "pointerdown",
+    "mousedown",
+    "click",
+    "dblclick",
+    "touchstart",
+    "wheel",
+  ];
   const ZOOM_MIN = 0.35;
   const ZOOM_MAX = 2.2;
   const ZOOM_WHEEL_FACTOR = 0.0018;
   const PAN_THRESHOLD = 4;
   const NODE_SPACING_GAP = 46;
+  const ROOT_DENSE_CHILD_THRESHOLD = 4;
+  const ROOT_CHILD_DENSE_STEP = 44;
+  const ROOT_CHILD_MAX_EXTRA_DISTANCE = 360;
+  const ROOT_SUBTREE_BASELINE_RADIUS = 300;
+  const ROOT_CLUSTER_PADDING = 44;
+  const ROOT_CLUSTER_RELAXATION_STEP = 48;
+  const ROOT_CLUSTER_RELAXATION_ATTEMPTS = 7;
+  const ROOT_CLUSTER_MAX_DISTANCE =
+    ROOT_CHILD_DISTANCE + ROOT_CHILD_MAX_EXTRA_DISTANCE + 260;
 
   const canvas = document.getElementById("workspaceCanvas");
   const ctx = canvas.getContext("2d");
@@ -80,6 +101,7 @@
     apiMode: "fallback",
     lastSaveAt: null,
     pendingDeleteId: null,
+    panelShiftX: 0,
   };
 
   const supportsHtmlInCanvas =
@@ -97,15 +119,16 @@
   }
 
   const resizeObserver = new ResizeObserver(([entry]) => {
-    const box = entry.devicePixelContentBoxSize && entry.devicePixelContentBoxSize[0];
+    const box =
+      entry.devicePixelContentBoxSize && entry.devicePixelContentBoxSize[0];
     const cssWidth = entry.contentRect.width;
     const cssHeight = entry.contentRect.height;
 
     state.dpr = box ? box.inlineSize / cssWidth : window.devicePixelRatio || 1;
     canvas.width = box ? box.inlineSize : Math.floor(cssWidth * state.dpr);
     canvas.height = box ? box.blockSize : Math.floor(cssHeight * state.dpr);
-    resetView(false, !state.cameraX && !state.cameraY);
     layoutGraph();
+    resetView(false, !state.cameraX && !state.cameraY);
     scheduleRender();
   });
 
@@ -118,8 +141,8 @@
   });
 
   fitButton.addEventListener("click", () => {
-    resetView(true, true);
     layoutGraph();
+    resetView(true, true);
     scheduleRender();
   });
 
@@ -127,8 +150,8 @@
     state.entities = cloneEntities(initialEntities);
     state.selectedId = null;
     state.lastSaveAt = null;
-    resetView(true, true);
     layoutGraph();
+    resetView(true, true);
     syncPanelFromSelection();
     scheduleRender();
   });
@@ -140,7 +163,9 @@
 
     const screenPoint = canvasPointFromEvent(event);
     const worldPoint = screenToWorld(screenPoint);
-    const hitEntity = [...state.entities].reverse().find((entity) => isEntityHit(entity, worldPoint));
+    const hitEntity = [...state.entities]
+      .reverse()
+      .find((entity) => isEntityHit(entity, worldPoint));
 
     if (hitEntity) {
       selectEntity(hitEntity.id);
@@ -194,14 +219,21 @@
     canvas.releasePointerCapture?.(event.pointerId);
   });
 
-  canvas.addEventListener("wheel", (event) => {
-    if (event.target !== canvas) {
-      return;
-    }
+  canvas.addEventListener(
+    "wheel",
+    (event) => {
+      if (event.target !== canvas) {
+        return;
+      }
 
-    event.preventDefault();
-    zoomAt(canvasPointFromEvent(event), Math.exp(-event.deltaY * ZOOM_WHEEL_FACTOR));
-  }, { passive: false });
+      event.preventDefault();
+      zoomAt(
+        canvasPointFromEvent(event),
+        Math.exp(-event.deltaY * ZOOM_WHEEL_FACTOR),
+      );
+    },
+    { passive: false },
+  );
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -250,8 +282,8 @@
     scheduleRender();
   });
 
-  resetView(false, true);
   layoutGraph();
+  resetView(false, true);
   syncPanelFromSelection();
   scheduleRender();
 
@@ -318,9 +350,11 @@
 
   function defaultDescription(kind) {
     const copy = {
-      system: "Owns the documentation workspace, MCP access, providers, and agent topology.",
+      system:
+        "Owns the documentation workspace, MCP access, providers, and agent topology.",
       llm: "Routes model calls and hosts the agents assigned to this provider.",
-      agent: "Runs focused automation against documentation, source, or quality signals.",
+      agent:
+        "Runs focused automation against documentation, source, or quality signals.",
       mcp: "Exposes the local Living Documentation MCP consultation panel to agents.",
     };
     return copy[kind] || copy.agent;
@@ -328,7 +362,8 @@
 
   function addContextualNode() {
     const selected = selectedEntity();
-    const parent = selected?.kind === "llm" ? selected : entityById(selected?.parentId);
+    const parent =
+      selected?.kind === "llm" ? selected : entityById(selected?.parentId);
     const shouldAddAgent = selected?.kind === "llm" || parent?.kind === "llm";
 
     if (shouldAddAgent) {
@@ -340,25 +375,30 @@
   }
 
   function addProvider() {
-    const index = childrenOf("root").filter((entity) => entity.kind === "llm").length + 1;
+    const hadSelection = Boolean(state.selectedId);
+    const index =
+      childrenOf("root").filter((entity) => entity.kind === "llm").length + 1;
     const id = `provider-${Date.now().toString(36)}`;
     const provider = createEntity(id, `LLM Provider ${index}`, "llm", "root");
     state.entities = [...state.entities, provider];
     state.selectedId = provider.id;
-    resetView(true, false);
     layoutGraph();
+    syncCameraForPanelChange(hadSelection, true, true);
     syncPanelFromSelection();
     scheduleRender();
   }
 
   function addAgent(parentId) {
-    const index = childrenOf(parentId).filter((entity) => entity.kind === "agent").length + 1;
+    const hadSelection = Boolean(state.selectedId);
+    const index =
+      childrenOf(parentId).filter((entity) => entity.kind === "agent").length +
+      1;
     const id = `agent-${Date.now().toString(36)}`;
     const agent = createEntity(id, `Agent ${index}`, "agent", parentId);
     state.entities = [...state.entities, agent];
     state.selectedId = agent.id;
-    resetView(true, false);
     layoutGraph();
+    syncCameraForPanelChange(hadSelection, true, true);
     syncPanelFromSelection();
     scheduleRender();
   }
@@ -370,23 +410,125 @@
     root.angle = 0;
 
     layoutRootChildren(root);
-
-    for (const provider of state.entities.filter((entity) => entity.kind === "llm")) {
-      layoutProviderChildren(provider);
-    }
   }
 
   function layoutRootChildren(root) {
     const children = childrenOf(root.id);
+    const baseDistance = distanceForChildren(
+      children,
+      ROOT_RADIUS,
+      ROOT_CHILD_DISTANCE,
+      {
+        spread: Math.PI * 2,
+        includeSubtree: false,
+      },
+    );
+    const distances = new Map(
+      children.map((child) => [
+        child.id,
+        distanceForRootChild(child, baseDistance),
+      ]),
+    );
+
+    for (
+      let attempt = 0;
+      attempt <= ROOT_CLUSTER_RELAXATION_ATTEMPTS;
+      attempt += 1
+    ) {
+      positionRootChildren(root, children, distances);
+      layoutAllProviderChildren();
+
+      if (!relaxRootClusterDistances(children, distances)) {
+        return;
+      }
+    }
+
+    positionRootChildren(root, children, distances);
+    layoutAllProviderChildren();
+  }
+
+  function positionRootChildren(root, children, distances) {
     const layoutSlots = Math.max(1, children.length);
-    const distance = distanceForChildren(children, ROOT_RADIUS, ROOT_CHILD_DISTANCE, true);
 
     children.forEach((child, index) => {
       const angle = -Math.PI / 2 + (index / layoutSlots) * Math.PI * 2;
+      const distance = distances.get(child.id) || ROOT_CHILD_DISTANCE;
       child.angle = angle;
       child.x = root.x + Math.cos(angle) * distance;
       child.y = root.y + Math.sin(angle) * distance;
     });
+  }
+
+  function layoutAllProviderChildren() {
+    for (const provider of state.entities.filter(
+      (entity) => entity.kind === "llm",
+    )) {
+      layoutProviderChildren(provider);
+    }
+  }
+
+  function relaxRootClusterDistances(children, distances) {
+    let changed = false;
+
+    for (let firstIndex = 0; firstIndex < children.length; firstIndex += 1) {
+      for (
+        let secondIndex = firstIndex + 1;
+        secondIndex < children.length;
+        secondIndex += 1
+      ) {
+        const first = children[firstIndex];
+        const second = children[secondIndex];
+
+        if (
+          !paddedBoundsOverlap(
+            clusterBounds(first),
+            clusterBounds(second),
+            ROOT_CLUSTER_PADDING,
+          )
+        ) {
+          continue;
+        }
+
+        distances.set(
+          first.id,
+          Math.min(
+            ROOT_CLUSTER_MAX_DISTANCE,
+            distances.get(first.id) + ROOT_CLUSTER_RELAXATION_STEP,
+          ),
+        );
+        distances.set(
+          second.id,
+          Math.min(
+            ROOT_CLUSTER_MAX_DISTANCE,
+            distances.get(second.id) + ROOT_CLUSTER_RELAXATION_STEP,
+          ),
+        );
+        changed = true;
+      }
+    }
+
+    return changed;
+  }
+
+  function distanceForRootChild(child, baseDistance) {
+    if (child.kind !== "llm") {
+      return baseDistance;
+    }
+
+    const childCount = childrenOf(child.id).length;
+    if (childCount <= ROOT_DENSE_CHILD_THRESHOLD) {
+      return baseDistance;
+    }
+
+    const countPressure =
+      (childCount - ROOT_DENSE_CHILD_THRESHOLD) * ROOT_CHILD_DENSE_STEP;
+    const radiusPressure =
+      Math.max(0, subtreeRadius(child) - ROOT_SUBTREE_BASELINE_RADIUS) * 0.65;
+    const extraDistance = Math.min(
+      ROOT_CHILD_MAX_EXTRA_DISTANCE,
+      Math.max(countPressure, radiusPressure),
+    );
+    return baseDistance + extraDistance;
   }
 
   function layoutProviderChildren(provider) {
@@ -396,32 +538,79 @@
     }
 
     const outwardAngle = Math.atan2(provider.y, provider.x);
-    const layoutSlots = Math.max(1, children.length);
-    const distance = distanceForChildren(children, PROVIDER_RADIUS, PROVIDER_CHILD_DISTANCE, false);
+    const spread = spreadForProviderChildren(children.length);
+    const distance = distanceForChildren(
+      children,
+      PROVIDER_RADIUS,
+      PROVIDER_CHILD_DISTANCE,
+      {
+        spread,
+        includeSubtree: false,
+      },
+    );
 
     children.forEach((child, index) => {
-      const angle = outwardAngle + (index / layoutSlots) * Math.PI * 2;
+      const angle = angleInSpread(outwardAngle, spread, index, children.length);
       child.angle = angle;
       child.x = provider.x + Math.cos(angle) * distance;
       child.y = provider.y + Math.sin(angle) * distance;
     });
   }
 
-  function distanceForChildren(children, parentRadius, minimumDistance, includeSubtree) {
+  function distanceForChildren(
+    children,
+    parentRadius,
+    minimumDistance,
+    options = {},
+  ) {
     if (!children.length) {
       return minimumDistance;
     }
 
-    const largestChildRadius = Math.max(...children.map((child) => includeSubtree ? subtreeRadius(child) : collisionRadius(child)));
-    const parentClearance = parentRadius + largestChildRadius + NODE_SPACING_GAP;
+    const includeSubtree = Boolean(options.includeSubtree);
+    const spread = options.spread || Math.PI * 2;
+    const largestChildRadius = Math.max(
+      ...children.map((child) =>
+        includeSubtree ? subtreeRadius(child) : collisionRadius(child),
+      ),
+    );
+    const parentClearance =
+      parentRadius + largestChildRadius + NODE_SPACING_GAP;
 
     if (children.length === 1) {
       return Math.max(minimumDistance, parentClearance);
     }
 
     const largestChildDiameter = largestChildRadius * 2 + NODE_SPACING_GAP;
-    const chordDistance = largestChildDiameter / (2 * Math.sin(Math.PI / children.length));
+    const fullCircle = spread >= Math.PI * 2 - 0.001;
+    const angleStep = fullCircle
+      ? (Math.PI * 2) / children.length
+      : spread / (children.length - 1);
+    const chordDistance = largestChildDiameter / (2 * Math.sin(angleStep / 2));
     return Math.max(minimumDistance, parentClearance, chordDistance);
+  }
+
+  function spreadForProviderChildren(count) {
+    if (count <= 1) {
+      return 0;
+    }
+    if (count <= 2) {
+      return PROVIDER_CHILD_SPREAD_SMALL;
+    }
+    if (count <= 4) {
+      return PROVIDER_CHILD_SPREAD_MEDIUM;
+    }
+    if (count <= 7) {
+      return PROVIDER_CHILD_SPREAD_LARGE;
+    }
+    return PROVIDER_CHILD_SPREAD_MAX;
+  }
+
+  function angleInSpread(centerAngle, spread, index, count) {
+    if (count <= 1 || spread === 0) {
+      return centerAngle;
+    }
+    return centerAngle - spread / 2 + (index / (count - 1)) * spread;
   }
 
   function subtreeRadius(entity) {
@@ -434,8 +623,18 @@
       return PROVIDER_RADIUS;
     }
 
-    const childDistance = distanceForChildren(children, PROVIDER_RADIUS, PROVIDER_CHILD_DISTANCE, false);
-    const largestChildRadius = Math.max(...children.map((child) => collisionRadius(child)));
+    const childDistance = distanceForChildren(
+      children,
+      PROVIDER_RADIUS,
+      PROVIDER_CHILD_DISTANCE,
+      {
+        spread: spreadForProviderChildren(children.length),
+        includeSubtree: false,
+      },
+    );
+    const largestChildRadius = Math.max(
+      ...children.map((child) => collisionRadius(child)),
+    );
     return childDistance + largestChildRadius;
   }
 
@@ -452,9 +651,10 @@
   }
 
   function selectEntity(id) {
+    const hadSelection = Boolean(state.selectedId);
     state.selectedId = id;
-    resetView(true, false);
     layoutGraph();
+    syncCameraForPanelChange(hadSelection, Boolean(id), true);
     syncPanelFromSelection();
     scheduleRender();
   }
@@ -484,11 +684,14 @@
     }
 
     const parentId = selected.parentId || "root";
+    const hadSelection = Boolean(state.selectedId);
     const idsToRemove = new Set([selectedId, ...descendantIds(selectedId)]);
-    state.entities = state.entities.filter((entity) => !idsToRemove.has(entity.id));
+    state.entities = state.entities.filter(
+      (entity) => !idsToRemove.has(entity.id),
+    );
     state.selectedId = entityById(parentId) ? parentId : null;
-    resetView(true, false);
     layoutGraph();
+    syncCameraForPanelChange(hadSelection, Boolean(state.selectedId), true);
     syncPanelFromSelection();
     scheduleRender();
   }
@@ -517,9 +720,10 @@
     fields.kind.disabled = true;
     fields.mcpInventory.hidden = selected.kind !== "mcp";
     deleteNodeButton.disabled = isProtectedEntity(selected.id);
-    addButton.title = selected.kind === "llm" || entityById(selected.parentId)?.kind === "llm"
-      ? "Add agent"
-      : "Add LLM provider";
+    addButton.title =
+      selected.kind === "llm" || entityById(selected.parentId)?.kind === "llm"
+        ? "Add agent"
+        : "Add LLM provider";
   }
 
   function syncSelectedFromForm() {
@@ -694,10 +898,17 @@
     ctx.fillStyle = selected ? "#ffffff" : "#111827";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.font = entity.kind === "system"
-      ? "800 21px Inter, system-ui, sans-serif"
-      : "800 16px Inter, system-ui, sans-serif";
-    wrapText(entity.label, entity.x, entity.y - 8, radius * 1.32, entity.kind === "system" ? 26 : 20);
+    ctx.font =
+      entity.kind === "system"
+        ? "800 21px Inter, system-ui, sans-serif"
+        : "800 16px Inter, system-ui, sans-serif";
+    wrapText(
+      entity.label,
+      entity.x,
+      entity.y - 8,
+      radius * 1.32,
+      entity.kind === "system" ? 26 : 20,
+    );
 
     drawSelectedDot(entity, selected, radius);
     ctx.restore();
@@ -732,7 +943,13 @@
     }
 
     ctx.beginPath();
-    ctx.arc(entity.x + radius * 0.62, entity.y - radius * 0.66, 5, 0, Math.PI * 2);
+    ctx.arc(
+      entity.x + radius * 0.62,
+      entity.y - radius * 0.66,
+      5,
+      0,
+      Math.PI * 2,
+    );
     ctx.fillStyle = "#34d399";
     ctx.fill();
   }
@@ -748,7 +965,13 @@
     const panelY = Math.max(24, (height - panelHeight) / 2);
 
     try {
-      const transform = ctx.drawElementImage(configSurface, panelX, panelY, panelWidth, panelHeight);
+      const transform = ctx.drawElementImage(
+        configSurface,
+        panelX,
+        panelY,
+        panelWidth,
+        panelHeight,
+      );
       configSurface.style.transform = transform.toString();
     } catch (error) {
       apiStatus.textContent = "Waiting for HTML snapshot";
@@ -758,21 +981,58 @@
   function resetView(animate, resetZoom) {
     const cssWidth = canvas.clientWidth;
     const cssHeight = canvas.clientHeight;
-    const panelReserve = selectedEntity() ? panelWidthForViewport(cssWidth) + PANEL_GAP : 0;
+    const panelReserve = selectedEntity()
+      ? panelWidthForViewport(cssWidth) + PANEL_GAP
+      : 0;
     const availableWidth = Math.max(360, cssWidth - panelReserve);
-    const targetX = panelReserve ? Math.max(300, availableWidth * 0.5) : cssWidth * 0.5;
-    const targetY = cssHeight * 0.5;
-    const targetZoom = resetZoom ? 1 : state.zoom;
+    const bounds = graphBounds();
+    const fitZoom = zoomToFitBounds(bounds, availableWidth, cssHeight);
+    const targetZoom = resetZoom ? fitZoom : Math.min(state.zoom, fitZoom);
+    const centerX = (bounds.minX + bounds.maxX) / 2;
+    const centerY = (bounds.minY + bounds.maxY) / 2;
+    const targetX = availableWidth * 0.5 - centerX * targetZoom;
+    const targetY = cssHeight * 0.5 - centerY * targetZoom;
 
     if (!animate || !state.cameraX || !state.cameraY) {
       cancelViewAnimation();
       state.cameraX = targetX;
       state.cameraY = targetY;
       state.zoom = targetZoom;
+      state.panelShiftX = panelReserve;
       return;
     }
 
+    state.panelShiftX = panelReserve;
     startViewAnimation(targetX, targetY, targetZoom);
+  }
+
+  function syncCameraForPanelChange(hadSelection, hasSelection, animate) {
+    if (hadSelection === hasSelection) {
+      return;
+    }
+
+    const panelReserve = panelWidthForViewport(canvas.clientWidth) + PANEL_GAP;
+    const deltaX = hasSelection
+      ? -panelReserve
+      : state.panelShiftX || panelReserve;
+    state.panelShiftX = hasSelection ? panelReserve : 0;
+    translateCamera(deltaX, animate);
+  }
+
+  function translateCamera(deltaX, animate) {
+    cancelViewAnimation();
+
+    if (!deltaX) {
+      return;
+    }
+
+    const targetX = state.cameraX + deltaX;
+    if (!animate) {
+      state.cameraX = targetX;
+      return;
+    }
+
+    startViewAnimation(targetX, state.cameraY, state.zoom);
   }
 
   function startViewAnimation(targetX, targetY, targetZoom) {
@@ -800,6 +1060,48 @@
     }
 
     state.viewAnimationId = requestAnimationFrame(tick);
+  }
+
+  function graphBounds() {
+    return state.entities.reduce(
+      (bounds, entity) => {
+        const radius = collisionRadius(entity);
+        return {
+          minX: Math.min(bounds.minX, entity.x - radius),
+          minY: Math.min(bounds.minY, entity.y - radius),
+          maxX: Math.max(bounds.maxX, entity.x + radius),
+          maxY: Math.max(bounds.maxY, entity.y + radius),
+        };
+      },
+      {
+        minX: Infinity,
+        minY: Infinity,
+        maxX: -Infinity,
+        maxY: -Infinity,
+      },
+    );
+  }
+
+  function zoomToFitBounds(bounds, availableWidth, availableHeight) {
+    const graphWidth = bounds.maxX - bounds.minX;
+    const graphHeight = bounds.maxY - bounds.minY;
+
+    if (
+      !Number.isFinite(graphWidth) ||
+      !Number.isFinite(graphHeight) ||
+      graphWidth <= 0 ||
+      graphHeight <= 0
+    ) {
+      return 1;
+    }
+
+    const fitWidth = Math.max(1, availableWidth - VIEW_PADDING * 2);
+    const fitHeight = Math.max(1, availableHeight - VIEW_PADDING * 2);
+    return clamp(
+      Math.min(1, fitWidth / graphWidth, fitHeight / graphHeight),
+      ZOOM_MIN,
+      1,
+    );
   }
 
   function cancelViewAnimation() {
@@ -906,7 +1208,10 @@
   function isEntityHit(entity, point) {
     if (entity.kind === "system" || entity.kind === "llm") {
       const radius = entity.kind === "system" ? ROOT_RADIUS : PROVIDER_RADIUS;
-      return Math.hypot(point.x - entity.x, point.y - entity.y) <= radius + HIT_PADDING;
+      return (
+        Math.hypot(point.x - entity.x, point.y - entity.y) <=
+        radius + HIT_PADDING
+      );
     }
 
     const { width, height } = leafSize(entity);
@@ -917,13 +1222,61 @@
   }
 
   function panelWidthForViewport(width) {
-    return Math.min(PANEL_MAX_WIDTH, Math.max(PANEL_MIN_WIDTH, Math.floor(width * PANEL_VIEWPORT_RATIO)));
+    return Math.min(
+      PANEL_MAX_WIDTH,
+      Math.max(PANEL_MIN_WIDTH, Math.floor(width * PANEL_VIEWPORT_RATIO)),
+    );
   }
 
   function leafSize(entity) {
     return entity.kind === "mcp"
       ? { width: 116, height: 58 }
       : { width: LEAF_WIDTH, height: LEAF_HEIGHT };
+  }
+
+  function clusterBounds(rootEntity) {
+    return [rootEntity, ...descendantIds(rootEntity.id).map(entityById)]
+      .filter(Boolean)
+      .map(entityBounds)
+      .reduce(mergeBounds);
+  }
+
+  function entityBounds(entity) {
+    if (entity.kind === "system" || entity.kind === "llm") {
+      const radius = entity.kind === "system" ? ROOT_RADIUS : PROVIDER_RADIUS;
+      return {
+        left: entity.x - radius,
+        top: entity.y - radius,
+        right: entity.x + radius,
+        bottom: entity.y + radius,
+      };
+    }
+
+    const { width, height } = leafSize(entity);
+    return {
+      left: entity.x - width / 2,
+      top: entity.y - height / 2,
+      right: entity.x + width / 2,
+      bottom: entity.y + height / 2,
+    };
+  }
+
+  function mergeBounds(first, second) {
+    return {
+      left: Math.min(first.left, second.left),
+      top: Math.min(first.top, second.top),
+      right: Math.max(first.right, second.right),
+      bottom: Math.max(first.bottom, second.bottom),
+    };
+  }
+
+  function paddedBoundsOverlap(first, second, padding) {
+    return !(
+      first.right + padding < second.left ||
+      first.left - padding > second.right ||
+      first.bottom + padding < second.top ||
+      first.top - padding > second.bottom
+    );
   }
 
   function canvasPointFromEvent(event) {

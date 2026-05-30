@@ -10,7 +10,11 @@ This folder is an isolated prototype for a graph-native configuration interface.
 - Render a professional contextual configuration form through the experimental HTML-in-Canvas API when the browser supports it.
 - Keep the graph centered while no node is selected, then reserve a one-third-width consultation panel after selection.
 - Zoom around the pointer with the mouse wheel and pan the whole diagram by dragging empty canvas space.
-- Grow layout radii from child count so dense provider/agent groups use longer links instead of overlapping.
+- Opening the configuration panel translates the camera horizontally without changing zoom.
+- Keep the default preset compact, then grow layout radii only when child count or subtree size would create collisions.
+- Lengthen the root-to-provider link when a provider owns a dense agent subtree.
+- Let neighboring root clusters lengthen their root links when their subtree footprints collide.
+- Fit the full graph into the available workspace by zooming out only when the graph would otherwise overflow.
 - Keep a DOM fallback so the same prototype remains inspectable in regular Chromium.
 
 ## Run

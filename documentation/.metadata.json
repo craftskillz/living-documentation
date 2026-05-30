@@ -466,11 +466,11 @@
   "ADRS/2026_05_29_21_56_[FRONTEND_EXPERIMENT]_prototype_isole_html_in_canvas_pour_configuration_graphe": [
     {
       "path": "experiments/html-in-canvas-configuration/index.html",
-      "hash": "82a3a470e97b2a0fa848fb1ad1a800a2c8a3b835ce2abaf4041135ae140336bb"
+      "hash": "b01f8f4ee44e03072bce3c92abdba897e999d93852c08bebee4a6d63d9bb13c1"
     },
     {
       "path": "experiments/html-in-canvas-configuration/app.js",
-      "hash": "5c823e0267ad57532499c03979467ceb5bc34a18990eb0aa16206b5c5f2c6a77"
+      "hash": "187077c5c2981a41174e1b35e4f4c58dfb76d8ebbfbacce2d111911f37aa355f"
     },
     {
       "path": "experiments/html-in-canvas-configuration/styles.css",
@@ -478,7 +478,7 @@
     },
     {
       "path": "experiments/html-in-canvas-configuration/README.md",
-      "hash": "0615fe5fe4118c4233bed9a2e6c21f9baf51220d69bf0965b506e817085ed196"
+      "hash": "98ba35ccd521dfcb1bdc75835949eee4ca2697ce4550e44efd3041e8d2a44bfc"
     }
   ]
 }
