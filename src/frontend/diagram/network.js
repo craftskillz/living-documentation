@@ -1142,6 +1142,7 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
       const lastStyle = getLastFreeArrowStyle();
       const arrowDir = lastStyle.arrowDir || "to";
       const dashes = lastStyle.dashes || false;
+      const edgeFontSize = lastStyle.fontSize || null;
       st.edges.add({
         id: edgeId,
         from: fromId,
@@ -1150,6 +1151,7 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
         dashes,
         edgeColor: lastStyle.edgeColor || null,
         edgeWidth: lastStyle.edgeWidth || null,
+        ...(edgeFontSize ? { fontSize: edgeFontSize, font: { size: edgeFontSize, align: 'middle', color: 'rgba(0,0,0,0)' } } : {}),
         smooth: { enabled: false },
         ...visEdgeProps(arrowDir, dashes),
         ...(lastStyle.edgeColor
@@ -1720,6 +1722,8 @@ function onDoubleClick(params) {
     const fontSize = lastStyle.fontSize || null;
     const textAlign = lastStyle.textAlign || null;
     const textValign = lastStyle.textValign || null;
+    const nodeWidth  = lastStyle.width  || defaults[0];
+    const nodeHeight = lastStyle.height || defaults[1];
     const rawPos = params.pointer.canvas;
     const pos = st.gridEnabled ? snapToGrid(rawPos.x, rawPos.y) : rawPos;
     st.nodes.add({
@@ -1733,8 +1737,8 @@ function onDoubleClick(params) {
       shapeType,
       customShapeId: customShapeId || null,
       colorKey,
-      nodeWidth: defaults[0],
-      nodeHeight: defaults[1],
+      nodeWidth,
+      nodeHeight,
       fontSize,
       textAlign,
       textValign,
@@ -1745,8 +1749,8 @@ function onDoubleClick(params) {
       ...visNodeProps(
         shapeType,
         colorKey,
-        defaults[0],
-        defaults[1],
+        nodeWidth,
+        nodeHeight,
         fontSize,
         textAlign,
         textValign,

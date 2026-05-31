@@ -50,5 +50,56 @@
   "exclusiveFolderExpansion": true,
   "exclusiveCategoryExpansion": true,
   "codeBlockMaxHeight": 400,
-  "markdownSoftBreaks": true
+  "markdownSoftBreaks": true,
+  "diagramDefaults": {
+    "arrows": {
+      "fontSize": 11,
+      "arrowDir": "to",
+      "dashes": false
+    },
+    "shapes": {
+      "box": {
+        "width": 100,
+        "height": 40,
+        "fontSize": 13,
+        "colorKey": "c-lime"
+      },
+      "ellipse": {
+        "width": 110,
+        "height": 50,
+        "fontSize": 13,
+        "colorKey": "c-gray"
+      },
+      "circle": {
+        "width": 55,
+        "height": 55,
+        "fontSize": 13,
+        "colorKey": "c-gray"
+      },
+      "database": {
+        "width": 50,
+        "height": 70,
+        "fontSize": 13,
+        "colorKey": "c-gray"
+      },
+      "actor": {
+        "width": 30,
+        "height": 52,
+        "fontSize": 13,
+        "colorKey": "c-gray"
+      },
+      "post-it": {
+        "width": 120,
+        "height": 100,
+        "fontSize": 13,
+        "colorKey": "c-amber"
+      },
+      "text-free": {
+        "width": 80,
+        "height": 30,
+        "fontSize": 13,
+        "colorKey": "c-gray"
+      }
+    }
+  }
 }

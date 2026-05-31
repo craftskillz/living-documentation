@@ -5,9 +5,37 @@ import { st, markDirty } from './state.js';
 import { visEdgeProps }  from './edge-rendering.js';
 import { pushSnapshot }  from './history.js';
 import { t }             from './t.js';
+import { getArrowDefaults } from './defaults-modal.js';
+import { openColorPickerPopup } from './color-picker.js';
 
 const DEFAULT_EDGE_COLOR = '#a8a29e';
 const FREE_ARROW_STYLE_KEY = 'ld-free-arrow-style';
+
+// Palette is injected at boot by diagram.html via initEdgeColorSwatch().
+let _edgePaletteEntries = [];
+
+function syncEdgeColorSwatch(hexColor) {
+  const swatch = document.getElementById('edgeColorSwatch');
+  if (!swatch) return;
+  swatch.style.background = hexColor;
+  swatch.style.borderColor = hexColor;
+  swatch.dataset.currentColor = hexColor;
+}
+
+export function initEdgeColorSwatch(palette) {
+  _edgePaletteEntries = palette.map((hex) => ({
+    value: hex, bg: hex, border: hex, label: hex,
+  }));
+  const swatch = document.getElementById('edgeColorSwatch');
+  if (!swatch) return;
+  swatch.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const current = swatch.dataset.currentColor || DEFAULT_EDGE_COLOR;
+    openColorPickerPopup(swatch, _edgePaletteEntries, current, (entry) => {
+      setEdgeColor(entry.value);
+    }, { columns: _edgePaletteEntries.length });
+  });
+}
 
 // Persist the style of the first free arrow (anchor→anchor) in the current
 // selection so the next double-click creation reuses it.
@@ -26,12 +54,16 @@ function persistFreeArrowStyle() {
     dashes:    e.dashes    || false,
     edgeColor: e.edgeColor || null,
     edgeWidth: e.edgeWidth || null,
+    fontSize:  e.fontSize  || null,
   }));
 }
 
 export function getLastFreeArrowStyle() {
-  try { return JSON.parse(localStorage.getItem(FREE_ARROW_STYLE_KEY)) || {}; }
-  catch { return {}; }
+  try {
+    const stored = JSON.parse(localStorage.getItem(FREE_ARROW_STYLE_KEY));
+    if (stored) return stored;
+  } catch { /* ignore */ }
+  return getArrowDefaults();
 }
 
 function isEdgeLocked(edge) {
@@ -97,13 +129,9 @@ export function showEdgePanel() {
     document.getElementById(id).classList.remove('edge-btn-active'));
   document.getElementById(dashes ? 'edgeBtnDashed' : 'edgeBtnSolid').classList.add('edge-btn-active');
 
-  // Highlight active color dot.
-  const activeColor = (e.edgeColor || DEFAULT_EDGE_COLOR).toLowerCase();
-  document.querySelectorAll('#edgePanel [data-edge-color]').forEach((btn) => {
-    const isActive = btn.dataset.edgeColor.toLowerCase() === activeColor;
-    btn.style.outline       = isActive ? '2px solid #f97316' : '';
-    btn.style.outlineOffset = isActive ? '2px' : '';
-  });
+  // Sync edge color swatch.
+  const activeColor = (e.edgeColor || DEFAULT_EDGE_COLOR);
+  syncEdgeColorSwatch(activeColor);
 
   // Show/hide the clear-ports button based on whether this edge has ports.
   const hasPorts = !!(e.fromPort || e.toPort);

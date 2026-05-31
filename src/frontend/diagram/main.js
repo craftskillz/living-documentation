@@ -207,8 +207,6 @@ initEvidenceMode();
 // ── Node panel wiring ─────────────────────────────────────────────────────────
 
 document.getElementById('nodePanel').addEventListener('click', (e) => {
-  const colorBtn = e.target.closest('[data-color]');
-  if (colorBtn) setNodeColor(colorBtn.dataset.color);
   const labelPlacementBtn = e.target.closest('[data-label-placement]');
   if (labelPlacementBtn) setCustomShapeLabelPlacement(labelPlacementBtn.dataset.labelPlacement);
 });
@@ -277,10 +275,7 @@ document.getElementById('btnEdgeLabelWidthReset').addEventListener('click', rese
 document.getElementById('btnEdgeLock').addEventListener('click', toggleEdgeLock);
 document.getElementById('btnEdgeWidthDecrease').addEventListener('click', () => changeEdgeWidth(-0.5));
 document.getElementById('btnEdgeWidthIncrease').addEventListener('click', () => changeEdgeWidth(0.5));
-document.getElementById('edgePanel').addEventListener('click', (e) => {
-  const colorBtn = e.target.closest('[data-edge-color]');
-  if (colorBtn) setEdgeColor(colorBtn.dataset.edgeColor);
-});
+// Edge color is handled by #edgeColorSwatch via initEdgeColorSwatch() in edge-panel.js
 
 // ── Keyboard shortcuts ────────────────────────────────────────────────────────
 

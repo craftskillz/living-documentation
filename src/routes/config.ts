@@ -34,6 +34,7 @@ export function configRouter(docsPath: string): Router {
         'exclusiveCategoryExpansion',
         'codeBlockMaxHeight',
         'markdownSoftBreaks',
+        'diagramDefaults',
       ];
       const safe: Partial<StoredConfig> = {};
       for (const key of allowed) {
@@ -120,6 +121,16 @@ export function configRouter(docsPath: string): Router {
           valid.push(f);
         }
         safe.extraFiles = valid;
+      }
+      if ('diagramDefaults' in patch) {
+        const v = patch.diagramDefaults;
+        if (v === null) {
+          safe.diagramDefaults = null;
+        } else if (v && typeof v === 'object' && v.arrows && v.shapes) {
+          safe.diagramDefaults = v as import('../lib/config').DiagramDefaults;
+        } else {
+          delete (safe as Record<string, unknown>).diagramDefaults;
+        }
       }
       const updated = writeConfig(docsPath, safe);
       res.json(updated);

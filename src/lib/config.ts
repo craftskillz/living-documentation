@@ -1,6 +1,30 @@
 import fs from "fs";
 import path from "path";
 
+export interface DiagramShapeDefault {
+  width: number;
+  height: number;
+  colorKey: string;
+  fontSize: number;
+}
+
+export interface DiagramDefaults {
+  arrows: {
+    fontSize: number;
+    arrowDir: 'none' | 'to' | 'from' | 'both';
+    dashes: boolean;
+  };
+  shapes: {
+    box: DiagramShapeDefault;
+    ellipse: DiagramShapeDefault;
+    circle: DiagramShapeDefault;
+    database: DiagramShapeDefault;
+    actor: DiagramShapeDefault;
+    'post-it': DiagramShapeDefault;
+    'text-free': DiagramShapeDefault;
+  };
+}
+
 // Storage shape: what is actually persisted in .living-doc.json.
 // Paths are stored as POSIX-style paths RELATIVE to the docs folder, so the file
 // is portable across machines (checkable into git).
@@ -20,6 +44,7 @@ export interface StoredConfig {
   exclusiveCategoryExpansion: boolean;
   codeBlockMaxHeight: number;
   markdownSoftBreaks: boolean;
+  diagramDefaults: DiagramDefaults | null;
 }
 
 // Runtime shape: what consumers receive from readConfig.
@@ -92,6 +117,7 @@ const STORAGE_DEFAULTS: StoredConfig = {
   exclusiveCategoryExpansion: false,
   codeBlockMaxHeight: 400,
   markdownSoftBreaks: true,
+  diagramDefaults: null,
 };
 
 export function getConfigPath(docsPath: string): string {

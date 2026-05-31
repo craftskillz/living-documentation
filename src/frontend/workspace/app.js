@@ -287,13 +287,15 @@ fields.name.addEventListener("blur", () => {
     if (!selected || selected.kind !== "agent")
         return;
     const newName = fields.name.value.trim();
-    if (!newName || !savedAgentLabel || !savedAgentFolder || newName === savedAgentLabel)
+    if (!newName ||
+        !savedAgentLabel ||
+        !savedAgentFolder ||
+        newName === savedAgentLabel)
         return;
     const newFolder = workspaceFolderForProvider(newName);
     if (newFolder === savedAgentFolder)
         return; // slug identique, pas de renommage nécessaire
-    renameConfirmMessage.textContent =
-        `Renommer le dossier "${savedAgentFolder}" en "${newFolder}" ?`;
+    renameConfirmMessage.textContent = `Renommer le dossier "${savedAgentFolder}" en "${newFolder}" ?`;
     renameConfirmOverlay.hidden = false;
     cancelRenameButton.focus();
 });
@@ -575,7 +577,7 @@ function cloneEntities(entities) {
 }
 function defaultEndpoint(id, kind) {
     if (kind === "llm") {
-        return "http://localhost:1234/v1";
+        return "http://localhost:11434";
     }
     if (kind === "mcp") {
         return "http://localhost:4321/mcp";
@@ -798,7 +800,11 @@ function selectEntity(id) {
     state.selectedId = id;
     const entity = id ? entityById(id) : null;
     savedAgentLabel = entity?.kind === "agent" ? entity.label : null;
-    savedAgentFolder = entity?.kind === "agent" ? (entity.config.workspaceFolder || workspaceFolderForProvider(entity.label)) : null;
+    savedAgentFolder =
+        entity?.kind === "agent"
+            ? entity.config.workspaceFolder ||
+                workspaceFolderForProvider(entity.label)
+            : null;
     layoutGraph();
     syncCameraForPanelChange(hadSelection, Boolean(id), true);
     syncPanelFromSelection();
@@ -858,7 +864,8 @@ function syncPanelFromSelection() {
     fields.description.value = selected.config.description;
     fields.typeBadge.textContent = labelForBadge(selected.kind);
     fields.kind.disabled = true;
-    fields.llmFields.hidden = selected.kind === "mcp" || selected.kind === "agent";
+    fields.llmFields.hidden =
+        selected.kind === "mcp" || selected.kind === "agent";
     fields.mcpInventory.hidden = selected.kind !== "mcp";
     fields.agentSection.hidden = selected.kind !== "agent";
     fields.systemPrompt.value = selected.config.systemPrompt;
@@ -870,7 +877,9 @@ function syncPanelFromSelection() {
     testNodeButton.textContent = "Test";
     testNodeButton.hidden = selected.kind !== "llm" && selected.kind !== "agent";
     testNodeButton.disabled =
-        selected.kind === "llm" ? !selected.config.model : selected.kind !== "agent";
+        selected.kind === "llm"
+            ? !selected.config.model
+            : selected.kind !== "agent";
     addButton.title =
         selected.kind === "llm" || entityById(selected.parentId)?.kind === "llm"
             ? "Add agent"
@@ -1025,7 +1034,10 @@ async function loadModelsForSelect() {
     loadModelsButton.classList.add("loading");
     loadModelsButton.disabled = true;
     fields.model.disabled = true;
-    const result = await listLlmModels({ endpoint, token: selected.config.token });
+    const result = await listLlmModels({
+        endpoint,
+        token: selected.config.token,
+    });
     loadModelsButton.classList.remove("loading");
     loadModelsButton.disabled = false;
     fields.model.disabled = false;

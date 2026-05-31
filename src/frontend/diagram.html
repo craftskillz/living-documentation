@@ -560,6 +560,16 @@
       <div class="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-0.5"></div>
 
       <button
+        id="btnDiagramDefaults"
+        class="tool-btn"
+        data-i18n-title="diagram.toolbar.defaults"
+      >
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
+          <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.474l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/>
+        </svg>
+      </button>
+      <button
         id="btnAlign"
         class="tool-btn"
         data-i18n-title="diagram.toolbar.align_guides"
@@ -812,7 +822,9 @@
           >🔒</button>
           <div class="panel-sep"></div>
           <div id="nodePanelControls" class="contents">
-          <div id="nodePaletteContainer" class="contents"></div>
+          <button id="nodeColorSwatch"
+            style="width:1.5rem;height:1.5rem;border-radius:0.25rem;border:2px solid #a8a29e;background:#f5f5f4;cursor:pointer;flex-shrink:0;"
+            data-i18n-title="diagram.node_panel.color"></button>
           <div class="panel-sep"></div>
           <input
             id="nodeBgOpacity"
@@ -1350,7 +1362,9 @@
           <button id="btnEdgeWidthDecrease" class="tool-btn !w-7 !h-6" style="font-size:10px" data-i18n-title="diagram.edge_panel.width_decrease">W−</button>
           <button id="btnEdgeWidthIncrease" class="tool-btn !w-7 !h-6" style="font-size:10px" data-i18n-title="diagram.edge_panel.width_increase">W+</button>
           <div class="panel-sep"></div>
-          <div id="edgePaletteContainer" class="contents"></div>
+          <button id="edgeColorSwatch"
+            style="width:1.5rem;height:1.5rem;border-radius:0.25rem;border:2px solid #a8a29e;background:#a8a29e;cursor:pointer;flex-shrink:0;"
+            data-i18n-title="diagram.edge_panel.color"></button>
           <div class="panel-sep"></div>
           <button
             id="btnEdgeClearPorts"
@@ -1437,6 +1451,9 @@
       import { st } from '/diagram/state.js';
       import { loadDiagramList } from '/diagram/persistence.js';
       import { loadCustomShapeLibraries, renderCustomShapeBar } from '/diagram/custom-shapes.js';
+      import { initDiagramDefaults, openDefaultsModal } from '/diagram/defaults-modal.js';
+      import { initNodeColorSwatch } from '/diagram/node-panel.js';
+      import { initEdgeColorSwatch } from '/diagram/edge-panel.js';
       (async () => {
         // diagramNodePalette: array of 15 bg hex strings (positional, matching DEFAULT_NODE_PALETTE)
         // diagramEdgePalette: array of hex strings
@@ -1447,6 +1464,7 @@
           await window.initI18n(cfg.language);
           if (Array.isArray(cfg.diagramNodePalette) && cfg.diagramNodePalette.length) nodeBgOverrides = cfg.diagramNodePalette;
           if (Array.isArray(cfg.diagramEdgePalette) && cfg.diagramEdgePalette.length) edgePalette = cfg.diagramEdgePalette;
+          initDiagramDefaults(cfg);
         } catch { await window.initI18n('en'); /* config unavailable — use defaults */ }
 
         // Apply node color overrides to shared state so renderers pick them up.
@@ -1457,36 +1475,12 @@
           }
         });
 
-        // Build node palette buttons.
-        const nc = document.getElementById('nodePaletteContainer');
-        DEFAULT_NODE_PALETTE.forEach((key, i) => {
-          if (!nc) return;
-          const customBg = nodeBgOverrides && nodeBgOverrides[i];
-          const c = (customBg ? deriveNodeColors(customBg, NODE_L_RATIOS[key] || 0.60) : null) || NODE_COLORS[key];
-          const btn = document.createElement('button');
-          btn.dataset.color = key;
-          btn.className = 'w-5 h-5 rounded-full border-2 hover:scale-125 transition-transform';
-          btn.style.background = c.bg;
-          btn.style.borderColor = c.border;
-          btn.title = key.replace('c-', '');
-          nc.appendChild(btn);
-        });
-
-        // Build edge palette buttons.
-        const ec = document.getElementById('edgePaletteContainer');
-        edgePalette.forEach((hex) => {
-          if (!ec) return;
-          const btn = document.createElement('button');
-          btn.dataset.edgeColor = hex;
-          btn.className = 'edge-color-btn w-4 h-4 rounded-full hover:scale-125 transition-transform';
-          btn.style.background = hex;
-          btn.style.border = '2px solid rgba(0,0,0,0.2)';
-          btn.title = hex;
-          ec.appendChild(btn);
-        });
+        initNodeColorSwatch();
+        initEdgeColorSwatch(edgePalette);
         await loadCustomShapeLibraries();
         renderCustomShapeBar();
         window.applyI18n();
+        document.getElementById('btnDiagramDefaults').addEventListener('click', openDefaultsModal);
         loadDiagramList();
       })();
     </script>

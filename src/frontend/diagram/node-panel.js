@@ -6,6 +6,37 @@ import { SHAPE_DEFAULTS } from './node-rendering.js';
 import { CUSTOM_SHAPE_TYPE, getCustomShapeLabelPlacement } from './custom-shapes.js';
 import { pushSnapshot }   from './history.js';
 import { t }              from './t.js';
+import { getShapeDefaults } from './defaults-modal.js';
+import { NODE_COLORS, DEFAULT_NODE_PALETTE } from './constants.js';
+import { openColorPickerPopup } from './color-picker.js';
+
+// Reads the effective color for a key, respecting runtime overrides.
+function getEffectiveNodeColor(key) {
+  return st.nodeColorOverrides[key] || NODE_COLORS[key] || NODE_COLORS['c-gray'];
+}
+
+// Built dynamically so overrides applied at boot are reflected in the picker.
+function buildNodeColorEntries() {
+  return DEFAULT_NODE_PALETTE.map((key) => {
+    const c = getEffectiveNodeColor(key);
+    return { value: key, bg: c.bg, border: c.border, label: key.replace('c-', '') };
+  });
+}
+
+function syncNodeColorSwatch() {
+  const swatch = document.getElementById('nodeColorSwatch');
+  if (!swatch) return;
+  const firstId = (st.selectedNodeIds || []).find((id) => {
+    const n = st.nodes && st.nodes.get(id);
+    return n && n.shapeType !== 'anchor';
+  });
+  const n = firstId && st.nodes && st.nodes.get(firstId);
+  const key = (n && n.colorKey) || 'c-gray';
+  const c = getEffectiveNodeColor(key);
+  swatch.style.background = c.bg;
+  swatch.style.borderColor = c.border;
+  swatch.dataset.currentColor = key;
+}
 
 const CUSTOM_LABEL_PLACEMENTS = ['below', 'above', 'right', 'left', 'center'];
 
@@ -27,8 +58,11 @@ function persistNodeStyle() {
 }
 
 export function getLastNodeStyle(shapeType) {
-  try { return JSON.parse(localStorage.getItem('ld-node-style-' + shapeType)) || {}; }
-  catch { return {}; }
+  try {
+    const stored = JSON.parse(localStorage.getItem('ld-node-style-' + shapeType));
+    if (stored) return stored;
+  } catch { /* ignore */ }
+  return getShapeDefaults(shapeType);
 }
 
 // All shapes are ctxRenderers — vis-network never re-reads the closure after
@@ -145,6 +179,7 @@ export function showNodePanel() {
   syncNodeLockButton();
   syncNodeFontSizeValue();
   syncCustomShapeLabelPlacementControls();
+  syncNodeColorSwatch();
   // Sync the opacity slider with the first selected node's current value so the
   // slider reflects the live state rather than whatever position it was left at.
   const slider = document.getElementById('nodeBgOpacity');
@@ -157,6 +192,18 @@ export function showNodePanel() {
 
 export function hideNodePanel() {
   document.getElementById('nodePanel').classList.add('hidden');
+}
+
+export function initNodeColorSwatch() {
+  const swatch = document.getElementById('nodeColorSwatch');
+  if (!swatch) return;
+  swatch.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const current = swatch.dataset.currentColor || 'c-gray';
+    openColorPickerPopup(swatch, buildNodeColorEntries(), current, (entry) => {
+      setNodeColor(entry.value);
+    });
+  });
 }
 
 export function toggleNodeLock() {
@@ -195,6 +242,7 @@ export function setNodeColor(colorKey) {
   persistNodeStyle();
   forceRedraw();
   markDirty();
+  syncNodeColorSwatch();
 }
 
 // The slider fires `input` on every step during a drag. The caller is expected
