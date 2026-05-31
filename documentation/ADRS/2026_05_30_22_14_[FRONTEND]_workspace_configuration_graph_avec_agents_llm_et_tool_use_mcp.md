@@ -1,74 +1,117 @@
 ---
 **date:** 2026-05-30
 **status:** To be validated
-**description:** Workspace de configuration graphique servi sur /workspace, avec graphe hierarchique pan/zoom, panneau contextuel, persistence JSON, providers LLM configurables, agents avec system prompt, boucle tool use MCP et selection de modele dynamique.
-**tags:** workspace, html-in-canvas, typescript, configuration-graph, llm-provider, agent, mcp, tool-use, pan-zoom, panel, persistence, ollama, chat-completions, model-select, run-agent
+**description:** Workspace de configuration graphique servi sur /workspace, avec agents LLM configurables, user input optionnel, marqueur de sortie attendu, boucle tool use MCP, lancement depuis la Home et creation de documents de run.
+**tags:** workspace, html-in-canvas, typescript, configuration-graph, llm-provider, agent, mcp, tool-use, expected-output-marker, mermaid, run-agent, agents-ia, document-generation
 ---
 
 # Workspace de configuration graphe avec agents LLM et tool use MCP
 
 ## Contexte
 
-Le projet Living Documentation doit pouvoir orchestrer des agents LLM qui consultent et maintiennent la documentation via le MCP. Une interface de configuration graphique est nécessaire pour déclarer les providers LLM, configurer les agents et tester les connexions sans passer par des fichiers de configuration manuels.
+Le projet Living Documentation doit orchestrer des agents LLM qui consultent et maintiennent la documentation via le MCP. Le workspace graphique sert à déclarer les providers LLM, configurer les agents, tester les connexions et exécuter les agents depuis la Home.
 
-Le prototype HTML-in-Canvas initial (ADR supersédé) a validé l'approche graphique. Ce workspace devient la surface de configuration opérationnelle.
+Un run de l'agent `Générer Diagramme Mermaid` a montré qu'un modèle peut répondre par une introduction textuelle sans produire l'artefact demandé. Le backend acceptait jusque-là le premier message texte non vide comme succès final.
 
 ## Decision
 
-Implémenter `src/frontend/workspace/` comme workspace de configuration complet, servi par Express sur `/workspace`, compilé en TypeScript vers `app.js` avant la copie des assets.
+Conserver le workspace TypeScript `/workspace` comme surface de configuration des agents, et ajouter une contrainte optionnelle `expectedOutputMarker` par agent.
+
+Lorsqu'un agent définit ce marqueur, la boucle backend `runAgent` vérifie que la réponse finale contient ce marqueur. Si ce n'est pas le cas, elle ajoute un message correctif au modèle et lui donne un tour supplémentaire pour produire la sortie attendue. Si aucun tour ne produit le marqueur, l'exécution échoue explicitement au lieu de créer un document de succès incomplet.
 
 ## Architecture du graphe
 
 Le modèle est hiérarchique avec quatre types de nœuds :
 
-- **system** (`root`) — brique racine `Living AI Documentation`, immuable, non supprimable, non sélectionnable (aucun panel à l'ouverture).
-- **llm** — provider LLM OpenAI-compatible (Ollama, OpenAI, etc.), enfant de root.
-- **agent** — agent configuré avec un system prompt, enfant d'un provider LLM.
+- **system** (`root`) — brique racine `Living AI Documentation`, immuable, non supprimable, non sélectionnable.
+- **llm** — provider LLM OpenAI-compatible, enfant de root.
+- **agent** — agent configuré avec system prompt et contraintes d'exécution, enfant d'un provider LLM.
 - **mcp** — surface de consultation MCP, enfant de root, affiche l'inventaire des outils disponibles.
 
-La géométrie polygonale des providers encode le nombre d'enfants (`max(6, nbAgents)` côtés). Le layout distribue les agents en éventail orienté vers l'extérieur. La relaxation multi-passes (`relaxRootClusterDistances`) évite les chevauchements entre clusters racine.
+La géométrie polygonale des providers encode le nombre d'enfants (`max(6, nbAgents)` côtés). Le layout distribue les agents en éventail orienté vers l'extérieur et applique une relaxation entre clusters pour limiter les chevauchements.
 
-## Caméra et panel
+## Panel agent
 
-- **Fit** recalcule zoom et position pour centrer le graphe visible.
-- **Pan** sur zone vide, zoom molette autour du pointeur.
-- **Sélection d'un nœud** (panel fermé) : anime le nœud au centre horizontal de la zone gauche (`availableWidth / 2 - entity.x * zoom`). La caméra revient à sa position d'origine à la désélection.
-- **Sélection avec panel déjà ouvert** : translation minimale si le nœud risque d'être occulté par le panel.
-- Les événements pointer/touch/wheel du panel stoppent leur propagation pour ne pas déclencher de désélection accidentelle.
+Champs de configuration :
 
-## Panel contextuel par kind
+- Workspace folder readonly, auto-généré sous `AI/WORKSPACE/<agent_slug>`.
+- System prompt.
+- `Require a user input`.
+- `Describe User input`, obligatoire quand `Require a user input` est coché.
+- `Required output marker`, optionnel, par exemple ```mermaid pour imposer une sortie Mermaid.
 
-### LLM provider
-Champs : Endpoint (URL OpenAI-compatible), API token, Model (selectbox chargée dynamiquement depuis `/v1/models` via bouton ↻ avec animation spinner), Workspace folder (readonly, auto-généré), Timeout, Description.
-
-Bouton **Test** (désactivé si aucun modèle sélectionné) : appel `POST /v1/chat/completions` avec `max_tokens: 1` si un modèle est sélectionné, sinon `GET /v1/models`. Résultat via toast ✓/✕.
-
-### Agent
-Champs : System prompt (textarea), User input (textarea — message `role: user` envoyé après le system prompt).
-
-Bouton **Test** : déclenche la boucle agentique (voir ci-dessous).
-
-### MCP
-Affiche l'inventaire statique des outils et prompts disponibles. Pas de champs endpoint/token/model/timeout.
-
-### Nœud root
-Aucun panel — clic ignoré.
+Le bouton **Test** ouvre une modale d'exécution dédiée. Cette modale ne contient un champ de saisie que si `Require a user input` est actif ; sinon elle lance le test avec le system prompt configuré et un input vide. Elle affiche ensuite le résultat ou l'erreur dans la même modale sans écrire de document durable.
 
 ## Persistence
 
-`PUT /api/workspace` et `GET /api/workspace` sérialisent l'état complet (entités + caméra) dans un fichier `.workspace` dans le dossier de documentation. Auto-save déclenché par chaque modification de champ (debounce). Les champs persistés par entité incluent : `endpoint`, `token`, `model`, `timeout`, `description`, `workspaceFolder`, `systemPrompt`.
+`PUT /api/workspace` et `GET /api/workspace` sérialisent l'état complet dans `DOCS_FOLDER/.workspace`.
 
-## Boucle agentique (run-agent)
+Les champs persistés par entité incluent : `endpoint`, `token`, `model`, `timeout`, `description`, `workspaceFolder`, `systemPrompt`, `requiresUserInput`, `userInputDescription`, `expectedOutputMarker`.
 
-`POST /api/workspace/run-agent` orchestre la boucle LLM ↔ MCP côté backend :
+Pour chaque agent, le backend garantit un dossier workspace sous `AI/WORKSPACE/<agent_slug>`. Ce dossier reçoit les documents de run de l'agent.
 
-1. Si `mcpEndpoint` fourni : appel `tools/list` au MCP pour récupérer les schémas de tools.
-2. Conversion au format OpenAI (`type: "function"`), envoyés au LLM avec `tools: [...]`.
-3. Si le LLM répond avec `tool_calls` : exécution de chaque appel via `tools/call` au MCP (Streamable HTTP JSON-RPC 2.0), résultats injectés comme messages `role: tool`.
-4. Boucle jusqu'à 5 tours max ou réponse textuelle finale.
-5. Timeout configurable jusqu'à 600s (défaut 180s).
+## Boucle agentique
 
-Le LLM (Ollama/gemma4) décide lui-même quels tools appeler en fonction du system prompt et du user input. Le system prompt peut orienter sans hardcoder l'appel.
+`POST /api/workspace/run-agent` et `POST /api/workspace/run-agent-document` utilisent la fonction backend `runAgent` :
+
+1. Si `mcpEndpoint` est fourni, appel `tools/list` au MCP.
+2. Conversion des tools au format OpenAI function calling.
+3. Envoi du system prompt, du user input éventuel et des tools au LLM.
+4. Si le LLM demande des `tool_calls`, exécution via `tools/call`, puis réinjection des résultats comme messages `role: tool`.
+5. Si le LLM fournit une réponse texte :
+   - sans `expectedOutputMarker`, elle est acceptée comme réponse finale ;
+   - avec `expectedOutputMarker`, elle est acceptée seulement si elle contient ce marqueur ;
+   - sinon un message correctif est ajouté et un nouveau tour est lancé.
+6. Après épuisement des tours, absence de réponse ou absence du marqueur requis devient une erreur explicite.
+
+## Lancement depuis la Home
+
+La Home `/` expose un bouton topbar `Agents IA` immédiatement après `Workspace`.
+
+Le module `src/frontend/agents.js` :
+
+- charge `GET /api/workspace` ;
+- extrait les entités `kind === "agent"` ;
+- retrouve le provider parent ;
+- affiche les agents dans une modale en grille ;
+- ouvre une modale de saisie seulement si `config.requiresUserInput === true` ;
+- affiche `config.userInputDescription` comme consigne ;
+- lance `POST /api/workspace/run-agent-document` ;
+- affiche une notification persistante loading/success/error avec bouton `x` ;
+- propose `Open document` si un document a été créé et ferme le toast après ouverture.
+
+## Documents de run
+
+`POST /api/workspace/run-agent-document` relit `.workspace`, résout l'agent, son provider parent et le MCP, puis exécute `runAgent`.
+
+En succès, la route crée un document Markdown dans `DOCS_FOLDER/<agent.config.workspaceFolder>` avec catégorie `[AGENT]`, titre `Run - <Nom Agent>`, contexte d'exécution, user input et réponse finale.
+
+En échec d'exécution LLM/MCP ou de validation `expectedOutputMarker`, si l'agent et son provider ont été résolus, la route crée aussi un document avec `status: Failed` contenant l'erreur.
+
+## Configuration Mermaid
+
+L'agent `Générer Diagramme Mermaid` est configuré avec :
+
+- un prompt strict demandant de produire directement un diagramme Mermaid, sans introduction ;
+- `expectedOutputMarker: ```mermaid`.
+
+Cette configuration évite qu'un document de succès soit créé avec une simple annonce du type "I will generate..." sans bloc Mermaid.
+
+## Panel agent workspace
+
+Le panel agent conserve les champs de configuration dans la zone centrale, mais les actions sont regroupées dans le footer `panel-actions`.
+
+`Test` est le bouton footer commun :
+
+- sur un LLM provider, il lance le test de connexion ;
+- sur un agent, il ouvre la modale de test agent ;
+- il n'est pas affiché pour les autres types.
+
+`Delete` reste dans le même footer, à droite, et n'est pas affiché pour les entités protégées.
+
+La section agent n'utilise pas de sélecteur dépendant de l'ordre comme `first-child`. Elle est rendue en grille simple, avec une hauteur minimale explicite pour `System prompt` et `Describe User input`, afin d'éviter les superpositions quand `Workspace folder` est présent.
+
+La page workspace référence ses assets en chemins absolus `/workspace/styles.css` et `/workspace/app.js` pour que `/workspace` sans slash final charge le même CSS/JS que `/workspace/`.
 
 ## Routes backend
 
@@ -78,19 +121,21 @@ Le LLM (Ollama/gemma4) décide lui-même quels tools appeler en fonction du syst
 | `PUT /api/workspace` | Sauvegarde état workspace |
 | `POST /api/workspace/list-models` | Liste modèles depuis `/v1/models` |
 | `POST /api/workspace/test-llm` | Test connexion LLM |
-| `POST /api/workspace/run-agent` | Boucle agentique LLM + MCP |
+| `POST /api/workspace/run-agent` | Boucle agentique LLM + MCP pour test depuis le workspace |
+| `POST /api/workspace/run-agent-document` | Boucle agentique LLM + MCP puis création du document de run |
 
 ## Conséquences
 
 ### PROS
 - Configuration graphique des providers et agents sans fichiers manuels.
 - Boucle agentique générique : n'importe quel tool MCP peut être appelé selon le prompt.
-- Fallback DOM assure l'utilisabilité sans flag navigateur expérimental.
-- Persistence locale transparente (auto-save).
-- Sélection de modèle dynamique depuis le provider configuré.
+- Les agents deviennent actionnables depuis la Home sans exposer endpoint/token/prompt au frontend.
+- Les résultats sont capturés sous forme documentaire dans le dossier de l'agent, succès comme échec.
+- Les agents nécessitant un format de sortie peuvent déclarer un marqueur de validation.
+- Un agent Mermaid ne peut plus produire un document de succès sans bloc Mermaid.
 
 ### CONS
-- `app.js` reste un artefact commité (pas de bundler frontend dédié).
+- `app.js` reste un artefact commité.
 - Le rendu HTML-in-Canvas natif reste dépendant d'une API expérimentale.
 - La boucle agentique ne streame pas les réponses intermédiaires.
-- Pas de gestion des erreurs MCP granulaire (échec silencieux si le MCP est down).
+- `expectedOutputMarker` est une validation textuelle simple, pas une validation syntaxique complète du format généré.

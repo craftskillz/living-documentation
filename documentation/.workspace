@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-30T21:37:21.345Z",
+  "updatedAt": "2026-05-30T23:38:20.829Z",
   "entities": [
     {
       "id": "root",
@@ -14,8 +14,11 @@
         "endpoint": "",
         "token": "",
         "model": "",
-        "timeout": 30,
+        "timeout": 180,
         "systemPrompt": "",
+        "requiresUserInput": false,
+        "userInputDescription": "",
+        "expectedOutputMarker": "",
         "description": "Owns the documentation workspace, MCP access, providers, and agent topology.",
         "workspaceFolder": ""
       }
@@ -31,28 +34,34 @@
       "config": {
         "endpoint": "http://localhost:4321/mcp",
         "token": "",
-        "model": "gemma4:latest",
-        "timeout": 30,
+        "model": "",
+        "timeout": 180,
         "systemPrompt": "",
+        "requiresUserInput": false,
+        "userInputDescription": "",
+        "expectedOutputMarker": "",
         "description": "The whole \"Living AI Documentation MCP\" informations, Tools and prompts.",
         "workspaceFolder": ""
       }
     },
     {
       "id": "provider-mpsmymtb",
-      "label": "Gemma 4",
+      "label": "DEVSTRAL SMALL 2",
       "kind": "llm",
       "parentId": "root",
-      "x": 1.567547902908612e-14,
-      "y": 256,
-      "angle": 1.5707963267948966,
+      "x": 221.7025033688163,
+      "y": 127.99999999999996,
+      "angle": 0.5235987755982987,
       "config": {
         "endpoint": "http://localhost:11434",
         "token": "",
-        "model": "gemma4:latest",
-        "timeout": 180,
+        "model": "devstral-small-2:latest",
+        "timeout": 300,
         "systemPrompt": "",
-        "description": "Routes model calls and hosts the agents assigned to this provider.",
+        "requiresUserInput": false,
+        "userInputDescription": "",
+        "expectedOutputMarker": "",
+        "description": "Bon modèle de raisonnement global.\nPermet de comprendre le métier, lire les adrs, comparer avec le code, générer des diagrammes Mermaid.",
         "workspaceFolder": ""
       }
     },
@@ -61,15 +70,18 @@
       "label": "Agent de listage des ADRS driftés",
       "kind": "agent",
       "parentId": "provider-mpsmymtb",
-      "x": 188.91363066193932,
-      "y": 352.2563025786491,
-      "angle": 0.47123889803846897,
+      "x": 399.51972200725766,
+      "y": 12.524148014934227,
+      "angle": -0.5759586531581289,
       "config": {
         "endpoint": "",
         "token": "",
-        "model": "gemma4:latest",
-        "timeout": 180,
+        "model": "devstral-small-2:latest",
+        "timeout": 300,
         "systemPrompt": "You are a documentation assistant. \nStart by calling list_adrs_below_accuracy to retrieve degraded ADRs.\nThen give a concise summary in French: total count, the 3 most critical ADRs with their title and accuracy percentage, and a one-line recommendation for each.",
+        "requiresUserInput": false,
+        "userInputDescription": "",
+        "expectedOutputMarker": "",
         "description": "Runs focused automation against documentation, source, or quality signals.",
         "workspaceFolder": "AI/WORKSPACE/agent_de_listage_des_adrs_driftes"
       }
@@ -79,23 +91,68 @@
       "label": "Générer Diagramme Mermaid",
       "kind": "agent",
       "parentId": "provider-mpsmymtb",
-      "x": -188.91363066193924,
-      "y": 352.2563025786491,
-      "angle": 2.670353755551324,
+      "x": 210.60609134531842,
+      "y": 339.7321545637148,
+      "angle": 1.6231562043547263,
+      "config": {
+        "endpoint": "",
+        "token": "",
+        "model": "devstral-small-2:latest",
+        "timeout": 300,
+        "systemPrompt": "You are a diagram generator for a software documentation project.\nWhen given a document ID, call read_document to retrieve its content.\nThen generate one or more relevant Mermaid diagrams that best represent the structure, flows, or relationships described in the document.\nYour final answer must contain at least one fenced code block tagged exactly with mermaid.\nDo not explain what you will do. Do not stop after an introduction. Produce the diagram output directly.\nAdd a short title before each diagram explaining what it represents.\nIf you cannot generate a Mermaid diagram, return an explicit error explaining why.",
+        "requiresUserInput": true,
+        "userInputDescription": "Pass the document ID for which ou want to generate Mermaid Diagrams",
+        "expectedOutputMarker": "```mermaid",
+        "description": "Runs focused automation against documentation, source, or quality signals.",
+        "workspaceFolder": "AI/WORKSPACE/generer_diagramme_mermaid"
+      }
+    },
+    {
+      "id": "provider-mpsyqgb7",
+      "label": "Gemma 4",
+      "kind": "llm",
+      "parentId": "root",
+      "x": -221.70250336881625,
+      "y": 128.00000000000009,
+      "angle": 2.617993877991494,
+      "config": {
+        "endpoint": "http://localhost:11434",
+        "token": "",
+        "model": "gemma4:latest",
+        "timeout": 300,
+        "systemPrompt": "",
+        "requiresUserInput": false,
+        "userInputDescription": "",
+        "expectedOutputMarker": "",
+        "description": "Routes model calls and hosts the agents assigned to this provider.",
+        "workspaceFolder": ""
+      }
+    },
+    {
+      "id": "agent-mpsyrivy",
+      "label": "Traducteur Anglais Français",
+      "kind": "agent",
+      "parentId": "provider-mpsyqgb7",
+      "x": -405.31956882568227,
+      "y": 234.01136216933094,
+      "angle": 2.617993877991494,
       "config": {
         "endpoint": "",
         "token": "",
         "model": "gemma4:latest",
-        "timeout": 180,
-        "systemPrompt": "You are a diagram generator for a software documentation project.\nWhen given a document ID, call read_document to retrieve its content.\nThen generate one or more relevant Mermaid diagrams that best represent \nthe structure, flows, or relationships described in the document.\nOutput each diagram in a fenced code block tagged with \"mermaid\".\nAdd a short title before each diagram explaining what it represents.",
+        "timeout": 300,
+        "systemPrompt": "You are a professional technical translator specialized in software documentation.\nYour task is to translate a Living Documentation document from English to French.\n\nInstructions:\n1. Call read_document with the document ID provided in the user message.\n2. Translate the full content from English to French. Rules:\n   - Translate with maximum fidelity to the original meaning — do not paraphrase.\n   - Preserve all Markdown formatting exactly (headings, bold, lists, code blocks, frontmatter).\n   - Do NOT translate: code snippets, file paths, technical identifiers, proper nouns, tool names, MCP tool names, field names, JSON keys.\n   - Translate frontmatter values (description, tags) but keep the keys in English.\n   - Keep the same document structure and section order.\n3. Call update_document with the document ID and the fully translated Markdown content.\n4. Confirm with a short summary of what was translated.",
+        "requiresUserInput": true,
+        "userInputDescription": "Document Id",
+        "expectedOutputMarker": "",
         "description": "Runs focused automation against documentation, source, or quality signals.",
-        "workspaceFolder": "AI/WORKSPACE/generer_diagramme_mermaid"
+        "workspaceFolder": "AI/WORKSPACE/traducteur_anglais_francais"
       }
     }
   ],
   "camera": {
-    "x": 613.9089037555436,
-    "y": 358.6001758302309,
-    "zoom": 0.9871560962214722
+    "x": 842.8472365547804,
+    "y": 371.01672601853807,
+    "zoom": 0.9818316393237724
   }
 }

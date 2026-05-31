@@ -104,6 +104,7 @@ export interface AgentRunInput {
   userInput?: string;
   timeout: number;
   mcpEndpoint?: string;
+  expectedOutputMarker?: string;
 }
 
 export interface AgentRunResult {

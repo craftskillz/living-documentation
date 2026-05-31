@@ -4,7 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>HTML-in-Canvas Configuration Experiment</title>
-    <link rel="stylesheet" href="./styles.css?v=workspace-ts-1" />
+    <link
+      rel="stylesheet"
+      href="/workspace/styles.css?v=workspace-agent-panel-1"
+    />
   </head>
   <body>
     <main class="app-shell">
@@ -50,10 +53,10 @@
             <div class="panel-kicker">
               <span id="nodeTypeBadge">Provider</span>
               <button
-                id="deleteNodeButton"
-                class="icon-button danger"
+                id="closePanelButton"
+                class="icon-button close"
                 type="button"
-                title="Delete node"
+                title="Close panel"
               >
                 ×
               </button>
@@ -87,7 +90,7 @@
                     id="nodeEndpoint"
                     name="nodeEndpoint"
                     type="url"
-                    placeholder="http://localhost:1234/v1"
+                    placeholder="http://localhost:11434"
                   />
                 </label>
 
@@ -163,33 +166,36 @@
                   placeholder="You are a helpful assistant…"
                 ></textarea>
               </label>
-              <label class="field wide">
-                <span>User input</span>
+              <label class="field wide checkbox-field">
+                <input
+                  id="nodeRequiresUserInput"
+                  name="nodeRequiresUserInput"
+                  type="checkbox"
+                />
+                <span>Require a user input</span>
+              </label>
+              <label
+                id="agentUserInputDescriptionField"
+                class="field wide"
+                hidden
+              >
+                <span>Describe User input</span>
                 <textarea
-                  id="nodeUserInput"
-                  name="nodeUserInput"
-                  rows="2"
-                  placeholder="Document ID, question, or any input for the agent…"
+                  id="nodeUserInputDescription"
+                  name="nodeUserInputDescription"
+                  rows="3"
+                  placeholder="Describe exactly what the user must provide before running this agent."
                 ></textarea>
               </label>
-
-              <div class="agent-run-row">
-                <button
-                  id="runAgentButton"
-                  class="secondary-button"
-                  type="button"
-                >
-                  Test
-                </button>
-                <button
-                  id="clearAgentButton"
-                  class="ghost-button"
-                  type="button"
-                >
-                  Clear
-                </button>
-              </div>
-              <div id="agentResponses" class="agent-responses" hidden></div>
+              <label class="field wide">
+                <span>Required output marker</span>
+                <input
+                  id="nodeExpectedOutputMarker"
+                  name="nodeExpectedOutputMarker"
+                  type="text"
+                  placeholder="Optional, e.g. ```mermaid"
+                />
+              </label>
             </section>
 
             <section id="mcpInventory" class="mcp-inventory" hidden>
@@ -235,13 +241,24 @@
             </section>
 
             <footer class="panel-actions">
-              <button
-                id="testNodeButton"
-                class="secondary-button"
-                type="button"
-              >
-                Test
-              </button>
+              <div class="panel-actions-left">
+                <button
+                  id="testNodeButton"
+                  class="secondary-button"
+                  type="button"
+                >
+                  Test
+                </button>
+              </div>
+              <div class="panel-actions-right">
+                <button
+                  id="deleteNodeButton"
+                  class="danger-button"
+                  type="button"
+                >
+                  Delete
+                </button>
+              </div>
             </footer>
           </form>
         </canvas>
@@ -262,8 +279,20 @@
             <p id="renameConfirmMessage" class="confirm-message"></p>
           </div>
           <footer class="confirm-actions">
-            <button id="cancelRenameButton" class="secondary-button" type="button">Annuler</button>
-            <button id="confirmRenameButton" class="primary-button" type="button">Renommer</button>
+            <button
+              id="cancelRenameButton"
+              class="secondary-button"
+              type="button"
+            >
+              Annuler
+            </button>
+            <button
+              id="confirmRenameButton"
+              class="primary-button"
+              type="button"
+            >
+              Renommer
+            </button>
           </footer>
         </section>
       </div>
@@ -298,6 +327,53 @@
           </footer>
         </section>
       </div>
+
+      <div id="agentRunOverlay" class="confirm-overlay" hidden>
+        <section
+          class="agent-run-dialog"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="agentRunTitle"
+        >
+          <div>
+            <p class="confirm-kicker">Agent test</p>
+            <h2 id="agentRunTitle">Run agent</h2>
+            <p id="agentRunHint" class="confirm-message"></p>
+          </div>
+
+          <label
+            id="agentRunInputField"
+            class="field wide agent-run-input-field"
+          >
+            <span>User input</span>
+            <textarea
+              id="agentRunInput"
+              name="agentRunInput"
+              rows="6"
+              placeholder="Document ID, question, or any input for the agent…"
+            ></textarea>
+          </label>
+
+          <div id="agentRunResult" class="agent-run-result" hidden></div>
+
+          <footer class="confirm-actions">
+            <button
+              id="cancelAgentRunButton"
+              class="secondary-button"
+              type="button"
+            >
+              Close
+            </button>
+            <button
+              id="executeAgentRunButton"
+              class="primary-button"
+              type="button"
+            >
+              Run
+            </button>
+          </footer>
+        </section>
+      </div>
     </main>
 
     <div
@@ -313,6 +389,9 @@
       <span id="workspaceToastMessage">Workspace saved</span>
     </div>
 
-    <script type="module" src="./app.js?v=workspace-persistence-1"></script>
+    <script
+      type="module"
+      src="/workspace/app.js?v=workspace-agent-panel-1"
+    ></script>
   </body>
 </html>

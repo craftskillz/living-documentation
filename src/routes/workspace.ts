@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import fs from 'fs';
 import path from 'path';
+import { readConfig } from '../lib/config';
 
 const WORKSPACE_VERSION = 1;
 const MAX_WORKSPACE_ENTITIES = 1000;
@@ -20,6 +21,9 @@ interface WorkspaceEntityConfig {
   description: string;
   workspaceFolder: string;
   systemPrompt: string;
+  requiresUserInput: boolean;
+  userInputDescription: string;
+  expectedOutputMarker: string;
 }
 
 interface WorkspaceEntity {
@@ -51,6 +55,24 @@ interface LlmConnectionTestRequest {
   token?: unknown;
   model?: unknown;
   timeout?: unknown;
+}
+
+interface AgentRunConfig {
+  endpoint: string;
+  token: string;
+  model: string;
+  systemPrompt: string;
+  userInput: string;
+  timeout: number;
+  mcpEndpoint: string;
+  expectedOutputMarker: string;
+}
+
+interface AgentRunDocumentResult {
+  id: string;
+  filename: string;
+  title: string;
+  ok: boolean;
 }
 
 function workspaceFilePath(docsPath: string): string {
@@ -152,6 +174,9 @@ function sanitizeConfig(input: unknown): WorkspaceEntityConfig {
     model: safeOptionalString(config.model, '', MAX_LABEL_LENGTH),
     timeout: clamp(safeFiniteNumber(config.timeout, 180), 1, 600),
     systemPrompt: safeOptionalString(config.systemPrompt, '', MAX_TEXT_FIELD_LENGTH),
+    requiresUserInput: config.requiresUserInput === true,
+    userInputDescription: safeOptionalString(config.userInputDescription, '', MAX_TEXT_FIELD_LENGTH),
+    expectedOutputMarker: safeOptionalString(config.expectedOutputMarker, '', MAX_LABEL_LENGTH),
     description: safeOptionalString(config.description, '', MAX_TEXT_FIELD_LENGTH),
     workspaceFolder: sanitizeWorkspaceFolder(
       safeOptionalString(config.workspaceFolder, '', MAX_TEXT_FIELD_LENGTH),
@@ -396,6 +421,239 @@ async function callMcp(endpoint: string, method: string, params: unknown): Promi
   throw new Error('No valid MCP response');
 }
 
+async function runAgent(config: AgentRunConfig): Promise<string> {
+  if (!config.endpoint.trim()) throw new Error('endpoint is required');
+  if (!config.model.trim()) throw new Error('model is required');
+  if (!config.systemPrompt.trim()) throw new Error('systemPrompt is required');
+
+  const timeoutSeconds = clamp(config.timeout, 1, 600);
+  const base = config.endpoint.trim();
+  const chatUrl = new URL(base.endsWith('/v1') ? `${base}/chat/completions` : `${base}/v1/chat/completions`);
+  const llmHeaders: Record<string, string> = { Accept: 'application/json', 'Content-Type': 'application/json' };
+  if (config.token.trim()) {
+    llmHeaders.Authorization = `Bearer ${config.token.trim()}`;
+  }
+
+  let mcpTools: unknown[] = [];
+  if (config.mcpEndpoint) {
+    try {
+      const toolsRes = await callMcp(config.mcpEndpoint, 'tools/list', {});
+      if (isRecord(toolsRes) && Array.isArray(toolsRes.tools)) {
+        mcpTools = (toolsRes.tools as unknown[]).map((tool) => {
+          if (!isRecord(tool)) return null;
+          return {
+            type: 'function',
+            function: {
+              name: tool.name,
+              description: tool.description ?? '',
+              parameters: tool.inputSchema ?? { type: 'object', properties: {} },
+            },
+          };
+        }).filter(Boolean);
+      }
+    } catch {
+      mcpTools = [];
+    }
+  }
+
+  const messages: unknown[] = [{ role: 'system', content: config.systemPrompt.trim() }];
+  const expectedOutputMarker = config.expectedOutputMarker.trim();
+  if (config.userInput.trim()) {
+    messages.push({ role: 'user', content: config.userInput.trim() });
+  }
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutSeconds * 1000);
+
+  let toolsSupported = mcpTools.length > 0;
+
+  try {
+    for (let turn = 0; turn < 5; turn += 1) {
+      const llmBody: Record<string, unknown> = { model: config.model.trim(), messages };
+      if (toolsSupported && mcpTools.length > 0) llmBody.tools = mcpTools;
+
+      const response = await fetch(chatUrl, {
+        method: 'POST',
+        headers: llmHeaders,
+        signal: controller.signal,
+        body: JSON.stringify(llmBody),
+      });
+
+      // Model doesn't support tool use — retry once without tools
+      if (!response.ok && response.status === 400 && toolsSupported) {
+        toolsSupported = false;
+        // Inject tool descriptions as context in the system message
+        const toolDescriptions = mcpTools
+          .map((t) => {
+            if (!isRecord(t) || !isRecord(t.function)) return '';
+            return `- ${t.function.name}: ${t.function.description ?? ''}`;
+          })
+          .filter(Boolean)
+          .join('\n');
+        if (toolDescriptions && messages.length > 0 && isRecord(messages[0]) && messages[0].role === 'system') {
+          (messages[0] as Record<string, unknown>).content =
+            `${messages[0].content}\n\nAvailable MCP tools (call them by name in your response):\n${toolDescriptions}`;
+        }
+        continue;
+      }
+
+      if (!response.ok) {
+        throw new Error(`LLM error (${response.status})`);
+      }
+
+      const parsed = JSON.parse(await response.text()) as unknown;
+      if (!isRecord(parsed) || !Array.isArray(parsed.choices) || !parsed.choices.length) break;
+
+      const choice = parsed.choices[0] as unknown;
+      if (!isRecord(choice) || !isRecord(choice.message)) break;
+      const msg = choice.message;
+      messages.push(msg);
+
+      if (Array.isArray(msg.tool_calls) && msg.tool_calls.length > 0 && config.mcpEndpoint) {
+        for (const toolCall of msg.tool_calls as unknown[]) {
+          if (!isRecord(toolCall) || !isRecord(toolCall.function)) continue;
+          const fnName = typeof toolCall.function.name === 'string' ? toolCall.function.name : '';
+          const fnArgs = typeof toolCall.function.arguments === 'string'
+            ? JSON.parse(toolCall.function.arguments) as unknown
+            : (toolCall.function.arguments ?? {});
+          let toolResult = '';
+          try {
+            const mcpResult = await callMcp(config.mcpEndpoint, 'tools/call', { name: fnName, arguments: fnArgs });
+            if (isRecord(mcpResult) && Array.isArray(mcpResult.content)) {
+              toolResult = (mcpResult.content as unknown[])
+                .filter((content) => isRecord(content) && typeof content.text === 'string')
+                .map((content) => (content as Record<string, unknown>).text as string)
+                .join('\n');
+            } else {
+              toolResult = JSON.stringify(mcpResult);
+            }
+          } catch (error) {
+            toolResult = `Tool error: ${error instanceof Error ? error.message : String(error)}`;
+          }
+          messages.push({ role: 'tool', tool_call_id: toolCall.id ?? '', content: toolResult });
+        }
+        continue;
+      }
+
+      if (typeof msg.content === 'string' && msg.content.trim()) {
+        const content = msg.content.trim();
+        if (!expectedOutputMarker || content.includes(expectedOutputMarker)) {
+          return content;
+        }
+        messages.push({
+          role: 'user',
+          content:
+            `Your previous answer did not include the required output marker "${expectedOutputMarker}". ` +
+            `Return the final answer now, include "${expectedOutputMarker}", and do not explain the correction.`,
+        });
+        continue;
+      }
+      break;
+    }
+  } finally {
+    clearTimeout(timer);
+  }
+
+  throw new Error(
+    expectedOutputMarker
+      ? `Agent response did not include required output marker: ${expectedOutputMarker}`
+      : 'Agent did not produce a response',
+  );
+}
+
+function agentRunMarkdown(args: {
+  title: string;
+  agent: WorkspaceEntity;
+  provider: WorkspaceEntity;
+  ok: boolean;
+  userInput: string;
+  content: string;
+}): string {
+  const status = args.ok ? 'Success' : 'Failed';
+  const userInput = args.userInput.trim() || '_No user input._';
+  return `---\n**date:** ${new Date().toISOString()}\n**status:** ${status}\n**description:** Resultat d'execution de l'agent ${args.agent.label} via ${args.provider.label}.\n**tags:** agent, run-agent, workspace, llm, ${slugify(args.agent.label)}\n---\n\n# ${args.title}\n\n## Execution\n\n- Agent: ${args.agent.label}\n- Provider: ${args.provider.label}\n- Model: ${args.provider.config.model}\n- Status: ${status}\n\n## User input\n\n${userInput}\n\n## Response\n\n${args.content}\n`;
+}
+
+function createAgentRunDocument(
+  docsPath: string,
+  agent: WorkspaceEntity,
+  provider: WorkspaceEntity,
+  ok: boolean,
+  userInput: string,
+  content: string,
+): AgentRunDocumentResult {
+  const folder = sanitizeWorkspaceFolder(agent.config.workspaceFolder);
+  if (!folder) throw new Error('agent workspace folder is missing');
+
+  const docsRoot = path.resolve(docsPath);
+  const targetDir = path.resolve(docsPath, folder);
+  if (!targetDir.startsWith(`${docsRoot}${path.sep}`) && targetDir !== docsRoot) {
+    throw new Error('agent workspace folder escapes docs folder');
+  }
+  fs.mkdirSync(targetDir, { recursive: true });
+
+  const title = `Run - ${agent.label}`;
+  const baseFilename = buildWorkspaceFilenameForDocs(docsPath, title, 'AGENT');
+  const baseName = baseFilename.replace(/\.md$/, '');
+  let filename = baseFilename;
+  let filePath = path.join(targetDir, filename);
+  let suffix = 2;
+  while (fs.existsSync(filePath)) {
+    filename = `${baseName}_${suffix}.md`;
+    filePath = path.join(targetDir, filename);
+    suffix += 1;
+  }
+
+  fs.writeFileSync(filePath, agentRunMarkdown({ title, agent, provider, ok, userInput, content }), 'utf-8');
+  const relativePath = path.relative(docsPath, filePath);
+  return {
+    id: encodeURIComponent(relativePath.slice(0, -3)),
+    filename: relativePath,
+    title,
+    ok,
+  };
+}
+
+function findWorkspaceAgentRunContext(state: WorkspaceState, agentId: string): {
+  agent: WorkspaceEntity;
+  provider: WorkspaceEntity;
+  mcp: WorkspaceEntity | null;
+} {
+  const agent = state.entities.find((entity) => entity.id === agentId && entity.kind === 'agent');
+  if (!agent) {
+    throw new Error('agent not found');
+  }
+
+  const provider = state.entities.find((entity) => entity.id === agent.parentId && entity.kind === 'llm');
+  if (!provider) {
+    throw new Error('agent parent LLM provider not found');
+  }
+
+  return {
+    agent,
+    provider,
+    mcp: state.entities.find((entity) => entity.kind === 'mcp') ?? null,
+  };
+}
+
+function buildWorkspaceFilenameForDocs(docsPath: string, title: string, category: string): string {
+  const { filenamePattern } = readConfig(docsPath);
+  const now = new Date();
+  const yyyy = String(now.getFullYear());
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const hh = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+  return (filenamePattern || 'YYYY_MM_DD_HH_mm_[Category]_title')
+    .replace('YYYY', yyyy)
+    .replace('MM', mm)
+    .replace('DD', dd)
+    .replace('HH', hh)
+    .replace('mm', min)
+    .replace(/\[Category\]/i, `[${category}]`)
+    .replace(/(?<![a-z0-9])(?:title_words|title)(?![a-z0-9])/i, slugify(title)) + '.md';
+}
+
 export function workspaceRouter(docsPath: string): Router {
   const router = Router();
 
@@ -460,11 +718,51 @@ export function workspaceRouter(docsPath: string): Router {
     }
   });
 
+  router.post('/run-agent-document', async (req, res) => {
+    try {
+      const body = req.body as { agentId?: unknown; userInput?: unknown };
+      if (typeof body.agentId !== 'string' || !body.agentId.trim()) {
+        res.status(400).json({ ok: false, error: 'agentId is required' });
+        return;
+      }
+
+      const state = readWorkspaceState(docsPath);
+      ensureProviderWorkspaceFolders(docsPath, state);
+      writeWorkspaceState(docsPath, state);
+
+      const { agent, provider, mcp } = findWorkspaceAgentRunContext(state, body.agentId.trim());
+      const userInput = typeof body.userInput === 'string' ? body.userInput.trim() : '';
+
+      try {
+        const content = await runAgent({
+          endpoint: provider.config.endpoint,
+          token: provider.config.token,
+          model: agent.config.model || provider.config.model,
+          systemPrompt: agent.config.systemPrompt,
+          userInput,
+          timeout: agent.config.timeout || provider.config.timeout,
+          mcpEndpoint: mcp?.config.endpoint ?? '',
+          expectedOutputMarker: agent.config.expectedOutputMarker,
+        });
+        const document = createAgentRunDocument(docsPath, agent, provider, true, userInput, content);
+        res.json({ ok: true, content, document });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Agent run failed';
+        const document = createAgentRunDocument(docsPath, agent, provider, false, userInput, message);
+        res.status(502).json({ ok: false, error: message, document });
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Agent run failed';
+      const status = message === 'agent not found' ? 404 : 400;
+      res.status(status).json({ ok: false, error: message });
+    }
+  });
+
   router.post('/run-agent', async (req, res) => {
     try {
       const body = req.body as {
         endpoint?: unknown; token?: unknown; model?: unknown;
-        systemPrompt?: unknown; userInput?: unknown; timeout?: unknown; mcpEndpoint?: unknown;
+        systemPrompt?: unknown; userInput?: unknown; timeout?: unknown; mcpEndpoint?: unknown; expectedOutputMarker?: unknown;
       };
       if (typeof body.endpoint !== 'string' || !body.endpoint.trim()) {
         res.status(400).json({ ok: false, error: 'endpoint is required' }); return;
@@ -476,107 +774,18 @@ export function workspaceRouter(docsPath: string): Router {
         res.status(400).json({ ok: false, error: 'systemPrompt is required' }); return;
       }
 
-      const mcpEndpoint = typeof body.mcpEndpoint === 'string' ? body.mcpEndpoint.trim() : '';
-      const timeoutSeconds = clamp(safeFiniteNumber(body.timeout, 180), 1, 600);
-      const base = body.endpoint.trim();
-      const chatUrl = new URL(base.endsWith('/v1') ? `${base}/chat/completions` : `${base}/v1/chat/completions`);
-      const llmHeaders: Record<string, string> = { Accept: 'application/json', 'Content-Type': 'application/json' };
-      if (typeof body.token === 'string' && body.token.trim()) {
-        llmHeaders.Authorization = `Bearer ${body.token.trim()}`;
-      }
-
-      // Fetch MCP tools if endpoint provided
-      let mcpTools: unknown[] = [];
-      if (mcpEndpoint) {
-        try {
-          const toolsRes = await callMcp(mcpEndpoint, 'tools/list', {});
-          if (isRecord(toolsRes) && Array.isArray(toolsRes.tools)) {
-            mcpTools = (toolsRes.tools as unknown[]).map((t) => {
-              if (!isRecord(t)) return null;
-              return {
-                type: 'function',
-                function: {
-                  name: t.name,
-                  description: t.description ?? '',
-                  parameters: t.inputSchema ?? { type: 'object', properties: {} },
-                },
-              };
-            }).filter(Boolean);
-          }
-        } catch { /* no tools */ }
-      }
-
-      // Agentic loop: up to 5 tool calls max
-      const userInput = typeof body.userInput === 'string' ? body.userInput.trim() : '';
-      const messages: unknown[] = [{ role: 'system', content: body.systemPrompt.trim() }];
-      if (userInput) messages.push({ role: 'user', content: userInput });
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), timeoutSeconds * 1000);
-      let finalContent: string | null = null;
-
-      try {
-        for (let turn = 0; turn < 5; turn++) {
-          const llmBody: Record<string, unknown> = { model: body.model.trim(), messages };
-          if (mcpTools.length > 0) llmBody.tools = mcpTools;
-
-          const response = await fetch(chatUrl, {
-            method: 'POST', headers: llmHeaders, signal: controller.signal,
-            body: JSON.stringify(llmBody),
-          });
-          if (!response.ok) {
-            res.status(502).json({ ok: false, error: `LLM error (${response.status})` }); return;
-          }
-
-          const parsed = JSON.parse(await response.text()) as unknown;
-          if (!isRecord(parsed) || !Array.isArray(parsed.choices) || !parsed.choices.length) break;
-
-          const choice = parsed.choices[0] as unknown;
-          if (!isRecord(choice) || !isRecord(choice.message)) break;
-          const msg = choice.message;
-          messages.push(msg);
-
-          // Tool calls requested by LLM
-          if (Array.isArray(msg.tool_calls) && msg.tool_calls.length > 0 && mcpEndpoint) {
-            for (const tc of msg.tool_calls as unknown[]) {
-              if (!isRecord(tc) || !isRecord(tc.function)) continue;
-              const fnName = typeof tc.function.name === 'string' ? tc.function.name : '';
-              const fnArgs = typeof tc.function.arguments === 'string'
-                ? JSON.parse(tc.function.arguments) as unknown
-                : (tc.function.arguments ?? {});
-              let toolResult = '';
-              try {
-                const mcpResult = await callMcp(mcpEndpoint, 'tools/call', { name: fnName, arguments: fnArgs });
-                if (isRecord(mcpResult) && Array.isArray(mcpResult.content)) {
-                  toolResult = (mcpResult.content as unknown[])
-                    .filter((c) => isRecord(c) && typeof c.text === 'string')
-                    .map((c) => (c as Record<string, unknown>).text as string)
-                    .join('\n');
-                } else {
-                  toolResult = JSON.stringify(mcpResult);
-                }
-              } catch (e) {
-                toolResult = `Tool error: ${e instanceof Error ? e.message : String(e)}`;
-              }
-              messages.push({ role: 'tool', tool_call_id: tc.id ?? '', content: toolResult });
-            }
-            continue; // next turn: send tool results back to LLM
-          }
-
-          // Final text response
-          if (typeof msg.content === 'string' && msg.content.trim()) {
-            finalContent = msg.content;
-          }
-          break;
-        }
-      } finally {
-        clearTimeout(timer);
-      }
-
-      if (finalContent !== null) {
-        res.json({ ok: true, content: finalContent });
-      } else {
-        res.status(502).json({ ok: false, error: 'Agent did not produce a response' });
-      }
+      const content = await runAgent({
+        endpoint: body.endpoint,
+        token: typeof body.token === 'string' ? body.token : '',
+        model: body.model,
+        systemPrompt: body.systemPrompt,
+        userInput: typeof body.userInput === 'string' ? body.userInput : '',
+        timeout: clamp(safeFiniteNumber(body.timeout, 180), 1, 600),
+        mcpEndpoint: typeof body.mcpEndpoint === 'string' ? body.mcpEndpoint : '',
+        expectedOutputMarker:
+          typeof body.expectedOutputMarker === 'string' ? body.expectedOutputMarker : '',
+      });
+      res.json({ ok: true, content });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Agent run failed';
       res.status(400).json({ ok: false, error: message });

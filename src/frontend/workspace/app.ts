@@ -32,6 +32,9 @@ interface EntityConfig {
   description: string;
   workspaceFolder: string;
   systemPrompt: string;
+  requiresUserInput: boolean;
+  userInputDescription: string;
+  expectedOutputMarker: string;
 }
 
 interface Entity {
@@ -144,13 +147,9 @@ const testNodeButton = document.getElementById(
 const loadModelsButton = document.getElementById(
   "loadModelsButton",
 ) as HTMLButtonElement;
-const runAgentButton = document.getElementById(
-  "runAgentButton",
+const closePanelButton = document.getElementById(
+  "closePanelButton",
 ) as HTMLButtonElement;
-const clearAgentButton = document.getElementById(
-  "clearAgentButton",
-) as HTMLButtonElement;
-const agentResponses = document.getElementById("agentResponses") as HTMLElement;
 const deleteNodeButton = document.getElementById(
   "deleteNodeButton",
 ) as HTMLButtonElement;
@@ -178,6 +177,24 @@ const cancelDeleteButton = document.getElementById(
 const confirmDeleteButton = document.getElementById(
   "confirmDeleteButton",
 ) as HTMLButtonElement;
+const agentRunOverlay = document.getElementById(
+  "agentRunOverlay",
+) as HTMLElement;
+const agentRunTitle = document.getElementById("agentRunTitle") as HTMLElement;
+const agentRunHint = document.getElementById("agentRunHint") as HTMLElement;
+const agentRunInputField = document.getElementById(
+  "agentRunInputField",
+) as HTMLElement;
+const agentRunInput = document.getElementById(
+  "agentRunInput",
+) as HTMLTextAreaElement;
+const agentRunResult = document.getElementById("agentRunResult") as HTMLElement;
+const cancelAgentRunButton = document.getElementById(
+  "cancelAgentRunButton",
+) as HTMLButtonElement;
+const executeAgentRunButton = document.getElementById(
+  "executeAgentRunButton",
+) as HTMLButtonElement;
 const fallbackPanelHost = document.getElementById(
   "fallbackPanelHost",
 ) as HTMLElement;
@@ -186,13 +203,16 @@ const configSurface = document.getElementById(
 ) as HTMLFormElement;
 const form = configSurface;
 const workspaceToast = document.getElementById("workspaceToast") as HTMLElement;
-const workspaceToastIcon = document.getElementById("workspaceToastIcon") as HTMLElement;
+const workspaceToastIcon = document.getElementById(
+  "workspaceToastIcon",
+) as HTMLElement;
 const workspaceToastMessage = document.getElementById(
   "workspaceToastMessage",
 ) as HTMLElement;
 let toastTimerId: number | null = null;
 let savedAgentLabel: string | null = null;
 let savedAgentFolder: string | null = null;
+let agentRunTargetId: string | null = null;
 
 const fields = {
   name: document.getElementById("nodeName") as HTMLInputElement,
@@ -200,9 +220,7 @@ const fields = {
   endpoint: document.getElementById("nodeEndpoint") as HTMLInputElement,
   token: document.getElementById("nodeToken") as HTMLInputElement,
   model: document.getElementById("nodeModel") as HTMLSelectElement,
-  workspaceField: document.getElementById(
-    "agentWorkspaceField",
-  ) as HTMLElement,
+  workspaceField: document.getElementById("agentWorkspaceField") as HTMLElement,
   workspaceFolder: document.getElementById(
     "nodeWorkspaceFolder",
   ) as HTMLInputElement,
@@ -214,8 +232,21 @@ const fields = {
   llmFields: document.getElementById("llmFields") as HTMLElement,
   mcpInventory: document.getElementById("mcpInventory") as HTMLElement,
   agentSection: document.getElementById("agentSection") as HTMLElement,
-  systemPrompt: document.getElementById("nodeSystemPrompt") as HTMLTextAreaElement,
-  userInput: document.getElementById("nodeUserInput") as HTMLTextAreaElement,
+  systemPrompt: document.getElementById(
+    "nodeSystemPrompt",
+  ) as HTMLTextAreaElement,
+  requiresUserInput: document.getElementById(
+    "nodeRequiresUserInput",
+  ) as HTMLInputElement,
+  userInputDescriptionField: document.getElementById(
+    "agentUserInputDescriptionField",
+  ) as HTMLElement,
+  userInputDescription: document.getElementById(
+    "nodeUserInputDescription",
+  ) as HTMLTextAreaElement,
+  expectedOutputMarker: document.getElementById(
+    "nodeExpectedOutputMarker",
+  ) as HTMLInputElement,
 };
 
 const initialEntities: Entity[] = [
@@ -292,7 +323,6 @@ fitButton.addEventListener("click", () => {
   scheduleWorkspaceSave();
   scheduleRender();
 });
-
 
 canvas.addEventListener("pointerdown", (event) => {
   if (event.target !== canvas) {
@@ -398,6 +428,10 @@ form.addEventListener("input", (event) => {
   scheduleRender();
 });
 
+closePanelButton.addEventListener("click", () => {
+  selectEntity(null);
+});
+
 deleteNodeButton.addEventListener("click", (event) => {
   event.preventDefault();
   event.stopPropagation();
@@ -425,6 +459,12 @@ confirmDeleteButton.addEventListener("click", () => {
 });
 
 testNodeButton.addEventListener("click", () => {
+  const selected = selectedEntity();
+  if (selected?.kind === "agent") {
+    openAgentRunDialog();
+    return;
+  }
+
   void testSelectedLlmConnection();
 });
 
@@ -436,13 +476,18 @@ fields.name.addEventListener("blur", () => {
   const selected = selectedEntity();
   if (!selected || selected.kind !== "agent") return;
   const newName = fields.name.value.trim();
-  if (!newName || !savedAgentLabel || !savedAgentFolder || newName === savedAgentLabel) return;
+  if (
+    !newName ||
+    !savedAgentLabel ||
+    !savedAgentFolder ||
+    newName === savedAgentLabel
+  )
+    return;
 
   const newFolder = workspaceFolderForProvider(newName);
   if (newFolder === savedAgentFolder) return; // slug identique, pas de renommage nécessaire
 
-  renameConfirmMessage.textContent =
-    `Renommer le dossier "${savedAgentFolder}" en "${newFolder}" ?`;
+  renameConfirmMessage.textContent = `Renommer le dossier "${savedAgentFolder}" en "${newFolder}" ?`;
   renameConfirmOverlay.hidden = false;
   cancelRenameButton.focus();
 });
@@ -479,13 +524,18 @@ fields.model.addEventListener("change", () => {
   }
 });
 
-runAgentButton.addEventListener("click", () => {
-  void runAgent();
+cancelAgentRunButton.addEventListener("click", () => {
+  closeAgentRunDialog();
 });
 
-clearAgentButton.addEventListener("click", () => {
-  agentResponses.innerHTML = "";
-  agentResponses.hidden = true;
+executeAgentRunButton.addEventListener("click", () => {
+  void executeAgentRunFromDialog();
+});
+
+agentRunOverlay.addEventListener("click", (event) => {
+  if (event.target === agentRunOverlay) {
+    closeAgentRunDialog();
+  }
 });
 
 void initializeWorkspace();
@@ -501,6 +551,7 @@ function isolateConfirmEvents() {
   for (const type of PANEL_EVENT_TYPES) {
     deleteConfirmOverlay.addEventListener(type, stopPanelEventPropagation);
     renameConfirmOverlay.addEventListener(type, stopPanelEventPropagation);
+    agentRunOverlay.addEventListener(type, stopPanelEventPropagation);
   }
 }
 
@@ -612,6 +663,9 @@ function hydrateEntity(input: unknown): Entity | null {
         stringValue(config.workspaceFolder) ||
         (kind === "agent" ? workspaceFolderForProvider(label) : ""),
       systemPrompt: stringValue(config.systemPrompt),
+      requiresUserInput: config.requiresUserInput === true,
+      userInputDescription: stringValue(config.userInputDescription),
+      expectedOutputMarker: stringValue(config.expectedOutputMarker),
     },
   };
 }
@@ -664,7 +718,10 @@ function showLoadingToast(message: string) {
   workspaceToast.hidden = false;
 }
 
-function showSaveToast(message: string, state: "success" | "error" = "success") {
+function showSaveToast(
+  message: string,
+  state: "success" | "error" = "success",
+) {
   if (toastTimerId) {
     clearTimeout(toastTimerId);
   }
@@ -736,8 +793,12 @@ function createEntity(id, label, kind, parentId) {
       model: "",
       timeout: 180,
       description: defaultDescription(kind),
-      workspaceFolder: kind === "agent" ? workspaceFolderForProvider(label) : "",
+      workspaceFolder:
+        kind === "agent" ? workspaceFolderForProvider(label) : "",
       systemPrompt: "",
+      requiresUserInput: false,
+      userInputDescription: "",
+      expectedOutputMarker: "",
     },
   };
 }
@@ -751,7 +812,7 @@ function cloneEntities(entities) {
 
 function defaultEndpoint(id, kind) {
   if (kind === "llm") {
-    return "http://localhost:1234/v1";
+    return "http://localhost:11434";
   }
   if (kind === "mcp") {
     return "http://localhost:4321/mcp";
@@ -1080,7 +1141,11 @@ function selectEntity(id) {
   state.selectedId = id;
   const entity = id ? entityById(id) : null;
   savedAgentLabel = entity?.kind === "agent" ? entity.label : null;
-  savedAgentFolder = entity?.kind === "agent" ? (entity.config.workspaceFolder || workspaceFolderForProvider(entity.label)) : null;
+  savedAgentFolder =
+    entity?.kind === "agent"
+      ? entity.config.workspaceFolder ||
+        workspaceFolderForProvider(entity.label)
+      : null;
   layoutGraph();
   syncCameraForPanelChange(hadSelection, Boolean(id), true);
   syncPanelFromSelection();
@@ -1133,6 +1198,7 @@ function syncPanelFromSelection() {
 
   if (!selected) {
     addButton.title = "Add LLM provider";
+    testNodeButton.textContent = "Test";
     testNodeButton.hidden = true;
     testNodeButton.disabled = true;
     return;
@@ -1149,14 +1215,22 @@ function syncPanelFromSelection() {
   fields.description.value = selected.config.description;
   fields.typeBadge.textContent = labelForBadge(selected.kind);
   fields.kind.disabled = true;
-  fields.llmFields.hidden = selected.kind === "mcp" || selected.kind === "agent";
+  fields.llmFields.hidden =
+    selected.kind === "mcp" || selected.kind === "agent";
   fields.mcpInventory.hidden = selected.kind !== "mcp";
   fields.agentSection.hidden = selected.kind !== "agent";
   fields.systemPrompt.value = selected.config.systemPrompt;
+  fields.requiresUserInput.checked = selected.config.requiresUserInput;
+  syncUserInputDescriptionVisibility();
+  fields.userInputDescription.value = selected.config.userInputDescription;
+  fields.expectedOutputMarker.value = selected.config.expectedOutputMarker;
   deleteNodeButton.hidden = isProtectedEntity(selected.id);
-  deleteNodeButton.disabled = isProtectedEntity(selected.id);
-  testNodeButton.hidden = selected.kind !== "llm";
-  testNodeButton.disabled = selected.kind !== "llm" || !selected.config.model;
+  testNodeButton.textContent = "Test";
+  testNodeButton.hidden = selected.kind !== "llm" && selected.kind !== "agent";
+  testNodeButton.disabled =
+    selected.kind === "llm"
+      ? !selected.config.model
+      : selected.kind !== "agent";
   addButton.title =
     selected.kind === "llm" || entityById(selected.parentId)?.kind === "llm"
       ? "Add agent"
@@ -1177,7 +1251,28 @@ function syncSelectedFromForm() {
   selected.config.timeout = Number(fields.timeout.value || 30);
   selected.config.description = fields.description.value;
   selected.config.systemPrompt = fields.systemPrompt.value;
+  selected.config.requiresUserInput = fields.requiresUserInput.checked;
+  selected.config.userInputDescription = fields.userInputDescription.value;
+  selected.config.expectedOutputMarker = fields.expectedOutputMarker.value;
+  syncUserInputDescriptionVisibility();
   fields.typeBadge.textContent = labelForBadge(selected.kind);
+
+  // Propagate model + timeout to child agents
+  if (selected.kind === "llm") {
+    for (const entity of state.entities) {
+      if (entity.parentId === selected.id && entity.kind === "agent") {
+        entity.config.model = selected.config.model;
+        entity.config.timeout = selected.config.timeout;
+      }
+    }
+  }
+}
+
+function syncUserInputDescriptionVisibility() {
+  const shouldShow =
+    selectedEntity()?.kind === "agent" && fields.requiresUserInput.checked;
+  fields.userInputDescriptionField.hidden = !shouldShow;
+  fields.userInputDescription.required = shouldShow;
 }
 
 function restoreModelSelect(savedModel: string) {
@@ -1192,7 +1287,7 @@ function restoreModelSelect(savedModel: string) {
   fields.model.value = savedModel || (existing[0] ?? "");
 }
 
-async function runAgent() {
+function openAgentRunDialog() {
   const selected = selectedEntity();
   if (!selected || selected.kind !== "agent") return;
 
@@ -1211,9 +1306,60 @@ async function runAgent() {
     showSaveToast("Write a system prompt first.", "error");
     return;
   }
+  if (
+    selected.config.requiresUserInput &&
+    !selected.config.userInputDescription.trim()
+  ) {
+    showSaveToast("Describe the required user input first.", "error");
+    return;
+  }
 
-  runAgentButton.disabled = true;
-  showLoadingToast("Running agent…");
+  agentRunTargetId = selected.id;
+  agentRunTitle.textContent = `Test ${selected.label}`;
+  agentRunHint.textContent = selected.config.requiresUserInput
+    ? selected.config.userInputDescription
+    : "Run this agent with its configured system prompt.";
+  agentRunInputField.hidden = !selected.config.requiresUserInput;
+  agentRunInput.required = selected.config.requiresUserInput;
+  agentRunInput.value = "";
+  agentRunResult.hidden = true;
+  agentRunResult.textContent = "";
+  executeAgentRunButton.disabled = false;
+  executeAgentRunButton.textContent = "Run";
+  agentRunOverlay.hidden = false;
+  if (selected.config.requiresUserInput) {
+    window.setTimeout(() => agentRunInput.focus(), 0);
+  } else {
+    window.setTimeout(() => executeAgentRunButton.focus(), 0);
+  }
+}
+
+function closeAgentRunDialog() {
+  agentRunOverlay.hidden = true;
+  agentRunTargetId = null;
+}
+
+async function executeAgentRunFromDialog() {
+  if (agentRunInput.required && !agentRunInput.value.trim()) {
+    agentRunInput.reportValidity();
+    return;
+  }
+
+  const selected = agentRunTargetId ? entityById(agentRunTargetId) : null;
+  if (!selected || selected.kind !== "agent") {
+    showAgentRunResult("error", "The selected agent is no longer available.");
+    return;
+  }
+
+  const llm = entityById(selected.parentId ?? "");
+  if (!llm || llm.kind !== "llm") {
+    showAgentRunResult("error", "No parent LLM found for this agent.");
+    return;
+  }
+
+  executeAgentRunButton.disabled = true;
+  executeAgentRunButton.textContent = "Running…";
+  showAgentRunResult("loading", "Running agent…");
 
   const mcpEntity = state.entities.find((e) => e.kind === "mcp");
 
@@ -1222,30 +1368,31 @@ async function runAgent() {
     token: llm.config.token,
     model: llm.config.model,
     systemPrompt: selected.config.systemPrompt,
-    userInput: fields.userInput.value.trim() || undefined,
+    userInput: agentRunInput.value.trim() || undefined,
     timeout: llm.config.timeout,
     mcpEndpoint: mcpEntity?.config.endpoint || undefined,
+    expectedOutputMarker: selected.config.expectedOutputMarker || undefined,
   });
 
-  runAgentButton.disabled = false;
+  executeAgentRunButton.disabled = false;
+  executeAgentRunButton.textContent = "Run";
 
   if (result.ok && result.content) {
-    agentResponses.hidden = false;
-    const item = document.createElement("div");
-    item.className = "agent-response-item";
-    const meta = document.createElement("div");
-    meta.className = "agent-response-meta";
-    meta.textContent = new Date().toLocaleTimeString();
-    const content = document.createElement("div");
-    content.textContent = result.content;
-    item.appendChild(meta);
-    item.appendChild(content);
-    agentResponses.appendChild(item);
-    agentResponses.scrollTop = agentResponses.scrollHeight;
+    showAgentRunResult("success", result.content);
     showSaveToast("Agent responded.", "success");
   } else {
+    showAgentRunResult("error", result.error ?? "Agent failed.");
     showSaveToast(result.error ?? "Agent failed.", "error");
   }
+}
+
+function showAgentRunResult(
+  state: "loading" | "success" | "error",
+  message: string,
+) {
+  agentRunResult.hidden = false;
+  agentRunResult.dataset.state = state;
+  agentRunResult.textContent = message;
 }
 
 async function loadModelsForSelect() {
@@ -1263,7 +1410,10 @@ async function loadModelsForSelect() {
   loadModelsButton.disabled = true;
   fields.model.disabled = true;
 
-  const result = await listLlmModels({ endpoint, token: selected.config.token });
+  const result = await listLlmModels({
+    endpoint,
+    token: selected.config.token,
+  });
 
   loadModelsButton.classList.remove("loading");
   loadModelsButton.disabled = false;
@@ -1287,7 +1437,9 @@ async function loadModelsForSelect() {
     : result.models[0];
   selected.config.model = fields.model.value;
   testNodeButton.disabled = !fields.model.value;
-  showSaveToast(`${result.models.length} model${result.models.length === 1 ? "" : "s"} loaded.`);
+  showSaveToast(
+    `${result.models.length} model${result.models.length === 1 ? "" : "s"} loaded.`,
+  );
   scheduleRender();
 }
 
@@ -1313,7 +1465,10 @@ async function testSelectedLlmConnection() {
   if (result.ok) {
     showSaveToast(result.detail ?? "Connection OK", "success");
   } else {
-    showSaveToast(result.error || `Connection failed (${result.status || "no status"})`, "error");
+    showSaveToast(
+      result.error || `Connection failed (${result.status || "no status"})`,
+      "error",
+    );
   }
   scheduleRender();
 }
@@ -1587,7 +1742,8 @@ function syncCameraForPanelChange(hadSelection, hasSelection, animate) {
       // Panel was closed → center selected node in the left area
       const selected = selectedEntity();
       if (selected) {
-        const panelReserve = panelWidthForViewport(canvas.clientWidth) + PANEL_GAP;
+        const panelReserve =
+          panelWidthForViewport(canvas.clientWidth) + PANEL_GAP;
         const availableWidth = canvas.clientWidth - panelReserve;
         const targetX = availableWidth / 2 - selected.x * state.zoom;
         const appliedDelta = targetX - state.cameraX;

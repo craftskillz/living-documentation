@@ -51,9 +51,7 @@ const addButton = document.getElementById("addButton");
 const fitButton = document.getElementById("fitButton");
 const testNodeButton = document.getElementById("testNodeButton");
 const loadModelsButton = document.getElementById("loadModelsButton");
-const runAgentButton = document.getElementById("runAgentButton");
-const clearAgentButton = document.getElementById("clearAgentButton");
-const agentResponses = document.getElementById("agentResponses");
+const closePanelButton = document.getElementById("closePanelButton");
 const deleteNodeButton = document.getElementById("deleteNodeButton");
 const renameConfirmOverlay = document.getElementById("renameConfirmOverlay");
 const renameConfirmMessage = document.getElementById("renameConfirmMessage");
@@ -63,6 +61,14 @@ const deleteConfirmOverlay = document.getElementById("deleteConfirmOverlay");
 const deleteConfirmMessage = document.getElementById("deleteConfirmMessage");
 const cancelDeleteButton = document.getElementById("cancelDeleteButton");
 const confirmDeleteButton = document.getElementById("confirmDeleteButton");
+const agentRunOverlay = document.getElementById("agentRunOverlay");
+const agentRunTitle = document.getElementById("agentRunTitle");
+const agentRunHint = document.getElementById("agentRunHint");
+const agentRunInputField = document.getElementById("agentRunInputField");
+const agentRunInput = document.getElementById("agentRunInput");
+const agentRunResult = document.getElementById("agentRunResult");
+const cancelAgentRunButton = document.getElementById("cancelAgentRunButton");
+const executeAgentRunButton = document.getElementById("executeAgentRunButton");
 const fallbackPanelHost = document.getElementById("fallbackPanelHost");
 const configSurface = document.getElementById("configSurface");
 const form = configSurface;
@@ -72,6 +78,7 @@ const workspaceToastMessage = document.getElementById("workspaceToastMessage");
 let toastTimerId = null;
 let savedAgentLabel = null;
 let savedAgentFolder = null;
+let agentRunTargetId = null;
 const fields = {
     name: document.getElementById("nodeName"),
     kind: document.getElementById("nodeKind"),
@@ -87,7 +94,10 @@ const fields = {
     mcpInventory: document.getElementById("mcpInventory"),
     agentSection: document.getElementById("agentSection"),
     systemPrompt: document.getElementById("nodeSystemPrompt"),
-    userInput: document.getElementById("nodeUserInput"),
+    requiresUserInput: document.getElementById("nodeRequiresUserInput"),
+    userInputDescriptionField: document.getElementById("agentUserInputDescriptionField"),
+    userInputDescription: document.getElementById("nodeUserInputDescription"),
+    expectedOutputMarker: document.getElementById("nodeExpectedOutputMarker"),
 };
 const initialEntities = [
     createEntity("root", "Living AI Documentation", "system", null),
@@ -236,6 +246,9 @@ form.addEventListener("input", (event) => {
     }
     scheduleRender();
 });
+closePanelButton.addEventListener("click", () => {
+    selectEntity(null);
+});
 deleteNodeButton.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -259,6 +272,11 @@ confirmDeleteButton.addEventListener("click", () => {
     closeDeleteConfirmation();
 });
 testNodeButton.addEventListener("click", () => {
+    const selected = selectedEntity();
+    if (selected?.kind === "agent") {
+        openAgentRunDialog();
+        return;
+    }
     void testSelectedLlmConnection();
 });
 loadModelsButton.addEventListener("click", () => {
@@ -310,12 +328,16 @@ fields.model.addEventListener("change", () => {
         selected.config.model = fields.model.value;
     }
 });
-runAgentButton.addEventListener("click", () => {
-    void runAgent();
+cancelAgentRunButton.addEventListener("click", () => {
+    closeAgentRunDialog();
 });
-clearAgentButton.addEventListener("click", () => {
-    agentResponses.innerHTML = "";
-    agentResponses.hidden = true;
+executeAgentRunButton.addEventListener("click", () => {
+    void executeAgentRunFromDialog();
+});
+agentRunOverlay.addEventListener("click", (event) => {
+    if (event.target === agentRunOverlay) {
+        closeAgentRunDialog();
+    }
 });
 void initializeWorkspace();
 function isolatePanelEvents() {
@@ -328,6 +350,7 @@ function isolateConfirmEvents() {
     for (const type of PANEL_EVENT_TYPES) {
         deleteConfirmOverlay.addEventListener(type, stopPanelEventPropagation);
         renameConfirmOverlay.addEventListener(type, stopPanelEventPropagation);
+        agentRunOverlay.addEventListener(type, stopPanelEventPropagation);
     }
 }
 function stopPanelEventPropagation(event) {
@@ -419,6 +442,9 @@ function hydrateEntity(input) {
             workspaceFolder: stringValue(config.workspaceFolder) ||
                 (kind === "agent" ? workspaceFolderForProvider(label) : ""),
             systemPrompt: stringValue(config.systemPrompt),
+            requiresUserInput: config.requiresUserInput === true,
+            userInputDescription: stringValue(config.userInputDescription),
+            expectedOutputMarker: stringValue(config.expectedOutputMarker),
         },
     };
 }
@@ -535,6 +561,9 @@ function createEntity(id, label, kind, parentId) {
             description: defaultDescription(kind),
             workspaceFolder: kind === "agent" ? workspaceFolderForProvider(label) : "",
             systemPrompt: "",
+            requiresUserInput: false,
+            userInputDescription: "",
+            expectedOutputMarker: "",
         },
     };
 }
@@ -813,6 +842,7 @@ function syncPanelFromSelection() {
     fallbackPanelHost.hidden = !hasSelection || supportsHtmlInCanvas;
     if (!selected) {
         addButton.title = "Add LLM provider";
+        testNodeButton.textContent = "Test";
         testNodeButton.hidden = true;
         testNodeButton.disabled = true;
         return;
@@ -832,10 +862,15 @@ function syncPanelFromSelection() {
     fields.mcpInventory.hidden = selected.kind !== "mcp";
     fields.agentSection.hidden = selected.kind !== "agent";
     fields.systemPrompt.value = selected.config.systemPrompt;
+    fields.requiresUserInput.checked = selected.config.requiresUserInput;
+    syncUserInputDescriptionVisibility();
+    fields.userInputDescription.value = selected.config.userInputDescription;
+    fields.expectedOutputMarker.value = selected.config.expectedOutputMarker;
     deleteNodeButton.hidden = isProtectedEntity(selected.id);
-    deleteNodeButton.disabled = isProtectedEntity(selected.id);
-    testNodeButton.hidden = selected.kind !== "llm";
-    testNodeButton.disabled = selected.kind !== "llm" || !selected.config.model;
+    testNodeButton.textContent = "Test";
+    testNodeButton.hidden = selected.kind !== "llm" && selected.kind !== "agent";
+    testNodeButton.disabled =
+        selected.kind === "llm" ? !selected.config.model : selected.kind !== "agent";
     addButton.title =
         selected.kind === "llm" || entityById(selected.parentId)?.kind === "llm"
             ? "Add agent"
@@ -854,7 +889,25 @@ function syncSelectedFromForm() {
     selected.config.timeout = Number(fields.timeout.value || 30);
     selected.config.description = fields.description.value;
     selected.config.systemPrompt = fields.systemPrompt.value;
+    selected.config.requiresUserInput = fields.requiresUserInput.checked;
+    selected.config.userInputDescription = fields.userInputDescription.value;
+    selected.config.expectedOutputMarker = fields.expectedOutputMarker.value;
+    syncUserInputDescriptionVisibility();
     fields.typeBadge.textContent = labelForBadge(selected.kind);
+    // Propagate model + timeout to child agents
+    if (selected.kind === "llm") {
+        for (const entity of state.entities) {
+            if (entity.parentId === selected.id && entity.kind === "agent") {
+                entity.config.model = selected.config.model;
+                entity.config.timeout = selected.config.timeout;
+            }
+        }
+    }
+}
+function syncUserInputDescriptionVisibility() {
+    const shouldShow = selectedEntity()?.kind === "agent" && fields.requiresUserInput.checked;
+    fields.userInputDescriptionField.hidden = !shouldShow;
+    fields.userInputDescription.required = shouldShow;
 }
 function restoreModelSelect(savedModel) {
     const existing = Array.from(fields.model.options).map((o) => o.value);
@@ -867,7 +920,7 @@ function restoreModelSelect(savedModel) {
     }
     fields.model.value = savedModel || (existing[0] ?? "");
 }
-async function runAgent() {
+function openAgentRunDialog() {
     const selected = selectedEntity();
     if (!selected || selected.kind !== "agent")
         return;
@@ -885,37 +938,79 @@ async function runAgent() {
         showSaveToast("Write a system prompt first.", "error");
         return;
     }
-    runAgentButton.disabled = true;
-    showLoadingToast("Running agent…");
+    if (selected.config.requiresUserInput &&
+        !selected.config.userInputDescription.trim()) {
+        showSaveToast("Describe the required user input first.", "error");
+        return;
+    }
+    agentRunTargetId = selected.id;
+    agentRunTitle.textContent = `Test ${selected.label}`;
+    agentRunHint.textContent = selected.config.requiresUserInput
+        ? selected.config.userInputDescription
+        : "Run this agent with its configured system prompt.";
+    agentRunInputField.hidden = !selected.config.requiresUserInput;
+    agentRunInput.required = selected.config.requiresUserInput;
+    agentRunInput.value = "";
+    agentRunResult.hidden = true;
+    agentRunResult.textContent = "";
+    executeAgentRunButton.disabled = false;
+    executeAgentRunButton.textContent = "Run";
+    agentRunOverlay.hidden = false;
+    if (selected.config.requiresUserInput) {
+        window.setTimeout(() => agentRunInput.focus(), 0);
+    }
+    else {
+        window.setTimeout(() => executeAgentRunButton.focus(), 0);
+    }
+}
+function closeAgentRunDialog() {
+    agentRunOverlay.hidden = true;
+    agentRunTargetId = null;
+}
+async function executeAgentRunFromDialog() {
+    if (agentRunInput.required && !agentRunInput.value.trim()) {
+        agentRunInput.reportValidity();
+        return;
+    }
+    const selected = agentRunTargetId ? entityById(agentRunTargetId) : null;
+    if (!selected || selected.kind !== "agent") {
+        showAgentRunResult("error", "The selected agent is no longer available.");
+        return;
+    }
+    const llm = entityById(selected.parentId ?? "");
+    if (!llm || llm.kind !== "llm") {
+        showAgentRunResult("error", "No parent LLM found for this agent.");
+        return;
+    }
+    executeAgentRunButton.disabled = true;
+    executeAgentRunButton.textContent = "Running…";
+    showAgentRunResult("loading", "Running agent…");
     const mcpEntity = state.entities.find((e) => e.kind === "mcp");
     const result = await runAgentPrompt({
         endpoint: llm.config.endpoint,
         token: llm.config.token,
         model: llm.config.model,
         systemPrompt: selected.config.systemPrompt,
-        userInput: fields.userInput.value.trim() || undefined,
+        userInput: agentRunInput.value.trim() || undefined,
         timeout: llm.config.timeout,
         mcpEndpoint: mcpEntity?.config.endpoint || undefined,
+        expectedOutputMarker: selected.config.expectedOutputMarker || undefined,
     });
-    runAgentButton.disabled = false;
+    executeAgentRunButton.disabled = false;
+    executeAgentRunButton.textContent = "Run";
     if (result.ok && result.content) {
-        agentResponses.hidden = false;
-        const item = document.createElement("div");
-        item.className = "agent-response-item";
-        const meta = document.createElement("div");
-        meta.className = "agent-response-meta";
-        meta.textContent = new Date().toLocaleTimeString();
-        const content = document.createElement("div");
-        content.textContent = result.content;
-        item.appendChild(meta);
-        item.appendChild(content);
-        agentResponses.appendChild(item);
-        agentResponses.scrollTop = agentResponses.scrollHeight;
+        showAgentRunResult("success", result.content);
         showSaveToast("Agent responded.", "success");
     }
     else {
+        showAgentRunResult("error", result.error ?? "Agent failed.");
         showSaveToast(result.error ?? "Agent failed.", "error");
     }
+}
+function showAgentRunResult(state, message) {
+    agentRunResult.hidden = false;
+    agentRunResult.dataset.state = state;
+    agentRunResult.textContent = message;
 }
 async function loadModelsForSelect() {
     const selected = selectedEntity();

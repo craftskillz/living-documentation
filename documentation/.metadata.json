@@ -504,19 +504,39 @@
   "ADRS/2026_05_30_22_14_[FRONTEND]_workspace_configuration_graph_avec_agents_llm_et_tool_use_mcp": [
     {
       "path": "src/frontend/workspace/app.ts",
-      "hash": "5dc419da4e8cd847cd2f8dbacd077664d4e030133163680db77a27d406e9c05a"
+      "hash": "cb07d48c8eed7d29575bd0b897ea01fcb217010a45cb103c0075874077b954e2"
     },
     {
       "path": "src/frontend/workspace/persistence.ts",
-      "hash": "46c75bf7e186f84ccd2b577be1e1c3e15572ec1532c812b6b6f4ba2f279d1b61"
+      "hash": "0ee0a98a7341580c5fc41b896a7d18e72571941100f8029a38842bc06e659b03"
     },
     {
       "path": "src/frontend/workspace/index.html",
-      "hash": "7fdb942f79bafcc14b7e79ea41819f8ec0804ccd94f128b3264235ee17bce672"
+      "hash": "f30bb417bfa34d4102f9da21e477d991ca135676b4d904c57ad4a2acb5b56ef3"
     },
     {
       "path": "src/routes/workspace.ts",
-      "hash": "c0b603c5e6c505b133b2f9aff95536d0a5a36c97fecda6fc7f8b70809b04698f"
+      "hash": "bba3805c2e7338fe9e37711f86a6eb97f65ff0454941f959395e770db6db1dc1"
+    },
+    {
+      "path": "src/frontend/agents.js",
+      "hash": "13d05535a0f5be5deb77d785d6084db931944f8f335f194b79361c5fbbff913a"
+    },
+    {
+      "path": "src/frontend/index.html",
+      "hash": "d22827e8b033f8e0c0e89ea133f732739c0c6b5530af88c258b7cee0cffe3034"
+    },
+    {
+      "path": "src/frontend/i18n/en.json",
+      "hash": "af0bf834d4dcfb9d3f57bbd6883ae4cf168896030821cdee58815aef2fe6f6de"
+    },
+    {
+      "path": "src/frontend/i18n/fr.json",
+      "hash": "9ba1d92ce38492f82ae3799771e79e263f4cbdf14ba82cf39270dbe6ad971bc3"
+    },
+    {
+      "path": "src/frontend/workspace/styles.css",
+      "hash": "6ee8a4061b7840e69637c4998e82a3f85320c9d4bf2b5a8c07748caeac7c691c"
     }
   ]
 }
