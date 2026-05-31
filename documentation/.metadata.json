@@ -590,5 +590,39 @@
       "path": "src/frontend/diagram.html",
       "hash": "ae5f1fd4bc047e70e4e882cc6419dc7003178099a096bd2dbac7c676d1d65faf"
     }
+  ],
+  "ADRS/2026_05_31_15_34_[ADR]_synchronisation_localstorage_et_diagramdefaults_coherence_des_styles_de_creation": [
+    {
+      "path": "src/frontend/diagram/defaults-modal.js",
+      "hash": "58152134721bc48b2cd6aff783c4928c7b73cdf0db0d6d66ff7b1789242d5b70"
+    },
+    {
+      "path": "src/frontend/diagram/node-panel.js",
+      "hash": "c3d6caff5e7e221d7669bf6cd8e0e4145b01861273847214126adc7a55be85f4"
+    },
+    {
+      "path": "src/frontend/diagram/edge-panel.js",
+      "hash": "b2ddc37fb5b6f8c8da864fbef8d32b53380a797181c1ed34511896b0ea75e990"
+    }
+  ],
+  "ADRS/2026_05_31_15_34_[ADR]_persistance_et_application_des_styles_de_fleches_tous_types_daretes_et_defaults_a_la_creation": [
+    {
+      "path": "src/frontend/diagram/edge-panel.js",
+      "hash": "b2ddc37fb5b6f8c8da864fbef8d32b53380a797181c1ed34511896b0ea75e990"
+    },
+    {
+      "path": "src/frontend/diagram/network.js",
+      "hash": "3c74df3c34df86a2b9c91a8bd0894975dc527347a61a425480c5543656cb5cfa"
+    },
+    {
+      "path": "src/frontend/diagram.html",
+      "hash": "58126f89d4eeefb3232481f2141c172b633654e8ab4ce1a0c06d4d52a1cacb13"
+    }
+  ],
+  "ADRS/2026_05_31_15_35_[ADR]_diagramdefaults_dans_storage_defaults_valeurs_embarquees_dans_le_template_projet": [
+    {
+      "path": "src/lib/config.ts",
+      "hash": "f297004c1fcc5310d4aaa5aea27def8eb920706409894ca8ab3c9aa30fb070f2"
+    }
   ]
 }
