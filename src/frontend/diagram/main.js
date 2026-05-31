@@ -3,10 +3,10 @@
 
 import { st, markDirty }      from './state.js';
 import { TOOL_BTN_MAP }       from './constants.js';
-import { showNodePanel, hideNodePanel, setNodeColor, setNodeBgOpacity, changeNodeFontSize, setTextAlign, setTextValign, setCustomShapeLabelPlacement, changeZOrder, activateStamp, cancelStamp, stepRotate, toggleNodeLock } from './node-panel.js';
+import { showNodePanel, hideNodePanel, setNodeColor, setNodeBgOpacity, changeNodeFontSize, setTextAlign, setTextValign, setCustomShapeLabelPlacement, changeZOrder, activateStamp, cancelStamp, stepRotate, toggleNodeLock, saveShapeAsDefault } from './node-panel.js';
 import { groupNodes, ungroupNodes } from './groups.js';
 import { showLinkPanel, hideLinkPanel } from './link-panel.js';
-import { hideEdgePanel, setEdgeArrow, setEdgeDashes, changeEdgeFontSize, stepEdgeLabelRotation, clearEdgePorts, setEdgeColor, changeEdgeWidth, toggleEdgeLock, resetEdgeLabelWidth, stepEdgeLabelOffset, resetEdgeLabelOffset } from './edge-panel.js';
+import { hideEdgePanel, setEdgeArrow, setEdgeDashes, changeEdgeFontSize, stepEdgeLabelRotation, clearEdgePorts, setEdgeColor, changeEdgeWidth, toggleEdgeLock, resetEdgeLabelWidth, stepEdgeLabelOffset, resetEdgeLabelOffset, saveEdgeAsDefault } from './edge-panel.js';
 import { startLabelEdit, startEdgeLabelEdit, hideLabelInput } from './label-editor.js';
 import { hideSelectionOverlay, toggleResizeMode } from './selection-overlay.js';
 import { toggleGrid }          from './grid.js';
@@ -276,6 +276,8 @@ document.getElementById('btnEdgeLock').addEventListener('click', toggleEdgeLock)
 document.getElementById('btnEdgeWidthDecrease').addEventListener('click', () => changeEdgeWidth(-0.5));
 document.getElementById('btnEdgeWidthIncrease').addEventListener('click', () => changeEdgeWidth(0.5));
 // Edge color is handled by #edgeColorSwatch via initEdgeColorSwatch() in edge-panel.js
+document.getElementById('btnSaveShapeDefault').addEventListener('click', saveShapeAsDefault);
+document.getElementById('btnSaveEdgeDefault').addEventListener('click', saveEdgeAsDefault);
 
 // ── Keyboard shortcuts ────────────────────────────────────────────────────────
 

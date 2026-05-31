@@ -60,7 +60,12 @@ function persistNodeStyle() {
 export function getLastNodeStyle(shapeType) {
   try {
     const stored = JSON.parse(localStorage.getItem('ld-node-style-' + shapeType));
-    if (stored) return stored;
+    if (stored) {
+      // Merge with defaults: stored values override defaults, but null/undefined
+      // values in stored fall back to defaults (handles legacy keys without width/height).
+      const clean = Object.fromEntries(Object.entries(stored).filter(([, v]) => v != null));
+      return { ...getShapeDefaults(shapeType), ...clean };
+    }
   } catch { /* ignore */ }
   return getShapeDefaults(shapeType);
 }
@@ -204,6 +209,55 @@ export function initNodeColorSwatch() {
       setNodeColor(entry.value);
     });
   });
+}
+
+export async function saveShapeAsDefault() {
+  const firstId = (st.selectedNodeIds || []).find((id) => {
+    const n = st.nodes && st.nodes.get(id);
+    return n && n.shapeType !== 'anchor' && n.shapeType !== CUSTOM_SHAPE_TYPE;
+  });
+  if (!firstId) return;
+  const n = st.nodes.get(firstId);
+  if (!n || !n.shapeType) return;
+
+  const { getDiagramDefaults } = await import('./defaults-modal.js');
+  const current = getDiagramDefaults() || {};
+  const shapes = Object.assign({}, current.shapes || {});
+  shapes[n.shapeType] = {
+    width:    n.nodeWidth  || SHAPE_DEFAULTS[n.shapeType]?.[0] || 100,
+    height:   n.nodeHeight || SHAPE_DEFAULTS[n.shapeType]?.[1] || 40,
+    fontSize: n.fontSize   || 13,
+    colorKey: n.colorKey   || 'c-gray',
+  };
+  const updated = { arrows: current.arrows || null, shapes };
+
+  try {
+    const res = await fetch('/api/config', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ diagramDefaults: updated }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const { initDiagramDefaults } = await import('./defaults-modal.js');
+    initDiagramDefaults({ diagramDefaults: updated });
+    // Sync localStorage so the next creation uses the new default immediately
+    localStorage.setItem('ld-node-style-' + n.shapeType, JSON.stringify({
+      colorKey:   shapes[n.shapeType].colorKey,
+      fontSize:   shapes[n.shapeType].fontSize,
+      width:      shapes[n.shapeType].width,
+      height:     shapes[n.shapeType].height,
+      textAlign:  null,
+      textValign: null,
+    }));
+    // Visual feedback: flash the button orange briefly
+    const btn = document.getElementById('btnSaveShapeDefault');
+    if (btn) {
+      btn.classList.add('tool-active');
+      setTimeout(() => btn.classList.remove('tool-active'), 800);
+    }
+  } catch (err) {
+    console.error('Failed to save shape default', err);
+  }
 }
 
 export function toggleNodeLock() {

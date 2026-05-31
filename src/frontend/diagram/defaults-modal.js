@@ -6,6 +6,11 @@
 import { t } from './t.js';
 import { NODE_COLORS, DEFAULT_NODE_PALETTE } from './constants.js';
 import { openColorPickerPopup, closeAllColorPickerPopups } from './color-picker.js';
+import { st } from './state.js';
+
+function effectiveNodeColor(key) {
+  return st.nodeColorOverrides[key] || NODE_COLORS[key] || NODE_COLORS['c-gray'];
+}
 
 const SHAPE_KEYS = ['box', 'ellipse', 'circle', 'database', 'actor', 'post-it', 'text-free'];
 
@@ -46,13 +51,15 @@ export function getArrowDefaults() {
 
 // ── Modal ─────────────────────────────────────────────────────────────────────
 
-const NODE_COLOR_ENTRIES = DEFAULT_NODE_PALETTE.map((key) => {
-  const c = NODE_COLORS[key];
-  return { value: key, bg: c.bg, border: c.border, label: key.replace('c-', '') };
-});
+function buildNodeColorEntries() {
+  return DEFAULT_NODE_PALETTE.map((key) => {
+    const c = effectiveNodeColor(key);
+    return { value: key, bg: c.bg, border: c.border, label: key.replace('c-', '') };
+  });
+}
 
 function buildColorSwatch(selectedKey, shape) {
-  const c = NODE_COLORS[selectedKey] || NODE_COLORS['c-gray'];
+  const c = effectiveNodeColor(selectedKey);
   return `
     <button type="button" class="ld-color-swatch-trigger" data-shape="${shape}"
       style="width:2rem;height:1.4rem;border-radius:0.25rem;border:2px solid ${c.border};background:${c.bg};cursor:pointer;flex-shrink:0;"
@@ -208,8 +215,8 @@ function renderModal() {
       e.stopPropagation();
       const shape = trigger.dataset.shape;
       const currentKey = modal.querySelector(`.ld-defaults-color-key[data-shape="${shape}"]`).value;
-      openColorPickerPopup(trigger, NODE_COLOR_ENTRIES, currentKey, (entry) => {
-        const c = NODE_COLORS[entry.value];
+      openColorPickerPopup(trigger, buildNodeColorEntries(), currentKey, (entry) => {
+        const c = effectiveNodeColor(entry.value);
         modal.querySelector(`.ld-defaults-color-key[data-shape="${shape}"]`).value = entry.value;
         trigger.style.background = c.bg;
         trigger.style.borderColor = c.border;
@@ -232,6 +239,9 @@ function renderModal() {
         body: JSON.stringify({ diagramDefaults: null }),
       });
       _cache = null;
+      // Vider les clés localStorage pour revenir aux valeurs système
+      SHAPE_KEYS.forEach((key) => localStorage.removeItem('ld-node-style-' + key));
+      localStorage.removeItem('ld-free-arrow-style');
       modal.remove();
     } catch (err) {
       console.error('Failed to reset diagram defaults', err);
@@ -262,6 +272,24 @@ function renderModal() {
       });
       if (!res.ok) throw new Error(await res.text());
       _cache = { arrows, shapes };
+      // Sync localStorage: chaque clé de forme + flèches
+      SHAPE_KEYS.forEach((key) => {
+        localStorage.setItem('ld-node-style-' + key, JSON.stringify({
+          colorKey:   shapes[key].colorKey,
+          fontSize:   shapes[key].fontSize,
+          width:      shapes[key].width,
+          height:     shapes[key].height,
+          textAlign:  null,
+          textValign: null,
+        }));
+      });
+      localStorage.setItem('ld-free-arrow-style', JSON.stringify({
+        arrowDir:  arrows.arrowDir,
+        dashes:    arrows.dashes,
+        fontSize:  arrows.fontSize,
+        edgeColor: null,
+        edgeWidth: null,
+      }));
       modal.remove();
     } catch (err) {
       console.error('Failed to save diagram defaults', err);

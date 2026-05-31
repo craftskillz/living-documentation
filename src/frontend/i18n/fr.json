@@ -647,6 +647,7 @@
   "diagram.sidebar.delete_title": "Supprimer",
 
   "diagram.node_panel.color": "Couleur de la forme",
+  "diagram.node_panel.save_as_default": "Enregistrer comme valeur par défaut pour ce type de forme",
   "diagram.node_panel.lock": "Verrouiller la sélection",
   "diagram.node_panel.unlock": "Déverrouiller la sélection",
   "diagram.node_panel.edit_label": "Modifier le texte (double-clic)",
@@ -686,7 +687,9 @@
   "diagram.link_panel.save_btn": "Enregistrer",
   "diagram.link_panel.remove_btn": "Retirer",
 
+  "diagram.edge_panel.font_size_value": "Taille de police",
   "diagram.edge_panel.color": "Couleur de la flèche",
+  "diagram.edge_panel.save_as_default": "Enregistrer comme valeur par défaut pour les flèches",
   "diagram.edge_panel.lock": "Verrouiller la flèche",
   "diagram.edge_panel.unlock": "Déverrouiller la flèche",
   "diagram.edge_panel.no_arrow": "Trait simple",

@@ -205,14 +205,19 @@ export function initNetwork(savedNodes, savedEdges, edgesStraight = false) {
         }
         pushSnapshot();
         data.id = "e" + Date.now();
-        data.arrowDir = "to";
-        data.dashes = false;
+        const edgeStyle = getLastFreeArrowStyle();
+        data.arrowDir = edgeStyle.arrowDir || "to";
+        data.dashes   = edgeStyle.dashes   || false;
+        if (edgeStyle.fontSize) {
+          data.fontSize = edgeStyle.fontSize;
+          data.font = { size: edgeStyle.fontSize, align: 'middle', color: 'rgba(0,0,0,0)' };
+        }
         // Attach captured port selections — skip for anchor nodes.
         const fromIsAnchor = fromNode.shapeType === "anchor";
         const toIsAnchor = toNode.shapeType === "anchor";
         if (!fromIsAnchor) data.fromPort = _addEdgeFromPort || null;
         if (!toIsAnchor) data.toPort = _hoveredPortKey || null;
-        Object.assign(data, visEdgeProps("to", false));
+        Object.assign(data, visEdgeProps(data.arrowDir, data.dashes));
         // Port edges: make vis-network's ghost transparent so only drawPortEdge is visible.
         if (data.fromPort || data.toPort) {
           data.color = {

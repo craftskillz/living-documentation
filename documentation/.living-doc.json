@@ -53,51 +53,51 @@
   "markdownSoftBreaks": true,
   "diagramDefaults": {
     "arrows": {
-      "fontSize": 11,
       "arrowDir": "to",
-      "dashes": false
+      "dashes": false,
+      "fontSize": 16
     },
     "shapes": {
       "box": {
-        "width": 100,
-        "height": 40,
-        "fontSize": 13,
+        "width": 146,
+        "height": 52,
+        "fontSize": 16,
         "colorKey": "c-lime"
       },
       "ellipse": {
-        "width": 110,
-        "height": 50,
-        "fontSize": 13,
-        "colorKey": "c-gray"
+        "width": 118,
+        "height": 67,
+        "fontSize": 16,
+        "colorKey": "c-red"
       },
       "circle": {
-        "width": 55,
-        "height": 55,
-        "fontSize": 13,
-        "colorKey": "c-gray"
+        "width": 90,
+        "height": 81,
+        "fontSize": 16,
+        "colorKey": "c-amber"
       },
       "database": {
-        "width": 50,
-        "height": 70,
-        "fontSize": 13,
-        "colorKey": "c-gray"
+        "width": 121,
+        "height": 106,
+        "fontSize": 16,
+        "colorKey": "c-cyan"
       },
       "actor": {
         "width": 30,
         "height": 52,
-        "fontSize": 13,
+        "fontSize": 16,
         "colorKey": "c-gray"
       },
       "post-it": {
         "width": 120,
         "height": 100,
         "fontSize": 13,
-        "colorKey": "c-amber"
+        "colorKey": "c-orange"
       },
       "text-free": {
-        "width": 80,
-        "height": 30,
-        "fontSize": 13,
+        "width": 123,
+        "height": 44,
+        "fontSize": 16,
         "colorKey": "c-gray"
       }
     }

@@ -647,6 +647,7 @@
   "diagram.sidebar.delete_title": "Delete",
 
   "diagram.node_panel.color": "Shape color",
+  "diagram.node_panel.save_as_default": "Save as default for this shape type",
   "diagram.node_panel.lock": "Lock selection",
   "diagram.node_panel.unlock": "Unlock selection",
   "diagram.node_panel.edit_label": "Edit text (double-click)",
@@ -686,7 +687,9 @@
   "diagram.link_panel.save_btn": "Save",
   "diagram.link_panel.remove_btn": "Remove",
 
+  "diagram.edge_panel.font_size_value": "Font size",
   "diagram.edge_panel.color": "Arrow color",
+  "diagram.edge_panel.save_as_default": "Save as default for arrows",
   "diagram.edge_panel.lock": "Lock arrow",
   "diagram.edge_panel.unlock": "Unlock arrow",
   "diagram.edge_panel.no_arrow": "Simple line",

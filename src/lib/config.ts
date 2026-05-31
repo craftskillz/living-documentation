@@ -117,7 +117,22 @@ const STORAGE_DEFAULTS: StoredConfig = {
   exclusiveCategoryExpansion: false,
   codeBlockMaxHeight: 400,
   markdownSoftBreaks: true,
-  diagramDefaults: null,
+  diagramDefaults: {
+    arrows: {
+      arrowDir: 'to',
+      dashes: false,
+      fontSize: 16,
+    },
+    shapes: {
+      box:        { width: 146, height: 52,  fontSize: 16, colorKey: 'c-lime'   },
+      ellipse:    { width: 118, height: 67,  fontSize: 16, colorKey: 'c-red'    },
+      circle:     { width: 90,  height: 81,  fontSize: 16, colorKey: 'c-amber'  },
+      database:   { width: 121, height: 106, fontSize: 16, colorKey: 'c-cyan'   },
+      actor:      { width: 30,  height: 52,  fontSize: 16, colorKey: 'c-gray'   },
+      'post-it':  { width: 120, height: 100, fontSize: 13, colorKey: 'c-orange' },
+      'text-free':{ width: 123, height: 44,  fontSize: 16, colorKey: 'c-gray'   },
+    },
+  },
 };
 
 export function getConfigPath(docsPath: string): string {

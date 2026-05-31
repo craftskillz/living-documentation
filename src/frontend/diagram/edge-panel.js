@@ -14,6 +14,18 @@ const FREE_ARROW_STYLE_KEY = 'ld-free-arrow-style';
 // Palette is injected at boot by diagram.html via initEdgeColorSwatch().
 let _edgePaletteEntries = [];
 
+function syncEdgeFontSizeValue() {
+  const el = document.getElementById('edgeFontSizeValue');
+  if (!el) return;
+  const sizes = (st.selectedEdgeIds || []).map((id) => {
+    const e = st.edges && st.edges.get(id);
+    return e ? (e.fontSize || 11) : null;
+  }).filter((s) => s !== null);
+  if (!sizes.length) { el.textContent = '–'; return; }
+  const first = sizes[0];
+  el.textContent = sizes.every((s) => s === first) ? String(first) : '–';
+}
+
 function syncEdgeColorSwatch(hexColor) {
   const swatch = document.getElementById('edgeColorSwatch');
   if (!swatch) return;
@@ -40,6 +52,8 @@ export function initEdgeColorSwatch(palette) {
 // Persist the style of the first free arrow (anchor→anchor) in the current
 // selection so the next double-click creation reuses it.
 function persistFreeArrowStyle() {
+  // Persist from any selected edge — free arrows (anchor→anchor) take priority,
+  // but shape→shape edges also update the style memory.
   const freeId = st.selectedEdgeIds.find((id) => {
     const e = st.edges.get(id);
     if (!e) return false;
@@ -47,8 +61,10 @@ function persistFreeArrowStyle() {
     const toN   = st.nodes && st.nodes.get(e.to);
     return fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor';
   });
-  if (!freeId) return;
-  const e = st.edges.get(freeId);
+  const edgeId = freeId || st.selectedEdgeIds[0];
+  if (!edgeId) return;
+  const e = st.edges.get(edgeId);
+  if (!e) return;
   localStorage.setItem(FREE_ARROW_STYLE_KEY, JSON.stringify({
     arrowDir:  e.arrowDir  || 'to',
     dashes:    e.dashes    || false,
@@ -61,7 +77,12 @@ function persistFreeArrowStyle() {
 export function getLastFreeArrowStyle() {
   try {
     const stored = JSON.parse(localStorage.getItem(FREE_ARROW_STYLE_KEY));
-    if (stored) return stored;
+    if (stored) {
+      // Merge with defaults: stored values override defaults, but null/undefined
+      // values in stored fall back to defaults (handles legacy keys without fontSize).
+      const clean = Object.fromEntries(Object.entries(stored).filter(([, v]) => v != null));
+      return { ...getArrowDefaults(), ...clean };
+    }
   } catch { /* ignore */ }
   return getArrowDefaults();
 }
@@ -129,9 +150,10 @@ export function showEdgePanel() {
     document.getElementById(id).classList.remove('edge-btn-active'));
   document.getElementById(dashes ? 'edgeBtnDashed' : 'edgeBtnSolid').classList.add('edge-btn-active');
 
-  // Sync edge color swatch.
+  // Sync edge color swatch and font size display.
   const activeColor = (e.edgeColor || DEFAULT_EDGE_COLOR);
   syncEdgeColorSwatch(activeColor);
+  syncEdgeFontSizeValue();
 
   // Show/hide the clear-ports button based on whether this edge has ports.
   const hasPorts = !!(e.fromPort || e.toPort);
@@ -208,6 +230,54 @@ export function setEdgeColor(hex) {
   markDirty();
 }
 
+export async function saveEdgeAsDefault() {
+  const freeId = st.selectedEdgeIds.find((id) => {
+    const e = st.edges.get(id);
+    if (!e) return false;
+    const fromN = st.nodes && st.nodes.get(e.from);
+    const toN   = st.nodes && st.nodes.get(e.to);
+    return fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor';
+  });
+  const edgeId = freeId || st.selectedEdgeIds[0];
+  if (!edgeId) return;
+  const e = st.edges.get(edgeId);
+  if (!e) return;
+
+  const { getDiagramDefaults, initDiagramDefaults } = await import('./defaults-modal.js');
+  const current = getDiagramDefaults() || {};
+  const arrows = {
+    arrowDir: e.arrowDir  || 'to',
+    dashes:   e.dashes    || false,
+    fontSize: e.fontSize  || 11,
+  };
+  const updated = { arrows, shapes: current.shapes || null };
+
+  try {
+    const res = await fetch('/api/config', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ diagramDefaults: updated }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    initDiagramDefaults({ diagramDefaults: updated });
+    // Sync localStorage so the next arrow creation uses the new default immediately
+    localStorage.setItem(FREE_ARROW_STYLE_KEY, JSON.stringify({
+      arrowDir:  arrows.arrowDir,
+      dashes:    arrows.dashes,
+      fontSize:  arrows.fontSize,
+      edgeColor: null,
+      edgeWidth: null,
+    }));
+    const btn = document.getElementById('btnSaveEdgeDefault');
+    if (btn) {
+      btn.classList.add('tool-active');
+      setTimeout(() => btn.classList.remove('tool-active'), 800);
+    }
+  } catch (err) {
+    console.error('Failed to save edge default', err);
+  }
+}
+
 export function changeEdgeWidth(delta) {
   if (!st.selectedEdgeIds.length) return;
   pushSnapshot();
@@ -272,6 +342,7 @@ export function changeEdgeFontSize(delta) {
     // Keep native label transparent — drawEdgeLabels() is the single render path.
     st.edges.update({ id, fontSize: newSize, font: { size: newSize, align: 'middle', color: 'rgba(0,0,0,0)' } });
   });
+  syncEdgeFontSizeValue();
   markDirty();
 }
 
