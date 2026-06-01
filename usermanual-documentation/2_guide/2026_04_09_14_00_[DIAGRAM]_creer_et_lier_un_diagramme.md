@@ -52,7 +52,7 @@ Une fois le PNG exporté, insérez-le dans votre document Markdown en tant qu'im
 Ou directement en Markdown :
 
 ```markdown
-[![Mon diagramme](./images/diagram-d1234567890.png)](/diagram?id=d1234567890)
+[![Mon diagramme](/images/diagram-d1234567890.png)](/diagram?id=d1234567890)
 ```
 
 ✅ Dans l'article, un clic sur l'image ouvre l'éditeur de diagramme.

@@ -78,7 +78,7 @@ function ldBuildTableSnippetMarkdown(data) {
 }
 
 function ldBuildDiagramSnippetMarkdown(data) {
-  return `[![${data.label}](./images/${data.imageName})](/diagram?id=${data.id})`;
+  return `[![${data.label}](/images/${data.imageName})](/diagram?id=${data.id})`;
 }
 
 function ldBuildColoredTextSnippetMarkdown(data) {

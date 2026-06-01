@@ -519,7 +519,7 @@ test.describe('inline snippet editing from viewer', () => {
     const body = await page.locator('#snip-collapsible-body').inputValue();
     expect(body).toContain('Some intro text.');
     expect(body).toContain('```markdown');
-    expect(body).toContain('![image](./images/foo.png)');
+    expect(body).toContain('![image](/images/foo.png)');
     expect(body).toContain('```');
   });
 
@@ -536,7 +536,7 @@ test.describe('inline snippet editing from viewer', () => {
 
     await expect(page.locator('#snippet-type')).toHaveValue('code-block');
     await expect(page.locator('#snip-code-lang')).toHaveValue('markdown');
-    await expect(page.locator('#snip-code-content')).toHaveValue('![image](./images/foo.png)');
+    await expect(page.locator('#snip-code-content')).toHaveValue('![image](/images/foo.png)');
   });
 
   test('right-click on a level-1 heading opens heading editor and saves new text', async ({ page, ld }) => {

@@ -17,6 +17,11 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: false, theme: "default" });
+      window.mermaid = mermaid;
+    </script>
 
     <!-- Font Awesome — icons -->
     <link
@@ -324,7 +329,7 @@
       .color-text-swatch-btn.selected-text-swatch {
         outline: 2px solid currentColor;
         outline-offset: 2px;
-        box-shadow: 0 0 0 3px rgba(0,0,0,0.15);
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
       }
 
       /* Active doc highlight */
@@ -434,7 +439,9 @@
         text-decoration: none;
         font-weight: 500;
         border: 1px solid #ddd6fe;
-        transition: background-color 0.15s, border-color 0.15s;
+        transition:
+          background-color 0.15s,
+          border-color 0.15s;
       }
       .prose a.ld-file-attachment:hover,
       a.ld-file-attachment:hover {
@@ -543,8 +550,16 @@
             >LD</span
           >
           <div>
-            <div id="app-title" class="font-[760] text-[15px] tracking-tight leading-tight">Living AI Documentation</div>
-            <div id="app-subtitle" class="text-[12px] text-gray-400 mt-[2px]"></div>
+            <div
+              id="app-title"
+              class="font-[760] text-[15px] tracking-tight leading-tight"
+            >
+              Living AI Documentation
+            </div>
+            <div
+              id="app-subtitle"
+              class="text-[12px] text-gray-400 mt-[2px]"
+            ></div>
           </div>
         </div>
 
@@ -656,7 +671,9 @@
           class="no-print w-72 shrink-0 flex flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-y-auto"
         >
           <!-- Mobile / sidebar search -->
-          <div class="sticky top-0 z-10 bg-white dark:bg-gray-900 p-3 border-b border-gray-100 dark:border-gray-800">
+          <div
+            class="sticky top-0 z-10 bg-white dark:bg-gray-900 p-3 border-b border-gray-100 dark:border-gray-800"
+          >
             <div class="relative sm:hidden">
               <input
                 id="sidebar-search"
@@ -735,7 +752,12 @@
 
           <!-- Category tree -->
           <nav id="category-tree" class="flex-1 py-2 space-y-0.5">
-            <p class="px-4 py-8 text-sm text-gray-400 text-center" data-i18n="common.loading">Loading…</p>
+            <p
+              class="px-4 py-8 text-sm text-gray-400 text-center"
+              data-i18n="common.loading"
+            >
+              Loading…
+            </p>
           </nav>
         </aside>
 
@@ -753,7 +775,10 @@
               >
                 Select a document
               </h2>
-              <p data-i18n="welcome.hint" class="text-sm text-gray-500 dark:text-gray-500">
+              <p
+                data-i18n="welcome.hint"
+                class="text-sm text-gray-500 dark:text-gray-500"
+              >
                 Choose a document from the sidebar to start reading.
               </p>
               <p
@@ -762,7 +787,10 @@
               >
                 YYYY_MM_DD_HH_mm_[Category]_title.md
               </p>
-              <p data-i18n="welcome.pattern_hint" class="mt-2 text-xs text-gray-400">
+              <p
+                data-i18n="welcome.pattern_hint"
+                class="mt-2 text-xs text-gray-400"
+              >
                 Expected filename pattern
               </p>
             </div>
@@ -814,7 +842,11 @@
                       title="Validate document"
                       class="hidden no-print text-sm px-3 py-1.5 rounded-lg border border-green-700 bg-green-600 text-white font-semibold hover:bg-green-700 transition-colors"
                     >
-                      <i class="fa-solid fa-check" aria-hidden="true" style="margin-right: 4px"></i>
+                      <i
+                        class="fa-solid fa-check"
+                        aria-hidden="true"
+                        style="margin-right: 4px"
+                      ></i>
                       <span data-i18n="doc.validate_btn">Validate</span>
                     </button>
                     <button
@@ -916,7 +948,9 @@
                       title="Toggle full width"
                       class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                     >
-                      <span data-i18n="doc.full_width_btn">&#8596; Full width</span>
+                      <span data-i18n="doc.full_width_btn"
+                        >&#8596; Full width</span
+                      >
                     </button>
                     <button
                       onclick="exportPDF()"
@@ -924,7 +958,8 @@
                       title="Export as PDF"
                       class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                     >
-                      &#128196; <span data-i18n="doc.export_pdf_btn">Export PDF</span>
+                      &#128196;
+                      <span data-i18n="doc.export_pdf_btn">Export PDF</span>
                     </button>
                     <button
                       onclick="copyLink()"
@@ -933,7 +968,8 @@
                       title="Copy link"
                       class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                     >
-                      <i class="fa-solid fa-link"></i> <span data-i18n="doc.copy_link_btn">Copy link</span>
+                      <i class="fa-solid fa-link"></i>
+                      <span data-i18n="doc.copy_link_btn">Copy link</span>
                     </button>
                     <button
                       onclick="openMetadataModal()"
@@ -942,7 +978,8 @@
                       title="Manage source-file metadata"
                       class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                     >
-                      <i class="fa-solid fa-code-compare"></i> <span data-i18n="metadata.button">Metadata</span>
+                      <i class="fa-solid fa-code-compare"></i>
+                      <span data-i18n="metadata.button">Metadata</span>
                     </button>
                     <button
                       onclick="enterEditMode()"
@@ -950,7 +987,8 @@
                       title="Edit document"
                       class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                     >
-                      <i class="fa-solid fa-file-pen"></i> <span data-i18n="doc.edit_btn">Edit</span>
+                      <i class="fa-solid fa-file-pen"></i>
+                      <span data-i18n="doc.edit_btn">Edit</span>
                     </button>
                     <button
                       onclick="askDeleteDocument()"
@@ -958,7 +996,8 @@
                       title="Delete document"
                       class="no-print text-sm px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-700 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 transition-colors"
                     >
-                      <i class="fa-solid fa-trash"></i> <span data-i18n="doc.delete_btn">Delete</span>
+                      <i class="fa-solid fa-trash"></i>
+                      <span data-i18n="doc.delete_btn">Delete</span>
                     </button>
                   </div>
                   <!-- Edit mode actions -->
@@ -1001,21 +1040,23 @@
                   id="accuracy-gauge-label"
                   data-i18n="accuracy.label"
                   class="text-xs text-gray-500 dark:text-gray-400 shrink-0"
-                >Reliability</span>
+                  >Reliability</span
+                >
                 <div
                   class="flex-1 h-4 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden"
                 >
                   <div
                     id="accuracy-gauge-bar"
                     class="h-full w-full transition-all"
-                    style="background: #dc2626;"
+                    style="background: #dc2626"
                   ></div>
                 </div>
                 <span
                   id="accuracy-gauge-value"
                   class="text-xs font-semibold shrink-0 tabular-nums"
                   style="color: #9ca3af"
-                >0%</span>
+                  >0%</span
+                >
               </div>
 
               <!-- Navigation history back-links -->
@@ -1078,7 +1119,8 @@
               data-i18n="metadata.subtitle"
               class="text-xs text-gray-500 dark:text-gray-400 mt-1"
             >
-              Attach source files to track whether this document is still accurate.
+              Attach source files to track whether this document is still
+              accurate.
             </p>
           </div>
           <button
@@ -1103,15 +1145,15 @@
           data-i18n="metadata.readonly_banner"
           class="hidden text-xs text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-900/30 border-l-4 border-amber-500 rounded-r px-3 py-2"
         >
-          Read-only — this document is SuperSeeded. Source metadata can still be viewed but not edited.
+          Read-only — this document is SuperSeeded. Source metadata can still be
+          viewed but not edited.
         </div>
 
         <!-- List -->
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-          <div
-            id="metadata-list"
-            class="max-h-64 overflow-y-auto"
-          ></div>
+        <div
+          class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
+        >
+          <div id="metadata-list" class="max-h-64 overflow-y-auto"></div>
           <div
             id="metadata-empty"
             data-i18n="metadata.empty"
@@ -1128,14 +1170,16 @@
             id="metadata-add-btn"
             class="text-sm px-3 py-1.5 rounded-lg border border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
           >
-            <i class="fa-solid fa-plus"></i> <span data-i18n="metadata.add">Add source file</span>
+            <i class="fa-solid fa-plus"></i>
+            <span data-i18n="metadata.add">Add source file</span>
           </button>
           <button
             onclick="metadataRefresh()"
             id="metadata-refresh-btn"
             class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
-            <i class="fa-solid fa-arrows-rotate"></i> <span data-i18n="metadata.refresh">Refresh hashes</span>
+            <i class="fa-solid fa-arrows-rotate"></i>
+            <span data-i18n="metadata.refresh">Refresh hashes</span>
           </button>
         </div>
 
@@ -1508,7 +1552,9 @@
               checked
               onchange="diagModeChanged()"
             />
-            <span data-i18n="modal.diag_link.existing_radio" class="text-gray-700 dark:text-gray-300"
+            <span
+              data-i18n="modal.diag_link.existing_radio"
+              class="text-gray-700 dark:text-gray-300"
               >Existing diagram</span
             >
           </label>
@@ -1520,7 +1566,11 @@
               value="new"
               onchange="diagModeChanged()"
             />
-            <span data-i18n="modal.diag_link.new_radio" class="text-gray-700 dark:text-gray-300">New diagram</span>
+            <span
+              data-i18n="modal.diag_link.new_radio"
+              class="text-gray-700 dark:text-gray-300"
+              >New diagram</span
+            >
           </label>
         </div>
 
@@ -1560,7 +1610,9 @@
           <label
             class="block text-xs font-medium text-gray-500 dark:text-gray-400"
             ><span data-i18n="modal.diag_link.img_label">Image filename</span>
-            <span data-i18n="modal.diag_link.img_hint" class="font-normal text-gray-400"
+            <span
+              data-i18n="modal.diag_link.img_hint"
+              class="font-normal text-gray-400"
               >(saved in ./images/)</span
             ></label
           >
@@ -1611,13 +1663,15 @@
     <div
       id="snippets-modal"
       class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-      >
+    >
       <div
         id="snippet-modal-card"
         class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-6xl mx-4 p-6 space-y-5 max-h-[90vh] overflow-y-auto"
       >
         <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">
-          <span id="snippet-modal-title" data-i18n="snippet.modal_title">🧩 Insert a snippet</span>
+          <span id="snippet-modal-title" data-i18n="snippet.modal_title"
+            >🧩 Insert a snippet</span
+          >
         </h3>
 
         <div
@@ -1636,12 +1690,17 @@
             onkeydown="snippetPickerSearchKeydown(event)"
             class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <div id="snippet-picker-categories" class="space-y-4 max-h-[60vh] overflow-y-auto pr-1"></div>
+          <div
+            id="snippet-picker-categories"
+            class="space-y-4 max-h-[60vh] overflow-y-auto pr-1"
+          ></div>
           <div
             id="snippet-picker-no-results"
             data-i18n="snippet.picker_no_results"
             class="hidden text-center text-sm text-gray-500 dark:text-gray-400 py-4"
-          >No matching snippet.</div>
+          >
+            No matching snippet.
+          </div>
         </div>
 
         <!-- Back to picker (panel mode after picker selection) -->
@@ -1667,31 +1726,65 @@
             onchange="snippetTypeChanged()"
             class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option data-i18n="snippet.diagram" value="diagram" selected>Diagram</option>
-            <option data-i18n="snippet.heading_1" value="heading-1">Title level 1</option>
-            <option data-i18n="snippet.heading_2" value="heading-2">Title level 2</option>
-            <option data-i18n="snippet.heading_3" value="heading-3">Title level 3</option>
-            <option data-i18n="snippet.heading_4" value="heading-4">Title level 4</option>
-            <option data-i18n="snippet.collapsible" value="collapsible">Collapsible block (details)</option>
+            <option data-i18n="snippet.diagram" value="diagram" selected>
+              Diagram
+            </option>
+            <option data-i18n="snippet.heading_1" value="heading-1">
+              Title level 1
+            </option>
+            <option data-i18n="snippet.heading_2" value="heading-2">
+              Title level 2
+            </option>
+            <option data-i18n="snippet.heading_3" value="heading-3">
+              Title level 3
+            </option>
+            <option data-i18n="snippet.heading_4" value="heading-4">
+              Title level 4
+            </option>
+            <option data-i18n="snippet.collapsible" value="collapsible">
+              Collapsible block (details)
+            </option>
             <option data-i18n="snippet.link" value="link">Link</option>
-            <option data-i18n="snippet.link_doc" value="doc-link">Link to document</option>
-            <option data-i18n="snippet.link_anchor" value="anchor-link">Link to anchor</option>
+            <option data-i18n="snippet.link_doc" value="doc-link">
+              Link to document
+            </option>
+            <option data-i18n="snippet.link_anchor" value="anchor-link">
+              Link to anchor
+            </option>
             <option data-i18n="snippet.link_doc_anchor" value="anchor-doc-link">
               Link to document with anchor
             </option>
-            <option data-i18n="snippet.numbered_list" value="ordered-list">Numbered list</option>
-            <option data-i18n="snippet.bullet_list" value="unordered-list">Bullet list</option>
-            <option data-i18n="snippet.code_block" value="code-block">Code block</option>
-            <option data-i18n="snippet.blockquote" value="blockquote">Blockquote</option>
-            <option data-i18n="snippet.separator" value="separator">Horizontal rule</option>
+            <option data-i18n="snippet.numbered_list" value="ordered-list">
+              Numbered list
+            </option>
+            <option data-i18n="snippet.bullet_list" value="unordered-list">
+              Bullet list
+            </option>
+            <option data-i18n="snippet.code_block" value="code-block">
+              Code block
+            </option>
+            <option data-i18n="snippet.blockquote" value="blockquote">
+              Blockquote
+            </option>
+            <option data-i18n="snippet.separator" value="separator">
+              Horizontal rule
+            </option>
             <option data-i18n="snippet.image" value="image">Image</option>
             <option data-i18n="snippet.table" value="table">Table</option>
             <option data-i18n="snippet.tree" value="tree">Tree</option>
-            <option data-i18n="snippet.colored_section" value="colored-section">Colored section</option>
-            <option data-i18n="snippet.colored_text" value="colored-text">Colored text</option>
+            <option data-i18n="snippet.colored_section" value="colored-section">
+              Colored section
+            </option>
+            <option data-i18n="snippet.colored_text" value="colored-text">
+              Colored text
+            </option>
             <option data-i18n="snippet.emojis" value="emojis">😀 Emojis</option>
-            <option data-i18n="snippet.attachment" value="attachment">📎 File attachment</option>
-            <option data-i18n="snippet.local_search" value="local-search">🔎 Local search</option>
+            <option data-i18n="snippet.attachment" value="attachment">
+              📎 File attachment
+            </option>
+            <option data-i18n="snippet.local_search" value="local-search">
+              🔎 Local search
+            </option>
           </select>
         </div>
 
@@ -1801,7 +1894,9 @@
             <label
               class="block text-xs font-medium text-gray-500 dark:text-gray-400"
               ><span data-i18n="snippet.link_text_label">Link text</span>
-              <span data-i18n="snippet.link_doc_text_hint" class="font-normal text-gray-400"
+              <span
+                data-i18n="snippet.link_doc_text_hint"
+                class="font-normal text-gray-400"
                 >(optional, uses default title)</span
               ></label
             >
@@ -1836,7 +1931,9 @@
             <label
               class="block text-xs font-medium text-gray-500 dark:text-gray-400"
               ><span data-i18n="snippet.link_anchor_label">Anchor</span>
-              <span data-i18n="snippet.link_anchor_select_hint" class="font-normal text-gray-400"
+              <span
+                data-i18n="snippet.link_anchor_select_hint"
+                class="font-normal text-gray-400"
                 >(pick a heading from the document)</span
               ></label
             >
@@ -1881,7 +1978,9 @@
             <label
               class="block text-xs font-medium text-gray-500 dark:text-gray-400"
               ><span data-i18n="snippet.link_anchor_label">Anchor</span>
-              <span data-i18n="snippet.link_anchor_select_hint" class="font-normal text-gray-400"
+              <span
+                data-i18n="snippet.link_anchor_select_hint"
+                class="font-normal text-gray-400"
                 >(pick a heading from the document)</span
               ></label
             >
@@ -1937,7 +2036,9 @@
             <label
               class="block text-xs font-medium text-gray-500 dark:text-gray-400"
               ><span data-i18n="snippet.code_lang_label">Language</span>
-              <span data-i18n="snippet.code_lang_hint" class="font-normal text-gray-400"
+              <span
+                data-i18n="snippet.code_lang_hint"
+                class="font-normal text-gray-400"
                 >(e.g. javascript, python, bash…)</span
               ></label
             >
@@ -2034,12 +2135,20 @@
                 onchange="snippetUpdatePreview()"
                 class="text-xs rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2 py-1"
               >
-                <option data-i18n="snippet.table_style_default" value="">Default</option>
-                <option data-i18n="snippet.table_style_compact" value="compact">Compact</option>
-                <option data-i18n="snippet.table_style_striped" value="striped">Striped</option>
+                <option data-i18n="snippet.table_style_default" value="">
+                  Default
+                </option>
+                <option data-i18n="snippet.table_style_compact" value="compact">
+                  Compact
+                </option>
+                <option data-i18n="snippet.table_style_striped" value="striped">
+                  Striped
+                </option>
               </select>
             </div>
-            <label class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+            <label
+              class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400"
+            >
               <input
                 id="snip-table-bordered"
                 type="checkbox"
@@ -2060,16 +2169,30 @@
                 onchange="snippetUpdatePreview()"
                 class="text-xs rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2 py-1"
               >
-                <option data-i18n="snippet.table_color_default" value="">None</option>
-                <option data-i18n="snippet.table_color_info" value="info">Info (blue)</option>
-                <option data-i18n="snippet.table_color_success" value="success">Success (green)</option>
-                <option data-i18n="snippet.table_color_warning" value="warning">Warning (orange)</option>
-                <option data-i18n="snippet.table_color_danger" value="danger">Danger (red)</option>
-                <option data-i18n="snippet.table_color_note" value="note">Note (violet)</option>
+                <option data-i18n="snippet.table_color_default" value="">
+                  None
+                </option>
+                <option data-i18n="snippet.table_color_info" value="info">
+                  Info (blue)
+                </option>
+                <option data-i18n="snippet.table_color_success" value="success">
+                  Success (green)
+                </option>
+                <option data-i18n="snippet.table_color_warning" value="warning">
+                  Warning (orange)
+                </option>
+                <option data-i18n="snippet.table_color_danger" value="danger">
+                  Danger (red)
+                </option>
+                <option data-i18n="snippet.table_color_note" value="note">
+                  Note (violet)
+                </option>
               </select>
             </div>
             <div class="flex items-center gap-2">
-              <span data-i18n="snippet.table_rows_label" class="text-xs text-gray-500 dark:text-gray-400"
+              <span
+                data-i18n="snippet.table_rows_label"
+                class="text-xs text-gray-500 dark:text-gray-400"
                 >Rows</span
               >
               <button
@@ -2091,7 +2214,9 @@
               </button>
             </div>
             <div class="flex items-center gap-2">
-              <span data-i18n="snippet.table_cols_label" class="text-xs text-gray-500 dark:text-gray-400"
+              <span
+                data-i18n="snippet.table_cols_label"
+                class="text-xs text-gray-500 dark:text-gray-400"
                 >Columns</span
               >
               <button
@@ -2118,7 +2243,10 @@
 
         <!-- Panel: tree -->
         <div id="snip-panel-tree" class="hidden space-y-2">
-          <p data-i18n="snippet.tree_hint" class="text-xs text-gray-400 dark:text-gray-500">
+          <p
+            data-i18n="snippet.tree_hint"
+            class="text-xs text-gray-400 dark:text-gray-500"
+          >
             ← → to indent · names with / will be folders
           </p>
           <div id="snip-tree-list" class="space-y-1"></div>
@@ -2144,7 +2272,9 @@
                 checked
                 onchange="snippetDiagModeChanged()"
               />
-              <span data-i18n="snippet.diagram_existing" class="text-gray-700 dark:text-gray-300"
+              <span
+                data-i18n="snippet.diagram_existing"
+                class="text-gray-700 dark:text-gray-300"
                 >Existing diagram</span
               >
             </label>
@@ -2156,7 +2286,9 @@
                 value="new"
                 onchange="snippetDiagModeChanged()"
               />
-              <span data-i18n="snippet.diagram_new" class="text-gray-700 dark:text-gray-300"
+              <span
+                data-i18n="snippet.diagram_new"
+                class="text-gray-700 dark:text-gray-300"
                 >New diagram</span
               >
             </label>
@@ -2202,7 +2334,9 @@
               class="block text-xs font-medium text-gray-500 dark:text-gray-400"
             >
               <span data-i18n="snippet.diag_img_label">Image filename</span>
-              <span data-i18n="snippet.diag_img_saved_hint" class="font-normal text-gray-400"
+              <span
+                data-i18n="snippet.diag_img_saved_hint"
+                class="font-normal text-gray-400"
                 >(saved in ./images/)</span
               >
             </label>
@@ -2389,7 +2523,9 @@
                 onclick="emojiClear()"
                 data-i18n="snippet.emoji_clear_btn"
                 class="px-3 py-2 text-xs rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
-              >Clear</button>
+              >
+                Clear
+              </button>
             </div>
           </div>
           <div class="space-y-1.5">
@@ -2409,12 +2545,20 @@
 
         <!-- Panel: file attachment -->
         <div id="snip-panel-attachment" class="hidden space-y-3">
-          <div class="rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 px-3 py-3 text-sm text-blue-900 dark:text-blue-100 space-y-2">
+          <div
+            class="rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 px-3 py-3 text-sm text-blue-900 dark:text-blue-100 space-y-2"
+          >
             <p data-i18n-html="snippet.attachment_help">
-              Click <strong>Insert</strong> to choose a file. It will be uploaded under the <code>files/</code> folder and inserted as a <i class="fa-solid fa-paperclip"></i> link in your document.
+              Click <strong>Insert</strong> to choose a file. It will be
+              uploaded under the <code>files/</code> folder and inserted as a
+              <i class="fa-solid fa-paperclip"></i> link in your document.
             </p>
-            <p data-i18n-html="snippet.attachment_alt" class="text-xs text-blue-700 dark:text-blue-300">
-              Tip: you can also drag &amp; drop a file onto the editor, or paste it from the clipboard.
+            <p
+              data-i18n-html="snippet.attachment_alt"
+              class="text-xs text-blue-700 dark:text-blue-300"
+            >
+              Tip: you can also drag &amp; drop a file onto the editor, or paste
+              it from the clipboard.
             </p>
           </div>
         </div>
@@ -2470,14 +2614,17 @@
         class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-sm mx-4 p-6 space-y-5"
       >
         <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">
-          🖼️ <span data-i18n="modal.img_paste.title">Paste clipboard image?</span>
+          🖼️
+          <span data-i18n="modal.img_paste.title">Paste clipboard image?</span>
         </h3>
         <div class="space-y-1.5">
           <label
             class="block text-xs font-medium text-gray-500 dark:text-gray-400"
           >
             <span data-i18n="modal.img_paste.filename_label">Filename</span>
-            <span data-i18n="modal.img_paste.saved_hint" class="font-normal text-gray-400"
+            <span
+              data-i18n="modal.img_paste.saved_hint"
+              class="font-normal text-gray-400"
               >(saved in images/)</span
             >
           </label>
@@ -2521,7 +2668,8 @@
       <div
         class="text-xs font-semibold text-yellow-700 dark:text-yellow-300 flex items-center gap-2"
       >
-        <span>&#9999;</span> <span data-i18n="annotation.title">Annotation</span>
+        <span>&#9999;</span>
+        <span data-i18n="annotation.title">Annotation</span>
       </div>
       <div
         id="stabilo-selected-preview"
@@ -2596,7 +2744,10 @@
       class="hidden fixed z-50 w-72 bg-white dark:bg-gray-900 border border-red-200 dark:border-red-700 rounded-xl shadow-2xl p-4 flex flex-col gap-3"
       style="top: 0; left: 0"
     >
-      <p data-i18n="annotation.confirm_delete" class="text-sm text-gray-700 dark:text-gray-200">
+      <p
+        data-i18n="annotation.confirm_delete"
+        class="text-sm text-gray-700 dark:text-gray-200"
+      >
         Delete this annotation?
       </p>
       <div class="flex justify-end gap-2">
@@ -2627,10 +2778,16 @@
         class="w-full max-w-sm bg-white dark:bg-gray-900 border border-red-200 dark:border-red-700 rounded-xl shadow-2xl p-5 flex flex-col gap-3"
         onclick="event.stopPropagation()"
       >
-        <p data-i18n="doc.confirm_delete" class="text-sm text-gray-700 dark:text-gray-200">
+        <p
+          data-i18n="doc.confirm_delete"
+          class="text-sm text-gray-700 dark:text-gray-200"
+        >
           Permanently delete this document?
         </p>
-        <p id="doc-confirm-delete-title" class="text-xs text-gray-500 dark:text-gray-400 italic truncate"></p>
+        <p
+          id="doc-confirm-delete-title"
+          class="text-xs text-gray-500 dark:text-gray-400 italic truncate"
+        ></p>
         <div class="flex justify-end gap-2 mt-2">
           <button
             onclick="cancelDeleteDocument()"
@@ -2686,7 +2843,9 @@
       <div
         class="flex items-center justify-between px-6 h-14 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0"
       >
-        <h2 data-i18n="wc.title" class="font-semibold text-base">&#9729; Word Cloud</h2>
+        <h2 data-i18n="wc.title" class="font-semibold text-base">
+          &#9729; Word Cloud
+        </h2>
         <button
           onclick="closeWordCloud()"
           data-i18n="wc.close_btn"
@@ -2947,7 +3106,9 @@
           <div
             class="px-3 py-2 border-b border-gray-100 dark:border-gray-800 flex items-center gap-2"
           >
-            <span data-i18n="wc.min_files_label" class="text-xs text-gray-500 dark:text-gray-400 shrink-0"
+            <span
+              data-i18n="wc.min_files_label"
+              class="text-xs text-gray-500 dark:text-gray-400 shrink-0"
               >Min files</span
             >
             <input
@@ -3025,7 +3186,9 @@
       id="export-modal"
       class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
     >
-      <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-sm mx-4 p-6 space-y-4">
+      <div
+        class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-sm mx-4 p-6 space-y-4"
+      >
         <!-- Title -->
         <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">
           <i class="fa-solid fa-file-export mr-2 text-blue-500"></i>
@@ -3039,19 +3202,25 @@
             onclick="switchExportTab('markdown')"
             data-i18n="modal.export.tab_markdown"
             class="px-4 py-2 text-sm border-b-2 border-blue-500 text-blue-600 dark:text-blue-400 font-semibold transition-colors"
-          >Markdown</button>
+          >
+            Markdown
+          </button>
           <button
             id="export-tab-html"
             onclick="switchExportTab('html')"
             data-i18n="modal.export.tab_html"
             class="px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-          >HTML</button>
+          >
+            HTML
+          </button>
           <button
             id="export-tab-pdf"
             onclick="switchExportTab('pdf')"
             data-i18n="modal.export.tab_pdf"
             class="px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-          >PDF</button>
+          >
+            PDF
+          </button>
         </div>
 
         <!-- Folder list (html tab only) -->
@@ -3064,27 +3233,38 @@
 
         <!-- Markdown tab content -->
         <div id="export-content-markdown">
-          <p class="text-xs text-gray-500 dark:text-gray-400" data-i18n="modal.export.markdown_hint">
-            Export all documents and images as Markdown files, with internal links rewritten to relative paths.
+          <p
+            class="text-xs text-gray-500 dark:text-gray-400"
+            data-i18n="modal.export.markdown_hint"
+          >
+            Export all documents and images as Markdown files, with internal
+            links rewritten to relative paths.
           </p>
           <div class="flex justify-end gap-3 pt-2">
             <button
               onclick="closeExportModal()"
               data-i18n="common.cancel"
               class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-            >Cancel</button>
+            >
+              Cancel
+            </button>
             <button
               id="export-md-btn"
               onclick="exportMarkdown()"
               data-i18n="modal.export.markdown_btn"
               class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
-            >Export Markdown</button>
+            >
+              Export Markdown
+            </button>
           </div>
         </div>
 
         <!-- HTML tab content -->
         <div id="export-content-html" class="hidden">
-          <p class="text-xs text-gray-500 dark:text-gray-400" data-i18n="modal.export_html.hint">
+          <p
+            class="text-xs text-gray-500 dark:text-gray-400"
+            data-i18n="modal.export_html.hint"
+          >
             Select the folders to include in the ZIP archive.
           </p>
           <div class="flex justify-end gap-3 pt-2">
@@ -3092,25 +3272,34 @@
               onclick="closeExportModal()"
               data-i18n="common.cancel"
               class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-            >Cancel</button>
+            >
+              Cancel
+            </button>
             <button
               id="export-notion-btn"
               onclick="exportHtml('notion')"
               data-i18n="modal.export_html.notion_btn"
               class="text-sm px-4 py-2 rounded-lg border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-semibold transition-colors"
-            >Export Notion</button>
+            >
+              Export Notion
+            </button>
             <button
               id="export-confluence-btn"
               onclick="exportHtml('confluence')"
               data-i18n="modal.export_html.confluence_btn"
               class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
-            >Export Confluence</button>
+            >
+              Export Confluence
+            </button>
           </div>
         </div>
 
         <!-- PDF tab content -->
         <div id="export-content-pdf" class="hidden">
-          <p class="text-xs text-gray-500 dark:text-gray-400" data-i18n="modal.export.pdf_hint">
+          <p
+            class="text-xs text-gray-500 dark:text-gray-400"
+            data-i18n="modal.export.pdf_hint"
+          >
             Export all documents as a single PDF with table of contents.
           </p>
           <div class="flex justify-end gap-3 pt-2">
@@ -3118,13 +3307,17 @@
               onclick="closeExportModal()"
               data-i18n="common.cancel"
               class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-            >Cancel</button>
+            >
+              Cancel
+            </button>
             <button
               id="export-pdf-btn"
               onclick="exportAllPdfFromModal()"
               data-i18n="modal.export.pdf_btn"
               class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
-            >Export all PDF</button>
+            >
+              Export all PDF
+            </button>
           </div>
         </div>
       </div>
@@ -3134,16 +3327,26 @@
     <div
       id="ai-agents-modal"
       class="hidden fixed inset-0 z-[55] bg-black/45 flex items-center justify-center p-4"
-      onclick="if(event.target===this)closeAiAgentsModal()"
+      onclick="if (event.target === this) closeAiAgentsModal();"
     >
       <div
         class="w-full max-w-4xl max-h-[82vh] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl flex flex-col overflow-hidden"
         onclick="event.stopPropagation()"
       >
-        <div class="px-5 py-4 border-b border-gray-200 dark:border-gray-800 flex items-start justify-between gap-4">
+        <div
+          class="px-5 py-4 border-b border-gray-200 dark:border-gray-800 flex items-start justify-between gap-4"
+        >
           <div>
-            <h2 class="font-semibold text-base text-gray-900 dark:text-gray-100" data-i18n="agents.title">Agents IA</h2>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-i18n="agents.subtitle">
+            <h2
+              class="font-semibold text-base text-gray-900 dark:text-gray-100"
+              data-i18n="agents.title"
+            >
+              Agents IA
+            </h2>
+            <p
+              class="text-xs text-gray-500 dark:text-gray-400 mt-1"
+              data-i18n="agents.subtitle"
+            >
               Launch a configured workspace agent.
             </p>
           </div>
@@ -3156,8 +3359,13 @@
             &times;
           </button>
         </div>
-        <div id="ai-agents-grid" class="p-5 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          <p class="text-sm text-gray-400" data-i18n="common.loading">Loading…</p>
+        <div
+          id="ai-agents-grid"
+          class="p-5 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
+        >
+          <p class="text-sm text-gray-400" data-i18n="common.loading">
+            Loading…
+          </p>
         </div>
       </div>
     </div>
@@ -3166,16 +3374,28 @@
     <div
       id="ai-agent-input-modal"
       class="hidden fixed inset-0 z-[56] bg-black/45 flex items-center justify-center p-4"
-      onclick="if(event.target===this)closeAiAgentInputModal()"
+      onclick="if (event.target === this) closeAiAgentInputModal();"
     >
       <div
         class="w-full max-w-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl flex flex-col overflow-hidden"
         onclick="event.stopPropagation()"
       >
-        <div class="px-5 py-4 border-b border-gray-200 dark:border-gray-800 flex items-start justify-between gap-4">
+        <div
+          class="px-5 py-4 border-b border-gray-200 dark:border-gray-800 flex items-start justify-between gap-4"
+        >
           <div>
-            <h2 id="ai-agent-input-title" class="font-semibold text-base text-gray-900 dark:text-gray-100" data-i18n="agents.input_title">Agent input</h2>
-            <p id="ai-agent-input-hint" class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-i18n="agents.input_hint">
+            <h2
+              id="ai-agent-input-title"
+              class="font-semibold text-base text-gray-900 dark:text-gray-100"
+              data-i18n="agents.input_title"
+            >
+              Agent input
+            </h2>
+            <p
+              id="ai-agent-input-hint"
+              class="text-xs text-gray-500 dark:text-gray-400 mt-1"
+              data-i18n="agents.input_hint"
+            >
               Provide the input required for this run.
             </p>
           </div>
@@ -3200,13 +3420,17 @@
               onclick="closeAiAgentInputModal()"
               data-i18n="common.cancel"
               class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-            >Cancel</button>
+            >
+              Cancel
+            </button>
             <button
               id="ai-agent-input-run"
               type="button"
               data-i18n="agents.run"
               class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
-            >Run agent</button>
+            >
+              Run agent
+            </button>
           </div>
         </div>
       </div>
@@ -3219,16 +3443,30 @@
       role="status"
     >
       <div class="flex items-start gap-3">
-        <span id="ai-agent-toast-icon" class="mt-0.5 h-5 w-5 rounded-full border-2 border-blue-500 border-t-transparent animate-spin shrink-0"></span>
+        <span
+          id="ai-agent-toast-icon"
+          class="mt-0.5 h-5 w-5 rounded-full border-2 border-blue-500 border-t-transparent animate-spin shrink-0"
+        ></span>
         <div class="min-w-0 flex-1">
-          <p id="ai-agent-toast-title" class="text-sm font-semibold text-gray-900 dark:text-gray-100" data-i18n="agents.loading">Running agent…</p>
-          <p id="ai-agent-toast-message" class="text-xs text-gray-500 dark:text-gray-400 mt-1 break-words"></p>
+          <p
+            id="ai-agent-toast-title"
+            class="text-sm font-semibold text-gray-900 dark:text-gray-100"
+            data-i18n="agents.loading"
+          >
+            Running agent…
+          </p>
+          <p
+            id="ai-agent-toast-message"
+            class="text-xs text-gray-500 dark:text-gray-400 mt-1 break-words"
+          ></p>
           <button
             id="ai-agent-toast-open"
             type="button"
             data-i18n="agents.open_document"
             class="hidden mt-3 text-xs px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
-          >Open document</button>
+          >
+            Open document
+          </button>
         </div>
         <button
           id="ai-agent-toast-close"
@@ -3251,9 +3489,18 @@
         class="w-full max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl p-5 flex flex-col gap-3"
         onclick="event.stopPropagation()"
       >
-        <h3 id="confirm-modal-title" class="font-semibold text-gray-900 dark:text-gray-100"></h3>
-        <p id="confirm-modal-message" class="text-sm text-gray-700 dark:text-gray-200"></p>
-        <p id="confirm-modal-detail" class="text-xs text-gray-500 dark:text-gray-400 italic break-all"></p>
+        <h3
+          id="confirm-modal-title"
+          class="font-semibold text-gray-900 dark:text-gray-100"
+        ></h3>
+        <p
+          id="confirm-modal-message"
+          class="text-sm text-gray-700 dark:text-gray-200"
+        ></p>
+        <p
+          id="confirm-modal-detail"
+          class="text-xs text-gray-500 dark:text-gray-400 italic break-all"
+        ></p>
         <div class="flex justify-end gap-2 mt-2">
           <button
             id="confirm-modal-cancel"
@@ -3273,7 +3520,7 @@
     <div
       id="files-modal"
       class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-      onclick="if(event.target===this)closeFilesModal()"
+      onclick="if (event.target === this) closeFilesModal();"
     >
       <div
         class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-[min(720px,92vw)] max-h-[85vh] flex flex-col border border-gray-200 dark:border-gray-800"
@@ -3281,7 +3528,10 @@
         <div
           class="flex items-center justify-between px-5 py-3 border-b border-gray-200 dark:border-gray-800 shrink-0"
         >
-          <h2 data-i18n="files.title" class="font-semibold text-base text-gray-900 dark:text-gray-100">
+          <h2
+            data-i18n="files.title"
+            class="font-semibold text-base text-gray-900 dark:text-gray-100"
+          >
             &#128193; Files
           </h2>
           <button
@@ -3293,7 +3543,9 @@
           </button>
         </div>
         <div id="files-modal-body" class="flex-1 overflow-y-auto p-5">
-          <p class="text-sm text-gray-400" data-i18n="common.loading">Loading…</p>
+          <p class="text-sm text-gray-400" data-i18n="common.loading">
+            Loading…
+          </p>
         </div>
       </div>
     </div>

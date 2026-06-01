@@ -12,6 +12,6 @@ Ca en arrange certains ? Pas moi !
 
 # Pourtant certaines approches ont prouvé leur valeur
 
-[![Découvrons les ADRs](./images/decouverte_adrs.png)](?doc=3_concept%252F2026_04_08_20_58_%255BDOCUMENTING%255D_ADRS)
+[![Découvrons les ADRs](/images/decouverte_adrs.png)](?doc=3_concept%252F2026_04_08_20_58_%255BDOCUMENTING%255D_ADRS)
 
 <h1 style="text-align:center"><code>CLIC sur l'image pour naviguer 😉</code></h1>

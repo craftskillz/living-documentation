@@ -642,7 +642,7 @@
   "000_BLUEPRINT/2026_06_01_17_40_[SCRIPTS]_scripts": [
     {
       "path": "scripts/copy-assets.ts",
-      "hash": "c4b765a05c3508c8e61b3624a31dffa236acab0d2e03e2cd9f3401f9734a9b04"
+      "hash": "9c9ea3b5045e7fcf70f1515fd6888024a38405015b7a0845bbf08311c58a4f60"
     },
     {
       "path": "scripts/dev.js",

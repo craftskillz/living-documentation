@@ -74,7 +74,7 @@ function diagUpdatePreview() {
     diagId = sel.value;
     diagLabel = sel.options[sel.selectedIndex]?.text || "Diagram";
   }
-  const md = `\n\n[![${diagLabel}](./images/${imgName})](/diagram?id=${diagId})`;
+  const md = `\n\n[![${diagLabel}](/images/${imgName})](/diagram?id=${diagId})`;
   document.getElementById("diag-preview").textContent = md.trim();
   // store for insertDiagramLink
   document.getElementById("diag-insert-btn").dataset.diagId = diagId;
@@ -107,7 +107,7 @@ async function insertDiagramLink() {
     }
 
     // Append markdown to document and save
-    const md = `\n\n[![${diagLabel}](./images/${imgName})](/diagram?id=${diagId})`;
+    const md = `\n\n[![${diagLabel}](/images/${imgName})](/diagram?id=${diagId})`;
     const newContent = currentDocContent + md;
     const res = await fetch("/api/documents/" + currentDocId, {
       method: "PUT",

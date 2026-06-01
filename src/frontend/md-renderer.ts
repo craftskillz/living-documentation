@@ -13,6 +13,7 @@
 declare global {
   interface Window {
     hljs?: { highlightElement(block: Element): void };
+    mermaid?: { run(opts: { nodes: NodeListOf<Element> }): void };
   }
 }
 
@@ -29,6 +30,19 @@ export function renderMarkdownHtml(html: string, el: HTMLElement): void {
         .replace(/\s+/g, '-');
     }
   });
+
+  // Mermaid diagrams — replace before highlight.js
+  el.querySelectorAll('pre code.language-mermaid').forEach((block) => {
+    const source = block.textContent ?? '';
+    const wrapper = document.createElement('div');
+    wrapper.className = 'mermaid';
+    wrapper.textContent = source;
+    block.closest('pre')!.replaceWith(wrapper);
+  });
+  if (window.mermaid) {
+    const nodes = el.querySelectorAll('.mermaid');
+    if (nodes.length) window.mermaid.run({ nodes });
+  }
 
   // Syntax highlighting
   if (window.hljs) {

@@ -19,7 +19,7 @@ Pour plus d'information consulter le [`Guide de démarrage`](?doc=2_guide%252F20
 <h2 style="text-align:center"><code>SHIFT+CLIC sur l'image pour l'agrandir 😉</code></h2>
 <h2 style="text-align:center"><code>CLIC sur l'image pour accéder au diagamme en modification 😲</code></h2>
 
-[![The Living Documentation Tool](./images/the_living_documentation_tool.png)](/diagram?id=d1775684671412)
+[![The Living Documentation Tool](/images/the_living_documentation_tool.png)](/diagram?id=d1775684671412)
 
 - **Garder la documentation dans le dépôt**, en Markdown, versionnée avec le code, sans dépendance externe
 - **Résoudre le problème des diagrammes** avec un éditeur intégré dont la source est stockée dans le même dossier que les documents

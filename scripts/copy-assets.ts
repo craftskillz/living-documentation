@@ -1,8 +1,8 @@
 #!/usr/bin/env ts-node
-// Copies frontend assets (HTML, vendor) into the dist/ directory after tsc compile
+// Copies frontend assets (HTML, vendor aka wordcloud2.js) into the dist/ directory after tsc compile
 
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
 function copyDir(src: string, dest: string): void {
   fs.mkdirSync(dest, { recursive: true });
@@ -22,19 +22,22 @@ function copyFreshDir(src: string, dest: string): void {
   copyDir(src, dest);
 }
 
-const src = path.join(__dirname, '..', 'src', 'frontend');
-const dest = path.join(__dirname, '..', 'dist', 'src', 'frontend');
+const src = path.join(__dirname, "..", "src", "frontend");
+const dest = path.join(__dirname, "..", "dist", "src", "frontend");
 
 copyFreshDir(src, dest);
 console.log(`Copied frontend assets → dist/src/frontend/`);
 
-for (const legacyStarterName of ['starting-doc', 'starting-doc-fr']) {
-  fs.rmSync(path.join(__dirname, '..', 'dist', legacyStarterName), { recursive: true, force: true });
+for (const legacyStarterName of ["starting-doc", "starting-doc-fr"]) {
+  fs.rmSync(path.join(__dirname, "..", "dist", legacyStarterName), {
+    recursive: true,
+    force: true,
+  });
 }
 
-for (const starterName of ['starter-doc', 'starter-doc-fr']) {
-  const starterDocSrc = path.join(__dirname, '..', starterName);
-  const starterDocDest = path.join(__dirname, '..', 'dist', starterName);
+for (const starterName of ["starter-doc", "starter-doc-fr"]) {
+  const starterDocSrc = path.join(__dirname, "..", starterName);
+  const starterDocDest = path.join(__dirname, "..", "dist", starterName);
 
   if (fs.existsSync(starterDocSrc)) {
     copyFreshDir(starterDocSrc, starterDocDest);

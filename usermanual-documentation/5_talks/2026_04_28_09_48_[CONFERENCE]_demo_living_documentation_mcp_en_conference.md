@@ -71,7 +71,7 @@ Les changements **structurels** (la décision elle-même est remise en cause) so
 
 ## Architecture en un coup d'œil
 
-[![Diagramme context — Living Documentation](./images/living_documentation_context_demo_conf.png)](/diagram?id=d1777363627693)
+[![Diagramme context — Living Documentation](/images/living_documentation_context_demo_conf.png)](/diagram?id=d1777363627693)
 
 Le diagramme contient quatre nœuds : _Coding agent_ (acteur), _Developer / Reader_ (acteur), _Living Documentation_ (système central) et _Local filesystem_ (datastore). Les edges décrivent les trois interactions clés : invocation MCP par l'agent, navigation/édition par le développeur, et lecture/écriture sur le filesystem.
 

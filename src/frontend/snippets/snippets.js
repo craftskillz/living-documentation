@@ -1497,7 +1497,7 @@ async function insertDiagramSnippet() {
   }
 
   // Insert at cursor
-  const md = `[![${diagLabel}](./images/${imgName})](/diagram?id=${diagId})`;
+  const md = `[![${diagLabel}](/images/${imgName})](/diagram?id=${diagId})`;
   const wasInlineInsert = _snippetInlineInsert;
   const insertStart = _snippetSelStart;
   const insertEnd = _snippetSelEnd;

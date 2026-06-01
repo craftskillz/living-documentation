@@ -13,7 +13,7 @@ npx living-ai-documentation@latest                # assistant interactif (EN/FR)
 npx living-ai-documentation@latest ./docs         # servir un dossier existant
 ```
 
-![Viewer Living Documentation](./images/living_documentation.jpg)
+![Viewer Living Documentation](/images/living_documentation.jpg)
 
 ---
 
@@ -180,9 +180,9 @@ Un `GET http://localhost:4321/mcp` retourne les schémas live des tools et promp
 - **Navigation par ancre** — `[label](#heading-slug)` scrolle correctement après le rendu async ; IDs auto-générés.
 - **Mode sombre** — suit la préférence système, basculable manuellement. Coloration syntaxique toujours sombre.
 
-![Sidebar groupé par dossier → catégorie](./images/readme-sidebar.png)
+![Sidebar groupé par dossier → catégorie](/images/readme-sidebar.png)
 
-![Recherche plein-texte](./images/readme-intelligent-search-demo.jpg)
+![Recherche plein-texte](/images/readme-intelligent-search-demo.jpg)
 
 ---
 
@@ -216,7 +216,7 @@ docs/
 - Les dossiers sont triés alphabétiquement — préfixer par `1_`, `2_`… pour forcer un ordre ; le préfixe est caché dans l'UI mais visible au survol.
 - L'imbrication de sous-dossiers est récursive.
 
-![Pattern de filename](./images/readme-filename-pattern.png)
+![Pattern de filename](/images/readme-filename-pattern.png)
 
 ---
 
@@ -245,7 +245,7 @@ Créé automatiquement dans votre dossier de doc au premier lancement. Modifiabl
 
 **Tous les chemins sont relatifs POSIX** pour que `.living-doc.json` reste portable. Les chemins absolus legacy sont migrés silencieusement à la première lecture.
 
-![Extra files](./images/readme-extra-files.png)
+![Extra files](/images/readme-extra-files.png)
 
 ---
 

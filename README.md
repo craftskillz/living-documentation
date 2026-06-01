@@ -13,7 +13,7 @@ npx living-ai-documentation@latest                # interactive wizard (EN/FR)
 npx living-ai-documentation@latest ./docs         # serve an existing folder
 ```
 
-![Living Documentation viewer](./images/living_documentation.jpg)
+![Living Documentation viewer](/images/living_documentation.jpg)
 
 ---
 
@@ -180,9 +180,9 @@ A `GET http://localhost:4321/mcp` returns the live tool + prompt schemas for ins
 - **Anchor navigation** — `[label](#heading-slug)` scrolls correctly after async render; IDs auto-generated.
 - **Dark mode** — follows system preference, manually toggleable. Syntax highlighting always dark.
 
-![Sidebar grouped by folder → category](./images/readme-sidebar.png)
+![Sidebar grouped by folder → category](/images/readme-sidebar.png)
 
-![Full-text search](./images/readme-intelligent-search-demo.jpg)
+![Full-text search](/images/readme-intelligent-search-demo.jpg)
 
 ---
 
@@ -216,7 +216,7 @@ docs/
 - Folders are sorted alphabetically — prefix with `1_`, `2_`… to force an order; the prefix is hidden in the UI but visible on hover.
 - Subdirectory nesting is supported recursively.
 
-![Filename pattern](./images/readme-filename-pattern.png)
+![Filename pattern](/images/readme-filename-pattern.png)
 
 ---
 
@@ -245,7 +245,7 @@ Created automatically in your docs folder on first run. Edit in the Admin panel 
 
 **All paths are relative POSIX** so `.living-doc.json` stays portable. Legacy absolute paths are silently migrated on first read.
 
-![Extra files](./images/readme-extra-files.png)
+![Extra files](/images/readme-extra-files.png)
 
 ---
 

@@ -9,6 +9,7 @@ Les snippets sont accessibles en mode édition via le bouton **`🧩 Snippets`**
 <!-- table-style: striped -->
 <!-- table-border: bordered -->
 <!-- table-color: info -->
+
 | Snippet                      | Description                                              | Markdown généré (exemple)                                  |
 | ---------------------------- | -------------------------------------------------------- | ---------------------------------------------------------- |
 | **Bloc dépliable**           | Bloc `<details>` avec titre et contenu masqué par défaut | `<details><summary>Titre</summary>\n\nContenu\n</details>` |
@@ -16,8 +17,8 @@ Les snippets sont accessibles en mode édition via le bouton **`🧩 Snippets`**
 | **Lien vers un document**    | Lien vers un autre document Living Documentation         | `[Texte](?doc=<id_encodé>)`                                |
 | **Lien d'ancre**             | Lien vers une section du document courant                | `[Texte](#titre-de-section)`                               |
 | **Lien d'ancre (autre doc)** | Lien vers une section d'un autre document                | `[Texte](?doc=<id_encodé>#titre)`                          |
-| **Lien vers un diagramme**   | Image cliquable ouvrant l'éditeur de diagramme           | `[![Alt](./images/img.png)](/diagram?id=<id>)`             |
-| **Image**                    | Image Markdown simple                                    | `![Alt](./images/img.png)`                                 |
+| **Lien vers un diagramme**   | Image cliquable ouvrant l'éditeur de diagramme           | `[![Alt](/images/img.png)](/diagram?id=<id>)`              |
+| **Image**                    | Image Markdown simple                                    | `![Alt](/images/img.png)`                                  |
 | **Bloc de code**             | Bloc de code avec langage                                | ` ```langage\ncode\n``` `                                  |
 | **Citation**                 | Bloc blockquote                                          | `> Texte de la citation`                                   |
 | **Séparateur**               | Ligne horizontale                                        | `---`                                                      |
@@ -38,9 +39,9 @@ Ouvre une grille interactive dans le panneau Snippets.
 - En édition inline, les cellules vides sont conservées et la grille reprend tout le tableau détecté
 
 ```markdown
-| Col 1  | Col 2  | Col 3  |
-|--------|--------|--------|
-| val 1  | val 2  | val 3  |
+| Col 1 | Col 2 | Col 3 |
+| ----- | ----- | ----- |
+| val 1 | val 2 | val 3 |
 ```
 
 #### Arbre ASCII (éditeur d'indentation)

@@ -30,7 +30,7 @@ Old section body
 | s         |           |           |
 |           | s         |           |
 
-``` javascript
+```javascript
 console.log("Hello World!");
 ```
 
@@ -41,17 +41,17 @@ console.log("Hello World!");
 - First bullet
   continuation for first bullet
 - Second bullet
-lazy continuation for second bullet
+  lazy continuation for second bullet
   - Nested bullet
 
 1. First numbered
    continuation for first numbered
 2. Second numbered
-lazy continuation for second numbered
+   lazy continuation for second numbered
    1. Nested numbered
    - Nested bullet under numbered
 
-1. Chercher le groupe lié à l'app Amplify — il est nommé selon le pattern :
+3. Chercher le groupe lié à l'app Amplify — il est nommé selon le pattern :
    ```yaml
    /aws/amplify/<app-id>
    ```
@@ -74,7 +74,7 @@ Just a body paragraph.
 Some intro text.
 
 ```markdown
-![image](./images/foo.png)
+![image](/images/foo.png)
 ```
 
 </details>
@@ -82,6 +82,7 @@ Some intro text.
 <!-- table-style: compact -->
 <!-- table-border: bordered -->
 <!-- table-color: info -->
-| Name | Age |
-| ---- | ---:|
-| Youssef | 42 |
+
+| Name    | Age |
+| ------- | --: |
+| Youssef |  42 |

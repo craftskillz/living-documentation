@@ -149,7 +149,7 @@ function processMarkdown(md: string, currentGroup: string): { md: string; images
   // Rewrite ?doc= internal navigation links to relative file links.
   md = rewriteDocLinks(md, currentGroup);
 
-  // Rewrite markdown image syntax: ![alt](./images/name.png "title") → ![alt](./name.png "title")
+  // Rewrite markdown image syntax: ![alt](/images/name.png "title") → ![alt](./name.png "title")
   md = md.replace(
     /!\[([^\]]*)\]\(((?:\.\/|\/)?images\/([^)"'\s#?]+))([^)]*)\)/g,
     (_match, alt, _fullSrc, filename, rest) => {

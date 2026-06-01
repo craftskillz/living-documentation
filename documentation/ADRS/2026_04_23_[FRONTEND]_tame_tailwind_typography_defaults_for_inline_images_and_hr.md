@@ -16,14 +16,14 @@ With soft-breaks on, the user hit this real-world case:
 
 ```markdown
 1. Créer un document
-   [![…](./images/…png)](/diagram?id=d1776024969304)
+   [![…](/images/…png)](/diagram?id=d1776024969304)
 ```
 
-renders as `<li><p>Créer un document<br><a><img></a></p></li>`. The `<br>` already pushes the image to the next visual line ; the inherited 32 px top margin on `<img>` then *adds* another full blank line, yielding a 32–48 px gap between the list-item label and its illustration. The same problem applies to any image sitting next to text (inline captions, emoji-style icons inside paragraphs, etc.). The 2em spacing is appropriate for an editorial photo set on its own line ; it is wrong for inline usage.
+renders as `<li><p>Créer un document<br><a><img></a></p></li>`. The `<br>` already pushes the image to the next visual line ; the inherited 32 px top margin on `<img>` then _adds_ another full blank line, yielding a 32–48 px gap between the list-item label and its illustration. The same problem applies to any image sitting next to text (inline captions, emoji-style icons inside paragraphs, etc.). The 2em spacing is appropriate for an editorial photo set on its own line ; it is wrong for inline usage.
 
 ### 2. `.prose hr { margin-top: 3em; margin-bottom: 3em; border-color: #e5e7eb }`
 
-48 px top + 48 px bottom = 96 px consumed per `<hr>`. Combined with the default `gray-200` border, the separator paradoxically feels *both* too wide *and* invisible on a white background — it eats vertical real estate yet does not meaningfully mark the transition it is supposed to announce.
+48 px top + 48 px bottom = 96 px consumed per `<hr>`. Combined with the default `gray-200` border, the separator paradoxically feels _both_ too wide _and_ invisible on a white background — it eats vertical real estate yet does not meaningfully mark the transition it is supposed to announce.
 
 The user wanted both defects fixed without reinventing the prose styling wholesale — just surgical overrides co-located with the other `.dark .prose *` rules already in `src/frontend/index.html`.
 
@@ -49,7 +49,7 @@ Two rules, in that order:
 
 The first rule zeroes out the 2em default globally. The second re-adds a moderate 1em only when the image sits as the only child of its paragraph — either directly (`<p><img></p>`) or wrapped in a single link (`<p><a><img></a></p>`). `:only-child` makes the selector robust: an image with a caption string next to it, an image in a list, an image after a `<br>` all fall back to the zero rule.
 
-This matches the author's mental model: *"this image is the block"* deserves breathing room ; *"this image decorates text"* should flow with the text.
+This matches the author's mental model: _"this image is the block"_ deserves breathing room ; _"this image decorates text"_ should flow with the text.
 
 ### 2. Horizontal-rule margins + color
 
@@ -66,7 +66,7 @@ This matches the author's mental model: *"this image is the block"* deserves bre
 
 Dark mode keeps its pre-existing rule (`.dark .prose hr { border-color: #4b5563 }` at line ~265), which already has enough contrast on the dark background.
 
-### 3. Decisions explicitly *not* taken
+### 3. Decisions explicitly _not_ taken
 
 - No change to `.prose table`, `.prose blockquote`, `.prose ul` margins — they did not surface as problems yet. Holding off on more pre-emptive tweaks, in line with the "don't refactor beyond the task" principle.
 - No move to a custom Typography plugin config (would require a build step) ; CDN-friendly CSS overrides are enough.
@@ -77,7 +77,7 @@ Dark mode keeps its pre-existing rule (`.dark .prose hr { border-color: #4b5563 
 ### PROS
 
 - **Fixes the concrete user-reported issue** — inline images in numbered lists no longer get a 32 px ghost margin after the `<br>`.
-- **Preserves editorial intent** — images that *are* the paragraph still get 1em of breathing room, so screenshots in their own block still look "framed".
+- **Preserves editorial intent** — images that _are_ the paragraph still get 1em of breathing room, so screenshots in their own block still look "framed".
 - **Tamed separators** — `<hr>` is 33 % less wasteful vertically and actually visible on white, without needing a thicker stroke.
 - **Zero JavaScript** — pure CSS, applies uniformly to the viewer and to every doc without any render-path change.
 - **Self-contained** — all changes live in one `<style>` block ; no Tailwind config override, no build tooling change, no CDN URL change.
@@ -87,7 +87,7 @@ Dark mode keeps its pre-existing rule (`.dark .prose hr { border-color: #4b5563 
 ### CONS
 
 - **Divergence from Typography defaults** — anyone pulling a doc out of the viewer and pasting into another Tailwind Typography context (e.g. a blog) will see different spacing. Acceptable given we own the viewer, but worth flagging.
-- **`:only-child` selector is strict** — an image followed by a single whitespace-only text node will *not* match `:only-child` ; browsers normally coalesce whitespace but some HTML pipelines may leave a trailing text node that breaks the match. If we ever see such a case we can loosen to `:first-child:last-of-type` or equivalent.
+- **`:only-child` selector is strict** — an image followed by a single whitespace-only text node will _not_ match `:only-child` ; browsers normally coalesce whitespace but some HTML pipelines may leave a trailing text node that breaks the match. If we ever see such a case we can loosen to `:first-child:last-of-type` or equivalent.
 - **Color hard-coded** — `#d1d5db` is inlined rather than pulled from a CSS custom property or Tailwind's `--tw-prose-hr`. If the user later wants to re-theme, this becomes another spot to update alongside `.dark .prose hr`.
 - **No hr override for dark mode** — the margin/color tweaks only apply in light mode for the color ; dark users keep the original border. Intentional (dark already reads well), but asymmetric.
 - **Tight feedback loop was needed to settle the values** — we iterated through 1em / 2em, 1px / 2px, gray-200 / gray-300 / gray-400 before landing on `2em + gray-300 + 1px`. This ADR captures the endpoint ; the rejected variants are documented in the decision section so we do not re-try them later.

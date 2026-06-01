@@ -42,7 +42,7 @@ Une nouvelle entrée `Diagramme` est ajoutée en **première position** de la se
 Au clic sur "Insérer" :
 
 1. Si nouveau diagramme : `PUT /api/diagrams/:id` pour créer le diagramme vide
-2. Le lien markdown `[![label](./images/nom.png)](/diagram?id=xxx)` est inséré **à la position du curseur** dans l'éditeur
+2. Le lien markdown `[![label](/images/nom.png)](/diagram?id=xxx)` est inséré **à la position du curseur** dans l'éditeur
 3. Le document est auto-sauvegardé via `PUT /api/documents/:id`
 4. Redirection vers `/diagram?id=xxx&img=nom.png`
 

@@ -8,7 +8,7 @@ Si vous ne maitrisez pas le markdown, vous pouvez utiliser l'éditeur de documen
 - lien vers un document
 - lien vers une ancre
 - lien vers une ancre d'un autre document
-![image](./images/liens_snippets.png)
+![image](/images/liens_snippets.png)
 </details>
 
 ---
@@ -24,19 +24,19 @@ Une image peut être **simple** ou **liée à une destination**
 - simple
 
 ```markdown
-![Découvrons les ADRs](./images/decouverte_adrs.png)
+![Découvrons les ADRs](/images/decouverte_adrs.png)
 ```
 
 - liée à un autre document de `living documentation`
 
 ```
-[![Découvrons les ADRs](./images/decouverte_adrs.png)](?doc=3_concept%252F2026_04_08_20_58_%255BDOCUMENTING%255D_ADRS)
+[![Découvrons les ADRs](/images/decouverte_adrs.png)](?doc=3_concept%252F2026_04_08_20_58_%255BDOCUMENTING%255D_ADRS)
 ```
 
 - liée à un **diagramme** de `living documentation`
 
 ```
-[![The Living Documentation Tool](./images/living_documentation_tool.png)](/diagram?id=d1775684671412)
+[![The Living Documentation Tool](/images/living_documentation_tool.png)](/diagram?id=d1775684671412)
 ```
 
 - liée à autre chose (généralement une page web)

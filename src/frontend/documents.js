@@ -56,6 +56,18 @@ function _wireDocContent(html) {
     }
   });
 
+  // Render Mermaid diagrams before highlight.js touches them
+  contentEl.querySelectorAll("pre code.language-mermaid").forEach((block) => {
+    const source = block.textContent || "";
+    const wrapper = document.createElement("div");
+    wrapper.className = "mermaid my-4";
+    wrapper.textContent = source;
+    block.closest("pre").replaceWith(wrapper);
+  });
+  if (window.mermaid && contentEl.querySelector(".mermaid")) {
+    window.mermaid.run({ nodes: contentEl.querySelectorAll(".mermaid") });
+  }
+
   contentEl.querySelectorAll("pre code").forEach((block) => {
     hljs.highlightElement(block);
   });

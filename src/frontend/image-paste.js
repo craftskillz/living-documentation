@@ -94,7 +94,7 @@ async function imgPasteConfirm() {
     if (!res.ok) throw new Error(await res.text());
 
     const { filename } = await res.json();
-    const mdImage = `![image](./images/${filename})`;
+    const mdImage = `![image](/images/${filename})`;
 
     const before = editor.value.slice(0, _imgPasteCursorStart);
     const after = editor.value.slice(_imgPasteCursorEnd);
