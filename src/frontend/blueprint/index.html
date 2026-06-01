@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Blueprint</title>
     <link rel="stylesheet" href="/blueprint/styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
   </head>
   <body>
     <main class="app-shell">
@@ -37,10 +40,18 @@
 
         <aside id="fileExplorer" class="file-explorer" hidden>
           <header class="explorer-header">
-            <div class="explorer-path" id="explorerPath"></div>
+            <div id="explorerBreadcrumb" class="explorer-breadcrumb"></div>
             <button id="explorerClose" class="explorer-close" type="button">×</button>
           </header>
-          <div id="explorerList" class="explorer-list"></div>
+          <div class="explorer-top">
+            <div id="explorerList" class="explorer-list"></div>
+          </div>
+          <div class="explorer-divider"></div>
+          <div class="explorer-bottom">
+            <div id="filePreview" class="file-preview">
+              <p class="file-preview-placeholder">Click a file to preview it</p>
+            </div>
+          </div>
         </aside>
       </section>
     </main>

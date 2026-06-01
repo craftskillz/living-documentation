@@ -54,9 +54,11 @@ const ctx = canvas.getContext('2d')!;
 const fitButton = document.getElementById('fitButton') as HTMLButtonElement;
 const dragToggle = document.getElementById('dragToggle') as HTMLButtonElement;
 const fileExplorer = document.getElementById('fileExplorer') as HTMLElement;
-const explorerPath = document.getElementById('explorerPath') as HTMLElement;
+const explorerBreadcrumb = document.getElementById('explorerBreadcrumb') as HTMLElement;
 const explorerList = document.getElementById('explorerList') as HTMLElement;
 const explorerClose = document.getElementById('explorerClose') as HTMLButtonElement;
+const filePreview = document.getElementById('filePreview') as HTMLElement;
+let explorerCurrentPath = '';
 const breadcrumbEl = document.getElementById('breadcrumb') as HTMLElement;
 const emptyState = document.getElementById('emptyState') as HTMLElement;
 
@@ -77,6 +79,7 @@ let isSelecting = false;
 let selectStartWorld = { x: 0, y: 0 };
 let selectCurrentWorld = { x: 0, y: 0 };
 let activeExplorerPath: string | null = null;
+let currentCanvasPath = '';
 let dragOffsetX = 0;
 let dragOffsetY = 0;
 let isDragging = false;
@@ -133,6 +136,21 @@ function boundsOfBoxes(b: Box[]): { minX: number; minY: number; maxX: number; ma
 }
 
 // ── Camera helpers ────────────────────────────────────────────────────────────
+
+function getParentPath(p: string): string {
+  const i = p.lastIndexOf('/');
+  return i >= 0 ? p.slice(0, i) : '';
+}
+
+function centerOnBox(box: Box) {
+  const W = canvas.clientWidth;
+  const H = canvas.clientHeight;
+  // Center the box in the left half (file explorer takes the right half)
+  const availW = fileExplorer.hidden ? W : W / 2;
+  const targetX = availW / 2 - (box.x + box.w / 2) * zoom;
+  const targetY = H / 2 - (box.y + box.h / 2) * zoom;
+  startAnim(targetX, targetY, zoom);
+}
 
 function fitToBoxes(animate: boolean) {
   if (!boxes.length) return;
@@ -398,6 +416,7 @@ async function loadPath(folderPath: string, animate: boolean, zoomBox?: Box) {
     }
     renderBreadcrumb();
 
+    currentCanvasPath = folderPath;
     boxes = layoutFolders(data.folders);
     emptyState.hidden = boxes.length > 0;
 
@@ -433,7 +452,7 @@ function renderBreadcrumb() {
     item.className = `breadcrumb-item${isLast ? ' current' : ''}`;
     item.textContent = entry.name;
     if (!isLast) {
-      item.addEventListener('click', () => loadPath(entry.path, true));
+      item.addEventListener('click', () => { closeFileExplorer(); loadPath(entry.path, true); });
     }
     breadcrumbEl.appendChild(item);
   });
@@ -461,15 +480,32 @@ function isOnMenuIcon(box: Box, wx: number, wy: number): boolean {
     wy >= box.y + 6 && wy <= box.y + 6 + MENU_ICON_SIZE;
 }
 
-async function openFileExplorer(box: Box): Promise<void> {
-  const key = box.folder.path;
-  activeExplorerPath = key;
-  fileExplorer.hidden = false;
-  explorerPath.textContent = key || '(root)';
+async function navigateToFolder(childPath: string): Promise<void> {
+  const parentPath = getParentPath(childPath);
+
+  // 1. Navigate canvas to parent level if needed
+  if (currentCanvasPath !== parentPath) {
+    await loadPath(parentPath, true);
+  }
+
+  // 2. Find the box for childPath and center on it
+  const box = boxes.find((b) => b.folder.path === childPath);
+  if (box) {
+    centerOnBox(box);
+    activeExplorerPath = childPath;
+    scheduleRender();
+  }
+
+  // 3. Update the file explorer panel
+  await populateExplorer(childPath);
+}
+
+async function populateExplorer(folderPath: string): Promise<void> {
+  explorerCurrentPath = folderPath;
+  renderExplorerBreadcrumb(folderPath);
   explorerList.innerHTML = '<div class="explorer-section-label">Loading…</div>';
-  scheduleRender();
   try {
-    const data = await fetch(`/api/blueprint/files?path=${encodeURIComponent(key)}`).then((r) => r.json()) as { folders: string[]; files: string[] };
+    const data = await fetch(`/api/blueprint/files?path=${encodeURIComponent(folderPath)}`).then((r) => r.json()) as { folders: string[]; files: string[] };
     explorerList.innerHTML = '';
     if (data.folders.length) {
       const lbl = document.createElement('div');
@@ -477,9 +513,11 @@ async function openFileExplorer(box: Box): Promise<void> {
       lbl.textContent = 'Folders';
       explorerList.appendChild(lbl);
       for (const name of data.folders) {
+        const childPath = folderPath ? `${folderPath}/${name}` : name;
         const item = document.createElement('div');
         item.className = 'explorer-item is-folder';
         item.innerHTML = `<span class="explorer-item-icon">📁</span><span class="explorer-item-name">${name}</span>`;
+        item.addEventListener('click', () => void navigateToFolder(childPath));
         explorerList.appendChild(item);
       }
     }
@@ -489,16 +527,109 @@ async function openFileExplorer(box: Box): Promise<void> {
       lbl.textContent = 'Files';
       explorerList.appendChild(lbl);
       for (const name of data.files) {
+        const filePath = folderPath ? `${folderPath}/${name}` : name;
         const item = document.createElement('div');
         item.className = 'explorer-item is-file';
         item.innerHTML = `<span class="explorer-item-icon">📄</span><span class="explorer-item-name">${name}</span>`;
+        item.addEventListener('click', () => void showFilePreview(filePath, name));
         explorerList.appendChild(item);
       }
+    }
+    if (!data.folders.length && !data.files.length) {
+      explorerList.innerHTML = '<div class="explorer-section-label">Empty folder</div>';
     }
   } catch {
     explorerList.innerHTML = '<div class="explorer-section-label">Error loading files</div>';
   }
+}
+
+function renderExplorerBreadcrumb(folderPath: string): void {
+  explorerBreadcrumb.innerHTML = '';
+  const rootSpan = document.createElement('span');
+  rootSpan.className = `explorer-breadcrumb-item${!folderPath ? ' current' : ''}`;
+  rootSpan.textContent = '~';
+  if (folderPath) rootSpan.addEventListener('click', () => void navigateToFolder(''));
+  explorerBreadcrumb.appendChild(rootSpan);
+
+  if (folderPath) {
+    const parts = folderPath.split('/');
+    parts.forEach((part, i) => {
+      const sep = document.createElement('span');
+      sep.className = 'explorer-breadcrumb-sep';
+      sep.textContent = '/';
+      explorerBreadcrumb.appendChild(sep);
+      const isLast = i === parts.length - 1;
+      const partPath = parts.slice(0, i + 1).join('/');
+      const span = document.createElement('span');
+      span.className = `explorer-breadcrumb-item${isLast ? ' current' : ''}`;
+      span.textContent = part;
+      if (!isLast) span.addEventListener('click', () => void navigateToFolder(partPath));
+      explorerBreadcrumb.appendChild(span);
+    });
+  }
+}
+
+async function showFilePreview(filePath: string, fileName: string): Promise<void> {
+  filePreview.innerHTML = `<p class="file-preview-name">${fileName}</p><p class="file-preview-placeholder">Loading…</p>`;
+  try {
+    const data = await fetch(`/api/blueprint/file-content?path=${encodeURIComponent(filePath)}`).then((r) => r.json()) as {
+      type: 'text' | 'image' | 'video' | 'binary';
+      content?: string;
+      language?: string;
+      truncated?: boolean;
+      url?: string;
+      ext?: string;
+    };
+
+    filePreview.innerHTML = `<p class="file-preview-name">${fileName}</p>`;
+
+    if (data.type === 'image') {
+      const img = document.createElement('img');
+      img.src = data.url!;
+      img.alt = fileName;
+      filePreview.appendChild(img);
+    } else if (data.type === 'video') {
+      const video = document.createElement('video');
+      video.src = data.url!;
+      video.controls = true;
+      filePreview.appendChild(video);
+    } else if (data.type === 'binary') {
+      const badge = document.createElement('span');
+      badge.className = 'file-preview-binary';
+      badge.textContent = '⊘ Binary file';
+      filePreview.appendChild(badge);
+    } else if (data.type === 'text' && data.content !== undefined) {
+      if (data.truncated) {
+        const badge = document.createElement('span');
+        badge.className = 'file-preview-truncated';
+        badge.textContent = '⚠ Truncated at 1 MB';
+        filePreview.appendChild(badge);
+      }
+      const pre = document.createElement('pre');
+      const code = document.createElement('code');
+      if (data.language && data.language !== 'plaintext') code.className = `language-${data.language}`;
+      code.textContent = data.content;
+      pre.appendChild(code);
+      filePreview.appendChild(pre);
+      // @ts-ignore
+      if (window.hljs) {
+        // @ts-ignore
+        window.hljs.highlightElement(code);
+        // @ts-ignore
+        if (window.hljs.lineNumbersBlock) window.hljs.lineNumbersBlock(code);
+      }
+    }
+  } catch {
+    filePreview.innerHTML = `<p class="file-preview-name">${fileName}</p><p class="file-preview-placeholder">Error loading file</p>`;
+  }
+}
+
+async function openFileExplorer(box: Box): Promise<void> {
+  activeExplorerPath = box.folder.path;
+  fileExplorer.hidden = false;
+  filePreview.innerHTML = '<p class="file-preview-placeholder">Click a file to preview it</p>';
   scheduleRender();
+  await populateExplorer(box.folder.path);
 }
 
 function closeFileExplorer(): void {
@@ -636,6 +767,7 @@ canvas.addEventListener('pointerup', (e) => {
         if (activeExplorerPath === box.folder.path) closeFileExplorer();
         else void openFileExplorer(box);
       } else if (box.folder.hasChildren) {
+        closeFileExplorer();
         loadPath(box.folder.path, true, box);
       }
     }
