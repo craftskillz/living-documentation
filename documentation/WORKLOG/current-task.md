@@ -72,3 +72,9 @@ Deux chantiers parallèles complétés :
 - Le Blueprint est en lecture seule pour l'instant.
 - La page Workspace est maintenant appelée "Agentic Workspace" (nav.workspace i18n).
 - La topbar principale (`/`) a été alignée visuellement avec le workspace : hauteur 72px, badge LD, sous-titre dynamique depuis cfg.title.
+
+## Intervention annexe terminée - 2026-06-01
+
+- Remplacement via MCP du document `000_BLUEPRINT/2026_06_01_17_40_[SCRIPTS]_scripts` par une explication haut niveau du dossier `scripts/` : rôle, inventaire, flux build/dev/check/hooks/CI, commandes et règles de modification.
+- Métadonnées Living Documentation attachées à `scripts/copy-assets.ts`, `scripts/dev.js`, `scripts/check-frontend-js.js`, `scripts/check-readme-sync.sh`, `scripts/check-workflows.sh`, `.githooks/pre-commit`, `.github/workflows/readme-sync.yml` et `.github/workflows/publish.yml`.
+- Vérifications : `read_document` MCP du document mis à jour, `refresh_metadata`, puis `get_accuracy` à `1` avec 8 fichiers inchangés.

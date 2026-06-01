@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Blueprint</title>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <link rel="stylesheet" href="/blueprint/styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -55,6 +56,60 @@
         </aside>
       </section>
     </main>
+
+    <!-- Blueprint ADR Modal -->
+    <div id="blueprintAdrOverlay" class="bpadr-overlay" hidden>
+      <div class="bpadr-modal">
+        <header class="bpadr-header">
+          <h2 id="bpadrModalTitle" class="bpadr-title">Blueprint ADR</h2>
+          <div class="bpadr-header-actions">
+            <button id="bpadrEditBtn" class="bpadr-icon-btn" type="button" title="Edit" hidden>✏️</button>
+            <button id="bpadrClose" class="bpadr-icon-btn" type="button" title="Close">×</button>
+          </div>
+        </header>
+
+        <!-- Read view -->
+        <div id="bpadrReadView" class="bpadr-read" hidden>
+          <div id="bpadrRendered" class="prose prose-gray max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 prose-code:before:content-none prose-code:after:content-none prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-gray-700"></div>
+        </div>
+
+        <!-- Edit / Create form -->
+        <form id="bpadrForm" class="bpadr-form" hidden>
+          <div class="bpadr-field">
+            <label>Title</label>
+            <input id="bpadrTitle" type="text" class="bpadr-input" />
+          </div>
+          <div class="bpadr-field-row">
+            <div class="bpadr-field">
+              <label>Category</label>
+              <input id="bpadrCategory" type="text" class="bpadr-input" readonly />
+            </div>
+            <div class="bpadr-field">
+              <label>Folder</label>
+              <input id="bpadrFolder" type="text" class="bpadr-input" readonly />
+            </div>
+          </div>
+          <div class="bpadr-field bpadr-field-grow">
+            <label>Content (Markdown)</label>
+            <textarea id="bpadrContent" class="bpadr-textarea"></textarea>
+          </div>
+          <footer class="bpadr-footer">
+            <button type="button" id="bpadrCancelEdit" class="bpadr-btn-ghost">Cancel</button>
+            <button type="submit" class="bpadr-btn-primary">Save</button>
+          </footer>
+        </form>
+
+        <!-- Confirm create folder -->
+        <div id="bpadrFolderConfirm" class="bpadr-folder-confirm" hidden>
+          <p>The folder <strong id="bpadrFolderName"></strong> does not exist yet.</p>
+          <p class="bpadr-muted">Create it to store Blueprint ADRs?</p>
+          <footer class="bpadr-footer">
+            <button type="button" id="bpadrFolderCancel" class="bpadr-btn-ghost">Cancel</button>
+            <button type="button" id="bpadrFolderCreate" class="bpadr-btn-primary">Create folder</button>
+          </footer>
+        </div>
+      </div>
+    </div>
 
     <script type="module" src="/blueprint/app.js"></script>
   </body>

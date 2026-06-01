@@ -390,3 +390,171 @@ canvas.is-panning { cursor: grabbing; }
 }
 
 .empty-state p { margin: 0; }
+
+/* ── Blueprint ADR Modal ─────────────────────────────────────────────────── */
+
+.bpadr-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgb(148 163 184 / 30%);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.bpadr-modal {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 32px 80px rgb(0 0 0 / 30%);
+  width: min(1100px, 96vw);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: #1e293b;
+}
+
+.bpadr-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.bpadr-title {
+  font-size: 16px;
+  font-weight: 760;
+  margin: 0;
+  color: #0f172a;
+}
+
+.bpadr-header-actions { display: flex; gap: 8px; align-items: center; }
+
+.bpadr-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  background: transparent;
+  color: #64748b;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.bpadr-icon-btn:hover { background: #f1f5f9; color: #0f172a; }
+
+.bpadr-read {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.bpadr-prose {
+  font-size: 14px;
+  max-width: none !important;
+  width: 100%;
+}
+
+/* Inline code — gray pill, matches Home */
+#bpadrRendered :not(pre) > code {
+  background-color: #e5e7eb;
+  border-radius: 0.25rem;
+  padding: 0.1em 0.3em;
+  font-size: 0.875em;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+/* Table custom styles from Home */
+#bpadrRendered table {
+  border-collapse: collapse;
+  border: none;
+}
+#bpadrRendered table th,
+#bpadrRendered table td {
+  padding: 0.6rem 1rem;
+  border: none;
+  border-bottom: 1px solid #e5e7eb;
+}
+#bpadrRendered table thead th {
+  border-bottom-color: #d1d5db;
+}
+#bpadrRendered table thead,
+#bpadrRendered table tbody tr { border: none; }
+
+.bpadr-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px 24px;
+  overflow-y: auto;
+}
+
+.bpadr-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.bpadr-field label { font-size: 12px; font-weight: 700; color: #64748b; }
+
+.bpadr-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.bpadr-field-grow { flex: 1; min-height: 0; }
+.bpadr-field-grow .bpadr-textarea { flex: 1; min-height: 200px; }
+
+.bpadr-input, .bpadr-textarea {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #1e293b;
+  font-size: 13px;
+  padding: 8px 12px;
+  outline: none;
+  resize: none;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+.bpadr-input:focus, .bpadr-textarea:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgb(59 130 246 / 12%); background: #fff; }
+.bpadr-input[readonly] { color: #2563eb; background: #eff6ff; cursor: default; border-color: #bfdbfe; }
+.bpadr-textarea { min-height: 180px; line-height: 1.6; }
+
+.bpadr-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 4px;
+  flex-shrink: 0;
+}
+
+.bpadr-btn-ghost {
+  height: 36px; padding: 0 14px; border: 1px solid #e2e8f0;
+  border-radius: 9px; background: transparent; color: #64748b;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.bpadr-btn-ghost:hover { background: #f1f5f9; color: #1e293b; }
+
+.bpadr-btn-primary {
+  height: 36px; padding: 0 16px; border: none;
+  border-radius: 9px; background: #3b82f6; color: #fff;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.bpadr-btn-primary:hover { background: #2563eb; }
+
+.bpadr-folder-confirm {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.bpadr-folder-confirm p { margin: 0; color: #1e293b; font-size: 14px; }
+.bpadr-folder-confirm strong { color: #2563eb; }
+.bpadr-muted { color: #64748b !important; font-size: 13px !important; }

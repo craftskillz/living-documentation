@@ -1,6 +1,14 @@
-"use strict";
-// ── Types ─────────────────────────────────────────────────────────────────────
+import { renderMarkdownHtml } from '../md-renderer.js';
 // ── Constants ─────────────────────────────────────────────────────────────────
+const BLUEPRINT_FOLDER = '000_BLUEPRINT';
+function slugifyCategory(name) {
+    return name
+        .normalize('NFKD')
+        .replace(/[̀-ͯ]/g, '')
+        .toUpperCase()
+        .replace(/[^A-Z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '') || 'FOLDER';
+}
 const BOX_W = 200;
 const BOX_H = 110;
 const GAP_X = 40;
@@ -22,6 +30,23 @@ const canvas = document.getElementById('blueprintCanvas');
 const ctx = canvas.getContext('2d');
 const fitButton = document.getElementById('fitButton');
 const dragToggle = document.getElementById('dragToggle');
+// Blueprint ADR modal
+const bpadrOverlay = document.getElementById('blueprintAdrOverlay');
+const bpadrModalTitle = document.getElementById('bpadrModalTitle');
+const bpadrEditBtn = document.getElementById('bpadrEditBtn');
+const bpadrClose = document.getElementById('bpadrClose');
+const bpadrReadView = document.getElementById('bpadrReadView');
+const bpadrRendered = document.getElementById('bpadrRendered');
+const bpadrForm = document.getElementById('bpadrForm');
+const bpadrTitle = document.getElementById('bpadrTitle');
+const bpadrCategory = document.getElementById('bpadrCategory');
+const bpadrFolder = document.getElementById('bpadrFolder');
+const bpadrContent = document.getElementById('bpadrContent');
+const bpadrCancelEdit = document.getElementById('bpadrCancelEdit');
+const bpadrFolderConfirm = document.getElementById('bpadrFolderConfirm');
+const bpadrFolderName = document.getElementById('bpadrFolderName');
+const bpadrFolderCancel = document.getElementById('bpadrFolderCancel');
+const bpadrFolderCreate = document.getElementById('bpadrFolderCreate');
 const fileExplorer = document.getElementById('fileExplorer');
 const explorerBreadcrumb = document.getElementById('explorerBreadcrumb');
 const explorerList = document.getElementById('explorerList');
@@ -260,6 +285,12 @@ function drawBox(box, hovered, dragging = false, selected = false) {
     ctx.textBaseline = 'top';
     ctx.textAlign = 'left';
     ctx.fillText('☰', x + 10, y + 10);
+    // D icon top-left (after ☰)
+    ctx.fillStyle = hovered ? '#a78bfa' : 'rgba(167,139,250,0.4)';
+    ctx.font = `bold ${MENU_ICON_SIZE * 0.65}px Inter, ui-sans-serif, sans-serif`;
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'left';
+    ctx.fillText('D', x + 10 + MENU_ICON_SIZE + 4, y + 11);
     // Folder icon + name (centered vertically)
     const iconSize = 18;
     const iconX = x + 18;
@@ -408,6 +439,118 @@ function isOnMenuIcon(box, wx, wy) {
     return wx >= box.x + 6 && wx <= box.x + 6 + MENU_ICON_SIZE &&
         wy >= box.y + 6 && wy <= box.y + 6 + MENU_ICON_SIZE;
 }
+function isOnDocIcon(box, wx, wy) {
+    const iconX = box.x + 10 + MENU_ICON_SIZE + 4;
+    return wx >= iconX && wx <= iconX + MENU_ICON_SIZE &&
+        wy >= box.y + 6 && wy <= box.y + 6 + MENU_ICON_SIZE;
+}
+// ── Blueprint ADR modal ───────────────────────────────────────────────────────
+let currentAdrId = null;
+let currentAdrBox = null;
+function showBpadrView(mode) {
+    bpadrReadView.hidden = mode !== 'read';
+    bpadrForm.hidden = mode !== 'form';
+    bpadrFolderConfirm.hidden = mode !== 'folder-confirm';
+    bpadrEditBtn.hidden = mode !== 'read';
+}
+async function openBlueprintAdr(box) {
+    currentAdrBox = box;
+    currentAdrId = null;
+    const category = slugifyCategory(box.folder.name);
+    bpadrModalTitle.textContent = `Blueprint ADR — ${box.folder.name}`;
+    bpadrCategory.value = category;
+    bpadrFolder.value = BLUEPRINT_FOLDER;
+    bpadrOverlay.hidden = false;
+    // 1. Check folder exists
+    const folderRes = await fetch('/api/blueprint/blueprint-folder').then((r) => r.json());
+    if (!folderRes.exists) {
+        bpadrFolderName.textContent = BLUEPRINT_FOLDER;
+        showBpadrView('folder-confirm');
+        return;
+    }
+    await loadOrCreateAdr(box, category);
+}
+async function loadOrCreateAdr(box, category) {
+    // 2. Search for existing ADR
+    const adrRes = await fetch(`/api/blueprint/blueprint-adr?category=${encodeURIComponent(category)}`).then((r) => r.json());
+    if (adrRes.found && adrRes.doc) {
+        currentAdrId = adrRes.doc.id;
+        // Load full doc with rendered HTML
+        const doc = await fetch(`/api/documents/${encodeURIComponent(adrRes.doc.id)}`).then((r) => r.json());
+        bpadrTitle.value = doc.title;
+        bpadrContent.value = doc.content;
+        bpadrModalTitle.textContent = doc.title;
+        renderMarkdownHtml(doc.html, bpadrRendered);
+        showBpadrView('read');
+    }
+    else {
+        // New ADR
+        bpadrTitle.value = box.folder.name;
+        bpadrContent.value = '';
+        showBpadrView('form');
+    }
+}
+function closeBpadrModal() {
+    bpadrOverlay.hidden = true;
+    currentAdrId = null;
+    currentAdrBox = null;
+}
+// Event listeners for modal
+bpadrClose.addEventListener('click', closeBpadrModal);
+bpadrOverlay.addEventListener('click', (e) => { if (e.target === bpadrOverlay)
+    closeBpadrModal(); });
+bpadrEditBtn.addEventListener('click', () => showBpadrView('form'));
+bpadrCancelEdit.addEventListener('click', () => {
+    if (currentAdrId)
+        showBpadrView('read');
+    else
+        closeBpadrModal();
+});
+bpadrFolderCancel.addEventListener('click', closeBpadrModal);
+bpadrFolderCreate.addEventListener('click', async () => {
+    await fetch('/api/blueprint/blueprint-folder', { method: 'POST' });
+    if (currentAdrBox) {
+        const category = slugifyCategory(currentAdrBox.folder.name);
+        await loadOrCreateAdr(currentAdrBox, category);
+    }
+});
+bpadrForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = {
+        title: bpadrTitle.value.trim() || currentAdrBox?.folder.name || 'Untitled',
+        category: bpadrCategory.value,
+        folder: bpadrFolder.value,
+        content: bpadrContent.value,
+    };
+    if (currentAdrId) {
+        // Update existing
+        await fetch(`/api/documents/${encodeURIComponent(currentAdrId)}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
+        // Reload read view
+        const doc = await fetch(`/api/documents/${encodeURIComponent(currentAdrId)}`).then((r) => r.json());
+        bpadrModalTitle.textContent = doc.title;
+        bpadrContent.value = doc.content;
+        renderMarkdownHtml(doc.html, bpadrRendered);
+        showBpadrView('read');
+    }
+    else {
+        // Create new
+        const res = await fetch('/api/documents/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        }).then((r) => r.json());
+        currentAdrId = res.id;
+        const doc = await fetch(`/api/documents/${encodeURIComponent(res.id)}`).then((r) => r.json());
+        bpadrModalTitle.textContent = doc.title;
+        bpadrContent.value = doc.content;
+        renderMarkdownHtml(doc.html, bpadrRendered);
+        showBpadrView('read');
+    }
+});
 async function navigateToFolder(childPath) {
     const parentPath = getParentPath(childPath);
     // 1. Navigate canvas to parent level if needed
@@ -681,6 +824,9 @@ canvas.addEventListener('pointerup', (e) => {
                 selectedIndices.clear();
                 selectedIndices.add(draggingIndex);
                 scheduleRender();
+            }
+            else if (isOnDocIcon(box, wx, wy)) {
+                void openBlueprintAdr(box);
             }
             else if (isOnMenuIcon(box, wx, wy)) {
                 if (activeExplorerPath === box.folder.path)

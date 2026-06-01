@@ -2,6 +2,9 @@ import { Router } from 'express';
 import fs from 'fs';
 import path from 'path';
 import { readConfig } from '../lib/config';
+import { listDocs } from './documents';
+
+export const BLUEPRINT_FOLDER = '000_BLUEPRINT';
 
 const MAX_TEXT_BYTES = 1024 * 1024; // 1 MB
 
@@ -124,6 +127,41 @@ export function blueprintRouter(docsPath: string): Router {
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Blueprint error';
       res.status(400).json({ error: message });
+    }
+  });
+
+  // Blueprint ADR folder management
+  router.get('/blueprint-folder', (_req, res) => {
+    const folderPath = path.join(docsPath, BLUEPRINT_FOLDER);
+    res.json({ exists: fs.existsSync(folderPath), folder: BLUEPRINT_FOLDER });
+  });
+
+  router.post('/blueprint-folder', (_req, res) => {
+    try {
+      const folderPath = path.join(docsPath, BLUEPRINT_FOLDER);
+      fs.mkdirSync(folderPath, { recursive: true });
+      res.json({ ok: true, folder: BLUEPRINT_FOLDER });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to create folder' });
+    }
+  });
+
+  router.get('/blueprint-adr', (req, res) => {
+    try {
+      const category = typeof req.query.category === 'string' ? req.query.category.trim().toUpperCase() : '';
+      if (!category) { res.status(400).json({ error: 'category required' }); return; }
+      const { extraFiles = [], filenamePattern } = readConfig(docsPath);
+      const docs = listDocs(docsPath, extraFiles, filenamePattern);
+      const matches = docs.filter((d) =>
+        Array.isArray(d.folder) && d.folder.length === 1 && d.folder[0] === BLUEPRINT_FOLDER &&
+        d.category.toUpperCase() === category
+      );
+      if (!matches.length) { res.json({ found: false }); return; }
+      // Most recent first (filename starts with date)
+      matches.sort((a, b) => b.id.localeCompare(a.id));
+      res.json({ found: true, doc: matches[0] });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : 'error' });
     }
   });
 

@@ -8,5 +8,5 @@
     "skipLibCheck": true,
     "sourceMap": true
   },
-  "files": ["app.ts"]
+  "files": ["app.ts", "../md-renderer.ts"]
 }
