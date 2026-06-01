@@ -14,7 +14,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc && tsc -p src/frontend/workspace/tsconfig.json && ts-node scripts/copy-assets.ts && chmod +x dist/bin/cli.js",
+    "build": "tsc && tsc -p src/frontend/workspace/tsconfig.json && tsc -p src/frontend/blueprint/tsconfig.json && ts-node scripts/copy-assets.ts && chmod +x dist/bin/cli.js",
     "dev": "node scripts/dev.js",
     "start": "node dist/bin/cli.js",
     "test": "npm run test:e2e",

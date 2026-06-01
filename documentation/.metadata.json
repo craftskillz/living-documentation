@@ -504,7 +504,7 @@
   "ADRS/2026_05_30_22_14_[FRONTEND]_workspace_configuration_graph_avec_agents_llm_et_tool_use_mcp": [
     {
       "path": "src/frontend/workspace/app.ts",
-      "hash": "cb07d48c8eed7d29575bd0b897ea01fcb217010a45cb103c0075874077b954e2"
+      "hash": "fe28d92cc067c226e9d88415f2ad85f8424fb87cffaa6d93e6f4de246eec35ad"
     },
     {
       "path": "src/frontend/workspace/persistence.ts",
@@ -512,11 +512,11 @@
     },
     {
       "path": "src/frontend/workspace/index.html",
-      "hash": "f30bb417bfa34d4102f9da21e477d991ca135676b4d904c57ad4a2acb5b56ef3"
+      "hash": "bfe76faf912b5dbfce0900b1a53375856fd7a132ded6c14109d1c027b4673018"
     },
     {
       "path": "src/routes/workspace.ts",
-      "hash": "bba3805c2e7338fe9e37711f86a6eb97f65ff0454941f959395e770db6db1dc1"
+      "hash": "c48c18c3918aef88b3c85fb5301991817dc15f07663f0b72165dfd887007fa3f"
     },
     {
       "path": "src/frontend/agents.js",
@@ -524,15 +524,15 @@
     },
     {
       "path": "src/frontend/index.html",
-      "hash": "d22827e8b033f8e0c0e89ea133f732739c0c6b5530af88c258b7cee0cffe3034"
+      "hash": "438469fda8e548f0dced760b053b1964cf350786c02bdf1783d0ec15f52d5c39"
     },
     {
       "path": "src/frontend/i18n/en.json",
-      "hash": "af0bf834d4dcfb9d3f57bbd6883ae4cf168896030821cdee58815aef2fe6f6de"
+      "hash": "6231147901e8bbc3a1b352feb3d662f180eda3e13e92e8dbb40e623d9684bce6"
     },
     {
       "path": "src/frontend/i18n/fr.json",
-      "hash": "9ba1d92ce38492f82ae3799771e79e263f4cbdf14ba82cf39270dbe6ad971bc3"
+      "hash": "abd9d2ea0f1d22dc4d593add2c20cc6e82453be0cb221dfc9c80552bb0b799d5"
     },
     {
       "path": "src/frontend/workspace/styles.css",
@@ -623,6 +623,20 @@
     {
       "path": "src/lib/config.ts",
       "hash": "f297004c1fcc5310d4aaa5aea27def8eb920706409894ca8ab3c9aa30fb070f2"
+    }
+  ],
+  "ADRS/2026_06_01_14_19_[FRONTEND]_blueprint_explorateur_de_dossiers_source_avec_canvas_prezi": [
+    {
+      "path": "src/frontend/blueprint/app.ts",
+      "hash": "f3f3a4d57813bcbdaaf08185acb3c7155f62d14d84db1662703fef64931398a9"
+    },
+    {
+      "path": "src/frontend/blueprint/index.html",
+      "hash": "68d17b4682954e25636956a4da3308c71f6de98e163b3fc556cdaca3cb5b7182"
+    },
+    {
+      "path": "src/routes/blueprint.ts",
+      "hash": "a78aa463f3b495d84e9ab08efd706f029d9e6ee5d1a25a62528ce286034a3953"
     }
   ]
 }

@@ -1,8 +1,8 @@
 ---
-**date:** 2026-05-31
-**status:** Done
+**date:** 2026-06-01
+**status:** In progress
 **description:** Point de reprise partagé entre assistants IA pour suivre la tâche courante, son statut, les fichiers touchés, les vérifications et la prochaine action.
-**tags:** worklog, handoff, progression, reprise, agents-ia, workspace, panel-agent, html-in-canvas, layout, assets
+**tags:** worklog, handoff, progression, reprise, agents-ia, workspace, blueprint, folder-explorer, canvas, pan-zoom, prezi-zoom
 ---
 
 # Current task
@@ -11,52 +11,64 @@ Ce document est le point de reprise entre assistants IA. Tout agent doit le lire
 
 ## Statut courant
 
-Done
+In progress
 
-## Tâche réalisée
+## Tâche courante
 
-Correction du rendu du panel agent workspace après observation d'un chevauchement entre `Workspace folder` et `System prompt`, et d'un bouton `Test` agent non aligné avec `Delete`.
+Deux chantiers parallèles complétés :
 
-## Diagnostic
+1. **Workspace Agentique** — nombreuses itérations sur le panel contextuel (dark mode, champs par kind, rename dossier agent, propagation model/timeout LLM→agents, boucle agentique LLM+MCP).
+2. **Blueprint** — nouvelle page `/blueprint` : canvas pan/zoom avec exploration Prezi des dossiers du sourceRoot.
 
-La section agent contenait encore une règle CSS ciblant `.agent-section .field.wide:first-child`. Cette règle était correcte avant l'ajout de `Workspace folder`, mais elle s'appliquait désormais au mauvais champ et produisait une compression/extension incohérente.
+## Dernière action réalisée
 
-Le bouton `Test` agent était aussi placé dans la section formulaire agent, tandis que `Delete` était dans le footer `panel-actions`, ce qui empêchait l'alignement bas commun.
+- Page Blueprint créée : `src/frontend/blueprint/` (index.html, app.ts, styles.css, tsconfig.json).
+- Route `GET /api/blueprint?path=` dans `src/routes/blueprint.ts` : liste les dossiers du sourceRoot en ignorant node_modules, .git, dist, etc.
+- Route `/blueprint` enregistrée dans `src/server.ts`.
+- Lien "Blueprint" ajouté dans la topbar principale (`src/frontend/index.html`).
+- Build mis à jour dans `package.json` pour compiler blueprint TypeScript.
+- Fix CSS `[hidden] { display: none !important }` dans blueprint/styles.css.
+- Chemins absolus `/blueprint/styles.css` et `/blueprint/app.js` dans index.html.
 
-Pendant la vérification navigateur, `/workspace` sans slash final chargeait aussi les assets relatifs `./styles.css` et `./app.js` comme `/styles.css` et `/app.js`. Les chemins ont été rendus absolus vers `/workspace/...`.
+## Fichiers ou zones concernés
 
-## Implémentation réalisée
+### Blueprint (nouveau)
+- `src/frontend/blueprint/index.html`
+- `src/frontend/blueprint/app.ts`
+- `src/frontend/blueprint/app.js` (compilé)
+- `src/frontend/blueprint/styles.css`
+- `src/frontend/blueprint/tsconfig.json`
+- `src/routes/blueprint.ts`
 
-- Suppression du bouton inline `runAgentButton` du formulaire agent.
-- Réutilisation de `testNodeButton` dans le footer pour lancer soit le test LLM, soit la modale de test agent selon le type sélectionné.
-- Remplacement des règles CSS fragiles `first-child` par une grille simple pour `.agent-section`.
-- Ajout de hauteurs minimales dédiées à `#nodeSystemPrompt` et `#nodeUserInputDescription`.
-- Alignement bas des actions via `panel-actions` en `flex`, `space-between` et `margin-top: auto`.
-- Correction des assets workspace en `/workspace/styles.css` et `/workspace/app.js`.
-
-## Fichiers touchés
-
-- `src/routes/workspace.ts`
+### Workspace (itérations)
 - `src/frontend/workspace/app.ts`
-- `src/frontend/workspace/app.js`
-- `src/frontend/workspace/app.js.map`
 - `src/frontend/workspace/index.html`
 - `src/frontend/workspace/styles.css`
-- `documentation/ADRS/2026_05_30_22_14_[FRONTEND]_workspace_configuration_graph_avec_agents_llm_et_tool_use_mcp.md`
-- `documentation/WORKLOG/current-task.md`
+- `src/routes/workspace.ts`
+
+### Serveur / topbar
+- `src/server.ts`
+- `src/frontend/index.html`
+- `package.json`
 
 ## Vérifications réalisées
 
-- `npx tsc -p src/frontend/workspace/tsconfig.json` : OK.
+- `npx tsc -p src/frontend/blueprint/tsconfig.json` : OK.
+- `npx tsc --noEmit` : OK.
 - `npm run build` : OK.
-- `npm run check:frontend` : OK.
-- Vérification navigateur sur `http://localhost:4321/workspace` :
-  - stylesheet chargé depuis `/workspace/styles.css?v=workspace-agent-panel-1` ;
-  - script chargé depuis `/workspace/app.js?v=workspace-agent-panel-1` ;
-  - `runAgentButton` absent ;
-  - `panel-actions` calculé en `display: flex`, `justify-content: space-between`, `margin-top: auto` ;
-  - `#nodeSystemPrompt` calculé avec `min-height: 180px` et `resize: vertical`.
+- `curl http://localhost:4321/api/blueprint` : retourne les dossiers du sourceRoot.
+- Fix `[hidden]` CSS : emptyState correctement masqué quand des dossiers sont présents.
 
-## Point de reprise
+## Prochaine action recommandée
 
-La prochaine vérification utile est visuelle : sélectionner un agent existant dans `/workspace` et confirmer que `Workspace folder`, `System prompt`, `Require a user input`, `Describe User input`, `Required output marker`, `Test` et `Delete` restent lisibles, non superposés, et que `Test`/`Delete` sont alignés dans le footer.
+- Créer l'ADR Blueprint dans `documentation/ADRS/` via MCP (quand disponible).
+- Mettre à jour l'ADR Workspace avec les dernières itérations (panel dark, agents, rename, topbar).
+- Tester le zoom Prezi en naviguant dans les sous-dossiers.
+- Envisager d'afficher le nombre de sous-dossiers sur chaque box.
+
+## Notes
+
+- Le MCP Living Documentation était déconnecté lors de cette session — les ADRs et métadonnées devront être créés au prochain redémarrage du serveur.
+- Le Blueprint est en lecture seule pour l'instant.
+- La page Workspace est maintenant appelée "Agentic Workspace" (nav.workspace i18n).
+- La topbar principale (`/`) a été alignée visuellement avec le workspace : hauteur 72px, badge LD, sous-titre dynamique depuis cfg.title.

@@ -16,6 +16,7 @@ import { browseSourceRouter } from './routes/browse-source';
 import { exportRouter } from './routes/export';
 import { contextRouter } from './routes/context';
 import { workspaceRouter } from './routes/workspace';
+import { blueprintRouter } from './routes/blueprint';
 import { mcpRouter } from './mcp/server';
 import { writeConfig } from './lib/config';
 
@@ -54,6 +55,7 @@ export async function startServer({
   app.use('/api/export', exportRouter(docsPath));
   app.use('/api/context', contextRouter(docsPath));
   app.use('/api/workspace', workspaceRouter(docsPath));
+  app.use('/api/blueprint', blueprintRouter(docsPath));
   app.use('/mcp', mcpRouter(docsPath));
 
   // Static frontend assets
@@ -62,6 +64,9 @@ export async function startServer({
   const frontendPath = path.join(__dirname, 'frontend');
   app.get('/workspace', (_req, res) =>
     res.sendFile(path.join(frontendPath, 'workspace', 'index.html'), { dotfiles: 'allow' }),
+  );
+  app.get('/blueprint', (_req, res) =>
+    res.sendFile(path.join(frontendPath, 'blueprint', 'index.html'), { dotfiles: 'allow' }),
   );
   app.use(express.static(frontendPath, { dotfiles: 'allow' }));
 
