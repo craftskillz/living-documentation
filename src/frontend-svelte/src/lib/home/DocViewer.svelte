@@ -9,6 +9,8 @@
   import ConfirmDialog from "../ConfirmDialog.svelte";
   import { metadata } from "./metadata.svelte";
   import { getDocStatus, replaceStatus, isWorklogDocument } from "./docStatus";
+  import { initLocalSearch } from "./localSearch";
+  import { highlightMatches, scrollToMatch, type SearchMatch } from "./searchNotice";
   import type { DocDetail } from "./types";
 
   let { doc, onopen, onsave, ondelete }: {
@@ -23,6 +25,17 @@
   let annotations = $state<Annotations>(null!);
   let confirmDialog = $state<ConfirmDialog>(null!);
   let metadataOpen = $state(false);
+  let localSearchMount = $state<HTMLElement>(null!);
+  let searchMatches = $state<SearchMatch[]>([]);
+  let lastWiredId = "";
+
+  const noticeTitle = $derived(
+    searchMatches.length
+      ? t(searchMatches.length === 1 ? "search.notice_singular" : "search.notice_plural")
+          .replace("{count}", String(searchMatches.length))
+          .replace("{query}", home.searchQuery)
+      : "",
+  );
 
   const docStatus = $derived(getDocStatus(doc.content));
   const showValidate = $derived((docStatus || "").toUpperCase() === "TO BE VALIDATED");
@@ -60,17 +73,34 @@
   }
 
   $effect(() => {
-    const _ = doc.id;
+    const id = doc.id;
+    const q = home.searchQuery; // re-wire when the global search query changes
     if (editing || !contentEl) return;
+
     wireDocContent(contentEl, doc.html, {
       content: doc.content,
       codeBlockMaxHeight: home.codeBlockMaxHeight,
       t,
-      onDocLink: (id, anchor) => onopen(id, anchor),
+      onDocLink: (linkId, anchor) => onopen(linkId, anchor),
       onAnchor: scrollToAnchor,
     });
-    annotations?.load(doc.id);
-    metadata.load(doc.id);
+
+    // Global-search in-doc highlight + notice (skip metadata:// queries)
+    const isMeta = typeof q === "string" && q.toLowerCase().startsWith("metadata://");
+    searchMatches = q && !isMeta ? highlightMatches(contentEl, q) : [];
+
+    // Local in-document search widget
+    if (localSearchMount) initLocalSearch(contentEl, localSearchMount, t);
+
+    if (id !== lastWiredId) {
+      // New document: (re)fetch annotations + metadata
+      lastWiredId = id;
+      annotations?.load(id);
+      metadata.load(id);
+    } else {
+      // Same doc, re-wired for a search change: re-apply in-memory annotation marks
+      annotations?.apply();
+    }
   });
 
   async function validate() {
@@ -343,6 +373,24 @@
     {#if !editing}
       <AccuracyGauge onopen={() => (metadataOpen = true)} />
     {/if}
+
+    {#if !editing && searchMatches.length && home.searchQuery}
+      <div class="mt-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-sm text-yellow-800 dark:text-yellow-300 overflow-hidden">
+        <div class="px-3 py-2 font-medium border-b border-yellow-200 dark:border-yellow-800">{noticeTitle}</div>
+        <ol class="max-h-40 overflow-y-auto divide-y divide-yellow-100 dark:divide-yellow-900/40 list-none m-0 p-0">
+          {#each searchMatches as m, i (m.id)}
+            <li>
+              <button onclick={() => scrollToMatch(m.id)} class="w-full text-left px-3 py-1.5 hover:bg-yellow-100 dark:hover:bg-yellow-900/30 transition-colors">
+                <span class="text-yellow-600 dark:text-yellow-500 font-mono text-xs mr-2">{i + 1}.</span><span class="text-xs">{m.snippet}</span>
+              </button>
+            </li>
+          {/each}
+        </ol>
+      </div>
+    {/if}
+
+    <!-- Local in-document search widget mount (populated imperatively) -->
+    <div bind:this={localSearchMount} class="hidden no-print"></div>
   </header>
 
   {#if editing}
