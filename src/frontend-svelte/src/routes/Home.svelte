@@ -4,9 +4,17 @@
   import { home } from "../lib/home/state.svelte";
   import { t, loadI18n } from "../lib/i18n.svelte";
   import * as api from "../lib/home/api";
+  import Topbar from "../lib/Topbar.svelte";
   import Sidebar from "../lib/home/Sidebar.svelte";
   import DocViewer from "../lib/home/DocViewer.svelte";
+  import NewFolderModal from "../lib/home/NewFolderModal.svelte";
+  import NewDocModal from "../lib/home/NewDocModal.svelte";
+  import ExportModal from "../lib/home/ExportModal.svelte";
   import type { DocDetail } from "../lib/home/types";
+
+  let newFolderOpen = $state(false);
+  let newDocOpen = $state(false);
+  let exportOpen = $state(false);
 
   let currentDoc = $state<DocDetail | null>(null);
   let loadingDoc = $state(false);
@@ -16,15 +24,6 @@
   let welcomePattern = $state("YYYY_MM_DD_HH_mm_[Category]_title.md");
 
   let searchTimer: number | null = null;
-
-  const navLinks = [
-    { label: "Workspace", href: "/workspace" },
-    { label: "Agents", href: "/agents" },
-    { label: "Blueprint", href: "/blueprint" },
-    { label: "Files", href: "/files" },
-    { label: "AI Context", href: "/context" },
-    { label: "Admin", href: "/admin" },
-  ];
 
   // ── Dark mode ────────────────────────────────────────────────────────────────
   function loadDarkPref(): boolean {
@@ -82,6 +81,7 @@
     docError = "";
     try {
       const doc = await api.fetchDocument(id);
+      doc.id = id; // API omits `id` for normal docs — reinject the requested id
       currentDoc = doc;
       document.title = doc.title;
       requestAnimationFrame(() => {
@@ -112,6 +112,7 @@
     });
     if (!res.ok) throw new Error(await res.text());
     const fresh = await api.fetchDocument(id);
+    fresh.id = id;
     currentDoc = fresh;
     // Update file-attachment count from links in content
     const fileLinks = content.match(/\]\(\s*\.?\/files\/[^)\s]+/g);
@@ -184,17 +185,10 @@
   });
 </script>
 
-<div class="h-screen flex flex-col bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+<div class="app-shell bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
   <!-- Header -->
-  <header class="no-print h-14 shrink-0 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 flex items-center gap-3 px-4">
-    <div class="flex items-center gap-3 min-w-0">
-      <span class="text-blue-600 dark:text-blue-400 text-xl select-none" aria-hidden="true">📚</span>
-      <div class="min-w-0">
-        <h1 class="text-base font-semibold tracking-tight truncate">{appTitle}</h1>
-      </div>
-    </div>
-
-    <div class="relative ml-4 hidden sm:block">
+  <Topbar title={appTitle} subtitle="">
+    <div class="relative hidden sm:block">
       <input
         type="search"
         placeholder={t("nav.search_placeholder")}
@@ -204,20 +198,20 @@
       />
       <span class="absolute left-2.5 top-2 text-gray-400 text-sm pointer-events-none">🔍</span>
     </div>
-
-    <nav class="flex items-center gap-1.5 ml-auto">
-      {#each navLinks as link}
-        <a href={link.href} class="text-sm px-2.5 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">{link.label}</a>
-      {/each}
-      <button onclick={toggleDark} title="Toggle dark mode" class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors leading-none">
-        {dark ? "☀" : "☾"}
-      </button>
-    </nav>
-  </header>
+    {#snippet actions()}
+      <button onclick={toggleDark} title="Toggle dark mode" class="ghost-button" aria-label="Toggle dark mode">{dark ? "☀" : "☾"}</button>
+    {/snippet}
+  </Topbar>
 
   <!-- Body -->
-  <div class="flex flex-1 overflow-hidden">
-    <Sidebar onopen={(id) => openDoc(id)} onsearch={onSearch} />
+  <div class="flex overflow-hidden">
+    <Sidebar
+      onopen={(id) => openDoc(id)}
+      onsearch={onSearch}
+      onexport={() => (exportOpen = true)}
+      onnewfolder={() => (newFolderOpen = true)}
+      onnewdoc={() => (newDocOpen = true)}
+    />
 
     <main id="home-content-area" class="flex-1 overflow-y-auto">
       {#if currentDoc}
@@ -240,3 +234,7 @@
     </main>
   </div>
 </div>
+
+<NewFolderModal open={newFolderOpen} onclose={() => (newFolderOpen = false)} onsuccess={loadDocuments} />
+<NewDocModal open={newDocOpen} onclose={() => (newDocOpen = false)} onsuccess={async (id) => { await loadDocuments(); openDoc(id); }} />
+<ExportModal open={exportOpen} onclose={() => (exportOpen = false)} />

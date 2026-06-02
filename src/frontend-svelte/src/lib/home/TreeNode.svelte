@@ -17,6 +17,10 @@
   function catPathKey(cat: string) { return [...folderPath, cat].join("|"); }
   function childPathKey(key: string) { return [...folderPath, key].join("|"); }
 
+  function badgeTitle(count: number, key: string): string {
+    return `${count} ${t(key)}${count > 1 ? "s" : ""}`;
+  }
+
   function statusPill(doc: DocSummary): "V" | "S" | null {
     if (!home.highlightStatusState) return null;
     const status = String(home.docStatuses[doc.id] || "").trim().toLowerCase();
@@ -63,10 +67,10 @@
           <span title={t("sidebar.status_superseeded")} class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-orange-500 text-[10px] font-bold text-white border border-orange-600 shadow-sm">S</span>
         {/if}
         {#if annCount > 0 && !home.markerHidden}
-          <span class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-yellow-300 dark:bg-yellow-400 text-[10px] font-bold text-yellow-900 border border-yellow-500 shadow-sm">{annCount}</span>
+          <span title={badgeTitle(annCount, "sidebar.annotation_badge")} class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-yellow-300 dark:bg-yellow-400 text-[10px] font-bold text-yellow-900 border border-yellow-500 shadow-sm">{annCount}</span>
         {/if}
         {#if fileCount > 0 && !home.hideAttachments}
-          <span class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-sky-200 dark:bg-sky-300 text-[10px] font-bold text-sky-900 border border-sky-500 shadow-sm">{fileCount}</span>
+          <span title={badgeTitle(fileCount, "sidebar.file_attachment_badge")} class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-sky-200 dark:bg-sky-300 text-[10px] font-bold text-sky-900 border border-sky-500 shadow-sm">{fileCount}</span>
         {/if}
       </span>
     </div>
@@ -89,8 +93,8 @@
     >
       <span class="flex items-center gap-2">
         <span>{cat}</span>
-        {#if annDocs > 0 && !home.markerHidden}<span class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-orange-400 dark:bg-orange-500 text-[10px] font-bold text-white border border-orange-600 shadow-sm">{annDocs}</span>{/if}
-        {#if fileDocs > 0 && !home.hideAttachments}<span class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-slate-400 dark:bg-slate-500 text-[10px] font-bold text-white border border-slate-600 shadow-sm">{fileDocs}</span>{/if}
+        {#if annDocs > 0 && !home.markerHidden}<span title={badgeTitle(annDocs, "sidebar.annotated_docs_badge")} class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-orange-400 dark:bg-orange-500 text-[10px] font-bold text-white border border-orange-600 shadow-sm">{annDocs}</span>{/if}
+        {#if fileDocs > 0 && !home.hideAttachments}<span title={badgeTitle(fileDocs, "sidebar.file_attached_docs_badge")} class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-slate-400 dark:bg-slate-500 text-[10px] font-bold text-white border border-slate-600 shadow-sm">{fileDocs}</span>{/if}
       </span>
       <span class="flex items-center gap-1.5">
         <span class="font-normal normal-case text-gray-400">{docs.length}</span>
@@ -121,8 +125,8 @@
     >
       <span class="flex items-center gap-2 min-w-0">
         <span title={key} class="truncate">📁 {folderLabel(key)}</span>
-        {#if annDocs > 0 && !home.markerHidden}<span class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-orange-400 dark:bg-orange-500 text-[10px] font-bold text-white border border-orange-600 shadow-sm">{annDocs}</span>{/if}
-        {#if fileDocs > 0 && !home.hideAttachments}<span class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-slate-400 dark:bg-slate-500 text-[10px] font-bold text-white border border-slate-600 shadow-sm">{fileDocs}</span>{/if}
+        {#if annDocs > 0 && !home.markerHidden}<span title={badgeTitle(annDocs, "sidebar.annotated_docs_badge")} class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-orange-400 dark:bg-orange-500 text-[10px] font-bold text-white border border-orange-600 shadow-sm">{annDocs}</span>{/if}
+        {#if fileDocs > 0 && !home.hideAttachments}<span title={badgeTitle(fileDocs, "sidebar.file_attached_docs_badge")} class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-slate-400 dark:bg-slate-500 text-[10px] font-bold text-white border border-slate-600 shadow-sm">{fileDocs}</span>{/if}
       </span>
       <span class="flex items-center gap-1.5">
         <span class="font-normal normal-case text-gray-400">{docCount}</span>

@@ -60,6 +60,29 @@ textarea {
   border-bottom: 1px solid var(--line);
   background: rgb(255 255 255 / 92%);
   backdrop-filter: blur(12px);
+  flex-shrink: 0;
+}
+
+/* Dark mode — only active when `.dark` is set on documentElement (home page). */
+.dark .topbar {
+  background: rgb(17 24 39 / 92%);
+  border-bottom-color: rgb(255 255 255 / 10%);
+  color: #f3f4f6;
+}
+.dark .brand-mark {
+  background: #1f2937;
+  border-color: rgb(255 255 255 / 20%);
+}
+.dark .brand-lockup p {
+  color: #9ca3af;
+}
+.dark .ghost-button {
+  background: transparent;
+  border-color: rgb(255 255 255 / 12%);
+  color: #e5e7eb;
+}
+.dark .ghost-button:hover {
+  background: rgb(255 255 255 / 6%);
 }
 
 .brand-lockup,

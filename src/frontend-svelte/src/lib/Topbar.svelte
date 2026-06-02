@@ -1,9 +1,10 @@
 <script lang="ts">
-  let { title, subtitle, nav = [], children }: {
+  let { title, subtitle, nav = [], children, actions }: {
     title: string;
     subtitle: string;
     nav?: { label: string; href: string }[];
     children?: import("svelte").Snippet;
+    actions?: import("svelte").Snippet;
   } = $props();
 
   const currentPath = window.location.pathname;
@@ -39,5 +40,6 @@
     {#each allNav as link}
       <a href={link.href} class="ghost-button">{link.label}</a>
     {/each}
+    {#if actions}{@render actions()}{/if}
   </div>
 </header>

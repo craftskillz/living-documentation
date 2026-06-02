@@ -104,7 +104,7 @@
   "ADRS/2026_05_11_19_33_[AI_CONTEXT]_affichage_detail_erreur_appels_mcp_page_context": [
     {
       "path": "src/frontend/context.html",
-      "hash": "420e6bfc84ee50c0ab6dc06c344e4e17e359829184e35398be81013330d71e22"
+      "hash": "72382f6d7dc3aff332db94c2a806c499095437453a0c0022b79fbb5d90e15221"
     },
     {
       "path": "tests/e2e/context.spec.ts",

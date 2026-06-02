@@ -4,6 +4,11 @@
   import { folderLabel } from "./tree";
   import { wireDocContent } from "./wireContent";
   import Annotations from "./Annotations.svelte";
+  import AccuracyGauge from "./AccuracyGauge.svelte";
+  import MetadataModal from "./MetadataModal.svelte";
+  import ConfirmDialog from "../ConfirmDialog.svelte";
+  import { metadata } from "./metadata.svelte";
+  import { getDocStatus, replaceStatus, isWorklogDocument } from "./docStatus";
   import type { DocDetail } from "./types";
 
   let { doc, onopen, onsave, ondelete }: {
@@ -16,6 +21,11 @@
   let contentEl = $state<HTMLElement>(null!);
   let editorEl = $state<HTMLTextAreaElement>(null!);
   let annotations = $state<Annotations>(null!);
+  let confirmDialog = $state<ConfirmDialog>(null!);
+  let metadataOpen = $state(false);
+
+  const docStatus = $derived(getDocStatus(doc.content));
+  const showValidate = $derived((docStatus || "").toUpperCase() === "TO BE VALIDATED");
   let editing = $state(false);
   let editorValue = $state("");
   let saveMsg = $state<{ text: string; cls: string } | null>(null);
@@ -60,7 +70,35 @@
       onAnchor: scrollToAnchor,
     });
     annotations?.load(doc.id);
+    metadata.load(doc.id);
   });
+
+  async function validate() {
+    let accuracy = 1;
+    try { const rep = await metadata.load(doc.id); if (rep && typeof rep.accuracy === "number") accuracy = rep.accuracy; } catch {}
+    const pct = Math.round(accuracy * 100);
+    const lowAccuracy = pct < 100;
+    const worklog = isWorklogDocument(doc.id);
+    const message = t(worklog ? "doc.validate_worklog_message" : "doc.validate_message") +
+      (lowAccuracy ? "\n\n" + t("doc.validate_detail_low_accuracy").replace("{accuracy}", pct + "%") : "");
+    const ok = await confirmDialog.show({
+      title: t("doc.validate_title"),
+      message,
+      confirmLabel: t("doc.validate_confirm"),
+      cancelLabel: t("common.cancel"),
+    });
+    if (!ok) return;
+    const newContent = replaceStatus(doc.content, worklog ? "Done" : "Accepted");
+    if (newContent === doc.content) return;
+    try {
+      await onsave(newContent);
+      if (lowAccuracy) await fetch("/api/metadata/" + encodeURIComponent(doc.id) + "/refresh", { method: "POST" });
+      await metadata.load(doc.id);
+      home.docStatuses = { ...home.docStatuses, [doc.id]: worklog ? "Done" : "Accepted" };
+    } catch (err: unknown) {
+      saveMsg = { text: t("doc.validate_failed") + (err instanceof Error ? err.message : String(err)), cls: "text-red-500 dark:text-red-400" };
+    }
+  }
 
   // Full-width persistence
   $effect(() => {
@@ -264,13 +302,19 @@
 
       <div class="flex items-center gap-2 flex-wrap ml-auto">
         {#if editing}
+          <div class="flex items-center gap-2">
           {#if saveMsg}<span class="text-xs {saveMsg.cls}">{saveMsg.text}</span>{/if}
           <button onclick={cancelEdit} class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t("common.cancel")}</button>
           <button onclick={save} class="text-sm px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">{t("common.save")}</button>
+          </div>
         {:else}
           {@const bodyFill = home.markerActive ? "#fef08a" : "#bfdbfe"}
           {@const capFill = home.markerActive ? "#fef08a" : "#93c5fd"}
           {@const nibFill = home.markerActive ? "#fde047" : "#93c5fd"}
+          <div class="flex items-center gap-2">
+          {#if showValidate}
+            <button onclick={validate} title={t("doc.validate_mode")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-green-700 bg-green-600 text-white font-semibold hover:bg-green-700 transition-colors"><i class="fa-solid fa-check" style="margin-right:4px"></i>{t("doc.validate_btn")}</button>
+          {/if}
           <button onclick={() => home.toggleMarker()} title={t("doc.marker_mode")} class="no-print text-sm px-3 py-1.5 rounded-lg border transition-colors {home.markerActive ? 'border-yellow-400 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'}">
             <svg width="18" height="18" viewBox="0 0 100 100" fill="none" style="display:inline-block;vertical-align:middle;margin-right:4px">
               <rect x="28" y="10" width="44" height="52" rx="6" transform="rotate(40 50 50)" fill={bodyFill} stroke="currentColor" stroke-width="6" />
@@ -289,11 +333,16 @@
           <button onclick={toggleFullWidth} title={t("doc.toggle_width")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t(fullWidth ? "doc.full_width_narrow_btn" : "doc.full_width_btn")}</button>
           <button onclick={exportPDF} title={t("doc.export_pdf")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">📄 {t("doc.export_pdf_btn")}</button>
           <button onclick={copyLink} title={t("doc.copy_link")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"><i class="fa-solid fa-link"></i> {t("doc.copy_link_btn")}</button>
+          <button onclick={() => (metadataOpen = true)} title={t("metadata.button_title")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"><i class="fa-solid fa-code-compare"></i> {t("metadata.button")}</button>
           <button onclick={enterEdit} title={t("doc.edit")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"><i class="fa-solid fa-file-pen"></i> {t("doc.edit_btn")}</button>
           <button onclick={() => (confirmingDelete = true)} title={t("doc.delete")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-700 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 transition-colors"><i class="fa-solid fa-trash"></i> {t("doc.delete_btn")}</button>
+          </div>
         {/if}
       </div>
     </div>
+    {#if !editing}
+      <AccuracyGauge onopen={() => (metadataOpen = true)} />
+    {/if}
   </header>
 
   {#if editing}
@@ -317,6 +366,9 @@
 </article>
 
 <Annotations bind:this={annotations} {contentEl} docId={doc.id} />
+
+<MetadataModal open={metadataOpen} docId={doc.id} content={doc.content} onclose={() => (metadataOpen = false)} />
+<ConfirmDialog bind:this={confirmDialog} />
 
 <!-- Image paste modal -->
 {#if imgModalOpen}
