@@ -1,4 +1,4 @@
-import { renderMarkdownHtml } from '../md-renderer.js';
+import { renderMarkdownHtml } from "../md-renderer.js";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -23,7 +23,6 @@ interface Box {
   h: number;
 }
 
-
 interface BreadcrumbEntry {
   name: string;
   path: string;
@@ -31,15 +30,17 @@ interface BreadcrumbEntry {
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const BLUEPRINT_FOLDER = '000_BLUEPRINT';
+const BLUEPRINT_FOLDER = "000_BLUEPRINT";
 
 function slugifyCategory(name: string): string {
-  return name
-    .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
-    .toUpperCase()
-    .replace(/[^A-Z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '') || 'FOLDER';
+  return (
+    name
+      .normalize("NFKD")
+      .replace(/[̀-ͯ]/g, "")
+      .toUpperCase()
+      .replace(/[^A-Z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "") || "FOLDER"
+  );
 }
 
 const BOX_W = 200;
@@ -52,46 +53,70 @@ const CORNER_R = 18;
 const ANIM_MS = 420;
 const VIEW_PADDING = 80;
 
-const COLOR_BOX_FILL = '#1e293b';
-const COLOR_BOX_FILL_CHILD = '#172033';
-const COLOR_BOX_STROKE = 'rgba(255,255,255,0.12)';
-const COLOR_BOX_STROKE_HOVER = '#3b82f6';
-const COLOR_NAME = '#f1f5f9';
-const COLOR_MUTED = '#64748b';
-const COLOR_ARROW = '#3b82f6';
+const COLOR_BOX_FILL = "#1e293b";
+const COLOR_BOX_FILL_CHILD = "#172033";
+const COLOR_BOX_STROKE = "rgba(255,255,255,0.12)";
+const COLOR_BOX_STROKE_HOVER = "#3b82f6";
+const COLOR_NAME = "#f1f5f9";
+const COLOR_MUTED = "#64748b";
+const COLOR_ARROW = "#3b82f6";
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
 
-const canvas = document.getElementById('blueprintCanvas') as HTMLCanvasElement;
-const ctx = canvas.getContext('2d')!;
-const fitButton = document.getElementById('fitButton') as HTMLButtonElement;
-const dragToggle = document.getElementById('dragToggle') as HTMLButtonElement;
+const canvas = document.getElementById("blueprintCanvas") as HTMLCanvasElement;
+const ctx = canvas.getContext("2d")!;
+const fitButton = document.getElementById("fitButton") as HTMLButtonElement;
+const dragToggle = document.getElementById("dragToggle") as HTMLButtonElement;
 // Blueprint ADR modal
-const bpadrOverlay    = document.getElementById('blueprintAdrOverlay') as HTMLElement;
-const bpadrModalTitle = document.getElementById('bpadrModalTitle') as HTMLElement;
-const bpadrEditBtn    = document.getElementById('bpadrEditBtn') as HTMLButtonElement;
-const bpadrClose      = document.getElementById('bpadrClose') as HTMLButtonElement;
-const bpadrReadView   = document.getElementById('bpadrReadView') as HTMLElement;
-const bpadrRendered   = document.getElementById('bpadrRendered') as HTMLElement;
-const bpadrForm       = document.getElementById('bpadrForm') as HTMLFormElement;
-const bpadrTitle      = document.getElementById('bpadrTitle') as HTMLInputElement;
-const bpadrCategory   = document.getElementById('bpadrCategory') as HTMLInputElement;
-const bpadrFolder     = document.getElementById('bpadrFolder') as HTMLInputElement;
-const bpadrContent    = document.getElementById('bpadrContent') as HTMLTextAreaElement;
-const bpadrCancelEdit = document.getElementById('bpadrCancelEdit') as HTMLButtonElement;
-const bpadrFolderConfirm = document.getElementById('bpadrFolderConfirm') as HTMLElement;
-const bpadrFolderName    = document.getElementById('bpadrFolderName') as HTMLElement;
-const bpadrFolderCancel  = document.getElementById('bpadrFolderCancel') as HTMLButtonElement;
-const bpadrFolderCreate  = document.getElementById('bpadrFolderCreate') as HTMLButtonElement;
+const bpadrOverlay = document.getElementById(
+  "blueprintAdrOverlay",
+) as HTMLElement;
+const bpadrModalTitle = document.getElementById(
+  "bpadrModalTitle",
+) as HTMLElement;
+const bpadrEditBtn = document.getElementById(
+  "bpadrEditBtn",
+) as HTMLButtonElement;
+const bpadrClose = document.getElementById("bpadrClose") as HTMLButtonElement;
+const bpadrReadView = document.getElementById("bpadrReadView") as HTMLElement;
+const bpadrRendered = document.getElementById("bpadrRendered") as HTMLElement;
+const bpadrForm = document.getElementById("bpadrForm") as HTMLFormElement;
+const bpadrTitle = document.getElementById("bpadrTitle") as HTMLInputElement;
+const bpadrCategory = document.getElementById(
+  "bpadrCategory",
+) as HTMLInputElement;
+const bpadrFolder = document.getElementById("bpadrFolder") as HTMLInputElement;
+const bpadrContent = document.getElementById(
+  "bpadrContent",
+) as HTMLTextAreaElement;
+const bpadrCancelEdit = document.getElementById(
+  "bpadrCancelEdit",
+) as HTMLButtonElement;
+const bpadrFolderConfirm = document.getElementById(
+  "bpadrFolderConfirm",
+) as HTMLElement;
+const bpadrFolderName = document.getElementById(
+  "bpadrFolderName",
+) as HTMLElement;
+const bpadrFolderCancel = document.getElementById(
+  "bpadrFolderCancel",
+) as HTMLButtonElement;
+const bpadrFolderCreate = document.getElementById(
+  "bpadrFolderCreate",
+) as HTMLButtonElement;
 
-const fileExplorer = document.getElementById('fileExplorer') as HTMLElement;
-const explorerBreadcrumb = document.getElementById('explorerBreadcrumb') as HTMLElement;
-const explorerList = document.getElementById('explorerList') as HTMLElement;
-const explorerClose = document.getElementById('explorerClose') as HTMLButtonElement;
-const filePreview = document.getElementById('filePreview') as HTMLElement;
-let explorerCurrentPath = '';
-const breadcrumbEl = document.getElementById('breadcrumb') as HTMLElement;
-const emptyState = document.getElementById('emptyState') as HTMLElement;
+const fileExplorer = document.getElementById("fileExplorer") as HTMLElement;
+const explorerBreadcrumb = document.getElementById(
+  "explorerBreadcrumb",
+) as HTMLElement;
+const explorerList = document.getElementById("explorerList") as HTMLElement;
+const explorerClose = document.getElementById(
+  "explorerClose",
+) as HTMLButtonElement;
+const filePreview = document.getElementById("filePreview") as HTMLElement;
+let explorerCurrentPath = "";
+const breadcrumbEl = document.getElementById("breadcrumb") as HTMLElement;
+const emptyState = document.getElementById("emptyState") as HTMLElement;
 
 // ── State ─────────────────────────────────────────────────────────────────────
 
@@ -110,7 +135,7 @@ let isSelecting = false;
 let selectStartWorld = { x: 0, y: 0 };
 let selectCurrentWorld = { x: 0, y: 0 };
 let activeExplorerPath: string | null = null;
-let currentCanvasPath = '';
+let currentCanvasPath = "";
 let dragOffsetX = 0;
 let dragOffsetY = 0;
 let isDragging = false;
@@ -148,15 +173,26 @@ function layoutFolders(folders: Folder[]): Box[] {
     const y = saved ? saved.y : gridRow * (BOX_H + GAP_Y);
     if (!saved) {
       gridCol++;
-      if (gridCol >= COLS) { gridCol = 0; gridRow++; }
+      if (gridCol >= COLS) {
+        gridCol = 0;
+        gridRow++;
+      }
     }
     return { folder, x, y, w: BOX_W, h: BOX_H };
   });
 }
 
-function boundsOfBoxes(b: Box[]): { minX: number; minY: number; maxX: number; maxY: number } {
+function boundsOfBoxes(b: Box[]): {
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+} {
   if (!b.length) return { minX: 0, minY: 0, maxX: 0, maxY: 0 };
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  let minX = Infinity,
+    minY = Infinity,
+    maxX = -Infinity,
+    maxY = -Infinity;
   for (const box of b) {
     minX = Math.min(minX, box.x);
     minY = Math.min(minY, box.y);
@@ -169,8 +205,8 @@ function boundsOfBoxes(b: Box[]): { minX: number; minY: number; maxX: number; ma
 // ── Camera helpers ────────────────────────────────────────────────────────────
 
 function getParentPath(p: string): string {
-  const i = p.lastIndexOf('/');
-  return i >= 0 ? p.slice(0, i) : '';
+  const i = p.lastIndexOf("/");
+  return i >= 0 ? p.slice(0, i) : "";
 }
 
 function centerOnBox(box: Box) {
@@ -281,7 +317,12 @@ function render(now: number) {
   ctx.scale(zoom, zoom);
 
   for (let i = 0; i < boxes.length; i++) {
-    drawBox(boxes[i], i === hoverIndex, i === draggingIndex, selectedIndices.has(i));
+    drawBox(
+      boxes[i],
+      i === hoverIndex,
+      i === draggingIndex,
+      selectedIndices.has(i),
+    );
   }
 
   // Rubber band selection rect
@@ -290,9 +331,9 @@ function render(now: number) {
     const ry = Math.min(selectStartWorld.y, selectCurrentWorld.y);
     const rw = Math.abs(selectCurrentWorld.x - selectStartWorld.x);
     const rh = Math.abs(selectCurrentWorld.y - selectStartWorld.y);
-    ctx.strokeStyle = '#3b82f6';
+    ctx.strokeStyle = "#3b82f6";
     ctx.lineWidth = 1.5 / zoom;
-    ctx.fillStyle = 'rgba(59,130,246,0.08)';
+    ctx.fillStyle = "rgba(59,130,246,0.08)";
     ctx.beginPath();
     ctx.roundRect(rx, ry, rw, rh, 6 / zoom);
     ctx.fill();
@@ -306,11 +347,17 @@ function drawGrid(W: number, H: number) {
   const step = 40 * zoom;
   const ox = ((cameraX % step) + step) % step;
   const oy = ((cameraY % step) + step) % step;
-  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.strokeStyle = "rgba(255,255,255,0.04)";
   ctx.lineWidth = 1;
   ctx.beginPath();
-  for (let x = ox; x < W; x += step) { ctx.moveTo(x, 0); ctx.lineTo(x, H); }
-  for (let y = oy; y < H; y += step) { ctx.moveTo(0, y); ctx.lineTo(W, y); }
+  for (let x = ox; x < W; x += step) {
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, H);
+  }
+  for (let y = oy; y < H; y += step) {
+    ctx.moveTo(0, y);
+    ctx.lineTo(W, y);
+  }
   ctx.stroke();
 }
 
@@ -319,16 +366,29 @@ function roundRect(x: number, y: number, w: number, h: number, r: number) {
   ctx.roundRect(x, y, w, h, r);
 }
 
-function drawBox(box: Box, hovered: boolean, dragging = false, selected = false) {
+function drawBox(
+  box: Box,
+  hovered: boolean,
+  dragging = false,
+  selected = false,
+) {
   const { x, y, w, h, folder } = box;
   const fill = folder.hasChildren ? COLOR_BOX_FILL : COLOR_BOX_FILL_CHILD;
   const isExplorerOpen = activeExplorerPath === folder.path;
-  const stroke = dragging ? '#f59e0b' : selected ? '#fbbf24' : isExplorerOpen ? '#60a5fa' : hovered ? COLOR_BOX_STROKE_HOVER : COLOR_BOX_STROKE;
-  const lw = (hovered || dragging || selected || isExplorerOpen) ? 2 : 1;
+  const stroke = dragging
+    ? "#f59e0b"
+    : selected
+      ? "#fbbf24"
+      : isExplorerOpen
+        ? "#60a5fa"
+        : hovered
+          ? COLOR_BOX_STROKE_HOVER
+          : COLOR_BOX_STROKE;
+  const lw = hovered || dragging || selected || isExplorerOpen ? 2 : 1;
 
   // Shadow
   ctx.save();
-  ctx.shadowColor = dragging ? 'rgba(245,158,11,0.4)' : 'rgba(0,0,0,0.4)';
+  ctx.shadowColor = dragging ? "rgba(245,158,11,0.4)" : "rgba(0,0,0,0.4)";
   ctx.shadowBlur = dragging ? 36 : hovered ? 24 : 12;
   roundRect(x, y, w, h, CORNER_R);
   ctx.fillStyle = fill;
@@ -343,18 +403,22 @@ function drawBox(box: Box, hovered: boolean, dragging = false, selected = false)
 
   // ☰ icon top-left
   const menuActive = isExplorerOpen;
-  ctx.fillStyle = menuActive ? '#60a5fa' : hovered ? '#94a3b8' : 'rgba(255,255,255,0.3)';
+  ctx.fillStyle = menuActive
+    ? "#60a5fa"
+    : hovered
+      ? "#94a3b8"
+      : "rgba(255,255,255,0.3)";
   ctx.font = `${MENU_ICON_SIZE * 0.7}px sans-serif`;
-  ctx.textBaseline = 'top';
-  ctx.textAlign = 'left';
-  ctx.fillText('☰', x + 10, y + 10);
+  ctx.textBaseline = "top";
+  ctx.textAlign = "left";
+  ctx.fillText("☰", x + 10, y + 10);
 
   // D icon top-left (after ☰)
-  ctx.fillStyle = hovered ? '#a78bfa' : 'rgba(167,139,250,0.4)';
+  ctx.fillStyle = hovered ? "#a78bfa" : "rgba(167,139,250,0.4)";
   ctx.font = `bold ${MENU_ICON_SIZE * 0.65}px Inter, ui-sans-serif, sans-serif`;
-  ctx.textBaseline = 'top';
-  ctx.textAlign = 'left';
-  ctx.fillText('D', x + 10 + MENU_ICON_SIZE + 4, y + 11);
+  ctx.textBaseline = "top";
+  ctx.textAlign = "left";
+  ctx.fillText("D", x + 10 + MENU_ICON_SIZE + 4, y + 11);
 
   // Folder icon + name (centered vertically)
   const iconSize = 18;
@@ -363,10 +427,10 @@ function drawBox(box: Box, hovered: boolean, dragging = false, selected = false)
   drawFolderIcon(iconX, iconY, iconSize, hovered);
 
   const fontSize = Math.max(10, Math.min(14, 120 / folder.name.length));
-  ctx.fillStyle = hovered ? '#fff' : COLOR_NAME;
+  ctx.fillStyle = hovered ? "#fff" : COLOR_NAME;
   ctx.font = `700 ${fontSize}px Inter, ui-sans-serif, sans-serif`;
-  ctx.textBaseline = 'middle';
-  ctx.textAlign = 'left';
+  ctx.textBaseline = "middle";
+  ctx.textAlign = "left";
   const maxTextW = w - 36 - iconSize - 8;
   const label = truncateText(folder.name, maxTextW, fontSize);
   ctx.fillText(label, iconX + iconSize + 8, y + h / 2);
@@ -405,17 +469,22 @@ function truncateText(text: string, maxW: number, fontSize: number): string {
   ctx.font = `700 ${fontSize}px Inter, ui-sans-serif, sans-serif`;
   if (ctx.measureText(text).width <= maxW) return text;
   let truncated = text;
-  while (truncated.length > 1 && ctx.measureText(truncated + '…').width > maxW) {
+  while (
+    truncated.length > 1 &&
+    ctx.measureText(truncated + "…").width > maxW
+  ) {
     truncated = truncated.slice(0, -1);
   }
-  return truncated + '…';
+  return truncated + "…";
 }
 
 // ── Persistence ───────────────────────────────────────────────────────────────
 
 async function loadPositions(): Promise<void> {
   try {
-    positions = await fetch('/api/blueprint/positions').then((r) => r.json()) as Record<string, PositionEntry>;
+    positions = (await fetch("/api/blueprint/positions").then((r) =>
+      r.json(),
+    )) as Record<string, PositionEntry>;
   } catch {
     positions = {};
   }
@@ -425,9 +494,9 @@ function scheduleSavePositions(): void {
   if (saveTimer !== null) clearTimeout(saveTimer);
   saveTimer = window.setTimeout(() => {
     saveTimer = null;
-    void fetch('/api/blueprint/positions', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+    void fetch("/api/blueprint/positions", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(positions),
     });
   }, 600);
@@ -437,16 +506,16 @@ function scheduleSavePositions(): void {
 
 async function loadPath(folderPath: string, animate: boolean, zoomBox?: Box) {
   try {
-    const url = `/api/blueprint${folderPath ? `?path=${encodeURIComponent(folderPath)}` : ''}`;
-    const data = await fetch(url).then((r) => r.json()) as BlueprintResponse;
+    const url = `/api/blueprint${folderPath ? `?path=${encodeURIComponent(folderPath)}` : ""}`;
+    const data = (await fetch(url).then((r) => r.json())) as BlueprintResponse;
 
     // Update breadcrumb
     if (!folderPath) {
-      breadcrumb = [{ name: data.sourceRoot, path: '' }];
+      breadcrumb = [{ name: data.sourceRoot, path: "" }];
     } else {
-      const segments = folderPath.split('/');
-      let built = '';
-      breadcrumb = [{ name: data.sourceRoot, path: '' }];
+      const segments = folderPath.split("/");
+      let built = "";
+      breadcrumb = [{ name: data.sourceRoot, path: "" }];
       for (const seg of segments) {
         built = built ? `${built}/${seg}` : seg;
         breadcrumb.push({ name: seg, path: built });
@@ -470,27 +539,30 @@ async function loadPath(folderPath: string, animate: boolean, zoomBox?: Box) {
 
     scheduleRender();
   } catch (e) {
-    console.error('Blueprint load error', e);
+    console.error("Blueprint load error", e);
   }
 }
 
 // ── Breadcrumb ────────────────────────────────────────────────────────────────
 
 function renderBreadcrumb() {
-  breadcrumbEl.innerHTML = '';
+  breadcrumbEl.innerHTML = "";
   breadcrumb.forEach((entry, i) => {
     const isLast = i === breadcrumb.length - 1;
     if (i > 0) {
-      const sep = document.createElement('span');
-      sep.className = 'breadcrumb-sep';
-      sep.textContent = '/';
+      const sep = document.createElement("span");
+      sep.className = "breadcrumb-sep";
+      sep.textContent = "/";
       breadcrumbEl.appendChild(sep);
     }
-    const item = document.createElement('span');
-    item.className = `breadcrumb-item${isLast ? ' current' : ''}`;
+    const item = document.createElement("span");
+    item.className = `breadcrumb-item${isLast ? " current" : ""}`;
     item.textContent = entry.name;
     if (!isLast) {
-      item.addEventListener('click', () => { closeFileExplorer(); loadPath(entry.path, true); });
+      item.addEventListener("click", () => {
+        closeFileExplorer();
+        loadPath(entry.path, true);
+      });
     }
     breadcrumbEl.appendChild(item);
   });
@@ -514,14 +586,22 @@ function boxAt(wx: number, wy: number): number {
 }
 
 function isOnMenuIcon(box: Box, wx: number, wy: number): boolean {
-  return wx >= box.x + 6 && wx <= box.x + 6 + MENU_ICON_SIZE &&
-    wy >= box.y + 6 && wy <= box.y + 6 + MENU_ICON_SIZE;
+  return (
+    wx >= box.x + 6 &&
+    wx <= box.x + 6 + MENU_ICON_SIZE &&
+    wy >= box.y + 6 &&
+    wy <= box.y + 6 + MENU_ICON_SIZE
+  );
 }
 
 function isOnDocIcon(box: Box, wx: number, wy: number): boolean {
   const iconX = box.x + 10 + MENU_ICON_SIZE + 4;
-  return wx >= iconX && wx <= iconX + MENU_ICON_SIZE &&
-    wy >= box.y + 6 && wy <= box.y + 6 + MENU_ICON_SIZE;
+  return (
+    wx >= iconX &&
+    wx <= iconX + MENU_ICON_SIZE &&
+    wy >= box.y + 6 &&
+    wy <= box.y + 6 + MENU_ICON_SIZE
+  );
 }
 
 // ── Blueprint ADR modal ───────────────────────────────────────────────────────
@@ -529,11 +609,11 @@ function isOnDocIcon(box: Box, wx: number, wy: number): boolean {
 let currentAdrId: string | null = null;
 let currentAdrBox: Box | null = null;
 
-function showBpadrView(mode: 'read' | 'form' | 'folder-confirm') {
-  bpadrReadView.hidden       = mode !== 'read';
-  bpadrForm.hidden           = mode !== 'form';
-  bpadrFolderConfirm.hidden  = mode !== 'folder-confirm';
-  bpadrEditBtn.hidden        = mode !== 'read';
+function showBpadrView(mode: "read" | "form" | "folder-confirm") {
+  bpadrReadView.hidden = mode !== "read";
+  bpadrForm.hidden = mode !== "form";
+  bpadrFolderConfirm.hidden = mode !== "folder-confirm";
+  bpadrEditBtn.hidden = mode !== "read";
 }
 
 async function openBlueprintAdr(box: Box): Promise<void> {
@@ -541,16 +621,18 @@ async function openBlueprintAdr(box: Box): Promise<void> {
   currentAdrId = null;
   const category = slugifyCategory(box.folder.name);
 
-  bpadrModalTitle.textContent = `Blueprint ADR — ${box.folder.name}`;
+  bpadrModalTitle.textContent = `Création d'un nouveau Blueprint — ${box.folder.name}`;
   bpadrCategory.value = category;
-  bpadrFolder.value   = BLUEPRINT_FOLDER;
+  bpadrFolder.value = BLUEPRINT_FOLDER;
   bpadrOverlay.hidden = false;
 
   // 1. Check folder exists
-  const folderRes = await fetch('/api/blueprint/blueprint-folder').then((r) => r.json()) as { exists: boolean; folder: string };
+  const folderRes = (await fetch("/api/blueprint/blueprint-folder").then((r) =>
+    r.json(),
+  )) as { exists: boolean; folder: string };
   if (!folderRes.exists) {
     bpadrFolderName.textContent = BLUEPRINT_FOLDER;
-    showBpadrView('folder-confirm');
+    showBpadrView("folder-confirm");
     return;
   }
 
@@ -559,22 +641,33 @@ async function openBlueprintAdr(box: Box): Promise<void> {
 
 async function loadOrCreateAdr(box: Box, category: string): Promise<void> {
   // 2. Search for existing ADR
-  const adrRes = await fetch(`/api/blueprint/blueprint-adr?category=${encodeURIComponent(category)}`).then((r) => r.json()) as { found: boolean; doc?: { id: string; title: string } };
+  const adrRes = (await fetch(
+    `/api/blueprint/blueprint-adr?category=${encodeURIComponent(category)}`,
+  ).then((r) => r.json())) as {
+    found: boolean;
+    doc?: { id: string; title: string };
+  };
 
   if (adrRes.found && adrRes.doc) {
     currentAdrId = adrRes.doc.id;
     // Load full doc with rendered HTML
-    const doc = await fetch(`/api/documents/${encodeURIComponent(adrRes.doc.id)}`).then((r) => r.json()) as { title: string; html: string; content: string };
-    bpadrTitle.value   = doc.title;
+    const doc = (await fetch(
+      `/api/documents/${encodeURIComponent(adrRes.doc.id)}`,
+    ).then((r) => r.json())) as {
+      title: string;
+      html: string;
+      content: string;
+    };
+    bpadrTitle.value = doc.title;
     bpadrContent.value = doc.content;
     bpadrModalTitle.textContent = doc.title;
     renderMarkdownHtml(doc.html, bpadrRendered);
-    showBpadrView('read');
+    showBpadrView("read");
   } else {
     // New ADR
-    bpadrTitle.value   = box.folder.name;
-    bpadrContent.value = '';
-    showBpadrView('form');
+    bpadrTitle.value = box.folder.name;
+    bpadrContent.value = "";
+    showBpadrView("form");
   }
 }
 
@@ -585,61 +678,75 @@ function closeBpadrModal() {
 }
 
 // Event listeners for modal
-bpadrClose.addEventListener('click', closeBpadrModal);
-bpadrOverlay.addEventListener('click', (e) => { if (e.target === bpadrOverlay) closeBpadrModal(); });
+bpadrClose.addEventListener("click", closeBpadrModal);
+bpadrOverlay.addEventListener("click", (e) => {
+  if (e.target === bpadrOverlay) closeBpadrModal();
+});
 
-bpadrEditBtn.addEventListener('click', () => showBpadrView('form'));
+bpadrEditBtn.addEventListener("click", () => showBpadrView("form"));
 
-bpadrCancelEdit.addEventListener('click', () => {
-  if (currentAdrId) showBpadrView('read');
+bpadrCancelEdit.addEventListener("click", () => {
+  if (currentAdrId) showBpadrView("read");
   else closeBpadrModal();
 });
 
-bpadrFolderCancel.addEventListener('click', closeBpadrModal);
+bpadrFolderCancel.addEventListener("click", closeBpadrModal);
 
-bpadrFolderCreate.addEventListener('click', async () => {
-  await fetch('/api/blueprint/blueprint-folder', { method: 'POST' });
+bpadrFolderCreate.addEventListener("click", async () => {
+  await fetch("/api/blueprint/blueprint-folder", { method: "POST" });
   if (currentAdrBox) {
     const category = slugifyCategory(currentAdrBox.folder.name);
     await loadOrCreateAdr(currentAdrBox, category);
   }
 });
 
-bpadrForm.addEventListener('submit', async (e) => {
+bpadrForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const payload = {
-    title:    bpadrTitle.value.trim() || currentAdrBox?.folder.name || 'Untitled',
+    title: bpadrTitle.value.trim() || currentAdrBox?.folder.name || "Untitled",
     category: bpadrCategory.value,
-    folder:   bpadrFolder.value,
-    content:  bpadrContent.value,
+    folder: bpadrFolder.value,
+    content: bpadrContent.value,
   };
 
   if (currentAdrId) {
     // Update existing
     await fetch(`/api/documents/${encodeURIComponent(currentAdrId)}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
     // Reload read view
-    const doc = await fetch(`/api/documents/${encodeURIComponent(currentAdrId)}`).then((r) => r.json()) as { title: string; html: string; content: string };
+    const doc = (await fetch(
+      `/api/documents/${encodeURIComponent(currentAdrId)}`,
+    ).then((r) => r.json())) as {
+      title: string;
+      html: string;
+      content: string;
+    };
     bpadrModalTitle.textContent = doc.title;
     bpadrContent.value = doc.content;
     renderMarkdownHtml(doc.html, bpadrRendered);
-    showBpadrView('read');
+    showBpadrView("read");
   } else {
     // Create new
-    const res = await fetch('/api/documents/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = (await fetch("/api/documents/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
-    }).then((r) => r.json()) as { id: string; title: string };
+    }).then((r) => r.json())) as { id: string; title: string };
     currentAdrId = res.id;
-    const doc = await fetch(`/api/documents/${encodeURIComponent(res.id)}`).then((r) => r.json()) as { title: string; html: string; content: string };
+    const doc = (await fetch(
+      `/api/documents/${encodeURIComponent(res.id)}`,
+    ).then((r) => r.json())) as {
+      title: string;
+      html: string;
+      content: string;
+    };
     bpadrModalTitle.textContent = doc.title;
     bpadrContent.value = doc.content;
     renderMarkdownHtml(doc.html, bpadrRendered);
-    showBpadrView('read');
+    showBpadrView("read");
   }
 });
 
@@ -668,75 +775,89 @@ async function populateExplorer(folderPath: string): Promise<void> {
   renderExplorerBreadcrumb(folderPath);
   explorerList.innerHTML = '<div class="explorer-section-label">Loading…</div>';
   try {
-    const data = await fetch(`/api/blueprint/files?path=${encodeURIComponent(folderPath)}`).then((r) => r.json()) as { folders: string[]; files: string[] };
-    explorerList.innerHTML = '';
+    const data = (await fetch(
+      `/api/blueprint/files?path=${encodeURIComponent(folderPath)}`,
+    ).then((r) => r.json())) as { folders: string[]; files: string[] };
+    explorerList.innerHTML = "";
     if (data.folders.length) {
-      const lbl = document.createElement('div');
-      lbl.className = 'explorer-section-label';
-      lbl.textContent = 'Folders';
+      const lbl = document.createElement("div");
+      lbl.className = "explorer-section-label";
+      lbl.textContent = "Folders";
       explorerList.appendChild(lbl);
       for (const name of data.folders) {
         const childPath = folderPath ? `${folderPath}/${name}` : name;
-        const item = document.createElement('div');
-        item.className = 'explorer-item is-folder';
+        const item = document.createElement("div");
+        item.className = "explorer-item is-folder";
         item.innerHTML = `<span class="explorer-item-icon">📁</span><span class="explorer-item-name">${name}</span>`;
-        item.addEventListener('click', () => void navigateToFolder(childPath));
+        item.addEventListener("click", () => void navigateToFolder(childPath));
         explorerList.appendChild(item);
       }
     }
     if (data.files.length) {
-      const lbl = document.createElement('div');
-      lbl.className = 'explorer-section-label';
-      lbl.textContent = 'Files';
+      const lbl = document.createElement("div");
+      lbl.className = "explorer-section-label";
+      lbl.textContent = "Files";
       explorerList.appendChild(lbl);
       for (const name of data.files) {
         const filePath = folderPath ? `${folderPath}/${name}` : name;
-        const item = document.createElement('div');
-        item.className = 'explorer-item is-file';
+        const item = document.createElement("div");
+        item.className = "explorer-item is-file";
         item.innerHTML = `<span class="explorer-item-icon">📄</span><span class="explorer-item-name">${name}</span>`;
-        item.addEventListener('click', () => void showFilePreview(filePath, name));
+        item.addEventListener(
+          "click",
+          () => void showFilePreview(filePath, name),
+        );
         explorerList.appendChild(item);
       }
     }
     if (!data.folders.length && !data.files.length) {
-      explorerList.innerHTML = '<div class="explorer-section-label">Empty folder</div>';
+      explorerList.innerHTML =
+        '<div class="explorer-section-label">Empty folder</div>';
     }
   } catch {
-    explorerList.innerHTML = '<div class="explorer-section-label">Error loading files</div>';
+    explorerList.innerHTML =
+      '<div class="explorer-section-label">Error loading files</div>';
   }
 }
 
 function renderExplorerBreadcrumb(folderPath: string): void {
-  explorerBreadcrumb.innerHTML = '';
-  const rootSpan = document.createElement('span');
-  rootSpan.className = `explorer-breadcrumb-item${!folderPath ? ' current' : ''}`;
-  rootSpan.textContent = '~';
-  if (folderPath) rootSpan.addEventListener('click', () => void navigateToFolder(''));
+  explorerBreadcrumb.innerHTML = "";
+  const rootSpan = document.createElement("span");
+  rootSpan.className = `explorer-breadcrumb-item${!folderPath ? " current" : ""}`;
+  rootSpan.textContent = "~";
+  if (folderPath)
+    rootSpan.addEventListener("click", () => void navigateToFolder(""));
   explorerBreadcrumb.appendChild(rootSpan);
 
   if (folderPath) {
-    const parts = folderPath.split('/');
+    const parts = folderPath.split("/");
     parts.forEach((part, i) => {
-      const sep = document.createElement('span');
-      sep.className = 'explorer-breadcrumb-sep';
-      sep.textContent = '/';
+      const sep = document.createElement("span");
+      sep.className = "explorer-breadcrumb-sep";
+      sep.textContent = "/";
       explorerBreadcrumb.appendChild(sep);
       const isLast = i === parts.length - 1;
-      const partPath = parts.slice(0, i + 1).join('/');
-      const span = document.createElement('span');
-      span.className = `explorer-breadcrumb-item${isLast ? ' current' : ''}`;
+      const partPath = parts.slice(0, i + 1).join("/");
+      const span = document.createElement("span");
+      span.className = `explorer-breadcrumb-item${isLast ? " current" : ""}`;
       span.textContent = part;
-      if (!isLast) span.addEventListener('click', () => void navigateToFolder(partPath));
+      if (!isLast)
+        span.addEventListener("click", () => void navigateToFolder(partPath));
       explorerBreadcrumb.appendChild(span);
     });
   }
 }
 
-async function showFilePreview(filePath: string, fileName: string): Promise<void> {
+async function showFilePreview(
+  filePath: string,
+  fileName: string,
+): Promise<void> {
   filePreview.innerHTML = `<p class="file-preview-name">${fileName}</p><p class="file-preview-placeholder">Loading…</p>`;
   try {
-    const data = await fetch(`/api/blueprint/file-content?path=${encodeURIComponent(filePath)}`).then((r) => r.json()) as {
-      type: 'text' | 'image' | 'video' | 'binary';
+    const data = (await fetch(
+      `/api/blueprint/file-content?path=${encodeURIComponent(filePath)}`,
+    ).then((r) => r.json())) as {
+      type: "text" | "image" | "video" | "binary";
       content?: string;
       language?: string;
       truncated?: boolean;
@@ -746,31 +867,32 @@ async function showFilePreview(filePath: string, fileName: string): Promise<void
 
     filePreview.innerHTML = `<p class="file-preview-name">${fileName}</p>`;
 
-    if (data.type === 'image') {
-      const img = document.createElement('img');
+    if (data.type === "image") {
+      const img = document.createElement("img");
       img.src = data.url!;
       img.alt = fileName;
       filePreview.appendChild(img);
-    } else if (data.type === 'video') {
-      const video = document.createElement('video');
+    } else if (data.type === "video") {
+      const video = document.createElement("video");
       video.src = data.url!;
       video.controls = true;
       filePreview.appendChild(video);
-    } else if (data.type === 'binary') {
-      const badge = document.createElement('span');
-      badge.className = 'file-preview-binary';
-      badge.textContent = '⊘ Binary file';
+    } else if (data.type === "binary") {
+      const badge = document.createElement("span");
+      badge.className = "file-preview-binary";
+      badge.textContent = "⊘ Binary file";
       filePreview.appendChild(badge);
-    } else if (data.type === 'text' && data.content !== undefined) {
+    } else if (data.type === "text" && data.content !== undefined) {
       if (data.truncated) {
-        const badge = document.createElement('span');
-        badge.className = 'file-preview-truncated';
-        badge.textContent = '⚠ Truncated at 1 MB';
+        const badge = document.createElement("span");
+        badge.className = "file-preview-truncated";
+        badge.textContent = "⚠ Truncated at 1 MB";
         filePreview.appendChild(badge);
       }
-      const pre = document.createElement('pre');
-      const code = document.createElement('code');
-      if (data.language && data.language !== 'plaintext') code.className = `language-${data.language}`;
+      const pre = document.createElement("pre");
+      const code = document.createElement("code");
+      if (data.language && data.language !== "plaintext")
+        code.className = `language-${data.language}`;
       code.textContent = data.content;
       pre.appendChild(code);
       filePreview.appendChild(pre);
@@ -790,7 +912,8 @@ async function showFilePreview(filePath: string, fileName: string): Promise<void
 async function openFileExplorer(box: Box): Promise<void> {
   activeExplorerPath = box.folder.path;
   fileExplorer.hidden = false;
-  filePreview.innerHTML = '<p class="file-preview-placeholder">Click a file to preview it</p>';
+  filePreview.innerHTML =
+    '<p class="file-preview-placeholder">Click a file to preview it</p>';
   scheduleRender();
   await populateExplorer(box.folder.path);
 }
@@ -805,7 +928,7 @@ function closeFileExplorer(): void {
 
 const DRAG_THRESHOLD = 6;
 
-canvas.addEventListener('pointermove', (e) => {
+canvas.addEventListener("pointermove", (e) => {
   const rect = canvas.getBoundingClientRect();
   const sx = e.clientX - rect.left;
   const sy = e.clientY - rect.top;
@@ -817,12 +940,16 @@ canvas.addEventListener('pointermove', (e) => {
     const dy = wy - dragStartWorld.y;
     if (Math.hypot(dx, dy) > DRAG_THRESHOLD / zoom) didPan = true;
     // Move all selected boxes (or just the dragged one if not in selection)
-    const toMove = selectedIndices.has(draggingIndex) && selectedIndices.size > 1
-      ? [...selectedIndices]
-      : [draggingIndex];
+    const toMove =
+      selectedIndices.has(draggingIndex) && selectedIndices.size > 1
+        ? [...selectedIndices]
+        : [draggingIndex];
     for (const idx of toMove) {
       const orig = dragStartPositions.get(idx);
-      if (orig) { boxes[idx].x = orig.x + dx; boxes[idx].y = orig.y + dy; }
+      if (orig) {
+        boxes[idx].x = orig.x + dx;
+        boxes[idx].y = orig.y + dy;
+      }
     }
     scheduleRender();
     return;
@@ -850,12 +977,13 @@ canvas.addEventListener('pointermove', (e) => {
   const idx = boxAt(x, y);
   if (idx !== hoverIndex) {
     hoverIndex = idx;
-    canvas.style.cursor = idx >= 0 && dragMode ? 'grab' : idx >= 0 ? 'pointer' : 'default';
+    canvas.style.cursor =
+      idx >= 0 && dragMode ? "grab" : idx >= 0 ? "pointer" : "default";
     scheduleRender();
   }
 });
 
-canvas.addEventListener('pointerdown', (e) => {
+canvas.addEventListener("pointerdown", (e) => {
   const rect = canvas.getBoundingClientRect();
   const sx = e.clientX - rect.left;
   const sy = e.clientY - rect.top;
@@ -875,13 +1003,13 @@ canvas.addEventListener('pointerdown', (e) => {
     dragStartPositions = new Map(boxes.map((b, i) => [i, { x: b.x, y: b.y }]));
     dragOffsetX = wx - boxes[idx].x;
     dragOffsetY = wy - boxes[idx].y;
-    if (dragMode) canvas.style.cursor = 'grabbing';
+    if (dragMode) canvas.style.cursor = "grabbing";
   } else if (dragMode && e.shiftKey) {
     // Rubber band selection on empty canvas
     isSelecting = true;
     selectStartWorld = { x: wx, y: wy };
     selectCurrentWorld = { x: wx, y: wy };
-    canvas.style.cursor = 'crosshair';
+    canvas.style.cursor = "crosshair";
   } else {
     // Pan the camera
     isPanning = true;
@@ -890,7 +1018,7 @@ canvas.addEventListener('pointerdown', (e) => {
   }
 });
 
-canvas.addEventListener('pointerup', (e) => {
+canvas.addEventListener("pointerup", (e) => {
   const rect = canvas.getBoundingClientRect();
   const sx = e.clientX - rect.left;
   const sy = e.clientY - rect.top;
@@ -898,15 +1026,20 @@ canvas.addEventListener('pointerup', (e) => {
 
   if (isDragging) {
     isDragging = false;
-    canvas.style.cursor = dragMode ? 'grab' : 'pointer';
+    canvas.style.cursor = dragMode ? "grab" : "pointer";
     if (didPan) {
       // Save new positions for all moved boxes
-      const toMove = selectedIndices.has(draggingIndex) && selectedIndices.size > 1
-        ? [...selectedIndices]
-        : [draggingIndex];
+      const toMove =
+        selectedIndices.has(draggingIndex) && selectedIndices.size > 1
+          ? [...selectedIndices]
+          : [draggingIndex];
       for (const idx of toMove) {
         const b = boxes[idx];
-        positions[b.folder.path] = { ...positions[b.folder.path] ?? {}, x: b.x, y: b.y };
+        positions[b.folder.path] = {
+          ...(positions[b.folder.path] ?? {}),
+          x: b.x,
+          y: b.y,
+        };
       }
       scheduleSavePositions();
     } else {
@@ -942,7 +1075,7 @@ canvas.addEventListener('pointerup', (e) => {
 
   if (isSelecting) {
     isSelecting = false;
-    canvas.style.cursor = 'crosshair';
+    canvas.style.cursor = "crosshair";
     // Select boxes intersecting the rubber band rect
     const rx1 = Math.min(selectStartWorld.x, selectCurrentWorld.x);
     const ry1 = Math.min(selectStartWorld.y, selectCurrentWorld.y);
@@ -966,41 +1099,51 @@ canvas.addEventListener('pointerup', (e) => {
     const dy = sy - panStartY;
     if (Math.hypot(dx, dy) <= DRAG_THRESHOLD) {
       // Click on empty canvas → clear selection
-      if (dragMode) { selectedIndices.clear(); scheduleRender(); }
+      if (dragMode) {
+        selectedIndices.clear();
+        scheduleRender();
+      }
     }
   }
 });
 
-canvas.addEventListener('wheel', (e) => {
-  e.preventDefault();
-  const rect = canvas.getBoundingClientRect();
-  const sx = e.clientX - rect.left;
-  const sy = e.clientY - rect.top;
-  // Zoom the canvas
-  const factor = 1 - e.deltaY * 0.0018;
-  const newZoom = Math.max(0.15, Math.min(4, zoom * factor));
-  cameraX = sx - (sx - cameraX) * (newZoom / zoom);
-  cameraY = sy - (sy - cameraY) * (newZoom / zoom);
-  zoom = newZoom;
-  scheduleRender();
-}, { passive: false });
+canvas.addEventListener(
+  "wheel",
+  (e) => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const sx = e.clientX - rect.left;
+    const sy = e.clientY - rect.top;
+    // Zoom the canvas
+    const factor = 1 - e.deltaY * 0.0018;
+    const newZoom = Math.max(0.15, Math.min(4, zoom * factor));
+    cameraX = sx - (sx - cameraX) * (newZoom / zoom);
+    cameraY = sy - (sy - cameraY) * (newZoom / zoom);
+    zoom = newZoom;
+    scheduleRender();
+  },
+  { passive: false },
+);
 
-fitButton.addEventListener('click', () => fitToBoxes(true));
-explorerClose.addEventListener('click', () => closeFileExplorer());
+fitButton.addEventListener("click", () => fitToBoxes(true));
+explorerClose.addEventListener("click", () => closeFileExplorer());
 
-dragToggle.addEventListener('click', () => {
+dragToggle.addEventListener("click", () => {
   dragMode = !dragMode;
-  dragToggle.classList.toggle('active', dragMode);
-  if (!dragMode) { selectedIndices.clear(); scheduleRender(); }
-  canvas.style.cursor = dragMode && hoverIndex >= 0 ? 'grab' : 'default';
+  dragToggle.classList.toggle("active", dragMode);
+  if (!dragMode) {
+    selectedIndices.clear();
+    scheduleRender();
+  }
+  canvas.style.cursor = dragMode && hoverIndex >= 0 ? "grab" : "default";
 });
 
-window.addEventListener('resize', () => {
+window.addEventListener("resize", () => {
   scheduleRender();
 });
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 void loadPositions().then(async () => {
-  await loadPath('', false);
+  await loadPath("", false);
 });

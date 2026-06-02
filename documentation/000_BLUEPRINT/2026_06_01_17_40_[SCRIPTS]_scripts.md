@@ -13,4 +13,34 @@ C'est un dossier volontairement petit : chaque script correspond à une responsa
 
 ## Vue d'ensemble
 
-[![Scripts — Points d'entrée et scripts associés](/images/scripts_points_d_entr_e_et_scripts_associ_s.png)](/diagram?id=d1780343848906)
+---
+
+### copy-assets.js
+
+[![scripts copy-assets](/images/scripts_copy_assets.png)](/diagram?id=d1780349800332)
+
+---
+
+### dev.js
+
+[![scripts dev-js](/images/scripts_dev_js.png)](/diagram?id=d1780349961347)
+
+---
+
+### check_readme_sync.sh
+
+[![script check-readme-sync](/images/script_check_readme_sync.png)](/diagram?id=d1780350000793)
+
+---
+
+### check-workflows.sh
+
+[![script check-workflows](/images/script_check_workflows.png)](/diagram?id=d1780350085601)
+
+---
+
+### check-frontend-js.js
+
+[![Scripts check-frontend](/images/scripts_check_frontend.png)](/diagram?id=d1780343848906)
+
+---

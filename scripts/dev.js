@@ -43,14 +43,14 @@ for (const signal of ["SIGINT", "SIGTERM"]) {
   });
 }
 
-const initialCompile = spawnSync(
+const initialCompileWorkspace = spawnSync(
   npmCommand,
   ["exec", "--", "tsc", "-p", workspaceTsconfig],
   { stdio: "inherit" },
 );
 
-if (initialCompile.status !== 0) {
-  process.exit(initialCompile.status || 1);
+if (initialCompileWorkspace.status !== 0) {
+  process.exit(initialCompileWorkspace.status || 1);
 }
 
 const workspaceWatcher = run(npmCommand, [
@@ -61,6 +61,14 @@ const workspaceWatcher = run(npmCommand, [
   workspaceTsconfig,
   "--watch",
   "--preserveWatchOutput",
+]);
+
+const blueprintWatcher = run(npmCommand, [
+  "exec",
+  "--",
+  "vite",
+  "--config",
+  "src/frontend/blueprint/vite.config.ts",
 ]);
 
 const cliArgs = process.argv.slice(2).map(quoteShellArg).join(" ");
@@ -80,4 +88,5 @@ const server = run(npmCommand, [
 ]);
 
 workspaceWatcher.once("exit", exitFromChild);
+blueprintWatcher.once("exit", exitFromChild);
 server.once("exit", exitFromChild);

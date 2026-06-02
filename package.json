@@ -14,7 +14,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc && tsc -p src/frontend/workspace/tsconfig.json && tsc -p src/frontend/blueprint/tsconfig.json && ts-node scripts/copy-assets.ts && chmod +x dist/bin/cli.js",
+    "build": "tsc && tsc -p src/frontend/workspace/tsconfig.json && vite build --config src/frontend/blueprint/vite.config.ts && ts-node scripts/copy-assets.ts && chmod +x dist/bin/cli.js",
     "dev": "node scripts/dev.js",
     "start": "node dist/bin/cli.js",
     "test": "npm run test:e2e",
@@ -63,13 +63,17 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
+    "@sveltejs/vite-plugin-svelte": "^7.1.2",
     "@types/archiver": "^7.0.0",
     "@types/express": "^5.0.6",
     "@types/node": "^25.6.0",
     "c8": "^11.0.0",
     "nodemon": "^3.1.14",
+    "svelte": "^5.56.1",
+    "svelte-check": "^4.5.0",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16"
   },
   "engines": {
     "node": ">=18.0.0"

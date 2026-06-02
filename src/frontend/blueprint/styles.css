@@ -16,7 +16,6 @@ html, body {
   width: 100%;
   height: 100%;
   margin: 0;
-  overflow: hidden;
   background: var(--bg);
   color: var(--ink);
 }
@@ -406,7 +405,7 @@ canvas.is-panning { cursor: grabbing; }
 }
 
 .bpadr-modal {
-  background: #ffffff;
+  background: #f9fafb;
   border: 1px solid #e2e8f0;
   border-radius: 20px;
   box-shadow: 0 32px 80px rgb(0 0 0 / 30%);
@@ -459,9 +458,14 @@ canvas.is-panning { cursor: grabbing; }
 }
 
 .bpadr-prose {
-  font-size: 14px;
   max-width: none !important;
   width: 100%;
+}
+
+/* hr — explicit color needed (body color var makes it too faint) */
+#bpadrRendered hr {
+  border-color: #d1d5db !important;
+  opacity: 1 !important;
 }
 
 /* Inline code — gray pill, matches Home */
