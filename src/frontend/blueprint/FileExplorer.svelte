@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { t } from "../i18n.svelte";
+
   let {
     onclose,
     onnavigate,
@@ -142,14 +144,14 @@
   <div class="explorer-top">
     <div class="explorer-list">
       {#if loading}
-        <div class="explorer-section-label">Loading…</div>
+        <div class="explorer-section-label">{t("blueprint.explorer.loading")}</div>
       {:else if error}
-        <div class="explorer-section-label">Error loading files</div>
+        <div class="explorer-section-label">{t("blueprint.explorer.error")}</div>
       {:else if folders.length === 0 && files.length === 0}
-        <div class="explorer-section-label">Empty folder</div>
+        <div class="explorer-section-label">{t("blueprint.explorer.empty")}</div>
       {:else}
         {#if folders.length}
-          <div class="explorer-section-label">Folders</div>
+          <div class="explorer-section-label">{t("blueprint.explorer.folders")}</div>
           {#each folders as name}
             <button
               class="explorer-item is-folder"
@@ -162,7 +164,7 @@
           {/each}
         {/if}
         {#if files.length}
-          <div class="explorer-section-label">Files</div>
+          <div class="explorer-section-label">{t("blueprint.explorer.files")}</div>
           {#each files as name}
             <button
               class="explorer-item is-file"
@@ -183,16 +185,16 @@
   <div class="explorer-bottom">
     <div class="file-preview">
       {#if preview.status === "idle"}
-        <p class="file-preview-placeholder">Click a file to preview it</p>
+        <p class="file-preview-placeholder">{t("blueprint.preview.placeholder")}</p>
       {:else if preview.status === "loading"}
         <p class="file-preview-name">{preview.name}</p>
-        <p class="file-preview-placeholder">Loading…</p>
+        <p class="file-preview-placeholder">{t("blueprint.preview.loading")}</p>
       {:else if preview.status === "error"}
         <p class="file-preview-name">{preview.name}</p>
-        <p class="file-preview-placeholder">Error loading file</p>
+        <p class="file-preview-placeholder">{t("blueprint.preview.error")}</p>
       {:else if preview.status === "binary"}
         <p class="file-preview-name">{preview.name}</p>
-        <span class="file-preview-binary">⊘ Binary file</span>
+        <span class="file-preview-binary">{t("blueprint.preview.binary")}</span>
       {:else if preview.status === "image"}
         <p class="file-preview-name">{preview.name}</p>
         <img src={preview.url} alt={preview.name} />
@@ -203,7 +205,7 @@
       {:else if preview.status === "text"}
         <p class="file-preview-name">{preview.name}</p>
         {#if preview.truncated}
-          <span class="file-preview-truncated">⚠ Truncated at 1 MB</span>
+          <span class="file-preview-truncated">{t("blueprint.preview.truncated")}</span>
         {/if}
         <pre><code class={preview.language && preview.language !== "plaintext" ? `language-${preview.language}` : ""}>{preview.content}</code></pre>
       {/if}

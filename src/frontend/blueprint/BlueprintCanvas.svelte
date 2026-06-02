@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { t } from "../i18n.svelte";
 
   interface Folder {
     name: string;
@@ -687,12 +688,12 @@
 </script>
 
 <nav class="rail">
-  <button class="tool-button" type="button" title="Fit view" onclick={onFitClick}>⌖</button>
+  <button class="tool-button" type="button" title={t("blueprint.canvas.fit_view")} onclick={onFitClick}>⌖</button>
   <button
     class="tool-button"
     class:active={dragModeActive}
     type="button"
-    title="Toggle drag mode"
+    title={t("blueprint.canvas.drag_mode")}
     onclick={onDragToggle}
   >⠿</button>
 </nav>

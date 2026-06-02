@@ -1,5 +1,6 @@
 <script lang="ts">
   import { renderMarkdownHtml } from "../md-renderer.js";
+  import { t } from "../i18n.svelte";
 
   export interface Box {
     folder: { name: string; path: string; hasChildren: boolean };
@@ -43,7 +44,7 @@
     titleValue = box.folder.name;
     contentValue = "";
     renderedHtml = "";
-    modalTitle = `Création d'un nouveau Blueprint — ${box.folder.name}`;
+    modalTitle = t("blueprint.adr.new_title", { folder: box.folder.name });
     view = "form";
 
     const folderRes = (await fetch("/api/blueprint/blueprint-folder").then((r) => r.json())) as {
@@ -96,7 +97,7 @@
   async function onSubmit(e: SubmitEvent) {
     e.preventDefault();
     const payload = {
-      title: titleValue.trim() || currentBox?.folder.name || "Untitled",
+      title: titleValue.trim() || currentBox?.folder.name || t("common.untitled"),
       category: categoryValue,
       folder: BLUEPRINT_FOLDER,
       content: contentValue,
@@ -150,6 +151,7 @@
       {#if view === "read"}
         <div class="bpadr-read">
           <div
+            id="bpadrRendered"
             bind:this={renderedEl}
             class="prose prose-gray max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 prose-code:before:content-none prose-code:after:content-none prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-gray-700"
           ></div>
@@ -160,11 +162,11 @@
           <input type="hidden" name="category" value={categoryValue} />
           <input type="hidden" name="folder" value={BLUEPRINT_FOLDER} />
           <div class="bpadr-field">
-            <label for="adr-title">Title</label>
+            <label for="adr-title">{t("blueprint.adr.title_label")}</label>
             <input id="adr-title" type="text" class="bpadr-input" bind:value={titleValue} />
           </div>
           <div class="bpadr-field bpadr-field-grow">
-            <label for="adr-content">Content (Markdown)</label>
+            <label for="adr-content">{t("blueprint.adr.content_label")}</label>
             <textarea id="adr-content" class="bpadr-textarea" bind:value={contentValue}></textarea>
           </div>
           <footer class="bpadr-footer">
@@ -172,18 +174,18 @@
               type="button"
               class="bpadr-btn-ghost"
               onclick={() => { if (currentAdrId) view = "read"; else close(); }}
-            >Cancel</button>
-            <button type="submit" class="bpadr-btn-primary">Save</button>
+            >{t("common.cancel")}</button>
+            <button type="submit" class="bpadr-btn-primary">{t("common.save")}</button>
           </footer>
         </form>
 
       {:else if view === "folder-confirm"}
         <div class="bpadr-folder-confirm">
-          <p>The folder <strong>{folderName}</strong> does not exist yet.</p>
-          <p class="bpadr-muted">Create it to store Blueprint ADRs?</p>
+          <p>{@html t("blueprint.adr.folder_missing", { name: folderName })}</p>
+          <p class="bpadr-muted">{t("blueprint.adr.folder_create_prompt")}</p>
           <footer class="bpadr-footer">
-            <button type="button" class="bpadr-btn-ghost" onclick={close}>Cancel</button>
-            <button type="button" class="bpadr-btn-primary" onclick={onFolderCreate}>Create folder</button>
+            <button type="button" class="bpadr-btn-ghost" onclick={close}>{t("common.cancel")}</button>
+            <button type="button" class="bpadr-btn-primary" onclick={onFolderCreate}>{t("blueprint.adr.create_folder_btn")}</button>
           </footer>
         </div>
       {/if}

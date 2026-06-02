@@ -15,7 +15,6 @@
   "common.up": "↑ Up",
   "common.empty_dir": "Empty directory",
   "common.cannot_read_dir": "Cannot read directory",
-
   "nav.toggle_sidebar": "Toggle sidebar",
   "nav.search_placeholder": "Search docs…",
   "nav.search_mobile_placeholder": "Search…",
@@ -35,7 +34,6 @@
   "nav.ai_context": "AI Context",
   "nav.files": "📁 Attached files",
   "nav.admin": "⚙ Admin",
-
   "agents.title": "Agents IA",
   "agents.subtitle": "Launch a configured workspace agent.",
   "agents.empty": "No workspace agent is configured yet.",
@@ -52,7 +50,6 @@
   "agents.open_document": "Open document",
   "agents.load_failed": "Failed to load workspace agents.",
   "agents.run_failed": "Agent run failed.",
-
   "files.title": "📁 Attached files",
   "files.empty": "No files yet — upload one from a document editor (paperclip, drag & drop, or paste).",
   "files.replace": "Replace",
@@ -74,11 +71,9 @@
   "files.size_bytes": "{n} B",
   "files.size_kb": "{n} KB",
   "files.size_mb": "{n} MB",
-
   "welcome.title": "Select a document",
   "welcome.hint": "Choose a document from the sidebar to start reading.",
   "welcome.pattern_hint": "Expected filename pattern",
-
   "sidebar.failed_to_load": "Failed to load documents.",
   "sidebar.no_docs": "No documents found.",
   "sidebar.annotation_badge": "annotation",
@@ -87,7 +82,6 @@
   "sidebar.file_attached_docs_badge": "document with attachments",
   "sidebar.status_to_validate": "To be validated",
   "sidebar.status_superseeded": "SuperSeeded",
-
   "doc.validate_mode": "Validate document — flip frontmatter status from \"To be validated\" to \"Accepted\"",
   "doc.validate_btn": "Validate",
   "doc.validate_title": "Validate this document?",
@@ -130,7 +124,6 @@
   "doc.code_show_less": "▴ Show less",
   "doc.code_copy": "Copy",
   "doc.code_copied": "Copied!",
-
   "metadata.button": "Metadata",
   "metadata.button_title": "Manage source-file metadata",
   "metadata.title": "Source metadata",
@@ -144,7 +137,6 @@
   "metadata.status.missing": "Missing",
   "accuracy.label": "Reliability",
   "accuracy.tooltip": "Unchanged: {unchanged} · Modified: {modified} · Missing: {missing} · Total: {total}",
-
   "context.back_to_docs": "Back to docs",
   "context.title": "AI Context",
   "context.orientation_title": "AI orientation",
@@ -216,7 +208,6 @@
   "context.rule_body_placeholder": "Numeric constants with domain meaning should be named.",
   "context.rule_title_required": "Rule title is required.",
   "context.saving_rule": "Saving rule…",
-
   "modal.new_folder.title": "New folder",
   "modal.new_folder.name_label": "Folder name",
   "modal.new_folder.name_placeholder": "my-folder",
@@ -232,7 +223,6 @@
   "modal.new_folder.error_reserved": "\"files\" and \"images\" are reserved folder names at the docs root.",
   "modal.new_folder.no_subfolders": "No subfolders",
   "modal.new_folder.error_loading": "Error loading",
-
   "modal.new_doc.title": "New document",
   "modal.new_doc.title_label": "Title",
   "modal.new_doc.category_label": "Category",
@@ -244,7 +234,6 @@
   "modal.new_doc.create_folder_btn": "+ Create",
   "modal.new_doc.error_empty_title": "Please enter a title.",
   "modal.new_doc.no_subfolders": "No sub-folders",
-
   "modal.diag_link.title": "◇ Link a diagram",
   "modal.diag_link.existing_radio": "Existing diagram",
   "modal.diag_link.new_radio": "New diagram",
@@ -257,7 +246,6 @@
   "modal.diag_link.insert_btn": "Insert & Open Diagram",
   "modal.diag_link.saving_btn": "Saving…",
   "modal.diag_link.no_diagrams": "No diagrams yet",
-
   "snippet.modal_title": "🧩 Insert a snippet",
   "snippet.type_label": "Snippet type",
   "snippet.diagram": "◇ Diagram",
@@ -440,12 +428,10 @@
   "local_search.count_plural": "{count} matches",
   "snippet.attachment_help": "Click <strong>Insert</strong> to choose a file. It will be uploaded under the <code>files/</code> folder and inserted as a <i class=\"fa-solid fa-paperclip\"></i> link in your document.",
   "snippet.attachment_alt": "Tip: you can also drag &amp; drop a file onto the editor, or paste it from the clipboard.",
-
   "modal.img_paste.title": "Paste clipboard image?",
   "modal.img_paste.filename_label": "Filename",
   "modal.img_paste.saved_hint": "(saved in images/)",
   "modal.img_paste.paste_btn": "Paste",
-
   "modal.export.title": "Export",
   "modal.export.tab_markdown": "Markdown",
   "modal.export.tab_html": "HTML",
@@ -454,12 +440,10 @@
   "modal.export.markdown_btn": "Export Markdown",
   "modal.export.pdf_hint": "Export all documents as a single PDF with table of contents.",
   "modal.export.pdf_btn": "Export all PDF",
-
   "modal.export_html.title": "Export folders as HTML",
   "modal.export_html.hint": "Select the folders to include in the ZIP archive.",
   "modal.export_html.notion_btn": "Export Notion",
   "modal.export_html.confluence_btn": "Export Confluence",
-
   "annotation.title": "Annotation",
   "annotation.placeholder": "Your comment or suggestion…",
   "annotation.save_btn": "Save",
@@ -467,7 +451,6 @@
   "annotation.confirm_delete": "Delete this annotation?",
   "annotation.confirm_btn": "Delete",
   "annotation.orphan": "⚠ Annotated text not found — the excerpt has been edited or removed.",
-
   "wc.title": "☁ Word Cloud",
   "wc.close_btn": "✕ Close",
   "wc.search_root_label": "Search root",
@@ -481,32 +464,25 @@
   "wc.top_words": "Top words",
   "wc.found_in": "Found in",
   "wc.launch_btn": "Launch",
-
   "search.notice_singular": "Showing {count} match for \"{query}\"",
   "search.notice_plural": "Showing {count} matches for \"{query}\"",
-
   "error.create_diagram": "Error creating diagram: ",
   "error.save": "Save failed: ",
   "error.pdf_popup": "Please allow popups to export as PDF.",
   "error.pdf_export": "Export failed: ",
   "error.no_diagrams": "No diagrams",
-
   "pdf.toc_title": "Table of Contents",
-
   "admin.title": "Admin Panel",
   "admin.toggle_dark": "Toggle dark mode",
   "admin.back_to_docs": "Back to docs →",
-
   "admin.server_info.title": "Server Info",
   "admin.server_info.docs_folder": "Docs Folder",
   "admin.server_info.port": "Port",
   "admin.server_info.source_root": "Source Root",
   "admin.server_info.source_root_hint": "Path relative to the docs folder (e.g. \"..\" or \"../src\"). Used by MCP source tools. Leave empty to default to the parent directory.",
-
   "admin.config.title": "Configuration",
   "admin.config.description": "Settings are saved to .living-doc.json in your docs folder.",
   "admin.config.save_btn": "Save changes",
-
   "admin.section.general.title": "General",
   "admin.section.general.desc": "Site identity, theme, and interface language.",
   "admin.section.filename.title": "Filename convention",
@@ -523,7 +499,6 @@
   "admin.section.developer.title": "Developer",
   "admin.section.developer.desc": "Advanced options for power users.",
   "admin.section.added_files_label": "Added files",
-
   "admin.appearance.site_title_label": "Site Title",
   "admin.appearance.site_title_placeholder": "Living Documentation",
   "admin.appearance.site_title_hint": "Displayed in the browser tab and sidebar header.",
@@ -546,7 +521,6 @@
   "admin.appearance.code_max_height_hint": "Longer code blocks get a collapse/expand button. Set to 0 to disable.",
   "admin.appearance.soft_breaks_label": "Treat every newline as a line break",
   "admin.appearance.soft_breaks_hint": "<strong>Unchecked (CommonMark, default):</strong> a single newline in the source is rendered as a space — two adjacent lines merge into one paragraph. To force a line break without leaving a blank line, end the previous line with <code>two spaces</code> then newline, or use <code>&lt;br/&gt;</code>.<br/><strong>Checked (GitHub-flavoured):</strong> every single newline becomes a real line break in the rendered output. Convenient for chat-style writing, but you can no longer hard-wrap long paragraphs in the source file without visible breaks.",
-
   "admin.pattern.label": "Filename Pattern",
   "admin.pattern.placeholder": "YYYY_MM_DD_HH_mm_[Category]_title",
   "admin.pattern.hint": "Parsed for date, category, and title.",
@@ -557,19 +531,16 @@
   "admin.pattern.col_title": "Title",
   "admin.pattern.col_none": "none",
   "admin.pattern.col_general": "General",
-
   "admin.extra_files.title": "General — Extra Files",
   "admin.extra_files.description": "Add Markdown files from outside the docs folder to the General section.",
   "admin.extra_files.empty": "No extra files added yet.",
   "admin.extra_files.add_btn": "+ Add",
   "admin.extra_files.added_label": "Added",
   "admin.extra_files.loading": "Loading…",
-
   "admin.files.title": "File Attachments",
   "admin.files.description": "Extensions that are rejected by the <code>/api/files/upload</code> endpoint. One extension per line (or comma/space separated), without the leading dot.",
   "admin.files.blocked_label": "Blocked extensions",
   "admin.files.hint": "Defaults to common executable formats. Max upload size is 19 MB per file.",
-
   "admin.palette.title": "Diagram Color Palettes",
   "admin.palette.description": "Customize the colors available in the diagram editor. Changes take effect after saving.",
   "admin.palette.shapes_title": "Shape colors",
@@ -579,20 +550,17 @@
   "admin.palette.arrows_hint": "Add or remove colors available for arrows. Click ✕ to remove.",
   "admin.palette.add_color_btn": "Add color",
   "admin.palette.delete_color_title": "Remove",
-
   "admin.license.title": "AGPL-3.0 License — Open Source",
   "admin.license.subtitle": "Free to use, fork, and build upon — derivatives and network-hosted services must remain under AGPL (copyleft + SaaS clause).",
   "admin.license.body": "This open source project is gracefully provided to you by its conceptors <strong>Youssef MEDAGHRI-ALAOUI</strong> &amp; <strong>Claude Code</strong>.",
   "admin.license.linkedin_btn": "Youssef on LinkedIn",
   "admin.license.npm_btn": "living-ai-documentation on npm",
-
   "admin.msg.saved": "Saved!",
   "admin.msg.save_failed": "Save failed: ",
   "admin.msg.load_failed": "Failed to load config.",
   "admin.msg.pattern_no_category": "Filename pattern must contain [Category]",
   "admin.msg.pattern_one_category": "Filename pattern must contain [Category] exactly once",
   "admin.msg.source_root_absolute": "Source Root must be a relative path (e.g. \"..\" or \"../src\"). Absolute paths are not allowed.",
-
   "diagram.back_btn": "← Back",
   "diagram.diagrams_list_title": "My diagrams",
   "diagram.toolbar.copy_mcp_id": "Copy MCP diagram id",
@@ -640,12 +608,10 @@
   "diagram.toolbar.debug": "Debug overlay",
   "diagram.toolbar.export_drawio": "Export as drawio (.drawio)",
   "diagram.toolbar.save": "Save",
-
   "diagram.sidebar.title": "Diagrams",
   "diagram.sidebar.new_btn": "+ New",
   "diagram.sidebar.empty": "No diagrams",
   "diagram.sidebar.delete_title": "Delete",
-
   "diagram.node_panel.color": "Shape color",
   "diagram.node_panel.save_as_default": "Save as default for this shape type",
   "diagram.node_panel.lock": "Lock selection",
@@ -677,7 +643,6 @@
   "diagram.node_panel.copy_png": "Copy selection as PNG (⌘⇧C)",
   "diagram.node_panel.group": "Group selection",
   "diagram.node_panel.ungroup": "Ungroup",
-
   "diagram.link_panel.title": "Link on this shape",
   "diagram.link_panel.external": "External URL",
   "diagram.link_panel.url_placeholder": "https://…",
@@ -686,7 +651,6 @@
   "diagram.link_panel.diagram_name_placeholder": "Diagram name…",
   "diagram.link_panel.save_btn": "Save",
   "diagram.link_panel.remove_btn": "Remove",
-
   "diagram.edge_panel.font_size_value": "Font size",
   "diagram.edge_panel.color": "Arrow color",
   "diagram.edge_panel.save_as_default": "Save as default for arrows",
@@ -712,7 +676,6 @@
   "diagram.edge_panel.width_decrease": "Decrease width",
   "diagram.edge_panel.width_increase": "Increase width",
   "diagram.edge_panel.clear_ports": "Clear attachment points",
-
   "diagram.toolbar.evidence_mode": "Source consultation mode",
   "diagram.evidence.panel_title": "Sources",
   "diagram.evidence.node_title": "Node sources",
@@ -721,20 +684,16 @@
   "diagram.evidence.close": "Close sources",
   "diagram.evidence.empty": "No source attached.",
   "diagram.evidence.section_label": "Section",
-
   "diagram.label_input.placeholder": "Label…",
   "diagram.empty_state": "Select or create a diagram",
-
   "diagram.image_modal.title": "Image filename",
   "diagram.image_modal.description": "Letters, numbers, _ and - only. Leave empty for auto-generated name.",
   "diagram.image_modal.placeholder": "image_name",
   "diagram.image_modal.error_chars": "Allowed characters: letters, numbers, _ and -",
   "diagram.image_modal.cancel_btn": "Cancel",
   "diagram.image_modal.paste_btn": "Paste",
-
   "diagram.selection.rotate_shape": "Rotate shape",
   "diagram.selection.rotate_text": "Rotate text",
-
   "diagram.toast.png_copied": "PNG copied to clipboard",
   "diagram.toast.png_copy_error": "Cannot copy image",
   "diagram.toast.diagram_saved_png": "Diagram saved as image",
@@ -749,12 +708,31 @@
   "diagram.toast.drawio_export_error": "drawio export failed",
   "diagram.toast.drawio_label_rotation_dropped": "{count} label rotation(s) dropped — drawio cannot rotate labels independently from their shape",
   "diagram.toast.diagram_linked": "Diagram \"{title}\" created and linked",
-
   "shape_editor.show_in_diagram_label": "Show in diagram palette",
   "shape_editor.show_in_diagram_hint": "When disabled, existing diagram nodes still render but this shape is hidden from the bottom palette.",
   "shape_editor.label_placement.below": "Below the shape",
   "shape_editor.label_placement.above": "Above the shape",
   "shape_editor.label_placement.right": "To the right",
   "shape_editor.label_placement.left": "To the left",
-  "shape_editor.label_placement.center": "Centered in the shape"
+  "shape_editor.label_placement.center": "Centered in the shape",
+  "blueprint.subtitle": "Source folder explorer",
+  "blueprint.explorer.loading": "Loading…",
+  "blueprint.explorer.error": "Error loading files",
+  "blueprint.explorer.empty": "Empty folder",
+  "blueprint.explorer.folders": "Folders",
+  "blueprint.explorer.files": "Files",
+  "blueprint.preview.placeholder": "Click a file to preview it",
+  "blueprint.preview.loading": "Loading…",
+  "blueprint.preview.error": "Error loading file",
+  "blueprint.preview.binary": "⊘ Binary file",
+  "blueprint.preview.truncated": "⚠ Truncated at 1 MB",
+  "blueprint.adr.title_label": "Title",
+  "blueprint.adr.content_label": "Content (Markdown)",
+  "blueprint.adr.folder_missing": "The folder <strong>{name}</strong> does not exist yet.",
+  "blueprint.adr.folder_create_prompt": "Create it to store Blueprint ADRs?",
+  "blueprint.adr.create_folder_btn": "Create folder",
+  "blueprint.adr.new_title": "New Blueprint — {folder}",
+  "common.untitled": "Untitled",
+  "blueprint.canvas.fit_view": "Fit view",
+  "blueprint.canvas.drag_mode": "Toggle drag mode"
 }

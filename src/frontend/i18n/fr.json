@@ -15,7 +15,6 @@
   "common.up": "↑ Haut",
   "common.empty_dir": "Dossier vide",
   "common.cannot_read_dir": "Impossible de lire le dossier",
-
   "nav.toggle_sidebar": "Afficher/masquer le panneau",
   "nav.search_placeholder": "Rechercher dans les docs…",
   "nav.search_mobile_placeholder": "Rechercher…",
@@ -35,7 +34,6 @@
   "nav.ai_context": "Contexte IA",
   "nav.files": "📁 Fichiers joints",
   "nav.admin": "⚙ Admin",
-
   "agents.title": "Agents IA",
   "agents.subtitle": "Lancer un agent configuré dans le workspace.",
   "agents.empty": "Aucun agent workspace n'est encore configuré.",
@@ -52,7 +50,6 @@
   "agents.open_document": "Ouvrir le document",
   "agents.load_failed": "Impossible de charger les agents workspace.",
   "agents.run_failed": "Échec de l'exécution de l'agent.",
-
   "files.title": "📁 Fichiers joints",
   "files.empty": "Aucun fichier — téléversez-en un depuis un document (trombone, glisser-déposer ou coller).",
   "files.replace": "Remplacer",
@@ -74,11 +71,9 @@
   "files.size_bytes": "{n} o",
   "files.size_kb": "{n} Ko",
   "files.size_mb": "{n} Mo",
-
   "welcome.title": "Sélectionner un document",
   "welcome.hint": "Choisissez un document dans la barre latérale pour commencer à lire.",
   "welcome.pattern_hint": "Modèle de nom de fichier attendu",
-
   "sidebar.failed_to_load": "Impossible de charger les documents.",
   "sidebar.no_docs": "Aucun document trouvé.",
   "sidebar.annotation_badge": "annotation",
@@ -87,7 +82,6 @@
   "sidebar.file_attached_docs_badge": "document contenant des pièces jointes",
   "sidebar.status_to_validate": "À valider",
   "sidebar.status_superseeded": "Obsolète",
-
   "doc.validate_mode": "Valider le document — passer le statut frontmatter de « To be validated » à « Accepted »",
   "doc.validate_btn": "Valider",
   "doc.validate_title": "Valider ce document ?",
@@ -130,7 +124,6 @@
   "doc.code_show_less": "▴ Réduire",
   "doc.code_copy": "Copier",
   "doc.code_copied": "Copié !",
-
   "metadata.button": "Métadonnées",
   "metadata.button_title": "Gérer les métadonnées des fichiers source",
   "metadata.title": "Métadonnées des sources",
@@ -144,7 +137,6 @@
   "metadata.status.missing": "Manquant",
   "accuracy.label": "Fiabilité",
   "accuracy.tooltip": "Inchangés : {unchanged} · Modifiés : {modified} · Manquants : {missing} · Total : {total}",
-
   "context.back_to_docs": "Retour aux docs",
   "context.title": "Contexte IA",
   "context.orientation_title": "Orientation IA",
@@ -216,7 +208,6 @@
   "context.rule_body_placeholder": "Les constantes numériques qui portent un sens métier doivent être nommées.",
   "context.rule_title_required": "Le titre de la règle est obligatoire.",
   "context.saving_rule": "Enregistrement de la règle…",
-
   "modal.new_folder.title": "Nouveau dossier",
   "modal.new_folder.name_label": "Nom du dossier",
   "modal.new_folder.name_placeholder": "mon-dossier",
@@ -232,7 +223,6 @@
   "modal.new_folder.error_reserved": "\"files\" et \"images\" sont des noms de dossiers réservés à la racine des documents.",
   "modal.new_folder.no_subfolders": "Aucun sous-dossier",
   "modal.new_folder.error_loading": "Erreur de chargement",
-
   "modal.new_doc.title": "Nouveau document",
   "modal.new_doc.title_label": "Titre",
   "modal.new_doc.category_label": "Catégorie",
@@ -244,7 +234,6 @@
   "modal.new_doc.create_folder_btn": "+ Créer",
   "modal.new_doc.error_empty_title": "Veuillez saisir un titre.",
   "modal.new_doc.no_subfolders": "Aucun sous-dossier",
-
   "modal.diag_link.title": "◇ Lier un diagramme",
   "modal.diag_link.existing_radio": "Diagramme existant",
   "modal.diag_link.new_radio": "Nouveau diagramme",
@@ -257,7 +246,6 @@
   "modal.diag_link.insert_btn": "Insérer & Ouvrir le diagramme",
   "modal.diag_link.saving_btn": "Enregistrement…",
   "modal.diag_link.no_diagrams": "Aucun diagramme",
-
   "snippet.modal_title": "🧩 Insérer un snippet",
   "snippet.type_label": "Type de snippet",
   "snippet.diagram": "◇ Diagramme",
@@ -440,12 +428,10 @@
   "local_search.count_plural": "{count} occurrences",
   "snippet.attachment_help": "Cliquez sur <strong>Insérer</strong> pour choisir un fichier. Il sera téléversé dans le dossier <code>files/</code> et inséré sous forme de lien <i class=\"fa-solid fa-paperclip\"></i> dans votre document.",
   "snippet.attachment_alt": "Astuce : vous pouvez aussi glisser-déposer un fichier sur l'éditeur ou le coller depuis le presse-papiers.",
-
   "modal.img_paste.title": "Coller l'image du presse-papiers ?",
   "modal.img_paste.filename_label": "Nom du fichier",
   "modal.img_paste.saved_hint": "(enregistré dans images/)",
   "modal.img_paste.paste_btn": "Coller",
-
   "modal.export.title": "Exporter",
   "modal.export.tab_markdown": "Markdown",
   "modal.export.tab_html": "HTML",
@@ -454,12 +440,10 @@
   "modal.export.markdown_btn": "Exporter Markdown",
   "modal.export.pdf_hint": "Exporte tous les documents en un seul PDF avec table des matières.",
   "modal.export.pdf_btn": "Exporter tout en PDF",
-
   "modal.export_html.title": "Exporter les dossiers en HTML",
   "modal.export_html.hint": "Sélectionnez les dossiers à inclure dans l'archive ZIP.",
   "modal.export_html.notion_btn": "Exporter Notion",
   "modal.export_html.confluence_btn": "Exporter Confluence",
-
   "annotation.title": "Annotation",
   "annotation.placeholder": "Votre remarque ou suggestion…",
   "annotation.save_btn": "Enregistrer",
@@ -467,7 +451,6 @@
   "annotation.confirm_delete": "Supprimer cette annotation ?",
   "annotation.confirm_btn": "Supprimer",
   "annotation.orphan": "⚠ Texte annoté introuvable — l'extrait a été modifié ou supprimé.",
-
   "wc.title": "☁ Nuage de mots",
   "wc.close_btn": "✕ Fermer",
   "wc.search_root_label": "Dossier de recherche",
@@ -481,32 +464,25 @@
   "wc.top_words": "Mots clés",
   "wc.found_in": "Trouvé dans",
   "wc.launch_btn": "Lancer",
-
   "search.notice_singular": "{count} résultat pour \"{query}\"",
   "search.notice_plural": "{count} résultats pour \"{query}\"",
-
   "error.create_diagram": "Erreur lors de la création du diagramme : ",
   "error.save": "Erreur lors de la sauvegarde : ",
   "error.pdf_popup": "Veuillez autoriser les popups pour exporter en PDF.",
   "error.pdf_export": "Export échoué : ",
   "error.no_diagrams": "Aucun diagramme",
-
   "pdf.toc_title": "Table des matières",
-
   "admin.title": "Panneau d'administration",
   "admin.toggle_dark": "Basculer le mode sombre",
   "admin.back_to_docs": "← Retour aux docs",
-
   "admin.server_info.title": "Informations serveur",
   "admin.server_info.docs_folder": "Dossier docs",
   "admin.server_info.port": "Port",
   "admin.server_info.source_root": "Racine des sources",
   "admin.server_info.source_root_hint": "Chemin relatif au dossier docs (ex. \"..\" ou \"../src\"). Utilisé par les outils MCP de lecture du code source. Laisser vide pour utiliser le dossier parent par défaut.",
-
   "admin.config.title": "Configuration",
   "admin.config.description": "Les paramètres sont sauvegardés dans .living-doc.json dans votre dossier docs.",
   "admin.config.save_btn": "Enregistrer",
-
   "admin.section.general.title": "Général",
   "admin.section.general.desc": "Identité du site, thème, et langue de l'interface.",
   "admin.section.filename.title": "Convention de nommage",
@@ -523,7 +499,6 @@
   "admin.section.developer.title": "Développeur",
   "admin.section.developer.desc": "Options avancées pour utilisateurs expérimentés.",
   "admin.section.added_files_label": "Fichiers ajoutés",
-
   "admin.appearance.site_title_label": "Titre du site",
   "admin.appearance.site_title_placeholder": "Living Documentation",
   "admin.appearance.site_title_hint": "Affiché dans l'onglet du navigateur et l'en-tête de la barre latérale.",
@@ -546,7 +521,6 @@
   "admin.appearance.code_max_height_hint": "Les blocs plus longs reçoivent un bouton « Afficher plus / Réduire ». Mettre 0 pour désactiver.",
   "admin.appearance.soft_breaks_label": "Traiter chaque retour à la ligne comme un saut de ligne",
   "admin.appearance.soft_breaks_hint": "<strong>Décoché (CommonMark, défaut) :</strong> un seul retour à la ligne dans la source est rendu comme un espace — deux lignes adjacentes fusionnent dans un même paragraphe. Pour forcer un saut de ligne sans ligne vide, terminer la ligne précédente par <code>deux espaces</code> puis retour à la ligne, ou utiliser <code>&lt;br/&gt;</code>.<br/><strong>Coché (GitHub-flavoured) :</strong> chaque retour à la ligne devient un vrai saut de ligne dans le rendu. Pratique pour un style d'écriture « chat », mais vous ne pourrez plus couper un long paragraphe sur plusieurs lignes dans la source sans voir le saut apparaître.",
-
   "admin.pattern.label": "Modèle de nom de fichier",
   "admin.pattern.placeholder": "YYYY_MM_DD_HH_mm_[Category]_title",
   "admin.pattern.hint": "Analysé pour extraire la date, la catégorie et le titre.",
@@ -557,19 +531,16 @@
   "admin.pattern.col_title": "Titre",
   "admin.pattern.col_none": "aucune",
   "admin.pattern.col_general": "Général",
-
   "admin.extra_files.title": "Général — Fichiers supplémentaires",
   "admin.extra_files.description": "Ajoutez des fichiers Markdown hors du dossier docs dans la section Général.",
   "admin.extra_files.empty": "Aucun fichier supplémentaire ajouté.",
   "admin.extra_files.add_btn": "+ Ajouter",
   "admin.extra_files.added_label": "Ajouté",
   "admin.extra_files.loading": "Chargement…",
-
   "admin.files.title": "Pièces jointes",
   "admin.files.description": "Extensions refusées par le endpoint <code>/api/files/upload</code>. Une extension par ligne (ou séparées par des virgules ou des espaces), sans le point.",
   "admin.files.blocked_label": "Extensions bloquées",
   "admin.files.hint": "Par défaut, les formats exécutables courants. Taille maximale : 19 Mo par fichier.",
-
   "admin.palette.title": "Palettes de couleurs des diagrammes",
   "admin.palette.description": "Personnalisez les couleurs disponibles dans l'éditeur de diagrammes. Les modifications prennent effet après enregistrement.",
   "admin.palette.shapes_title": "Couleurs des formes",
@@ -579,20 +550,17 @@
   "admin.palette.arrows_hint": "Ajoutez ou supprimez des couleurs pour les flèches. Cliquez sur ✕ pour supprimer.",
   "admin.palette.add_color_btn": "Ajouter une couleur",
   "admin.palette.delete_color_title": "Supprimer",
-
   "admin.license.title": "Licence AGPL-3.0 — Open Source",
   "admin.license.subtitle": "Libre d'utilisation, de fork et d'extension — les dérivés et services hébergés doivent rester sous AGPL (copyleft + clause SaaS).",
   "admin.license.body": "Ce projet open source vous est gracieusement offert par ses concepteurs <strong>Youssef MEDAGHRI-ALAOUI</strong> &amp; <strong>Claude Code</strong>.",
   "admin.license.linkedin_btn": "Youssef sur LinkedIn",
   "admin.license.npm_btn": "living-ai-documentation sur npm",
-
   "admin.msg.saved": "Enregistré !",
   "admin.msg.save_failed": "Échec de l'enregistrement : ",
   "admin.msg.load_failed": "Impossible de charger la configuration.",
   "admin.msg.pattern_no_category": "Le modèle de nom de fichier doit contenir [Category]",
   "admin.msg.pattern_one_category": "Le modèle de nom de fichier doit contenir [Category] exactement une fois",
   "admin.msg.source_root_absolute": "La racine du code source doit être un chemin relatif (ex. \"..\" ou \"../src\"). Les chemins absolus ne sont pas autorisés.",
-
   "diagram.back_btn": "← Retour",
   "diagram.diagrams_list_title": "Mes diagrammes",
   "diagram.toolbar.copy_mcp_id": "Copier l'id MCP du diagramme",
@@ -640,12 +608,10 @@
   "diagram.toolbar.debug": "Overlay debug",
   "diagram.toolbar.export_drawio": "Exporter en drawio (.drawio)",
   "diagram.toolbar.save": "Enregistrer",
-
   "diagram.sidebar.title": "Diagrammes",
   "diagram.sidebar.new_btn": "+ Nouveau",
   "diagram.sidebar.empty": "Aucun diagramme",
   "diagram.sidebar.delete_title": "Supprimer",
-
   "diagram.node_panel.color": "Couleur de la forme",
   "diagram.node_panel.save_as_default": "Enregistrer comme valeur par défaut pour ce type de forme",
   "diagram.node_panel.lock": "Verrouiller la sélection",
@@ -677,7 +643,6 @@
   "diagram.node_panel.copy_png": "Copier la sélection en PNG (⌘⇧C)",
   "diagram.node_panel.group": "Grouper la sélection",
   "diagram.node_panel.ungroup": "Dégrouper",
-
   "diagram.link_panel.title": "Lien sur cette forme",
   "diagram.link_panel.external": "URL externe",
   "diagram.link_panel.url_placeholder": "https://…",
@@ -686,7 +651,6 @@
   "diagram.link_panel.diagram_name_placeholder": "Nom du diagramme…",
   "diagram.link_panel.save_btn": "Enregistrer",
   "diagram.link_panel.remove_btn": "Retirer",
-
   "diagram.edge_panel.font_size_value": "Taille de police",
   "diagram.edge_panel.color": "Couleur de la flèche",
   "diagram.edge_panel.save_as_default": "Enregistrer comme valeur par défaut pour les flèches",
@@ -712,7 +676,6 @@
   "diagram.edge_panel.width_decrease": "Réduire l'épaisseur",
   "diagram.edge_panel.width_increase": "Augmenter l'épaisseur",
   "diagram.edge_panel.clear_ports": "Supprimer les points d'attache",
-
   "diagram.toolbar.evidence_mode": "Mode consultation des sources",
   "diagram.evidence.panel_title": "Sources",
   "diagram.evidence.node_title": "Sources du nœud",
@@ -721,20 +684,16 @@
   "diagram.evidence.close": "Fermer les sources",
   "diagram.evidence.empty": "Aucune source attachée.",
   "diagram.evidence.section_label": "Section",
-
   "diagram.label_input.placeholder": "Libellé…",
   "diagram.empty_state": "Sélectionne ou crée un diagramme",
-
   "diagram.image_modal.title": "Nom du fichier image",
   "diagram.image_modal.description": "Lettres, chiffres, _ et - uniquement. Laisser vide pour un nom automatique.",
   "diagram.image_modal.placeholder": "nom_image",
   "diagram.image_modal.error_chars": "Caractères autorisés : lettres, chiffres, _ et -",
   "diagram.image_modal.cancel_btn": "Annuler",
   "diagram.image_modal.paste_btn": "Coller",
-
   "diagram.selection.rotate_shape": "Rotation forme",
   "diagram.selection.rotate_text": "Rotation texte",
-
   "diagram.toast.png_copied": "PNG copié dans le presse-papier",
   "diagram.toast.png_copy_error": "Impossible de copier l'image",
   "diagram.toast.diagram_saved_png": "Diagramme enregistré en tant qu'image",
@@ -749,12 +708,31 @@
   "diagram.toast.drawio_export_error": "Échec de l'export drawio",
   "diagram.toast.drawio_label_rotation_dropped": "{count} rotation(s) de label ignorée(s) — drawio ne permet pas de tourner un label indépendamment de sa forme",
   "diagram.toast.diagram_linked": "Diagramme \"{title}\" créé et lié",
-
   "shape_editor.show_in_diagram_label": "Afficher dans la palette du diagramme",
   "shape_editor.show_in_diagram_hint": "Si désactivé, les nœuds existants restent rendus mais cette forme est masquée dans la palette du bas.",
   "shape_editor.label_placement.below": "Sous la forme",
   "shape_editor.label_placement.above": "Au-dessus de la forme",
   "shape_editor.label_placement.right": "À droite",
   "shape_editor.label_placement.left": "À gauche",
-  "shape_editor.label_placement.center": "Centré dans la forme"
+  "shape_editor.label_placement.center": "Centré dans la forme",
+  "blueprint.subtitle": "Explorateur de dossiers source",
+  "blueprint.explorer.loading": "Chargement…",
+  "blueprint.explorer.error": "Erreur lors du chargement",
+  "blueprint.explorer.empty": "Dossier vide",
+  "blueprint.explorer.folders": "Dossiers",
+  "blueprint.explorer.files": "Fichiers",
+  "blueprint.preview.placeholder": "Cliquez sur un fichier pour le prévisualiser",
+  "blueprint.preview.loading": "Chargement…",
+  "blueprint.preview.error": "Erreur lors du chargement",
+  "blueprint.preview.binary": "⊘ Fichier binaire",
+  "blueprint.preview.truncated": "⚠ Tronqué à 1 Mo",
+  "blueprint.adr.title_label": "Titre",
+  "blueprint.adr.content_label": "Contenu (Markdown)",
+  "blueprint.adr.folder_missing": "Le dossier <strong>{name}</strong> n'existe pas encore.",
+  "blueprint.adr.folder_create_prompt": "Le créer pour stocker les Blueprint ADRs ?",
+  "blueprint.adr.create_folder_btn": "Créer le dossier",
+  "blueprint.adr.new_title": "Nouveau Blueprint — {folder}",
+  "common.untitled": "Untitled",
+  "blueprint.canvas.fit_view": "Ajuster la vue",
+  "blueprint.canvas.drag_mode": "Basculer le mode déplacement"
 }

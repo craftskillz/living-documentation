@@ -63,12 +63,12 @@ const workspaceWatcher = run(npmCommand, [
   "--preserveWatchOutput",
 ]);
 
-const blueprintWatcher = run(npmCommand, [
+const svelteApp = run(npmCommand, [
   "exec",
   "--",
   "vite",
   "--config",
-  "src/frontend/blueprint/vite.config.ts",
+  "src/frontend-svelte/vite.config.ts",
 ]);
 
 const cliArgs = process.argv.slice(2).map(quoteShellArg).join(" ");
@@ -88,5 +88,5 @@ const server = run(npmCommand, [
 ]);
 
 workspaceWatcher.once("exit", exitFromChild);
-blueprintWatcher.once("exit", exitFromChild);
+svelteApp.once("exit", exitFromChild);
 server.once("exit", exitFromChild);

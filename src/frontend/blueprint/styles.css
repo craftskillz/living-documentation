@@ -1,4 +1,4 @@
-:root {
+:root[data-blueprint] {
   --bg: #0f172a;
   --ink: #f1f5f9;
   --muted: #94a3b8;
@@ -27,16 +27,9 @@ html, body {
   height: 100vh;
 }
 
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 0 24px;
-  border-bottom: 1px solid var(--line);
+[data-blueprint] .topbar {
   background: rgb(15 23 42 / 92%);
   backdrop-filter: blur(12px);
-  z-index: 10;
 }
 
 .brand-lockup {
@@ -46,17 +39,10 @@ html, body {
   min-width: 0;
 }
 
-.brand-mark {
-  display: grid;
-  width: 36px;
-  height: 36px;
-  place-items: center;
-  border: 1px solid rgb(255 255 255 / 20%);
-  border-radius: 10px;
+[data-blueprint] .brand-mark {
+  border-color: rgb(255 255 255 / 20%);
   background: #1e293b;
   color: #fff;
-  font-size: 11px;
-  font-weight: 800;
 }
 
 .brand-lockup h1 {
@@ -93,6 +79,11 @@ html, body {
   font-weight: 600;
   white-space: nowrap;
   transition: opacity 0.15s;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  font-family: inherit;
 }
 
 .breadcrumb-item:hover { opacity: 0.75; }
@@ -124,7 +115,7 @@ html, body {
   transition: background 0.15s;
 }
 
-.ghost-button:hover { background: rgb(255 255 255 / 6%); }
+[data-blueprint] .ghost-button:hover { background: rgb(255 255 255 / 6%); }
 
 .workspace-shell {
   position: relative;
@@ -257,6 +248,11 @@ canvas.is-panning { cursor: grabbing; }
   padding: 8px 20px;
   font-size: 13px;
   transition: background 0.1s;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
 }
 
 .explorer-item:hover { background: rgb(255 255 255 / 4%); }
@@ -278,6 +274,11 @@ canvas.is-panning { cursor: grabbing; }
   cursor: pointer;
   white-space: nowrap;
   font-weight: 600;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  font-family: inherit;
 }
 
 .explorer-breadcrumb-item:hover { text-decoration: underline; }
