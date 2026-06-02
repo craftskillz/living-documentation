@@ -860,7 +860,7 @@ function openDeleteConfirmation(entity) {
         ? ` This node has ${childCount} direct child${childCount === 1 ? "" : "ren"} and ${descendants.length} total descendant${descendants.length === 1 ? "" : "s"}; they will also be deleted.`
         : " This node has no children.";
     state.pendingDeleteId = entity.id;
-    deleteConfirmMessage.textContent = `You are about to delete "${entity.label}".${descendantCopy} This action cannot be undone in this experiment.`;
+    deleteConfirmMessage.textContent = `You are about to delete "${entity.label}".${descendantCopy} This action cannot be undone.`;
     deleteConfirmOverlay.hidden = false;
     confirmDeleteButton.focus();
 }

@@ -5,6 +5,14 @@ const COMMENT = "<!--\\s*table-(?:style|border|color):\\s*" + VALUE + "\\s*-->";
 const PREFIX = "(?:" + COMMENT + "\\n){0,3}";
 const TABLE_START = "\\|[^\\n]*\\|\\n\\|[ \\t:|-]*-[ \\t:|-]*\\|";
 
+const TABLE_BLOCK =
+  PREFIX +
+  "(?:\\|[^\\n]*\\|\\n)\\|[ \\t:|-]*-[ \\t:|-]*\\|(?:\\n\\|[^\\n]*\\|)*";
+
+export function tableBlockSource(): string {
+  return TABLE_BLOCK;
+}
+
 const ALLOWED_STYLES = new Set(["compact", "striped"]);
 const ALLOWED_BORDERS = new Set(["bordered", "borderless"]);
 const LEGACY_BORDER_STYLES = new Set(["bordered", "borderless"]);

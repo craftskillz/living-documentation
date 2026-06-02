@@ -64,8 +64,36 @@
     }, 350);
   }
 
+  // ── Navigation history (back-link trail when following in-doc links) ───────────
+  let navHistory = $state<{ id: string; title: string }[]>([]);
+
+  function goBack(i: number) {
+    const entry = navHistory[i];
+    if (!entry) return;
+    navHistory = navHistory.slice(0, i); // drop this entry and everything after
+    openDoc(entry.id, false, "restore");
+  }
+
   // ── Document open ──────────────────────────────────────────────────────────────
-  async function openDoc(id: string, skipHistory = false, anchor: string | null = null) {
+  async function openDoc(
+    id: string,
+    skipHistory = false,
+    fromLink: boolean | "restore" = false,
+    anchor: string | null = null,
+  ) {
+    // Maintain the breadcrumb trail.
+    if (fromLink === true && home.currentDocId && home.currentDocId !== id) {
+      const existingIdx = navHistory.findIndex(e => e.id === id);
+      if (existingIdx !== -1) {
+        navHistory = navHistory.slice(0, existingIdx);
+      } else {
+        const prev = home.allDocs.find(d => d.id === home.currentDocId);
+        navHistory = [...navHistory, { id: home.currentDocId, title: prev ? prev.title : home.currentDocId }];
+      }
+    } else if (!fromLink) {
+      navHistory = [];
+    }
+
     home.currentDocId = id;
     const summary = home.allDocs.find(d => d.id === id);
     if (summary) home.revealDoc(summary);
@@ -169,7 +197,7 @@
     const params = new URLSearchParams(location.search);
     const docId = params.get("doc");
     if (docId) {
-      openDoc(docId, true, location.hash ? location.hash.slice(1) : null);
+      openDoc(docId, true, false, location.hash ? location.hash.slice(1) : null);
     } else {
       const first = home.allDocs.find(d => d.category === "General") ?? home.allDocs[0];
       if (first) openDoc(first.id, true);
@@ -178,7 +206,7 @@
     const onPop = (e: PopStateEvent) => {
       const id = e.state?.docId || new URLSearchParams(location.search).get("doc");
       const anchor = e.state?.anchor || (location.hash.length > 1 ? location.hash.slice(1) : null);
-      if (id) openDoc(id, true, anchor);
+      if (id) openDoc(id, true, false, anchor);
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
@@ -218,7 +246,7 @@
         {#if docError}
           <p class="p-8 text-red-500">{docError}</p>
         {:else}
-          <DocViewer doc={currentDoc} onopen={(id, anchor) => openDoc(id, false, anchor)} onsave={saveDoc} ondelete={deleteDoc} />
+          <DocViewer doc={currentDoc} {navHistory} ongoback={goBack} onopen={(id, anchor) => openDoc(id, false, true, anchor)} onsave={saveDoc} ondelete={deleteDoc} />
         {/if}
       {:else}
         <div class="h-full flex items-center justify-center p-8">

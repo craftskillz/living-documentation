@@ -200,32 +200,70 @@ export function initWorkspace(): () => void {
   apiStatus = document.getElementById("apiStatus") as HTMLElement;
   addButton = document.getElementById("addButton") as HTMLButtonElement;
   fitButton = document.getElementById("fitButton") as HTMLButtonElement;
-  testNodeButton = document.getElementById("testNodeButton") as HTMLButtonElement;
-  loadModelsButton = document.getElementById("loadModelsButton") as HTMLButtonElement;
-  closePanelButton = document.getElementById("closePanelButton") as HTMLButtonElement;
-  deleteNodeButton = document.getElementById("deleteNodeButton") as HTMLButtonElement;
-  renameConfirmOverlay = document.getElementById("renameConfirmOverlay") as HTMLElement;
-  renameConfirmMessage = document.getElementById("renameConfirmMessage") as HTMLElement;
-  cancelRenameButton = document.getElementById("cancelRenameButton") as HTMLButtonElement;
-  confirmRenameButton = document.getElementById("confirmRenameButton") as HTMLButtonElement;
-  deleteConfirmOverlay = document.getElementById("deleteConfirmOverlay") as HTMLElement;
-  deleteConfirmMessage = document.getElementById("deleteConfirmMessage") as HTMLElement;
-  cancelDeleteButton = document.getElementById("cancelDeleteButton") as HTMLButtonElement;
-  confirmDeleteButton = document.getElementById("confirmDeleteButton") as HTMLButtonElement;
+  testNodeButton = document.getElementById(
+    "testNodeButton",
+  ) as HTMLButtonElement;
+  loadModelsButton = document.getElementById(
+    "loadModelsButton",
+  ) as HTMLButtonElement;
+  closePanelButton = document.getElementById(
+    "closePanelButton",
+  ) as HTMLButtonElement;
+  deleteNodeButton = document.getElementById(
+    "deleteNodeButton",
+  ) as HTMLButtonElement;
+  renameConfirmOverlay = document.getElementById(
+    "renameConfirmOverlay",
+  ) as HTMLElement;
+  renameConfirmMessage = document.getElementById(
+    "renameConfirmMessage",
+  ) as HTMLElement;
+  cancelRenameButton = document.getElementById(
+    "cancelRenameButton",
+  ) as HTMLButtonElement;
+  confirmRenameButton = document.getElementById(
+    "confirmRenameButton",
+  ) as HTMLButtonElement;
+  deleteConfirmOverlay = document.getElementById(
+    "deleteConfirmOverlay",
+  ) as HTMLElement;
+  deleteConfirmMessage = document.getElementById(
+    "deleteConfirmMessage",
+  ) as HTMLElement;
+  cancelDeleteButton = document.getElementById(
+    "cancelDeleteButton",
+  ) as HTMLButtonElement;
+  confirmDeleteButton = document.getElementById(
+    "confirmDeleteButton",
+  ) as HTMLButtonElement;
   agentRunOverlay = document.getElementById("agentRunOverlay") as HTMLElement;
   agentRunTitle = document.getElementById("agentRunTitle") as HTMLElement;
   agentRunHint = document.getElementById("agentRunHint") as HTMLElement;
-  agentRunInputField = document.getElementById("agentRunInputField") as HTMLElement;
-  agentRunInput = document.getElementById("agentRunInput") as HTMLTextAreaElement;
+  agentRunInputField = document.getElementById(
+    "agentRunInputField",
+  ) as HTMLElement;
+  agentRunInput = document.getElementById(
+    "agentRunInput",
+  ) as HTMLTextAreaElement;
   agentRunResult = document.getElementById("agentRunResult") as HTMLElement;
-  cancelAgentRunButton = document.getElementById("cancelAgentRunButton") as HTMLButtonElement;
-  executeAgentRunButton = document.getElementById("executeAgentRunButton") as HTMLButtonElement;
-  fallbackPanelHost = document.getElementById("fallbackPanelHost") as HTMLElement;
+  cancelAgentRunButton = document.getElementById(
+    "cancelAgentRunButton",
+  ) as HTMLButtonElement;
+  executeAgentRunButton = document.getElementById(
+    "executeAgentRunButton",
+  ) as HTMLButtonElement;
+  fallbackPanelHost = document.getElementById(
+    "fallbackPanelHost",
+  ) as HTMLElement;
   configSurface = document.getElementById("configSurface") as HTMLFormElement;
   form = configSurface;
   workspaceToast = document.getElementById("workspaceToast") as HTMLElement;
-  workspaceToastIcon = document.getElementById("workspaceToastIcon") as HTMLElement;
-  workspaceToastMessage = document.getElementById("workspaceToastMessage") as HTMLElement;
+  workspaceToastIcon = document.getElementById(
+    "workspaceToastIcon",
+  ) as HTMLElement;
+  workspaceToastMessage = document.getElementById(
+    "workspaceToastMessage",
+  ) as HTMLElement;
   toastTimerId = null;
   savedAgentLabel = null;
   savedAgentFolder = null;
@@ -237,19 +275,35 @@ export function initWorkspace(): () => void {
     endpoint: document.getElementById("nodeEndpoint") as HTMLInputElement,
     token: document.getElementById("nodeToken") as HTMLInputElement,
     model: document.getElementById("nodeModel") as HTMLSelectElement,
-    workspaceField: document.getElementById("agentWorkspaceField") as HTMLElement,
-    workspaceFolder: document.getElementById("nodeWorkspaceFolder") as HTMLInputElement,
+    workspaceField: document.getElementById(
+      "agentWorkspaceField",
+    ) as HTMLElement,
+    workspaceFolder: document.getElementById(
+      "nodeWorkspaceFolder",
+    ) as HTMLInputElement,
     timeout: document.getElementById("nodeTimeout") as HTMLInputElement,
-    description: document.getElementById("nodeDescription") as HTMLTextAreaElement,
+    description: document.getElementById(
+      "nodeDescription",
+    ) as HTMLTextAreaElement,
     typeBadge: document.getElementById("nodeTypeBadge") as HTMLElement,
     llmFields: document.getElementById("llmFields") as HTMLElement,
     mcpInventory: document.getElementById("mcpInventory") as HTMLElement,
     agentSection: document.getElementById("agentSection") as HTMLElement,
-    systemPrompt: document.getElementById("nodeSystemPrompt") as HTMLTextAreaElement,
-    requiresUserInput: document.getElementById("nodeRequiresUserInput") as HTMLInputElement,
-    userInputDescriptionField: document.getElementById("agentUserInputDescriptionField") as HTMLElement,
-    userInputDescription: document.getElementById("nodeUserInputDescription") as HTMLTextAreaElement,
-    expectedOutputMarker: document.getElementById("nodeExpectedOutputMarker") as HTMLInputElement,
+    systemPrompt: document.getElementById(
+      "nodeSystemPrompt",
+    ) as HTMLTextAreaElement,
+    requiresUserInput: document.getElementById(
+      "nodeRequiresUserInput",
+    ) as HTMLInputElement,
+    userInputDescriptionField: document.getElementById(
+      "agentUserInputDescriptionField",
+    ) as HTMLElement,
+    userInputDescription: document.getElementById(
+      "nodeUserInputDescription",
+    ) as HTMLTextAreaElement,
+    expectedOutputMarker: document.getElementById(
+      "nodeExpectedOutputMarker",
+    ) as HTMLInputElement,
   };
 
   const initialEntities: Entity[] = [
@@ -1163,7 +1217,7 @@ function openDeleteConfirmation(entity) {
     : " This node has no children.";
 
   state.pendingDeleteId = entity.id;
-  deleteConfirmMessage.textContent = `You are about to delete "${entity.label}".${descendantCopy} This action cannot be undone in this experiment.`;
+  deleteConfirmMessage.textContent = `You are about to delete "${entity.label}".${descendantCopy} This action cannot be undone.`;
   deleteConfirmOverlay.hidden = false;
   confirmDeleteButton.focus();
 }

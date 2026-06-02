@@ -617,7 +617,7 @@ h1 {
 
 .confirm-overlay {
   position: fixed;
-  z-index: 20;
+  z-index: 60; /* always above other modals (snippets/metadata use z-50) */
   inset: 0;
   display: grid;
   place-items: center;

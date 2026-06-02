@@ -16,6 +16,7 @@
   import { ldBuildSnippetMarkdown } from "./snippets/builders";
   import { ldParseSnippetMarkdown } from "./snippets/parsers";
   import { detectSnippetType } from "./snippets/detect";
+  import ConfirmDialog from "../ConfirmDialog.svelte";
   import {
     orderedListDefaultMarkdown,
     unorderedListDefaultMarkdown,
@@ -36,14 +37,30 @@
     buildTreeMarkdown,
   } from "./snippets/tree";
 
-  let { open, editor, onclose }: {
+  let {
+    open,
+    editor,
+    onclose,
+    mode = "insert",
+    content = "",
+    range = null,
+    insertPos = 0,
+    onsave = undefined,
+  }: {
     open: boolean;
     editor: HTMLTextAreaElement | null;
     onclose: () => void;
+    mode?: "insert" | "inline-edit" | "inline-insert";
+    content?: string;
+    range?: { start: number; end: number; type: string; indent?: string } | null;
+    insertPos?: number;
+    onsave?: ((newContent: string) => Promise<void>) | undefined;
   } = $props();
 
   let selStart = 0;
   let selEnd = 0;
+  let inlineIndent = "";
+  let confirmDialog = $state<ConfirmDialog>(null!);
   let colorSectionSwatch = "info";
   let colorTextSwatch = "info";
 
@@ -556,7 +573,7 @@
       case "unordered-list":
         return { content: val("snip-unordered-list-content") };
       case "code-block":
-        return { lang: val("snip-code-lang"), code: val("snip-code-content"), inlineIndent: "" };
+        return { lang: val("snip-code-lang"), code: val("snip-code-content"), inlineIndent };
       case "blockquote":
         return { content: val("snip-blockquote-content") };
       case "heading-1":
@@ -634,6 +651,11 @@
 
   async function insertSnippet(): Promise<void> {
     const type = byId<HTMLSelectElement>("snippet-type")!.value;
+    const isInline = mode === "inline-edit" || mode === "inline-insert";
+
+    // Diagram/attachment are unavailable in inline modes (no editor to anchor).
+    if (isInline && (type === "diagram" || type === "attachment")) return;
+
     if (type === "diagram") {
       await insertDiagramSnippet();
       return;
@@ -642,8 +664,66 @@
       await uploadAttachment();
       return;
     }
+
     const text = buildSnippetMarkdown();
+
+    if (mode === "inline-edit") {
+      const newContent = content.slice(0, selStart) + text + content.slice(selEnd);
+      try {
+        if (onsave) await onsave(newContent);
+      } catch (err) {
+        alert(t("snippet.inline_save_failed") + (err instanceof Error ? err.message : String(err)));
+      }
+      onclose();
+      return;
+    }
+
+    if (mode === "inline-insert") {
+      const before = content.slice(0, selStart);
+      const after = content.slice(selStart);
+      const leadingBlank =
+        before.length === 0 || /\n\n$/.test(before)
+          ? ""
+          : before.endsWith("\n")
+            ? "\n"
+            : "\n\n";
+      const trailingBlank =
+        after.length === 0 || /^\n\n/.test(after)
+          ? ""
+          : after.startsWith("\n")
+            ? "\n"
+            : "\n\n";
+      const payload = leadingBlank + text + trailingBlank;
+      try {
+        if (onsave) await onsave(before + payload + after);
+      } catch (err) {
+        alert(t("snippet.inline_insert_failed") + (err instanceof Error ? err.message : String(err)));
+      }
+      onclose();
+      return;
+    }
+
     insertTextAtCursor(text);
+    onclose();
+  }
+
+  async function deleteInlineSnippet(): Promise<void> {
+    if (mode !== "inline-edit") return;
+    const ok = await confirmDialog.show({
+      title: t("snippet.inline_delete_title"),
+      message: t("snippet.inline_delete_message"),
+      confirmLabel: t("snippet.inline_delete_confirm_btn"),
+      cancelLabel: t("common.cancel"),
+      danger: true,
+    });
+    if (!ok) return;
+    const start = selStart;
+    const end = selEnd;
+    try {
+      if (onsave) await onsave(content.slice(0, start) + content.slice(end));
+    } catch (err) {
+      alert(t("snippet.inline_delete_failed") + (err instanceof Error ? err.message : String(err)));
+    }
     onclose();
   }
 
@@ -894,11 +974,48 @@
     snippetAnchorDocChanged();
   }
 
+  function applyModalMode(): void {
+    const isInlineEdit = mode === "inline-edit";
+
+    const title = byId("snippet-modal-title");
+    if (title) {
+      let key = "snippet.modal_title";
+      if (isInlineEdit) key = "snippet.inline_modal_title";
+      else if (mode === "inline-insert") key = "snippet.inline_insert_modal_title";
+      title.textContent = t(key);
+    }
+    const submit = byId("snippet-submit-btn");
+    if (submit) {
+      submit.textContent = t(isInlineEdit ? "snippet.inline_save_btn" : "snippet.insert_btn");
+    }
+    const typeSelect = byId<HTMLSelectElement>("snippet-type");
+    if (typeSelect) {
+      typeSelect.disabled = isInlineEdit;
+      typeSelect.classList.toggle("cursor-not-allowed", isInlineEdit);
+      typeSelect.classList.toggle("opacity-70", isInlineEdit);
+    }
+    const deleteBtn = byId("snippet-delete-btn");
+    if (deleteBtn) deleteBtn.classList.toggle("hidden", !isInlineEdit);
+    const card = byId("snippet-modal-card");
+    if (card) {
+      card.classList.toggle("max-w-6xl", !isInlineEdit);
+      card.classList.toggle("max-w-5xl", isInlineEdit);
+    }
+  }
+
   let wasOpen = false;
   $effect(() => {
     if (open && !wasOpen) {
       wasOpen = true;
-      if (editor) {
+      inlineIndent = "";
+      if (mode === "inline-edit" && range) {
+        selStart = range.start;
+        selEnd = range.end;
+        inlineIndent = range.indent || "";
+      } else if (mode === "inline-insert") {
+        const pos = Math.max(0, Math.min(content.length, Number(insertPos) || 0));
+        selStart = selEnd = pos;
+      } else if (editor) {
         selStart = editor.selectionStart;
         selEnd = editor.selectionEnd;
       }
@@ -906,18 +1023,30 @@
       colorTextSwatch = "info";
       // Defer until the modal markup is in the DOM.
       queueMicrotask(() => {
+        applyModalMode();
         populateDocSelects();
-        const selectedText = editor ? editor.value.slice(selStart, selEnd) : "";
-        const detected = selectedText ? detectSnippetType(selectedText) : null;
-        if (detected) {
-          // Selected text matches a snippet → open its panel pre-filled for editing.
+        if (mode === "inline-edit" && range) {
+          const selectedText = content.slice(selStart, selEnd);
           const sel = byId<HTMLSelectElement>("snippet-type");
-          if (sel) sel.value = detected;
+          if (sel) sel.value = range.type;
           snippetTypeChanged();
-          parseAndFillSnippet(selectedText, detected);
+          parseAndFillSnippet(selectedText, range.type);
           showSnippetPanelOnly();
-        } else {
+        } else if (mode === "inline-insert") {
           showSnippetPicker();
+        } else {
+          const selectedText = editor ? editor.value.slice(selStart, selEnd) : "";
+          const detected = selectedText ? detectSnippetType(selectedText) : null;
+          if (detected) {
+            // Selected text matches a snippet → open its panel pre-filled for editing.
+            const sel = byId<HTMLSelectElement>("snippet-type");
+            if (sel) sel.value = detected;
+            snippetTypeChanged();
+            parseAndFillSnippet(selectedText, detected);
+            showSnippetPanelOnly();
+          } else {
+            showSnippetPicker();
+          }
         }
       });
     } else if (!open) {
@@ -1284,9 +1413,12 @@
 
       <!-- Actions -->
       <div class="flex justify-end gap-3 pt-1">
+        <button onclick={deleteInlineSnippet} id="snippet-delete-btn" class="hidden text-sm px-4 py-2 mr-auto rounded-lg border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors">{t("snippet.inline_delete_btn")}</button>
         <button onclick={onclose} class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t("common.cancel")}</button>
         <button onclick={insertSnippet} id="snippet-submit-btn" class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">{t("snippet.insert_btn")}</button>
       </div>
     </div>
   </div>
 {/if}
+
+<ConfirmDialog bind:this={confirmDialog} />

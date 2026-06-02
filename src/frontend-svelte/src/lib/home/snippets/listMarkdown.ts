@@ -28,6 +28,14 @@ export function unorderedListDefaultMarkdown(): string {
   return UNORDERED_LIST_DEFAULT;
 }
 
+export function orderedListBlockRegex(): RegExp {
+  return /^1\. .*(?:\n(?![ \t]*$)(?:\d+\. .*| {3,}.*|(?!(?:[-*+] |#{1,6}\s|>|```|~~~|\|)).+))*/gm;
+}
+
+export function unorderedListBlockRegex(): RegExp {
+  return /^[-*+] .*(?:\n(?![ \t]*$)(?:[-*+] .*| {2,}.*|(?!(?:\d+\. |#{1,6}\s|>|```|~~~|\|)).+))*/gm;
+}
+
 export function looksLikeOrderedListSnippet(markdown: string): boolean {
   return /^1\. /.test((markdown || "").trim());
 }

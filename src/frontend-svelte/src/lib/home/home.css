@@ -1,3 +1,8 @@
+      /* Inline snippet edit affordance (right-click targets in read mode) */
+      .ld-inline-snippet-target {
+        cursor: context-menu;
+      }
+
       /* Smooth sidebar transitions */
       .category-docs {
         transition:

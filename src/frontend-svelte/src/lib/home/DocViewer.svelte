@@ -12,13 +12,16 @@
   import { getDocStatus, replaceStatus, isWorklogDocument } from "./docStatus";
   import { initLocalSearch } from "./localSearch";
   import { highlightMatches, scrollToMatch, type SearchMatch } from "./searchNotice";
+  import { initInlineSnippetEditing } from "./inlineSnippetEdit";
   import type { DocDetail } from "./types";
 
-  let { doc, onopen, onsave, ondelete }: {
+  let { doc, onopen, onsave, ondelete, navHistory = [], ongoback }: {
     doc: DocDetail;
     onopen: (id: string, anchor: string | null) => void;
     onsave: (content: string) => Promise<void>;
     ondelete: () => Promise<void>;
+    navHistory?: { id: string; title: string }[];
+    ongoback?: (i: number) => void;
   } = $props();
 
   let contentEl = $state<HTMLElement>(null!);
@@ -27,6 +30,10 @@
   let confirmDialog = $state<ConfirmDialog>(null!);
   let metadataOpen = $state(false);
   let snippetsOpen = $state(false);
+  let snippetMode = $state<"insert" | "inline-edit" | "inline-insert">("insert");
+  let snippetRange = $state<{ start: number; end: number; type: string; indent?: string } | null>(null);
+  let snippetInsertPos = $state(0);
+  let disposeInline: (() => void) | null = null;
   let localSearchMount = $state<HTMLElement>(null!);
   let searchMatches = $state<SearchMatch[]>([]);
   let lastWiredId = "";
@@ -77,6 +84,8 @@
   $effect(() => {
     const id = doc.id;
     const q = home.searchQuery; // re-wire when the global search query changes
+    disposeInline?.();
+    disposeInline = null;
     if (editing || !contentEl) return;
 
     wireDocContent(contentEl, doc.html, {
@@ -93,6 +102,23 @@
 
     // Local in-document search widget
     if (localSearchMount) initLocalSearch(contentEl, localSearchMount, t);
+
+    // Inline snippet editing (right-click on rendered snippets)
+    disposeInline = initInlineSnippetEditing(contentEl, doc.content, {
+      onEdit: (range) => { snippetMode = "inline-edit"; snippetRange = range; snippetsOpen = true; },
+      onInsert: (pos) => { snippetMode = "inline-insert"; snippetInsertPos = pos; snippetsOpen = true; },
+      onDelete: async (range) => {
+        const ok = await confirmDialog.show({
+          title: t("snippet.inline_delete_title"),
+          message: t("snippet.inline_delete_message"),
+          confirmLabel: t("snippet.inline_delete_confirm_btn"),
+          cancelLabel: t("common.cancel"),
+          danger: true,
+        });
+        if (!ok) return;
+        await onsave(doc.content.slice(0, range.start) + doc.content.slice(range.end));
+      },
+    });
 
     if (id !== lastWiredId) {
       // New document: (re)fetch annotations + metadata
@@ -337,7 +363,7 @@
           <div class="flex items-center gap-2">
           {#if saveMsg}<span class="text-xs {saveMsg.cls}">{saveMsg.text}</span>{/if}
           <button onclick={cancelEdit} class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t("common.cancel")}</button>
-          <button onclick={() => (snippetsOpen = true)} title={t("doc.snippets")} class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t("doc.snippets_btn")}</button>
+          <button onclick={() => { snippetMode = "insert"; snippetsOpen = true; }} title={t("doc.snippets")} class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t("doc.snippets_btn")}</button>
           <button onclick={save} class="text-sm px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">{t("common.save")}</button>
           </div>
         {:else}
@@ -375,6 +401,15 @@
     </div>
     {#if !editing}
       <AccuracyGauge onopen={() => (metadataOpen = true)} />
+    {/if}
+
+    {#if !editing && navHistory.length}
+      <div class="no-print mt-2 flex flex-wrap gap-1 text-xs">
+        {#each navHistory as entry, i (i)}
+          {#if i > 0}<span class="text-gray-300 dark:text-gray-600 mx-1">·</span>{/if}
+          <button class="text-blue-600 dark:text-blue-400 hover:underline" onclick={() => ongoback?.(i)}>← {entry.title}</button>
+        {/each}
+      </div>
     {/if}
 
     {#if !editing && searchMatches.length && home.searchQuery}
@@ -419,7 +454,16 @@
 <Annotations bind:this={annotations} {contentEl} docId={doc.id} />
 
 <MetadataModal open={metadataOpen} docId={doc.id} content={doc.content} onclose={() => (metadataOpen = false)} />
-<SnippetsModal open={snippetsOpen} editor={editorEl} onclose={() => (snippetsOpen = false)} />
+<SnippetsModal
+  open={snippetsOpen}
+  editor={editorEl}
+  mode={snippetMode}
+  content={doc.content}
+  range={snippetRange}
+  insertPos={snippetInsertPos}
+  onsave={onsave}
+  onclose={() => (snippetsOpen = false)}
+/>
 <ConfirmDialog bind:this={confirmDialog} />
 
 <!-- Image paste modal -->
