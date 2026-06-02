@@ -1,0 +1,450 @@
+      /* Smooth sidebar transitions */
+      .category-docs {
+        transition:
+          max-height 0.2s ease,
+          opacity 0.2s ease;
+      }
+      .category-docs.collapsed {
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+      }
+      .category-docs.expanded {
+        max-height: 9999px;
+        opacity: 1;
+      }
+      .category-docs.no-transition {
+        transition: none !important;
+      }
+
+      /* Code block decorations (copy + collapse) */
+      .prose pre {
+        position: relative;
+      }
+      .ld-code-copy {
+        position: absolute;
+        top: 0.4rem;
+        right: 0.5rem;
+        z-index: 2;
+        width: 28px;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.375rem;
+        background: rgba(255, 255, 255, 0.08);
+        color: #d1d5db;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        cursor: pointer;
+        opacity: 0;
+        transition:
+          opacity 0.15s ease,
+          background 0.15s ease;
+        font-size: 0.8rem;
+        line-height: 1;
+      }
+      .prose pre:hover .ld-code-copy,
+      .ld-code-copy:focus-visible,
+      .ld-code-copy.ld-copied {
+        opacity: 1;
+      }
+      .ld-code-copy:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .ld-code-copy.ld-copied {
+        background: rgba(34, 197, 94, 0.25);
+        color: #86efac;
+        border-color: rgba(34, 197, 94, 0.4);
+      }
+
+      /* Table presets — triggered by table-style/table-border/table-color comments. */
+
+      /* Color palette via CSS variables. Default (no color class) uses neutral fallbacks. */
+      table.table-color-info {
+        --tbl-accent: rgb(59 130 246);
+        --tbl-accent-soft: rgb(219 234 254);
+        --tbl-accent-stripe: rgb(239 246 255);
+        --tbl-accent-text: rgb(30 58 138);
+      }
+      table.table-color-success {
+        --tbl-accent: rgb(34 197 94);
+        --tbl-accent-soft: rgb(220 252 231);
+        --tbl-accent-stripe: rgb(240 253 244);
+        --tbl-accent-text: rgb(20 83 45);
+      }
+      table.table-color-warning {
+        --tbl-accent: rgb(245 158 11);
+        --tbl-accent-soft: rgb(254 243 199);
+        --tbl-accent-stripe: rgb(255 251 235);
+        --tbl-accent-text: rgb(120 53 15);
+      }
+      table.table-color-danger {
+        --tbl-accent: rgb(239 68 68);
+        --tbl-accent-soft: rgb(254 226 226);
+        --tbl-accent-stripe: rgb(254 242 242);
+        --tbl-accent-text: rgb(127 29 29);
+      }
+      table.table-color-note {
+        --tbl-accent: rgb(139 92 246);
+        --tbl-accent-soft: rgb(233 213 255);
+        --tbl-accent-stripe: rgb(245 243 255);
+        --tbl-accent-text: rgb(76 29 149);
+      }
+      .dark table.table-color-info {
+        --tbl-accent: rgb(96 165 250);
+        --tbl-accent-soft: rgb(30 58 138 / 0.55);
+        --tbl-accent-stripe: rgb(30 58 138 / 0.35);
+        --tbl-accent-text: rgb(191 219 254);
+      }
+      .dark table.table-color-success {
+        --tbl-accent: rgb(74 222 128);
+        --tbl-accent-soft: rgb(20 83 45 / 0.55);
+        --tbl-accent-stripe: rgb(20 83 45 / 0.35);
+        --tbl-accent-text: rgb(187 247 208);
+      }
+      .dark table.table-color-warning {
+        --tbl-accent: rgb(251 191 36);
+        --tbl-accent-soft: rgb(120 53 15 / 0.55);
+        --tbl-accent-stripe: rgb(120 53 15 / 0.35);
+        --tbl-accent-text: rgb(254 215 170);
+      }
+      .dark table.table-color-danger {
+        --tbl-accent: rgb(248 113 113);
+        --tbl-accent-soft: rgb(127 29 29 / 0.55);
+        --tbl-accent-stripe: rgb(127 29 29 / 0.35);
+        --tbl-accent-text: rgb(254 202 202);
+      }
+      .dark table.table-color-note {
+        --tbl-accent: rgb(167 139 250);
+        --tbl-accent-soft: rgb(76 29 149 / 0.55);
+        --tbl-accent-stripe: rgb(76 29 149 / 0.35);
+        --tbl-accent-text: rgb(221 214 254);
+      }
+      /* When a color is applied, tint the header with the accent palette. */
+      .prose table[class*="table-color-"] thead th {
+        background-color: var(--tbl-accent-soft);
+        color: var(--tbl-accent-text);
+      }
+
+      /* Default table type: generous padding with horizontal separators only. */
+      .prose table {
+        border-collapse: collapse;
+        border: none;
+      }
+      .prose table th,
+      .prose table td {
+        padding: 0.6rem 1rem;
+        border: none;
+        border-bottom: 1px solid rgb(229 231 235);
+      }
+      .prose table thead th {
+        border-bottom-color: rgb(209 213 219);
+      }
+      .dark .prose table th,
+      .dark .prose table td {
+        border-bottom-color: rgb(55 65 81);
+      }
+      .prose table[class*="table-color-"] th,
+      .prose table[class*="table-color-"] td {
+        border-bottom-color: var(--tbl-accent-soft);
+      }
+      .prose table[class*="table-color-"] thead th {
+        border-bottom-color: var(--tbl-accent);
+      }
+      .prose table thead,
+      .prose table tbody tr {
+        border: none;
+      }
+
+      /* Compact: small font + reduced padding (clearly denser than other variants). */
+      .prose table.table-style-compact {
+        font-size: 0.85em;
+        line-height: 1.35;
+      }
+      .prose table.table-style-compact th,
+      .prose table.table-style-compact td {
+        padding: 0.2rem 0.5rem;
+      }
+
+      /* Striped: zebra rows using the accent stripe (neutral fallback if no color). */
+      .prose table.table-style-striped {
+        border-collapse: collapse;
+      }
+      .prose table.table-style-striped tbody tr:nth-child(odd) {
+        background-color: var(--tbl-accent-stripe, rgb(243 244 246));
+      }
+      .dark .prose table.table-style-striped tbody tr:nth-child(odd) {
+        background-color: var(--tbl-accent-stripe, rgb(55 65 81));
+      }
+
+      /* Border checkbox: visible borders tinted with the accent (neutral fallback otherwise). */
+      .prose table.table-border-bordered {
+        border-collapse: collapse;
+      }
+      .prose table.table-border-bordered,
+      .prose table.table-border-bordered th,
+      .prose table.table-border-bordered td {
+        border: 1px solid var(--tbl-accent, rgb(209 213 219));
+      }
+      .dark .prose table.table-border-bordered,
+      .dark .prose table.table-border-bordered th,
+      .dark .prose table.table-border-bordered td {
+        border-color: var(--tbl-accent, rgb(75 85 99));
+      }
+
+      /* Explicit/legacy borderless: keep only horizontal separators. */
+      .prose table.table-border-borderless th,
+      .prose table.table-border-borderless td {
+        border-left: none !important;
+        border-right: none !important;
+        border-top: none !important;
+      }
+
+      /* Collapsible code blocks (set via --ld-code-max-h from .living-doc.json) */
+      pre.ld-collapsible {
+        max-height: var(--ld-code-max-h, 400px);
+        overflow: hidden;
+        position: relative;
+      }
+      pre.ld-collapsible.ld-expanded {
+        max-height: none;
+        overflow: auto;
+      }
+      pre.ld-collapsible:not(.ld-expanded)::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 64px;
+        pointer-events: none;
+        background: linear-gradient(
+          to bottom,
+          rgba(40, 44, 52, 0) 0%,
+          rgba(40, 44, 52, 0.85) 100%
+        );
+      }
+      .ld-code-toggle {
+        position: absolute;
+        right: 0.5rem;
+        bottom: 0.4rem;
+        z-index: 1;
+        padding: 0.15rem 0.6rem;
+        border-radius: 0.375rem;
+        background: rgba(255, 255, 255, 0.12);
+        color: #e5e7eb;
+        font-size: 0.75rem;
+        font-weight: 500;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        cursor: pointer;
+        transition: background 0.15s ease;
+      }
+      .ld-code-toggle:hover {
+        background: rgba(255, 255, 255, 0.22);
+      }
+
+      /* Color swatch selection ring */
+      .color-swatch-btn.selected-swatch,
+      .color-text-swatch-btn.selected-text-swatch {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Active doc highlight */
+      .doc-item.active {
+        background-color: rgba(59, 130, 246, 0.12);
+        color: rgb(59, 130, 246);
+        font-weight: 600;
+      }
+      .dark .doc-item.active {
+        background-color: rgba(96, 165, 250, 0.15);
+        color: rgb(96, 165, 250);
+      }
+
+      /* Prose overrides for correct dark mode */
+      .dark .prose {
+        color: #d1d5db;
+      }
+      .dark .prose h1,
+      .dark .prose h2,
+      .dark .prose h3,
+      .dark .prose h4,
+      .dark .prose h5,
+      .dark .prose h6 {
+        color: #f9fafb;
+      }
+      .dark .prose a {
+        color: #60a5fa;
+      }
+      .dark .prose strong {
+        color: #f3f4f6;
+      }
+      .prose code:not(pre code) {
+        background: #e5e7eb;
+        color: #111827;
+        padding: 0.1em 0.35em;
+        border-radius: 0.25em;
+        font-size: 0.875em;
+        font-weight: 400;
+      }
+      .dark .prose code:not(pre code) {
+        background: #4b5563;
+        color: #f87171;
+        padding: 0.1em 0.35em;
+        border-radius: 0.25em;
+        font-size: 0.875em;
+        font-weight: 400;
+      }
+
+      .dark .prose blockquote {
+        border-color: #4b5563;
+        color: #9ca3af;
+      }
+
+      /* Image margins — inline images (in lists, after <br>, mixed with text)
+         collapse to zero vertical margin; only images that sit alone in their
+         own paragraph keep a visual breathing room. */
+      .prose img {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+      .prose p > img:only-child,
+      .prose p > a:only-child > img {
+        margin-top: 1em;
+        margin-bottom: 1em;
+      }
+
+      /* Horizontal rules — tame Tailwind Typography's 3em default + bump contrast */
+      .prose hr {
+        margin-top: 2em;
+        margin-bottom: 2em;
+        border-color: #d1d5db;
+      }
+
+      /* Local search highlight — distinct from the global yellow search */
+      mark.ld-local-mark {
+        background: #bae6fd;
+        color: inherit;
+        padding: 0 1px;
+        border-radius: 2px;
+      }
+      mark.ld-local-mark.ld-local-active {
+        background: #0284c7;
+        color: #fff;
+      }
+      .dark mark.ld-local-mark {
+        background: #075985;
+        color: #e0f2fe;
+      }
+      .dark mark.ld-local-mark.ld-local-active {
+        background: #0ea5e9;
+        color: #082f49;
+      }
+      .ld-local-item-active {
+        background: rgba(14, 165, 233, 0.12);
+      }
+
+      /* File attachment pills — links pointing to /files/ */
+      .prose a.ld-file-attachment,
+      a.ld-file-attachment {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35em;
+        padding: 0.1em 0.55em;
+        border-radius: 0.375rem;
+        background: #ede9fe;
+        color: #5b21b6;
+        text-decoration: none;
+        font-weight: 500;
+        border: 1px solid #ddd6fe;
+        transition:
+          background-color 0.15s,
+          border-color 0.15s;
+      }
+      .prose a.ld-file-attachment:hover,
+      a.ld-file-attachment:hover {
+        background: #ddd6fe;
+        border-color: #c4b5fd;
+      }
+      .dark .prose a.ld-file-attachment,
+      .dark a.ld-file-attachment {
+        background: rgba(139, 92, 246, 0.18);
+        color: #c4b5fd;
+        border-color: rgba(139, 92, 246, 0.3);
+      }
+      .dark .prose a.ld-file-attachment:hover,
+      .dark a.ld-file-attachment:hover {
+        background: rgba(139, 92, 246, 0.28);
+        border-color: rgba(139, 92, 246, 0.45);
+      }
+      a.ld-file-attachment .ld-file-icon {
+        font-size: 0.85em;
+        opacity: 0.85;
+      }
+      .dark .prose hr {
+        border-color: #374151;
+      }
+      .dark .prose table th {
+        background: #1f2937;
+        color: #f9fafb;
+      }
+      .dark .prose table td {
+        border-color: #374151;
+      }
+      .dark .prose table tr:nth-child(even) {
+        background: #111827;
+      }
+
+      /* Print / Export PDF */
+      @media print {
+        #sidebar,
+        #header {
+          display: none !important;
+        }
+        #content-area {
+          margin: 0 !important;
+        }
+        .no-print {
+          display: none !important;
+        }
+        .prose {
+          max-width: 100% !important;
+        }
+      }
+
+      /* Scrollbar thin */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 3px;
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background: #4b5563;
+      }
+
+      /* Search highlight */
+      mark {
+        background: #fef08a;
+        color: inherit;
+        border-radius: 2px;
+        padding: 0 2px;
+      }
+      mark.match-active {
+        background: #f97316;
+        color: #fff;
+      }
+      .dark mark {
+        background: #713f12;
+        color: #fef9c3;
+      }
+      .dark mark.match-active {
+        background: #ea580c;
+        color: #fff;
+      }

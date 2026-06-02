@@ -16,7 +16,6 @@ export default defineConfig({
       "/i18n": "http://localhost:4321",
       "/images": "http://localhost:4321",
       "^/files/.+": { target: "http://localhost:4321", changeOrigin: true },
-      "^/$": { target: "http://localhost:4321", changeOrigin: true },
     },
   },
 });
