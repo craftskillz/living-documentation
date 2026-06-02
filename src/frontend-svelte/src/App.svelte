@@ -3,6 +3,7 @@
   import Admin from "./routes/Admin.svelte";
   import Blueprint from "./routes/Blueprint.svelte";
   import Workspace from "./routes/Workspace.svelte";
+  import Files from "./routes/Files.svelte";
 
   let path = $state(window.location.pathname);
 
@@ -30,6 +31,8 @@
   <Blueprint />
 {:else if path === "/workspace"}
   <Workspace />
+{:else if path === "/files"}
+  <Files />
 {:else}
   <p style="padding:2rem">Route "{path}" — not yet migrated.</p>
 {/if}

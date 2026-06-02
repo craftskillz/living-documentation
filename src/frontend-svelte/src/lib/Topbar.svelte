@@ -13,6 +13,7 @@
       ...nav,
       { label: "Workspace", href: "/workspace" },
       { label: "Blueprint", href: "/blueprint" },
+      { label: "Files", href: "/files" },
       { label: "Admin", href: "/admin" },
       { label: "Home", href: "/" },
     ].filter((link) => link.href !== currentPath)
