@@ -140,25 +140,14 @@ canvas.is-panning { cursor: grabbing; }
   z-index: 5;
 }
 
-.tool-button {
-  display: grid;
-  width: 46px;
-  height: 46px;
-  place-items: center;
-  border: 1px solid var(--line);
-  border-radius: 14px;
+[data-blueprint] .tool-button {
   background: #1e293b;
-  color: var(--ink);
-  font-size: 22px;
-  font-weight: 700;
-  cursor: pointer;
   box-shadow: 0 8px 24px rgb(0 0 0 / 30%);
-  transition: background 0.15s;
 }
 
-.tool-button:hover { background: #273549; }
+[data-blueprint] .tool-button:hover { background: #273549; }
 
-.tool-button.active {
+[data-blueprint] .tool-button.active {
   border-color: #3b82f6;
   background: rgb(59 130 246 / 20%);
   color: #60a5fa;

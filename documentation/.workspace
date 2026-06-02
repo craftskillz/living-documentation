@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-02T12:20:24.602Z",
+  "updatedAt": "2026-06-02T13:16:28.539Z",
   "entities": [
     {
       "id": "root",
@@ -49,9 +49,9 @@
       "label": "DEVSTRAL SMALL 2",
       "kind": "llm",
       "parentId": "root",
-      "x": 221.7025033688163,
-      "y": 127.99999999999996,
-      "angle": 0.5235987755982987,
+      "x": 256,
+      "y": 0,
+      "angle": 0,
       "config": {
         "endpoint": "http://localhost:11434",
         "token": "",
@@ -70,9 +70,9 @@
       "label": "Agent de listage des ADRS driftés",
       "kind": "agent",
       "parentId": "provider-mpsmymtb",
-      "x": 399.51972200725766,
-      "y": 12.524148014934227,
-      "angle": -0.5759586531581289,
+      "x": 352.2563025786491,
+      "y": -188.91363066193927,
+      "angle": -1.0995574287564276,
       "config": {
         "endpoint": "",
         "token": "",
@@ -91,9 +91,9 @@
       "label": "Générer Diagramme Mermaid",
       "kind": "agent",
       "parentId": "provider-mpsmymtb",
-      "x": 210.60609134531842,
-      "y": 339.7321545637148,
-      "angle": 1.6231562043547263,
+      "x": 352.2563025786491,
+      "y": 188.91363066193927,
+      "angle": 1.0995574287564276,
       "config": {
         "endpoint": "",
         "token": "",
@@ -112,9 +112,9 @@
       "label": "Gemma 4",
       "kind": "llm",
       "parentId": "root",
-      "x": -221.70250336881625,
-      "y": 128.00000000000009,
-      "angle": 2.617993877991494,
+      "x": 1.567547902908612e-14,
+      "y": 256,
+      "angle": 1.5707963267948966,
       "config": {
         "endpoint": "http://localhost:11434",
         "token": "",
@@ -133,9 +133,9 @@
       "label": "Traducteur Anglais Français",
       "kind": "agent",
       "parentId": "provider-mpsyqgb7",
-      "x": -405.31956882568227,
-      "y": 234.01136216933094,
-      "angle": 2.617993877991494,
+      "x": 2.865812656447829e-14,
+      "y": 468.02272433866153,
+      "angle": 1.5707963267948966,
       "config": {
         "endpoint": "",
         "token": "",
@@ -148,11 +148,32 @@
         "description": "Runs focused automation against documentation, source, or quality signals.",
         "workspaceFolder": "AI/WORKSPACE/traducteur_anglais_francais"
       }
+    },
+    {
+      "id": "provider-mpwnspnr",
+      "label": "LLM Provider 3",
+      "kind": "llm",
+      "parentId": "root",
+      "x": -256,
+      "y": 3.135095805817224e-14,
+      "angle": 3.141592653589793,
+      "config": {
+        "endpoint": "http://localhost:11434",
+        "token": "",
+        "model": "devstral-small-2:latest",
+        "timeout": 180,
+        "systemPrompt": "",
+        "requiresUserInput": false,
+        "userInputDescription": "",
+        "expectedOutputMarker": "",
+        "description": "Routes model calls and hosts the agents assigned to this provider.",
+        "workspaceFolder": ""
+      }
     }
   ],
   "camera": {
-    "x": 645.674532324789,
-    "y": 371.01672601853807,
-    "zoom": 0.9818316393237724
+    "x": 795.4590893465393,
+    "y": 324.92929221925107,
+    "zoom": 0.8381881533054557
   }
 }

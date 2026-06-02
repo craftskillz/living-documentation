@@ -2,6 +2,7 @@
   import "../src/styles/app.css";
   import Admin from "./routes/Admin.svelte";
   import Blueprint from "./routes/Blueprint.svelte";
+  import Workspace from "./routes/Workspace.svelte";
 
   let path = $state(window.location.pathname);
 
@@ -27,6 +28,8 @@
   <Admin {navigate} />
 {:else if path === "/blueprint"}
   <Blueprint />
+{:else if path === "/workspace"}
+  <Workspace />
 {:else}
   <p style="padding:2rem">Route "{path}" — not yet migrated.</p>
 {/if}

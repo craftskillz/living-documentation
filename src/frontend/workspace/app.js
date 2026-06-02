@@ -44,304 +44,347 @@ const ROOT_CLUSTER_RELAXATION_ATTEMPTS = 7;
 const ROOT_CLUSTER_MAX_DISTANCE = ROOT_CHILD_DISTANCE + ROOT_CHILD_MAX_EXTRA_DISTANCE + 260;
 const SAVE_DEBOUNCE_MS = 450;
 const SAVE_TOAST_MS = 2600;
-const canvas = document.getElementById("workspaceCanvas");
-const ctx = canvas.getContext("2d");
-const apiStatus = document.getElementById("apiStatus");
-const addButton = document.getElementById("addButton");
-const fitButton = document.getElementById("fitButton");
-const testNodeButton = document.getElementById("testNodeButton");
-const loadModelsButton = document.getElementById("loadModelsButton");
-const closePanelButton = document.getElementById("closePanelButton");
-const deleteNodeButton = document.getElementById("deleteNodeButton");
-const renameConfirmOverlay = document.getElementById("renameConfirmOverlay");
-const renameConfirmMessage = document.getElementById("renameConfirmMessage");
-const cancelRenameButton = document.getElementById("cancelRenameButton");
-const confirmRenameButton = document.getElementById("confirmRenameButton");
-const deleteConfirmOverlay = document.getElementById("deleteConfirmOverlay");
-const deleteConfirmMessage = document.getElementById("deleteConfirmMessage");
-const cancelDeleteButton = document.getElementById("cancelDeleteButton");
-const confirmDeleteButton = document.getElementById("confirmDeleteButton");
-const agentRunOverlay = document.getElementById("agentRunOverlay");
-const agentRunTitle = document.getElementById("agentRunTitle");
-const agentRunHint = document.getElementById("agentRunHint");
-const agentRunInputField = document.getElementById("agentRunInputField");
-const agentRunInput = document.getElementById("agentRunInput");
-const agentRunResult = document.getElementById("agentRunResult");
-const cancelAgentRunButton = document.getElementById("cancelAgentRunButton");
-const executeAgentRunButton = document.getElementById("executeAgentRunButton");
-const fallbackPanelHost = document.getElementById("fallbackPanelHost");
-const configSurface = document.getElementById("configSurface");
-const form = configSurface;
-const workspaceToast = document.getElementById("workspaceToast");
-const workspaceToastIcon = document.getElementById("workspaceToastIcon");
-const workspaceToastMessage = document.getElementById("workspaceToastMessage");
+// ── Module-level DOM refs (assigned in initWorkspace) ─────────────────────────
+let canvas;
+let ctx;
+let apiStatus;
+let addButton;
+let fitButton;
+let testNodeButton;
+let loadModelsButton;
+let closePanelButton;
+let deleteNodeButton;
+let renameConfirmOverlay;
+let renameConfirmMessage;
+let cancelRenameButton;
+let confirmRenameButton;
+let deleteConfirmOverlay;
+let deleteConfirmMessage;
+let cancelDeleteButton;
+let confirmDeleteButton;
+let agentRunOverlay;
+let agentRunTitle;
+let agentRunHint;
+let agentRunInputField;
+let agentRunInput;
+let agentRunResult;
+let cancelAgentRunButton;
+let executeAgentRunButton;
+let fallbackPanelHost;
+let configSurface;
+let form;
+let workspaceToast;
+let workspaceToastIcon;
+let workspaceToastMessage;
 let toastTimerId = null;
 let savedAgentLabel = null;
 let savedAgentFolder = null;
 let agentRunTargetId = null;
-const fields = {
-    name: document.getElementById("nodeName"),
-    kind: document.getElementById("nodeKind"),
-    endpoint: document.getElementById("nodeEndpoint"),
-    token: document.getElementById("nodeToken"),
-    model: document.getElementById("nodeModel"),
-    workspaceField: document.getElementById("agentWorkspaceField"),
-    workspaceFolder: document.getElementById("nodeWorkspaceFolder"),
-    timeout: document.getElementById("nodeTimeout"),
-    description: document.getElementById("nodeDescription"),
-    typeBadge: document.getElementById("nodeTypeBadge"),
-    llmFields: document.getElementById("llmFields"),
-    mcpInventory: document.getElementById("mcpInventory"),
-    agentSection: document.getElementById("agentSection"),
-    systemPrompt: document.getElementById("nodeSystemPrompt"),
-    requiresUserInput: document.getElementById("nodeRequiresUserInput"),
-    userInputDescriptionField: document.getElementById("agentUserInputDescriptionField"),
-    userInputDescription: document.getElementById("nodeUserInputDescription"),
-    expectedOutputMarker: document.getElementById("nodeExpectedOutputMarker"),
-};
-const initialEntities = [
-    createEntity("root", "Living AI Documentation", "system", null),
-    createEntity("mcp", "MCP", "mcp", "root"),
-    //createEntity("devstral", "DevStral2 LLM API", "llm", "root"),
-    //createEntity("qwen", "Qwen2 LLM API", "llm", "root"),
-    //createEntity("review-agent", "Code Review Agent", "agent", "devstral"),
-    //createEntity("sonar-agent", "Sonarqube Metrics Agent", "agent", "devstral"),
-    //createEntity("doc-agent", "Documentation Agent", "agent", "qwen"),
-];
-const state = {
-    entities: cloneEntities(initialEntities),
-    selectedId: null,
-    cameraX: 0,
-    cameraY: 0,
-    zoom: 1,
-    isPanning: false,
-    panStartX: 0,
-    panStartY: 0,
-    panStartCameraX: 0,
-    panStartCameraY: 0,
-    didPan: false,
-    viewAnimationId: null,
-    dpr: window.devicePixelRatio || 1,
-    apiMode: "fallback",
-    lastSaveAt: null,
-    pendingDeleteId: null,
-    panelShiftX: 0,
-    saveTimerId: null,
-    isHydrated: false,
-};
-const supportsHtmlInCanvas = Boolean(canvas.requestPaint) && typeof ctx.drawElementImage === "function";
-if (!supportsHtmlInCanvas) {
-    fallbackPanelHost.appendChild(configSurface);
-    apiStatus.textContent = "DOM fallback";
-    apiStatus.classList.add("is-fallback");
-}
-else {
-    state.apiMode = "html-in-canvas";
-    apiStatus.textContent = "HTML-in-Canvas active";
-    apiStatus.classList.add("is-live");
-    canvas.onpaint = render;
-}
-const resizeObserver = new ResizeObserver(([entry]) => {
-    const box = entry.devicePixelContentBoxSize && entry.devicePixelContentBoxSize[0];
-    const cssWidth = entry.contentRect.width;
-    const cssHeight = entry.contentRect.height;
-    state.dpr = box ? box.inlineSize / cssWidth : window.devicePixelRatio || 1;
-    canvas.width = box ? box.inlineSize : Math.floor(cssWidth * state.dpr);
-    canvas.height = box ? box.blockSize : Math.floor(cssHeight * state.dpr);
-    layoutGraph();
-    resetView(false, !state.cameraX && !state.cameraY);
-    scheduleRender();
-});
-resizeObserver.observe(canvas, { box: "device-pixel-content-box" });
-isolatePanelEvents();
-isolateConfirmEvents();
-addButton.addEventListener("click", () => {
-    addContextualNode();
-});
-fitButton.addEventListener("click", () => {
-    layoutGraph();
-    resetView(true, true);
-    scheduleWorkspaceSave();
-    scheduleRender();
-});
-canvas.addEventListener("pointerdown", (event) => {
-    if (event.target !== canvas) {
-        return;
+let fields;
+let state;
+let resizeObserver;
+let supportsHtmlInCanvas = false;
+export function initWorkspace() {
+    canvas = document.getElementById("workspaceCanvas");
+    ctx = canvas.getContext("2d");
+    apiStatus = document.getElementById("apiStatus");
+    addButton = document.getElementById("addButton");
+    fitButton = document.getElementById("fitButton");
+    testNodeButton = document.getElementById("testNodeButton");
+    loadModelsButton = document.getElementById("loadModelsButton");
+    closePanelButton = document.getElementById("closePanelButton");
+    deleteNodeButton = document.getElementById("deleteNodeButton");
+    renameConfirmOverlay = document.getElementById("renameConfirmOverlay");
+    renameConfirmMessage = document.getElementById("renameConfirmMessage");
+    cancelRenameButton = document.getElementById("cancelRenameButton");
+    confirmRenameButton = document.getElementById("confirmRenameButton");
+    deleteConfirmOverlay = document.getElementById("deleteConfirmOverlay");
+    deleteConfirmMessage = document.getElementById("deleteConfirmMessage");
+    cancelDeleteButton = document.getElementById("cancelDeleteButton");
+    confirmDeleteButton = document.getElementById("confirmDeleteButton");
+    agentRunOverlay = document.getElementById("agentRunOverlay");
+    agentRunTitle = document.getElementById("agentRunTitle");
+    agentRunHint = document.getElementById("agentRunHint");
+    agentRunInputField = document.getElementById("agentRunInputField");
+    agentRunInput = document.getElementById("agentRunInput");
+    agentRunResult = document.getElementById("agentRunResult");
+    cancelAgentRunButton = document.getElementById("cancelAgentRunButton");
+    executeAgentRunButton = document.getElementById("executeAgentRunButton");
+    fallbackPanelHost = document.getElementById("fallbackPanelHost");
+    configSurface = document.getElementById("configSurface");
+    form = configSurface;
+    workspaceToast = document.getElementById("workspaceToast");
+    workspaceToastIcon = document.getElementById("workspaceToastIcon");
+    workspaceToastMessage = document.getElementById("workspaceToastMessage");
+    toastTimerId = null;
+    savedAgentLabel = null;
+    savedAgentFolder = null;
+    agentRunTargetId = null;
+    fields = {
+        name: document.getElementById("nodeName"),
+        kind: document.getElementById("nodeKind"),
+        endpoint: document.getElementById("nodeEndpoint"),
+        token: document.getElementById("nodeToken"),
+        model: document.getElementById("nodeModel"),
+        workspaceField: document.getElementById("agentWorkspaceField"),
+        workspaceFolder: document.getElementById("nodeWorkspaceFolder"),
+        timeout: document.getElementById("nodeTimeout"),
+        description: document.getElementById("nodeDescription"),
+        typeBadge: document.getElementById("nodeTypeBadge"),
+        llmFields: document.getElementById("llmFields"),
+        mcpInventory: document.getElementById("mcpInventory"),
+        agentSection: document.getElementById("agentSection"),
+        systemPrompt: document.getElementById("nodeSystemPrompt"),
+        requiresUserInput: document.getElementById("nodeRequiresUserInput"),
+        userInputDescriptionField: document.getElementById("agentUserInputDescriptionField"),
+        userInputDescription: document.getElementById("nodeUserInputDescription"),
+        expectedOutputMarker: document.getElementById("nodeExpectedOutputMarker"),
+    };
+    const initialEntities = [
+        createEntity("root", "Living AI Documentation", "system", null),
+        createEntity("mcp", "MCP", "mcp", "root"),
+    ];
+    state = {
+        entities: cloneEntities(initialEntities),
+        selectedId: null,
+        cameraX: 0,
+        cameraY: 0,
+        zoom: 1,
+        isPanning: false,
+        panStartX: 0,
+        panStartY: 0,
+        panStartCameraX: 0,
+        panStartCameraY: 0,
+        didPan: false,
+        viewAnimationId: null,
+        dpr: window.devicePixelRatio || 1,
+        apiMode: "fallback",
+        lastSaveAt: null,
+        pendingDeleteId: null,
+        panelShiftX: 0,
+        saveTimerId: null,
+        isHydrated: false,
+    };
+    supportsHtmlInCanvas =
+        Boolean(canvas.requestPaint) && typeof ctx.drawElementImage === "function";
+    if (!supportsHtmlInCanvas) {
+        fallbackPanelHost.appendChild(configSurface);
+        apiStatus.textContent = "DOM fallback";
+        apiStatus.classList.add("is-fallback");
     }
-    const screenPoint = canvasPointFromEvent(event);
-    const worldPoint = screenToWorld(screenPoint);
-    const hitEntity = [...state.entities]
-        .reverse()
-        .find((entity) => isEntityHit(entity, worldPoint));
-    if (hitEntity) {
-        if (hitEntity.id !== "root")
-            selectEntity(hitEntity.id);
-        return;
+    else {
+        state.apiMode = "html-in-canvas";
+        apiStatus.textContent = "HTML-in-Canvas active";
+        apiStatus.classList.add("is-live");
+        canvas.onpaint = render;
     }
-    state.isPanning = true;
-    state.didPan = false;
-    state.panStartX = screenPoint.x;
-    state.panStartY = screenPoint.y;
-    state.panStartCameraX = state.cameraX;
-    state.panStartCameraY = state.cameraY;
-    canvas.classList.add("is-panning");
-    canvas.setPointerCapture?.(event.pointerId);
-});
-canvas.addEventListener("pointermove", (event) => {
-    if (!state.isPanning) {
-        return;
-    }
-    const point = canvasPointFromEvent(event);
-    const dx = point.x - state.panStartX;
-    const dy = point.y - state.panStartY;
-    if (Math.hypot(dx, dy) > PAN_THRESHOLD) {
-        state.didPan = true;
-    }
-    state.cameraX = state.panStartCameraX + dx;
-    state.cameraY = state.panStartCameraY + dy;
-    scheduleRender();
-});
-canvas.addEventListener("pointerup", (event) => {
-    if (!state.isPanning) {
-        return;
-    }
-    state.isPanning = false;
-    canvas.classList.remove("is-panning");
-    canvas.releasePointerCapture?.(event.pointerId);
-    if (!state.didPan && state.selectedId) {
-        selectEntity(null);
-    }
-    else if (state.didPan) {
-        scheduleWorkspaceSave();
-    }
-});
-canvas.addEventListener("pointercancel", (event) => {
-    state.isPanning = false;
-    canvas.classList.remove("is-panning");
-    canvas.releasePointerCapture?.(event.pointerId);
-});
-canvas.addEventListener("wheel", (event) => {
-    if (event.target !== canvas) {
-        return;
-    }
-    event.preventDefault();
-    zoomAt(canvasPointFromEvent(event), Math.exp(-event.deltaY * ZOOM_WHEEL_FACTOR));
-    scheduleWorkspaceSave();
-}, { passive: false });
-form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    syncSelectedFromForm();
-    state.lastSaveAt = new Date();
-    layoutGraph();
-    void saveWorkspaceNow(true);
-    scheduleRender();
-});
-form.addEventListener("input", (event) => {
-    syncSelectedFromForm();
-    layoutGraph();
-    // Don't auto-save while editing the name of an agent — wait for blur + popup
-    const isAgentNameEdit = event.target === fields.name && selectedEntity()?.kind === "agent";
-    if (!isAgentNameEdit) {
-        scheduleWorkspaceSave();
-    }
-    scheduleRender();
-});
-closePanelButton.addEventListener("click", () => {
-    selectEntity(null);
-});
-deleteNodeButton.addEventListener("click", (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const selectedId = state.selectedId;
-    const selected = selectedId ? entityById(selectedId) : null;
-    if (!selected || isProtectedEntity(selectedId)) {
-        return;
-    }
-    openDeleteConfirmation(selected);
-});
-cancelDeleteButton.addEventListener("click", closeDeleteConfirmation);
-deleteConfirmOverlay.addEventListener("click", (event) => {
-    if (event.target === deleteConfirmOverlay) {
-        closeDeleteConfirmation();
-    }
-});
-confirmDeleteButton.addEventListener("click", () => {
-    if (state.pendingDeleteId) {
-        performDelete(state.pendingDeleteId);
-    }
-    closeDeleteConfirmation();
-});
-testNodeButton.addEventListener("click", () => {
-    const selected = selectedEntity();
-    if (selected?.kind === "agent") {
-        openAgentRunDialog();
-        return;
-    }
-    void testSelectedLlmConnection();
-});
-loadModelsButton.addEventListener("click", () => {
-    void loadModelsForSelect();
-});
-fields.name.addEventListener("blur", () => {
-    const selected = selectedEntity();
-    if (!selected || selected.kind !== "agent")
-        return;
-    const newName = fields.name.value.trim();
-    if (!newName ||
-        !savedAgentLabel ||
-        !savedAgentFolder ||
-        newName === savedAgentLabel)
-        return;
-    const newFolder = workspaceFolderForProvider(newName);
-    if (newFolder === savedAgentFolder)
-        return; // slug identique, pas de renommage nécessaire
-    renameConfirmMessage.textContent = `Renommer le dossier "${savedAgentFolder}" en "${newFolder}" ?`;
-    renameConfirmOverlay.hidden = false;
-    cancelRenameButton.focus();
-});
-cancelRenameButton.addEventListener("click", () => {
-    renameConfirmOverlay.hidden = true;
-    const selected = selectedEntity();
-    if (selected && savedAgentLabel) {
-        selected.label = savedAgentLabel;
-        fields.name.value = savedAgentLabel;
+    resizeObserver = new ResizeObserver(([entry]) => {
+        const box = entry.devicePixelContentBoxSize && entry.devicePixelContentBoxSize[0];
+        const cssWidth = entry.contentRect.width;
+        const cssHeight = entry.contentRect.height;
+        state.dpr = box ? box.inlineSize / cssWidth : window.devicePixelRatio || 1;
+        canvas.width = box ? box.inlineSize : Math.floor(cssWidth * state.dpr);
+        canvas.height = box ? box.blockSize : Math.floor(cssHeight * state.dpr);
         layoutGraph();
+        resetView(false, !state.cameraX && !state.cameraY);
         scheduleRender();
-    }
-});
-confirmRenameButton.addEventListener("click", () => {
-    renameConfirmOverlay.hidden = true;
-    const selected = selectedEntity();
-    if (!selected || !savedAgentFolder)
-        return;
-    // Remettre l'ancien chemin pour que le backend sache quoi renommer
-    selected.config.workspaceFolder = savedAgentFolder;
-    fields.workspaceFolder.value = savedAgentFolder;
-    const newName = fields.name.value.trim();
-    if (newName)
-        savedAgentLabel = newName;
-    savedAgentFolder = workspaceFolderForProvider(newName);
-    scheduleWorkspaceSave();
-});
-fields.model.addEventListener("change", () => {
-    testNodeButton.disabled = !fields.model.value;
-    const selected = selectedEntity();
-    if (selected) {
-        selected.config.model = fields.model.value;
-    }
-});
-cancelAgentRunButton.addEventListener("click", () => {
-    closeAgentRunDialog();
-});
-executeAgentRunButton.addEventListener("click", () => {
-    void executeAgentRunFromDialog();
-});
-agentRunOverlay.addEventListener("click", (event) => {
-    if (event.target === agentRunOverlay) {
+    });
+    resizeObserver.observe(canvas, { box: "device-pixel-content-box" });
+    isolatePanelEvents();
+    isolateConfirmEvents();
+    addButton.addEventListener("click", () => {
+        addContextualNode();
+    });
+    fitButton.addEventListener("click", () => {
+        layoutGraph();
+        resetView(true, true);
+        scheduleWorkspaceSave();
+        scheduleRender();
+    });
+    canvas.addEventListener("pointerdown", (event) => {
+        if (event.target !== canvas) {
+            return;
+        }
+        const screenPoint = canvasPointFromEvent(event);
+        const worldPoint = screenToWorld(screenPoint);
+        const hitEntity = [...state.entities]
+            .reverse()
+            .find((entity) => isEntityHit(entity, worldPoint));
+        if (hitEntity) {
+            if (hitEntity.id !== "root")
+                selectEntity(hitEntity.id);
+            return;
+        }
+        state.isPanning = true;
+        state.didPan = false;
+        state.panStartX = screenPoint.x;
+        state.panStartY = screenPoint.y;
+        state.panStartCameraX = state.cameraX;
+        state.panStartCameraY = state.cameraY;
+        canvas.classList.add("is-panning");
+        canvas.setPointerCapture?.(event.pointerId);
+    });
+    canvas.addEventListener("pointermove", (event) => {
+        if (!state.isPanning) {
+            return;
+        }
+        const point = canvasPointFromEvent(event);
+        const dx = point.x - state.panStartX;
+        const dy = point.y - state.panStartY;
+        if (Math.hypot(dx, dy) > PAN_THRESHOLD) {
+            state.didPan = true;
+        }
+        state.cameraX = state.panStartCameraX + dx;
+        state.cameraY = state.panStartCameraY + dy;
+        scheduleRender();
+    });
+    canvas.addEventListener("pointerup", (event) => {
+        if (!state.isPanning) {
+            return;
+        }
+        state.isPanning = false;
+        canvas.classList.remove("is-panning");
+        canvas.releasePointerCapture?.(event.pointerId);
+        if (!state.didPan && state.selectedId) {
+            selectEntity(null);
+        }
+        else if (state.didPan) {
+            scheduleWorkspaceSave();
+        }
+    });
+    canvas.addEventListener("pointercancel", (event) => {
+        state.isPanning = false;
+        canvas.classList.remove("is-panning");
+        canvas.releasePointerCapture?.(event.pointerId);
+    });
+    canvas.addEventListener("wheel", (event) => {
+        if (event.target !== canvas) {
+            return;
+        }
+        event.preventDefault();
+        zoomAt(canvasPointFromEvent(event), Math.exp(-event.deltaY * ZOOM_WHEEL_FACTOR));
+        scheduleWorkspaceSave();
+    }, { passive: false });
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        syncSelectedFromForm();
+        state.lastSaveAt = new Date();
+        layoutGraph();
+        void saveWorkspaceNow(true);
+        scheduleRender();
+    });
+    form.addEventListener("input", (event) => {
+        syncSelectedFromForm();
+        layoutGraph();
+        const isAgentNameEdit = event.target === fields.name && selectedEntity()?.kind === "agent";
+        if (!isAgentNameEdit) {
+            scheduleWorkspaceSave();
+        }
+        scheduleRender();
+    });
+    closePanelButton.addEventListener("click", () => {
+        selectEntity(null);
+    });
+    deleteNodeButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const selectedId = state.selectedId;
+        const selected = selectedId ? entityById(selectedId) : null;
+        if (!selected || isProtectedEntity(selectedId)) {
+            return;
+        }
+        openDeleteConfirmation(selected);
+    });
+    cancelDeleteButton.addEventListener("click", closeDeleteConfirmation);
+    deleteConfirmOverlay.addEventListener("click", (event) => {
+        if (event.target === deleteConfirmOverlay) {
+            closeDeleteConfirmation();
+        }
+    });
+    confirmDeleteButton.addEventListener("click", () => {
+        if (state.pendingDeleteId) {
+            performDelete(state.pendingDeleteId);
+        }
+        closeDeleteConfirmation();
+    });
+    testNodeButton.addEventListener("click", () => {
+        const selected = selectedEntity();
+        if (selected?.kind === "agent") {
+            openAgentRunDialog();
+            return;
+        }
+        void testSelectedLlmConnection();
+    });
+    loadModelsButton.addEventListener("click", () => {
+        void loadModelsForSelect();
+    });
+    fields.name.addEventListener("blur", () => {
+        const selected = selectedEntity();
+        if (!selected || selected.kind !== "agent")
+            return;
+        const newName = fields.name.value.trim();
+        if (!newName ||
+            !savedAgentLabel ||
+            !savedAgentFolder ||
+            newName === savedAgentLabel)
+            return;
+        const newFolder = workspaceFolderForProvider(newName);
+        if (newFolder === savedAgentFolder)
+            return;
+        renameConfirmMessage.textContent = `Renommer le dossier "${savedAgentFolder}" en "${newFolder}" ?`;
+        renameConfirmOverlay.hidden = false;
+        cancelRenameButton.focus();
+    });
+    cancelRenameButton.addEventListener("click", () => {
+        renameConfirmOverlay.hidden = true;
+        const selected = selectedEntity();
+        if (selected && savedAgentLabel) {
+            selected.label = savedAgentLabel;
+            fields.name.value = savedAgentLabel;
+            layoutGraph();
+            scheduleRender();
+        }
+    });
+    confirmRenameButton.addEventListener("click", () => {
+        renameConfirmOverlay.hidden = true;
+        const selected = selectedEntity();
+        if (!selected || !savedAgentFolder)
+            return;
+        selected.config.workspaceFolder = savedAgentFolder;
+        fields.workspaceFolder.value = savedAgentFolder;
+        const newName = fields.name.value.trim();
+        if (newName)
+            savedAgentLabel = newName;
+        savedAgentFolder = workspaceFolderForProvider(newName);
+        scheduleWorkspaceSave();
+    });
+    fields.model.addEventListener("change", () => {
+        testNodeButton.disabled = !fields.model.value;
+        const selected = selectedEntity();
+        if (selected) {
+            selected.config.model = fields.model.value;
+        }
+    });
+    cancelAgentRunButton.addEventListener("click", () => {
         closeAgentRunDialog();
-    }
-});
-void initializeWorkspace();
+    });
+    executeAgentRunButton.addEventListener("click", () => {
+        void executeAgentRunFromDialog();
+    });
+    agentRunOverlay.addEventListener("click", (event) => {
+        if (event.target === agentRunOverlay) {
+            closeAgentRunDialog();
+        }
+    });
+    void initializeWorkspace();
+    return () => {
+        resizeObserver.disconnect();
+        if (state?.saveTimerId)
+            clearTimeout(state.saveTimerId);
+        if (toastTimerId)
+            clearTimeout(toastTimerId);
+    };
+}
 function isolatePanelEvents() {
     for (const type of PANEL_EVENT_TYPES) {
         configSurface.addEventListener(type, stopPanelEventPropagation);
