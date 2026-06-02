@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-02T13:16:28.539Z",
+  "updatedAt": "2026-06-02T15:23:42.643Z",
   "entities": [
     {
       "id": "root",
@@ -55,7 +55,7 @@
       "config": {
         "endpoint": "http://localhost:11434",
         "token": "",
-        "model": "devstral-small-2:latest",
+        "model": "qwen3.6:latest",
         "timeout": 300,
         "systemPrompt": "",
         "requiresUserInput": false,
@@ -76,7 +76,7 @@
       "config": {
         "endpoint": "",
         "token": "",
-        "model": "devstral-small-2:latest",
+        "model": "qwen3.6:latest",
         "timeout": 300,
         "systemPrompt": "You are a documentation assistant. \nStart by calling list_adrs_below_accuracy to retrieve degraded ADRs.\nThen give a concise summary in French: total count, the 3 most critical ADRs with their title and accuracy percentage, and a one-line recommendation for each.",
         "requiresUserInput": false,
@@ -97,7 +97,7 @@
       "config": {
         "endpoint": "",
         "token": "",
-        "model": "devstral-small-2:latest",
+        "model": "qwen3.6:latest",
         "timeout": 300,
         "systemPrompt": "You are a diagram generator for a software documentation project.\nWhen given a document ID, call read_document to retrieve its content.\nThen generate one or more relevant Mermaid diagrams that best represent the structure, flows, or relationships described in the document.\nYour final answer must contain at least one fenced code block tagged exactly with mermaid.\nDo not explain what you will do. Do not stop after an introduction. Produce the diagram output directly.\nAdd a short title before each diagram explaining what it represents.\nIf you cannot generate a Mermaid diagram, return an explicit error explaining why.",
         "requiresUserInput": true,
@@ -150,8 +150,8 @@
       }
     },
     {
-      "id": "provider-mpwnspnr",
-      "label": "LLM Provider 3",
+      "id": "provider-mpwryxsk",
+      "label": "Qwen 3.6",
       "kind": "llm",
       "parentId": "root",
       "x": -256,
@@ -160,7 +160,7 @@
       "config": {
         "endpoint": "http://localhost:11434",
         "token": "",
-        "model": "devstral-small-2:latest",
+        "model": "qwen3.6:latest",
         "timeout": 180,
         "systemPrompt": "",
         "requiresUserInput": false,
@@ -169,11 +169,32 @@
         "description": "Routes model calls and hosts the agents assigned to this provider.",
         "workspaceFolder": ""
       }
+    },
+    {
+      "id": "agent-mpwsdylm",
+      "label": "Agent 1",
+      "kind": "agent",
+      "parentId": "provider-mpwryxsk",
+      "x": -468.02272433866153,
+      "y": 5.731625312895658e-14,
+      "angle": 3.141592653589793,
+      "config": {
+        "endpoint": "",
+        "token": "",
+        "model": "qwen3.6:latest",
+        "timeout": 180,
+        "systemPrompt": "calculate the expression",
+        "requiresUserInput": true,
+        "userInputDescription": "Type a calculation, for instance\n2 + 3",
+        "expectedOutputMarker": "",
+        "description": "Runs focused automation against documentation, source, or quality signals.",
+        "workspaceFolder": "AI/WORKSPACE/agent_1"
+      }
     }
   ],
   "camera": {
-    "x": 795.4590893465393,
-    "y": 324.92929221925107,
-    "zoom": 0.8381881533054557
+    "x": 428,
+    "y": 383.0180631560263,
+    "zoom": 0.7943627660637083
   }
 }

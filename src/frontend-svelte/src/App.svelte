@@ -5,6 +5,7 @@
   import Workspace from "./routes/Workspace.svelte";
   import Files from "./routes/Files.svelte";
   import AiContext from "./routes/AiContext.svelte";
+  import Agents from "./routes/Agents.svelte";
 
   let path = $state(window.location.pathname);
 
@@ -36,6 +37,8 @@
   <Files />
 {:else if path === "/context"}
   <AiContext {navigate} />
+{:else if path === "/agents"}
+  <Agents />
 {:else}
   <p style="padding:2rem">Route "{path}" — not yet migrated.</p>
 {/if}

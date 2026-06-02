@@ -12,6 +12,7 @@
     [
       ...nav,
       { label: "Workspace", href: "/workspace" },
+      { label: "Agents", href: "/agents" },
       { label: "Blueprint", href: "/blueprint" },
       { label: "Files", href: "/files" },
       { label: "AI Context", href: "/context" },
