@@ -6,6 +6,7 @@
   import Annotations from "./Annotations.svelte";
   import AccuracyGauge from "./AccuracyGauge.svelte";
   import MetadataModal from "./MetadataModal.svelte";
+  import SnippetsModal from "./SnippetsModal.svelte";
   import ConfirmDialog from "../ConfirmDialog.svelte";
   import { metadata } from "./metadata.svelte";
   import { getDocStatus, replaceStatus, isWorklogDocument } from "./docStatus";
@@ -25,6 +26,7 @@
   let annotations = $state<Annotations>(null!);
   let confirmDialog = $state<ConfirmDialog>(null!);
   let metadataOpen = $state(false);
+  let snippetsOpen = $state(false);
   let localSearchMount = $state<HTMLElement>(null!);
   let searchMatches = $state<SearchMatch[]>([]);
   let lastWiredId = "";
@@ -335,6 +337,7 @@
           <div class="flex items-center gap-2">
           {#if saveMsg}<span class="text-xs {saveMsg.cls}">{saveMsg.text}</span>{/if}
           <button onclick={cancelEdit} class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t("common.cancel")}</button>
+          <button onclick={() => (snippetsOpen = true)} title={t("doc.snippets")} class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t("doc.snippets_btn")}</button>
           <button onclick={save} class="text-sm px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">{t("common.save")}</button>
           </div>
         {:else}
@@ -416,6 +419,7 @@
 <Annotations bind:this={annotations} {contentEl} docId={doc.id} />
 
 <MetadataModal open={metadataOpen} docId={doc.id} content={doc.content} onclose={() => (metadataOpen = false)} />
+<SnippetsModal open={snippetsOpen} editor={editorEl} onclose={() => (snippetsOpen = false)} />
 <ConfirmDialog bind:this={confirmDialog} />
 
 <!-- Image paste modal -->

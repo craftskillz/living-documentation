@@ -1,0 +1,161 @@
+// Snippets — Markdown parsers (ported from snippet-parsers.js).
+
+import { parseTableSnippetMarkdown } from "./table";
+import { parseTreeSnippetMarkdown } from "./tree";
+
+function ldStripCodeBlockIndent(code: string, indent: string): string {
+  if (!indent) return code;
+  const escapedIndent = indent.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return code.replace(new RegExp("^" + escapedIndent, "gm"), "");
+}
+
+export function ldParseCollapsibleSnippetMarkdown(markdown: string): {
+  summary?: string;
+  body: string;
+} {
+  const summaryMatch = markdown.match(/<summary>([\s\S]*?)<\/summary>/i);
+  const bodyMatch = markdown.match(
+    /<details\b[^>]*>[\s\S]*?<\/summary>\s*\n?([\s\S]*?)\s*<\/details>\s*$/i,
+  );
+  return {
+    summary: summaryMatch ? summaryMatch[1].trim() : undefined,
+    body: bodyMatch ? bodyMatch[1].trim() : "",
+  };
+}
+
+export function ldParseLinkSnippetMarkdown(markdown: string): {
+  text?: string;
+  url?: string;
+} {
+  const match = markdown.match(/^\[([\s\S]*?)\]\(([\s\S]*?)\)$/);
+  return match ? { text: match[1], url: match[2] } : {};
+}
+
+export function ldParseDocLinkSnippetMarkdown(markdown: string): {
+  text?: string;
+  docId?: string;
+} {
+  const match = markdown.match(/^\[([\s\S]*?)\]\(\?doc=([\s\S]*?)\)$/);
+  return match ? { text: match[1], docId: decodeURIComponent(match[2]) } : {};
+}
+
+export function ldParseAnchorLinkSnippetMarkdown(markdown: string): {
+  text?: string;
+  anchor?: string;
+} {
+  const match = markdown.match(/^\[([\s\S]*?)\]\(#([\s\S]*?)\)$/);
+  return match ? { text: match[1], anchor: match[2] } : {};
+}
+
+export function ldParseAnchorDocLinkSnippetMarkdown(markdown: string): {
+  text?: string;
+  docId?: string;
+  anchor?: string;
+} {
+  const match = markdown.match(/^\[([\s\S]*?)\]\(\?doc=([\s\S]*?)#([\s\S]*?)\)$/);
+  return match
+    ? { text: match[1], docId: decodeURIComponent(match[2]), anchor: match[3] }
+    : {};
+}
+
+export function ldParseCodeBlockSnippetMarkdown(
+  markdown: string,
+  options: { inlineIndent?: string } = {},
+): { lang: string; code: string } {
+  const match = markdown.match(/^```[ \t]*([^\n]*)\n([\s\S]*?)\n[ \t]*```$/);
+  if (!match) return { lang: "", code: "" };
+  return {
+    lang: match[1].trim(),
+    code: ldStripCodeBlockIndent(match[2], options.inlineIndent || ""),
+  };
+}
+
+export function ldParseBlockquoteSnippetMarkdown(markdown: string): { content: string } {
+  return {
+    content: markdown
+      .split("\n")
+      .map((line) => line.replace(/^>\s?/, ""))
+      .join("\n"),
+  };
+}
+
+export function ldParseImageSnippetMarkdown(markdown: string): {
+  alt?: string;
+  url?: string;
+} {
+  const match = markdown.match(/^!\[([\s\S]*?)\]\(([\s\S]*?)\)$/);
+  return match ? { alt: match[1], url: match[2] } : {};
+}
+
+export function ldParseHeadingSnippetMarkdown(
+  type: string,
+  markdown: string,
+): { text: string } {
+  const level = Number(type.slice(-1));
+  const match = markdown.match(new RegExp(`^#{${level}}\\s+(.+)$`));
+  return { text: match ? match[1].trim() : "" };
+}
+
+export function ldParseColoredTextSnippetMarkdown(markdown: string): {
+  color?: string;
+  content?: string;
+} {
+  const match = markdown.match(/^<span\s[^>]*color:([^;>"]+)[^>]*>([\s\S]*)<\/span>$/);
+  return match ? { color: match[1].trim(), content: match[2] } : {};
+}
+
+export function ldParseColoredSectionSnippetMarkdown(markdown: string): {
+  borderColor?: string;
+  content?: string;
+} {
+  const borderMatch = markdown.match(/border-left:[^;]*solid\s+(#[0-9a-fA-F]{6})/);
+  const contentMatch = markdown.match(/^<div[^>]*>\n\n([\s\S]*?)\n\n<\/div>$/);
+  return {
+    borderColor: borderMatch ? borderMatch[1] : undefined,
+    content: contentMatch ? contentMatch[1] : undefined,
+  };
+}
+
+export function ldParseSnippetMarkdown(
+  type: string,
+  markdown: string,
+  options: { inlineIndent?: string } = {},
+): any {
+  const text = (markdown || "").trim();
+  switch (type) {
+    case "collapsible":
+      return ldParseCollapsibleSnippetMarkdown(text);
+    case "link":
+      return ldParseLinkSnippetMarkdown(text);
+    case "doc-link":
+      return ldParseDocLinkSnippetMarkdown(text);
+    case "anchor-link":
+      return ldParseAnchorLinkSnippetMarkdown(text);
+    case "anchor-doc-link":
+      return ldParseAnchorDocLinkSnippetMarkdown(text);
+    case "ordered-list":
+    case "unordered-list":
+      return { content: text };
+    case "code-block":
+      return ldParseCodeBlockSnippetMarkdown(text, options);
+    case "blockquote":
+      return ldParseBlockquoteSnippetMarkdown(text);
+    case "image":
+      return ldParseImageSnippetMarkdown(text);
+    case "heading-1":
+    case "heading-2":
+    case "heading-3":
+    case "heading-4":
+      return ldParseHeadingSnippetMarkdown(type, text);
+    case "table":
+      return parseTableSnippetMarkdown(text);
+    case "tree":
+      return parseTreeSnippetMarkdown(text);
+    case "colored-text":
+      return ldParseColoredTextSnippetMarkdown(text);
+    case "colored-section":
+      return ldParseColoredSectionSnippetMarkdown(text);
+    default:
+      return {};
+  }
+}

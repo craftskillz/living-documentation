@@ -1,30 +1,16 @@
-
-
 <!-- table-border: bordered -->
 <!-- table-color: info -->
-| Name    | Age |
-| ------- | --- |
-| Youssef | 42  |
-| Youssef | 42  |
-| Youssef | 42  |
-| Youssef | 42  |
+| En-tête 1 | En-tête 2 | En-tête 3 |
+| --------- | --------- | --------- |
+| a         | b         | c         |
+| d         | e         | f         |
 
-- Utilisez **Chrome** ou **Edge** pour la meilleure qualité d'export PDF (le moteur de rendu produit des résultats plus fidèles que Safari ou Firefox)
-- Dans la boîte de dialogue d'impression, activez **"Graphiques d'arrière-plan"** pour conserver les couleurs des blocs de code et des badges
-- Format recommandé : **A4**, marges normales
+[![The Living Documentation Tool](/images/the_living_documentation_tool.png)](/diagram?id=d1775684671412)
 
-1. a
-   toto
-2. b
-   titi
-3. c
+<span style="color:#3b82f6;">Votre texte…</span>
 
-- a
-  toto
-- b
-titi
-- c
+[📎 top-arbres.png](/files/20260603003037_ywki_top-arbres.png)
 
-[📎 top-arbres.png](/files/20260602153642_9hlx_top-arbres.png)
+[Word Cloud](?doc=2_guide%252F2026_04_09_13_00_%255BWORDCLOUD%255D_word_cloud)
 
-[📎 1776118560181-istockphoto-866406672-640_adpp_is.mp4](/files/20260602161432_84z0_1776118560181-istockphoto-866406672-640_adpp_is.mp4)
+[qqqq](?doc=%252FUsers%252Fymedaghri%252FDocuments%252FRepositories%252FMedaghri-Alaoui-Repositories%252F09_My_Published_Projects%252Fliving-documentation%252FREADME#living-documentation)
