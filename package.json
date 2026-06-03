@@ -14,14 +14,13 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc && tsc -p src/frontend/workspace/tsconfig.json && vite build --config src/frontend/blueprint/vite.config.ts && ts-node scripts/copy-assets.ts && chmod +x dist/bin/cli.js",
+    "build": "tsc && vite build --config src/frontend-svelte/vite.config.ts && ts-node scripts/copy-assets.ts && chmod +x dist/bin/cli.js",
     "dev": "node scripts/dev.js",
     "start": "node dist/bin/cli.js",
     "test": "npm run test:e2e",
     "test:e2e": "npm run build && playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:coverage": "rm -rf coverage && npm run build && mkdir -p coverage/tmp && COVERAGE=1 NODE_V8_COVERAGE=coverage/tmp playwright test && c8 report",
-    "check:frontend": "node scripts/check-frontend-js.js",
     "setup-hooks": "git config core.hooksPath .githooks && echo '✓ Git hooks active (.githooks/pre-commit)'",
     "check:readme-sync": "./scripts/check-readme-sync.sh",
     "prepublishOnly": "npm run build"

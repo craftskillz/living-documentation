@@ -9,11 +9,11 @@
       await loadI18n(cfg.language || "en");
     } catch { /* fallback to keys */ }
   });
-  import "../../../frontend/blueprint/styles.css";
-  import BlueprintCanvas from "../../../frontend/blueprint/BlueprintCanvas.svelte";
-  import FileExplorer from "../../../frontend/blueprint/FileExplorer.svelte";
-  import AdrModal from "../../../frontend/blueprint/AdrModal.svelte";
-  import type { Box, BreadcrumbEntry } from "../../../frontend/blueprint/BlueprintCanvas.svelte";
+  import "../lib/blueprint/styles.css";
+  import BlueprintCanvas from "../lib/blueprint/BlueprintCanvas.svelte";
+  import FileExplorer from "../lib/blueprint/FileExplorer.svelte";
+  import AdrModal from "../lib/blueprint/AdrModal.svelte";
+  import type { Box, BreadcrumbEntry } from "../lib/blueprint/BlueprintCanvas.svelte";
 
   let breadcrumb = $state<BreadcrumbEntry[]>([]);
   let activeExplorerPath = $state<string | null>(null);

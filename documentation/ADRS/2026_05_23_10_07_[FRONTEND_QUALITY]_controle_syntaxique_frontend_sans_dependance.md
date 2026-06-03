@@ -1,11 +1,14 @@
 ---
 **date:** 2026-05-23
-**status:** Accepted
-**description:** Ajout d'un script npm `check:frontend` qui execute `node --check` sur tous les fichiers `src/frontend/**/*.js` via `scripts/check-frontend-js.js`, sans introduire ESLint ni nouvelle dependance.
-**tags:** frontend, quality, javascript, syntax-check, node-check, npm-script, no-bundler, check-frontend, scripts
+**status:** SuperSeeded
+**description:** [SuperSeeded par la migration Svelte] Script npm `check:frontend` (`node --check` sur `src/frontend/**/*.js`) — supprime en meme temps que le frontend vanilla.
+**tags:** frontend, quality, javascript, syntax-check, node-check, npm-script, superseeded, check-frontend, scripts
 ---
 
-# Controle syntaxique frontend sans dependance
+> **SuperSeeded** par [Migration du frontend vers une application Svelte unifiee](?doc=ADRS%252F2026_06_03_10_53_%255BFRONTEND%255D_migration_du_frontend_vers_une_application_svelte_unifiee).
+> Le frontend vanilla `src/frontend/` et le script `scripts/check-frontend-js.js` (commande npm `check:frontend`) ont ete supprimes lors de la migration vers l'application Svelte unifiee. Le typage est desormais assure par `svelte-check` / `tsc` et le build Vite ; ce controle syntaxique dedie n'a plus d'objet.
+
+# Controle syntaxique frontend sans dependance (historique)
 
 ## Contexte
 

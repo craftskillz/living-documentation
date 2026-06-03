@@ -24,20 +24,20 @@ L'utilisateur lance le CLI avec un dossier de documentation relatif, par exemple
 
 ## Stack technique
 
-- **Langage principal** : TypeScript côté serveur/CLI, JavaScript navigateur côté frontend.
+- **Langage principal** : TypeScript côté serveur/CLI ; côté frontend, application Svelte 5 (TypeScript + composants `.svelte`).
 - **Runtime** : Node.js >= 18.
-- **Framework frontend** : HTML statique + scripts JavaScript modulaires, sans framework SPA.
+- **Framework frontend** : application **Vite + Svelte 5 (runes)** unifiée sous `src/frontend-svelte/`, routée par `pathname` dans `App.svelte`, regroupant les 9 écrans (Home, Workspace, Admin, Blueprint, Agents, Files, AI Context, Diagram, Shape-editor). Voir l'ADR `[FRONTEND] migration du frontend vers une application svelte unifiee`.
 - **Framework backend / serveur** : Express 5.
 - **Base de données / stockage** : système de fichiers local ; `.living-doc.json`, `.metadata.json`, `.diagrams.json`, `.annotations.json`, `.shape-libraries.json` selon les fonctionnalités.
-- **API externes / intégrations** : MCP Streamable HTTP sur `/mcp` via `@modelcontextprotocol/sdk`; assets CDN côté frontend pour Tailwind, highlight.js, Font Awesome et vis-network selon les pages.
+- **API externes / intégrations** : MCP Streamable HTTP sur `/mcp` via `@modelcontextprotocol/sdk`; assets CDN côté frontend pour Tailwind, highlight.js, Font Awesome, mermaid et vis-network selon les routes.
 - **Authentification / autorisation** : aucune authentification applicative ; outil local-first, avec protections de path traversal côté routes.
-- **Styles / design system** : Tailwind via CDN avec plugin Typography ; thème clair/sombre piloté par config/localStorage ; syntax highlighting toujours sombre.
-- **Gestion d'état frontend** : état mutable par modules plain JS (`src/frontend/state.js`, `src/frontend/diagram/state.js`) et persistance navigateur ciblée via `localStorage`.
-- **Build / bundler** : pas de bundler frontend ; `tsc` compile le serveur/CLI puis `scripts/copy-assets.ts` copie `src/frontend/`, `starter-doc/` et `starter-doc-fr/` vers `dist/`.
+- **Styles / design system** : Tailwind via CDN avec plugin Typography ; CSS partagée `src/frontend-svelte/src/styles/app.css` ; thème clair/sombre piloté par config/localStorage (la Home porte le dark mode) ; syntax highlighting toujours sombre. ATTENTION : toute CSS importée par un composant Svelte est bundlée **globalement** par Vite — scoper les sélecteurs génériques (`[data-blueprint]`, `.ld-shape-editor`).
+- **Gestion d'état frontend** : runes Svelte (`$state`) — stores réactifs (ex. `lib/home/state.svelte.ts`, `lib/i18n.svelte.ts`) ; les moteurs impératifs réutilisés (Workspace canvas, Diagram vis-network) gardent un état mutable (`lib/diagram/state.js`) ; persistance ciblée via `localStorage`.
+- **Build / bundler** : `tsc` compile le serveur/CLI ; **Vite** build le frontend (`src/frontend-svelte/vite.config.ts` → `dist/frontend-svelte/`) ; `scripts/copy-assets.ts` ne copie plus que `starter-doc/` et `starter-doc-fr/` vers `dist/`.
 - **Package manager** : npm, avec `package-lock.json`.
-- **Tests** : Playwright comme runner unique API/E2E/unit ; les tests serveur lancent un vrai CLI isolé sur port libre.
+- **Tests** : Playwright comme runner unique API/E2E/unit ; les tests serveur lancent un vrai CLI isolé sur port libre. NOTE : les specs E2E ciblant l'ancien frontend vanilla sont à réécrire pour l'UI Svelte.
 - **Coverage** : c8 + couverture V8 native, agrégée depuis les processus CLI/serveur lancés par Playwright.
-- **Qualité frontend** : `npm run check:frontend` exécute un contrôle syntaxique conservateur (`node --check`) sur `src/frontend/**/*.js`, sans bundler ni transpilation.
+- **Qualité frontend** : typage via `svelte-check` / `tsc` et build Vite (le script legacy `check:frontend` a été supprimé avec le frontend vanilla).
 - **Lint / formatage** : aucun script ESLint/format dédié documenté dans `package.json` à ce jour.
 - **Déploiement / publication** : package npm `living-ai-documentation`; `prepublishOnly` lance le build.
 
@@ -53,18 +53,20 @@ src/lib/hash.ts                    <- hash SHA-256 des fichiers source
 src/routes/*.ts                    <- routes REST documents, config, browse, files, diagrams, metadata, context, export...
 src/mcp/server.ts                  <- serveur MCP Streamable HTTP exposé sur `/mcp`
 src/mcp/tools/*.ts                 <- tools MCP documents, diagrams, source, metadata
-src/frontend/index.html            <- shell viewer Markdown
-src/frontend/admin.html            <- configuration projet
-src/frontend/context.html          <- contexte IA, règles, instructions et explorateur MCP
-src/frontend/diagram.html          <- shell éditeur de diagrammes
-src/frontend/shape-editor.html     <- éditeur de bibliothèques de formes personnalisées
-src/frontend/*.js                  <- modules frontend viewer/admin/context/search/metadata/export encore à plat
-src/frontend/snippets/*.js         <- domaine snippets : détection, inline-edit, tables, listes, builders, parsers
-src/frontend/modals/*.js           <- modales réutilisables ou spécialisées du viewer
-src/frontend/diagram/*.js          <- modules spécialisés de l'éditeur vis-network
-src/frontend/i18n/en.json          <- catalogue anglais obligatoire pour les libellés UI
-src/frontend/i18n/fr.json          <- catalogue français obligatoire pour les libellés UI
-scripts/copy-assets.ts             <- copie des assets non compilés vers `dist/`
+src/frontend-svelte/index.html     <- shell HTML de l'app Vite (charge Tailwind, FA, mermaid, hljs, vis, wordcloud2)
+src/frontend-svelte/vite.config.ts <- config Vite (plugin svelte, outDir dist/frontend-svelte, proxy /api,/mcp,/images,/files)
+src/frontend-svelte/src/App.svelte <- routeur par pathname → composants de route
+src/frontend-svelte/src/routes/*.svelte        <- une route par écran (Home, Workspace, Admin, Blueprint, Agents, Files, AiContext, Diagram, ShapeEditor)
+src/frontend-svelte/src/lib/Topbar.svelte      <- topbar partagée (nav + slots children/actions)
+src/frontend-svelte/src/lib/i18n.svelte.ts     <- store i18n runes (loadI18n + t), sert /i18n/*.json
+src/frontend-svelte/src/lib/home/*             <- domaine viewer Home : sidebar, DocViewer, annotations, metadata, recherche locale, wordcloud, modals
+src/frontend-svelte/src/lib/home/snippets/*    <- snippets (builders, parsers, detect, table, tree, listMarkdown, pickerData)
+src/frontend-svelte/src/lib/blueprint/*        <- composants Blueprint (canvas Prezi)
+src/frontend-svelte/src/lib/workspace/*        <- moteur Workspace (app.ts HTML-in-canvas + persistence)
+src/frontend-svelte/src/lib/diagram/*          <- 30 modules ES de l'éditeur vis-network + main.js (initDiagram) + shapeEditor
+src/frontend-svelte/public/i18n/en.json        <- catalogue anglais obligatoire pour les libellés UI
+src/frontend-svelte/public/i18n/fr.json        <- catalogue français obligatoire pour les libellés UI
+scripts/copy-assets.ts             <- copie des starter-docs vers `dist/` (le frontend est buildé par Vite)
 starter-doc/                       <- starter de documentation anglais empaqueté
 starter-doc-fr/                    <- starter de documentation français empaqueté
 tests/api/*.spec.ts                <- tests API et CLI via Playwright
@@ -97,11 +99,11 @@ memory/                           <- mémoire projet locale indexée par `memory
 
 - **Documentation comme source de vérité** : pour les diagrammes MCP, lire ou créer les documents source-of-truth avant de dessiner ; ne pas inventer d'acteurs ou relations absents des documents.
 - **MCP avant édition manuelle** : quand le MCP est disponible, utiliser `read_document`, `update_document`, `create_document`, `add_metadata` et `refresh_metadata` pour maintenir la documentation.
-- **Internationalisation obligatoire** : tout texte visible utilisateur doit exister dans `src/frontend/i18n/en.json` et `src/frontend/i18n/fr.json`; HTML via `data-i18n*`, JS dynamique via `window.t('key')`.
-- **Frontend sans bundler** : les scripts sont chargés directement par les HTML ; tenir compte de l'ordre de chargement et éviter les imports impossibles côté navigateur. Regrouper les sous-domaines stables en feature folders (`snippets/`, `modals/`, `diagram/`) tout en conservant des chemins de scripts explicites dans les pages HTML.
-- **Diagram editor modulaire** : modifier le module responsable sous `src/frontend/diagram/`; `vis` doit rester le seul global CDN de l'éditeur.
+- **Internationalisation obligatoire** : tout texte visible utilisateur doit exister dans `src/frontend-svelte/public/i18n/en.json` et `fr.json`; dans les composants Svelte, utiliser `{t('key')}` (import `{ t, loadI18n } from "../lib/i18n.svelte"`), pas de `data-i18n`/`window.t`. Chaque route appelle `loadI18n(lang)` au montage.
+- **Frontend bundlé par Vite** : les écrans sont des routes/composants Svelte ; ajouter une route = nouveau `.svelte` dans `routes/` + branche dans `App.svelte`. Les moteurs impératifs réutilisés (Workspace, Diagram) câblent le DOM par `getElementById` → conserver les `id` du markup et exposer un `init*()` appelé dans `onMount` (Diagram importe `main.js` dynamiquement car il touche le DOM au chargement).
+- **Diagram editor modulaire** : modifier le module responsable sous `src/frontend-svelte/src/lib/diagram/`; `vis` (vis-network) doit rester le seul global CDN de l'éditeur ; conteneur réseau = `#vis-canvas`.
 - **vis-network fragile** : avant de toucher au rendu diagramme, vérifier les ADR et règles sur `ctxRenderer`, `getBoundingBox`, `refreshNeeded`, `_drawNodes` et `_canonicalOrder`.
-- **Confirmation destructive** : utiliser `window.showConfirm(...)` depuis `modals/confirm-modal.js` au lieu de `window.confirm()` pour les actions destructives côté frontend.
+- **Confirmation destructive** : utiliser le composant partagé `lib/ConfirmDialog.svelte` (`confirmDialog.show({...})`) plutôt que `window.confirm()` pour les actions destructives côté frontend.
 - **Chemins sûrs** : les routes qui lisent/écrivent des chemins utilisateur doivent résoudre puis vérifier que le chemin reste sous `docsFolder` ou `sourceRoot` selon le cas.
 - **Config portable** : ne pas persister de chemins absolus dans `.living-doc.json`; stocker en relatif POSIX.
 - **Tests de comportement** : privilégier les tests qui exercent le vrai CLI/serveur via Playwright et fixtures isolées ; les imports directs de `dist/` dans les specs ne doivent pas être la stratégie principale de coverage.

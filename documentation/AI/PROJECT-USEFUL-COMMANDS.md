@@ -33,7 +33,7 @@ Indices : `package-lock.json` est présent, les scripts officiels sont dans `pac
 
 | Commande | Effet | Notes |
 |---|---|---|
-| `npm run dev -- ./documentation` | Démarre le serveur en mode développement sur le dossier `documentation` | Utilise `nodemon` + `ts-node`; surveille `src`, `bin`, `.ts` et `.html`. Port par défaut 4321 sauf config/option. |
+| `npm run dev -- ./documentation` | Démarre le frontend Vite (port 5174) + le backend Express en mode dev | `scripts/dev.js` lance Vite (HMR frontend) et `nodemon` + `ts-node` (backend seul : surveille `src`/`bin` `.ts`, ignore `src/frontend-svelte`). Backend port 4321 ; **ouvrir l'UI sur http://localhost:5174**. Proxy Vite : `/api`,`/mcp`,`/images`,`/files` → 4321. |
 | `npm run dev -- ./example-doc` | Démarre le serveur de dev sur la documentation d'exemple | Utile pour vérifier une UX sans modifier la documentation projet. |
 | `npm run start -- ./documentation` | Lance le CLI compilé depuis `dist/bin/cli.js` | Nécessite `npm run build` avant si `dist/` n'est pas à jour. |
 | `node dist/bin/cli.js ./documentation --port 4321 --open` | Lance explicitement l'artefact buildé | Utile pour reproduire le comportement publié/npm. |
@@ -45,14 +45,14 @@ Indices : `package-lock.json` est présent, les scripts officiels sont dans `pac
 
 | Commande | Effet | Quand la lancer |
 |---|---|---|
-| `npm run build` | Compile TypeScript, copie les assets frontend/starters vers `dist/`, rend `dist/bin/cli.js` exécutable | Après changement TypeScript, frontend statique, starter doc ou script de build. |
-| `npm run check:frontend` | Contrôle la syntaxe de tous les scripts `src/frontend/**/*.js` via `node --check` | Après changement JavaScript frontend, surtout quand aucun test E2E ciblé ne couvre directement le fichier modifié. |
+| `npm run build` | `tsc` (serveur/CLI) + `vite build` (frontend → `dist/frontend-svelte/`) + copie des starter-docs + `chmod +x dist/bin/cli.js` | Après changement TypeScript, frontend Svelte, starter doc ou script de build. |
+| `npx vite build --config src/frontend-svelte/vite.config.ts` | Build/vérifie uniquement le frontend Svelte | Itération frontend rapide sans rebuilder le backend. |
 | `npm test` | Alias de `npm run test:e2e` | Vérification complète par défaut après changement de comportement. |
 | `npm run test:e2e` | Lance `npm run build` puis `playwright test` | Après changement API, CLI, frontend ou comportement utilisateur. |
 | `npm run test:e2e:ui` | Ouvre Playwright UI mode | Pour debug interactif, traces et replay. |
 | `npm run test:coverage` | Nettoie `coverage/`, build, lance Playwright avec `COVERAGE=1` et agrège via c8 | Pour vérifier la couverture serveur/CLI avant publication ou refactor significatif. |
 
-Il n'existe pas de script ESLint ou `format` dans `package.json` à ce jour. Ne pas annoncer `npm run lint` ou `npm run format` comme vérification disponible tant qu'ils ne sont pas ajoutés. `npm run check:frontend` est un contrôle syntaxique, pas un linter de style.
+Il n'existe pas de script ESLint ou `format` dans `package.json` à ce jour. Ne pas annoncer `npm run lint` ou `npm run format` comme vérification disponible tant qu'ils ne sont pas ajoutés. Le typage frontend est assuré par `svelte-check`/`tsc` et le build Vite (le script `check:frontend` a été supprimé avec le frontend vanilla).
 
 ## Tests ciblés
 

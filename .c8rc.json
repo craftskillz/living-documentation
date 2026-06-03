@@ -2,7 +2,7 @@
   "all": true,
   "include": ["dist/src/**", "dist/bin/**"],
   "exclude": [
-    "dist/src/frontend/**",
+    "dist/frontend-svelte/**",
     "**/*.d.ts",
     "**/*.map",
     "scripts/**"

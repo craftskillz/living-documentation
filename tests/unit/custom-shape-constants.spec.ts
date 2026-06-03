@@ -15,7 +15,7 @@ test('custom shape default size stays aligned between backend and frontend', () 
     'CUSTOM_SHAPE_DEFAULT_SIZE',
   );
   const frontend = readNumericConst(
-    'src/frontend/diagram/custom-shapes.js',
+    'src/frontend-svelte/src/lib/diagram/custom-shapes.js',
     'CUSTOM_SHAPE_DEFAULT_SIZE',
   );
 

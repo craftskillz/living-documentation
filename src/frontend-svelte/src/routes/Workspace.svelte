@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import Topbar from "../lib/Topbar.svelte";
   import { t, loadI18n } from "../lib/i18n.svelte";
-  import { initWorkspace } from "../../../frontend/workspace/app";
+  import { initWorkspace } from "../lib/workspace/app";
 
   let apiStatusText = $state("Detecting canvas API");
   let apiStatusClass = $state("");

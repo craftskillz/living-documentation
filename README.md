@@ -325,13 +325,33 @@ git clone https://github.com/craftskillz/living-documentation.git
 cd living-documentation
 npm install
 npm run setup-hooks                      # one-time: enable .githooks/ as core.hooksPath
-npm run dev -- ./documentation          # nodemon + ts-node, watches src + bin
-npm run build                            # tsc → dist/ + copy frontend assets
+npm run dev -- ./documentation          # Vite (UI on :5174, HMR) + Express backend (:4321)
+npm run build                            # tsc (server) + vite build (UI → dist/frontend-svelte)
 npm run test:e2e                         # Playwright end-to-end (~3 s, ~30 MCP specs)
 npm run test:coverage                    # c8 V8-native coverage
 ```
 
+In **dev**, open the UI on **http://localhost:5174** (Vite serves the Svelte app with HMR and proxies `/api`, `/mcp`, `/images`, `/files` to the Express backend on `:4321`).
+
 End-to-end tests use **Playwright**. Each test spawns a real CLI child process against a fresh fixture on a random port — no leaking state, runs in parallel. Server-side coverage via **c8** (V8 native, ~72% baseline overall, 83% on `src/routes` and `src/lib`).
+
+### Test the published package locally
+
+No need to publish a version. The CLI starts a **single Express server** that serves the pre-built Svelte UI **and** the API/MCP on one port — Vite (`:5174`) is dev-only and does not exist for end users.
+
+```bash
+# Run the exact production artifact, then open http://localhost:4321
+npm run build
+node dist/bin/cli.js ./documentation
+
+# Most faithful: build the tarball npm would publish (respects "files"), then run it
+npm pack                                 # → living-ai-documentation-<version>.tgz
+npx ./living-ai-documentation-*.tgz ./documentation
+
+npm pack --dry-run                       # inspect exactly which files would be published
+```
+
+> In production there is no `:5174`. The MCP endpoint clients connect to is **`http://localhost:4321/mcp`** (Express, default port).
 
 ### Contributing
 

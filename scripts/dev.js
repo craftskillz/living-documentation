@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
-const { spawn, spawnSync } = require("child_process");
+const { spawn } = require("child_process");
 
-const workspaceTsconfig = "src/frontend/workspace/tsconfig.json";
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const childProcesses = new Set();
 
@@ -43,26 +42,7 @@ for (const signal of ["SIGINT", "SIGTERM"]) {
   });
 }
 
-const initialCompileWorkspace = spawnSync(
-  npmCommand,
-  ["exec", "--", "tsc", "-p", workspaceTsconfig],
-  { stdio: "inherit" },
-);
-
-if (initialCompileWorkspace.status !== 0) {
-  process.exit(initialCompileWorkspace.status || 1);
-}
-
-const workspaceWatcher = run(npmCommand, [
-  "exec",
-  "--",
-  "tsc",
-  "-p",
-  workspaceTsconfig,
-  "--watch",
-  "--preserveWatchOutput",
-]);
-
+// Vite dev server for the unified Svelte frontend.
 const svelteApp = run(npmCommand, [
   "exec",
   "--",
@@ -71,6 +51,8 @@ const svelteApp = run(npmCommand, [
   "src/frontend-svelte/vite.config.ts",
 ]);
 
+// Backend (Express API + MCP) via nodemon. Only the backend is watched;
+// the frontend is handled by Vite HMR.
 const cliArgs = process.argv.slice(2).map(quoteShellArg).join(" ");
 const execCommand = ["ts-node", "bin/cli.ts", cliArgs].filter(Boolean).join(" ");
 const server = run(npmCommand, [
@@ -81,12 +63,13 @@ const server = run(npmCommand, [
   "src",
   "--watch",
   "bin",
+  "--ignore",
+  "src/frontend-svelte",
   "--ext",
-  "ts,html",
+  "ts",
   "--exec",
   execCommand,
 ]);
 
-workspaceWatcher.once("exit", exitFromChild);
 svelteApp.once("exit", exitFromChild);
 server.once("exit", exitFromChild);

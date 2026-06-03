@@ -22,7 +22,6 @@ export default defineConfig({
     proxy: {
       "/api": "http://localhost:4321",
       "/mcp": "http://localhost:4321",
-      "/i18n": "http://localhost:4321",
       "/images": "http://localhost:4321",
       "^/files/.+": { target: "http://localhost:4321", changeOrigin: true },
     },

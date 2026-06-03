@@ -58,37 +58,23 @@ export async function startServer({
   app.use('/api/blueprint', blueprintRouter(docsPath));
   app.use('/mcp', mcpRouter(docsPath));
 
-  // Static frontend assets
+  // Static frontend — the unified Svelte app built by Vite into dist/frontend-svelte.
   // dotfiles: 'allow' so the npx cache (~/.npm/_npx/...) doesn't trip send's
   // dotfile guard on the .npm path segment and 404 every asset.
-  const frontendPath = path.join(__dirname, 'frontend');
-  app.get('/workspace', (_req, res) =>
-    res.sendFile(path.join(frontendPath, 'workspace', 'index.html'), { dotfiles: 'allow' }),
-  );
-  app.get('/blueprint', (_req, res) =>
-    res.sendFile(path.join(frontendPath, 'blueprint', 'index.html'), { dotfiles: 'allow' }),
-  );
+  const frontendPath = path.join(__dirname, '..', 'frontend-svelte');
   app.use(express.static(frontendPath, { dotfiles: 'allow' }));
 
-  // Static assets from docs folder (images, etc.)
+  // Static assets from docs folder (images, attached files).
   app.use('/images', express.static(path.join(docsPath, 'images'), { dotfiles: 'allow' }));
   app.use('/files', express.static(path.join(docsPath, 'files'), { dotfiles: 'allow' }));
 
-  app.get('/', (_req, res) =>
-    res.sendFile(path.join(frontendPath, 'index.html'), { dotfiles: 'allow' }),
-  );
-  app.get('/admin', (_req, res) =>
-    res.sendFile(path.join(frontendPath, 'admin.html'), { dotfiles: 'allow' }),
-  );
-  app.get('/diagram', (_req, res) =>
-    res.sendFile(path.join(frontendPath, 'diagram.html'), { dotfiles: 'allow' }),
-  );
-  app.get('/shape-editor', (_req, res) =>
-    res.sendFile(path.join(frontendPath, 'shape-editor.html'), { dotfiles: 'allow' }),
-  );
-  app.get('/context', (_req, res) =>
-    res.sendFile(path.join(frontendPath, 'context.html'), { dotfiles: 'allow' }),
-  );
+  // Serve the SPA shell (index.html) for the app's client-side routes. Explicit
+  // list rather than a catch-all so unknown paths still 404.
+  const indexHtml = path.join(frontendPath, 'index.html');
+  const spaRoutes = ['/', '/admin', '/workspace', '/blueprint', '/diagram', '/shape-editor', '/context', '/agents', '/files'];
+  for (const route of spaRoutes) {
+    app.get(route, (_req, res) => res.sendFile(indexHtml, { dotfiles: 'allow' }));
+  }
 
   return new Promise((resolve, reject) => {
     const server = app.listen(port);

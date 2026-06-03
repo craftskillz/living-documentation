@@ -1,5 +1,6 @@
 #!/usr/bin/env ts-node
-// Copies frontend assets (HTML, vendor aka wordcloud2.js) into the dist/ directory after tsc compile
+// Post-build asset copy. The frontend is built by Vite (→ dist/frontend-svelte);
+// this script only copies the bundled starter docs into dist/.
 
 import fs from "fs";
 import path from "path";
@@ -21,12 +22,6 @@ function copyFreshDir(src: string, dest: string): void {
   fs.rmSync(dest, { recursive: true, force: true });
   copyDir(src, dest);
 }
-
-const src = path.join(__dirname, "..", "src", "frontend");
-const dest = path.join(__dirname, "..", "dist", "src", "frontend");
-
-copyFreshDir(src, dest);
-console.log(`Copied frontend assets → dist/src/frontend/`);
 
 for (const legacyStarterName of ["starting-doc", "starting-doc-fr"]) {
   fs.rmSync(path.join(__dirname, "..", "dist", legacyStarterName), {

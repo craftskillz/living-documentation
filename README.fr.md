@@ -325,13 +325,33 @@ git clone https://github.com/craftskillz/living-documentation.git
 cd living-documentation
 npm install
 npm run setup-hooks                      # une fois : active .githooks/ comme core.hooksPath
-npm run dev -- ./documentation          # nodemon + ts-node, watch src + bin
-npm run build                            # tsc → dist/ + copie des assets frontend
+npm run dev -- ./documentation          # Vite (UI sur :5174, HMR) + backend Express (:4321)
+npm run build                            # tsc (serveur) + vite build (UI → dist/frontend-svelte)
 npm run test:e2e                         # Playwright end-to-end (~3 s, ~30 specs MCP)
 npm run test:coverage                    # couverture c8 V8-natif
 ```
 
+En **dev**, ouvrez l'UI sur **http://localhost:5174** (Vite sert l'app Svelte avec HMR et proxy `/api`, `/mcp`, `/images`, `/files` vers le backend Express sur `:4321`).
+
 Les tests end-to-end utilisent **Playwright**. Chaque test lance un vrai process CLI enfant sur un fixture frais sur un port aléatoire — pas de fuite d'état, parallélisable. Couverture serveur via **c8** (V8 natif, ~72 % global, 83 % sur `src/routes` et `src/lib`).
+
+### Tester le package publié en local
+
+Pas besoin de publier une version. Le CLI démarre un **unique serveur Express** qui sert l'UI Svelte pré-buildée **et** l'API/MCP sur un seul port — Vite (`:5174`) n'existe qu'en dev et pas pour l'utilisateur final.
+
+```bash
+# Lance l'artefact de production exact, puis ouvrez http://localhost:4321
+npm run build
+node dist/bin/cli.js ./documentation
+
+# Le plus fidèle : construire le tarball que npm publierait (respecte "files"), puis le lancer
+npm pack                                 # → living-ai-documentation-<version>.tgz
+npx ./living-ai-documentation-*.tgz ./documentation
+
+npm pack --dry-run                       # inspecter exactement les fichiers qui seraient publiés
+```
+
+> En production, il n'y a pas de `:5174`. L'endpoint MCP auquel les clients se connectent est **`http://localhost:4321/mcp`** (Express, port par défaut).
 
 ### Contribuer
 

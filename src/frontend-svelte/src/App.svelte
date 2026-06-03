@@ -10,10 +10,17 @@
   import Diagram from "./routes/Diagram.svelte";
   import ShapeEditor from "./routes/ShapeEditor.svelte";
 
-  let path = $state(window.location.pathname);
+  // Normalize the pathname so trailing slashes (e.g. "/diagram/") still match the
+  // exact route keys below. Express tolerates the trailing slash and serves
+  // index.html, but our string router would otherwise fall through.
+  function normalizePath(p: string): string {
+    return p.length > 1 ? p.replace(/\/+$/, "") : p;
+  }
+
+  let path = $state(normalizePath(window.location.pathname));
 
   window.addEventListener("popstate", () => {
-    path = window.location.pathname;
+    path = normalizePath(window.location.pathname);
   });
 
   $effect(() => {
@@ -26,7 +33,7 @@
 
   function navigate(to: string) {
     history.pushState(null, "", to);
-    path = to;
+    path = normalizePath(to);
   }
 </script>
 
