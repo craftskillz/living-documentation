@@ -2,7 +2,9 @@ import type { TableAttrs } from "./types";
 
 const VALUE = "[a-z][a-z0-9_-]*";
 const COMMENT = "<!--\\s*table-(?:style|border|color):\\s*" + VALUE + "\\s*-->";
-const PREFIX = "(?:" + COMMENT + "\\n){0,3}";
+// Allow one or more newlines after each comment so a blank line may separate the
+// `<!-- table-* -->` comment block from the table itself (lenient authoring).
+const PREFIX = "(?:" + COMMENT + "\\n+){0,3}";
 const TABLE_START = "\\|[^\\n]*\\|\\n\\|[ \\t:|-]*-[ \\t:|-]*\\|";
 
 const TABLE_BLOCK =
@@ -68,7 +70,10 @@ export function isMarkdownTableSeparatorLine(line: string): boolean {
   const cells = parseMarkdownTableCells(line);
   return (
     cells.length > 0 &&
-    cells.every((cell) => /^:?-{3,}:?$/.test(cell.replace(/\s+/g, "")))
+    // GFM allows a separator cell to be `:?-+:?` (one or more hyphens, optional
+    // alignment colons) — e.g. `--:` for right-align. Requiring 3+ dashes wrongly
+    // rejected such tables from inline-snippet detection.
+    cells.every((cell) => /^:?-+:?$/.test(cell.replace(/\s+/g, "")))
   );
 }
 

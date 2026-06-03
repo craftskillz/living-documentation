@@ -374,8 +374,11 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-type')).toHaveValue('unordered-list');
     await expect(page.locator('#snippet-preview-wrap')).toBeHidden();
+    // The unified editor is source-faithful: the captured text preserves the exact
+    // indentation found in the document (including continuation lines), rather than
+    // re-serializing from the rendered DOM the way the legacy viewer did.
     await expect(page.locator('#snip-unordered-list-content')).toHaveValue(
-      '- First bullet\n  continuation for first bullet\n- Second bullet\nlazy continuation for second bullet\n  - Nested bullet',
+      '- First bullet\n  continuation for first bullet\n- Second bullet\n  lazy continuation for second bullet\n  - Nested bullet',
     );
 
     await page
@@ -402,8 +405,9 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect(page.locator('#snippet-type')).toHaveValue('ordered-list');
     await expect(page.locator('#snippet-preview-wrap')).toBeHidden();
+    // Source-faithful capture: continuation lines keep their original indentation.
     await expect(page.locator('#snip-ordered-list-content')).toHaveValue(
-      '1. First numbered\n   continuation for first numbered\n2. Second numbered\nlazy continuation for second numbered\n   1. Nested numbered\n   - Nested bullet under numbered',
+      '1. First numbered\n   continuation for first numbered\n2. Second numbered\n   lazy continuation for second numbered\n   1. Nested numbered\n   - Nested bullet under numbered',
     );
 
     await page
@@ -644,6 +648,9 @@ test.describe('inline snippet editing from viewer', () => {
 
   test('opening the snippets modal from the editor shows the categorized picker, not the type selector', async ({ page, ld }) => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    // The editor textarea only exists in edit mode in the unified UI.
+    await page.getByTestId('view-actions').getByRole('button', { name: /Edit/ }).click();
+    await expect(page.getByTestId('doc-editor')).toBeVisible();
     await page.evaluate(() => {
       const editor = document.getElementById('doc-editor') as HTMLTextAreaElement;
       editor.selectionStart = 0;
@@ -751,7 +758,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(tinyDocId)}`);
 
     const coords = await page.evaluate(() => {
-      const main = document.getElementById('content-area')!;
+      const main = document.getElementById('home-content-area')!;
       const docContent = document.getElementById('doc-content')!;
       const mainRect = main.getBoundingClientRect();
       const docRect = docContent.getBoundingClientRect();

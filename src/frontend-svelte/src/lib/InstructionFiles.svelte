@@ -94,7 +94,7 @@
         >{t("common.up")}</button>
         <span class="file-browser-path">{browseCurrent}</span>
       </div>
-      <div class="file-browser-list">
+      <div class="file-browser-list" data-testid="instruction-browse-list">
         {#if browseLoading}
           <p class="browser-msg">{t("common.loading")}</p>
         {:else if browseError}
@@ -122,7 +122,7 @@
     </div>
   {/if}
 
-  <div class="instruction-list">
+  <div class="instruction-list" data-testid="instruction-list">
     {#if !items.length}
       <p class="empty-msg">{t("context.no_instructions")}</p>
     {:else}

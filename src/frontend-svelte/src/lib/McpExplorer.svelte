@@ -290,7 +290,7 @@
 
 <div class="section-card">
   <div class="section-header">
-    <span class="section-title">{t("context.mcp_title")}</span>
+    <span class="section-title" data-testid="mcp-title">{t("context.mcp_title")}</span>
     <button class="secondary-button btn-sm" onclick={load}>{t("context.mcp_refresh")}</button>
   </div>
 
@@ -307,7 +307,7 @@
     </div>
     <div class="mcp-info-cell wide">
       <div class="mcp-info-label">{t("context.mcp_endpoint")}</div>
-      <div class="mcp-info-value mono break">{mcpEndpoint}</div>
+      <div class="mcp-info-value mono break" data-testid="mcp-endpoint">{mcpEndpoint}</div>
     </div>
   </div>
 
@@ -324,7 +324,7 @@
         >{t("context.mcp_run_all_tools")}</button>
       </div>
     </div>
-    <div class="mcp-items">
+    <div class="mcp-items" data-testid="mcp-tool-list">
       {#if !tools.length}
         <p class="empty-msg">{t("context.mcp_no_tools")}</p>
       {:else}
@@ -348,11 +348,12 @@
                 rows="4"
                 spellcheck="false"
                 class="field-input mcp-textarea"
+                data-testid="mcp-args"
                 value={state.argsJson}
                 oninput={(e) => patchState("tool", tool.name, { argsJson: (e.target as HTMLTextAreaElement).value })}
               ></textarea>
               <div class="mcp-run-footer">
-                <span class="mcp-error-text">{state.error}</span>
+                <span class="mcp-error-text" data-testid="mcp-error">{state.error}</span>
                 <button
                   class="btn-primary btn-sm"
                   disabled={state.running}
@@ -361,7 +362,7 @@
               </div>
               {#if state.resultHtml}
                 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                <div class="mcp-result">{@html state.resultHtml}</div>
+                <div class="mcp-result" data-testid="mcp-result">{@html state.resultHtml}</div>
               {/if}
             </div>
           </details>
@@ -383,7 +384,7 @@
         >{t("context.mcp_get_all_prompts")}</button>
       </div>
     </div>
-    <div class="mcp-items">
+    <div class="mcp-items" data-testid="mcp-prompt-list">
       {#if !prompts.length}
         <p class="empty-msg">{t("context.mcp_no_prompts")}</p>
       {:else}
@@ -419,11 +420,12 @@
                 rows="4"
                 spellcheck="false"
                 class="field-input mcp-textarea"
+                data-testid="mcp-args"
                 value={state.argsJson}
                 oninput={(e) => patchState("prompt", prompt.name, { argsJson: (e.target as HTMLTextAreaElement).value })}
               ></textarea>
               <div class="mcp-run-footer">
-                <span class="mcp-error-text">{state.error}</span>
+                <span class="mcp-error-text" data-testid="mcp-error">{state.error}</span>
                 <button
                   class="btn-primary btn-sm"
                   disabled={state.running}
@@ -432,7 +434,7 @@
               </div>
               {#if state.resultHtml}
                 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                <div class="mcp-result">{@html state.resultHtml}</div>
+                <div class="mcp-result" data-testid="mcp-result">{@html state.resultHtml}</div>
               {/if}
             </div>
           </details>

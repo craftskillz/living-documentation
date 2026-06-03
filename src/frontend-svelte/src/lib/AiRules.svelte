@@ -70,12 +70,12 @@
   <!-- Rules list -->
   <div class="section-card">
     <div class="section-header">
-      <span class="section-title">{t("context.rules_title")}</span>
+      <span class="section-title" data-testid="rules-title">{t("context.rules_title")}</span>
       {#if rulesFolder}
         <span class="rules-folder">{rulesFolder}</span>
       {/if}
     </div>
-    <div class="rule-list">
+    <div class="rule-list" data-testid="rule-list">
       {#if !rules.length}
         <p class="empty-msg">{t("context.no_rules")}</p>
       {:else}
@@ -107,7 +107,7 @@
 
   <!-- Add rule form -->
   <div class="section-card aside-card">
-    <span class="section-title">{t("context.add_rule_title")}</span>
+    <span class="section-title" data-testid="add-rule-title">{t("context.add_rule_title")}</span>
 
     <div class="field-group">
       <label class="field-label" for="ruleTitle">{t("context.rule_title_label")}</label>

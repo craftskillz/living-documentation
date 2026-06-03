@@ -52,6 +52,19 @@ Indices : `package-lock.json` est présent, les scripts officiels sont dans `pac
 | `npm run test:e2e:ui` | Ouvre Playwright UI mode | Pour debug interactif, traces et replay. |
 | `npm run test:coverage` | Nettoie `coverage/`, build, lance Playwright avec `COVERAGE=1` et agrège via c8 | Pour vérifier la couverture serveur/CLI avant publication ou refactor significatif. |
 
+### Raccourcis `just` pour les tests
+
+Toutes ces cibles **buildent d'abord** (les tests unit importent `dist/`, les e2e/api lancent le CLI buildé), reproduisant les conditions CI.
+
+| Commande | Effet |
+|---|---|
+| `just test` | Suite complète (api + unit + e2e), headless, comme la CI. |
+| `just test-api` | Uniquement les tests API (HTTP sur le CLI lancé), headless. |
+| `just test-unit` | Uniquement les tests unitaires (parser, constantes de shapes). |
+| `just test-ui` | Tests UI/e2e headless (sans fenêtre navigateur). Filtres : `just test-ui viewer`. |
+| `just test-ui-headed` | Tests UI/e2e en mode `--headed` : on voit le navigateur exécuter les tests. |
+| `just test-ui-watch` | Runner interactif Playwright (`--ui`) : watch, traces, replay. |
+
 Il n'existe pas de script ESLint ou `format` dans `package.json` à ce jour. Ne pas annoncer `npm run lint` ou `npm run format` comme vérification disponible tant qu'ils ne sont pas ajoutés. Le typage frontend est assuré par `svelte-check`/`tsc` et le build Vite (le script `check:frontend` a été supprimé avec le frontend vanilla).
 
 ## Tests ciblés

@@ -162,10 +162,13 @@
     }
   }
 
-  function showSnippetPanelOnly(): void {
+  function showSnippetPanelOnly(showBack = true): void {
     byId("snippet-picker")?.classList.add("hidden");
     byId("snippet-submit-btn")?.classList.remove("hidden");
-    byId("snippet-picker-back")?.classList.remove("hidden");
+    // The "back to picker" button only makes sense when the panel was reached
+    // through the picker. In inline-edit (opened directly from a right-click on an
+    // existing snippet) there is no picker to return to.
+    byId("snippet-picker-back")?.classList.toggle("hidden", !showBack);
   }
 
   function snippetPickerFilter(query: string): void {
@@ -787,7 +790,7 @@
       diagLabel = sel.options[sel.selectedIndex]?.text || "Diagram";
     }
 
-    const md = `[![${diagLabel}](/images/${imgName})](/diagram?id=${diagId})`;
+    const md = `[![${diagLabel}](./images/${imgName})](/diagram?id=${diagId})`;
 
     if (mode === "inline-insert") {
       // Splice into the document source with blank-line padding, then persist
@@ -871,7 +874,7 @@
   }
 
   function parseAndFillSnippet(text: string, type: string): void {
-    const parsed = ldParseSnippetMarkdown(type, text, { inlineIndent: "" });
+    const parsed = ldParseSnippetMarkdown(type, text, { inlineIndent });
     switch (type) {
       case "collapsible": {
         if (parsed.summary !== undefined) val2("snip-collapsible-summary", parsed.summary);
@@ -1050,7 +1053,7 @@
           if (sel) sel.value = range.type;
           snippetTypeChanged();
           parseAndFillSnippet(selectedText, range.type);
-          showSnippetPanelOnly();
+          showSnippetPanelOnly(false);
         } else if (mode === "inline-insert") {
           showSnippetPicker();
         } else {

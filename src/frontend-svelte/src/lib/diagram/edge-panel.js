@@ -5,7 +5,7 @@ import { st, markDirty } from './state.js';
 import { visEdgeProps }  from './edge-rendering.js';
 import { pushSnapshot }  from './history.js';
 import { t }             from './t.js';
-import { getArrowDefaults } from './defaults-modal.js';
+import { getArrowDefaults, getDiagramDefaults, initDiagramDefaults } from './defaults-modal.js';
 import { openColorPickerPopup } from './color-picker.js';
 
 const DEFAULT_EDGE_COLOR = '#a8a29e';
@@ -243,7 +243,6 @@ export async function saveEdgeAsDefault() {
   const e = st.edges.get(edgeId);
   if (!e) return;
 
-  const { getDiagramDefaults, initDiagramDefaults } = await import('./defaults-modal.js');
   const current = getDiagramDefaults() || {};
   const arrows = {
     arrowDir: e.arrowDir  || 'to',

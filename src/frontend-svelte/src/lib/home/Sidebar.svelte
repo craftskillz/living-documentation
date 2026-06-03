@@ -98,7 +98,7 @@
     </div>
   </div>
 
-  <nav class="flex-1 py-2 space-y-0.5">
+  <nav data-testid="category-tree" class="flex-1 py-2 space-y-0.5">
     {#if isEmpty}
       <p class="px-4 py-8 text-sm text-gray-400 text-center">{t("sidebar.no_docs")}</p>
     {:else}

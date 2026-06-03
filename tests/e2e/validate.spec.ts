@@ -8,28 +8,28 @@ test.describe('validate button', () => {
   test('hidden on documents whose frontmatter status is not "To be validated"', async ({ page, ld }) => {
     const docId = '2026_01_03_10_00_[ADR]_already_accepted';
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
-    await expect(page.locator('#doc-title')).toHaveText('Already Accepted');
-    await expect(page.locator('#validate-btn')).toBeHidden();
+    await expect(page.getByTestId('doc-title')).toHaveText('Already Accepted');
+    await expect(page.getByTestId('validate-btn')).toBeHidden();
   });
 
   test('documents with YAML-style status or no frontmatter load without showing validate action unless pending', async ({ page, ld }) => {
     const yamlAcceptedDocId = '2026_01_05_10_00_[ADR]_yaml_accepted';
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(yamlAcceptedDocId)}`);
-    await expect(page.locator('#doc-title')).toHaveText('Yaml Accepted');
-    await expect(page.locator('#doc-content')).not.toContainText('Cannot read properties');
-    await expect(page.locator('#validate-btn')).toBeHidden();
+    await expect(page.getByTestId('doc-title')).toHaveText('Yaml Accepted');
+    await expect(page.getByTestId('doc-content')).not.toContainText('Cannot read properties');
+    await expect(page.getByTestId('validate-btn')).toBeHidden();
 
     const plainDocId = '2026_01_06_10_00_[General]_plain_document';
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(plainDocId)}`);
-    await expect(page.locator('#doc-title')).toHaveText('Plain Document');
-    await expect(page.locator('#doc-content')).not.toContainText('Cannot read properties');
-    await expect(page.locator('#validate-btn')).toBeHidden();
+    await expect(page.getByTestId('doc-title')).toHaveText('Plain Document');
+    await expect(page.getByTestId('doc-content')).not.toContainText('Cannot read properties');
+    await expect(page.getByTestId('validate-btn')).toBeHidden();
   });
 
   test('visible and green on a "To be validated" document', async ({ page, ld }) => {
     const docId = '2026_01_01_10_00_[ADR]_to_be_validated_pristine';
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
-    const btn = page.locator('#validate-btn');
+    const btn = page.getByTestId('validate-btn');
     await expect(btn).toBeVisible();
     await expect(btn).toContainText('Validate');
     await expect(btn).toHaveClass(/bg-green-600/);
@@ -40,17 +40,17 @@ test.describe('validate button', () => {
     const docPath = path.join(ld.docsAbs, `${docId}.md`);
 
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
-    await expect(page.locator('#validate-btn')).toBeVisible();
-    await page.locator('#validate-btn').click();
+    await expect(page.getByTestId('validate-btn')).toBeVisible();
+    await page.getByTestId('validate-btn').click();
 
-    await expect(page.locator('#confirm-modal')).toBeVisible();
-    await expect(page.locator('#confirm-modal-message')).toContainText('To be validated');
-    await expect(page.locator('#confirm-modal-detail')).toBeHidden();
+    await expect(page.getByTestId('confirm-modal')).toBeVisible();
+    await expect(page.getByTestId('confirm-modal-message')).toContainText('To be validated');
+    await expect(page.getByTestId('confirm-modal-detail')).toBeHidden();
 
-    await page.locator('#confirm-modal-ok').click();
+    await page.getByTestId('confirm-modal-ok').click();
 
     // The button hides after the doc reload because the new status is Accepted.
-    await expect(page.locator('#validate-btn')).toBeHidden();
+    await expect(page.getByTestId('validate-btn')).toBeHidden();
 
     // The file on disk reflects the flipped status.
     const fileAfter = fs.readFileSync(docPath, 'utf-8');
@@ -63,11 +63,11 @@ test.describe('validate button', () => {
     const docPath = path.join(ld.docsAbs, `${docId}.md`);
 
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
-    await expect(page.locator('#validate-btn')).toBeVisible();
-    await page.locator('#validate-btn').click();
-    await page.locator('#confirm-modal-ok').click();
+    await expect(page.getByTestId('validate-btn')).toBeVisible();
+    await page.getByTestId('validate-btn').click();
+    await page.getByTestId('confirm-modal-ok').click();
 
-    await expect(page.locator('#validate-btn')).toBeHidden();
+    await expect(page.getByTestId('validate-btn')).toBeHidden();
 
     const fileAfter = fs.readFileSync(docPath, 'utf-8');
     expect(fileAfter).toContain('status: Accepted');
@@ -82,11 +82,11 @@ test.describe('validate button', () => {
     expect(hashBefore).toBe('0'.repeat(64));
 
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
-    await expect(page.locator('#validate-btn')).toBeVisible();
-    await page.locator('#validate-btn').click();
+    await expect(page.getByTestId('validate-btn')).toBeVisible();
+    await page.getByTestId('validate-btn').click();
 
-    await expect(page.locator('#confirm-modal')).toBeVisible();
-    const detail = page.locator('#confirm-modal-detail');
+    await expect(page.getByTestId('confirm-modal')).toBeVisible();
+    const detail = page.getByTestId('confirm-modal-detail');
     await expect(detail).toBeVisible();
     // The placeholder must be substituted with a percentage value.
     await expect(detail).toContainText(/\d+%/);
@@ -95,9 +95,9 @@ test.describe('validate button', () => {
     await expect(detail).toHaveClass(/bg-amber-50/);
     await expect(detail).not.toHaveClass(/red/);
 
-    await page.locator('#confirm-modal-ok').click();
+    await page.getByTestId('confirm-modal-ok').click();
 
-    await expect(page.locator('#validate-btn')).toBeHidden();
+    await expect(page.getByTestId('validate-btn')).toBeHidden();
 
     const fileAfter = fs.readFileSync(docPath, 'utf-8');
     expect(fileAfter).toContain('**status:** Accepted');
@@ -113,11 +113,11 @@ test.describe('validate button', () => {
     const before = fs.readFileSync(docPath, 'utf-8');
 
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
-    await page.locator('#validate-btn').click();
-    await page.locator('#confirm-modal-cancel').click();
+    await page.getByTestId('validate-btn').click();
+    await page.getByTestId('confirm-modal-cancel').click();
 
-    await expect(page.locator('#confirm-modal')).toBeHidden();
-    await expect(page.locator('#validate-btn')).toBeVisible();
+    await expect(page.getByTestId('confirm-modal')).toBeHidden();
+    await expect(page.getByTestId('validate-btn')).toBeVisible();
     expect(fs.readFileSync(docPath, 'utf-8')).toBe(before);
   });
 });

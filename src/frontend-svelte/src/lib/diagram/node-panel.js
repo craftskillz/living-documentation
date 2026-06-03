@@ -6,7 +6,7 @@ import { SHAPE_DEFAULTS } from './node-rendering.js';
 import { CUSTOM_SHAPE_TYPE, getCustomShapeLabelPlacement } from './custom-shapes.js';
 import { pushSnapshot }   from './history.js';
 import { t }              from './t.js';
-import { getShapeDefaults } from './defaults-modal.js';
+import { getShapeDefaults, getDiagramDefaults, initDiagramDefaults } from './defaults-modal.js';
 import { NODE_COLORS, DEFAULT_NODE_PALETTE } from './constants.js';
 import { openColorPickerPopup } from './color-picker.js';
 
@@ -220,7 +220,6 @@ export async function saveShapeAsDefault() {
   const n = st.nodes.get(firstId);
   if (!n || !n.shapeType) return;
 
-  const { getDiagramDefaults } = await import('./defaults-modal.js');
   const current = getDiagramDefaults() || {};
   const shapes = Object.assign({}, current.shapes || {});
   shapes[n.shapeType] = {
@@ -238,7 +237,6 @@ export async function saveShapeAsDefault() {
       body: JSON.stringify({ diagramDefaults: updated }),
     });
     if (!res.ok) throw new Error(await res.text());
-    const { initDiagramDefaults } = await import('./defaults-modal.js');
     initDiagramDefaults({ diagramDefaults: updated });
     // Sync localStorage so the next creation uses the new default immediately
     localStorage.setItem('ld-node-style-' + n.shapeType, JSON.stringify({

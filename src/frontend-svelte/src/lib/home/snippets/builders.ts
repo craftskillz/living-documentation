@@ -120,7 +120,7 @@ export function ldBuildDiagramSnippetMarkdown(data: {
   imageName: string;
   id: string;
 }): string {
-  return `[![${data.label}](/images/${data.imageName})](/diagram?id=${data.id})`;
+  return `[![${data.label}](./images/${data.imageName})](/diagram?id=${data.id})`;
 }
 
 export interface SwatchColor {

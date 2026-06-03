@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import { home } from "./state.svelte";
   import { t } from "../i18n.svelte";
   import { folderLabel } from "./tree";
@@ -34,6 +35,22 @@
   let snippetRange = $state<{ start: number; end: number; type: string; indent?: string } | null>(null);
   let snippetInsertPos = $state(0);
   let disposeInline: (() => void) | null = null;
+
+  // Programmatic entry points for the snippets modal. These mirror the snippet
+  // buttons in the UI and double as a stable automation surface for e2e tests.
+  onMount(() => {
+    const w = window as unknown as Record<string, unknown>;
+    w.openSnippetsModal = () => { snippetMode = "insert"; snippetsOpen = true; };
+    w.openSnippetsModalForInlineInsert = (pos: number) => {
+      snippetMode = "inline-insert";
+      snippetInsertPos = Math.max(0, Number(pos) || 0);
+      snippetsOpen = true;
+    };
+    return () => {
+      delete w.openSnippetsModal;
+      delete w.openSnippetsModalForInlineInsert;
+    };
+  });
   let localSearchMount = $state<HTMLElement>(null!);
   let searchMatches = $state<SearchMatch[]>([]);
   let lastWiredId = "";
@@ -137,11 +154,14 @@
     const pct = Math.round(accuracy * 100);
     const lowAccuracy = pct < 100;
     const worklog = isWorklogDocument(doc.id);
-    const message = t(worklog ? "doc.validate_worklog_message" : "doc.validate_message") +
-      (lowAccuracy ? "\n\n" + t("doc.validate_detail_low_accuracy").replace("{accuracy}", pct + "%") : "");
+    const message = t(worklog ? "doc.validate_worklog_message" : "doc.validate_message");
+    const detail = lowAccuracy
+      ? t("doc.validate_detail_low_accuracy").replace("{accuracy}", pct + "%")
+      : undefined;
     const ok = await confirmDialog.show({
       title: t("doc.validate_title"),
       message,
+      detail,
       confirmLabel: t("doc.validate_confirm"),
       cancelLabel: t("common.cancel"),
     });
@@ -335,7 +355,7 @@
 
 <svelte:window onkeydown={onKeydown} />
 
-<article id="home-doc-view" class="{fullWidth ? 'max-w-none' : 'max-w-4xl'} mx-auto px-6 py-8">
+<article id="home-doc-view" data-testid="doc-view" class="{fullWidth ? 'max-w-none' : 'max-w-4xl'} mx-auto px-6 py-8">
   <header class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-950 -mx-6 px-6 pt-8 mb-8 pb-6 border-b border-gray-300 dark:border-gray-800">
     <div class="flex items-start gap-4 flex-wrap">
       <div class="shrink min-w-0">
@@ -351,8 +371,8 @@
           {/if}
         </div>
         <div class="flex items-center gap-2">
-          <h1 class="min-w-0 text-2xl font-bold text-gray-900 dark:text-gray-50 leading-tight">{doc.title}</h1>
-          <button type="button" onclick={copyMcpId} title={t("doc.copy_mcp_id")} class="no-print inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-gray-200 text-gray-500 transition-colors hover:bg-gray-50 hover:text-blue-600 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-blue-400 {copiedId ? 'text-green-600 dark:text-green-400' : ''}">
+          <h1 data-testid="doc-title" class="min-w-0 text-2xl font-bold text-gray-900 dark:text-gray-50 leading-tight">{doc.title}</h1>
+          <button type="button" data-testid="copy-doc-id-btn" onclick={copyMcpId} title={t("doc.copy_mcp_id")} class="no-print inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-gray-200 text-gray-500 transition-colors hover:bg-gray-50 hover:text-blue-600 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-blue-400 {copiedId ? 'text-green-600 dark:text-green-400' : ''}">
             <i class="fa-{copiedId ? 'solid fa-check' : 'regular fa-copy'}" aria-hidden="true"></i>
           </button>
         </div>
@@ -360,7 +380,7 @@
 
       <div class="flex items-center gap-2 flex-wrap ml-auto">
         {#if editing}
-          <div class="flex items-center gap-2">
+          <div data-testid="edit-actions" class="flex items-center gap-2">
           {#if saveMsg}<span class="text-xs {saveMsg.cls}">{saveMsg.text}</span>{/if}
           <button onclick={cancelEdit} class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t("common.cancel")}</button>
           <button onclick={() => { snippetMode = "insert"; snippetsOpen = true; }} title={t("doc.snippets")} class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t("doc.snippets_btn")}</button>
@@ -370,9 +390,9 @@
           {@const bodyFill = home.markerActive ? "#fef08a" : "#bfdbfe"}
           {@const capFill = home.markerActive ? "#fef08a" : "#93c5fd"}
           {@const nibFill = home.markerActive ? "#fde047" : "#93c5fd"}
-          <div class="flex items-center gap-2">
+          <div data-testid="view-actions" class="flex items-center gap-2">
           {#if showValidate}
-            <button onclick={validate} title={t("doc.validate_mode")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-green-700 bg-green-600 text-white font-semibold hover:bg-green-700 transition-colors"><i class="fa-solid fa-check" style="margin-right:4px"></i>{t("doc.validate_btn")}</button>
+            <button onclick={validate} data-testid="validate-btn" title={t("doc.validate_mode")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-green-700 bg-green-600 text-white font-semibold hover:bg-green-700 transition-colors"><i class="fa-solid fa-check" style="margin-right:4px"></i>{t("doc.validate_btn")}</button>
           {/if}
           <button onclick={() => home.toggleMarker()} title={t("doc.marker_mode")} class="no-print text-sm px-3 py-1.5 rounded-lg border transition-colors {home.markerActive ? 'border-yellow-400 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'}">
             <svg width="18" height="18" viewBox="0 0 100 100" fill="none" style="display:inline-block;vertical-align:middle;margin-right:4px">
@@ -392,7 +412,7 @@
           <button onclick={toggleFullWidth} title={t("doc.toggle_width")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t(fullWidth ? "doc.full_width_narrow_btn" : "doc.full_width_btn")}</button>
           <button onclick={exportPDF} title={t("doc.export_pdf")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">📄 {t("doc.export_pdf_btn")}</button>
           <button onclick={copyLink} title={t("doc.copy_link")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"><i class="fa-solid fa-link"></i> {t("doc.copy_link_btn")}</button>
-          <button onclick={() => (metadataOpen = true)} title={t("metadata.button_title")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"><i class="fa-solid fa-code-compare"></i> {t("metadata.button")}</button>
+          <button onclick={() => (metadataOpen = true)} data-testid="metadata-btn" title={t("metadata.button_title")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"><i class="fa-solid fa-code-compare"></i> {t("metadata.button")}</button>
           <button onclick={enterEdit} title={t("doc.edit")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"><i class="fa-solid fa-file-pen"></i> {t("doc.edit_btn")}</button>
           <button onclick={() => (confirmingDelete = true)} title={t("doc.delete")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-700 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 transition-colors"><i class="fa-solid fa-trash"></i> {t("doc.delete_btn")}</button>
           </div>
@@ -434,6 +454,8 @@
   {#if editing}
     <textarea
       bind:this={editorEl}
+      id="doc-editor"
+      data-testid="doc-editor"
       bind:value={editorValue}
       onpaste={onEditorPaste}
       ondrop={onEditorDrop}
@@ -445,6 +467,8 @@
     <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
     <div
       bind:this={contentEl}
+      id="doc-content"
+      data-testid="doc-content"
       onclick={onContentClick}
       class="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-code:before:content-none prose-code:after:content-none prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-gray-700"
     ></div>

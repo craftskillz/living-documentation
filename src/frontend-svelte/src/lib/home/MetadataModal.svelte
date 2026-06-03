@@ -88,7 +88,7 @@
 {#if open}
   <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onclick={(e) => { if (e.target === e.currentTarget) onclose(); }}>
-    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl mx-4 p-6 space-y-4">
+    <div data-testid="metadata-modal" class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl mx-4 p-6 space-y-4">
       <div class="flex items-start justify-between gap-4">
         <div>
           <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50"><i class="fa-solid fa-code-compare mr-1"></i> {t("metadata.title")}</h3>
@@ -102,11 +102,11 @@
 
       <!-- Read-only banner -->
       {#if readOnly}
-        <div class="text-xs text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-900/30 border-l-4 border-amber-500 rounded-r px-3 py-2">{t("metadata.readonly_banner")}</div>
+        <div data-testid="metadata-readonly-banner" class="text-xs text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-900/30 border-l-4 border-amber-500 rounded-r px-3 py-2">{t("metadata.readonly_banner")}</div>
       {/if}
 
       <!-- List -->
-      <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+      <div data-testid="metadata-list" class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
         <div class="max-h-64 overflow-y-auto">
           {#if !report || report.items.length === 0}
             <div class="px-3 py-4 text-center text-xs text-gray-400">{t("metadata.empty")}</div>
@@ -124,7 +124,7 @@
                   <span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300"><i class="fa-solid fa-circle-xmark"></i> {t("metadata.status.missing")}</span>
                 {/if}
                 {#if !readOnly}
-                  <button onclick={() => removePath(it.path)} title={t("metadata.remove")} class="text-xs px-2 py-1 rounded-lg border border-red-200 dark:border-red-700 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 transition-colors"><i class="fa-solid fa-trash"></i></button>
+                  <button onclick={() => removePath(it.path)} title={t("metadata.remove")} class="metadata-row-remove text-xs px-2 py-1 rounded-lg border border-red-200 dark:border-red-700 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 transition-colors"><i class="fa-solid fa-trash"></i></button>
                 {/if}
               </div>
             {/each}
@@ -135,8 +135,8 @@
       <!-- Actions -->
       {#if !readOnly}
         <div class="flex items-center gap-2 flex-wrap">
-          <button onclick={toggleBrowser} class="text-sm px-3 py-1.5 rounded-lg border border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"><i class="fa-solid fa-plus"></i> {t("metadata.add")}</button>
-          <button onclick={refresh} disabled={refreshing} class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"><i class="fa-solid fa-arrows-rotate"></i> {t("metadata.refresh")}</button>
+          <button onclick={toggleBrowser} data-testid="metadata-add-btn" class="text-sm px-3 py-1.5 rounded-lg border border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"><i class="fa-solid fa-plus"></i> {t("metadata.add")}</button>
+          <button onclick={refresh} data-testid="metadata-refresh-btn" disabled={refreshing} class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"><i class="fa-solid fa-arrows-rotate"></i> {t("metadata.refresh")}</button>
         </div>
       {/if}
 
