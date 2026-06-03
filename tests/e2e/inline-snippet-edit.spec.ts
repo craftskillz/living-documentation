@@ -131,6 +131,8 @@ test.describe('inline snippet editing from viewer', () => {
     const docPath = path.join(ld.docsAbs, `${tinyDocId}.md`);
 
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(tinyDocId)}`);
+    // Wait for the Svelte DocViewer to mount before reaching for its window hook.
+    await expect(page.locator('#doc-content')).toBeVisible();
     await page.evaluate(() => {
       (window as any).openSnippetsModalForInlineInsert(99999);
     });
@@ -235,6 +237,8 @@ test.describe('inline snippet editing from viewer', () => {
     const docPath = path.join(ld.docsAbs, `${tinyDocId}.md`);
 
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(tinyDocId)}`);
+    // Wait for the Svelte DocViewer to mount before reaching for its window hook.
+    await expect(page.locator('#doc-content')).toBeVisible();
     await page.evaluate(() => {
       (window as any).openSnippetsModalForInlineInsert(99999);
     });
@@ -614,6 +618,7 @@ test.describe('inline snippet editing from viewer', () => {
     const docPath = path.join(ld.docsAbs, `${docId}.md`);
 
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await expect(page.locator('#doc-content')).toBeVisible();
 
     const coords = await page.evaluate(() => {
       const content = document.getElementById('doc-content')!;
@@ -677,6 +682,7 @@ test.describe('inline snippet editing from viewer', () => {
 
   test('picker search filters cards live and Enter selects the first match', async ({ page, ld }) => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await expect(page.locator('#doc-content')).toBeVisible();
     await page.evaluate(() => {
       (window as any).openSnippetsModal();
     });
@@ -699,6 +705,7 @@ test.describe('inline snippet editing from viewer', () => {
 
   test('inline insert picker pre-fills unordered and ordered list editors', async ({ page, ld }) => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await expect(page.locator('#doc-content')).toBeVisible();
     await page.evaluate(() => {
       (window as any).openSnippetsModalForInlineInsert(0);
     });
@@ -736,6 +743,7 @@ test.describe('inline snippet editing from viewer', () => {
 
   test('back button returns from a panel to the picker without inserting', async ({ page, ld }) => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await expect(page.locator('#doc-content')).toBeVisible();
     await page.evaluate(() => {
       (window as any).openSnippetsModal();
     });
@@ -756,6 +764,7 @@ test.describe('inline snippet editing from viewer', () => {
     const docPath = path.join(ld.docsAbs, `${tinyDocId}.md`);
 
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(tinyDocId)}`);
+    await expect(page.locator('#doc-content')).toBeVisible();
 
     const coords = await page.evaluate(() => {
       const main = document.getElementById('home-content-area')!;
