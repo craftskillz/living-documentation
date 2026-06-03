@@ -10,11 +10,13 @@
   import NewFolderModal from "../lib/home/NewFolderModal.svelte";
   import NewDocModal from "../lib/home/NewDocModal.svelte";
   import ExportModal from "../lib/home/ExportModal.svelte";
+  import WordCloudModal from "../lib/home/WordCloudModal.svelte";
   import type { DocDetail } from "../lib/home/types";
 
   let newFolderOpen = $state(false);
   let newDocOpen = $state(false);
   let exportOpen = $state(false);
+  let wordCloudOpen = $state(false);
 
   let currentDoc = $state<DocDetail | null>(null);
   let loadingDoc = $state(false);
@@ -227,6 +229,7 @@
       <span class="absolute left-2.5 top-2 text-gray-400 text-sm pointer-events-none">🔍</span>
     </div>
     {#snippet actions()}
+      <button onclick={() => (wordCloudOpen = true)} title={t("nav.word_cloud")} class="ghost-button" aria-label={t("nav.word_cloud")}><i class="fa-solid fa-cloud"></i></button>
       <button onclick={toggleDark} title="Toggle dark mode" class="ghost-button" aria-label="Toggle dark mode">{dark ? "☀" : "☾"}</button>
     {/snippet}
   </Topbar>
@@ -266,3 +269,4 @@
 <NewFolderModal open={newFolderOpen} onclose={() => (newFolderOpen = false)} onsuccess={loadDocuments} />
 <NewDocModal open={newDocOpen} onclose={() => (newDocOpen = false)} onsuccess={async (id) => { await loadDocuments(); openDoc(id); }} />
 <ExportModal open={exportOpen} onclose={() => (exportOpen = false)} />
+<WordCloudModal open={wordCloudOpen} onclose={() => (wordCloudOpen = false)} />

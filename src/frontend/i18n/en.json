@@ -734,5 +734,7 @@
   "blueprint.adr.new_title": "New Blueprint — {folder}",
   "common.untitled": "Untitled",
   "blueprint.canvas.fit_view": "Fit view",
-  "blueprint.canvas.drag_mode": "Toggle drag mode"
+  "blueprint.canvas.drag_mode": "Toggle drag mode",
+  "wc.min_files_hint": "Only show words that appear in at least this many distinct files. Higher values filter out noise specific to a single file and surface terms shared across the codebase.",
+  "wc.apply_hint": "Recompute the cloud using the current “min files” threshold."
 }
