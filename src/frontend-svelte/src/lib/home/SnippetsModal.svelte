@@ -651,10 +651,11 @@
 
   async function insertSnippet(): Promise<void> {
     const type = byId<HTMLSelectElement>("snippet-type")!.value;
-    const isInline = mode === "inline-edit" || mode === "inline-insert";
 
-    // Diagram/attachment are unavailable in inline modes (no editor to anchor).
-    if (isInline && (type === "diagram" || type === "attachment")) return;
+    // Attachment needs the editor; the diagram snippet is allowed in inline-insert
+    // (right-click empty area) but not in inline-edit (editing an existing snippet).
+    if (mode === "inline-edit" && (type === "diagram" || type === "attachment")) return;
+    if (mode === "inline-insert" && type === "attachment") return;
 
     if (type === "diagram") {
       await insertDiagramSnippet();
@@ -787,19 +788,37 @@
     }
 
     const md = `[![${diagLabel}](/images/${imgName})](/diagram?id=${diagId})`;
-    insertTextAtCursor(md);
 
-    // Persist the editor content before redirecting to the diagram editor.
-    if (home.currentDocId && editor) {
+    if (mode === "inline-insert") {
+      // Splice into the document source with blank-line padding, then persist
+      // via onsave (no editor textarea in read mode).
+      const before = content.slice(0, selStart);
+      const after = content.slice(selStart);
+      const leadingBlank =
+        before.length === 0 || /\n\n$/.test(before) ? "" : before.endsWith("\n") ? "\n" : "\n\n";
+      const trailingBlank =
+        after.length === 0 || /^\n\n/.test(after) ? "" : after.startsWith("\n") ? "\n" : "\n\n";
+      const newContent = before + leadingBlank + md + trailingBlank + after;
       try {
-        await fetch("/api/documents/" + home.currentDocId, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ content: editor.value }),
-        });
+        if (onsave) await onsave(newContent);
       } catch (err) {
         alert(t("common.error_prefix") + (err instanceof Error ? err.message : String(err)));
         return;
+      }
+    } else {
+      // Editor mode: insert at caret and persist the editor content.
+      insertTextAtCursor(md);
+      if (home.currentDocId && editor) {
+        try {
+          await fetch("/api/documents/" + home.currentDocId, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ content: editor.value }),
+          });
+        } catch (err) {
+          alert(t("common.error_prefix") + (err instanceof Error ? err.message : String(err)));
+          return;
+        }
       }
     }
     onclose();

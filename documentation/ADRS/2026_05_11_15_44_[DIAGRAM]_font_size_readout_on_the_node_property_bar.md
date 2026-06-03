@@ -1,6 +1,6 @@
 ---
 **date:** 2026-05-05
-**status:** To be validated
+**status:** Accepted
 **description:** Affichage live de la taille de police entre les boutons Aa−/Aa+ du node panel, avec un fallback "–" quand la sélection mélange plusieurs tailles ou n'a aucun nœud non-anchor sélectionné.
 **tags:** diagram, node-panel, font-size, fontSize, property-bar, nodeFontSizeValue, syncNodeFontSizeValue, mixed-selection
 ---

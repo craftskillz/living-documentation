@@ -1,6 +1,6 @@
 ---
 **date:** 2026-05-23
-**status:** To be validated
+**status:** Accepted
 **description:** Ajout d'un script npm `check:frontend` qui execute `node --check` sur tous les fichiers `src/frontend/**/*.js` via `scripts/check-frontend-js.js`, sans introduire ESLint ni nouvelle dependance.
 **tags:** frontend, quality, javascript, syntax-check, node-check, npm-script, no-bundler, check-frontend, scripts
 ---

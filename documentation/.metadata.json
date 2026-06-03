@@ -114,7 +114,7 @@
   "ADRS/2026_05_11_19_41_[FRONTEND]_copie_id_document_mcp_depuis_entete_viewer": [
     {
       "path": "src/frontend/index.html",
-      "hash": "4847d6804c6220bcbabf7675fac7e3a229e12f805d0922f49bce83a48808cfb9"
+      "hash": "94c14f7fc0ba2295c6749eefe9b85757f26577d8eb4b39e18d7324b223349c7e"
     },
     {
       "path": "src/frontend/misc.js",
@@ -122,11 +122,11 @@
     },
     {
       "path": "src/frontend/i18n/en.json",
-      "hash": "1d5923644e771c6a4b14303ae630b5e99369627998dd09799caef8d357105821"
+      "hash": "aa4ee832bf7c1439b175a3972b6249ae1df1e81809fef15610d6d77b09475018"
     },
     {
       "path": "src/frontend/i18n/fr.json",
-      "hash": "3a740c6ac6daf1c86144876d84fe1effd1b3b8404acd8d4328f12420b7a0f1ad"
+      "hash": "36028b30289e541caabe6f7f8a8861e00ce77e39026a915ac4250ab8085b50cd"
     },
     {
       "path": "tests/e2e/viewer.spec.ts",

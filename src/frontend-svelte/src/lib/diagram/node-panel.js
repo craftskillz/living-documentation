@@ -1,0 +1,491 @@
+// ── Node panel ────────────────────────────────────────────────────────────────
+// Floating formatting toolbar for selected nodes (color, font, alignment, z-order).
+
+import { st, markDirty } from './state.js';
+import { SHAPE_DEFAULTS } from './node-rendering.js';
+import { CUSTOM_SHAPE_TYPE, getCustomShapeLabelPlacement } from './custom-shapes.js';
+import { pushSnapshot }   from './history.js';
+import { t }              from './t.js';
+import { getShapeDefaults } from './defaults-modal.js';
+import { NODE_COLORS, DEFAULT_NODE_PALETTE } from './constants.js';
+import { openColorPickerPopup } from './color-picker.js';
+
+// Reads the effective color for a key, respecting runtime overrides.
+function getEffectiveNodeColor(key) {
+  return st.nodeColorOverrides[key] || NODE_COLORS[key] || NODE_COLORS['c-gray'];
+}
+
+// Built dynamically so overrides applied at boot are reflected in the picker.
+function buildNodeColorEntries() {
+  return DEFAULT_NODE_PALETTE.map((key) => {
+    const c = getEffectiveNodeColor(key);
+    return { value: key, bg: c.bg, border: c.border, label: key.replace('c-', '') };
+  });
+}
+
+function syncNodeColorSwatch() {
+  const swatch = document.getElementById('nodeColorSwatch');
+  if (!swatch) return;
+  const firstId = (st.selectedNodeIds || []).find((id) => {
+    const n = st.nodes && st.nodes.get(id);
+    return n && n.shapeType !== 'anchor';
+  });
+  const n = firstId && st.nodes && st.nodes.get(firstId);
+  const key = (n && n.colorKey) || 'c-gray';
+  const c = getEffectiveNodeColor(key);
+  swatch.style.background = c.bg;
+  swatch.style.borderColor = c.border;
+  swatch.dataset.currentColor = key;
+}
+
+const CUSTOM_LABEL_PLACEMENTS = ['below', 'above', 'right', 'left', 'center'];
+
+// ── Last-used style persistence (per shape type) ──────────────────────────────
+// Saves colorKey/fontSize/textAlign/textValign per shapeType to localStorage so
+// the next shape of that type is created with the same style.
+
+function persistNodeStyle() {
+  st.selectedNodeIds.forEach((id) => {
+    const n = st.nodes && st.nodes.get(id);
+    if (!n || !n.shapeType || n.shapeType === 'anchor') return;
+    localStorage.setItem('ld-node-style-' + n.shapeType, JSON.stringify({
+      colorKey:   n.colorKey   || 'c-gray',
+      fontSize:   n.fontSize   || null,
+      textAlign:  n.textAlign  || null,
+      textValign: n.textValign || null,
+    }));
+  });
+}
+
+export function getLastNodeStyle(shapeType) {
+  try {
+    const stored = JSON.parse(localStorage.getItem('ld-node-style-' + shapeType));
+    if (stored) {
+      // Merge with defaults: stored values override defaults, but null/undefined
+      // values in stored fall back to defaults (handles legacy keys without width/height).
+      const clean = Object.fromEntries(Object.entries(stored).filter(([, v]) => v != null));
+      return { ...getShapeDefaults(shapeType), ...clean };
+    }
+  } catch { /* ignore */ }
+  return getShapeDefaults(shapeType);
+}
+
+// All shapes are ctxRenderers — vis-network never re-reads the closure after
+// nodes.update(). Force refreshNeeded + redraw so the new colorKey/fontSize/
+// textAlign/textValign values are picked up on the next draw call via st.nodes.get(id).
+function forceRedraw() {
+  st.selectedNodeIds.forEach((id) => {
+    const bn = st.network && st.network.body.nodes[id];
+    if (bn) bn.refreshNeeded = true;
+  });
+  if (st.network) st.network.redraw();
+}
+
+function isEdgeLocked(edge) {
+  if (!edge) return false;
+  const fromN = st.nodes && st.nodes.get(edge.from);
+  const toN   = st.nodes && st.nodes.get(edge.to);
+  const isFreeArrow = fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor';
+  return isFreeArrow ? !!(fromN.locked && toN.locked) : !!(edge.edgeLocked || (fromN && fromN.locked && toN && toN.locked));
+}
+
+function selectedLockState() {
+  const nodeIds = (st.selectedNodeIds || []).filter((id) => {
+    const n = st.nodes && st.nodes.get(id);
+    return n && n.shapeType !== 'anchor';
+  });
+  const edgeIds = (st.selectedEdgeIds || []).filter((id) => st.edges && st.edges.get(id));
+  const total = nodeIds.length + edgeIds.length;
+  if (!total) return { allLocked: false, nodeIds, edgeIds };
+
+  const nodesLocked = nodeIds.every((id) => {
+    const n = st.nodes.get(id);
+    return !!(n && n.locked);
+  });
+  const edgesLocked = edgeIds.every((id) => isEdgeLocked(st.edges.get(id)));
+  return { allLocked: nodesLocked && edgesLocked, nodeIds, edgeIds };
+}
+
+function syncNodeLockButton() {
+  const btn = document.getElementById('btnNodeLock');
+  if (!btn) return;
+  const { allLocked } = selectedLockState();
+  btn.textContent = allLocked ? '🔓' : '🔒';
+  btn.title = t(allLocked ? 'diagram.node_panel.unlock' : 'diagram.node_panel.lock');
+  btn.setAttribute('aria-label', btn.title);
+  btn.classList.toggle('tool-active', allLocked);
+}
+
+function syncNodeFontSizeValue() {
+  const el = document.getElementById('nodeFontSizeValue');
+  if (!el) return;
+  const sizes = (st.selectedNodeIds || []).map((id) => {
+    const n = st.nodes && st.nodes.get(id);
+    return n && n.shapeType !== 'anchor' ? (n.fontSize || 13) : null;
+  }).filter((size) => size !== null);
+
+  if (!sizes.length) {
+    el.textContent = '–';
+    return;
+  }
+  const first = sizes[0];
+  el.textContent = sizes.every((size) => size === first) ? String(first) : '–';
+}
+
+function selectedCustomShapeIds() {
+  return (st.selectedNodeIds || []).filter((id) => {
+    const n = st.nodes && st.nodes.get(id);
+    return n && n.shapeType === CUSTOM_SHAPE_TYPE;
+  });
+}
+
+function effectiveCustomShapeLabelPlacement(node) {
+  return CUSTOM_LABEL_PLACEMENTS.includes(node && node.labelPlacement)
+    ? node.labelPlacement
+    : getCustomShapeLabelPlacement(node && node.customShapeId);
+}
+
+function syncCustomShapeLabelPlacementControls() {
+  const controls = document.getElementById('customShapeLabelPlacementControls');
+  if (!controls) return;
+  const customIds = selectedCustomShapeIds();
+  controls.classList.toggle('hidden', customIds.length === 0);
+  if (!customIds.length) return;
+
+  const placements = customIds
+    .map((id) => effectiveCustomShapeLabelPlacement(st.nodes.get(id)))
+    .filter(Boolean);
+  const first = placements[0];
+  const shared = placements.length && placements.every((placement) => placement === first) ? first : null;
+  controls.querySelectorAll('[data-label-placement]').forEach((btn) => {
+    btn.classList.toggle('tool-active', !!shared && btn.dataset.labelPlacement === shared);
+  });
+}
+
+function setEdgeLocked(edge, locked) {
+  if (!edge) return;
+  const fromN = st.nodes && st.nodes.get(edge.from);
+  const toN   = st.nodes && st.nodes.get(edge.to);
+  const isFreeArrow = fromN && fromN.shapeType === 'anchor' && toN && toN.shapeType === 'anchor';
+  if (isFreeArrow) {
+    [edge.from, edge.to].forEach((nodeId) => {
+      st.nodes.update({ id: nodeId, locked, fixed: locked ? { x: true, y: true } : false, draggable: !locked });
+      const bn = st.network && st.network.body.nodes[nodeId];
+      if (bn) bn.refreshNeeded = true;
+    });
+  } else {
+    st.edges.update({ id: edge.id, edgeLocked: locked });
+  }
+}
+
+export function showNodePanel() {
+  document.getElementById('nodePanel').classList.remove('hidden');
+  document.getElementById('nodePanelControls').classList.remove('hidden');
+  syncNodeLockButton();
+  syncNodeFontSizeValue();
+  syncCustomShapeLabelPlacementControls();
+  syncNodeColorSwatch();
+  // Sync the opacity slider with the first selected node's current value so the
+  // slider reflects the live state rather than whatever position it was left at.
+  const slider = document.getElementById('nodeBgOpacity');
+  if (slider && st.selectedNodeIds.length) {
+    const first = st.nodes.get(st.selectedNodeIds[0]);
+    const op = first && typeof first.bgOpacity === 'number' ? first.bgOpacity : 1;
+    slider.value = String(Math.round(op * 100));
+  }
+}
+
+export function hideNodePanel() {
+  document.getElementById('nodePanel').classList.add('hidden');
+}
+
+export function initNodeColorSwatch() {
+  const swatch = document.getElementById('nodeColorSwatch');
+  if (!swatch) return;
+  swatch.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const current = swatch.dataset.currentColor || 'c-gray';
+    openColorPickerPopup(swatch, buildNodeColorEntries(), current, (entry) => {
+      setNodeColor(entry.value);
+    });
+  });
+}
+
+export async function saveShapeAsDefault() {
+  const firstId = (st.selectedNodeIds || []).find((id) => {
+    const n = st.nodes && st.nodes.get(id);
+    return n && n.shapeType !== 'anchor' && n.shapeType !== CUSTOM_SHAPE_TYPE;
+  });
+  if (!firstId) return;
+  const n = st.nodes.get(firstId);
+  if (!n || !n.shapeType) return;
+
+  const { getDiagramDefaults } = await import('./defaults-modal.js');
+  const current = getDiagramDefaults() || {};
+  const shapes = Object.assign({}, current.shapes || {});
+  shapes[n.shapeType] = {
+    width:    n.nodeWidth  || SHAPE_DEFAULTS[n.shapeType]?.[0] || 100,
+    height:   n.nodeHeight || SHAPE_DEFAULTS[n.shapeType]?.[1] || 40,
+    fontSize: n.fontSize   || 13,
+    colorKey: n.colorKey   || 'c-gray',
+  };
+  const updated = { arrows: current.arrows || null, shapes };
+
+  try {
+    const res = await fetch('/api/config', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ diagramDefaults: updated }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const { initDiagramDefaults } = await import('./defaults-modal.js');
+    initDiagramDefaults({ diagramDefaults: updated });
+    // Sync localStorage so the next creation uses the new default immediately
+    localStorage.setItem('ld-node-style-' + n.shapeType, JSON.stringify({
+      colorKey:   shapes[n.shapeType].colorKey,
+      fontSize:   shapes[n.shapeType].fontSize,
+      width:      shapes[n.shapeType].width,
+      height:     shapes[n.shapeType].height,
+      textAlign:  null,
+      textValign: null,
+    }));
+    // Visual feedback: flash the button orange briefly
+    const btn = document.getElementById('btnSaveShapeDefault');
+    if (btn) {
+      btn.classList.add('tool-active');
+      setTimeout(() => btn.classList.remove('tool-active'), 800);
+    }
+  } catch (err) {
+    console.error('Failed to save shape default', err);
+  }
+}
+
+export function toggleNodeLock() {
+  const { allLocked, nodeIds, edgeIds } = selectedLockState();
+  if (!nodeIds.length && !edgeIds.length) return;
+  const nextLocked = !allLocked;
+  pushSnapshot();
+  nodeIds.forEach((id) => {
+    st.nodes.update({ id, locked: nextLocked, fixed: nextLocked ? { x: true, y: true } : false, draggable: !nextLocked });
+    const bn = st.network && st.network.body.nodes[id];
+    if (bn) bn.refreshNeeded = true;
+  });
+  edgeIds.forEach((id) => setEdgeLocked(st.edges.get(id), nextLocked));
+  if (st.network) {
+    st.network.redraw();
+    if (nextLocked) st.network.unselectAll();
+  }
+  if (nextLocked) {
+    st.selectedNodeIds = [];
+    st.selectedEdgeIds = [];
+    hideNodePanel();
+  } else {
+    syncNodeLockButton();
+  }
+  markDirty();
+}
+
+export function setNodeColor(colorKey) {
+  if (!st.selectedNodeIds.length) return;
+  pushSnapshot();
+  st.selectedNodeIds.forEach((id) => {
+    const n = st.nodes.get(id);
+    if (!n) return;
+    st.nodes.update({ id, colorKey });
+  });
+  persistNodeStyle();
+  forceRedraw();
+  markDirty();
+  syncNodeColorSwatch();
+}
+
+// The slider fires `input` on every step during a drag. The caller is expected
+// to push a single snapshot on pointerdown (gesture start) so the whole drag
+// collapses into one undoable action instead of one per step.
+export function setNodeBgOpacity(opacity) {
+  if (!st.selectedNodeIds.length) return;
+  const clamped = Math.max(0, Math.min(1, opacity));
+  st.selectedNodeIds.forEach((id) => {
+    const n = st.nodes.get(id);
+    if (!n) return;
+    st.nodes.update({ id, bgOpacity: clamped });
+  });
+  forceRedraw();
+  markDirty();
+}
+
+export function changeNodeFontSize(delta) {
+  if (!st.selectedNodeIds.length) return;
+  pushSnapshot();
+  st.selectedNodeIds.forEach((id) => {
+    const n = st.nodes.get(id);
+    if (!n) return;
+    const newSize = Math.max(8, Math.min(48, (n.fontSize || 13) + delta));
+    st.nodes.update({ id, fontSize: newSize });
+  });
+  persistNodeStyle();
+  syncNodeFontSizeValue();
+  forceRedraw();
+  markDirty();
+}
+
+export function setTextAlign(align) {
+  if (!st.selectedNodeIds.length) return;
+  pushSnapshot();
+  st.selectedNodeIds.forEach((id) => {
+    const n = st.nodes.get(id);
+    if (!n) return;
+    st.nodes.update({ id, textAlign: align });
+  });
+  persistNodeStyle();
+  forceRedraw();
+  markDirty();
+}
+
+export function setTextValign(valign) {
+  if (!st.selectedNodeIds.length) return;
+  pushSnapshot();
+  st.selectedNodeIds.forEach((id) => {
+    const n = st.nodes.get(id);
+    if (!n) return;
+    st.nodes.update({ id, textValign: valign });
+  });
+  persistNodeStyle();
+  forceRedraw();
+  markDirty();
+}
+
+export function setCustomShapeLabelPlacement(placement) {
+  if (!CUSTOM_LABEL_PLACEMENTS.includes(placement)) return;
+  const ids = selectedCustomShapeIds();
+  if (!ids.length) return;
+  pushSnapshot();
+  ids.forEach((id) => {
+    st.nodes.update({ id, labelPlacement: placement });
+  });
+  syncCustomShapeLabelPlacementControls();
+  forceRedraw();
+  markDirty();
+}
+
+// ── Stamp (format painter) ────────────────────────────────────────────────────
+// Uses a transparent DOM overlay (#stampOverlay) that intercepts canvas clicks
+// during stamp mode. This bypasses vis-network's event system entirely, avoiding
+// the deselectNode/click ordering problems that make st.activeStamp unreliable.
+
+const STAMP_BTNS = { color: 'btnStampColor', fontSize: 'btnStampFontSize', size: 'btnStampSize' };
+
+export function activateStamp(type) {
+  if (!st.stampTargetIds.length) return; // targets were saved on mousedown
+  st.activeStamp = type;
+  const overlay = document.getElementById('stampOverlay');
+  overlay.style.display = 'block';
+  Object.entries(STAMP_BTNS).forEach(([t, id]) =>
+    document.getElementById(id).classList.toggle('tool-active', t === type)
+  );
+}
+
+export function cancelStamp() {
+  st.activeStamp = null;
+  st.stampTargetIds = [];
+  document.getElementById('stampOverlay').style.display = 'none';
+  Object.values(STAMP_BTNS).forEach((id) =>
+    document.getElementById(id).classList.remove('tool-active')
+  );
+}
+
+function applyStamp(sourceId) {
+  const source = st.nodes.get(sourceId);
+  if (!source || !st.activeStamp || !st.stampTargetIds.length) return;
+  const type    = st.activeStamp;
+  const targets = [...st.stampTargetIds]; // snapshot before cancelStamp clears the array
+  cancelStamp();
+  pushSnapshot();
+
+  targets.forEach((id) => {
+    if (id === sourceId) return;
+    const target = st.nodes.get(id);
+    if (!target) return;
+    if (type === 'color')    st.nodes.update({ id, colorKey: source.colorKey || 'c-gray' });
+    if (type === 'rotation') st.nodes.update({ id, rotation: source.rotation || 0 });
+    if (type === 'fontSize') st.nodes.update({ id, fontSize: source.fontSize || 13 });
+    if (type === 'size')     st.nodes.update({ id, nodeWidth: source.nodeWidth || null, nodeHeight: source.nodeHeight || null });
+    const bn = st.network && st.network.body.nodes[id];
+    if (bn) bn.refreshNeeded = true;
+  });
+  if (st.network) st.network.redraw();
+  markDirty();
+}
+
+// getNodeAt() is unreliable for shape:'custom' (bounding box near-zero).
+// Manual AABB hit test using DOMtoCanvas + node dimensions, topmost node first.
+function getNodeAtDOMPoint(domX, domY) {
+  if (!st.network || !st.nodes) return undefined;
+  const cp = st.network.DOMtoCanvas({ x: domX, y: domY });
+  for (let i = st.canonicalOrder.length - 1; i >= 0; i--) {
+    const id = st.canonicalOrder[i];
+    const n  = st.nodes.get(id);
+    const bn = st.network.body.nodes[id];
+    if (!n || !bn) continue;
+    const defaults = SHAPE_DEFAULTS[n.shapeType] || [100, 40];
+    const w = n.nodeWidth  || defaults[0];
+    const h = n.nodeHeight || defaults[1];
+    const rot = n.rotation || 0;
+    let hw, hh;
+    if (rot === 0) {
+      hw = w / 2; hh = h / 2;
+    } else {
+      const cos = Math.abs(Math.cos(rot)); const sin = Math.abs(Math.sin(rot));
+      hw = (w * cos + h * sin) / 2;
+      hh = (w * sin + h * cos) / 2;
+    }
+    if (Math.abs(cp.x - bn.x) <= hw && Math.abs(cp.y - bn.y) <= hh) return id;
+  }
+  return undefined;
+}
+
+// Wire the stamp overlay click.
+document.getElementById('stampOverlay').addEventListener('click', (e) => {
+  if (!st.activeStamp || !st.network) return;
+  const rect   = document.getElementById('vis-canvas').getBoundingClientRect();
+  const nodeId = getNodeAtDOMPoint(e.clientX - rect.left, e.clientY - rect.top);
+  if (nodeId !== undefined) {
+    applyStamp(nodeId);
+  } else {
+    cancelStamp();
+  }
+});
+
+// ── Step rotation ─────────────────────────────────────────────────────────────
+
+export function stepRotate(degrees) {
+  if (!st.selectedNodeIds.length) return;
+  pushSnapshot();
+  const delta = degrees * (Math.PI / 180);
+  st.selectedNodeIds.forEach((id) => {
+    const n = st.nodes.get(id);
+    if (!n) return;
+    st.nodes.update({ id, rotation: (n.rotation || 0) + delta });
+    const bn = st.network && st.network.body.nodes[id];
+    if (bn) bn.refreshNeeded = true;
+  });
+  if (st.network) st.network.redraw();
+  markDirty();
+}
+
+export function changeZOrder(direction) {
+  // direction: +1 = bring to front (last in canonicalOrder = drawn on top)
+  //            -1 = send to back   (first in canonicalOrder = drawn below)
+  if (!st.selectedNodeIds.length) return;
+  pushSnapshot();
+  st.selectedNodeIds.forEach((id) => {
+    const idx = st.canonicalOrder.indexOf(id);
+    if (idx === -1) return;
+    st.canonicalOrder.splice(idx, 1);
+    if (direction > 0) st.canonicalOrder.push(id);
+    else               st.canonicalOrder.unshift(id);
+  });
+  st.network.redraw();
+  st.network.selectNodes(st.selectedNodeIds);
+  markDirty();
+}

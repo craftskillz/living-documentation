@@ -296,6 +296,14 @@ function _inlineShowPopup(
   if (primary.dataType) popup.dataset.snippetType = primary.dataType;
   popup.className =
     "fixed z-50 flex flex-col rounded-lg border border-blue-200 dark:border-blue-800 bg-white dark:bg-gray-900 shadow-lg p-1";
+  // Layout-critical styles set inline so the popup is correctly sized at measure
+  // time even before the Tailwind CDN JIT generates these utility classes
+  // (otherwise the first popup is an unstyled full-width block → clamped left).
+  popup.style.position = "fixed";
+  popup.style.display = "flex";
+  popup.style.flexDirection = "column";
+  popup.style.width = "max-content";
+  popup.style.zIndex = "50";
   for (const action of actions) {
     const isDanger = action.dataAction === "delete";
     const btn = document.createElement("button");

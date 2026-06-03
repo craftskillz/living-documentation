@@ -1,6 +1,6 @@
 ---
 **date:** 2026-05-11
-**status:** To be validated
+**status:** Accepted
 **description:** Ajout d'un bouton icône à côté du titre document dans le viewer pour copier l'identifiant MCP décodé du document courant dans le presse-papiers.
 **tags:** frontend, viewer, document-id, mcp, clipboard, copyCurrentDocMcpId, copy-doc-id-btn, i18n, playwright
 ---

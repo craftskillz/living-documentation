@@ -1,0 +1,100 @@
+/* Scoped under .ld-shape-editor so generic classes (.btn, .field, .shape-item…)
+   don't leak globally and clash with other pages (e.g. workspace .field). */
+.ld-shape-editor .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  padding: 0 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #374151;
+}
+.ld-shape-editor .btn:hover {
+  background: #f3f4f6;
+}
+.ld-shape-editor .btn-primary {
+  border-color: #2563eb;
+  background: #2563eb;
+  color: #fff;
+}
+.ld-shape-editor .btn-primary:hover {
+  background: #1d4ed8;
+}
+.ld-shape-editor .btn-danger {
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+.ld-shape-editor .btn-danger:hover {
+  background: #fef2f2;
+}
+.ld-shape-editor .field {
+  height: 2rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  padding: 0 0.5rem;
+  font-size: 0.875rem;
+  background: #fff;
+}
+.ld-shape-editor .shape-item.active {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.ld-shape-editor #previewStage {
+  position: relative;
+  width: min(34rem, 100%);
+  aspect-ratio: 1 / 1;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background:
+    linear-gradient(45deg, #f9fafb 25%, transparent 25%),
+    linear-gradient(-45deg, #f9fafb 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #f9fafb 75%),
+    linear-gradient(-45deg, transparent 75%, #f9fafb 75%);
+  background-size: 1.25rem 1.25rem;
+  background-position:
+    0 0,
+    0 0.625rem,
+    0.625rem -0.625rem,
+    -0.625rem 0;
+  overflow: hidden;
+}
+.ld-shape-editor #previewImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+.ld-shape-editor .anchor-dot {
+  position: absolute;
+  width: 0.9rem;
+  height: 0.9rem;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  border: 2px solid #fff;
+  background: #f97316;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  cursor: grab;
+}
+.ld-shape-editor .anchor-dot:active {
+  cursor: grabbing;
+}
+.ld-shape-editor .anchor-dot span {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 0.2rem);
+  transform: translateX(-50%);
+  font:
+    10px/1 system-ui,
+    sans-serif;
+  color: #374151;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1px 3px;
+  border-radius: 3px;
+  white-space: nowrap;
+}

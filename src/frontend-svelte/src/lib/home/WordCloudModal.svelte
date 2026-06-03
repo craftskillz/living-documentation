@@ -543,8 +543,8 @@
   }
 
   // ── render ──────────────────────────────────────────────────────────────────
-  let canvasEl: HTMLCanvasElement;
-  let canvasWrapEl: HTMLDivElement;
+  let canvasEl = $state<HTMLCanvasElement>(null!);
+  let canvasWrapEl = $state<HTMLDivElement>(null!);
   let canvasVisible = $state(false);
 
   function wcRender() {

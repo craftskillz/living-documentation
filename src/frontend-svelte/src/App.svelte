@@ -7,6 +7,8 @@
   import AiContext from "./routes/AiContext.svelte";
   import Agents from "./routes/Agents.svelte";
   import Home from "./routes/Home.svelte";
+  import Diagram from "./routes/Diagram.svelte";
+  import ShapeEditor from "./routes/ShapeEditor.svelte";
 
   let path = $state(window.location.pathname);
 
@@ -40,6 +42,10 @@
   <AiContext {navigate} />
 {:else if path === "/agents"}
   <Agents />
+{:else if path === "/diagram"}
+  <Diagram />
+{:else if path === "/shape-editor"}
+  <ShapeEditor />
 {:else if path === "/"}
   <Home />
 {:else}

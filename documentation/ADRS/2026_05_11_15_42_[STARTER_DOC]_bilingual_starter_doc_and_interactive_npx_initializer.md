@@ -1,6 +1,6 @@
 ---
 **date:** 2026-05-11
-**status:** To be validated
+**status:** Accepted
 **description:** Le CLI living-ai-documentation lance un wizard interactif quand aucun dossier n'est fourni, scaffolde un starter EN ou FR (starter-doc / starter-doc-fr) avec PROJECT-INSTRUCTIONS et exemples d'ADR, et installe AGENTS.md, CLAUDE.md, memory/MEMORY.md à la racine du projet liés via symlinks dans le dossier AI.
 **tags:** cli, npx, init, wizard, starter-doc, starter-doc-fr, language-selection, scaffolding, agents.md, claude.md, memory.md, project-instructions, symlink, DOCS_FOLDER
 ---
