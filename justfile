@@ -41,7 +41,7 @@ test-ui-watch:
 
 # ── Release ─────────────────────────────────────────────────────────────────
 # Publish a new version: just publish patch|minor|major
-publish level:
+publish level: test
     @case "{{level}}" in patch|minor|major) ;; *) echo "Error: level must be patch, minor or major (got '{{level}}')"; exit 1 ;; esac
     npm version {{level}}
     git push
