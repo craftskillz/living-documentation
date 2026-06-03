@@ -84,3 +84,10 @@ Deux chantiers parallèles complétés :
 - Correction du blocage de commit zizmor sur `publish.yml` : `.github/zizmor.yml` ignore maintenant `publish.yml` (nom de base attendu par zizmor) et les commentaires inline `zizmor: ignore[cache-poisoning]` sont séparés des commentaires de version.
 - Métadonnées Living Documentation rafraîchies via MCP pour le document CI de durcissement des workflows GitHub Actions ; accuracy = 1.
 - Vérifications : `zizmor .github/workflows/publish.yml`, `zizmor .github/workflows/`, `zizmor --config .github/zizmor.yml .github/workflows/`, `./scripts/check-workflows.sh` et `.githooks/pre-commit` : OK.
+
+## Intervention annexe terminée - 2026-06-03 MCP update_document
+
+- Investigation du faux échec `update_document` observé pendant la correction zizmor : l'outil MCP fonctionne, y compris avec un Markdown multiligne contenant backticks, crochets et quotes.
+- Ajout d'un test API ciblé dans `tests/api/mcp.spec.ts` qui appelle `update_document`, relit via MCP et vérifie le contenu sur disque.
+- Cause des échecs observés : commandes locales de diagnostic dans le sandbox (`node fetch` refusé avec `EPERM`, pipelines vers `curl -d @-` instables), pas un bug du serveur MCP.
+- Vérification : `npx playwright test tests/api/mcp.spec.ts -g "update_document overwrites" --project=chromium` : OK.

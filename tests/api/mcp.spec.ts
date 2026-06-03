@@ -94,6 +94,53 @@ test('read_document returns raw markdown content for a specific doc', async ({ r
   expect(content).toContain('# Introduction');
 });
 
+test('update_document overwrites an existing document with multiline markdown', async ({ request, ld }) => {
+  const docs = await callTool<Array<{ id: string; title: string }>>(
+    request,
+    ld.baseURL,
+    'list_documents',
+  );
+  const intro = docs.find((d) => d.title === 'Intro');
+  expect(intro).toBeDefined();
+
+  const updatedContent = [
+    '---',
+    '**date:** 2026-01-01',
+    '**status:** To be validated',
+    '**description:** Update document MCP regression coverage.',
+    '**tags:** mcp, update_document, markdown, regression',
+    '---',
+    '',
+    '# Updated through MCP',
+    '',
+    'This body contains shell-sensitive characters that must stay data:',
+    '',
+    '- backticks: `publish.yml` and `zizmor: ignore[cache-poisoning]`',
+    '- brackets: [CI] and [cache-poisoning]',
+    '- quotes: "double" and \'single\'',
+    '',
+  ].join('\n');
+
+  const result = await callTool<{ success: boolean; id: string; bytes: number }>(
+    request,
+    ld.baseURL,
+    'update_document',
+    { id: intro!.id, content: updatedContent },
+  );
+
+  expect(result).toEqual({
+    success: true,
+    id: intro!.id,
+    bytes: Buffer.byteLength(updatedContent, 'utf-8'),
+  });
+
+  const reread = await callTool<string>(request, ld.baseURL, 'read_document', {
+    id: intro!.id,
+  });
+  expect(reread).toBe(updatedContent);
+  expect(fs.readFileSync(path.join(ld.docsAbs, decodeURIComponent(intro!.id) + '.md'), 'utf-8')).toBe(updatedContent);
+});
+
 test('create_document writes a new .md file through the MCP server', async ({
   request,
   ld,
