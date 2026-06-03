@@ -78,3 +78,9 @@ Deux chantiers parallèles complétés :
 - Remplacement via MCP du document `000_BLUEPRINT/2026_06_01_17_40_[SCRIPTS]_scripts` par une explication haut niveau du dossier `scripts/` : rôle, inventaire, flux build/dev/check/hooks/CI, commandes et règles de modification.
 - Métadonnées Living Documentation attachées à `scripts/copy-assets.ts`, `scripts/dev.js`, `scripts/check-frontend-js.js`, `scripts/check-readme-sync.sh`, `scripts/check-workflows.sh`, `.githooks/pre-commit`, `.github/workflows/readme-sync.yml` et `.github/workflows/publish.yml`.
 - Vérifications : `read_document` MCP du document mis à jour, `refresh_metadata`, puis `get_accuracy` à `1` avec 8 fichiers inchangés.
+
+## Intervention annexe terminée - 2026-06-03
+
+- Correction du blocage de commit zizmor sur `publish.yml` : `.github/zizmor.yml` ignore maintenant `publish.yml` (nom de base attendu par zizmor) et les commentaires inline `zizmor: ignore[cache-poisoning]` sont séparés des commentaires de version.
+- Métadonnées Living Documentation rafraîchies via MCP pour le document CI de durcissement des workflows GitHub Actions ; accuracy = 1.
+- Vérifications : `zizmor .github/workflows/publish.yml`, `zizmor .github/workflows/`, `zizmor --config .github/zizmor.yml .github/workflows/`, `./scripts/check-workflows.sh` et `.githooks/pre-commit` : OK.

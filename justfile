@@ -39,6 +39,19 @@ test-ui-headed *args: build
 test-ui-watch:
     npx playwright test --ui
 
+# ── Security ────────────────────────────────────────────────────────────────
+# Audit GitHub Actions workflows for security issues (supply-chain, injections…)
+# Exit codes: 0 = clean, 13 = only suppressed/ignored, 14 = active findings.
+audit:
+    zizmor .github/workflows/
+
+# Audit + apply all automatic fixes (pins actions to SHA, fixes injections, etc.)
+# Requires a GitHub token to resolve action SHAs.
+audit-fix:
+    zizmor --fix=all --gh-token "$(gh auth token)" .github/workflows/
+    @echo "Re-running audit to check remaining findings…"
+    zizmor .github/workflows/ || true
+
 # ── Release ─────────────────────────────────────────────────────────────────
 # Publish a new version: just publish patch|minor|major
 publish level: test

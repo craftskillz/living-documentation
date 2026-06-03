@@ -1,0 +1,7 @@
+rules:
+  cache-poisoning:
+    # setup-node in publish.yml (tag-triggered) is flagged as "enables caching by
+    # default" even when cache is intentionally omitted. Confidence is Low and
+    # the zizmor docs themselves note these findings "can likely be ignored".
+    ignore:
+      - publish.yml

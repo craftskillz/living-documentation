@@ -65,6 +65,17 @@ Toutes ces cibles **buildent d'abord** (les tests unit importent `dist/`, les e2
 | `just test-ui-headed` | Tests UI/e2e en mode `--headed` : on voit le navigateur exécuter les tests. |
 | `just test-ui-watch` | Runner interactif Playwright (`--ui`) : watch, traces, replay. |
 
+### Raccourcis `just` pour la sécurité CI (zizmor)
+
+Audit local des workflows GitHub Actions (le binaire `zizmor` doit être installé ; il l'est via `~/.local/bin`).
+
+| Commande | Effet |
+|---|---|
+| `just audit` | `zizmor .github/workflows/` — liste les findings de sécurité (exit 14 s'il en reste d'actifs). |
+| `just audit-fix` | `zizmor --fix=all --gh-token "$(gh auth token)"` puis re-audit — pinne les actions sur SHA, corrige les injections, etc. Nécessite un token GitHub (résolution des SHA). |
+
+Les 2 findings `cache-poisoning` résiduels sur `publish.yml` sont des faux positifs documentés et supprimés via `.github/zizmor.yml`.
+
 Il n'existe pas de script ESLint ou `format` dans `package.json` à ce jour. Ne pas annoncer `npm run lint` ou `npm run format` comme vérification disponible tant qu'ils ne sont pas ajoutés. Le typage frontend est assuré par `svelte-check`/`tsc` et le build Vite (le script `check:frontend` a été supprimé avec le frontend vanilla).
 
 ## Tests ciblés

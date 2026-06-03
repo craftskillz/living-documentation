@@ -698,5 +698,53 @@
       "path": "scripts/copy-assets.ts",
       "hash": "5bc38ba70f2c20b68f929aa1419fbadf1b8bcd88111a6a58af3dbb56f1210c3f"
     }
+  ],
+  "2026_06_03_23_19_[TESTING]_stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions": [
+    {
+      "path": "src/frontend-svelte/src/lib/home/DocViewer.svelte",
+      "hash": "080355b3e61b241bbb859b8223edc600e0d9ab9d1858fc1b28326499bcac6f14"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/SnippetsModal.svelte",
+      "hash": "47318ca7c074d963147c7cd9fd74c2972667092be47f4da32195802b844b8879"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/ConfirmDialog.svelte",
+      "hash": "338fc4e946c6b121cd1b946ad7c5515237511a2701b2944651c3df905fe5cb4d"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/tableAttributes.ts",
+      "hash": "4d2a6ff39136097ed36c29b5217de767aa9e0f50754acdd768de59c949695c8b"
+    },
+    {
+      "path": "tests/e2e/inline-snippet-edit.spec.ts",
+      "hash": "88a64f768d683aea6d88147c1b1fd7e5bb6d1e0772daea9f59a7cfafb8a19711"
+    }
+  ],
+  "2026_06_03_23_20_[CI]_durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials": [
+    {
+      "path": ".github/workflows/publish.yml",
+      "hash": "4fd88ac69bbae78808be98e85f34ba9ba470bce5a81d78bd56f9a1a58b6f7d88"
+    },
+    {
+      "path": ".github/workflows/e2e.yml",
+      "hash": "f2a7981d24b588832951dff2560f91fdaa5bb499bb70a21d9c8aaf404a4ca9ba"
+    },
+    {
+      "path": ".github/workflows/readme-sync.yml",
+      "hash": "d42d67093e506ea2b07d282298444906bfbb18db484cf1e9dc1f8199226f8bb3"
+    },
+    {
+      "path": ".github/workflows/codeql.yml",
+      "hash": "9421c5e996e73ef420bb5cb1ef183a6f2f75bb359f9da520822af0f25cb44761"
+    },
+    {
+      "path": ".github/workflows/zizmor.yml",
+      "hash": "5e850966afe47f1433d8dcc88abc7dd4ce23050464eb8e1651fc9fbf1ff46bff"
+    },
+    {
+      "path": ".github/zizmor.yml",
+      "hash": "ebc81c6f965228ed9bc5437fe884de7fb89c62c9e6799928e5daf21d7f969760"
+    }
   ]
 }

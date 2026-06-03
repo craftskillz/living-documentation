@@ -15,12 +15,15 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
       - name: Setup Node
-        uses: actions/setup-node@v6
+        # zizmor: ignore[cache-poisoning] setup-node has no npm cache configured here.
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: 20
-          cache: npm
+          # npm cache intentionally omitted on publish (tag-triggered) workflows.
       - name: Install dependencies
         # --ignore-scripts blocks postinstall hooks, the most common vector for
         # supply-chain attacks in compromised packages. None of our runtime deps
@@ -32,18 +35,15 @@ jobs:
         run: npm audit signatures
       - name: Build project
         run: npm run build
-      - name: Cache Playwright browsers
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
       - name: Install Playwright Chromium
+        # No browser cache: actions/cache on publish (tag-triggered) workflows
+        # is a cache-poisoning vector. Install fresh every time.
         run: npx playwright install --with-deps chromium
       - name: Run Playwright tests
         run: npx playwright test
       - name: Upload Playwright report on failure
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: playwright-report
           path: playwright-report/
@@ -61,9 +61,11 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@d77b13a0df3134d64a457ea9003f600b09fa1c8a # v3
         with:
           # javascript-typescript covers .js/.ts/.tsx/.mjs/.cjs plus inline
           # <script> blocks and event handlers inside .html files — so the
@@ -74,7 +76,7 @@ jobs:
           # security-and-quality pack; trades a bit more noise for fewer misses.
           queries: security-extended
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@d77b13a0df3134d64a457ea9003f600b09fa1c8a # v3
         with:
           category: '/language:javascript-typescript'
 
@@ -85,10 +87,11 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           # Full history so we can diff against the previous commit.
           fetch-depth: 0
+          persist-credentials: false
       - name: Check README.md ↔ README.fr.md sync
         # On a tag push, HEAD~1 is the previous main commit (the tag points at
         # the version-bump commit). Same comparison as the standalone workflow.
@@ -104,8 +107,11 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
+      # zizmor: ignore[cache-poisoning] setup-node has no npm cache configured here.
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: "22"
           registry-url: "https://registry.npmjs.org"
