@@ -11,6 +11,10 @@ const METADATA_SEARCH_PREFIX = "metadata://";
 
 const RESERVED_DOCS_SUBFOLDERS = new Set(["files", "images"]);
 
+function toPosixPath(value: string): string {
+  return value.split(path.sep).join("/");
+}
+
 export function collectMdFiles(dir: string, baseDir: string): string[] {
   const results: string[] = [];
   const atDocsRoot = path.resolve(dir) === path.resolve(baseDir);
@@ -24,7 +28,7 @@ export function collectMdFiles(dir: string, baseDir: string): string[] {
       entry.name.toLowerCase().endsWith(".md") &&
       (entry.isFile() || (entry.isSymbolicLink() && fs.statSync(fullPath).isFile()))
     ) {
-      results.push(path.relative(baseDir, fullPath));
+      results.push(toPosixPath(path.relative(baseDir, fullPath)));
     }
   }
   return results;
@@ -51,13 +55,13 @@ export function listDocs(
 
   // Regular docs: recursive scan, sorted by relative path
   const regularDocs = collectMdFiles(docsPath, docsPath).map((relPath) => {
-    const filename = path.basename(relPath);
-    const subdir = path.dirname(relPath);
+    const filename = path.posix.basename(relPath);
+    const subdir = path.posix.dirname(relPath);
     const meta = parseFilename(filename, filenamePattern);
     const id = encodeURIComponent(relPath.slice(0, -3));
     const folder =
       subdir !== "."
-        ? subdir.split(path.sep)
+        ? subdir.split("/")
         : null;
     return { ...meta, id, filename: relPath, folder };
   });

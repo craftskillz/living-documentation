@@ -30,6 +30,10 @@ function isIgnoredDir(name: string): boolean {
   return false;
 }
 
+function toPosixPath(value: string): string {
+  return value.split(path.sep).join("/");
+}
+
 export function browseSourceRouter(docsPath: string): Router {
   const router = Router();
 
@@ -55,7 +59,7 @@ export function browseSourceRouter(docsPath: string): Router {
         .filter((e) => e.isDirectory() && !isIgnoredDir(e.name))
         .map((e) => ({
           name: e.name,
-          path: path.relative(root, path.join(current, e.name)),
+          path: toPosixPath(path.relative(root, path.join(current, e.name))),
         }))
         .sort((a, b) => a.name.localeCompare(b.name));
 
@@ -63,13 +67,13 @@ export function browseSourceRouter(docsPath: string): Router {
         .filter((e) => e.isFile() && !e.name.startsWith("."))
         .map((e) => ({
           name: e.name,
-          path: path.relative(root, path.join(current, e.name)),
+          path: toPosixPath(path.relative(root, path.join(current, e.name))),
         }))
         .sort((a, b) => a.name.localeCompare(b.name));
 
-      const currentRel = path.relative(root, current);
+      const currentRel = toPosixPath(path.relative(root, current));
       const parent =
-        current === root ? null : path.relative(root, path.dirname(current));
+        current === root ? null : toPosixPath(path.relative(root, path.dirname(current)));
 
       res.json({ sourceRoot: root, current: currentRel, parent, dirs, files });
     } catch (err) {

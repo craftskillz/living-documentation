@@ -34,8 +34,10 @@ test('GET /api/browse/alldirs recursively lists subdirectories', async ({ reques
   expect(res.ok()).toBe(true);
   const dirs = (await res.json()) as string[];
   expect(dirs).toContain('a');
-  expect(dirs).toContain(path.join('a', 'b'));
-  expect(dirs).toContain(path.join('a', 'b', 'c'));
+  expect(dirs).toContain('a/b');
+  expect(dirs).toContain('a/b/c');
+  expect(dirs).not.toContain('a\\b');
+  expect(dirs).not.toContain('a\\b\\c');
 });
 
 test('POST /api/browse/mkdir creates a directory', async ({ request, ld }) => {

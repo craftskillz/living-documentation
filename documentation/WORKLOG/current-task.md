@@ -91,3 +91,10 @@ Deux chantiers parallèles complétés :
 - Ajout d'un test API ciblé dans `tests/api/mcp.spec.ts` qui appelle `update_document`, relit via MCP et vérifie le contenu sur disque.
 - Cause des échecs observés : commandes locales de diagnostic dans le sandbox (`node fetch` refusé avec `EPERM`, pipelines vers `curl -d @-` instables), pas un bug du serveur MCP.
 - Vérification : `npx playwright test tests/api/mcp.spec.ts -g "update_document overwrites" --project=chromium` : OK.
+
+## Intervention annexe terminée - 2026-06-05 chemins Windows sidebar
+
+- Diagnostic confirmé depuis Windows : `GET /api/browse/alldirs?path=C:\Users\Administrator\Desktop\docs` renvoyait `AI\\rules` et `TEST\\USAGE`, ce qui créait des dossiers plats non cliquables dans la sidebar Svelte.
+- Correction serveur : normalisation POSIX des chemins relatifs renvoyés par `src/routes/browse.ts`, des chemins/id/folders de documents dans `src/routes/documents.ts`, et des chemins relatifs de l'explorateur source dans `src/routes/browse-source.ts`.
+- Test renforcé : `tests/api/browse.spec.ts` exige maintenant `a/b` et `a/b/c`, et rejette `a\\b` / `a\\b\\c`.
+- Vérifications : `npm run build`, `npx playwright test tests/api/browse.spec.ts --project=chromium`, `npx playwright test tests/api/documents.spec.ts tests/api/browse-source.spec.ts --project=chromium` : OK.

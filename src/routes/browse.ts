@@ -4,6 +4,10 @@ import path from 'path';
 
 const RESERVED_SUBFOLDERS = new Set(['files', 'images']);
 
+function toPosixPath(value: string): string {
+  return value.split(path.sep).join('/');
+}
+
 function isReservedAtDocsRoot(
   parentDir: string,
   name: string,
@@ -68,7 +72,7 @@ export function browseRouter(docsPath: string): Router {
             !isReservedAtDocsRoot(dir, e.name, docsPath)
           ) {
             const full = path.join(dir, e.name);
-            results.push(path.relative(base, full));
+            results.push(toPosixPath(path.relative(base, full)));
             collect(full);
           }
         }
