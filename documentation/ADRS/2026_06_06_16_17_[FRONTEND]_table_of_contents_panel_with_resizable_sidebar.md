@@ -1,45 +1,56 @@
 ---
 **date:** 2026-06-06
 **status:** To be validated
-**description:** Un panneau TOC sticky et redimensionnable s'ouvre via un bouton fa-list-ul dans le header du viewer; les headings sont extraits après wireDocContent et les clics ouvrent les details fermés avant de scroller avec compensation de hauteur du header sticky.
-**tags:** TOC, table-of-contents, DocViewer, sidebar, resizable, sticky, details, scroll, localStorage, headings, wireDocContent
+**description:** Un panneau TOC sticky redimensionnable s'ouvre via un bouton fa-list-ul; le header reste pleine largeur au-dessus du contenu et la TOC se colle à top=hauteurHeader (mesurée par ResizeObserver) pour zéro sticky-travel; les clics ouvrent les details fermés avant de scroller.
+**tags:** TOC, table-of-contents, DocViewer, sticky, ResizeObserver, zero-travel, resizable, details, scroll, localStorage, headings
 ---
 
 ## Contexte
 
-Les documents longs n'avaient pas de navigation interne. Astro/Starlight propose une TOC fixe sur la droite. L'objectif était d'avoir le même principe mais opt-in (toggle) plutôt que toujours visible.
+Les documents longs n'avaient pas de navigation interne. Astro/Starlight propose une TOC fixe sur la droite. Objectif : même principe mais opt-in (toggle) plutôt que toujours visible.
 
 ## Décision
 
-### Structure
+### Layout (version finale)
 
-Le header `<header id="home-doc-header">` est sorti de l'`<article>` et placé comme frère du conteneur flex `<div class="flex">`. Cela permet au header d'être toujours pleine largeur (`#home-content-area`), quelle que soit la largeur de la TOC.
+Le header `#home-doc-header` est **pleine largeur**, sticky `top-0`, placé comme frère AU-DESSUS de la ligne de contenu. La ligne de contenu est un flex `items-start` contenant l'article (`flex-1`) + handle de resize + aside TOC.
 
-Le layout devient :
 ```
-<header sticky full-width>
-<div class="flex">
+<header sticky top-0 full-width>      ← bande grise sur toute la largeur, par-dessus la TOC
+<div class="flex items-start">
   <article flex-1>contenu</article>
-  <div cursor-col-resize>  ← handle resize
-  <aside ld-toc-aside sticky>TOC</aside>
+  <div cursor-col-resize>             ← handle resize
+  <aside sticky top:{headerH}px>TOC</aside>
 </div>
 ```
 
+### Sticky zéro-travel (point critique)
+
+Un `position: sticky` placé plus bas que le haut du scroller (ici sous un header en flux normal) doit parcourir la hauteur du header AVANT de se figer — pendant ce trajet il « scrolle avec la page » (bug observé : « la table bouge avec la page puis s'arrête »).
+
+Solution : coller la TOC à `top = hauteur du header` au lieu de `top: 0`. Sa position naturelle (offsetTop) égale alors déjà sa valeur `top` → **zéro travel**, la TOC ne bouge jamais.
+
+La hauteur du header est dynamique (badges dossier/catégorie, jauge accuracy, historique de nav, notice de résultats de recherche). Elle est suivie en continu par un `ResizeObserver` sur le header → `headerH` (state). L'aside utilise `style="top: {headerH}px; max-height: calc(100vh - {headerH}px)"`.
+
+C'est ce qui réconcilie « header pleine largeur » ET « TOC figée » (ce ne sont PAS des exigences en conflit).
+
 ### Extraction des headings
 
-L'extraction est faite à la fin de l'effet `wireDocContent` existant (pas dans un `$effect` séparé), pour garantir que les `h1-h6` ont leurs `id` posés avant la lecture. Les headings sans `id` ou sans texte sont filtrés.
+À la fin de l'effet `wireDocContent` existant (pas un `$effect` séparé), pour garantir que les `h1-h6` ont leurs `id` posés. Filtre les headings sans `id` ou sans texte.
 
 ### Resize
 
-Le pattern est identique à la sidebar du diagram (`Diagram.svelte`) : `mousedown` sur le handle → `mousemove` sur `document` → calcul de largeur inversé (`startW - (clientX - startX)` car on tire vers la gauche). Largeur persistée en `localStorage` (`ld-toc-w`). Min 160px, Max 400px, défaut 224px.
+Pattern identique à la sidebar du diagram : `mousedown` sur le handle → `mousemove` sur `document` → largeur inversée (`startW - (clientX - startX)`, on tire vers la gauche). Persistée en `localStorage` (`ld-toc-w`). Min 160, Max 400, défaut 224px.
 
 ### Scroll vers un heading
 
-`scrollToHeading(id)` :
-1. Remonte les ancêtres et ouvre tout `<details>` fermé avant de mesurer
-2. Lit la hauteur réelle du `#home-doc-header` (sticky)
-3. Calcule `targetTop` via `getBoundingClientRect` + `scrollTop`
-4. `scrollContainer.scrollTo({ top: targetTop - headerH - 16, behavior: "smooth" })`
+`scrollToHeading(id)` : ouvre les `<details>` ancêtres fermés avant de mesurer, lit la hauteur réelle du header sticky, puis `scrollContainer.scrollTo({ top: targetTop - headerH - 16, behavior: "smooth" })`.
+
+Les liens TOC ont `onmousedown preventDefault` pour empêcher le focus de scroller le conteneur overflow de la TOC quand on clique un lien partiellement hors-vue.
+
+### Espacement contenu ↔ TOC
+
+Padding et largeur calibrés pour un petit écart (~12px) entre le contenu et le séparateur, sans grand vide.
 
 ### Persistance
 
@@ -48,6 +59,7 @@ Le pattern est identique à la sidebar du diagram (`Diagram.svelte`) : `mousedow
 
 ## Conséquences
 
-- Le bouton TOC est visible dans toutes les actions du header, actif en bleu quand ouvert.
-- Le panneau est absent à l'impression (`no-print`).
-- La séparation verticale (1px `#e5e7eb` / `#374151` dark) est en CSS pur (classe `ld-toc-aside`) car Tailwind CDN JIT ne génère pas toujours `border-l-width`.
+- Bouton TOC visible dans les actions du header, actif en bleu quand ouvert.
+- Panneau absent à l'impression (`no-print`).
+- Séparation verticale 1px (`#e5e7eb` / `#374151` dark) en CSS pur (`.ld-toc-aside`) car Tailwind CDN JIT ne génère pas toujours `border-l-width`.
+- Le `derived showToc` (`tocOpen && tocEntries.length > 0`) pilote l'affichage et évite un panneau vide sur les docs sans heading.

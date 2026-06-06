@@ -750,7 +750,7 @@
   "ADRS/2026_06_06_16_17_[FRONTEND]_table_of_contents_panel_with_resizable_sidebar": [
     {
       "path": "src/frontend-svelte/src/lib/home/DocViewer.svelte",
-      "hash": "50f965b21553aa3202a1d5e9ef1dc7a50f2301748334feefe69091474ee29fef"
+      "hash": "f6425c3c2e9fa80d9a522146df296ce1431fd0a5b00dddd106c02d9a42055c5e"
     },
     {
       "path": "src/frontend-svelte/src/lib/home/home.css",
