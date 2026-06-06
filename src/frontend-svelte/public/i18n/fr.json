@@ -527,6 +527,8 @@
   "admin.appearance.image_centered_hint": "Centre toutes les images horizontalement dans la vue document.",
   "admin.appearance.image_border_label": "Bordure légère autour des images",
   "admin.appearance.image_border_hint": "Ajoute une bordure subtile et une ombre aux images dans la vue document.",
+  "admin.appearance.code_light_theme_label": "Thème clair pour les blocs de code",
+  "admin.appearance.code_light_theme_hint": "Bascule la coloration syntaxique des blocs de code vers un thème fond clair (github). Par défaut, les blocs de code utilisent le thème sombre (github-dark).",
   "admin.pattern.label": "Modèle de nom de fichier",
   "admin.pattern.placeholder": "YYYY_MM_DD_HH_mm_[Category]_title",
   "admin.pattern.hint": "Analysé pour extraire la date, la catégorie et le titre.",

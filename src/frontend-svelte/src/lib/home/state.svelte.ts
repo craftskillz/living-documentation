@@ -35,6 +35,7 @@ class HomeState {
   imageRoundedCorners = $state(false);
   imageCentered = $state(false);
   imageBorder = $state(false);
+  codeBlockLightTheme = $state(false);
 
   // Marker (stabilo): "normal" | "active" | "hidden"
   markerState = $state<"normal" | "active" | "hidden">("normal");

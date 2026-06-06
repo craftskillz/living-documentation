@@ -44,6 +44,17 @@
     try { localStorage.setItem("ld-dark", String(dark)); } catch {}
   }
 
+  // ── Code block hljs theme swap ───────────────────────────────────────────────
+  $effect(() => {
+    const hljsDark = document.getElementById('hljs-dark') as HTMLLinkElement | null;
+    const hljsLight = document.getElementById('hljs-light') as HTMLLinkElement | null;
+    if (!hljsDark || !hljsLight) return;
+    const useLightTheme = home.codeBlockLightTheme && !dark;
+    hljsDark.disabled = useLightTheme;
+    hljsLight.disabled = !useLightTheme;
+    document.body.classList.toggle('ld-code-light', useLightTheme);
+  });
+
   // ── Search ───────────────────────────────────────────────────────────────────
   function onSearch(q: string) {
     const trimmed = q.trim();
@@ -192,6 +203,7 @@
     home.imageRoundedCorners = !!cfg.imageRoundedCorners;
     home.imageCentered = !!cfg.imageCentered;
     home.imageBorder = !!cfg.imageBorder;
+    home.codeBlockLightTheme = !!cfg.codeBlockLightTheme;
     if (home.codeBlockMaxHeight > 0) {
       document.documentElement.style.setProperty("--ld-code-max-h", home.codeBlockMaxHeight + "px");
     }
@@ -218,7 +230,7 @@
   });
 </script>
 
-<div class="app-shell bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+<div class="app-shell bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
   <!-- Header -->
   <Topbar title={appTitle} subtitle="">
     <div class="relative hidden sm:block">

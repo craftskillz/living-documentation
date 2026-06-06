@@ -355,7 +355,7 @@
 
 <svelte:window onkeydown={onKeydown} />
 
-<article id="home-doc-view" data-testid="doc-view" class="{fullWidth ? 'max-w-none' : 'max-w-4xl'} mx-auto px-6 py-8">
+<article id="home-doc-view" data-testid="doc-view" class="max-w-none mx-auto px-6 pb-8">
   <header class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-950 -mx-6 px-6 pt-8 mb-8 pb-6 border-b border-gray-300 dark:border-gray-800">
     <div class="flex items-start gap-4 flex-wrap">
       <div class="shrink min-w-0">
@@ -394,7 +394,7 @@
           {#if showValidate}
             <button onclick={validate} data-testid="validate-btn" title={t("doc.validate_mode")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-green-700 bg-green-600 text-white font-semibold hover:bg-green-700 transition-colors"><i class="fa-solid fa-check" style="margin-right:4px"></i>{t("doc.validate_btn")}</button>
           {/if}
-          <button onclick={() => home.toggleMarker()} title={t("doc.marker_mode")} class="no-print text-sm px-3 py-1.5 rounded-lg border transition-colors {home.markerActive ? 'border-yellow-400 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'}">
+          <button onclick={() => home.toggleMarker()} title={t("doc.marker_mode")} class="no-print text-sm px-3 py-1.5 rounded-lg border transition-colors {home.markerActive ? 'border-yellow-400 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}">
             <svg width="18" height="18" viewBox="0 0 100 100" fill="none" style="display:inline-block;vertical-align:middle;margin-right:4px">
               <rect x="28" y="10" width="44" height="52" rx="6" transform="rotate(40 50 50)" fill={bodyFill} stroke="currentColor" stroke-width="6" />
               <rect x="52" y="8" width="22" height="30" rx="6" transform="rotate(40 50 50)" fill={capFill} stroke="currentColor" stroke-width="6" />
@@ -409,11 +409,11 @@
               {/if}
             </svg>{t("doc.marker_btn")}
           </button>
-          <button onclick={toggleFullWidth} title={t("doc.toggle_width")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t(fullWidth ? "doc.full_width_narrow_btn" : "doc.full_width_btn")}</button>
-          <button onclick={exportPDF} title={t("doc.export_pdf")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">📄 {t("doc.export_pdf_btn")}</button>
-          <button onclick={copyLink} title={t("doc.copy_link")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"><i class="fa-solid fa-link"></i> {t("doc.copy_link_btn")}</button>
-          <button onclick={() => (metadataOpen = true)} data-testid="metadata-btn" title={t("metadata.button_title")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"><i class="fa-solid fa-code-compare"></i> {t("metadata.button")}</button>
-          <button onclick={enterEdit} title={t("doc.edit")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"><i class="fa-solid fa-file-pen"></i> {t("doc.edit_btn")}</button>
+
+          <button onclick={exportPDF} title={t("doc.export_pdf")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">📄 {t("doc.export_pdf_btn")}</button>
+          <button onclick={copyLink} title={t("doc.copy_link")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-link"></i> {t("doc.copy_link_btn")}</button>
+          <button onclick={() => (metadataOpen = true)} data-testid="metadata-btn" title={t("metadata.button_title")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-code-compare"></i> {t("metadata.button")}</button>
+          <button onclick={enterEdit} title={t("doc.edit")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-file-pen"></i> {t("doc.edit_btn")}</button>
           <button onclick={() => (confirmingDelete = true)} title={t("doc.delete")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-700 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 transition-colors"><i class="fa-solid fa-trash"></i> {t("doc.delete_btn")}</button>
           </div>
         {/if}
@@ -470,7 +470,7 @@
       id="doc-content"
       data-testid="doc-content"
       onclick={onContentClick}
-      class="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-code:before:content-none prose-code:after:content-none prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-gray-700 {home.imageRoundedCorners ? '[&_img]:rounded-xl' : ''} {home.imageCentered ? '[&_img]:mx-auto [&_img]:block' : ''} {home.imageBorder ? '[&_img]:[box-shadow:0_0_0_1px_rgba(0,0,0,0.10),0_4px_12px_rgba(0,0,0,0.04)] dark:[&_img]:[box-shadow:0_0_0_1px_rgba(255,255,255,0.08),0_4px_12px_rgba(255,255,255,0.25)]' : ''}"
+      class="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-code:before:content-none prose-code:after:content-none {home.codeBlockLightTheme ? 'prose-pre:bg-[#f6f8fa] prose-pre:text-gray-800 prose-pre:border prose-pre:border-gray-200 prose-pre:rounded-lg dark:prose-pre:bg-[#0d1117] dark:prose-pre:text-gray-100 dark:prose-pre:border-gray-700' : 'prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-gray-700'} {home.imageRoundedCorners ? '[&_img]:rounded-xl' : ''} {home.imageCentered ? '[&_img]:mx-auto [&_img]:block' : ''} {home.imageBorder ? '[&_img]:[box-shadow:0_0_0_1px_rgba(0,0,0,0.10),0_4px_12px_rgba(0,0,0,0.04)] dark:[&_img]:[box-shadow:0_0_0_1px_rgba(255,255,255,0.08),0_4px_12px_rgba(255,255,255,0.25)]' : ''}"
     ></div>
   {/if}
 </article>

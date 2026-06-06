@@ -37,6 +37,7 @@ export function configRouter(docsPath: string): Router {
         'imageRoundedCorners',
         'imageCentered',
         'imageBorder',
+        'codeBlockLightTheme',
         'diagramDefaults',
       ];
       const safe: Partial<StoredConfig> = {};

@@ -47,6 +47,7 @@ export interface StoredConfig {
   imageRoundedCorners: boolean;
   imageCentered: boolean;
   imageBorder: boolean;
+  codeBlockLightTheme: boolean;
   diagramDefaults: DiagramDefaults | null;
 }
 
@@ -123,6 +124,7 @@ const STORAGE_DEFAULTS: StoredConfig = {
   imageRoundedCorners: true,
   imageCentered: true,
   imageBorder: true,
+  codeBlockLightTheme: false,
   diagramDefaults: {
     arrows: {
       arrowDir: 'to',
@@ -180,9 +182,10 @@ function readAndMigrate(docsPath: string): StoredConfig {
 
   // Image style options added in 3.2.0 — backfill with true so existing users get
   // the nicer rendering automatically on upgrade without touching the admin.
-  for (const key of ["imageRoundedCorners", "imageCentered", "imageBorder"] as const) {
+  const backfill: Partial<StoredConfig> = { imageRoundedCorners: true, imageCentered: true, imageBorder: true, codeBlockLightTheme: false };
+  for (const [key, val] of Object.entries(backfill) as [keyof StoredConfig, unknown][]) {
     if (!(key in raw)) {
-      raw[key] = true;
+      (raw as Record<string, unknown>)[key] = val;
       dirty = true;
     }
   }

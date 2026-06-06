@@ -51,6 +51,10 @@
   "exclusiveCategoryExpansion": true,
   "codeBlockMaxHeight": 400,
   "markdownSoftBreaks": true,
+  "imageRoundedCorners": true,
+  "imageCentered": true,
+  "imageBorder": true,
+  "codeBlockLightTheme": true,
   "diagramDefaults": {
     "arrows": {
       "arrowDir": "to",
@@ -101,8 +105,5 @@
         "colorKey": "c-gray"
       }
     }
-  },
-  "imageRoundedCorners": true,
-  "imageCentered": true,
-  "imageBorder": true
+  }
 }

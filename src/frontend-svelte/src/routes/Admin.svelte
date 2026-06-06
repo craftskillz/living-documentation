@@ -24,6 +24,7 @@
   let imageRoundedCorners = $state(false);
   let imageCentered = $state(false);
   let imageBorder = $state(false);
+  let codeBlockLightTheme = $state(false);
   let blockedFileExtensions = $state("");
   let extraFiles = $state<string[]>([]);
   let nodePalette = $state<string[]>([]);
@@ -137,6 +138,7 @@
       imageRoundedCorners = !!cfg.imageRoundedCorners;
       imageCentered = !!cfg.imageCentered;
       imageBorder = !!cfg.imageBorder;
+      codeBlockLightTheme = !!cfg.codeBlockLightTheme;
       blockedFileExtensions = (cfg.blockedFileExtensions || []).join(" ");
       extraFiles = cfg.extraFiles || [];
       const NODE_KEYS = ["c-white","c-gray","c-slate","c-blue","c-sky","c-cyan","c-teal","c-green","c-lime","c-amber","c-orange","c-red","c-rose","c-pink","c-purple"];
@@ -169,7 +171,7 @@
       title, theme, language, filenamePattern: pattern,
       exclusiveFolderExpansion, exclusiveCategoryExpansion,
       codeBlockMaxHeight: Math.max(0, Math.min(5000, codeBlockMaxHeight || 0)),
-      markdownSoftBreaks, imageRoundedCorners, imageCentered, imageBorder,
+      markdownSoftBreaks, imageRoundedCorners, imageCentered, imageBorder, codeBlockLightTheme,
       diagramNodePalette: [...nodePalette],
       diagramEdgePalette: [...edgePalette],
       sourceRoot: sourceRoot === "" ? null : sourceRoot,
@@ -350,6 +352,13 @@
               <span>{t("admin.appearance.image_border_label")}</span>
             </label>
             <p class="field-hint checkbox-hint">{t("admin.appearance.image_border_hint")}</p>
+          </div>
+          <div class="field-group">
+            <label class="checkbox-label">
+              <input type="checkbox" bind:checked={codeBlockLightTheme} />
+              <span>{t("admin.appearance.code_light_theme_label")}</span>
+            </label>
+            <p class="field-hint checkbox-hint">{t("admin.appearance.code_light_theme_hint")}</p>
           </div>
         </ConfigSection>
 
