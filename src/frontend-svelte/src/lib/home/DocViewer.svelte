@@ -146,6 +146,14 @@
       // Same doc, re-wired for a search change: re-apply in-memory annotation marks
       annotations?.apply();
     }
+
+    // Extract TOC headings after HTML is wired
+    const headings = Array.from(contentEl.querySelectorAll("h1,h2,h3,h4,h5,h6"));
+    tocEntries = headings.map(h => ({
+      id: h.id,
+      text: h.textContent?.trim() ?? "",
+      level: parseInt(h.tagName[1]),
+    })).filter(e => e.id && e.text);
   });
 
   async function validate() {
@@ -187,6 +195,76 @@
     fullWidth = !fullWidth;
     try { localStorage.setItem("ld-full-width", fullWidth ? "1" : "0"); } catch {}
   }
+
+  // ── Table of contents ─────────────────────────────────────────────────────────
+  type TocEntry = { id: string; text: string; level: number };
+  let tocOpen = $state(false);
+  let tocEntries = $state<TocEntry[]>([]);
+
+  // Resizable TOC panel
+  const TOC_KEY = "ld-toc-w";
+  const TOC_MIN = 160, TOC_MAX = 400, TOC_DEFAULT = 224;
+  let tocDragging = $state(false);
+  let tocEl = $state<HTMLElement | null>(null);
+
+  function startTocResize(e: MouseEvent) {
+    e.preventDefault();
+    if (!tocEl) return;
+    const startX = e.clientX;
+    const startW = tocEl.getBoundingClientRect().width;
+    tocDragging = true;
+    tocEl.style.transition = "none";
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+    const onMove = (ev: MouseEvent) => {
+      // dragging left border → moving left increases width
+      const w = Math.max(TOC_MIN, Math.min(TOC_MAX, startW - (ev.clientX - startX)));
+      tocEl!.style.width = w + "px";
+    };
+    const onUp = () => {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      tocDragging = false;
+      tocEl!.style.transition = "";
+      try { localStorage.setItem(TOC_KEY, String(parseInt(tocEl!.style.width, 10))); } catch {}
+    };
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  }
+
+  $effect(() => {
+    try { tocOpen = localStorage.getItem("ld-toc-open") === "1"; } catch {}
+    try {
+      const saved = parseInt(localStorage.getItem(TOC_KEY) || "", 10);
+      if (tocEl && saved >= TOC_MIN && saved <= TOC_MAX) tocEl.style.width = saved + "px";
+    } catch {}
+  });
+
+  function toggleToc() {
+    tocOpen = !tocOpen;
+    try { localStorage.setItem("ld-toc-open", tocOpen ? "1" : "0"); } catch {}
+  }
+
+  function scrollToHeading(id: string) {
+    const target = document.getElementById(id);
+    const scrollContainer = document.getElementById("home-content-area");
+    const header = document.getElementById("home-doc-header") as HTMLElement | null;
+    if (!target || !scrollContainer) return;
+
+    // Open any ancestor <details> so the target is visible before measuring position
+    let el: HTMLElement | null = target.parentElement;
+    while (el && el !== scrollContainer) {
+      if (el.tagName === "DETAILS") (el as HTMLDetailsElement).open = true;
+      el = el.parentElement;
+    }
+
+    const headerH = header ? header.getBoundingClientRect().height : 0;
+    const targetTop = target.getBoundingClientRect().top - scrollContainer.getBoundingClientRect().top + scrollContainer.scrollTop;
+    scrollContainer.scrollTo({ top: targetTop - headerH - 16, behavior: "smooth" });
+  }
+
 
   // ── Edit mode ────────────────────────────────────────────────────────────────
   function enterEdit() {
@@ -355,8 +433,7 @@
 
 <svelte:window onkeydown={onKeydown} />
 
-<article id="home-doc-view" data-testid="doc-view" class="max-w-none mx-auto px-6 pb-8">
-  <header class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-950 -mx-6 px-6 pt-8 mb-8 pb-6 border-b border-gray-300 dark:border-gray-800">
+<header id="home-doc-header" class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-950 px-6 pt-8 pb-6 mb-0 border-b border-gray-300 dark:border-gray-800">
     <div class="flex items-start gap-4 flex-wrap">
       <div class="shrink min-w-0">
         <div class="flex items-center gap-2 mb-2 flex-wrap">
@@ -415,6 +492,7 @@
           <button onclick={() => (metadataOpen = true)} data-testid="metadata-btn" title={t("metadata.button_title")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-code-compare"></i> {t("metadata.button")}</button>
           <button onclick={enterEdit} title={t("doc.edit")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-file-pen"></i> {t("doc.edit_btn")}</button>
           <button onclick={() => (confirmingDelete = true)} title={t("doc.delete")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-700 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 transition-colors"><i class="fa-solid fa-trash"></i> {t("doc.delete_btn")}</button>
+          <button onclick={toggleToc} title={t("doc.toc_toggle")} class="no-print text-sm px-3 py-1.5 rounded-lg border transition-colors {tocOpen ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}"><i class="fa-solid fa-list-ul"></i></button>
           </div>
         {/if}
       </div>
@@ -449,8 +527,10 @@
 
     <!-- Local in-document search widget mount (populated imperatively) -->
     <div bind:this={localSearchMount} class="hidden no-print"></div>
-  </header>
+</header>
 
+<div class="flex min-h-full items-start">
+<article id="home-doc-view" data-testid="doc-view" class="flex-1 min-w-0 px-6 pt-8 pb-8">
   {#if editing}
     <textarea
       bind:this={editorEl}
@@ -474,6 +554,37 @@
     ></div>
   {/if}
 </article>
+
+{#if tocOpen && tocEntries.length > 0}
+  <!-- Resize handle on the left border of the TOC -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div
+    onmousedown={startTocResize}
+    class="no-print w-1 shrink-0 self-stretch cursor-col-resize select-none transition-colors {tocDragging ? 'bg-blue-500/60' : 'bg-transparent hover:bg-blue-500/40'}"
+  ></div>
+  <aside
+    bind:this={tocEl}
+    class="no-print shrink-0 sticky top-0 self-start max-h-screen overflow-y-auto py-8 pr-4 pl-3 ld-toc-aside"
+    style="width: {TOC_DEFAULT}px"
+  >
+    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-3">{t("doc.toc_title")}</p>
+    <nav>
+      <ul class="space-y-1 list-none m-0 p-0">
+        {#each tocEntries as entry}
+          <li class="m-0 p-0" style="padding-left: {(entry.level - 1) * 0.75}rem">
+            <a
+              href="#{entry.id}"
+              onclick={(e) => { e.preventDefault(); scrollToHeading(entry.id); }}
+              class="block text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline py-0.5 leading-snug transition-colors truncate"
+              title={entry.text}
+            >{entry.text}</a>
+          </li>
+        {/each}
+      </ul>
+    </nav>
+  </aside>
+{/if}
+</div>
 
 <Annotations bind:this={annotations} {contentEl} docId={doc.id} />
 
