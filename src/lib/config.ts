@@ -44,6 +44,9 @@ export interface StoredConfig {
   exclusiveCategoryExpansion: boolean;
   codeBlockMaxHeight: number;
   markdownSoftBreaks: boolean;
+  imageRoundedCorners: boolean;
+  imageCentered: boolean;
+  imageBorder: boolean;
   diagramDefaults: DiagramDefaults | null;
 }
 
@@ -117,6 +120,9 @@ const STORAGE_DEFAULTS: StoredConfig = {
   exclusiveCategoryExpansion: false,
   codeBlockMaxHeight: 400,
   markdownSoftBreaks: true,
+  imageRoundedCorners: true,
+  imageCentered: true,
+  imageBorder: true,
   diagramDefaults: {
     arrows: {
       arrowDir: 'to',
@@ -171,6 +177,15 @@ function readAndMigrate(docsPath: string): StoredConfig {
     return { ...STORAGE_DEFAULTS };
   }
   let dirty = false;
+
+  // Image style options added in 3.2.0 — backfill with true so existing users get
+  // the nicer rendering automatically on upgrade without touching the admin.
+  for (const key of ["imageRoundedCorners", "imageCentered", "imageBorder"] as const) {
+    if (!(key in raw)) {
+      raw[key] = true;
+      dirty = true;
+    }
+  }
 
   // docsFolder was stored historically — now purely runtime. Drop it silently.
   if ("docsFolder" in raw) {

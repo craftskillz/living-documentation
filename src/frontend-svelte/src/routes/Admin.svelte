@@ -21,6 +21,9 @@
   let exclusiveCategoryExpansion = $state(false);
   let codeBlockMaxHeight = $state(400);
   let markdownSoftBreaks = $state(false);
+  let imageRoundedCorners = $state(false);
+  let imageCentered = $state(false);
+  let imageBorder = $state(false);
   let blockedFileExtensions = $state("");
   let extraFiles = $state<string[]>([]);
   let nodePalette = $state<string[]>([]);
@@ -131,6 +134,9 @@
       exclusiveCategoryExpansion = !!cfg.exclusiveCategoryExpansion;
       codeBlockMaxHeight = typeof cfg.codeBlockMaxHeight === "number" ? cfg.codeBlockMaxHeight : 400;
       markdownSoftBreaks = !!cfg.markdownSoftBreaks;
+      imageRoundedCorners = !!cfg.imageRoundedCorners;
+      imageCentered = !!cfg.imageCentered;
+      imageBorder = !!cfg.imageBorder;
       blockedFileExtensions = (cfg.blockedFileExtensions || []).join(" ");
       extraFiles = cfg.extraFiles || [];
       const NODE_KEYS = ["c-white","c-gray","c-slate","c-blue","c-sky","c-cyan","c-teal","c-green","c-lime","c-amber","c-orange","c-red","c-rose","c-pink","c-purple"];
@@ -163,7 +169,8 @@
       title, theme, language, filenamePattern: pattern,
       exclusiveFolderExpansion, exclusiveCategoryExpansion,
       codeBlockMaxHeight: Math.max(0, Math.min(5000, codeBlockMaxHeight || 0)),
-      markdownSoftBreaks, diagramNodePalette: [...nodePalette],
+      markdownSoftBreaks, imageRoundedCorners, imageCentered, imageBorder,
+      diagramNodePalette: [...nodePalette],
       diagramEdgePalette: [...edgePalette],
       sourceRoot: sourceRoot === "" ? null : sourceRoot,
       blockedFileExtensions: blocked,
@@ -322,6 +329,27 @@
             </label>
             <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
             <p class="field-hint checkbox-hint">{@html t("admin.appearance.soft_breaks_hint")}</p>
+          </div>
+          <div class="field-group">
+            <label class="checkbox-label">
+              <input type="checkbox" bind:checked={imageRoundedCorners} />
+              <span>{t("admin.appearance.image_rounded_label")}</span>
+            </label>
+            <p class="field-hint checkbox-hint">{t("admin.appearance.image_rounded_hint")}</p>
+          </div>
+          <div class="field-group">
+            <label class="checkbox-label">
+              <input type="checkbox" bind:checked={imageCentered} />
+              <span>{t("admin.appearance.image_centered_label")}</span>
+            </label>
+            <p class="field-hint checkbox-hint">{t("admin.appearance.image_centered_hint")}</p>
+          </div>
+          <div class="field-group">
+            <label class="checkbox-label">
+              <input type="checkbox" bind:checked={imageBorder} />
+              <span>{t("admin.appearance.image_border_label")}</span>
+            </label>
+            <p class="field-hint checkbox-hint">{t("admin.appearance.image_border_hint")}</p>
           </div>
         </ConfigSection>
 

@@ -470,7 +470,7 @@
       id="doc-content"
       data-testid="doc-content"
       onclick={onContentClick}
-      class="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-code:before:content-none prose-code:after:content-none prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-gray-700"
+      class="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-code:before:content-none prose-code:after:content-none prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-gray-700 {home.imageRoundedCorners ? '[&_img]:rounded-xl' : ''} {home.imageCentered ? '[&_img]:mx-auto [&_img]:block' : ''} {home.imageBorder ? '[&_img]:[box-shadow:0_0_0_1px_rgba(0,0,0,0.10),0_4px_12px_rgba(0,0,0,0.04)] dark:[&_img]:[box-shadow:0_0_0_1px_rgba(255,255,255,0.08),0_4px_12px_rgba(255,255,255,0.25)]' : ''}"
     ></div>
   {/if}
 </article>

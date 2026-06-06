@@ -3,7 +3,7 @@
   "title": "Projet Living Documentation",
   "theme": "system",
   "language": "fr",
-  "port": 4321,
+  "port": 4399,
   "extraFiles": [
     "../README.md"
   ],
@@ -101,5 +101,8 @@
         "colorKey": "c-gray"
       }
     }
-  }
+  },
+  "imageRoundedCorners": true,
+  "imageCentered": true,
+  "imageBorder": true
 }

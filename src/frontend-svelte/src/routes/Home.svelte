@@ -189,6 +189,9 @@
     home.exclusiveFolderExpansion = !!cfg.exclusiveFolderExpansion;
     home.exclusiveCategoryExpansion = !!cfg.exclusiveCategoryExpansion;
     home.codeBlockMaxHeight = typeof cfg.codeBlockMaxHeight === "number" ? cfg.codeBlockMaxHeight : 400;
+    home.imageRoundedCorners = !!cfg.imageRoundedCorners;
+    home.imageCentered = !!cfg.imageCentered;
+    home.imageBorder = !!cfg.imageBorder;
     if (home.codeBlockMaxHeight > 0) {
       document.documentElement.style.setProperty("--ld-code-max-h", home.codeBlockMaxHeight + "px");
     }

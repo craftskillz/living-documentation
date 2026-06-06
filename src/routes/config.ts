@@ -34,6 +34,9 @@ export function configRouter(docsPath: string): Router {
         'exclusiveCategoryExpansion',
         'codeBlockMaxHeight',
         'markdownSoftBreaks',
+        'imageRoundedCorners',
+        'imageCentered',
+        'imageBorder',
         'diagramDefaults',
       ];
       const safe: Partial<StoredConfig> = {};

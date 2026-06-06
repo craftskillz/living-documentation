@@ -32,6 +32,9 @@ class HomeState {
   exclusiveFolderExpansion = $state(false);
   exclusiveCategoryExpansion = $state(false);
   codeBlockMaxHeight = $state(400);
+  imageRoundedCorners = $state(false);
+  imageCentered = $state(false);
+  imageBorder = $state(false);
 
   // Marker (stabilo): "normal" | "active" | "hidden"
   markerState = $state<"normal" | "active" | "hidden">("normal");
