@@ -200,12 +200,26 @@
   type TocEntry = { id: string; text: string; level: number };
   let tocOpen = $state(false);
   let tocEntries = $state<TocEntry[]>([]);
+  const showToc = $derived(tocOpen && tocEntries.length > 0);
 
   // Resizable TOC panel
   const TOC_KEY = "ld-toc-w";
   const TOC_MIN = 160, TOC_MAX = 400, TOC_DEFAULT = 224;
   let tocDragging = $state(false);
   let tocEl = $state<HTMLElement | null>(null);
+
+  // The header is full-width above the content row; the TOC must stick right below
+  // it. We track the header's live height so the sticky `top` matches its natural
+  // position exactly → zero sticky travel (the TOC never moves while scrolling).
+  let headerEl = $state<HTMLElement | null>(null);
+  let headerH = $state(0);
+  $effect(() => {
+    if (!headerEl) return;
+    const ro = new ResizeObserver(() => { headerH = headerEl!.offsetHeight; });
+    ro.observe(headerEl);
+    headerH = headerEl.offsetHeight;
+    return () => ro.disconnect();
+  });
 
   function startTocResize(e: MouseEvent) {
     e.preventDefault();
@@ -433,7 +447,7 @@
 
 <svelte:window onkeydown={onKeydown} />
 
-<header id="home-doc-header" class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-950 px-6 pt-8 pb-6 mb-0 border-b border-gray-300 dark:border-gray-800">
+<header id="home-doc-header" bind:this={headerEl} class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-950 px-6 pt-8 pb-6 border-b border-gray-300 dark:border-gray-800">
     <div class="flex items-start gap-4 flex-wrap">
       <div class="shrink min-w-0">
         <div class="flex items-center gap-2 mb-2 flex-wrap">
@@ -550,12 +564,12 @@
       id="doc-content"
       data-testid="doc-content"
       onclick={onContentClick}
-      class="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-code:before:content-none prose-code:after:content-none {home.codeBlockLightTheme ? 'prose-pre:bg-[#f6f8fa] prose-pre:text-gray-800 prose-pre:border prose-pre:border-gray-200 prose-pre:rounded-lg dark:prose-pre:bg-[#0d1117] dark:prose-pre:text-gray-100 dark:prose-pre:border-gray-700' : 'prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-gray-700'} {home.imageRoundedCorners ? '[&_img]:rounded-xl' : ''} {home.imageCentered ? '[&_img]:mx-auto [&_img]:block' : ''} {home.imageBorder ? '[&_img]:[box-shadow:0_0_0_1px_rgba(0,0,0,0.10),0_4px_12px_rgba(0,0,0,0.04)] dark:[&_img]:[box-shadow:0_0_0_1px_rgba(255,255,255,0.08),0_4px_12px_rgba(255,255,255,0.25)]' : ''}"
+      class="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-headings:font-semibold prose-h1:text-[2.1875rem] prose-h2:text-[1.8125rem] prose-h3:text-[1.5rem] prose-h4:text-[1.25rem] prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-code:before:content-none prose-code:after:content-none {home.codeBlockLightTheme ? 'prose-pre:bg-[#f6f8fa] prose-pre:text-gray-800 prose-pre:border prose-pre:border-gray-200 prose-pre:rounded-lg dark:prose-pre:bg-[#0d1117] dark:prose-pre:text-gray-100 dark:prose-pre:border-gray-700' : 'prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-gray-700'} {home.imageRoundedCorners ? '[&_img]:rounded-xl' : ''} {home.imageCentered ? '[&_img]:mx-auto [&_img]:block' : ''} {home.imageBorder ? '[&_img]:[box-shadow:0_0_0_1px_rgba(0,0,0,0.10),0_4px_12px_rgba(0,0,0,0.04)] dark:[&_img]:[box-shadow:0_0_0_1px_rgba(255,255,255,0.08),0_4px_12px_rgba(255,255,255,0.25)]' : ''}"
     ></div>
   {/if}
 </article>
 
-{#if tocOpen && tocEntries.length > 0}
+{#if showToc}
   <!-- Resize handle on the left border of the TOC -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div
@@ -564,8 +578,8 @@
   ></div>
   <aside
     bind:this={tocEl}
-    class="no-print shrink-0 sticky top-0 self-start max-h-screen overflow-y-auto py-8 pr-4 pl-3 ld-toc-aside"
-    style="width: {TOC_DEFAULT}px"
+    class="no-print shrink-0 sticky self-start overflow-y-auto py-8 pr-4 pl-3 ld-toc-aside"
+    style="width: {TOC_DEFAULT}px; top: {headerH}px; max-height: calc(100vh - {headerH}px)"
   >
     <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-3">{t("doc.toc_title")}</p>
     <nav>
@@ -574,6 +588,7 @@
           <li class="m-0 p-0" style="padding-left: {(entry.level - 1) * 0.75}rem">
             <a
               href="#{entry.id}"
+              onmousedown={(e) => e.preventDefault()}
               onclick={(e) => { e.preventDefault(); scrollToHeading(entry.id); }}
               class="block text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline py-0.5 leading-snug transition-colors truncate"
               title={entry.text}
