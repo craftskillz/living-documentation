@@ -6,16 +6,37 @@ export interface SearchMatch {
   snippet: string;
 }
 
+// Strip diacritics for accent-insensitive matching (1:1 char mapping on NFC text)
+const deAccent = (s: string) => s.normalize("NFC").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+
 export function highlightMatches(el: HTMLElement, q: string): SearchMatch[] {
+  const normQ = deAccent(q);
+  if (!normQ) return [];
+
   const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
   const nodes: Text[] = [];
   while (walker.nextNode()) nodes.push(walker.currentNode as Text);
-  const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
+
   let idx = 0;
   nodes.forEach(node => {
-    if (!(node.textContent || "").toLowerCase().includes(q.toLowerCase())) return;
+    // Normalize to NFC so each accented char is 1 code point → 1:1 position mapping
+    const text = (node.textContent || "").normalize("NFC");
+    const normText = deAccent(text);
+    if (!normText.includes(normQ)) return;
+
+    // Build HTML by slicing original text at match positions from normalized text
+    let html = "";
+    let pos = 0;
+    while (pos <= normText.length) {
+      const matchIdx = normText.indexOf(normQ, pos);
+      if (matchIdx === -1) { html += text.slice(pos); break; }
+      html += text.slice(pos, matchIdx);
+      html += `<mark id="match-${idx++}">${text.slice(matchIdx, matchIdx + normQ.length)}</mark>`;
+      pos = matchIdx + normQ.length;
+    }
+
     const span = document.createElement("span");
-    span.innerHTML = (node.textContent || "").replace(re, m => `<mark id="match-${idx++}">${m}</mark>`);
+    span.innerHTML = html;
     node.parentNode!.replaceChild(span, node);
   });
 
@@ -23,7 +44,8 @@ export function highlightMatches(el: HTMLElement, q: string): SearchMatch[] {
   el.querySelectorAll("mark[id^='match-']").forEach(mark => {
     const block = (mark.closest("p, li, td, h1, h2, h3, h4, h5, h6, pre") || mark.parentElement) as Element;
     const full = (block.textContent || "").trim();
-    const pos = full.toLowerCase().indexOf(q.toLowerCase());
+    const normFull = deAccent(full);
+    const pos = normFull.indexOf(normQ);
     const start = Math.max(0, pos - 40);
     const end = Math.min(full.length, pos + q.length + 40);
     const snippet = (start > 0 ? "…" : "") + full.slice(start, end) + (end < full.length ? "…" : "");

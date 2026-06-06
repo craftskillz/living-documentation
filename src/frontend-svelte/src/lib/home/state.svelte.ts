@@ -61,9 +61,10 @@ class HomeState {
   get filteredDocs(): DocSummary[] {
     if (!this.searchQuery) return this.allDocs;
     if (Array.isArray(this.searchResults)) return this.searchResults;
-    const q = this.searchQuery.toLowerCase();
+    const deAccent = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+    const q = deAccent(this.searchQuery);
     return this.allDocs.filter(
-      d => d.title.toLowerCase().includes(q) || d.category.toLowerCase().includes(q),
+      d => deAccent(d.title).includes(q) || deAccent(d.category).includes(q),
     );
   }
 

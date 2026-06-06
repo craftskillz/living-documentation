@@ -215,7 +215,10 @@ export function documentsRouter(docsPath: string): Router {
       }
     }
 
-    const query = rawQuery.toLowerCase();
+    // Strip diacritics: NFD decomposition + remove combining marks → accent-insensitive matching
+    const deAccent = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+
+    const query = deAccent(rawQuery);
 
     try {
       const { extraFiles = [], filenamePattern } = readConfig(docsPath);
@@ -227,14 +230,14 @@ export function documentsRouter(docsPath: string): Router {
         if (!filePath || !fs.existsSync(filePath)) continue;
 
         const content = fs.readFileSync(filePath, "utf-8");
-        const inTitle = doc.title.toLowerCase().includes(query);
-        const inCategory = doc.category.toLowerCase().includes(query);
-        const inContent = content.toLowerCase().includes(query);
+        const inTitle = deAccent(doc.title).includes(query);
+        const inCategory = deAccent(doc.category).includes(query);
+        const inContent = deAccent(content).includes(query);
 
         if (inTitle || inCategory || inContent) {
           let excerpt = "";
           if (inContent) {
-            const idx = content.toLowerCase().indexOf(query);
+            const idx = deAccent(content).indexOf(query);
             const start = Math.max(0, idx - 60);
             const end = Math.min(content.length, idx + query.length + 90);
             excerpt =

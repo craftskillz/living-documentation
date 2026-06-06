@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import { home } from "./state.svelte";
   import { t } from "../i18n.svelte";
   import { applyHighlights as applyMarks, setHighlightsVisible, type Annotation } from "./annotationHighlight";
@@ -12,6 +13,18 @@
   let deleteTarget = $state<{ id: string; x: number; y: number } | null>(null);
   let elevatorItems = $state<{ id: string; note: string; orphan: boolean }[]>([]);
   let hideTimer: number | null = null;
+
+  // Close read popup immediately on scroll
+  onMount(() => {
+    const area = document.getElementById("home-content-area");
+    if (!area) return;
+    const onScroll = () => {
+      if (hideTimer) clearTimeout(hideTimer);
+      readPopup = null;
+    };
+    area.addEventListener("scroll", onScroll, { passive: true });
+    return () => area.removeEventListener("scroll", onScroll);
+  });
 
   function clampPos(x: number, y: number, w = 320, h = 260) {
     const vw = window.innerWidth, vh = window.innerHeight;
@@ -122,7 +135,7 @@
   }
 
   function scheduleHide() {
-    hideTimer = window.setTimeout(() => { readPopup = null; }, 300);
+    hideTimer = window.setTimeout(() => { readPopup = null; }, 1500);
   }
 
   function askDelete() {
@@ -151,11 +164,25 @@
     return m.getBoundingClientRect().top + area.scrollTop - area.getBoundingClientRect().top;
   }
 
+  function openAncestorDetails(el: HTMLElement, boundary: HTMLElement) {
+    let cur: HTMLElement | null = el.parentElement;
+    while (cur && cur !== boundary) {
+      if (cur.tagName === "DETAILS") (cur as HTMLDetailsElement).open = true;
+      cur = cur.parentElement;
+    }
+  }
+
   function pillClick(id: string, e: MouseEvent) {
     const m = contentEl?.querySelector(`mark[data-annotation-id="${id}"]`) as HTMLElement | null;
     const area = document.getElementById("home-content-area");
     if (m && area) {
-      area.scrollTo({ top: markRectTop(m, area) - 120, behavior: "smooth" });
+      // If popup is already open (after hover), don't re-scroll — just keep it visible
+      if (readPopup?.ann.id === id) {
+        if (hideTimer) clearTimeout(hideTimer);
+        return;
+      }
+      openAncestorDetails(m, area);
+      area.scrollTo({ top: markRectTop(m, area) - area.clientHeight / 2, behavior: "smooth" });
     } else {
       const ann = list.find(a => a.id === id);
       if (ann) showRead(ann, e.currentTarget as HTMLElement);
@@ -172,6 +199,8 @@
       showRead(ann, e.currentTarget as HTMLElement);
       return;
     }
+    // Open any ancestor <details> so the mark is visible before scrolling
+    openAncestorDetails(m, area);
     // Scroll the mark to the vertical center, then show the popup once settled.
     area.scrollTo({ top: markRectTop(m, area) - area.clientHeight / 2, behavior: "smooth" });
     let settleTimer: number;

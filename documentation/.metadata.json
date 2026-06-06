@@ -746,5 +746,69 @@
       "path": ".github/zizmor.yml",
       "hash": "ebc81c6f965228ed9bc5437fe884de7fb89c62c9e6799928e5daf21d7f969760"
     }
+  ],
+  "ADRS/2026_06_06_16_17_[FRONTEND]_table_of_contents_panel_with_resizable_sidebar": [
+    {
+      "path": "src/frontend-svelte/src/lib/home/DocViewer.svelte",
+      "hash": "50f965b21553aa3202a1d5e9ef1dc7a50f2301748334feefe69091474ee29fef"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/home.css",
+      "hash": "9191134c46099c924449c1db77faa7820d824ab6dd9b8a38f7059a6387122fbc"
+    }
+  ],
+  "ADRS/2026_06_06_16_17_[SEARCH]_accentinsensitive_search_across_global_api_and_indocument_highlight": [
+    {
+      "path": "src/frontend-svelte/src/lib/home/state.svelte.ts",
+      "hash": "88d432588d164930984225156ddbb795c20a049bd80954d14087e7f6ca3811df"
+    },
+    {
+      "path": "src/routes/documents.ts",
+      "hash": "8830e73805ba40c41ed746f05b0f7efbb6f3dd318111a3d1ddd76dfb6464d54d"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/searchNotice.ts",
+      "hash": "5452bd742d35bbe43f284a5d6a618a9677e50fa8c65662a5cf6649151e5aac59"
+    }
+  ],
+  "ADRS/2026_06_06_16_17_[ANNOTATION]_annotation_popup_fixes_details_autoopen_scroll_hide_hover_delay": [
+    {
+      "path": "src/frontend-svelte/src/lib/home/Annotations.svelte",
+      "hash": "1d7878a471b0df97b0d6686e9f43af2d10ff05a4c24f0ede85ead2b9880107f2"
+    }
+  ],
+  "ADRS/2026_06_06_12_57_[ADR]_image_and_code_block_style_options_configurable_from_admin": [
+    {
+      "path": "src/lib/config.ts",
+      "hash": "034aa32d6fbb232e998017b8c58d5d11db117d4ee1efa4d27326e37751694df3"
+    },
+    {
+      "path": "src/routes/config.ts",
+      "hash": "b26539b3dab8cfe271552f8fe20542caaff64815f18006f5865cca3dda074ddb"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/DocViewer.svelte",
+      "hash": "50f965b21553aa3202a1d5e9ef1dc7a50f2301748334feefe69091474ee29fef"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/home.css",
+      "hash": "9191134c46099c924449c1db77faa7820d824ab6dd9b8a38f7059a6387122fbc"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/state.svelte.ts",
+      "hash": "88d432588d164930984225156ddbb795c20a049bd80954d14087e7f6ca3811df"
+    },
+    {
+      "path": "src/frontend-svelte/src/routes/Home.svelte",
+      "hash": "bee233b5d8be2b3c942c62210c59616a4a58e173015f5a7e50379fa1cc2cc274"
+    },
+    {
+      "path": "src/frontend-svelte/src/routes/Admin.svelte",
+      "hash": "265e8e7c2a026e8f30ff5d0529abf9cfd62f6f0abeec8453e7c5bb1f97a14640"
+    },
+    {
+      "path": "tests/e2e/admin.spec.ts",
+      "hash": "deaf5bf456afb47946c6081511b1e2268de793af9badf1e2fda5eab6d9412f08"
+    }
   ]
 }
