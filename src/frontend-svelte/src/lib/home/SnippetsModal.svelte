@@ -23,10 +23,9 @@
   } from "./snippets/listMarkdown";
   import {
     createTableController,
+    focusTableCell,
     tableInit,
     tableRenderGrid,
-    tableChangeRows,
-    tableChangeCols,
     buildTableMarkdown,
   } from "./snippets/table";
   import {
@@ -52,7 +51,13 @@
     onclose: () => void;
     mode?: "insert" | "inline-edit" | "inline-insert";
     content?: string;
-    range?: { start: number; end: number; type: string; indent?: string } | null;
+    range?: {
+      start: number;
+      end: number;
+      type: string;
+      indent?: string;
+      tableFocusCell?: { row: number; col: number };
+    } | null;
     insertPos?: number;
     onsave?: ((newContent: string) => Promise<void>) | undefined;
   } = $props();
@@ -637,6 +642,14 @@
     if (preview) preview.textContent = buildSnippetMarkdown();
   }
 
+  function tableAppearanceChanged(): void {
+    tableRenderGrid(tableCtrl);
+  }
+
+  function closeSnippetModal(): void {
+    onclose();
+  }
+
   // ── Insert ─────────────────────────────────────────────────────────────
   function insertTextAtCursor(text: string): void {
     if (!editor) return;
@@ -678,7 +691,7 @@
       } catch (err) {
         alert(t("snippet.inline_save_failed") + (err instanceof Error ? err.message : String(err)));
       }
-      onclose();
+      closeSnippetModal();
       return;
     }
 
@@ -703,12 +716,12 @@
       } catch (err) {
         alert(t("snippet.inline_insert_failed") + (err instanceof Error ? err.message : String(err)));
       }
-      onclose();
+      closeSnippetModal();
       return;
     }
 
     insertTextAtCursor(text);
-    onclose();
+    closeSnippetModal();
   }
 
   async function deleteInlineSnippet(): Promise<void> {
@@ -728,7 +741,7 @@
     } catch (err) {
       alert(t("snippet.inline_delete_failed") + (err instanceof Error ? err.message : String(err)));
     }
-    onclose();
+    closeSnippetModal();
   }
 
   async function uploadAttachment(): Promise<void> {
@@ -761,7 +774,7 @@
       } catch (err) {
         alert(t("common.error_prefix") + (err instanceof Error ? err.message : String(err)));
       }
-      onclose();
+      closeSnippetModal();
     };
     input.click();
   }
@@ -824,7 +837,7 @@
         }
       }
     }
-    onclose();
+    closeSnippetModal();
     window.location.href = `/diagram?id=${diagId}&img=${encodeURIComponent(imgName)}`;
   }
 
@@ -1054,6 +1067,9 @@
           snippetTypeChanged();
           parseAndFillSnippet(selectedText, range.type);
           showSnippetPanelOnly(false);
+          if (range.type === "table" && range.tableFocusCell) {
+            focusTableCell(range.tableFocusCell.row, range.tableFocusCell.col, true);
+          }
         } else if (mode === "inline-insert") {
           showSnippetPicker();
         } else {
@@ -1082,7 +1098,7 @@
   <div
     id="snippets-modal"
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-    onclick={(e) => { if (e.target === e.currentTarget) onclose(); }}
+    onclick={(e) => { if (e.target === e.currentTarget) closeSnippetModal(); }}
   >
     <div
       id="snippet-modal-card"
@@ -1292,19 +1308,19 @@
         <div class="flex items-center gap-5 flex-wrap">
           <div class="flex items-center gap-2">
             <label for="snip-table-style" class="text-xs text-gray-500 dark:text-gray-400">{t("snippet.table_style_label")}</label>
-            <select id="snip-table-style" onchange={snippetUpdatePreview} class="text-xs rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2 py-1">
+            <select id="snip-table-style" onchange={tableAppearanceChanged} class="text-xs rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2 py-1">
               <option value="">{t("snippet.table_style_default")}</option>
               <option value="compact">{t("snippet.table_style_compact")}</option>
               <option value="striped">{t("snippet.table_style_striped")}</option>
             </select>
           </div>
           <label class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-            <input id="snip-table-bordered" type="checkbox" onchange={snippetUpdatePreview} class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500" />
+            <input id="snip-table-bordered" type="checkbox" onchange={tableAppearanceChanged} class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500" />
             <span>{t("snippet.table_border_label")}</span>
           </label>
           <div class="flex items-center gap-2">
             <label for="snip-table-color" class="text-xs text-gray-500 dark:text-gray-400">{t("snippet.table_color_label")}</label>
-            <select id="snip-table-color" onchange={snippetUpdatePreview} class="text-xs rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2 py-1">
+            <select id="snip-table-color" onchange={tableAppearanceChanged} class="text-xs rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2 py-1">
               <option value="">{t("snippet.table_color_default")}</option>
               <option value="info">{t("snippet.table_color_info")}</option>
               <option value="success">{t("snippet.table_color_success")}</option>
@@ -1313,18 +1329,9 @@
               <option value="note">{t("snippet.table_color_note")}</option>
             </select>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="text-xs text-gray-500 dark:text-gray-400">{t("snippet.table_rows_label")}</span>
-            <button onclick={() => tableChangeRows(tableCtrl, -1)} class="text-xs px-2 py-0.5 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">−</button>
-            <span id="snip-table-rows" class="text-xs font-mono w-4 text-center">3</span>
-            <button onclick={() => tableChangeRows(tableCtrl, 1)} class="text-xs px-2 py-0.5 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">+</button>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="text-xs text-gray-500 dark:text-gray-400">{t("snippet.table_cols_label")}</span>
-            <button onclick={() => tableChangeCols(tableCtrl, -1)} class="text-xs px-2 py-0.5 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">−</button>
-            <span id="snip-table-cols" class="text-xs font-mono w-4 text-center">3</span>
-            <button onclick={() => tableChangeCols(tableCtrl, 1)} class="text-xs px-2 py-0.5 rounded border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">+</button>
-          </div>
+          <p id="snip-table-hint" class="text-xs text-gray-400 dark:text-gray-500 ml-auto">
+            {t("snippet.table_keyboard_hint")}
+          </p>
         </div>
         <div id="snip-table-grid" class="overflow-x-auto"></div>
       </div>
@@ -1436,7 +1443,7 @@
       <!-- Actions -->
       <div class="flex justify-end gap-3 pt-1">
         <button onclick={deleteInlineSnippet} id="snippet-delete-btn" class="hidden text-sm px-4 py-2 mr-auto rounded-lg border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors">{t("snippet.inline_delete_btn")}</button>
-        <button onclick={onclose} class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t("common.cancel")}</button>
+        <button onclick={closeSnippetModal} class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t("common.cancel")}</button>
         <button onclick={insertSnippet} id="snippet-submit-btn" class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">{t("snippet.insert_btn")}</button>
       </div>
     </div>

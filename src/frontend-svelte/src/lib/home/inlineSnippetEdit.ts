@@ -18,6 +18,7 @@ export interface InlineSnippetRange {
   end: number;
   type: string;
   indent?: string;
+  tableFocusCell?: { row: number; col: number };
 }
 
 export interface InlineSnippetCallbacks {
@@ -353,6 +354,20 @@ function _inlineTopLevelBlock(contentEl: HTMLElement, target: EventTarget | null
   return block;
 }
 
+function _inlineTableCellPosition(
+  eventTarget: EventTarget | null,
+  tableTarget: Element,
+): { row: number; col: number } | null {
+  const cell = (eventTarget as Element | null)?.closest("th, td");
+  if (!cell || !tableTarget.contains(cell)) return null;
+  const rowEl = cell.closest("tr");
+  if (!rowEl) return null;
+  const row = Array.from(tableTarget.querySelectorAll("tr")).indexOf(rowEl);
+  const col = Array.from(rowEl.children).indexOf(cell);
+  if (row < 0 || col < 0) return null;
+  return { row, col };
+}
+
 function _inlineNearestBlockByY(contentEl: HTMLElement, clientY: number): Element | null {
   if (typeof clientY !== "number") return null;
   const children = Array.from(contentEl.children);
@@ -527,6 +542,23 @@ export function initInlineSnippetEditing(
   };
   contentEl.addEventListener("contextmenu", contextHandler);
 
+  const dblClickHandler = (event: MouseEvent) => {
+    const target = (event.target as Element | null)?.closest(
+      "[data-inline-snippet-index]",
+    );
+    if (!target || !contentEl.contains(target)) return;
+    const range = candidates[Number((target as HTMLElement).dataset.inlineSnippetIndex)];
+    if (!range || range.type !== "table") return;
+    event.preventDefault();
+    event.stopPropagation();
+    _inlineClosePopup();
+    cb.onEdit({
+      ...range,
+      tableFocusCell: _inlineTableCellPosition(event.target, target) || undefined,
+    });
+  };
+  contentEl.addEventListener("dblclick", dblClickHandler);
+
   // Fallback: catch right-clicks on the surrounding content area when the
   // rendered content is too small to receive them (empty doc, only a heading,
   // etc.). Lower priority than the inner handler — runs only when the click
@@ -570,6 +602,7 @@ export function initInlineSnippetEditing(
 
   return () => {
     contentEl.removeEventListener("contextmenu", contextHandler);
+    contentEl.removeEventListener("dblclick", dblClickHandler);
     if (mainEl && mainFallbackHandler) {
       mainEl.removeEventListener("contextmenu", mainFallbackHandler as EventListener);
     }

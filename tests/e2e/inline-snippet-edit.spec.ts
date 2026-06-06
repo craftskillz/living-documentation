@@ -76,9 +76,6 @@ test.describe('inline snippet editing from viewer', () => {
       return el.getBoundingClientRect().width;
     });
     expect(cardWidth).toBeGreaterThan(800);
-    await expect(page.locator('#snip-table-rows')).toHaveText('5');
-    await expect(page.locator('#snip-table-cols')).toHaveText('3');
-
     const cells = page.locator('#snip-table-grid input');
     await expect(cells).toHaveCount(15);
     await expect(cells.nth(0)).toHaveValue('En-tête 1');
@@ -98,6 +95,35 @@ test.describe('inline snippet editing from viewer', () => {
     const onDisk = fs.readFileSync(docPath, 'utf-8');
     expect(onDisk).toContain('|           | s         | updated   |');
     expect(onDisk).not.toContain('|           | s         |           |');
+  });
+
+  test('double-click on a rendered table cell opens the editor focused on that cell', async ({ page, ld }) => {
+    await page.setViewportSize({ width: 1280, height: 1000 });
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+
+    const scrollBefore = await page.evaluate(() => document.getElementById('home-content-area')?.scrollTop ?? -1);
+    await page.locator('#doc-content table').first().locator('tbody td').nth(4).dblclick();
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await expect
+      .poll(() => page.evaluate(() => document.getElementById('home-content-area')?.scrollTop ?? -1))
+      .toBe(scrollBefore);
+    await expect(page.locator('#snippet-type')).toHaveValue('table');
+    const focusedCell = page.locator('#snip-table-grid input[data-tr="2"][data-tc="1"]');
+    await expect(focusedCell).toBeFocused();
+    await expect(focusedCell).toHaveValue('e');
+    const selectedRange = await focusedCell.evaluate((el: HTMLInputElement) => ({
+      start: el.selectionStart,
+      end: el.selectionEnd,
+      length: el.value.length,
+    }));
+    expect(selectedRange).toEqual({ start: 0, end: 1, length: 1 });
+
+    await page.getByRole('button', { name: 'Cancel' }).click();
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect
+      .poll(() => page.evaluate(() => document.getElementById('home-content-area')?.scrollTop ?? -1))
+      .toBe(scrollBefore);
   });
 
   test('a table preceded by table-style + table-border + table-color comments is rendered with cumulative classes', async ({ page, ld }) => {
@@ -157,6 +183,79 @@ test.describe('inline snippet editing from viewer', () => {
     expect(onDisk).not.toContain('<!-- table-border:');
   });
 
+  test('table editor uses spreadsheet keyboard navigation and context menu deletion', async ({ page, ld }) => {
+    const tinyDocId = '2026_01_02_10_00_[General]_tiny';
+    const docPath = path.join(ld.docsAbs, `${tinyDocId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(tinyDocId)}`);
+    await expect(page.locator('#doc-content')).toBeVisible();
+    await page.evaluate(() => {
+      (window as any).openSnippetsModalForInlineInsert(99999);
+    });
+
+    await page.locator('#snippet-picker [data-snippet-type="table"]').click();
+    await expect(page.locator('#snip-table-rows')).toHaveCount(0);
+    await expect(page.locator('#snip-table-cols')).toHaveCount(0);
+    await expect(page.locator('#snip-table-hint')).toHaveText('Tab to move · → adds a column · ↓ adds a row');
+    await expect(page.locator('#snip-table-grid input')).toHaveCount(4);
+    await expect(page.locator('#snip-table-grid button[data-remove-col]')).toHaveCount(0);
+
+    await page.locator('#snip-table-grid input[data-tr="0"][data-tc="0"]').fill('A');
+    await page.locator('#snip-table-grid input[data-tr="0"][data-tc="0"]').press('Tab');
+    await expect(page.locator('#snip-table-grid input[data-tr="0"][data-tc="1"]')).toBeFocused();
+    const selectedRange = await page
+      .locator('#snip-table-grid input[data-tr="0"][data-tc="1"]')
+      .evaluate((el: HTMLInputElement) => ({
+        start: el.selectionStart,
+        end: el.selectionEnd,
+        length: el.value.length,
+      }));
+    expect(selectedRange.start).toBe(0);
+    expect(selectedRange.end).toBe(selectedRange.length);
+    expect(selectedRange.length).toBeGreaterThan(0);
+
+    await page.locator('#snip-table-grid input[data-tr="0"][data-tc="1"]').fill('B');
+    await page.locator('#snip-table-grid input[data-tr="0"][data-tc="1"]').press('Tab');
+    await expect(page.locator('#snip-table-grid input')).toHaveCount(4);
+    await expect(page.locator('#snip-table-grid input[data-tr="1"][data-tc="0"]')).toBeFocused();
+
+    await page.locator('#snip-table-grid input[data-tr="1"][data-tc="0"]').fill('row 1');
+    await page.locator('#snip-table-grid input[data-tr="1"][data-tc="1"]').fill('row 2');
+    await page.locator('#snip-table-grid input[data-tr="1"][data-tc="1"]').press('Tab');
+    await expect(page.locator('#snip-table-grid input')).toHaveCount(6);
+    await expect(page.locator('#snip-table-grid input[data-tr="2"][data-tc="0"]')).toBeFocused();
+
+    await page.locator('#snip-table-grid input[data-tr="0"][data-tc="1"]').press('ArrowRight');
+    await expect(page.locator('#snip-table-grid input')).toHaveCount(9);
+    await expect(page.locator('#snip-table-grid input[data-tr="0"][data-tc="2"]')).toBeFocused();
+    await page.locator('#snip-table-grid input[data-tr="0"][data-tc="2"]').fill('C');
+
+    await page.locator('#snip-table-grid input[data-tr="2"][data-tc="0"]').fill('delete me');
+    await page.locator('#snip-table-grid input[data-tr="2"][data-tc="0"]').press('ArrowDown');
+    await expect(page.locator('#snip-table-grid input')).toHaveCount(12);
+    await expect(page.locator('#snip-table-grid input[data-tr="3"][data-tc="0"]')).toBeFocused();
+
+    await page.locator('#snip-table-grid input[data-tr="0"][data-tc="1"]').click({ button: 'right' });
+    await expect(page.getByText('Delete column')).toBeVisible();
+    await page.getByText('Delete column').click();
+    await expect(page.locator('#snip-table-grid input')).toHaveCount(8);
+    await expect(page.locator('#snip-table-grid input[data-tr="0"][data-tc="0"]')).toHaveValue('A');
+    await expect(page.locator('#snip-table-grid input[data-tr="0"][data-tc="1"]')).toHaveValue('C');
+
+    await page.locator('#snip-table-grid input[data-tr="2"][data-tc="0"]').click({ button: 'right' });
+    await expect(page.getByText('Delete row')).toBeVisible();
+    await page.getByText('Delete row').click();
+    await expect(page.locator('#snip-table-grid input')).toHaveCount(6);
+
+    await page.locator('#snippet-submit-btn').click();
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toMatch(/\| A\s+\| C\s+\|/);
+    expect(onDisk).not.toMatch(/\| A\s+\| B\s+\| C\s+\|/);
+    expect(onDisk).not.toContain('delete me');
+  });
+
   test('inline-edit on a styled table loads style + border + color and round-trips comments on save', async ({ page, ld }) => {
     const docPath = path.join(ld.docsAbs, `${docId}.md`);
 
@@ -169,9 +268,21 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(page.locator('#snip-table-style')).toHaveValue('compact');
     await expect(page.locator('#snip-table-bordered')).toBeChecked();
     await expect(page.locator('#snip-table-color')).toHaveValue('info');
+    await expect(page.locator('#snip-table-grid table')).toHaveClass(/table-style-compact/);
+    await expect(page.locator('#snip-table-grid table')).toHaveClass(/table-border-bordered/);
+    await expect(page.locator('#snip-table-grid table')).toHaveClass(/table-color-info/);
+    await expect(page.locator('#snip-table-grid tr').first().locator('td').first()).toHaveCSS('background-color', 'rgb(219, 234, 254)');
+    await expect(page.locator('#snip-table-grid tr').nth(1).locator('td').first()).toHaveCSS('border-left-width', '1px');
 
     await page.locator('#snip-table-style').selectOption('striped');
     await page.locator('#snip-table-color').selectOption('success');
+    await expect(page.locator('#snip-table-grid table')).toHaveClass(/table-style-striped/);
+    await expect(page.locator('#snip-table-grid table')).toHaveClass(/table-color-success/);
+    await expect(page.locator('#snip-table-grid tr').first().locator('td').first()).toHaveCSS('background-color', 'rgb(220, 252, 231)');
+    await page.locator('#snip-table-bordered').uncheck();
+    await expect(page.locator('#snip-table-grid table')).not.toHaveClass(/table-border-bordered/);
+    await expect(page.locator('#snip-table-grid tr').nth(1).locator('td').first()).toHaveCSS('border-left-width', '0px');
+    await page.locator('#snip-table-bordered').check();
     await page.locator('#snippet-submit-btn').click();
     await expect(page.locator('#snippets-modal')).toBeHidden();
     await expect(page.locator('#doc-content table').nth(1)).toHaveClass(/table-style-striped/);
@@ -219,6 +330,9 @@ test.describe('inline snippet editing from viewer', () => {
     await page.locator('#snip-table-style').selectOption('striped');
     await page.locator('#snip-table-bordered').check();
     await page.locator('#snip-table-color').selectOption('danger');
+    await expect(page.locator('#snip-table-grid table')).toHaveClass(/table-style-striped/);
+    await expect(page.locator('#snip-table-grid table')).toHaveClass(/table-border-bordered/);
+    await expect(page.locator('#snip-table-grid table')).toHaveClass(/table-color-danger/);
     await page.locator('#snippet-submit-btn').click();
 
     await expect(page.locator('#snippets-modal')).toBeHidden();

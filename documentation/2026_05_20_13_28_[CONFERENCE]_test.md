@@ -2,12 +2,11 @@
 
 <!-- table-border: bordered -->
 <!-- table-color: info -->
-| Name    | Age |
+| Table   | Age |
 | ------- | --- |
+| Youssef | 10  |
 | Youssef | 42  |
-| Youssef | 42  |
-| Youssef | 42  |
-| Youssef | 42  |
+| Youssef | 34  |
 
 - Utilisez **Chrome** ou **Edge** pour la meilleure qualité d'export PDF (le moteur de rendu produit des résultats plus fidèles que Safari ou Firefox)
 - Dans la boîte de dialogue d'impression, activez **"Graphiques d'arrière-plan"** pour conserver les couleurs des blocs de code et des badges

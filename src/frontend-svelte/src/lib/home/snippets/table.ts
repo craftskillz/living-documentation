@@ -7,6 +7,7 @@ import {
   parseMarkdownTableCells,
   isMarkdownTableSeparatorLine,
 } from "../tableAttributes";
+import { t } from "../../i18n.svelte";
 
 function esc(str: string): string {
   return String(str ?? "")
@@ -22,15 +23,20 @@ export interface TableController {
   onPreview: () => void;
 }
 
+const DEFAULT_TABLE_ROWS = 2;
+const DEFAULT_TABLE_COLS = 2;
+const MIN_TABLE_ROWS = 1;
+const MIN_TABLE_COLS = 1;
+const TABLE_CONTEXT_MENU_ID = "snip-table-context-menu";
+
 export function createTableController(onPreview: () => void): TableController {
   return { data: [], onPreview };
 }
 
 export function tableInit(ctrl: TableController): void {
   ctrl.data = [
-    ["En-tête 1", "En-tête 2", "En-tête 3"],
-    ["", "", ""],
-    ["", "", ""],
+    Array.from({ length: DEFAULT_TABLE_COLS }, (_, i) => `En-tête ${i + 1}`),
+    Array(DEFAULT_TABLE_COLS).fill(""),
   ];
   const styleEl = document.getElementById("snip-table-style") as HTMLSelectElement | null;
   if (styleEl) styleEl.value = "";
@@ -41,7 +47,202 @@ export function tableInit(ctrl: TableController): void {
   tableRenderGrid(ctrl);
 }
 
+function ensureRectangularTable(ctrl: TableController): void {
+  if (!ctrl.data.length) {
+    ctrl.data = Array.from({ length: DEFAULT_TABLE_ROWS }, (_, r) =>
+      Array.from({ length: DEFAULT_TABLE_COLS }, (_, c) => (r === 0 ? `En-tête ${c + 1}` : "")),
+    );
+  }
+  while (ctrl.data.length < MIN_TABLE_ROWS) {
+    ctrl.data.push([]);
+  }
+  const cols = Math.max(MIN_TABLE_COLS, ...ctrl.data.map((row) => row.length));
+  ctrl.data.forEach((row) => {
+    while (row.length < cols) row.push("");
+  });
+}
+
+export function focusTableCell(row: number, col: number, selectContents = false): void {
+  queueMicrotask(() => {
+    const input = document.querySelector<HTMLInputElement>(
+      `#snip-table-grid input[data-tr="${row}"][data-tc="${col}"]`,
+    );
+    if (!input) return;
+    input.focus({ preventScroll: true });
+    if (selectContents) {
+      input.select();
+    } else {
+      const end = input.value.length;
+      input.setSelectionRange(end, end);
+    }
+  });
+}
+
+function addTableColumn(ctrl: TableController, focusRow: number): void {
+  ensureRectangularTable(ctrl);
+  const cols = ctrl.data[0]?.length ?? MIN_TABLE_COLS;
+  ctrl.data.forEach((currentRow) => currentRow.push(""));
+  tableRenderGrid(ctrl);
+  focusTableCell(focusRow, cols);
+}
+
+function addTableRow(ctrl: TableController, focusCol: number, selectContents = false): void {
+  ensureRectangularTable(ctrl);
+  const rows = ctrl.data.length;
+  const cols = ctrl.data[0]?.length ?? MIN_TABLE_COLS;
+  ctrl.data.push(Array(cols).fill(""));
+  tableRenderGrid(ctrl);
+  focusTableCell(rows, Math.max(0, Math.min(focusCol, cols - 1)), selectContents);
+}
+
+function moveTableFocus(
+  ctrl: TableController,
+  row: number,
+  col: number,
+  selectContents = false,
+): void {
+  ensureRectangularTable(ctrl);
+  const rows = ctrl.data.length;
+  const cols = ctrl.data[0]?.length ?? MIN_TABLE_COLS;
+  const nextRow = Math.max(0, Math.min(row, rows - 1));
+  let nextCol = col;
+
+  nextCol = Math.max(0, Math.min(nextCol, cols - 1));
+  focusTableCell(nextRow, nextCol, selectContents);
+}
+
+function removeTableColumn(ctrl: TableController, col: number): void {
+  hideTableContextMenu();
+  ensureRectangularTable(ctrl);
+  const cols = ctrl.data[0]?.length ?? MIN_TABLE_COLS;
+  if (cols <= MIN_TABLE_COLS) return;
+  ctrl.data.forEach((row) => row.splice(col, 1));
+  tableRenderGrid(ctrl);
+  focusTableCell(0, Math.max(0, Math.min(col, cols - 2)));
+}
+
+function removeTableRow(ctrl: TableController, row: number): void {
+  hideTableContextMenu();
+  ensureRectangularTable(ctrl);
+  if (ctrl.data.length <= MIN_TABLE_ROWS) return;
+  const cols = ctrl.data[0]?.length ?? MIN_TABLE_COLS;
+  ctrl.data.splice(row, 1);
+  tableRenderGrid(ctrl);
+  focusTableCell(Math.max(0, Math.min(row, ctrl.data.length - 1)), Math.min(cols - 1, 0));
+}
+
+function handleTableKeydown(ctrl: TableController, input: HTMLInputElement, ev: KeyboardEvent): void {
+  hideTableContextMenu();
+  const r = Number(input.dataset.tr);
+  const c = Number(input.dataset.tc);
+  const rows = ctrl.data.length;
+  const cols = ctrl.data[0]?.length ?? MIN_TABLE_COLS;
+
+  if (ev.key === "Tab") {
+    ev.preventDefault();
+    if (ev.shiftKey) {
+      if (c > 0) moveTableFocus(ctrl, r, c - 1, true);
+      else if (r > 0) moveTableFocus(ctrl, r - 1, cols - 1, true);
+      else moveTableFocus(ctrl, r, c, true);
+      return;
+    }
+    if (c < cols - 1) moveTableFocus(ctrl, r, c + 1, true);
+    else if (r < rows - 1) moveTableFocus(ctrl, r + 1, 0, true);
+    else addTableRow(ctrl, 0, true);
+    return;
+  }
+
+  if (ev.key === "ArrowUp") {
+    ev.preventDefault();
+    moveTableFocus(ctrl, r - 1, c);
+    return;
+  }
+
+  if (ev.key === "ArrowDown") {
+    ev.preventDefault();
+    if (r < rows - 1) moveTableFocus(ctrl, r + 1, c);
+    else addTableRow(ctrl, c);
+    return;
+  }
+
+  if (ev.key === "ArrowLeft") {
+    ev.preventDefault();
+    moveTableFocus(ctrl, r, c - 1);
+    return;
+  }
+
+  if (ev.key === "ArrowRight") {
+    ev.preventDefault();
+    if (c < cols - 1) moveTableFocus(ctrl, r, c + 1);
+    else addTableColumn(ctrl, r);
+  }
+}
+
+function hideTableContextMenu(): void {
+  document.getElementById(TABLE_CONTEXT_MENU_ID)?.remove();
+}
+
+function showTableContextMenu(
+  ctrl: TableController,
+  input: HTMLInputElement,
+  ev: MouseEvent,
+): void {
+  ev.preventDefault();
+  hideTableContextMenu();
+  ensureRectangularTable(ctrl);
+  const row = Number(input.dataset.tr);
+  const col = Number(input.dataset.tc);
+  const canDeleteRow = ctrl.data.length > MIN_TABLE_ROWS;
+  const canDeleteCol = (ctrl.data[0]?.length ?? MIN_TABLE_COLS) > MIN_TABLE_COLS;
+
+  const menu = document.createElement("div");
+  menu.id = TABLE_CONTEXT_MENU_ID;
+  menu.className =
+    "fixed z-[80] min-w-44 overflow-hidden rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg text-sm";
+  menu.style.left = `${ev.clientX}px`;
+  menu.style.top = `${ev.clientY}px`;
+
+  const rowBtn = document.createElement("button");
+  rowBtn.type = "button";
+  rowBtn.textContent = t("snippet.table_delete_row");
+  rowBtn.disabled = !canDeleteRow;
+  rowBtn.className =
+    "block w-full px-3 py-2 text-left text-gray-700 dark:text-gray-100 hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-40 disabled:hover:bg-transparent";
+  rowBtn.addEventListener("click", () => removeTableRow(ctrl, row));
+  menu.appendChild(rowBtn);
+
+  const colBtn = document.createElement("button");
+  colBtn.type = "button";
+  colBtn.textContent = t("snippet.table_delete_column");
+  colBtn.disabled = !canDeleteCol;
+  colBtn.className =
+    "block w-full px-3 py-2 text-left text-gray-700 dark:text-gray-100 hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-40 disabled:hover:bg-transparent";
+  colBtn.addEventListener("click", () => removeTableColumn(ctrl, col));
+  menu.appendChild(colBtn);
+
+  document.body.appendChild(menu);
+  window.setTimeout(() => {
+    document.addEventListener("click", hideTableContextMenu, { once: true });
+  }, 0);
+}
+
+function currentTableClassNames(): string {
+  const style = (document.getElementById("snip-table-style") as HTMLSelectElement | null)?.value;
+  const bordered = (document.getElementById("snip-table-bordered") as HTMLInputElement | null)?.checked;
+  const color = (document.getElementById("snip-table-color") as HTMLSelectElement | null)?.value;
+  return [
+    "ld-table-edit-table",
+    "w-full",
+    "table-fixed",
+    "border-collapse",
+    style ? `table-style-${style}` : "",
+    bordered ? "table-border-bordered" : "",
+    color ? `table-color-${color}` : "",
+  ].filter(Boolean).join(" ");
+}
+
 export function tableRenderGrid(ctrl: TableController): void {
+  ensureRectangularTable(ctrl);
   const rows = ctrl.data.length;
   const cols = ctrl.data[0]?.length ?? 0;
   const rowsEl = document.getElementById("snip-table-rows");
@@ -50,20 +251,21 @@ export function tableRenderGrid(ctrl: TableController): void {
   if (colsEl) colsEl.textContent = String(cols);
 
   const inputBase =
-    "px-2 py-1 text-xs rounded border focus:outline-none focus:ring-1 focus:ring-blue-500 w-full min-w-[80px]";
-  const hdrCls = `${inputBase} font-semibold border-blue-300 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-gray-900 dark:text-gray-100`;
-  const cellCls = `${inputBase} border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100`;
+    "ld-table-edit-input block w-full min-w-[160px] bg-transparent border-0 rounded-none focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500";
+  const hdrCls = `${inputBase} font-semibold`;
+  const bodyInputCls = `${inputBase}`;
 
-  let html = '<table class="border-collapse w-full"><tbody>';
+  let html = '<div class="ld-table-editor min-w-full overflow-x-auto rounded-md bg-white dark:bg-gray-950">';
+  html += `<table class="${currentTableClassNames()}"><tbody>`;
   for (let r = 0; r < rows; r++) {
     html += "<tr>";
     for (let c = 0; c < cols; c++) {
-      const cls = r === 0 ? hdrCls : cellCls;
-      html += `<td class="p-0.5"><input type="text" value="${esc(ctrl.data[r][c])}" data-tr="${r}" data-tc="${c}" class="${cls}" /></td>`;
+      const inputCls = r === 0 ? hdrCls : bodyInputCls;
+      html += `<td><input type="text" value="${esc(ctrl.data[r][c])}" data-tr="${r}" data-tc="${c}" class="${inputCls}" /></td>`;
     }
     html += "</tr>";
   }
-  html += "</tbody></table>";
+  html += "</tbody></table></div>";
   const grid = document.getElementById("snip-table-grid");
   if (grid) {
     grid.innerHTML = html;
@@ -74,6 +276,11 @@ export function tableRenderGrid(ctrl: TableController): void {
         ctrl.data[r][c] = input.value;
         ctrl.onPreview();
       });
+      input.addEventListener("keydown", (ev) => handleTableKeydown(ctrl, input, ev));
+      input.addEventListener("contextmenu", (ev) => showTableContextMenu(ctrl, input, ev));
+      input.addEventListener("mouseup", (ev) => {
+        if (ev.button === 2) showTableContextMenu(ctrl, input, ev);
+      });
     });
   }
   ctrl.onPreview();
@@ -83,17 +290,8 @@ export function tableChangeRows(ctrl: TableController, delta: number): void {
   const cols = ctrl.data[0]?.length ?? 3;
   if (delta > 0) {
     ctrl.data.push(Array(cols).fill(""));
-  } else if (ctrl.data.length > 2) {
+  } else if (ctrl.data.length > MIN_TABLE_ROWS) {
     ctrl.data.pop();
-  }
-  tableRenderGrid(ctrl);
-}
-
-export function tableChangeCols(ctrl: TableController, delta: number): void {
-  if (delta > 0) {
-    ctrl.data.forEach((row) => row.push(""));
-  } else if ((ctrl.data[0]?.length ?? 0) > 1) {
-    ctrl.data.forEach((row) => row.pop());
   }
   tableRenderGrid(ctrl);
 }

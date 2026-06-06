@@ -98,3 +98,13 @@ Deux chantiers parallèles complétés :
 - Correction serveur : normalisation POSIX des chemins relatifs renvoyés par `src/routes/browse.ts`, des chemins/id/folders de documents dans `src/routes/documents.ts`, et des chemins relatifs de l'explorateur source dans `src/routes/browse-source.ts`.
 - Test renforcé : `tests/api/browse.spec.ts` exige maintenant `a/b` et `a/b/c`, et rejette `a\\b` / `a\\b\\c`.
 - Vérifications : `npm run build`, `npx playwright test tests/api/browse.spec.ts --project=chromium`, `npx playwright test tests/api/documents.spec.ts tests/api/browse-source.spec.ts --project=chromium` : OK.
+
+## Intervention annexe terminee - 2026-06-06 snippet tableau tableur
+
+- Remplacement de l'editeur tableau global `+/- colonnes` par une grille type tableur dans `src/frontend-svelte/src/lib/home/snippets/table.ts` : nouveau tableau 2x2, navigation `Tab`/fleches, selection du contenu apres `Tab`, creation automatique de ligne/colonne aux bords, et suppression ligne/colonne par menu contextuel au clic droit.
+- `src/frontend-svelte/src/lib/home/SnippetsModal.svelte` ne garde plus que le compteur de colonnes dans la toolbar ; les controles de lignes restent disponibles.
+- Ajout des libelles i18n `snippet.table_delete_row` et `snippet.table_delete_column` dans `src/frontend-svelte/public/i18n/en.json` et `fr.json`.
+- Test E2E mis a jour : `table editor uses spreadsheet keyboard navigation and context menu deletion` dans `tests/e2e/inline-snippet-edit.spec.ts`.
+- ADR mis a jour via MCP : `ADRS/2026_06_06_21_47_[SNIPPET]_spreadsheet_style_table_snippet_editor`, avec metadonnees sur `table.ts`, `SnippetsModal.svelte`, les deux catalogues i18n et `inline-snippet-edit.spec.ts`; accuracy = 1.
+- Verifications : `npm run build`, test cible Playwright, puis `npx playwright test tests/e2e/inline-snippet-edit.spec.ts --project=chromium` : OK.
+- Note : verification visuelle via serveur local tentee ; `npm run dev` a echoue sur `EMFILE` watchers et le serveur build sur port 4322 ne servait pas l'UI attendue dans le navigateur integre. La couverture comportementale E2E est complete pour cette zone.

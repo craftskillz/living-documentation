@@ -13,7 +13,7 @@
   import { getDocStatus, replaceStatus, isWorklogDocument } from "./docStatus";
   import { initLocalSearch } from "./localSearch";
   import { highlightMatches, scrollToMatch, type SearchMatch } from "./searchNotice";
-  import { initInlineSnippetEditing } from "./inlineSnippetEdit";
+  import { initInlineSnippetEditing, type InlineSnippetRange } from "./inlineSnippetEdit";
   import type { DocDetail } from "./types";
 
   let { doc, onopen, onsave, ondelete, navHistory = [], ongoback }: {
@@ -32,7 +32,7 @@
   let metadataOpen = $state(false);
   let snippetsOpen = $state(false);
   let snippetMode = $state<"insert" | "inline-edit" | "inline-insert">("insert");
-  let snippetRange = $state<{ start: number; end: number; type: string; indent?: string } | null>(null);
+  let snippetRange = $state<InlineSnippetRange | null>(null);
   let snippetInsertPos = $state(0);
   let disposeInline: (() => void) | null = null;
 
