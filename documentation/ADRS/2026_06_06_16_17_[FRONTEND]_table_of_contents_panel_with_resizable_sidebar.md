@@ -7,7 +7,7 @@
 
 ## Contexte
 
-Les documents longs n'avaient pas de navigation interne. Astro/Starlight propose une TOC fixe sur la droite. Objectif : même principe mais opt-in (toggle) plutôt que toujours visible.
+Les documents longs n'avaient pas de navigation interne. Nous proposons une TOC fixe sur la droite. Objectif : même principe mais opt-in (toggle) plutôt que toujours visible.
 
 ## Décision
 

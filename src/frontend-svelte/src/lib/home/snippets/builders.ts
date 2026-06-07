@@ -78,12 +78,22 @@ export function ldBuildCodeBlockSnippetMarkdown(data: {
     .join("\n");
 }
 
-export function ldBuildBlockquoteSnippetMarkdown(data: { content?: string }): string {
+export function ldBuildBlockquoteSnippetMarkdown(data: {
+  content?: string;
+  type?: string;
+  title?: string;
+  icon?: boolean;
+}): string {
   const content = ldSnippetValueOr(data.content, "Citation ici\n\n— Auteur");
-  return content
+  const bq = content
     .split("\n")
     .map((line) => (line.trim() ? `> ${line}` : ">"))
     .join("\n");
+  const prefixLines: string[] = [];
+  if (data.type)  prefixLines.push(`<!-- quote-type: ${data.type} -->`);
+  if (data.title) prefixLines.push(`<!-- quote-title: ${data.title} -->`);
+  if (data.icon)  prefixLines.push(`<!-- quote-icon -->`);
+  return prefixLines.length > 0 ? prefixLines.join("\n") + "\n" + bq : bq;
 }
 
 export function ldBuildHeadingSnippetMarkdown(

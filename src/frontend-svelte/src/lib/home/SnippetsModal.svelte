@@ -582,8 +582,15 @@
         return { content: val("snip-unordered-list-content") };
       case "code-block":
         return { lang: val("snip-code-lang"), code: val("snip-code-content"), inlineIndent };
-      case "blockquote":
-        return { content: val("snip-blockquote-content") };
+      case "blockquote": {
+        const iconEl = byId<HTMLInputElement>("snip-blockquote-icon");
+        return {
+          type: val("snip-blockquote-type"),
+          title: val("snip-blockquote-title"),
+          icon: Boolean(iconEl && iconEl.checked),
+          content: val("snip-blockquote-content"),
+        };
+      }
       case "heading-1":
       case "heading-2":
       case "heading-3":
@@ -644,6 +651,35 @@
 
   function tableAppearanceChanged(): void {
     tableRenderGrid(tableCtrl);
+  }
+
+  function blockquoteTypeChanged(): void {
+    const typeVal = val("snip-blockquote-type");
+    const iconEl  = byId<HTMLInputElement>("snip-blockquote-icon");
+    const titleEl = byId<HTMLInputElement>("snip-blockquote-title");
+
+    // Set of all known default titles (any type, current language)
+    const knownDefaults = new Set(
+      ["info", "success", "warning", "error"]
+        .map((k) => t(`snippet.blockquote_default_title_${k}`))
+        .filter(Boolean),
+    );
+    const currentTitle = titleEl ? titleEl.value.trim() : "";
+    const isKnownDefault = currentTitle === "" || knownDefaults.has(currentTitle);
+
+    if (typeVal) {
+      // Colored type selected → auto-check icon
+      if (iconEl) iconEl.checked = true;
+      // Replace title if empty or if it was a known default title
+      if (titleEl && isKnownDefault) {
+        titleEl.value = t(`snippet.blockquote_default_title_${typeVal}`) || typeVal;
+      }
+    } else {
+      // "None" → uncheck icon, clear title if it was a known default
+      if (iconEl) iconEl.checked = false;
+      if (titleEl && knownDefaults.has(currentTitle)) titleEl.value = "";
+    }
+    snippetUpdatePreview();
   }
 
   function closeSnippetModal(): void {
@@ -944,9 +980,14 @@
         val2("snip-code-lang", parsed.lang);
         val2("snip-code-content", parsed.code);
         break;
-      case "blockquote":
+      case "blockquote": {
+        val2("snip-blockquote-type", parsed.type || "");
+        val2("snip-blockquote-title", parsed.title || "");
+        const iconEl = byId<HTMLInputElement>("snip-blockquote-icon");
+        if (iconEl) iconEl.checked = Boolean(parsed.icon);
         val2("snip-blockquote-content", parsed.content);
         break;
+      }
       case "image":
         if (parsed.alt !== undefined) {
           val2("snip-image-alt", parsed.alt);
@@ -1285,9 +1326,29 @@
 
       <!-- Panel: blockquote -->
       <div id="snip-panel-blockquote" class="hidden space-y-3">
+        <div class="flex items-center gap-5 flex-wrap">
+          <div class="flex items-center gap-2">
+            <label for="snip-blockquote-type" class="text-xs text-gray-500 dark:text-gray-400">{t("snippet.blockquote_type_label")}</label>
+            <select id="snip-blockquote-type" onchange={blockquoteTypeChanged} class="text-xs rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2 py-1">
+              <option value="">{t("snippet.blockquote_type_none")}</option>
+              <option value="info">{t("snippet.blockquote_type_info")}</option>
+              <option value="success">{t("snippet.blockquote_type_success")}</option>
+              <option value="warning">{t("snippet.blockquote_type_warning")}</option>
+              <option value="error">{t("snippet.blockquote_type_error")}</option>
+            </select>
+          </div>
+          <label class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+            <input id="snip-blockquote-icon" type="checkbox" onchange={snippetUpdatePreview} class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500" />
+            <span>{t("snippet.blockquote_icon_label")}</span>
+          </label>
+        </div>
+        <div class="space-y-1.5">
+          <label for="snip-blockquote-title" class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("snippet.blockquote_title_label")}</label>
+          <input id="snip-blockquote-title" type="text" placeholder={t("snippet.blockquote_title_placeholder")} oninput={snippetUpdatePreview} class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
         <div class="space-y-1.5">
           <label for="snip-blockquote-content" class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("snippet.blockquote_content_label")}</label>
-          <textarea id="snip-blockquote-content" rows="8" placeholder={t("snippet.blockquote_content_placeholder")} oninput={snippetUpdatePreview} class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y leading-relaxed"></textarea>
+          <textarea id="snip-blockquote-content" rows="6" placeholder={t("snippet.blockquote_content_placeholder")} oninput={snippetUpdatePreview} class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y leading-relaxed"></textarea>
         </div>
       </div>
 

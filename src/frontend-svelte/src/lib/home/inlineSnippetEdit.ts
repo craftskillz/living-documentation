@@ -11,6 +11,7 @@ import {
   unorderedListBlockRegex,
 } from "./snippets/listMarkdown";
 import { tableBlockSource } from "./tableAttributes";
+import { blockquoteBlockSource } from "./blockquoteAttributes";
 import { t } from "../i18n.svelte";
 
 export interface InlineSnippetRange {
@@ -219,7 +220,12 @@ function _inlineCollectSnippetRanges(content: string): InlineSnippetRange[] {
     new RegExp("(?:^|\\n)((" + tableBlockSource() + "))", "g"),
     1,
   );
-  _inlineAddRegexRanges(ranges, content, /^> .*(?:\n>.*)*/gm);
+  _inlineAddRegexRanges(
+    ranges,
+    content,
+    new RegExp("(?:^|\\n)((" + blockquoteBlockSource() + "))", "g"),
+    1,
+  );
   _inlineAddRegexRanges(ranges, content, orderedListBlockRegex());
   _inlineAddRegexRanges(ranges, content, unorderedListBlockRegex());
   _inlineAddRegexRanges(ranges, content, /!\[[^\]\n]*\]\([^)]+\)/g);

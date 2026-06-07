@@ -423,6 +423,134 @@
         border-color: #4b5563;
         color: #9ca3af;
       }
+      /* Remove browser/Tailwind Typography quotation marks on all blockquotes */
+      .prose blockquote p:first-of-type::before,
+      .prose blockquote p:last-of-type::after {
+        content: none;
+      }
+
+      /* ── Callout boxes (<!-- quote-type/title --> prefix on blockquotes) ── */
+
+      /* Base — overrides Tailwind prose blockquote defaults */
+      .prose blockquote.ld-callout {
+        --callout-accent: #9ca3af;
+        --callout-bg: #f9fafb;
+        --callout-title-color: #374151;
+        --callout-icon-color: #6b7280;
+        border: none;
+        border-left: 4px solid var(--callout-accent);
+        background: var(--callout-bg);
+        border-radius: 0 0.5rem 0.5rem 0;
+        padding: 1rem 1.25rem;
+        font-style: normal;
+        color: inherit;
+        margin-left: 0;
+        margin-right: 0;
+      }
+      .prose blockquote.ld-callout p {
+        color: inherit;
+        margin-top: 0.4em;
+        margin-bottom: 0.4em;
+      }
+      .prose blockquote.ld-callout p:first-of-type {
+        margin-top: 0;
+      }
+      .prose blockquote.ld-callout p:last-of-type {
+        margin-bottom: 0;
+      }
+      .ld-callout-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 700;
+        font-size: 1.05em;
+        color: var(--callout-title-color);
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+      }
+      .ld-callout-icon {
+        display: inline-flex;
+        align-items: center;
+        color: var(--callout-icon-color);
+        flex-shrink: 0;
+        transform: scale(1.35);
+        margin-right: 0.15rem;
+      }
+      /* Icon-only mode: inline before first paragraph text */
+      .ld-callout-icon-inline {
+        vertical-align: middle;
+        margin-right: 0.4rem;
+        margin-top: -0.1em;
+        transform: scale(1.2);
+      }
+
+      /* info / note → blue */
+      .prose blockquote.ld-callout-info,
+      .prose blockquote.ld-callout-note {
+        --callout-accent: rgb(59 130 246);
+        --callout-bg: rgb(239 246 255);
+        --callout-title-color: rgb(30 58 138);
+        --callout-icon-color: rgb(59 130 246);
+      }
+      /* success / tip → green */
+      .prose blockquote.ld-callout-success,
+      .prose blockquote.ld-callout-tip {
+        --callout-accent: rgb(34 197 94);
+        --callout-bg: rgb(240 253 244);
+        --callout-title-color: rgb(20 83 45);
+        --callout-icon-color: rgb(34 197 94);
+      }
+      /* warning / caution → amber */
+      .prose blockquote.ld-callout-warning,
+      .prose blockquote.ld-callout-caution {
+        --callout-accent: rgb(245 158 11);
+        --callout-bg: rgb(255 251 235);
+        --callout-title-color: rgb(120 53 15);
+        --callout-icon-color: rgb(245 158 11);
+      }
+      /* error / danger → red */
+      .prose blockquote.ld-callout-error,
+      .prose blockquote.ld-callout-danger {
+        --callout-accent: rgb(239 68 68);
+        --callout-bg: rgb(254 242 242);
+        --callout-title-color: rgb(127 29 29);
+        --callout-icon-color: rgb(239 68 68);
+      }
+
+      /* Dark mode */
+      .dark .prose blockquote.ld-callout {
+        --callout-bg: rgba(55 65 81 / 0.3);
+        --callout-title-color: #e5e7eb;
+        --callout-icon-color: #9ca3af;
+      }
+      .dark .prose blockquote.ld-callout-info,
+      .dark .prose blockquote.ld-callout-note {
+        --callout-accent: rgb(96 165 250);
+        --callout-bg: rgb(30 58 138 / 0.2);
+        --callout-title-color: rgb(191 219 254);
+        --callout-icon-color: rgb(96 165 250);
+      }
+      .dark .prose blockquote.ld-callout-success,
+      .dark .prose blockquote.ld-callout-tip {
+        --callout-accent: rgb(74 222 128);
+        --callout-bg: rgb(20 83 45 / 0.2);
+        --callout-title-color: rgb(187 247 208);
+        --callout-icon-color: rgb(74 222 128);
+      }
+      .dark .prose blockquote.ld-callout-warning,
+      .dark .prose blockquote.ld-callout-caution {
+        --callout-accent: rgb(251 191 36);
+        --callout-bg: rgb(120 53 15 / 0.2);
+        --callout-title-color: rgb(254 215 170);
+        --callout-icon-color: rgb(251 191 36);
+      }
+      .dark .prose blockquote.ld-callout-error,
+      .dark .prose blockquote.ld-callout-danger {
+        --callout-accent: rgb(248 113 113);
+        --callout-bg: rgb(127 29 29 / 0.2);
+        --callout-title-color: rgb(254 202 202);
+        --callout-icon-color: rgb(248 113 113);
+      }
 
       /* Image margins — inline images (in lists, after <br>, mixed with text)
          collapse to zero vertical margin; only images that sit alone in their

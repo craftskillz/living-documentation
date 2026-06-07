@@ -70,13 +70,40 @@ export function ldParseCodeBlockSnippetMarkdown(
   };
 }
 
-export function ldParseBlockquoteSnippetMarkdown(markdown: string): { content: string } {
-  return {
-    content: markdown
-      .split("\n")
-      .map((line) => line.replace(/^>\s?/, ""))
-      .join("\n"),
-  };
+const BLOCKQUOTE_TYPE_RE  = /^<!--\s*quote-type:\s*([a-z][a-z0-9_-]*)\s*-->$/;
+const BLOCKQUOTE_TITLE_RE = /^<!--\s*quote-title:\s*(.+?)\s*-->$/;
+const BLOCKQUOTE_ICON_RE  = /^<!--\s*quote-icon\s*-->$/;
+const BLOCKQUOTE_TYPE_ALIASES: Record<string, string> = {
+  note: "info", tip: "success", caution: "warning", danger: "error",
+};
+
+export function ldParseBlockquoteSnippetMarkdown(markdown: string): {
+  type: string;
+  title: string;
+  icon: boolean;
+  content: string;
+} {
+  const lines = markdown.split("\n");
+  let type = "";
+  let title = "";
+  let icon = false;
+  const contentLines: string[] = [];
+  let pastPrefix = false;
+
+  for (const line of lines) {
+    if (!pastPrefix) {
+      const tm = line.match(BLOCKQUOTE_TYPE_RE);
+      if (tm) { type = BLOCKQUOTE_TYPE_ALIASES[tm[1]] ?? tm[1]; continue; }
+      const titm = line.match(BLOCKQUOTE_TITLE_RE);
+      if (titm) { title = titm[1]; continue; }
+      if (BLOCKQUOTE_ICON_RE.test(line)) { icon = true; continue; }
+      if (line.trim() === "") continue;
+      pastPrefix = true;
+    }
+    contentLines.push(line.replace(/^>\s?/, ""));
+  }
+
+  return { type, title, icon, content: contentLines.join("\n") };
 }
 
 export function ldParseImageSnippetMarkdown(markdown: string): {

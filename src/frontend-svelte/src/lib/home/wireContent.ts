@@ -1,4 +1,8 @@
 import { collectTableAttributesFromSource } from "./tableAttributes";
+import {
+  collectBlockquoteAttributesFromSource,
+  getCalloutIcon,
+} from "./blockquoteAttributes";
 
 declare global {
   interface Window {
@@ -24,6 +28,7 @@ export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireO
   contentEl.innerHTML = html;
   applyTableStyles(contentEl, opts.content);
   fillEmptyTableCells(contentEl);
+  applyBlockquoteStyles(contentEl, opts.content);
 
   contentEl.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach(h => {
     if (!h.id) {
@@ -140,6 +145,56 @@ function decorateCodeCopy(contentEl: HTMLElement, t: (k: string) => string) {
       }, 1500);
     });
     pre.appendChild(btn);
+  });
+}
+
+function applyBlockquoteStyles(contentEl: HTMLElement, content: string) {
+  const attrs = collectBlockquoteAttributesFromSource(typeof content === "string" ? content : "");
+  contentEl.querySelectorAll("blockquote").forEach((bq, i) => {
+    const a = attrs[i];
+    if (!a || (!a.type && !a.title && !a.icon)) return;
+
+    bq.classList.add("ld-callout");
+    if (a.type) bq.classList.add(`ld-callout-${a.type}`);
+
+    const hasIcon  = a.icon;
+    const hasTitle = typeof a.title === "string" && a.title.trim() !== "";
+
+    if (hasIcon && !hasTitle) {
+      // Icon only → prepend inline before the first paragraph's text
+      const firstP = bq.querySelector("p");
+      const iconSpan = document.createElement("span");
+      iconSpan.className = "ld-callout-icon ld-callout-icon-inline";
+      iconSpan.innerHTML = getCalloutIcon(a.type);
+      if (firstP) {
+        firstP.insertBefore(iconSpan, firstP.firstChild);
+      } else {
+        bq.insertBefore(iconSpan, bq.firstChild);
+      }
+      return;
+    }
+
+    if (!hasIcon && !hasTitle) return;
+
+    // Icon + title, or title only → dedicated header row
+    const header = document.createElement("div");
+    header.className = "ld-callout-header";
+
+    if (hasIcon) {
+      const iconSpan = document.createElement("span");
+      iconSpan.className = "ld-callout-icon";
+      iconSpan.innerHTML = getCalloutIcon(a.type);
+      header.appendChild(iconSpan);
+    }
+
+    if (hasTitle) {
+      const titleSpan = document.createElement("span");
+      titleSpan.className = "ld-callout-title";
+      titleSpan.textContent = a.title!;
+      header.appendChild(titleSpan);
+    }
+
+    bq.insertBefore(header, bq.firstChild);
   });
 }
 
