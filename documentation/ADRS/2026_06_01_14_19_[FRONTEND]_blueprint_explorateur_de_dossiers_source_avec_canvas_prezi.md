@@ -1,11 +1,11 @@
 ---
 **date:** 2026-06-01
 **status:** To be validated
-**description:** Page Blueprint — canvas pan/zoom TypeScript servant l'exploration Prezi des dossiers du sourceRoot via GET /api/blueprint, sans affichage des fichiers.
+**description:** Page Blueprint , canvas pan/zoom TypeScript servant l'exploration Prezi des dossiers du sourceRoot via GET /api/blueprint, sans affichage des fichiers.
 **tags:** blueprint, frontend, canvas, pan-zoom, prezi-zoom, folder-explorer, sourceroot, typescript, blueprint-router
 ---
 
-# Blueprint — Explorateur de dossiers source avec canvas Prezi
+# Blueprint , Explorateur de dossiers source avec canvas Prezi
 
 ## Contexte
 
@@ -19,16 +19,17 @@ Créer une page dédiée `/blueprint` avec un canvas TypeScript pan/zoom permett
 
 ## Architecture
 
-### Backend — `src/routes/blueprint.ts`
+### Backend , `src/routes/blueprint.ts`
 
 `GET /api/blueprint?path=<chemin relatif>` :
+
 - Lit `sourceRoot` depuis `readConfig(docsPath)`
 - Liste les dossiers à la profondeur demandée (défaut : racine)
 - Filtre les dossiers système : `node_modules`, `.git`, `dist`, `build`, `out`, `coverage`, `.next`, `__pycache__`, etc.
 - Pour chaque dossier, indique `hasChildren: boolean`
 - Sécurité : chemin ne peut pas sortir du `sourceRoot`
 
-### Frontend — `src/frontend/blueprint/`
+### Frontend , `src/frontend/blueprint/`
 
 Page autonome TypeScript compilée vers `app.js` :
 
@@ -50,13 +51,15 @@ Page autonome TypeScript compilée vers `app.js` :
 ## Conséquences
 
 ### PROS
+
 - Visualisation immédiate de la structure source sans quitter l'application
 - Navigation intuitive Prezi, compatible tous navigateurs
 - Lecture seule : aucun risque de modification du code source
 - Architecture identique au workspace (TypeScript, canvas 2D, pan/zoom)
 
 ### CONS
-- Dossiers uniquement — fichiers non affichés
+
+- Dossiers uniquement , fichiers non affichés
 - Dossiers ignorés hardcodés, non configurables depuis l'admin
 - Pas d'état persisté entre sessions
 

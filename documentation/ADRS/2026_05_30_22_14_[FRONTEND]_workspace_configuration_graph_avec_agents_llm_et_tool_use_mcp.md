@@ -19,21 +19,21 @@ Implémenter `src/frontend/workspace/` comme workspace de configuration complet,
 
 Le modèle est hiérarchique avec quatre types de nœuds :
 
-- **system** (`root`) — brique racine immuable, non supprimable, non sélectionnable.
-- **llm** — provider LLM OpenAI-compatible (Ollama, OpenAI, etc.), enfant de root.
-- **agent** — agent configuré avec un system prompt, enfant d'un provider LLM.
-- **mcp** — surface de consultation MCP, enfant de root.
+- **system** (`root`) , brique racine immuable, non supprimable, non sélectionnable.
+- **llm** , provider LLM OpenAI-compatible (Ollama, OpenAI, etc.), enfant de root.
+- **agent** , agent configuré avec un system prompt, enfant d'un provider LLM.
+- **mcp** , surface de consultation MCP, enfant de root.
 
-## Panel contextuel — dark mode par kind
+## Panel contextuel , dark mode par kind
 
 Le panel est rendu en dark (`#111827`) avec des champs semi-transparents. Les champs affichés varient selon le kind :
 
-| Kind | Champs visibles |
-|---|---|
-| llm | Endpoint, API token, Model (selectbox dynamique), Workspace folder ignoré, Timeout, Description |
-| agent | System prompt, User input, Workspace folder (readonly), réponses scrollables |
-| mcp | Inventaire des tools/prompts uniquement |
-| root | Aucun panel (clic ignoré) |
+| Kind  | Champs visibles                                                                                 |
+| ----- | ----------------------------------------------------------------------------------------------- |
+| llm   | Endpoint, API token, Model (selectbox dynamique), Workspace folder ignoré, Timeout, Description |
+| agent | System prompt, User input, Workspace folder (readonly), réponses scrollables                    |
+| mcp   | Inventaire des tools/prompts uniquement                                                         |
+| root  | Aucun panel (clic ignoré)                                                                       |
 
 **Bouton ×** (jaune) = fermer le panel. **Bouton Delete** (rouge, footer droite) = ouvre la popup de confirmation. **Bouton Test** (footer gauche, LLM uniquement) = test de connexion. **Bouton Clear** (footer gauche, agent uniquement) = vide les réponses.
 
@@ -71,23 +71,25 @@ La topbar de `/` a été alignée visuellement avec le workspace : hauteur 72px,
 
 ## Routes backend
 
-| Route | Description |
-|---|---|
-| `GET /api/workspace` | Lecture état workspace |
-| `PUT /api/workspace` | Sauvegarde état workspace |
+| Route                             | Description                       |
+| --------------------------------- | --------------------------------- |
+| `GET /api/workspace`              | Lecture état workspace            |
+| `PUT /api/workspace`              | Sauvegarde état workspace         |
 | `POST /api/workspace/list-models` | Liste modèles depuis `/v1/models` |
-| `POST /api/workspace/test-llm` | Test connexion LLM |
-| `POST /api/workspace/run-agent` | Boucle agentique LLM + MCP |
+| `POST /api/workspace/test-llm`    | Test connexion LLM                |
+| `POST /api/workspace/run-agent`   | Boucle agentique LLM + MCP        |
 
 ## Conséquences
 
 ### PROS
+
 - Configuration graphique des providers et agents sans fichiers manuels.
 - Boucle agentique générique : n'importe quel tool MCP peut être appelé selon le prompt.
 - Fallback DOM assure l'utilisabilité sans flag navigateur expérimental.
 - Persistence locale transparente (auto-save).
 
 ### CONS
+
 - `app.js` reste un artefact commité (pas de bundler frontend dédié).
 - Le rendu HTML-in-Canvas reste dépendant d'une API expérimentale.
 - La boucle agentique ne streame pas les réponses intermédiaires.

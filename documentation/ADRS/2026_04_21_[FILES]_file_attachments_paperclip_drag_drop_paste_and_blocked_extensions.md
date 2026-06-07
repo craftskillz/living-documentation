@@ -1,7 +1,7 @@
 ---
 date: 2026-04-21
 status: Accepted
-description: Add a file attachment feature to the Markdown editor (non-image files) — base64 upload, drag-drop / paste / file-picker entry points, paperclip decoration at render time, configurable blocked extensions and 19 MB cap.
+description: Add a file attachment feature to the Markdown editor (non-image files) , base64 upload, drag-drop / paste / file-picker entry points, paperclip decoration at render time, configurable blocked extensions and 19 MB cap.
 tags: files, attachments, upload, paperclip, drag-drop, paste, base64, blocked-extensions, admin-config, security, documents, rendering, i18n
 ---
 
@@ -31,7 +31,7 @@ Constraints expressed by the user:
 - **New module** `src/frontend/file-attach.js` wiring three entry points on the `#doc-editor` textarea:
   1. Drag & drop of any non-image file.
   2. `Cmd/Ctrl+V` when `clipboardData.files` contains a non-image file (images continue to flow through `image-paste.js`).
-  3. `openFilePicker()` invoked from the 📎 snippet — opens the OS file picker.
+  3. `openFilePicker()` invoked from the 📎 snippet , opens the OS file picker.
      The module inserts a `[📎 uploading…](…)` placeholder at the caret, uploads via `POST /api/files/upload`, then replaces the placeholder by `[📎 <originalName>](./files/<filename>)`. Size guard mirrors the server (19 MB).
 - **Snippet integration** in `snippets.js` + `index.html`: a new `attachment` option in the snippet picker with a help panel; clicking **Insert** calls `openFilePicker()` and closes the modal (no preview needed).
 - **Admin panel** (`admin.html`): a new "File Attachments" section with a `#field-blocked-extensions` textarea (space / comma / newline separated, leading dots stripped, `/^[a-z0-9]+$/` Accepted before `PUT /api/config`).
@@ -40,24 +40,24 @@ Constraints expressed by the user:
 
 ### Security model
 
-The server is the source of truth for filenames and extensions. The client **cannot** choose the destination path nor bypass the blocked-extensions list. Path traversal is impossible because the route never reads a client-provided path — only `DOCS_FOLDER/files/` + server-generated name. The 19 MB guard rejects oversized payloads with an explicit error instead of relying on Express's generic 413.
+The server is the source of truth for filenames and extensions. The client **cannot** choose the destination path nor bypass the blocked-extensions list. Path traversal is impossible because the route never reads a client-provided path , only `DOCS_FOLDER/files/` + server-generated name. The 19 MB guard rejects oversized payloads with an explicit error instead of relying on Express's generic 413.
 
 ## Consequences
 
 ### PROS
 
-- **Zero new dependencies** — reuses the existing base64 JSON pipeline proven by image paste. No `multer`, no streaming layer, no multi-part parsing.
+- **Zero new dependencies** , reuses the existing base64 JSON pipeline proven by image paste. No `multer`, no streaming layer, no multi-part parsing.
 - **Consistent UX** with image paste: same placeholder-then-replace flow, same localized error messages, same admin surface.
-- **Configurable security posture** — admins can widen or tighten the blocked-extensions list without a rebuild. Defaults cover common Windows/Unix executables.
+- **Configurable security posture** , admins can widen or tighten the blocked-extensions list without a rebuild. Defaults cover common Windows/Unix executables.
 - **Render-time decoration** keeps authored Markdown simple: authors write `[Filename](./files/x.pdf)` (or let the upload flow generate it), and the reader sees a paperclip pill with `target="_blank"` and `rel="noopener"` for free. No author-side HTML.
 - **Three-entry-point UX** (drag-drop, paste, picker) matches modern editors; the same module handles all three so behavior is consistent.
-- **Localized** end-to-end — the i18n mandatory rule is respected for all new strings.
-- **Separation from images** — filtering images out of the paste/drop handler avoids conflict with the existing image flow and keeps `DOCS_FOLDER/images/` vs `DOCS_FOLDER/files/` semantically clean.
+- **Localized** end-to-end , the i18n mandatory rule is respected for all new strings.
+- **Separation from images** , filtering images out of the paste/drop handler avoids conflict with the existing image flow and keeps `DOCS_FOLDER/images/` vs `DOCS_FOLDER/files/` semantically clean.
 
 ### CONS
 
-- **19 MB cap** — base64 inflates payloads by ~33 %, so the effective file size ceiling sits around 14 MB of original binary. Fine for docs and PDFs, problematic for large archives or videos. A streamed multipart upload would lift this, but at the cost of a new dependency.
-- **Blocked-extensions list is extension-based only** — no MIME sniffing, no content inspection. A renamed `.exe → .pdf` would still pass. The server is local-only, so this is acceptable but not defense-in-depth.
+- **19 MB cap** , base64 inflates payloads by ~33 %, so the effective file size ceiling sits around 14 MB of original binary. Fine for docs and PDFs, problematic for large archives or videos. A streamed multipart upload would lift this, but at the cost of a new dependency.
+- **Blocked-extensions list is extension-based only** , no MIME sniffing, no content inspection. A renamed `.exe → .pdf` would still pass. The server is local-only, so this is acceptable but not defense-in-depth.
 - **Render-time regex decoration** of `<a href="./files/...">` is simple but coupled to the exact relative path prefix. Authors who write absolute URLs to the same folder won't get the paperclip pill automatically.
 - **Two parallel pipelines** (images vs files) increases surface area in the frontend (two modules, two handlers to keep in sync on clipboard and drag events). A future refactor could unify them behind a single `upload-dispatcher` that routes by MIME type.
-- **Admin UI accepts free-form text** — validation is strict (`/^[a-z0-9]+$/`) but there is no autocomplete or known-extensions helper. Typos silently drop entries.
+- **Admin UI accepts free-form text** , validation is strict (`/^[a-z0-9]+$/`) but there is no autocomplete or known-extensions helper. Typos silently drop entries.

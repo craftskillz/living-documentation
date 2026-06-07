@@ -6,7 +6,7 @@ Et je trouve que cela donne d'excellents résultats que ce soit chez mes clients
 
 `Diataxis` distingue quatre types de contenus, chacun dans son dossier :
 
-- **1_tutorial** — des guides pas à pas pour apprendre en faisant (comme celui-ci)
-- **2_guide** — des recettes orientées tâche : "comment faire X ?"
-- **3_concept** — des explications pour comprendre le pourquoi et le comment
-- **4_reference** — des descriptions factuelles et exhaustives (API, config, glossaire)
+- **1_tutorial** , des guides pas à pas pour apprendre en faisant (comme celui-ci)
+- **2_guide** , des recettes orientées tâche : "comment faire X ?"
+- **3_concept** , des explications pour comprendre le pourquoi et le comment
+- **4_reference** , des descriptions factuelles et exhaustives (API, config, glossaire)

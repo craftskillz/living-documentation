@@ -39,9 +39,9 @@ Le tool :
 - retourne les commits **du plus ancien au plus récent** : `sha`, `shortSha`, `committerDate`, `authorDate`, `author`, `subject`, `body` (tronqué à 4096 caractères), `parents` ;
 - pour chaque fichier touché : `path`, `changeType` (premier caractère de la sortie `--name-status`), `underSourceRoot`, `existsNow`, `godFileSuspect` ;
 - calcule un `state` par commit :
-    - `merge` si plus d'un parent ;
-    - `trivial` si aucun fichier non supprimé, non-godFile et sous `sourceRoot` ;
-    - `candidate` sinon ;
+  - `merge` si plus d'un parent ;
+  - `trivial` si aucun fichier non supprimé, non-godFile et sous `sourceRoot` ;
+  - `candidate` sinon ;
 - agrège `stateCounts` pour permettre un court-circuit côté prompt.
 
 La détection des god files est statique : `package.json`, `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `tsconfig.json`, `requirements.txt`, `Cargo.lock`, `Cargo.toml`, `go.sum`, `go.mod`, `pyproject.toml`, `composer.lock`, `composer.json`, `Gemfile.lock`, `Gemfile`. Le tool flague, il n'exclut pas.
@@ -50,7 +50,7 @@ Le tool ne décide rien sur le caractère durable d'un commit ni sur la superses
 
 ### Paramètre `date` sur `create_document`
 
-`create_document` accepte un argument optionnel `date` (ISO 8601, par exemple `2024-08-12` ou `2024-08-12T14:33:00Z`). Quand il est présent et valide, le préfixe horodaté du nom de fichier est dérivé de cette date au lieu de `new Date()`. Quand il est absent ou non parsable, le comportement antérieur est conservé : `now()`. Le contrat d'usage est limité à la rétrodocumentation — la description du tool précise explicitement de ne pas l'utiliser hors de ce contexte.
+`create_document` accepte un argument optionnel `date` (ISO 8601, par exemple `2024-08-12` ou `2024-08-12T14:33:00Z`). Quand il est présent et valide, le préfixe horodaté du nom de fichier est dérivé de cette date au lieu de `new Date()`. Quand il est absent ou non parsable, le comportement antérieur est conservé : `now()`. Le contrat d'usage est limité à la rétrodocumentation , la description du tool précise explicitement de ne pas l'utiliser hors de ce contexte.
 
 ### Prompt `retrodocument-adrs-from-git`
 
@@ -63,9 +63,9 @@ Le prompt porte le workflow sémantique :
 5. relire jusqu'à environ cinq fichiers candidats par commit via `read_source_file`, en ignorant les fichiers supprimés et les god files ;
 6. juger si le commit porte une décision durable selon les critères de `PROJECT-INSTRUCTIONS.md` (frontière d'architecture, contrat public, format, protocole, workflow, convention) ;
 7. décider d'un Outcome :
-    - **A — Nouvelle ADR** : `create_document` avec `date` = `committerDate`, frontmatter dans laquelle `**date:**` reprend la même date, statut `To be validated`, puis `add_metadata` pour chaque fichier candidat (`underSourceRoot && !godFileSuspect && existsNow`), puis `refresh_metadata` ;
-    - **B — Supersession + nouvelle ADR** : `read_document` puis `update_document` sur l'ADR obsolétée avec `**status:** SuperSeeded` et pointeur explicite vers la nouvelle ADR, puis exécuter l'Outcome A ;
-    - **C — Skip** : commit non durable ou message trop pauvre ;
+   - **A , Nouvelle ADR** : `create_document` avec `date` = `committerDate`, frontmatter dans laquelle `**date:**` reprend la même date, statut `To be validated`, puis `add_metadata` pour chaque fichier candidat (`underSourceRoot && !godFileSuspect && existsNow`), puis `refresh_metadata` ;
+   - **B , Supersession + nouvelle ADR** : `read_document` puis `update_document` sur l'ADR obsolétée avec `**status:** SuperSeeded` et pointeur explicite vers la nouvelle ADR, puis exécuter l'Outcome A ;
+   - **C , Skip** : commit non durable ou message trop pauvre ;
 8. mettre à jour l'inventaire en mémoire après chaque Outcome A ou B pour permettre la supersession des ADRs créées plus tôt dans la même boucle ;
 9. faire une pause après les trois premières ADRs créées puis par batches de cinq, en demandant à l'utilisateur de confirmer la poursuite ;
 10. produire un rapport final : commits traités, ADRs créées, ADRs superseded, commits sautés, commits dont les fichiers source n'existent plus.

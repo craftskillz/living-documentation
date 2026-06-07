@@ -19,6 +19,7 @@ export const SNIPPET_PANELS = [
   "colored-text",
   "emojis",
   "attachment",
+  "compare",
 ];
 
 const SNIPPET_TYPE_TO_PANEL: Record<string, string> = {
@@ -56,6 +57,7 @@ export const SNIPPET_PICKER_ICONS: Record<string, string> = {
   emojis: "fa-solid fa-face-smile",
   attachment: "fa-solid fa-paperclip",
   "local-search": "fa-solid fa-magnifying-glass",
+  "compare": "fa-solid fa-table-columns",
 };
 
 export const SNIPPET_PICKER_CATEGORIES = [
@@ -72,7 +74,7 @@ export const SNIPPET_PICKER_CATEGORIES = [
   {
     key: "rich-text",
     labelKey: "snippet.picker_cat_rich_text",
-    types: ["colored-text", "colored-section", "blockquote", "emojis", "local-search"],
+    types: ["colored-text", "colored-section", "blockquote", "emojis", "local-search", "compare"],
   },
   {
     key: "links-media",
@@ -127,6 +129,7 @@ export const SNIPPET_PICKER_TYPE_PALETTE: Record<string, string> = {
   attachment: "orange",
   emojis: "yellow",
   "local-search": "cyan",
+  "compare": "teal",
 };
 
 export const SNIPPET_TYPE_I18N_KEY: Record<string, string> = {
@@ -153,6 +156,7 @@ export const SNIPPET_TYPE_I18N_KEY: Record<string, string> = {
   emojis: "snippet.emojis",
   attachment: "snippet.attachment",
   "local-search": "snippet.local_search",
+  "compare": "snippet.compare",
 };
 
 export const COLOR_SWATCHES: Record<string, { bg: string; border: string; text: string }> = {

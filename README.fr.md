@@ -2,7 +2,7 @@
 
 [🇬🇧 Read in English](./README.md)
 
-> **Hub local de documentation Markdown avec serveur MCP intégré — vos agents de code créent les ADR, dessinent les diagrammes et détectent la dérive pendant que vous codez.**
+> **Hub local de documentation Markdown avec serveur MCP intégré , vos agents de code créent les ADR, dessinent les diagrammes et détectent la dérive pendant que vous codez.**
 
 Du Markdown sur disque, pas de cloud, pas de base de données, pas d'étape de build. Pointez l'outil vers un dossier, ouvrez `http://localhost:4321`. Branchez n'importe quel agent IA compatible MCP (Claude Code, Claude Desktop, Cursor…) et votre documentation se maintient à mesure que le code évolue.
 
@@ -19,14 +19,14 @@ npx living-ai-documentation@latest ./docs         # servir un dossier existant
 
 ## Deux usages
 
-### 1. Avec un agent IA — la fonctionnalité phare
+### 1. Avec un agent IA , la fonctionnalité phare
 
 Living Documentation embarque un **serveur MCP** sur `POST /mcp`. N'importe quel agent compatible MCP peut lire, créer et auditer la documentation projet de façon autonome.
 
 | Ce que vous dites…                                           | Ce que l'agent déclenche…     | Ce qui se passe                                                                                                                                           |
 | ------------------------------------------------------------ | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | _« feature terminée »_ / _"feature done"_                    | `create-adr`                  | Cherche les ADR existants, supplante l'ADR obsolète s'il y en a, écrit un nouvel ADR en `To be validated`, relie les fichiers source via les métadonnées. |
-| _« audite les ADR »_ / _"audit the ADRs"_                    | `audit-adrs-drift`            | Liste chaque ADR sous 80 % de fiabilité et remet chacun en cohérence — soit re-baseliner les hashes, soit supplanter après confirmation.                  |
+| _« audite les ADR »_ / _"audit the ADRs"_                    | `audit-adrs-drift`            | Liste chaque ADR sous 80 % de fiabilité et remet chacun en cohérence , soit re-baseliner les hashes, soit supplanter après confirmation.                  |
 | _« vérifie la pertinence de cet ADR »_ / _"review this ADR"_ | `review-adr-relevance`        | Revue d'un ADR précis contre les fichiers source liés ; rafraîchit les hashes ou propose la supersession.                                                 |
 | _« retrodocumente depuis git »_ / _"backfill ADRs from git"_ | `retrodocument-adrs-from-git` | Parcourt l'historique git du plus ancien au plus récent et crée des ADR pour les décisions durables jamais documentées.                                   |
 | _« donne-moi la big picture »_                               | `generate-context-diagram`    | Crée un diagramme C4 de contexte **dérivé des documents**, jamais inventé.                                                                                |
@@ -35,7 +35,7 @@ Living Documentation embarque un **serveur MCP** sur `POST /mcp`. N'importe quel
 
 ### 2. Sans IA, en solo
 
-Un hub doc personnel : ADR, notes de réunion, journal de dev, plans de features, esquisses d'architecture — tout reste en Markdown sur disque, git-friendly, zéro lock-in. Édition inline, snippets, paste d'image, pièces jointes, éditeur de diagrammes, recherche plein-texte, export PDF/HTML/Notion/Confluence.
+Un hub doc personnel : ADR, notes de réunion, journal de dev, plans de features, esquisses d'architecture , tout reste en Markdown sur disque, git-friendly, zéro lock-in. Édition inline, snippets, paste d'image, pièces jointes, éditeur de diagrammes, recherche plein-texte, export PDF/HTML/Notion/Confluence.
 
 Les deux modes se mélangent : prendre des notes en solo toute la semaine, puis laisser l'agent enregistrer l'ADR quand la feature est livrée.
 
@@ -44,7 +44,7 @@ Les deux modes se mélangent : prendre des notes en solo toute la semaine, puis 
 ## Démarrage rapide
 
 ```bash
-# Assistant interactif — crée un dossier de doc de démarrage (EN ou FR), scaffold
+# Assistant interactif , crée un dossier de doc de démarrage (EN ou FR), scaffold
 # AGENTS.md / CLAUDE.md / memory/MEMORY.md à la racine du projet et fait des symlinks
 # dans <docs>/AI/ pour que les agents IA les trouvent.
 npx living-ai-documentation@latest
@@ -113,13 +113,13 @@ Même endpoint HTTP : `http://localhost:4321/mcp` (transport Streamable HTTP, sa
 
 ## Concepts centraux
 
-- **Markdown sur disque** — chaque document est un fichier `.md`. La configuration vit dans `.living-doc.json` à côté. Les deux sont git-friendly.
-- **Pattern de nom de fichier** — par défaut `YYYY_MM_DD_HH_mm_[Category]_title.md`. Configurable ; date, catégorie et titre sont extraits. Les fichiers hors pattern apparaissent sous **General**.
+- **Markdown sur disque** , chaque document est un fichier `.md`. La configuration vit dans `.living-doc.json` à côté. Les deux sont git-friendly.
+- **Pattern de nom de fichier** , par défaut `YYYY_MM_DD_HH_mm_[Category]_title.md`. Configurable ; date, catégorie et titre sont extraits. Les fichiers hors pattern apparaissent sous **General**.
 - **Dossiers → catégories → docs** dans le sidebar. Les noms de dossiers deviennent les libellés ; un préfixe numérique (`1_TUTORIAL`, `2_REFERENCE`) contrôle l'ordre sans s'afficher dans l'UI.
 - **Les ADR** sont le journal canonique des décisions. Le serveur MCP impose un frontmatter normalisé (`**date:**`, `**status:**`, `**description:**`, `**tags:**`) et un statut initial `To be validated` que seul un humain promeut.
 - **`sourceRoot`** désigne le code du projet. Les tools MCP source (`list_source_files`, `read_source_file`, `search_source`) et l'attache de métadonnées en dépendent. Défaut : parent du dossier de doc.
-- **Métadonnées source + jauge de fiabilité** — lier un document à ses fichiers source. Chaque lien stocke un SHA-256. La jauge dans le header (`🔴 → 🟡 → 🟢`) reflète `unchanged / total`. Dès qu'un fichier change ou disparaît, la dérive est visible. Les **god files** (`package.json`, lock files, manifests, barrels) sont exclus par convention.
-- **Les diagrammes sont des vues dérivées** — ils citent les documents qui les justifient (`evidence`). Ils ne peuvent pas introduire un concept absent de la documentation.
+- **Métadonnées source + jauge de fiabilité** , lier un document à ses fichiers source. Chaque lien stocke un SHA-256. La jauge dans le header (`🔴 → 🟡 → 🟢`) reflète `unchanged / total`. Dès qu'un fichier change ou disparaît, la dérive est visible. Les **god files** (`package.json`, lock files, manifests, barrels) sont exclus par convention.
+- **Les diagrammes sont des vues dérivées** , ils citent les documents qui les justifient (`evidence`). Ils ne peuvent pas introduire un concept absent de la documentation.
 
 ---
 
@@ -143,7 +143,7 @@ Même endpoint HTTP : `http://localhost:4321/mcp` (transport Streamable HTTP, sa
 | Métadonnées            | `list_metadata`               | Fichiers source liés à un document.                                                                                                           |
 |                        | `get_accuracy`                | Statut par entrée (`unchanged` / `modified` / `missing`) + accuracy pondérée ∈ [0, 1].                                                        |
 |                        | `add_metadata`                | Attache un fichier source (chemin sous `sourceRoot`), enregistre SHA-256. **Saute les god files.**                                            |
-|                        | `remove_metadata`             | Détache un lien (idempotent — pour renames/deletes).                                                                                          |
+|                        | `remove_metadata`             | Détache un lien (idempotent , pour renames/deletes).                                                                                          |
 |                        | `refresh_metadata`            | Re-hashe chaque lien (re-baseline après une mise à jour).                                                                                     |
 | Audit ADR              | `list_adrs_below_accuracy`    | Jusqu'à 10 ADR dont l'accuracy < 80 %, triés du plus dégradé. Exclut `SuperSeeded` et non-ADR.                                                |
 |                        | `review_adr_relevance`        | Rapport factuel sur un ADR + fichiers en dérive à relire. Retourne un `state` pour piloter le LLM.                                            |
@@ -170,15 +170,15 @@ Un `GET http://localhost:4321/mcp` retourne les schémas live des tools et promp
 
 ## Fonctionnalités d'édition
 
-- **Éditeur inline** — édition de n'importe quel document dans le navigateur, sauvegarde disque instantanée.
-- **Panneau Snippets** (`🧩 Snippets`) — constructions Markdown pré-fabriquées au curseur : blocs repliables, liens (in-doc, cross-doc, ancre), listes, blocs de code, blockquotes, séparateurs, images. Plus un **éditeur de tableaux** (grille dynamique → tableau Markdown aligné) et un **éditeur d'arborescence** (indentation → ASCII tree avec `├──` / `└──`). Sélectionner un snippet existant **détecte son type** et pré-remplit le formulaire pour édition.
-- **Paste d'image** — colle depuis le presse-papier pendant l'édition, auto-upload vers `<docs>/images/`, insertion en Markdown.
-- **Pièces jointes** — glisser, déposer, coller ou choisir n'importe quel fichier non-image (PDF, archive, doc bureautique). Upload sous `<docs>/files/`, insertion en pill trombone. Extensions bloquées et limites configurables en Admin.
-- **Recherche plein-texte** — filtre filename instantané + recherche serveur de contenu ; pour chaque fichier liste chaque occurrence, surlignée, navigable.
-- **Préfixe de recherche `metadata://<nomdefichier>`** — recherche inverse : quels documents référencent cette pièce jointe ?
-- **Annotations** — marqueurs de surlignage persistants par document (jaune / rose / vert / bleu).
-- **Navigation par ancre** — `[label](#heading-slug)` scrolle correctement après le rendu async ; IDs auto-générés.
-- **Mode sombre** — suit la préférence système, basculable manuellement. Coloration syntaxique toujours sombre.
+- **Éditeur inline** , édition de n'importe quel document dans le navigateur, sauvegarde disque instantanée.
+- **Panneau Snippets** (`🧩 Snippets`) , constructions Markdown pré-fabriquées au curseur : blocs repliables, liens (in-doc, cross-doc, ancre), listes, blocs de code, blockquotes, séparateurs, images. Plus un **éditeur de tableaux** (grille dynamique → tableau Markdown aligné) et un **éditeur d'arborescence** (indentation → ASCII tree avec `├──` / `└──`). Sélectionner un snippet existant **détecte son type** et pré-remplit le formulaire pour édition.
+- **Paste d'image** , colle depuis le presse-papier pendant l'édition, auto-upload vers `<docs>/images/`, insertion en Markdown.
+- **Pièces jointes** , glisser, déposer, coller ou choisir n'importe quel fichier non-image (PDF, archive, doc bureautique). Upload sous `<docs>/files/`, insertion en pill trombone. Extensions bloquées et limites configurables en Admin.
+- **Recherche plein-texte** , filtre filename instantané + recherche serveur de contenu ; pour chaque fichier liste chaque occurrence, surlignée, navigable.
+- **Préfixe de recherche `metadata://<nomdefichier>`** , recherche inverse : quels documents référencent cette pièce jointe ?
+- **Annotations** , marqueurs de surlignage persistants par document (jaune / rose / vert / bleu).
+- **Navigation par ancre** , `[label](#heading-slug)` scrolle correctement après le rendu async ; IDs auto-générés.
+- **Mode sombre** , suit la préférence système, basculable manuellement. Coloration syntaxique toujours sombre.
 
 ![Sidebar groupé par dossier → catégorie](/images/readme-sidebar.png)
 
@@ -190,10 +190,10 @@ Un `GET http://localhost:4321/mcp` retourne les schémas live des tools et promp
 
 Éditeur de diagrammes canvas intégré (vis-network), accessible via `/diagram?id=...`.
 
-- **Progression C4 imposée** — contexte d'abord (défaut), conteneur/composant seulement sur demande explicite. UML sur demande explicite.
-- **`kind` architectural vs `renderAs` visuel** — sépare le concept (`software_system`, `database`, `queue`, `api`, `cloud_service`…) de la forme (`box`, `ellipse`, `database`, `actor`, `post-it`…). Le MCP choisit des défauts sensés pour chaque `kind`.
-- **Provenance documentaire (`evidence`)** — chaque nœud / arête architectural peut citer le document et la section qui le justifient. L'éditeur lève des warnings si l'evidence manque.
-- **Bibliothèques de formes personnalisées** sur `/shape-editor` — définissez vos propres formes (icônes SVG, ports, couleurs par défaut) et réutilisez-les.
+- **Progression C4 imposée** , contexte d'abord (défaut), conteneur/composant seulement sur demande explicite. UML sur demande explicite.
+- **`kind` architectural vs `renderAs` visuel** , sépare le concept (`software_system`, `database`, `queue`, `api`, `cloud_service`…) de la forme (`box`, `ellipse`, `database`, `actor`, `post-it`…). Le MCP choisit des défauts sensés pour chaque `kind`.
+- **Provenance documentaire (`evidence`)** , chaque nœud / arête architectural peut citer le document et la section qui le justifient. L'éditeur lève des warnings si l'evidence manque.
+- **Bibliothèques de formes personnalisées** sur `/shape-editor` , définissez vos propres formes (icônes SVG, ports, couleurs par défaut) et réutilisez-les.
 - **Ports** pour arêtes ancrées, **guides d'alignement**, **undo/redo**, **snap-to-grid**, **paste d'image**, **export PNG**, **deep-link** vers un diagramme par id.
 
 ---
@@ -213,7 +213,7 @@ docs/
 
 - Le tag `[Category]` est extrait du filename quel que soit le dossier.
 - Les fichiers sans `[Category]` tombent sous **General**. **General** est toujours rendu en premier.
-- Les dossiers sont triés alphabétiquement — préfixer par `1_`, `2_`… pour forcer un ordre ; le préfixe est caché dans l'UI mais visible au survol.
+- Les dossiers sont triés alphabétiquement , préfixer par `1_`, `2_`… pour forcer un ordre ; le préfixe est caché dans l'UI mais visible au survol.
 - L'imbrication de sous-dossiers est récursive.
 
 ![Pattern de filename](/images/readme-filename-pattern.png)
@@ -254,8 +254,8 @@ Créé automatiquement dans votre dossier de doc au premier lancement. Modifiabl
 | Format                 | Endpoint                    | Notes                                                              |
 | ---------------------- | --------------------------- | ------------------------------------------------------------------ |
 | PDF (par doc)          | `POST /api/export/html`     | Boîte de dialogue d'impression du navigateur depuis le HTML rendu. |
-| HTML — mode Notion     | `POST /api/export/html`     | Bundle HTML unique adapté à l'import Notion.                       |
-| HTML — mode Confluence | `POST /api/export/html`     | Bundle HTML zippé adapté à l'import Confluence.                    |
+| HTML , mode Notion     | `POST /api/export/html`     | Bundle HTML unique adapté à l'import Notion.                       |
+| HTML , mode Confluence | `POST /api/export/html`     | Bundle HTML zippé adapté à l'import Confluence.                    |
 | Bundle Markdown        | `POST /api/export/markdown` | Zip de tous les documents avec liens normalisés.                   |
 
 ---
@@ -264,11 +264,11 @@ Créé automatiquement dans votre dossier de doc au premier lancement. Modifiabl
 
 | URL             | Page                                                                                                 |
 | --------------- | ---------------------------------------------------------------------------------------------------- |
-| `/`             | Viewer — sidebar, rendu document, édition inline, snippets, recherche, pièces jointes.               |
-| `/admin`        | Config — titre, thème, pattern de filename, extra files, source root, liste de sécurité fichiers.    |
+| `/`             | Viewer , sidebar, rendu document, édition inline, snippets, recherche, pièces jointes.               |
+| `/admin`        | Config , titre, thème, pattern de filename, extra files, source root, liste de sécurité fichiers.    |
 | `/diagram?id=`  | Éditeur de diagrammes (vis-network) avec conventions C4, ports, guides d'alignement, undo/redo.      |
-| `/shape-editor` | Éditeur de bibliothèques de formes personnalisées — icônes SVG, couleurs par défaut, ports.          |
-| `/context`      | Page de contexte IA — instructions, règles, mémoire, **explorateur MCP** (tester les tools en live). |
+| `/shape-editor` | Éditeur de bibliothèques de formes personnalisées , icônes SVG, couleurs par défaut, ports.          |
+| `/context`      | Page de contexte IA , instructions, règles, mémoire, **explorateur MCP** (tester les tools en live). |
 
 ---
 
@@ -308,7 +308,7 @@ Créé automatiquement dans votre dossier de doc au premier lancement. Modifiabl
 | `GET`    | `/api/annotations[/:docId]`    | Liste les annotations (tous docs / un doc).                                                                         |
 | `POST`   | `/api/annotations/:docId`      | Ajoute une annotation.                                                                                              |
 | `DELETE` | `/api/annotations/:docId/:id`  | Supprime une annotation.                                                                                            |
-| `POST`   | `/api/export/html`             | Export HTML — modes Notion / Confluence.                                                                            |
+| `POST`   | `/api/export/html`             | Export HTML , modes Notion / Confluence.                                                                            |
 | `POST`   | `/api/export/markdown`         | Export bundle Markdown.                                                                                             |
 | `GET`    | `/api/wordcloud?path=&ext=`    | Concatène récursivement les fichiers source filtrés en texte brut.                                                  |
 | `POST`   | `/mcp`                         | Endpoint Model Context Protocol (Streamable HTTP).                                                                  |
@@ -333,11 +333,11 @@ npm run test:coverage                    # couverture c8 V8-natif
 
 En **dev**, ouvrez l'UI sur **http://localhost:5174** (Vite sert l'app Svelte avec HMR et proxy `/api`, `/mcp`, `/images`, `/files` vers le backend Express sur `:4321`).
 
-Les tests end-to-end utilisent **Playwright**. Chaque test lance un vrai process CLI enfant sur un fixture frais sur un port aléatoire — pas de fuite d'état, parallélisable. Couverture serveur via **c8** (V8 natif, ~72 % global, 83 % sur `src/routes` et `src/lib`).
+Les tests end-to-end utilisent **Playwright**. Chaque test lance un vrai process CLI enfant sur un fixture frais sur un port aléatoire , pas de fuite d'état, parallélisable. Couverture serveur via **c8** (V8 natif, ~72 % global, 83 % sur `src/routes` et `src/lib`).
 
 ### Tester le package publié en local
 
-Pas besoin de publier une version. Le CLI démarre un **unique serveur Express** qui sert l'UI Svelte pré-buildée **et** l'API/MCP sur un seul port — Vite (`:5174`) n'existe qu'en dev et pas pour l'utilisateur final.
+Pas besoin de publier une version. Le CLI démarre un **unique serveur Express** qui sert l'UI Svelte pré-buildée **et** l'API/MCP sur un seul port , Vite (`:5174`) n'existe qu'en dev et pas pour l'utilisateur final.
 
 ```bash
 # Lance l'artefact de production exact, puis ouvrez http://localhost:4321
@@ -361,4 +361,4 @@ Ce dépôt embarque un hook `pre-commit` (dans `.githooks/`) qui impose le contr
 
 ## Licence
 
-[AGPL-3.0](./LICENSE) — © Youssef MEDAGHRI-ALAOUI.
+[AGPL-3.0](./LICENSE) , © Youssef MEDAGHRI-ALAOUI.

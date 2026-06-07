@@ -66,5 +66,5 @@ Aucun cycle de dépendances : `constants` et `state` n'importent rien, `main` im
 ### CONS
 
 - `vis` reste une globale CDN (`window.vis`) ; les modules y accèdent directement sans import.
-- Si un module a besoin d'appeler une fonction d'un autre module, il doit l'importer explicitement — **ne pas ajouter de globals**.
+- Si un module a besoin d'appeler une fonction d'un autre module, il doit l'importer explicitement , **ne pas ajouter de globals**.
 - Si vis-network est mis à jour, vérifier `_drawNodes` dans `network.js` (cf. ADR z-order).

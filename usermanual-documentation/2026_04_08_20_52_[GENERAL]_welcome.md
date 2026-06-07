@@ -1,8 +1,8 @@
-# Living Documentation — Guide d'utilisation
+# Living Documentation , Guide d'utilisation
 
 > La documentation est un problème que presque tout le monde a résolu en faisant semblant de l'avoir résolu.
 >
-> — Nobody
+> , Nobody
 
 Des README squelettiques, des outils documentaires tels que Notion et Confluence devenant des forêts vierges où personne ne rentre plus, où on passe du temps à faire un `Ctrl+F` global sur tous les espaces pour finalement ne rien trouver, ou pire, trouver quelque chose d'obsolète mais on va faire avec.
 

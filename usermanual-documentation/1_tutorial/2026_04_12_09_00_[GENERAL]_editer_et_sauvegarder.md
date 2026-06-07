@@ -22,11 +22,11 @@ Living Documentation vous permet d'éditer vos fichiers Markdown directement dan
 
    ✅ Votre modification est visible et persistée dans le fichier `.md` sur le disque.
 
-5. **Pour annuler sans sauvegarder**, cliquez sur `Cancel` — le document revient à son état d'origine.
+5. **Pour annuler sans sauvegarder**, cliquez sur `Cancel` , le document revient à son état d'origine.
 
 ---
 
-## Astuce — coller une image
+## Astuce , coller une image
 
 En mode édition, vous pouvez coller une image directement depuis le presse-papiers :
 

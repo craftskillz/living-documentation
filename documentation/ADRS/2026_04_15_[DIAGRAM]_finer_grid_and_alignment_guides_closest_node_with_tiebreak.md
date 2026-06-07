@@ -10,9 +10,9 @@
 
 Two independent improvements to the diagram editor's positioning system:
 
-1. **Grid too coarse** — `GRID_SIZE = 40` world units produced large cells that made precise positioning impractical. Users needed finer granularity without changing the overall snap behaviour.
+1. **Grid too coarse** , `GRID_SIZE = 40` world units produced large cells that made precise positioning impractical. Users needed finer granularity without changing the overall snap behaviour.
 
-2. **Alignment guide candidate selection was incomplete** — the previous implementation:
+2. **Alignment guide candidate selection was incomplete** , the previous implementation:
    - Only detected same-`shapeType` nodes, so mixed-type diagrams got no guides at all.
    - Picked the **first** matching node found in DataSet iteration order (non-deterministic), ignoring closer candidates on the same axis.
    - Had no tiebreak rule when two candidates were equidistant.
@@ -36,8 +36,8 @@ Two new private helpers replace the inline loop logic in both `onDragging` and `
 **`collectCandidates(draggedBody, draggedType, draggedIds)`**
 Iterates all non-dragged nodes and fills four buckets:
 
-- `sameH` / `sameV` — same `shapeType`, within `THRESHOLD` on H / V axis
-- `anyH` / `anyV` — any `shapeType`, within `THRESHOLD` on H / V axis (fallback)
+- `sameH` / `sameV` , same `shapeType`, within `THRESHOLD` on H / V axis
+- `anyH` / `anyV` , any `shapeType`, within `THRESHOLD` on H / V axis (fallback)
 
 **`pickBest(candidates, dx, dy, axis)`**
 Among a bucket's candidates, selects the one with the smallest perpendicular distance to the dragged center:
@@ -78,7 +78,7 @@ const hMatch = pickBest(sameH.length ? sameH : anyH, dx, dy, "h");
 const vMatch = pickBest(sameV.length ? sameV : anyV, dx, dy, "v");
 ```
 
-The two axes are evaluated independently — same-type priority can apply on H while fallback applies on V.
+The two axes are evaluated independently , same-type priority can apply on H while fallback applies on V.
 
 ## Consequences
 
@@ -92,5 +92,5 @@ The two axes are evaluated independently — same-type priority can apply on H w
 
 ### CONS
 
-- `collectCandidates` iterates all nodes on every `dragging` event tick — O(n) per dragged node. Acceptable for typical diagram sizes; could be optimised with spatial indexing if diagrams grow very large.
+- `collectCandidates` iterates all nodes on every `dragging` event tick , O(n) per dragged node. Acceptable for typical diagram sizes; could be optimised with spatial indexing if diagrams grow very large.
 - Halving the grid size doubles the number of grid lines drawn on screen at the same zoom level, which may feel visually busier at low zoom.

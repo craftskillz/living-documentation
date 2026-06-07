@@ -8,11 +8,11 @@
 
 ## Context
 
-The Snippets modal already provides a set of reusable markdown constructs (table, tree, diagram, code block, etc.). Users wanted the ability to add visual emphasis to their documentation — either at the block level (a callout-style panel) or inline (a colored word or sentence) — without leaving the editor.
+The Snippets modal already provides a set of reusable markdown constructs (table, tree, diagram, code block, etc.). Users wanted the ability to add visual emphasis to their documentation , either at the block level (a callout-style panel) or inline (a colored word or sentence) , without leaving the editor.
 
 Standard Markdown does not support color. Because the server uses `marked` with default settings, raw HTML blocks pass through to the rendered output. This makes `<div>` and `<span>` with inline styles a viable approach.
 
-Tailwind utility classes were ruled out for inline styling: the CDN JIT build only scans the initial HTML — classes injected into markdown at runtime are not present in the stylesheet.
+Tailwind utility classes were ruled out for inline styling: the CDN JIT build only scans the initial HTML , classes injected into markdown at runtime are not present in the stylesheet.
 
 The diagram nav button also had a cosmetic issue: the icon character `⋄` (U+22C4, math DIAMOND OPERATOR) has poor vertical metrics in most system fonts and was visually clipping. The HTML fallback already used `◇` (U+25C7, WHITE DIAMOND from the Geometric Shapes block), which renders correctly at the same size as `☁` and `⚙`.
 
@@ -26,7 +26,7 @@ A new snippet type `colored-section` generates a block-level `<div>` with inline
 <div
   style="background:#eff6ff;border-left:4px solid #3b82f6;color:#1e3a5f;padding:1rem 1.25rem;border-radius:0.375rem;margin:1rem 0;"
 >
-  Content here — **markdown works** inside the blank-line sandwich.
+  Content here , **markdown works** inside the blank-line sandwich.
 </div>
 ```
 
@@ -51,7 +51,7 @@ A new snippet type `colored-text` generates an inline `<span>`:
 <span style="color:#3b82f6;">your text</span>
 ```
 
-Uses the `border` color from `_COLOR_SWATCHES` as the foreground — vivid enough to stand out. Same 6 swatches, shown as solid filled circles.
+Uses the `border` color from `_COLOR_SWATCHES` as the foreground , vivid enough to stand out. Same 6 swatches, shown as solid filled circles.
 
 ### Detect and re-edit
 
@@ -60,7 +60,7 @@ Both types are detectable from selected text in the editor:
 - `colored-section`: matched by `/^<div\s[^>]*border-left[^>]*>/`
 - `colored-text`: matched by `/^<span\s[^>]*color:[^>]*>[\s\S]*<\/span>$/`
 
-On detection, `parseAndFillSnippet` extracts the border/color value, finds the matching swatch, and pre-fills the content field — allowing the user to re-edit an existing snippet in place.
+On detection, `parseAndFillSnippet` extracts the border/color value, finds the matching swatch, and pre-fills the content field , allowing the user to re-edit an existing snippet in place.
 
 ### Icon fix
 
@@ -78,7 +78,7 @@ All user-visible strings added to both `en.json` and `fr.json`:
 ### PROS
 
 - Users can visually emphasize callouts, warnings, and key passages without external tooling.
-- Inline styles are self-contained — no dependency on a CSS framework at render time.
+- Inline styles are self-contained , no dependency on a CSS framework at render time.
 - Detection + pre-fill makes colored snippets as editable as any other snippet type.
 - The icon fix removes a rendering glitch present across all locales.
 

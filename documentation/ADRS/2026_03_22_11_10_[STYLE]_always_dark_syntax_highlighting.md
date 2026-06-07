@@ -8,7 +8,7 @@
 
 ## Context
 
-The viewer previously loaded two highlight.js stylesheets — `github.min.css` (light) and `github-dark.min.css` (dark) — and toggled between them using the `disabled` attribute when the user switched themes. The light theme rendered code blocks with a white background that blended into the page background, making them hard to distinguish from regular prose.
+The viewer previously loaded two highlight.js stylesheets , `github.min.css` (light) and `github-dark.min.css` (dark) , and toggled between them using the `disabled` attribute when the user switched themes. The light theme rendered code blocks with a white background that blended into the page background, making them hard to distinguish from regular prose.
 
 ## Decision
 

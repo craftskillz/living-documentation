@@ -25,7 +25,7 @@ Pour modifier un snippet inline, rester en mode lecture sur le viewer du documen
 
 3. Choisissez **`Bloc dépliable`** (`<details>`).
 
-   Des champs apparaissent : *Titre du bloc* et *Contenu*.
+   Des champs apparaissent : _Titre du bloc_ et _Contenu_.
 
 4. Remplissez :
    - Titre : `Voir les détails`
@@ -39,6 +39,7 @@ Pour modifier un snippet inline, rester en mode lecture sur le viewer du documen
    <details><summary>Voir les détails</summary>
 
    Voici le contenu caché.
+
    </details>
    ```
 
@@ -58,14 +59,14 @@ Pour modifier un snippet inline, rester en mode lecture sur le viewer du documen
 
    ```markdown
    | Colonne 1 | Colonne 2 | Colonne 3 |
-   |-----------|-----------|-----------|
+   | --------- | --------- | --------- |
    | val 1     | val 2     | val 3     |
    | val 4     | val 5     | val 6     |
    ```
 
 ---
 
-### Mode détection — modifier un snippet existant dans le Markdown
+### Mode détection , modifier un snippet existant dans le Markdown
 
 1. En mode édition, **sélectionnez** dans le textarea un snippet déjà présent (par exemple, un bloc `<details>…</details>` entier).
 
@@ -85,7 +86,7 @@ Pour modifier un snippet inline, rester en mode lecture sur le viewer du documen
 2. Si le bloc est reconnu, cliquez sur **`Édition inline`** dans la petite popup.
 3. La modale Snippets s'ouvre avec le type détecté verrouillé. Les champs utiles sont préremplis : grille de tableau, contenu du code, texte de citation, éléments de liste, contenu coloré, etc.
 4. Modifiez le contenu puis cliquez sur **`Enregistrer`**.
-  ✅ Le Markdown source est remplacé et le document rendu se met à jour.
+   ✅ Le Markdown source est remplacé et le document rendu se met à jour.
 5. Pour retirer entièrement le snippet, cliquez sur **`Supprimer le bloc`**, confirmez, puis le bloc Markdown détecté est supprimé du document.
 
 > En édition inline, le type de snippet ne peut pas être changé : cela évite d'écraser une plage Markdown avec un autre format.

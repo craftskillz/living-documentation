@@ -1,7 +1,7 @@
 ---
 **date:** 2026-05-23
 **status:** SuperSeeded
-**description:** [SuperSeeded par la migration Svelte] Script npm `check:frontend` (`node --check` sur `src/frontend/**/*.js`) — supprime en meme temps que le frontend vanilla.
+**description:** [SuperSeeded par la migration Svelte] Script npm `check:frontend` (`node --check` sur `src/frontend/**/*.js`) , supprime en meme temps que le frontend vanilla.
 **tags:** frontend, quality, javascript, syntax-check, node-check, npm-script, superseeded, check-frontend, scripts
 ---
 

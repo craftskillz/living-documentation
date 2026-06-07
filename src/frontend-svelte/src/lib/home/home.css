@@ -744,3 +744,81 @@
       html:not(.dark) body.ld-code-light .ld-code-toggle:hover {
         background: rgba(0, 0, 0, 0.1);
       }
+
+      /* ── Compare block (```compare) ─────────────────────────────────────────
+         Side-by-side layout: left = raw Markdown source, right = live render.
+         The server pre-renders the right column; wireContent.ts applies
+         table colors / callout styles using data-compare-source.             */
+
+      .ld-compare {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        border: 1px solid rgb(229 231 235);
+        border-radius: 0.5rem;
+        overflow: hidden;
+        margin: 1.5rem 0;
+        font-size: 0.92em;
+      }
+      .dark .ld-compare {
+        border-color: rgb(55 65 81);
+      }
+
+      .ld-compare-source,
+      .ld-compare-render {
+        padding: 1rem 1.25rem;
+        position: relative;
+      }
+
+      /* Column labels via pseudo-elements */
+      .ld-compare-source::before,
+      .ld-compare-render::before {
+        display: block;
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.6rem;
+      }
+      .ld-compare-source::before { content: "Syntaxe"; color: rgb(107 114 128); }
+      .ld-compare-render::before { content: "Rendu";   color: rgb(107 114 128); }
+
+      .ld-compare-source {
+        background-color: rgb(249 250 251);
+        border-right: 1px solid rgb(229 231 235);
+      }
+      .dark .ld-compare-source {
+        background-color: rgb(17 24 39);
+        border-right-color: rgb(55 65 81);
+      }
+
+      .ld-compare-render {
+        background-color: #ffffff;
+      }
+      .dark .ld-compare-render {
+        background-color: rgb(17 24 39);
+      }
+
+      /* Remove outer margins from direct children so the render column is tight */
+      .ld-compare-render > *:first-child { margin-top: 0; }
+      .ld-compare-render > *:last-child  { margin-bottom: 0; }
+
+      /* The source <pre> fills the column without extra margins */
+      .ld-compare-source > pre {
+        margin: 0;
+        border-radius: 0.25rem;
+        font-size: 0.85em;
+      }
+
+      /* On small screens, stack vertically */
+      @media (max-width: 640px) {
+        .ld-compare {
+          grid-template-columns: 1fr;
+        }
+        .ld-compare-source {
+          border-right: none;
+          border-bottom: 1px solid rgb(229 231 235);
+        }
+        .dark .ld-compare-source {
+          border-bottom-color: rgb(55 65 81);
+        }
+      }

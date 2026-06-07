@@ -21,9 +21,9 @@ Living Documentation servait jusqu'ici de viewer Markdown + éditeur de diagramm
 
 `src/routes/context.ts` expose un routeur monté sur `/api/context` qui couvre trois ressources :
 
-- `GET /orientation` — retourne `{ instructions, rules, sourceRoot, rulesFolder }`. Les `instructions` sont la liste des `.md` du dossier `<docsFolder>/AI/` (typiquement des **symlinks** créés depuis le viewer vers des fichiers extérieurs comme `CLAUDE.md`). Les `rules` sont les `.md` de `<docsFolder>/AI/rules/`, parsées via une frontmatter dédiée.
-- `POST /instructions` + `DELETE /instructions/:filename` — création d'un symlink dans `AI/` à partir d'un chemin absolu fourni, ou suppression. Le serveur valide que le fichier source existe, est un `.md` visible, et que la cible reste sous `docsFolder`.
-- `POST /rules` — création d'une nouvelle règle AI à partir d'un titre, d'une sévérité, de tags et d'un corps. Le serveur génère le slug (`id`), construit la frontmatter YAML et écrit `AI/rules/<id>.md`.
+- `GET /orientation` , retourne `{ instructions, rules, sourceRoot, rulesFolder }`. Les `instructions` sont la liste des `.md` du dossier `<docsFolder>/AI/` (typiquement des **symlinks** créés depuis le viewer vers des fichiers extérieurs comme `CLAUDE.md`). Les `rules` sont les `.md` de `<docsFolder>/AI/rules/`, parsées via une frontmatter dédiée.
+- `POST /instructions` + `DELETE /instructions/:filename` , création d'un symlink dans `AI/` à partir d'un chemin absolu fourni, ou suppression. Le serveur valide que le fichier source existe, est un `.md` visible, et que la cible reste sous `docsFolder`.
+- `POST /rules` , création d'une nouvelle règle AI à partir d'un titre, d'une sévérité, de tags et d'un corps. Le serveur génère le slug (`id`), construit la frontmatter YAML et écrit `AI/rules/<id>.md`.
 
 `src/server.ts` monte ces routes et sert la page statique [src/frontend/context.html](src/frontend/context.html) à l'URL `/context`.
 

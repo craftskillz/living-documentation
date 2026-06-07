@@ -2,7 +2,7 @@
 `🗄️ ADR : 2026_04_20_[TUTORIAL]_interroger_le_mcp_server_avec_curl.md`
 **date:** 2026-04-20
 **status:** Accepted
-**description:** Guide opérationnel pour inspecter le serveur MCP de Living Documentation avec curl — liste des tools, des prompts et lecture du contenu d'un prompt tel qu'un LLM le reçoit.
+**description:** Guide opérationnel pour inspecter le serveur MCP de Living Documentation avec curl , liste des tools, des prompts et lecture du contenu d'un prompt tel qu'un LLM le reçoit.
 **tags:** mcp, curl, debug, tutorial, streamable-http, sse, tools, prompts, json-rpc
 ---
 
@@ -10,7 +10,7 @@
 
 Le serveur MCP de Living Documentation est exposé via le transport **Streamable HTTP** (stateless) sur `POST /mcp`. Ce transport impose deux contraintes qui rendent l'inspection avec curl non triviale :
 
-1. Le header `Accept` doit obligatoirement déclarer **à la fois** `application/json` et `text/event-stream` — le SDK MCP rejette la requête avec `-32000 Not Acceptable` si l'un des deux manque.
+1. Le header `Accept` doit obligatoirement déclarer **à la fois** `application/json` et `text/event-stream` , le SDK MCP rejette la requête avec `-32000 Not Acceptable` si l'un des deux manque.
 2. Malgré l'Accept, le serveur répond systématiquement au format **SSE** (`text/event-stream`). La réponse JSON-RPC est encapsulée dans une ligne `data: {...}`, ce que `jq` ne peut pas parser directement.
 
 ## Decision
@@ -24,7 +24,7 @@ Pour interroger le MCP avec curl, il faut :
 
 | Méthode     | URL          | Rôle                                 |
 | ----------- | ------------ | ------------------------------------ |
-| `GET /mcp`  | —            | Résumé JSON custom (tools + prompts) |
+| `GET /mcp`  | ,            | Résumé JSON custom (tools + prompts) |
 | `POST /mcp` | JSON-RPC 2.0 | Protocole MCP complet                |
 
 ### Commandes curl

@@ -54,8 +54,50 @@ export function collectBlockquoteAttributesFromSource(source: string): Blockquot
   let pendingIcon = false;
   let inBlockquote = false;
 
+  // Fenced-code-block tracking: skip lines inside ``` or ~~~ fences so that
+  // `> ` lines or quote-* comments inside code blocks are not parsed as
+  // real blockquotes.
+  let inFencedCode = false;
+  let fenceChar = "";
+  let fenceLen = 0;
+  let inCompareBlock = false;
+
   for (const rawLine of lines) {
     const line = rawLine.trimEnd();
+
+    // Detect :::compare … ::: directive blocks (skip inner content)
+    if (/^:::compare[ \t]*$/.test(line)) {
+      inCompareBlock = true;
+      inBlockquote = false;
+      pendingType = null; pendingTitle = null; pendingIcon = false;
+      continue;
+    }
+    if (inCompareBlock) {
+      if (/^:::[ \t]*$/.test(line)) inCompareBlock = false;
+      continue;
+    }
+
+    // Detect opening / closing fence
+    const fenceMatch = /^(`{3,}|~{3,})/.exec(line);
+    if (fenceMatch) {
+      const ch  = fenceMatch[1][0];
+      const len = fenceMatch[1].length;
+      if (!inFencedCode) {
+        inFencedCode = true;
+        fenceChar = ch;
+        fenceLen  = len;
+        // Entering a code block resets any pending quote prefix that may have
+        // accumulated (edge case: comment immediately before a code fence).
+        inBlockquote = false;
+        pendingType = null; pendingTitle = null; pendingIcon = false;
+        continue;
+      } else if (ch === fenceChar && len >= fenceLen && /^[`~]+[ \t]*$/.test(line)) {
+        inFencedCode = false;
+        fenceChar = ""; fenceLen = 0;
+        continue;
+      }
+    }
+    if (inFencedCode) continue;
 
     const typeMatch = line.match(COMMENT_TYPE_RE);
     if (typeMatch) {

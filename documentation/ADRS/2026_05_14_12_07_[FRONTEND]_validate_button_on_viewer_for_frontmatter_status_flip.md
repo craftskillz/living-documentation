@@ -12,7 +12,7 @@
 Le frontmatter des ADR portait un champ `**status:** To be validated` qui devait être promu manuellement à `Accepted` en passant par le mode édition du viewer, puis en sauvegardant. Coûts :
 
 - friction inutile pour une décision binaire récurrente (une fois l'humain a validé l'ADR créé par l'IA) ;
-- pas de garde-fou contre la promotion d'un ADR dont la jauge de fiabilité est dégradée — l'humain pouvait « accepter » un ADR dont les hashes source étaient déjà drifted, gelant ainsi un mensonge dans l'historique ;
+- pas de garde-fou contre la promotion d'un ADR dont la jauge de fiabilité est dégradée , l'humain pouvait « accepter » un ADR dont les hashes source étaient déjà drifted, gelant ainsi un mensonge dans l'historique ;
 - pas de point d'entrée visuel rappelant que la promotion est attendue.
 
 Certains documents utilisent cependant un frontmatter Markdown/YAML standard (`status: Accepted`) ou aucun frontmatter. Le viewer ne doit jamais échouer au chargement d'un document parce que le statut est absent ou écrit dans cette forme standard.
@@ -25,7 +25,7 @@ Insertion dans la toolbar `#view-actions` de [src/frontend/index.html](src/front
 
 Si le document n'a pas de frontmatter, ou si aucun champ `status` n'est reconnu, `getDocStatus()` retourne `null` et le bouton reste simplement masqué. Ce cas est neutre : il ne doit pas bloquer le rendu du document.
 
-Le style est explicitement marquant — `bg-green-600 hover:bg-green-700 text-white font-semibold` + icône `fa-check` — pour signaler qu'une action durable est attendue. Le bouton reste invisible quand `view-actions` lui-même est masqué (mode édition).
+Le style est explicitement marquant , `bg-green-600 hover:bg-green-700 text-white font-semibold` + icône `fa-check` , pour signaler qu'une action durable est attendue. Le bouton reste invisible quand `view-actions` lui-même est masqué (mode édition).
 
 ### 2. Modale de confirmation avec `detail` conditionnel
 
@@ -52,11 +52,11 @@ Le remplacement utilise la même regex et préserve le préfixe trouvé. Un docu
 
 ### 4. i18n strict
 
-Sept nouvelles clés `doc.validate_*` ajoutées dans `src/frontend/i18n/en.json` et `fr.json`. Le `detail` de la modale utilise un placeholder `{accuracy}` substitué côté JS pour interpoler le pourcentage courant — pas de concaténation de fragments traduits.
+Sept nouvelles clés `doc.validate_*` ajoutées dans `src/frontend/i18n/en.json` et `fr.json`. Le `detail` de la modale utilise un placeholder `{accuracy}` substitué côté JS pour interpoler le pourcentage courant , pas de concaténation de fragments traduits.
 
 ### 5. Pas de nouvelle route serveur
 
-Le PUT documents et le POST metadata/refresh existaient déjà. La feature est purement frontend ; deux appels client successifs au lieu d'une route composite côté serveur. Justification : pas d'atomicité requise (si le refresh échoue après le PUT, le statut est déjà flippé mais la jauge reste rouge — état parfaitement réparable manuellement via le bouton refresh existant dans la modale métadonnées).
+Le PUT documents et le POST metadata/refresh existaient déjà. La feature est purement frontend ; deux appels client successifs au lieu d'une route composite côté serveur. Justification : pas d'atomicité requise (si le refresh échoue après le PUT, le statut est déjà flippé mais la jauge reste rouge , état parfaitement réparable manuellement via le bouton refresh existant dans la modale métadonnées).
 
 ## Conséquences
 

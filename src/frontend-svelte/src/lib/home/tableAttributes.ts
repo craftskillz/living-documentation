@@ -88,12 +88,33 @@ export function looksLikeTableSnippet(markdown: string): boolean {
   );
 }
 
+/**
+ * Replace fenced code block content with blank lines so that table-like
+ * patterns inside ``` ... ``` blocks are not mistaken for real tables.
+ * Line count is preserved so character-offset-based callers stay correct.
+ */
+function stripFencedCodeBlocks(source: string): string {
+  // Strip backtick/tilde fenced code blocks
+  let result = source.replace(
+    /^(`{3,})[^\n]*$([\s\S]*?)^\1[ \t]*$/gm,
+    (match) => "\n".repeat((match.match(/\n/g) ?? []).length),
+  );
+  // Strip :::compare … ::: directive blocks (their inner tables are handled
+  // separately by applyCompareBlockStyles, not by the main index-based pass)
+  result = result.replace(
+    /^:::compare[ \t]*\n([\s\S]*?)^:::[ \t]*$/gm,
+    (match) => "\n".repeat((match.match(/\n/g) ?? []).length),
+  );
+  return result;
+}
+
 export function collectTableAttributesFromSource(source: string): TableAttrs[] {
   if (typeof source !== "string") return [];
+  const stripped = stripFencedCodeBlocks(source);
   const attrs: TableAttrs[] = [];
   const re = new RegExp("(" + PREFIX + ")(" + TABLE_START + ")", "g");
   let m: RegExpExecArray | null;
-  while ((m = re.exec(source))) {
+  while ((m = re.exec(stripped))) {
     attrs.push(parsePrefix(m[1] || ""));
   }
   return attrs;

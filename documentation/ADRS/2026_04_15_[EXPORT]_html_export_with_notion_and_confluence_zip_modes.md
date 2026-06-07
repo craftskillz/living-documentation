@@ -12,7 +12,7 @@ Users need to publish their Living Documentation content into tools like Notion 
 
 ## Decision
 
-### Backend — `src/routes/export.ts`
+### Backend , `src/routes/export.ts`
 
 A new Express router is mounted at `POST /api/export/html`. It accepts `{ folders: string[], mode: 'notion' | 'confluence' }` and streams a ZIP response via the `archiver` npm package.
 
@@ -40,7 +40,7 @@ Confluence follows the official import specification: the HTML filename becomes 
 
 Image deduplication is tracked per `imageDir/imageName` key to avoid adding the same file twice when multiple documents in the same group share an image.
 
-### Frontend — `src/frontend/index.html`
+### Frontend , `src/frontend/index.html`
 
 - A new **HTML** button is added before the existing **PDF** button in the left drawer.
 - Clicking it opens a modal listing all first-level folder/category names as unchecked checkboxes.
@@ -51,14 +51,14 @@ Image deduplication is tracked per `imageDir/imageName` key to avoid adding the 
 
 ### PROS
 
-- Zero client-side dependencies — no JSZip CDN, no client-side ZIP generation.
+- Zero client-side dependencies , no JSZip CDN, no client-side ZIP generation.
 - Works for any document set size since the ZIP is streamed.
-- Self-contained HTML output (embedded CSS) — no linked stylesheets needed.
+- Self-contained HTML output (embedded CSS) , no linked stylesheets needed.
 - Same endpoint supports both Notion and Confluence with a single `mode` parameter.
 - Reuses existing `listDocs`, `safeFilePath`, and `stripFrontmatter` from `documents.ts`.
 
 ### CONS
 
-- Export is one-shot and not resumable — large exports could time out on very slow connections.
+- Export is one-shot and not resumable , large exports could time out on very slow connections.
 - Diagram images are only included if already saved as PNG in `DOCS_FOLDER/images/`; live diagram renders are not exported.
 - Image deduplication is per mode/group pair; the same physical image used across groups will appear multiple times in the ZIP.

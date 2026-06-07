@@ -2,7 +2,7 @@
 
 [🇫🇷 Lire en français](./README.fr.md)
 
-> **Local Markdown documentation hub with a built-in MCP server — coding agents create ADRs, draw diagrams, and detect drift while you code.**
+> **Local Markdown documentation hub with a built-in MCP server , coding agents create ADRs, draw diagrams, and detect drift while you code.**
 
 Markdown on disk, no cloud, no database, no build step. Point it at a folder, open `http://localhost:4321`. Plug any MCP-aware AI agent into it (Claude Code, Claude Desktop, Cursor…) and your documentation maintains itself as your code evolves.
 
@@ -19,14 +19,14 @@ npx living-ai-documentation@latest ./docs         # serve an existing folder
 
 ## Two ways to use it
 
-### 1. With an AI coding agent — the killer feature
+### 1. With an AI coding agent , the killer feature
 
 Living Documentation ships an **MCP server** on `POST /mcp`. Any MCP-aware agent can read, create and audit your project's documentation autonomously.
 
 | You say…                                                   | The agent triggers…           | What happens                                                                                                                            |
 | ---------------------------------------------------------- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | _"feature done"_ / _"feature terminée"_                    | `create-adr`                  | Searches existing ADRs, supersedes the obsolete one if any, writes a new ADR at `To be validated`, binds the source files via metadata. |
-| _"audit the ADRs"_ / _"vérifie la fiabilité des ADR"_      | `audit-adrs-drift`            | Lists every ADR below 80% reliability and brings each back in sync — re-baseline or supersede after your confirmation.                  |
+| _"audit the ADRs"_ / _"vérifie la fiabilité des ADR"_      | `audit-adrs-drift`            | Lists every ADR below 80% reliability and brings each back in sync , re-baseline or supersede after your confirmation.                  |
 | _"review this ADR"_ / _"vérifie la pertinence de cet ADR"_ | `review-adr-relevance`        | Reviews a single ADR against the bound source files; refreshes hashes or proposes supersession.                                         |
 | _"backfill ADRs from git"_ / _"retrodocumente depuis git"_ | `retrodocument-adrs-from-git` | Walks git history oldest-first and creates ADRs for the durable decisions that were never documented.                                   |
 | _"give me the big picture"_                                | `generate-context-diagram`    | Creates a C4 context diagram **derived from the docs**, never invented.                                                                 |
@@ -35,7 +35,7 @@ Living Documentation ships an **MCP server** on `POST /mcp`. Any MCP-aware agent
 
 ### 2. Solo, no AI
 
-A personal docs hub: ADRs, meeting notes, dev journals, feature plans, architecture sketches — all kept as Markdown on disk, git-friendly, zero vendor lock-in. Inline editor, snippets, image paste, file attachments, diagram editor, full-text search, PDF/HTML/Notion/Confluence export.
+A personal docs hub: ADRs, meeting notes, dev journals, feature plans, architecture sketches , all kept as Markdown on disk, git-friendly, zero vendor lock-in. Inline editor, snippets, image paste, file attachments, diagram editor, full-text search, PDF/HTML/Notion/Confluence export.
 
 The two modes mix freely: jot notes solo all week, then let your agent record the ADR when the feature actually lands.
 
@@ -44,7 +44,7 @@ The two modes mix freely: jot notes solo all week, then let your agent record th
 ## Quick start
 
 ```bash
-# Interactive wizard — creates a starter doc folder (EN or FR), scaffolds
+# Interactive wizard , creates a starter doc folder (EN or FR), scaffolds
 # AGENTS.md / CLAUDE.md / memory/MEMORY.md at the project root and symlinks
 # them into <docs>/AI/ so AI agents can find them.
 npx living-ai-documentation@latest
@@ -113,13 +113,13 @@ Use the same HTTP endpoint: `http://localhost:4321/mcp` (Streamable HTTP transpo
 
 ## Core concepts
 
-- **Markdown on disk** — each document is a `.md` file. Configuration lives in `.living-doc.json` next to it. Both are git-friendly.
-- **Filename pattern** — default `YYYY_MM_DD_HH_mm_[Category]_title.md`. The pattern is configurable; date, category and title are parsed from it. Files that don't match still appear under **General**.
+- **Markdown on disk** , each document is a `.md` file. Configuration lives in `.living-doc.json` next to it. Both are git-friendly.
+- **Filename pattern** , default `YYYY_MM_DD_HH_mm_[Category]_title.md`. The pattern is configurable; date, category and title are parsed from it. Files that don't match still appear under **General**.
 - **Folders → categories → docs** in the sidebar. Folder names become the labels; numeric prefixes (`1_TUTORIAL`, `2_REFERENCE`) control order without showing in the UI.
 - **ADRs** are the canonical decision record. The MCP server enforces a normalized frontmatter (`**date:**`, `**status:**`, `**description:**`, `**tags:**`) and a `To be validated` initial status that only a human can promote.
 - **`sourceRoot`** points to the project's code. The MCP source tools (`list_source_files`, `read_source_file`, `search_source`) and the metadata binding rely on it. Defaults to the parent of the docs folder.
-- **Source-file metadata + reliability gauge** — bind a doc to the source files it describes. Each binding stores a SHA-256. The gauge in the doc header (`🔴 → 🟡 → 🟢`) reflects `unchanged / total`. As soon as one bound file is modified or deleted, drift is visible. **God files** (`package.json`, lock files, manifests, barrels) are excluded by convention.
-- **Diagrams are derived views** — they cite the documents they're built from (`evidence`). They cannot introduce concepts absent from the docs.
+- **Source-file metadata + reliability gauge** , bind a doc to the source files it describes. Each binding stores a SHA-256. The gauge in the doc header (`🔴 → 🟡 → 🟢`) reflects `unchanged / total`. As soon as one bound file is modified or deleted, drift is visible. **God files** (`package.json`, lock files, manifests, barrels) are excluded by convention.
+- **Diagrams are derived views** , they cite the documents they're built from (`evidence`). They cannot introduce concepts absent from the docs.
 
 ---
 
@@ -143,7 +143,7 @@ Use the same HTTP endpoint: `http://localhost:4321/mcp` (Streamable HTTP transpo
 | Metadata               | `list_metadata`               | Source-file bindings of a doc.                                                                                                         |
 |                        | `get_accuracy`                | Per-entry status (`unchanged` / `modified` / `missing`) + weighted accuracy ∈ [0, 1].                                                  |
 |                        | `add_metadata`                | Bind a source file (path under `sourceRoot`), records SHA-256. **Skips god files.**                                                    |
-|                        | `remove_metadata`             | Detach a binding (idempotent — for renames/deletes).                                                                                   |
+|                        | `remove_metadata`             | Detach a binding (idempotent , for renames/deletes).                                                                                   |
 |                        | `refresh_metadata`            | Re-hash every binding (re-baseline after an update).                                                                                   |
 | ADR audit              | `list_adrs_below_accuracy`    | Up to 10 ADRs whose accuracy < 80%, sorted most-degraded first. Excludes `SuperSeeded` and non-ADRs.                                   |
 |                        | `review_adr_relevance`        | Factual report on one ADR + drifted files to re-read. Returns a `state` to drive the LLM decision tree.                                |
@@ -170,15 +170,15 @@ A `GET http://localhost:4321/mcp` returns the live tool + prompt schemas for ins
 
 ## Authoring features
 
-- **Inline editor** — edit any doc in the browser, saves to disk instantly.
-- **Snippets panel** (`🧩 Snippets`) — pre-built Markdown constructs at the cursor: collapsible blocks, links (in-doc, cross-doc, anchor), lists, code blocks, blockquotes, separators, images. Plus a **table editor** (dynamic grid → aligned Markdown table) and a **tree editor** (indentation → ASCII tree with `├──` / `└──`). Selecting an existing snippet **detects its type** and pre-fills the form for editing.
-- **Image paste** — paste from clipboard while editing, auto-uploaded to `<docs>/images/`, inserted as Markdown.
-- **File attachments** — drag, drop, paste or pick any non-image file (PDF, archive, office doc). Uploaded under `<docs>/files/`, inserted as a paperclip pill. Blocked extensions and size limits configurable in Admin.
-- **Full-text search** — instant filename filter + server-side content search; for each file lists every occurrence, highlights and jumps to them.
-- **`metadata://<filename>` search prefix** — reverse-lookup: which documents reference this attachment?
-- **Annotations** — persistent highlight markers per document (yellow / pink / green / blue).
-- **Anchor navigation** — `[label](#heading-slug)` scrolls correctly after async render; IDs auto-generated.
-- **Dark mode** — follows system preference, manually toggleable. Syntax highlighting always dark.
+- **Inline editor** , edit any doc in the browser, saves to disk instantly.
+- **Snippets panel** (`🧩 Snippets`) , pre-built Markdown constructs at the cursor: collapsible blocks, links (in-doc, cross-doc, anchor), lists, code blocks, blockquotes, separators, images. Plus a **table editor** (dynamic grid → aligned Markdown table) and a **tree editor** (indentation → ASCII tree with `├──` / `└──`). Selecting an existing snippet **detects its type** and pre-fills the form for editing.
+- **Image paste** , paste from clipboard while editing, auto-uploaded to `<docs>/images/`, inserted as Markdown.
+- **File attachments** , drag, drop, paste or pick any non-image file (PDF, archive, office doc). Uploaded under `<docs>/files/`, inserted as a paperclip pill. Blocked extensions and size limits configurable in Admin.
+- **Full-text search** , instant filename filter + server-side content search; for each file lists every occurrence, highlights and jumps to them.
+- **`metadata://<filename>` search prefix** , reverse-lookup: which documents reference this attachment?
+- **Annotations** , persistent highlight markers per document (yellow / pink / green / blue).
+- **Anchor navigation** , `[label](#heading-slug)` scrolls correctly after async render; IDs auto-generated.
+- **Dark mode** , follows system preference, manually toggleable. Syntax highlighting always dark.
 
 ![Sidebar grouped by folder → category](/images/readme-sidebar.png)
 
@@ -190,10 +190,10 @@ A `GET http://localhost:4321/mcp` returns the live tool + prompt schemas for ins
 
 Built-in canvas diagram editor (vis-network), accessible at `/diagram?id=...`.
 
-- **C4 progression enforced** — context first (default), container/component only on explicit request. UML on explicit request.
-- **Architectural `kind` vs visual `renderAs`** — separate the concept (`software_system`, `database`, `queue`, `api`, `cloud_service`…) from the shape (`box`, `ellipse`, `database`, `actor`, `post-it`…). The MCP picks sensible defaults for each `kind`.
-- **Evidence provenance** — every architectural node/edge can cite the document and section that justifies it. The editor surfaces missing-evidence warnings.
-- **Custom shape libraries** at `/shape-editor` — define your own shapes (SVG icons, ports, default colors) and reuse them across diagrams.
+- **C4 progression enforced** , context first (default), container/component only on explicit request. UML on explicit request.
+- **Architectural `kind` vs visual `renderAs`** , separate the concept (`software_system`, `database`, `queue`, `api`, `cloud_service`…) from the shape (`box`, `ellipse`, `database`, `actor`, `post-it`…). The MCP picks sensible defaults for each `kind`.
+- **Evidence provenance** , every architectural node/edge can cite the document and section that justifies it. The editor surfaces missing-evidence warnings.
+- **Custom shape libraries** at `/shape-editor` , define your own shapes (SVG icons, ports, default colors) and reuse them across diagrams.
 - **Ports** for anchored edges, **alignment guides**, **undo/redo**, **snap-to-grid**, **paste images**, **PNG export**, **deep-link** to a diagram by id.
 
 ---
@@ -213,7 +213,7 @@ docs/
 
 - The `[Category]` tag is parsed from the filename regardless of the folder.
 - Files without a `[Category]` fall under **General**. **General** is always rendered first.
-- Folders are sorted alphabetically — prefix with `1_`, `2_`… to force an order; the prefix is hidden in the UI but visible on hover.
+- Folders are sorted alphabetically , prefix with `1_`, `2_`… to force an order; the prefix is hidden in the UI but visible on hover.
 - Subdirectory nesting is supported recursively.
 
 ![Filename pattern](/images/readme-filename-pattern.png)
@@ -254,8 +254,8 @@ Created automatically in your docs folder on first run. Edit in the Admin panel 
 | Format                 | Endpoint                    | Notes                                              |
 | ---------------------- | --------------------------- | -------------------------------------------------- |
 | PDF (per doc)          | `POST /api/export/html`     | Browser print dialog from the rendered HTML.       |
-| HTML — Notion mode     | `POST /api/export/html`     | Single HTML bundle suitable for Notion import.     |
-| HTML — Confluence mode | `POST /api/export/html`     | Zipped HTML bundle suitable for Confluence import. |
+| HTML , Notion mode     | `POST /api/export/html`     | Single HTML bundle suitable for Notion import.     |
+| HTML , Confluence mode | `POST /api/export/html`     | Zipped HTML bundle suitable for Confluence import. |
 | Markdown bundle        | `POST /api/export/markdown` | Zip of every document with normalized links.       |
 
 ---
@@ -264,11 +264,11 @@ Created automatically in your docs folder on first run. Edit in the Admin panel 
 
 | URL             | Page                                                                                         |
 | --------------- | -------------------------------------------------------------------------------------------- |
-| `/`             | Viewer — sidebar, document rendering, inline edit, snippets, search, attachments.            |
-| `/admin`        | Config — title, theme, filename pattern, extra files, source root, file safety list.         |
+| `/`             | Viewer , sidebar, document rendering, inline edit, snippets, search, attachments.            |
+| `/admin`        | Config , title, theme, filename pattern, extra files, source root, file safety list.         |
 | `/diagram?id=`  | Diagram editor (vis-network) with C4 conventions, ports, alignment guides, undo/redo.        |
-| `/shape-editor` | Custom shape library editor — SVG icons, default colors, ports.                              |
-| `/context`      | AI context page — instructions, rules, memory, **MCP explorer** (try tools live in-browser). |
+| `/shape-editor` | Custom shape library editor , SVG icons, default colors, ports.                              |
+| `/context`      | AI context page , instructions, rules, memory, **MCP explorer** (try tools live in-browser). |
 
 ---
 
@@ -308,7 +308,7 @@ Created automatically in your docs folder on first run. Edit in the Admin panel 
 | `GET`    | `/api/annotations[/:docId]`    | List annotations (all docs / one doc).                                                                       |
 | `POST`   | `/api/annotations/:docId`      | Add an annotation.                                                                                           |
 | `DELETE` | `/api/annotations/:docId/:id`  | Delete one annotation.                                                                                       |
-| `POST`   | `/api/export/html`             | HTML export — Notion / Confluence modes.                                                                     |
+| `POST`   | `/api/export/html`             | HTML export , Notion / Confluence modes.                                                                     |
 | `POST`   | `/api/export/markdown`         | Markdown bundle export.                                                                                      |
 | `GET`    | `/api/wordcloud?path=&ext=`    | Recursively concatenate matching source files as raw text.                                                   |
 | `POST`   | `/mcp`                         | Model Context Protocol endpoint (Streamable HTTP).                                                           |
@@ -333,11 +333,11 @@ npm run test:coverage                    # c8 V8-native coverage
 
 In **dev**, open the UI on **http://localhost:5174** (Vite serves the Svelte app with HMR and proxies `/api`, `/mcp`, `/images`, `/files` to the Express backend on `:4321`).
 
-End-to-end tests use **Playwright**. Each test spawns a real CLI child process against a fresh fixture on a random port — no leaking state, runs in parallel. Server-side coverage via **c8** (V8 native, ~72% baseline overall, 83% on `src/routes` and `src/lib`).
+End-to-end tests use **Playwright**. Each test spawns a real CLI child process against a fresh fixture on a random port , no leaking state, runs in parallel. Server-side coverage via **c8** (V8 native, ~72% baseline overall, 83% on `src/routes` and `src/lib`).
 
 ### Test the published package locally
 
-No need to publish a version. The CLI starts a **single Express server** that serves the pre-built Svelte UI **and** the API/MCP on one port — Vite (`:5174`) is dev-only and does not exist for end users.
+No need to publish a version. The CLI starts a **single Express server** that serves the pre-built Svelte UI **and** the API/MCP on one port , Vite (`:5174`) is dev-only and does not exist for end users.
 
 ```bash
 # Run the exact production artifact, then open http://localhost:4321
@@ -361,4 +361,4 @@ This repository ships with a `pre-commit` hook (under `.githooks/`) that enforce
 
 ## License
 
-[AGPL-3.0](./LICENSE) — © Youssef MEDAGHRI-ALAOUI.
+[AGPL-3.0](./LICENSE) , © Youssef MEDAGHRI-ALAOUI.

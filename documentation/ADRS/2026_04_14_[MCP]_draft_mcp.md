@@ -16,14 +16,14 @@ Le protocole MCP (Model Context Protocol) est une norme émergente qui permet à
 
 ### Architecture
 
-Un routeur Express est monté sur `/mcp`. Il instancie un serveur MCP (`@modelcontextprotocol/sdk`) avec le transport **Streamable HTTP** (stateless — un Server + Transport par requête POST). Le routeur est démarré automatiquement avec l'application Express existante ; aucun processus séparé n'est requis.
+Un routeur Express est monté sur `/mcp`. Il instancie un serveur MCP (`@modelcontextprotocol/sdk`) avec le transport **Streamable HTTP** (stateless , un Server + Transport par requête POST). Le routeur est démarré automatiquement avec l'application Express existante ; aucun processus séparé n'est requis.
 
 ```
 POST /mcp   →  mcpRouter  →  createMcpServer()  →  outil exécuté
 GET  /mcp   →  résumé JSON (tools disponibles)
 ```
 
-### Outils exposés (v1 — draft)
+### Outils exposés (v1 , draft)
 
 | Outil             | Description                                                                   |
 | ----------------- | ----------------------------------------------------------------------------- |
@@ -35,9 +35,9 @@ GET  /mcp   →  résumé JSON (tools disponibles)
 
 ### Implémentation
 
-- `src/mcp/server.ts` — définition des outils MCP et routeur Express
-- `src/mcp/tools/documents.ts` — implémentation de `list_documents`, `read_document`, `create_document`
-- `src/mcp/tools/diagrams.ts` — implémentation de `list_diagrams`, `create_diagram`
+- `src/mcp/server.ts` , définition des outils MCP et routeur Express
+- `src/mcp/tools/documents.ts` , implémentation de `list_documents`, `read_document`, `create_document`
+- `src/mcp/tools/diagrams.ts` , implémentation de `list_diagrams`, `create_diagram`
 - Montage dans `src/server.ts` : `app.use('/mcp', mcpRouter(docsPath))`
 
 ### Configuration côté client
@@ -74,8 +74,8 @@ claude mcp add --transport http living-ai-documentation http://localhost:4321/mc
 - Aucune authentification : le serveur est conçu pour un usage local uniquement.
 - Les outils disponibles sont limités (pas encore de `update_document`, `delete_document`, `update_diagram`).
 - Aucun test automatisé sur le serveur MCP pour l'instant.
-- Le transport Streamable HTTP est relativement récent dans le SDK MCP — la stabilité de l'API est à surveiller.
+- Le transport Streamable HTTP est relativement récent dans le SDK MCP , la stabilité de l'API est à surveiller.
 
 ## Status
 
-**Draft** — fonctionnalité opérationnelle mais périmètre d'outils intentionnellement restreint. À compléter selon les besoins.
+**Draft** , fonctionnalité opérationnelle mais périmètre d'outils intentionnellement restreint. À compléter selon les besoins.

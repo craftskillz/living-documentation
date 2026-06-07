@@ -1,4 +1,4 @@
-## Word Cloud — visualiser le vocabulaire dominant
+## Word Cloud , visualiser le vocabulaire dominant
 
 Le **Word Cloud** génère un nuage de mots à partir du contenu de n'importe quel dossier de votre système de fichiers. Utile pour identifier les thèmes dominants d'une base de code ou d'une documentation.
 
@@ -16,14 +16,14 @@ Le **Word Cloud** génère un nuage de mots à partir du contenu de n'importe qu
 
 3. Cochez les **extensions de fichiers** à inclure dans l'analyse :
 
-   | Famille    | Extensions disponibles                        |
-   |------------|-----------------------------------------------|
-   | Docs       | `.md`, `.txt`                                 |
-   | JS/TS      | `.js`, `.ts`, `.jsx`, `.tsx`                  |
-   | JVM        | `.java`, `.kt`, `.scala`                      |
-   | Systèmes   | `.py`, `.go`, `.rs`, `.cs`, `.swift`, `.rb`   |
-   | Web        | `.html`, `.css`                               |
-   | Config     | `.yml`, `.yaml`, `.json`                      |
+   | Famille  | Extensions disponibles                      |
+   | -------- | ------------------------------------------- |
+   | Docs     | `.md`, `.txt`                               |
+   | JS/TS    | `.js`, `.ts`, `.jsx`, `.tsx`                |
+   | JVM      | `.java`, `.kt`, `.scala`                    |
+   | Systèmes | `.py`, `.go`, `.rs`, `.cs`, `.swift`, `.rb` |
+   | Web      | `.html`, `.css`                             |
+   | Config   | `.yml`, `.yaml`, `.json`                    |
 
 4. Cliquez **`Launch`**.
 

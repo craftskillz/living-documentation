@@ -17,8 +17,8 @@ In progress
 
 Deux chantiers parallèles complétés :
 
-1. **Workspace Agentique** — nombreuses itérations sur le panel contextuel (dark mode, champs par kind, rename dossier agent, propagation model/timeout LLM→agents, boucle agentique LLM+MCP).
-2. **Blueprint** — nouvelle page `/blueprint` : canvas pan/zoom avec exploration Prezi des dossiers du sourceRoot.
+1. **Workspace Agentique** , nombreuses itérations sur le panel contextuel (dark mode, champs par kind, rename dossier agent, propagation model/timeout LLM→agents, boucle agentique LLM+MCP).
+2. **Blueprint** , nouvelle page `/blueprint` : canvas pan/zoom avec exploration Prezi des dossiers du sourceRoot.
 
 ## Dernière action réalisée
 
@@ -33,6 +33,7 @@ Deux chantiers parallèles complétés :
 ## Fichiers ou zones concernés
 
 ### Blueprint (nouveau)
+
 - `src/frontend/blueprint/index.html`
 - `src/frontend/blueprint/app.ts`
 - `src/frontend/blueprint/app.js` (compilé)
@@ -41,12 +42,14 @@ Deux chantiers parallèles complétés :
 - `src/routes/blueprint.ts`
 
 ### Workspace (itérations)
+
 - `src/frontend/workspace/app.ts`
 - `src/frontend/workspace/index.html`
 - `src/frontend/workspace/styles.css`
 - `src/routes/workspace.ts`
 
 ### Serveur / topbar
+
 - `src/server.ts`
 - `src/frontend/index.html`
 - `package.json`
@@ -68,7 +71,7 @@ Deux chantiers parallèles complétés :
 
 ## Notes
 
-- Le MCP Living Documentation était déconnecté lors de cette session — les ADRs et métadonnées devront être créés au prochain redémarrage du serveur.
+- Le MCP Living Documentation était déconnecté lors de cette session , les ADRs et métadonnées devront être créés au prochain redémarrage du serveur.
 - Le Blueprint est en lecture seule pour l'instant.
 - La page Workspace est maintenant appelée "Agentic Workspace" (nav.workspace i18n).
 - La topbar principale (`/`) a été alignée visuellement avec le workspace : hauteur 72px, badge LD, sous-titre dynamique depuis cfg.title.

@@ -55,13 +55,13 @@ Les champs `edgeColor` et `edgeWidth` sont stockés sur l'edge. Pour les edges n
 ### PROS
 
 - Diagrammes expressifs : les flèches peuvent partir d'un point précis (ex. port S d'une forme vers port N d'une autre) sans déformation visuelle
-- Courbes bezier naturelles grâce aux normales sortantes — pas de courbe qui "rebrousse chemin"
+- Courbes bezier naturelles grâce aux normales sortantes , pas de courbe qui "rebrousse chemin"
 - Compatibilité ascendante : les edges sans `fromPort`/`toPort` continuent d'utiliser le rendu vis-network natif
 - Flèches libres utilisables comme annotations ou connecteurs décoratifs indépendants de toute forme
 - Couleur et épaisseur per-edge permettent une hiérarchisation visuelle des relations (flèches importantes en rouge épais, relations secondaires en gris fin)
 
 ### CONS
 
-- Le ghost edge transparent (0,0,0,0) est un détour — si vis-network est mis à jour, la compatibilité du patch `_drawNodes` doit être re-vérifiée
-- Les anchor nodes à `nodeDimensions: {16,16}` décalent légèrement le placement de la pointe de flèche (8px avant le centre) — imperceptible à l'usage normal mais techniquement inexact
-- La sélection manuelle des port-edges via sampling bezier (24 points) est une approximation — des edges très proches pourraient être ambiguës au clic
+- Le ghost edge transparent (0,0,0,0) est un détour , si vis-network est mis à jour, la compatibilité du patch `_drawNodes` doit être re-vérifiée
+- Les anchor nodes à `nodeDimensions: {16,16}` décalent légèrement le placement de la pointe de flèche (8px avant le centre) , imperceptible à l'usage normal mais techniquement inexact
+- La sélection manuelle des port-edges via sampling bezier (24 points) est une approximation , des edges très proches pourraient être ambiguës au clic

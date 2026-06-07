@@ -12,19 +12,19 @@ All user-visible strings in the three frontend pages (index.html, admin.html, di
 
 The constraints were:
 
-- No build step — all three pages use Tailwind and highlight.js via CDN; adding a bundler was not acceptable.
+- No build step , all three pages use Tailwind and highlight.js via CDN; adding a bundler was not acceptable.
 - The solution must work uniformly across all three pages with a single shared mechanism.
 - Language preference must be persisted server-side (in `.living-doc.json`) so all pages load in the correct language on the first render, without a flash of untranslated content.
 
 ## Decision
 
-### i18n.js — shared loader
+### i18n.js , shared loader
 
 A plain IIFE script `src/frontend/i18n.js` exposes three globals:
 
-- **`window.t(key)`** — returns the translation for `key`, or the key itself as fallback (so untranslated keys degrade gracefully).
-- **`window.initI18n(lang)`** — fetches `/i18n/<lang>.json` and populates the internal dictionary. Called once at page load, after `/api/config` resolves the configured language.
-- **`window.applyI18n()`** — walks the DOM and applies translations using four data attributes (see below). Called after `initI18n` resolves.
+- **`window.t(key)`** , returns the translation for `key`, or the key itself as fallback (so untranslated keys degrade gracefully).
+- **`window.initI18n(lang)`** , fetches `/i18n/<lang>.json` and populates the internal dictionary. Called once at page load, after `/api/config` resolves the configured language.
+- **`window.applyI18n()`** , walks the DOM and applies translations using four data attributes (see below). Called after `initI18n` resolves.
 
 The script is a regular `<script>` (not an ES module) so it loads identically in all three pages without import coordination.
 
@@ -32,8 +32,8 @@ The script is a regular `<script>` (not an ES module) so it loads identically in
 
 Two JSON files under `src/frontend/i18n/`:
 
-- `en.json` — English (default)
-- `fr.json` — French
+- `en.json` , English (default)
+- `fr.json` , French
 
 Each file is a flat key→string map. Keys are namespaced by domain, e.g. `nav.diagram`, `admin.config.title`, `diagram.toolbar.save`. Served statically by Express at `/i18n/*.json`.
 
@@ -50,7 +50,7 @@ HTML elements keep their original English text as a pre-`applyI18n` fallback, so
 
 ### Config field
 
-`language: "en" | "fr"` added to `LivingDocConfig` with default `"en"`. Accepted server-side in `PUT /api/config` — only `"en"` and `"fr"` are accepted, any other value is silently dropped.
+`language: "en" | "fr"` added to `LivingDocConfig` with default `"en"`. Accepted server-side in `PUT /api/config` , only `"en"` and `"fr"` are accepted, any other value is silently dropped.
 
 ### Admin panel selector
 
@@ -68,7 +68,7 @@ window.applyI18n();
 
 With a fallback to `'en'` if the config fetch fails.
 
-### Update 2026-04-22 — dynamic renderers must await initI18n
+### Update 2026-04-22 , dynamic renderers must await initI18n
 
 `applyI18n()` handles static DOM nodes, but JS-rendered content calls `window.t()` inline. If that render runs **before** `initI18n()` resolves, the dictionary is still empty and `t(key)` returns the raw key (e.g. `diagram.sidebar.empty` shown literally in the diagram sidebar).
 
@@ -90,15 +90,15 @@ Pattern for future pages:
 
 ### PROS
 
-- Zero build step — translation files are plain JSON fetched at runtime.
-- Single shared mechanism across all pages — one `i18n.js`, same four attributes everywhere.
-- Graceful degradation — missing keys display the key itself; a failed JSON fetch leaves the English fallback text intact.
-- Language is server-persisted — no flash of wrong language across page navigations.
+- Zero build step , translation files are plain JSON fetched at runtime.
+- Single shared mechanism across all pages , one `i18n.js`, same four attributes everywhere.
+- Graceful degradation , missing keys display the key itself; a failed JSON fetch leaves the English fallback text intact.
+- Language is server-persisted , no flash of wrong language across page navigations.
 - Adding a new language requires only a new JSON file and an extra `<option>` in the admin selector.
 
 ### CONS
 
-- `applyI18n()` runs after the DOM is painted — there is a brief moment where the English fallback text is visible before translations are applied (no true SSR).
+- `applyI18n()` runs after the DOM is painted , there is a brief moment where the English fallback text is visible before translations are applied (no true SSR).
 - Dynamically rendered HTML (e.g. sidebar items built by JS) must call `window.t()` inline at render time; `applyI18n()` only applies to elements present in the DOM at call time.
-- Dynamic renderers must be invoked after `initI18n()` resolves, otherwise `t(key)` returns the raw key — race condition fixed on 2026-04-22 for the diagram sidebar.
-- All strings added to the codebase must be manually added to both JSON files — there is no compile-time check for missing keys.
+- Dynamic renderers must be invoked after `initI18n()` resolves, otherwise `t(key)` returns the raw key , race condition fixed on 2026-04-22 for the diagram sidebar.
+- All strings added to the codebase must be manually added to both JSON files , there is no compile-time check for missing keys.

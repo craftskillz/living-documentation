@@ -13,7 +13,7 @@ The tool was designed to serve all Markdown files from a single docs folder. A c
 
 ## Decision
 
-Introduce an `extraFiles` field in `.living-doc.json` — an ordered list of absolute paths to Markdown files that live outside the docs folder. These files are always assigned to the **General** category and appear before regular General documents in the sidebar.
+Introduce an `extraFiles` field in `.living-doc.json` , an ordered list of absolute paths to Markdown files that live outside the docs folder. These files are always assigned to the **General** category and appear before regular General documents in the sidebar.
 
 An admin UI was added to browse the filesystem and add/remove/reorder extra files without editing the config file manually.
 

@@ -5,7 +5,7 @@
 **tags:** packaging, vendor, offline, proxy, tailwind, tailwindcss-typography, font-awesome, play-cdn, npx, copy-assets, license-mit, license-ofl, license-cc-by, superseded
 ---
 
-> **SuperSeeded** par [`2026_05_13_19_03_[PACKAGING]_revert_vendoring_tailwind_and_font_awesome_proxy_access_restored`](?doc=ADRS%252F2026_05_13_19_03_%255BPACKAGING%255D_revert_vendoring_tailwind_and_font_awesome_proxy_access_restored). Le proxy bloquant a été levé côté infrastructure ; le frontend est repassé sur les CDN d'origine (commits `e09a53a` et `a8d1114`). La procédure de revert documentée plus bas a été exécutée verbatim. La présente décision reste ici à titre de référence si la contrainte proxy revient un jour — le pattern de vendoring décrit ci-dessous reste réutilisable tel quel.
+> **SuperSeeded** par [`2026_05_13_19_03_[PACKAGING]_revert_vendoring_tailwind_and_font_awesome_proxy_access_restored`](?doc=ADRS%252F2026_05_13_19_03_%255BPACKAGING%255D_revert_vendoring_tailwind_and_font_awesome_proxy_access_restored). Le proxy bloquant a été levé côté infrastructure ; le frontend est repassé sur les CDN d'origine (commits `e09a53a` et `a8d1114`). La procédure de revert documentée plus bas a été exécutée verbatim. La présente décision reste ici à titre de référence si la contrainte proxy revient un jour , le pattern de vendoring décrit ci-dessous reste réutilisable tel quel.
 
 # Vendor Tailwind Play CDN et Font Awesome localement pour résilience offline et proxy
 
@@ -17,11 +17,11 @@ Le frontend chargeait trois familles d'assets externes au runtime :
 - `https://cdn.tailwindcss.com?plugins=typography` dans `index.html`, `context.html`, `diagram.html`, `shape-editor.html` et dans le template HTML d'export PDF généré par `export.js`.
 - `https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css` dans `index.html`. Ce CSS contient des règles `@font-face` qui pointent vers `../webfonts/fa-*.woff2` et `.ttf` sur le même CDN. C'est le navigateur lui-même qui suit ces déclarations à chaque rendu d'icône `fa-solid` / `fa-regular` / `fa-brands`.
 
-Sur certains postes, le proxy d'entreprise bloque `cdn.tailwindcss.com` en entier, et autorise le CSS de `cdnjs.cloudflare.com` mais bloque les binaires `.woff2` — comportement classique de filtrage par type MIME / extension. Sans Tailwind, l'UI perd toute mise en forme. Sans Font Awesome, toutes les icônes apparaissent en carrés vides.
+Sur certains postes, le proxy d'entreprise bloque `cdn.tailwindcss.com` en entier, et autorise le CSS de `cdnjs.cloudflare.com` mais bloque les binaires `.woff2` , comportement classique de filtrage par type MIME / extension. Sans Tailwind, l'UI perd toute mise en forme. Sans Font Awesome, toutes les icônes apparaissent en carrés vides.
 
 Le projet déclare déjà la convention `src/frontend/vendor/` (utilisée par `wordcloud2.js` notamment) et `scripts/copy-assets.ts` recopie récursivement `src/frontend/` → `dist/src/frontend/`. Combiné à `"files": ["dist/", "README.md"]` dans `package.json`, tout ce qui est posé dans `vendor/` est automatiquement embarqué dans le tarball npm et servi par `npx living-ai-documentation`.
 
-Cas particulier de `export.js` : le HTML d'export PDF est injecté dans une nouvelle fenêtre via `window.open("", "_blank")` puis `document.write(...)`. La fenêtre est à `about:blank`, qui n'a pas d'origine — un path absolu `/vendor/...` ne s'y résoudrait pas. Il faut une URL absolue construite avec `window.location.origin` au moment de la génération du HTML.
+Cas particulier de `export.js` : le HTML d'export PDF est injecté dans une nouvelle fenêtre via `window.open("", "_blank")` puis `document.write(...)`. La fenêtre est à `about:blank`, qui n'a pas d'origine , un path absolu `/vendor/...` ne s'y résoudrait pas. Il faut une URL absolue construite avec `window.location.origin` au moment de la génération du HTML.
 
 ## Décision
 
@@ -31,8 +31,8 @@ Vendorer les deux familles d'assets sous `src/frontend/vendor/` et basculer tout
 
 Ajout de deux bundles avec un bandeau MIT préservant le copyright Tailwind Labs :
 
-- `src/frontend/vendor/tailwindcss.js` — bundle Play CDN de base, téléchargé depuis `https://cdn.tailwindcss.com`.
-- `src/frontend/vendor/tailwindcss-typography.js` — bundle Play CDN + plugin Typography, téléchargé depuis `https://cdn.tailwindcss.com?plugins=typography`.
+- `src/frontend/vendor/tailwindcss.js` , bundle Play CDN de base, téléchargé depuis `https://cdn.tailwindcss.com`.
+- `src/frontend/vendor/tailwindcss-typography.js` , bundle Play CDN + plugin Typography, téléchargé depuis `https://cdn.tailwindcss.com?plugins=typography`.
 
 Substitutions :
 
@@ -109,14 +109,14 @@ Cette migration sort du scope de cet ADR et nécessite son propre ADR si entrepr
 ### PROS
 
 - Frontend fonctionne intégralement offline et derrière n'importe quel proxy filtrant.
-- Zéro modification de `package.json`, `copy-assets.ts` ou `server.ts` — la convention `vendor/` existante est strictement appliquée.
+- Zéro modification de `package.json`, `copy-assets.ts` ou `server.ts` , la convention `vendor/` existante est strictement appliquée.
 - Bundle npm autonome : `npx living-ai-documentation` n'a plus aucune dépendance externe au runtime navigateur (le seul restant est `unpkg.com/vis-network` sur `diagram.html` et `cdnjs.cloudflare.com/highlight.js`, hors scope car non bloqués par le proxy actuel).
 - Reproductibilité : Tailwind Play CDN sert toujours la dernière version, vendoré on fige la version utilisée (4.x au 2026-05-12).
 - Pas d'impact licence : conserve les bandeaux de copyright dans les fichiers (MIT pour Tailwind, multi-licence pour Font Awesome).
 
 ### CONS
 
-- Tarball npm grossit d'environ 1,5 Mo (Tailwind ~890 Ko, Font Awesome CSS + webfonts ~1 Mo) — acceptable pour un outil docs.
+- Tarball npm grossit d'environ 1,5 Mo (Tailwind ~890 Ko, Font Awesome CSS + webfonts ~1 Mo) , acceptable pour un outil docs.
 - Tailwind Play CDN reste un compilateur JIT navigateur, donc affiche toujours en console `cdn.tailwindcss.com should not be used in production`. C'est cosmétique mais visible. Une migration future vers le build CLI éliminerait ce warning (cf. section revert).
 - Mises à jour manuelles : pour suivre une nouvelle version de Tailwind ou Font Awesome, re-télécharger les fichiers et remplacer dans `vendor/`. Aucune automatisation en place.
 - Le HTML d'export PDF (`export.js`) reste couplé à `window.location.origin` ; si l'export est jamais sauvegardé sur disque et ouvert hors serveur, Tailwind ne se chargera pas. Le flux actuel ouvre la fenêtre depuis le serveur, donc pas de régression.

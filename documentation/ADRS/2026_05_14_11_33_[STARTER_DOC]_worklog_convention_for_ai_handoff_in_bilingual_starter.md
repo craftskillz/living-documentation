@@ -59,6 +59,6 @@ L'interpolation `DOCS_FOLDER` ([bin/cli.ts](bin/cli.ts) `replaceDocsFolderPlaceh
 
 ### CONS
 
-- Deux fichiers de plus à maintenir en parallèle EN/FR — même contrainte que l'ADR parent.
+- Deux fichiers de plus à maintenir en parallèle EN/FR , même contrainte que l'ADR parent.
 - Le worklog n'est pas typé : un agent négligent peut le laisser obsolète ou contradictoire avec la réalité. La règle est `required` mais ne peut pas être vérifiée mécaniquement.
 - Pas de mécanisme pour archiver l'historique des worklogs : `current-task.md` est écrasé à chaque tâche. Pour conserver une trace, l'agent doit créer un document daté dédié dans `WORKLOG/`.

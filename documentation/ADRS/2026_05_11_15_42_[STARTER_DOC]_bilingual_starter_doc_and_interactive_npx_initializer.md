@@ -48,7 +48,7 @@ Quand `npx living-ai-documentation` est appelé **sans** dossier, `runInitWizard
 1. Demande le dossier cible (relatif, refus des chemins absolus ou `~`).
 2. Refuse si le dossier existe et est non vide.
 3. Demande la langue du starter (`en` / `fr`), avec defaut `en` en mode non-TTY ou via l'option `--starter-language <en|fr>`.
-4. Vérifie que `AGENTS.md`, `CLAUDE.md`, `memory/MEMORY.md` du projet hôte sont **absents ou vides** (refus sinon — on ne réécrit jamais le travail de l'utilisateur).
+4. Vérifie que `AGENTS.md`, `CLAUDE.md`, `memory/MEMORY.md` du projet hôte sont **absents ou vides** (refus sinon , on ne réécrit jamais le travail de l'utilisateur).
 5. Copie le starter, remplace `DOCS_FOLDER`, copie les 3 fichiers d'orientation depuis `<docs>/AI/default/` vers la racine du projet, puis crée 3 **symlinks** dans `<docs>/AI/` pointant vers ces fichiers racine.
 6. Supprime `<docs>/AI/default/` (consommé) et démarre le serveur sur le port choisi.
 
@@ -58,14 +58,14 @@ L'option `--starter-language` reste disponible pour scripter l'init sans interac
 
 Le choix d'écrire `AGENTS.md`, `CLAUDE.md` et `memory/MEMORY.md` **à la racine** (et non dans `<docs>/AI/`) est délibéré :
 
-- Les agents IA (Claude Code, Codex, etc.) cherchent ces fichiers à la racine du projet ou dans `~/.claude/` — pas dans un sous-dossier de documentation.
+- Les agents IA (Claude Code, Codex, etc.) cherchent ces fichiers à la racine du projet ou dans `~/.claude/` , pas dans un sous-dossier de documentation.
 - Le symlink dans `<docs>/AI/<filename>` les rend visibles depuis la page `/context` du viewer sans dupliquer leur contenu.
 
 Si l'un de ces 3 fichiers existe déjà avec du contenu, l'initialiseur **avorte** plutôt que d'écraser. L'utilisateur doit alors choisir un autre project root ou vider le fichier.
 
 ### 4. Convention `PROJECT-INSTRUCTIONS.md` consolidé
 
-Le starter inclut un unique `PROJECT-INSTRUCTIONS.md` (et non plusieurs « flavors » comme dans une itération antérieure). Raison : un projet vit avec un seul jeu d'instructions. Demander à l'utilisateur de choisir entre `backend-api` / `frontend-app` / `library-cli` / `monorepo` ajoutait de la friction sans bénéfice clair — le contenu pertinent peut être ajusté à la main après init.
+Le starter inclut un unique `PROJECT-INSTRUCTIONS.md` (et non plusieurs « flavors » comme dans une itération antérieure). Raison : un projet vit avec un seul jeu d'instructions. Demander à l'utilisateur de choisir entre `backend-api` / `frontend-app` / `library-cli` / `monorepo` ajoutait de la friction sans bénéfice clair , le contenu pertinent peut être ajusté à la main après init.
 
 ## Conséquences
 
@@ -73,7 +73,7 @@ Le starter inclut un unique `PROJECT-INSTRUCTIONS.md` (et non plusieurs « flavo
 
 - L'expérience first-run devient : `npx living-ai-documentation` → réponses au wizard → viewer ouvert avec un projet de doc valide pré-rempli. Démo possible en moins de 30 secondes.
 - Le starter bilingue ouvre l'outil à un public non-francophone sans dégrader l'expérience FR.
-- Les fichiers d'orientation IA sont posés à la bonne place du premier coup — l'utilisateur n'a pas à connaître la convention d'agent IA pour en bénéficier.
+- Les fichiers d'orientation IA sont posés à la bonne place du premier coup , l'utilisateur n'a pas à connaître la convention d'agent IA pour en bénéficier.
 - La séparation `default/` (consommé à l'init) vs `rules/` (conservé) rend le starter auto-explicatif.
 
 ### CONS

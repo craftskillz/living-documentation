@@ -21,7 +21,7 @@ La barre de propriétés des arêtes affichait Aa− et Aa+ sans montrer la vale
 
 ## Décisions
 
-### 1. `persistFreeArrowStyle()` — tous les types d'arêtes
+### 1. `persistFreeArrowStyle()` , tous les types d'arêtes
 
 Free arrows restent prioritaires (si la sélection en contient une, c'est elle qui est persistée). Sinon, la première arête sélectionnée est utilisée :
 
@@ -33,11 +33,15 @@ const edgeId = freeId || st.selectedEdgeIds[0];
 
 ```js
 const edgeStyle = getLastFreeArrowStyle();
-data.arrowDir = edgeStyle.arrowDir || 'to';
-data.dashes   = edgeStyle.dashes   || false;
+data.arrowDir = edgeStyle.arrowDir || "to";
+data.dashes = edgeStyle.dashes || false;
 if (edgeStyle.fontSize) {
   data.fontSize = edgeStyle.fontSize;
-  data.font = { size: edgeStyle.fontSize, align: 'middle', color: 'rgba(0,0,0,0)' };
+  data.font = {
+    size: edgeStyle.fontSize,
+    align: "middle",
+    color: "rgba(0,0,0,0)",
+  };
 }
 Object.assign(data, visEdgeProps(data.arrowDir, data.dashes));
 ```

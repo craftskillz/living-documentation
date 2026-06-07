@@ -29,6 +29,7 @@ export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireO
   applyTableStyles(contentEl, opts.content);
   fillEmptyTableCells(contentEl);
   applyBlockquoteStyles(contentEl, opts.content);
+  applyCompareBlockStyles(contentEl);
 
   contentEl.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach(h => {
     if (!h.id) {
@@ -93,12 +94,16 @@ export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireO
 
 function applyTableStyles(contentEl: HTMLElement, content: string) {
   const attrs = collectTableAttributesFromSource(typeof content === "string" ? content : "");
-  contentEl.querySelectorAll("table").forEach((table, i) => {
+  // Exclude tables inside compare render blocks — those are handled by applyCompareBlockStyles.
+  const tables = Array.from(contentEl.querySelectorAll("table")).filter(
+    (t) => !t.closest(".ld-compare-render"),
+  );
+  tables.forEach((table, i) => {
     const a = attrs[i];
     if (!a) return;
-    if (a.style) { table.classList.add(`table-style-${a.style}`); table.dataset.tableStyle = a.style; }
-    if (a.border) { table.classList.add(`table-border-${a.border}`); table.dataset.tableBorder = a.border; }
-    if (a.color) { table.classList.add(`table-color-${a.color}`); table.dataset.tableColor = a.color; }
+    if (a.style) { table.classList.add(`table-style-${a.style}`); (table as HTMLElement).dataset.tableStyle = a.style; }
+    if (a.border) { table.classList.add(`table-border-${a.border}`); (table as HTMLElement).dataset.tableBorder = a.border; }
+    if (a.color) { table.classList.add(`table-color-${a.color}`); (table as HTMLElement).dataset.tableColor = a.color; }
   });
 }
 
@@ -150,7 +155,11 @@ function decorateCodeCopy(contentEl: HTMLElement, t: (k: string) => string) {
 
 function applyBlockquoteStyles(contentEl: HTMLElement, content: string) {
   const attrs = collectBlockquoteAttributesFromSource(typeof content === "string" ? content : "");
-  contentEl.querySelectorAll("blockquote").forEach((bq, i) => {
+  // Exclude blockquotes inside compare render blocks — those are handled by applyCompareBlockStyles.
+  const blockquotes = Array.from(contentEl.querySelectorAll("blockquote")).filter(
+    (bq) => !bq.closest(".ld-compare-render"),
+  );
+  blockquotes.forEach((bq, i) => {
     const a = attrs[i];
     if (!a || (!a.type && !a.title && !a.icon)) return;
 
@@ -196,6 +205,71 @@ function applyBlockquoteStyles(contentEl: HTMLElement, content: string) {
 
     bq.insertBefore(header, bq.firstChild);
   });
+}
+
+/**
+ * Apply table and blockquote styles to each .ld-compare-render container
+ * independently, using the raw Markdown source stored in data-compare-source.
+ *
+ * This is needed because the main applyTableStyles / applyBlockquoteStyles passes
+ * exclude compare-render elements to keep their index-based source↔DOM mapping
+ * correct for the rest of the document.
+ */
+function applyCompareBlockStyles(contentEl: HTMLElement) {
+  contentEl
+    .querySelectorAll<HTMLElement>(".ld-compare-render[data-compare-source]")
+    .forEach((render) => {
+      const encoded = render.dataset.compareSource ?? "";
+      if (!encoded) return;
+      const compareSource = decodeURIComponent(encoded);
+
+      // ── Tables ──────────────────────────────────────────────────────────────
+      const tableAttrs = collectTableAttributesFromSource(compareSource);
+      render.querySelectorAll("table").forEach((table, i) => {
+        const a = tableAttrs[i];
+        if (!a) return;
+        const t = table as HTMLElement;
+        if (a.style) { t.classList.add(`table-style-${a.style}`); t.dataset.tableStyle = a.style; }
+        if (a.border) { t.classList.add(`table-border-${a.border}`); t.dataset.tableBorder = a.border; }
+        if (a.color) { t.classList.add(`table-color-${a.color}`); t.dataset.tableColor = a.color; }
+      });
+
+      // ── Blockquotes ─────────────────────────────────────────────────────────
+      const bqAttrs = collectBlockquoteAttributesFromSource(compareSource);
+      render.querySelectorAll("blockquote").forEach((bq, i) => {
+        const a = bqAttrs[i];
+        if (!a || (!a.type && !a.title && !a.icon)) return;
+        bq.classList.add("ld-callout");
+        if (a.type) bq.classList.add(`ld-callout-${a.type}`);
+        const hasIcon  = a.icon;
+        const hasTitle = typeof a.title === "string" && a.title.trim() !== "";
+        if (hasIcon && !hasTitle) {
+          const firstP = bq.querySelector("p");
+          const iconSpan = document.createElement("span");
+          iconSpan.className = "ld-callout-icon ld-callout-icon-inline";
+          iconSpan.innerHTML = getCalloutIcon(a.type);
+          if (firstP) firstP.insertBefore(iconSpan, firstP.firstChild);
+          else bq.insertBefore(iconSpan, bq.firstChild);
+          return;
+        }
+        if (!hasIcon && !hasTitle) return;
+        const header = document.createElement("div");
+        header.className = "ld-callout-header";
+        if (hasIcon) {
+          const iconSpan = document.createElement("span");
+          iconSpan.className = "ld-callout-icon";
+          iconSpan.innerHTML = getCalloutIcon(a.type);
+          header.appendChild(iconSpan);
+        }
+        if (hasTitle) {
+          const titleSpan = document.createElement("span");
+          titleSpan.className = "ld-callout-title";
+          titleSpan.textContent = a.title!;
+          header.appendChild(titleSpan);
+        }
+        bq.insertBefore(header, bq.firstChild);
+      });
+    });
 }
 
 function decorateCollapsible(contentEl: HTMLElement, maxHeight: number, t: (k: string) => string) {

@@ -38,4 +38,4 @@ Mais il essaie de supprimer les **frictions** qui font qu'on finit par **ne plus
 >
 > Pour commencer, c'est par [ici](?doc=2026_04_11_12_55_%255BGeneral%255D_premiers_pas)
 >
-> — Youssef MEDAGHRI-ALAOUI (Concepteur de Living Documentation)
+> , Youssef MEDAGHRI-ALAOUI (Concepteur de Living Documentation)
