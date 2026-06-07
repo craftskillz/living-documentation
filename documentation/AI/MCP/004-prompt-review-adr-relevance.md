@@ -9,7 +9,7 @@ Decide whether the ADR still accurately describes the current source code.
 
 This is a semantic judgement. The MCP tool prepares the factual report, but you must read the ADR and the changed source files before deciding.
 
-## Step 1 — Prepare the ADR review packet
+## Step 1 , Prepare the ADR review packet
 
 Call `review_adr_relevance({ "id": "ADRS/2026_05_11_22_33_[MCP]_review_adr_relevance_mcp_tool" })`.
 
@@ -22,14 +22,14 @@ Interpret the returned `state`:
 - `already_superseeded`: the ADR is already superseded. Tell the user and do not refresh it as an active decision unless they explicitly ask.
 - `needs_llm_review`: continue below.
 
-## Step 2 — Read source files
+## Step 2 , Read source files
 
 For every item in `metadata.sourceFilesToReread`:
 
 - if `status === "modified"`, call `read_source_file(path)`;
 - if `status === "missing"`, do not invent a replacement path. Tell the user the file is missing and ask whether it was renamed or deleted. Do not refresh metadata in this case.
 
-## Step 3 — Compare
+## Step 3 , Compare
 
 Compare:
 
@@ -39,7 +39,7 @@ Compare:
 
 Decide whether the ADR still describes the code.
 
-## Outcome A — ADR still matches the code
+## Outcome A , ADR still matches the code
 
 If the ADR description and body still match the source files:
 
@@ -47,7 +47,7 @@ If the ADR description and body still match the source files:
 2. Tell the user that the ADR remains relevant and that the metadata hashes were refreshed back to 100 %.
 3. Mention the files that were reviewed.
 
-## Outcome B — ADR contradicts the code
+## Outcome B , ADR contradicts the code
 
 If the ADR description or body contradicts the source files:
 

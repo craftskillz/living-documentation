@@ -10,7 +10,7 @@
 
 ### Why this ADR supersedes `2026_03_20_10_15_[CONFIGURATION]_link_extra_files_as_documentation.md`
 
-The superseded ADR introduced the `extraFiles` feature — an ordered list of Markdown files outside the docs folder (e.g. repository-root `README.md` or `CLAUDE.md`) surfaced in the sidebar under **General**. It explicitly noted in its CONS section that _"absolute paths in config are not portable between machines or users"_, but shipped absolute paths anyway because at the time the config was not considered a file that users would check into git.
+The superseded ADR introduced the `extraFiles` feature , an ordered list of Markdown files outside the docs folder (e.g. repository-root `README.md` or `CLAUDE.md`) surfaced in the sidebar under **General**. It explicitly noted in its CONS section that _"absolute paths in config are not portable between machines or users"_, but shipped absolute paths anyway because at the time the config was not considered a file that users would check into git.
 
 Practice proved otherwise: users who version their docs folder (e.g. the `starting-doc` sample shipped with this project, any team using living-ai-documentation in a shared repo) found that `.living-doc.json` contained the author's machine-specific paths (`/Users/…/living-ai-documentation/…`) and was therefore unusable anywhere else. The `sourceRoot` field, initialised at server startup to the absolute parent directory of the docs folder, had the same problem. Every collaborator had to either manually rewrite the file or add it to `.gitignore`, which defeated the purpose of a shared, discoverable config.
 
@@ -23,7 +23,7 @@ The feature itself (whitelist-based security, admin filesystem browser, order pr
 - `GET /api/browse?path=...` returns directories and `.md` files at a given path, backing the admin browser.
 - Extra files are placed under the **General** category, before regular General documents, in user-defined config order (not date-sorted).
 - The server-side whitelist restricts reads to paths explicitly present in `extraFiles`; only `.md` files are accepted both at browse time and at config-write time.
-- The document-id scheme uses `encodeURIComponent(absolutePathWithoutExtension)` for extra files (vs `encodeURIComponent(relativeFilename)` for regular docs); the `/:id` route detects extra files by checking `path.isAbsolute(decodedId)`. This scheme is unchanged — at runtime `readConfig()` still resolves extra-file entries to absolute paths, so downstream code does not care that storage is relative.
+- The document-id scheme uses `encodeURIComponent(absolutePathWithoutExtension)` for extra files (vs `encodeURIComponent(relativeFilename)` for regular docs); the `/:id` route detects extra files by checking `path.isAbsolute(decodedId)`. This scheme is unchanged , at runtime `readConfig()` still resolves extra-file entries to absolute paths, so downstream code does not care that storage is relative.
 
 ## Decision
 
@@ -31,8 +31,8 @@ The feature itself (whitelist-based security, admin filesystem browser, order pr
 
 `src/lib/config.ts` now exposes two TypeScript shapes:
 
-- **`StoredConfig`** — what is actually serialised to `.living-doc.json`. Paths are POSIX-style (forward slashes) and relative to the docs folder. The `docsFolder` field is removed entirely (it is redundant — the JSON file lives _inside_ the docs folder, so its absolute location is always derivable from where the file was read).
-- **`LivingDocConfig`** — what `readConfig()` returns to the rest of the application. `sourceRoot`, `extraFiles` and `docsFolder` are resolved to absolute paths at runtime. Downstream consumers (routes, MCP tools, export, `resolveSourceRoot` helpers) continue to receive and manipulate absolute paths — no refactor was needed in the 20+ call sites.
+- **`StoredConfig`** , what is actually serialised to `.living-doc.json`. Paths are POSIX-style (forward slashes) and relative to the docs folder. The `docsFolder` field is removed entirely (it is redundant , the JSON file lives _inside_ the docs folder, so its absolute location is always derivable from where the file was read).
+- **`LivingDocConfig`** , what `readConfig()` returns to the rest of the application. `sourceRoot`, `extraFiles` and `docsFolder` are resolved to absolute paths at runtime. Downstream consumers (routes, MCP tools, export, `resolveSourceRoot` helpers) continue to receive and manipulate absolute paths , no refactor was needed in the 20+ call sites.
 
 ### Storage rules
 
@@ -61,23 +61,23 @@ Each migration prints a one-time `[living-doc] Migrating …` message to the con
 
 ### Runtime semantics
 
-`readConfig()` always returns a `LivingDocConfig` with absolute `sourceRoot` and `extraFiles`. The helpers `resolveSourceRoot()` in `src/lib/metadata.ts` and `src/mcp/tools/source.ts` — previously duplicated fallback logic for the case where `sourceRoot` was missing or non-absolute — were simplified to one line each, since `readConfig()` now guarantees the invariant. The `sourceRoot` field in `LivingDocConfig` is typed as `string` (never `null`) to reflect this guarantee.
+`readConfig()` always returns a `LivingDocConfig` with absolute `sourceRoot` and `extraFiles`. The helpers `resolveSourceRoot()` in `src/lib/metadata.ts` and `src/mcp/tools/source.ts` , previously duplicated fallback logic for the case where `sourceRoot` was missing or non-absolute , were simplified to one line each, since `readConfig()` now guarantees the invariant. The `sourceRoot` field in `LivingDocConfig` is typed as `string` (never `null`) to reflect this guarantee.
 
 ## Consequences
 
 ### PROS
 
-- `.living-doc.json` is now **portable** — a team can check it into git and every collaborator sees the same effective config. This unlocks the original goal of a shared, discoverable project configuration.
+- `.living-doc.json` is now **portable** , a team can check it into git and every collaborator sees the same effective config. This unlocks the original goal of a shared, discoverable project configuration.
 - **Zero breakage for existing users**: legacy configs with absolute paths auto-migrate on first read, with clear console warnings. No manual intervention, no failure modes that block startup.
 - **Clean storage shape**: removing the redundant `docsFolder` field eliminates the most confusing source of drift (people would manually copy configs between folders and the stored `docsFolder` would point to the _original_ location, silently masking bugs).
 - **Three independent layers of validation** make it impossible to accidentally reintroduce absolute paths through any UI or API path. Even a direct JSON edit with an absolute path is caught on the next read via silent migration.
-- **Downstream code is unchanged**: the `LivingDocConfig` runtime shape still exposes absolute paths, so routes, MCP tools, the export pipeline, and the admin's filesystem browser continue to receive the forms they expect. The refactor touched `~6` files (config lib, route, CLI, server init, admin JS, i18n) — not the 20+ consumers of absolute paths.
+- **Downstream code is unchanged**: the `LivingDocConfig` runtime shape still exposes absolute paths, so routes, MCP tools, the export pipeline, and the admin's filesystem browser continue to receive the forms they expect. The refactor touched `~6` files (config lib, route, CLI, server init, admin JS, i18n) , not the 20+ consumers of absolute paths.
 - **Windows-friendly**: POSIX slash normalisation on write keeps the git diff identical across macOS/Linux/Windows, and `path.isAbsolute` handles Windows drive letters during CLI/API validation.
 - **All feature characteristics from the superseded ADR are preserved**: whitelist security, `.md`-only filter, filesystem browser, user-defined ordering, General-category placement, document-id scheme for extra files.
 
 ### CONS
 
 - **Conceptual split between storage shape and runtime shape** (`StoredConfig` vs `LivingDocConfig`) adds a small amount of cognitive load for future maintainers. Mitigated by explicit TypeScript types and inline comments in `src/lib/config.ts`.
-- **Migration writes to disk on first read** when a legacy config is detected. If the docs folder is read-only (rare but possible in CI/Docker contexts), the runtime view still works but the file stays in its legacy form — subsequent runs will re-migrate in memory each time. The try/catch around the write makes this graceful, not fatal.
-- **Shared `sourceRoot`-per-repository** is now much more useful, but this also means a team with divergent repo layouts (e.g. one contributor with the source in `../src`, another with source in `../../monorepo/services/foo`) cannot share `.living-doc.json` cleanly. The admin UI is the escape hatch — each contributor can override `sourceRoot` locally and commit separately — but there is no per-user override file yet.
+- **Migration writes to disk on first read** when a legacy config is detected. If the docs folder is read-only (rare but possible in CI/Docker contexts), the runtime view still works but the file stays in its legacy form , subsequent runs will re-migrate in memory each time. The try/catch around the write makes this graceful, not fatal.
+- **Shared `sourceRoot`-per-repository** is now much more useful, but this also means a team with divergent repo layouts (e.g. one contributor with the source in `../src`, another with source in `../../monorepo/services/foo`) cannot share `.living-doc.json` cleanly. The admin UI is the escape hatch , each contributor can override `sourceRoot` locally and commit separately , but there is no per-user override file yet.
 - **The path-traversal CON from the superseded ADR remains**: extra files bypass the `docsPath` guard intentionally (they live outside it), and are only gated by the whitelist match. This was a conscious trade-off originally and is unchanged here.

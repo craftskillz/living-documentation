@@ -14,13 +14,13 @@ The previous default pattern `YYYY_MM_DD_[Category]_title` only had day-level gr
 
 The default `filenamePattern` was changed from `YYYY_MM_DD_[Category]_title` to `YYYY_MM_DD_HH_mm_[Category]_title` across the entire codebase:
 
-- **`src/lib/config.ts`** — updated default
-- **`src/lib/parser.ts`** — two new tokens `HH` and `mm` detected via `/HH.*mm/`; when present, the date capture group becomes `(\d{4}_\d{2}_\d{2}(?:_\d{2}_\d{2})?)` — the time portion is **optional** so old `YYYY_MM_DD` files continue to match; `dateStrToISO()` converts `YYYY_MM_DD_HH_mm` → `YYYY-MM-DDTHH:MM` and `YYYY_MM_DD` → `YYYY-MM-DD`; `formatDate()` appends the time when present
-- **`src/routes/documents.ts`** — `buildFilename()` now substitutes `HH` and `mm` from `new Date()` at creation time
-- **`src/frontend/index.html`** — live filename preview in the New Document modal includes hours and minutes
-- **`src/frontend/admin.html`** — pattern preview examples, `buildPatternsFromFormat`, `parsePreview`, placeholder and fallback strings all updated
-- **`README.md`, `CLAUDE.md`, `memory/project_overview.md`** — documentation updated with new format and examples
-- **All existing ADR files** — renamed to include `HH_mm` and their internal `🗄️ ADR :` frontmatter references updated accordingly
+- **`src/lib/config.ts`** , updated default
+- **`src/lib/parser.ts`** , two new tokens `HH` and `mm` detected via `/HH.*mm/`; when present, the date capture group becomes `(\d{4}_\d{2}_\d{2}(?:_\d{2}_\d{2})?)` , the time portion is **optional** so old `YYYY_MM_DD` files continue to match; `dateStrToISO()` converts `YYYY_MM_DD_HH_mm` → `YYYY-MM-DDTHH:MM` and `YYYY_MM_DD` → `YYYY-MM-DD`; `formatDate()` appends the time when present
+- **`src/routes/documents.ts`** , `buildFilename()` now substitutes `HH` and `mm` from `new Date()` at creation time
+- **`src/frontend/index.html`** , live filename preview in the New Document modal includes hours and minutes
+- **`src/frontend/admin.html`** , pattern preview examples, `buildPatternsFromFormat`, `parsePreview`, placeholder and fallback strings all updated
+- **`README.md`, `CLAUDE.md`, `memory/project_overview.md`** , documentation updated with new format and examples
+- **All existing ADR files** , renamed to include `HH_mm` and their internal `🗄️ ADR :` frontmatter references updated accordingly
 
 ## Consequences
 
@@ -34,4 +34,4 @@ The default `filenamePattern` was changed from `YYYY_MM_DD_[Category]_title` to 
 
 - Filenames are longer and slightly less readable at a glance
 - The optional time group in the regex adds a small complexity to the parser
-- Users who had customised their `filenamePattern` to `YYYY_MM_DD_...` are not automatically migrated — they need to update their `.living-doc.json` manually
+- Users who had customised their `filenamePattern` to `YYYY_MM_DD_...` are not automatically migrated , they need to update their `.living-doc.json` manually

@@ -16,11 +16,11 @@ The diagram editor (`src/frontend/diagram.html`) uses vis-network 9.1.9 to rende
 
 This means that hovering or selecting a node always brings it visually to the front, regardless of the user-defined z-order. The "bring to front / send to back" feature became effectively non-functional as soon as the user interacted with any node.
 
-A first attempt intercepted `network.body.nodeIndices` via `Object.defineProperty` to prevent vis.js from reordering them. This did not work because vis.js never reorders `nodeIndices` — it simply does separate passes in addition to the main one.
+A first attempt intercepted `network.body.nodeIndices` via `Object.defineProperty` to prevent vis.js from reordering them. This did not work because vis.js never reorders `nodeIndices` , it simply does separate passes in addition to the main one.
 
 ## Decision
 
-Replace `network.renderer._drawNodes` with a patched version (instance-level monkey-patch, applied immediately after `new vis.Network(...)`) that performs a **single rendering pass** in `_canonicalOrder` — an array maintained by the application that holds the user-defined z-order.
+Replace `network.renderer._drawNodes` with a patched version (instance-level monkey-patch, applied immediately after `new vis.Network(...)`) that performs a **single rendering pass** in `_canonicalOrder` , an array maintained by the application that holds the user-defined z-order.
 
 The patched function replicates the original's viewport culling logic (`isBoundingBoxOverlappingWith`) and `drawExternalLabel` callback collection, but removes the selected/hovered reordering. `this` inside the patch correctly refers to the renderer because vis.js calls it as a method (`this._drawNodes(ctx, hidden)`).
 
@@ -30,7 +30,7 @@ The patched function replicates the original's viewport culling logic (`isBoundi
 
 ### PROS
 
-- Hover and selection no longer change the visual stacking order — the user-defined z-order is always respected.
+- Hover and selection no longer change the visual stacking order , the user-defined z-order is always respected.
 - `changeZOrder(+1/-1)` (bring to front / send to back) now works correctly and visually.
 - `saveDiagram` uses `_canonicalOrder` to persist nodes in z-order so reloading restores the same stacking.
 - The patch is re-applied every time `initNetwork` is called (network destroy + recreate), so it survives network resets.
@@ -38,4 +38,4 @@ The patched function replicates the original's viewport culling logic (`isBoundi
 ### CONS
 
 - The patch is fragile if vis-network is upgraded: `_drawNodes`'s internal signature must be re-verified against the new version's source before upgrading.
-- Instance-level monkey-patching is not a clean abstraction — it relies on internal vis-network implementation details.
+- Instance-level monkey-patching is not a clean abstraction , it relies on internal vis-network implementation details.

@@ -11,20 +11,20 @@
 
 Le champ `arrowDir` d'une arête acceptait jusqu'ici trois valeurs : `to` (tête à l'extrémité destination, valeur par défaut), `both` (tête aux deux extrémités), et `none` (aucune tête). Conséquences :
 
-- Impossible de modéliser une relation où la flèche pointe **uniquement vers la source** sans en réécrire le sens (inverser `from`/`to` côté donnée, ce qui casse l'évidence documentaire). Cas concret : un widget de tablette qui *est piloté par* le serveur — on veut écrire l'arête `serveur → tablette` mais afficher la tête côté serveur pour signaler le flux de contrôle inverse.
+- Impossible de modéliser une relation où la flèche pointe **uniquement vers la source** sans en réécrire le sens (inverser `from`/`to` côté donnée, ce qui casse l'évidence documentaire). Cas concret : un widget de tablette qui _est piloté par_ le serveur , on veut écrire l'arête `serveur → tablette` mais afficher la tête côté serveur pour signaler le flux de contrôle inverse.
 - L'API MCP `create_diagram` rejetait `arrowDir: "from"` avec une erreur `Allowed: to, both, none`, ce qui forçait l'agent à inverser les sommets de l'arête et à perdre l'alignement avec la documentation.
 
 ## Décision
 
 ### 1. Ajout de la valeur `from`
 
-- [src/mcp/tools/diagrams.ts](src/mcp/tools/diagrams.ts) — `type ArrowDir = 'to' | 'from' | 'both' | 'none'`, `VALID_ARROW_DIRS` étendu, message d'erreur de `normalizeArrowDir` mis à jour.
-- [src/frontend/diagram/edge-rendering.js](src/frontend/diagram/edge-rendering.js) — `visEdgeProps()` active `arrows.from` quand `arrowDir === 'from'` ou `'both'`.
-- [src/frontend/diagram/ports.js](src/frontend/diagram/ports.js) — `drawPortEdge()` dessine la tête source quand `drawFrom = arrowDir === 'from' || arrowDir === 'both'`. Cela couvre les arêtes port-anchored qui contournent vis-network pour leur rendu Bezier.
+- [src/mcp/tools/diagrams.ts](src/mcp/tools/diagrams.ts) , `type ArrowDir = 'to' | 'from' | 'both' | 'none'`, `VALID_ARROW_DIRS` étendu, message d'erreur de `normalizeArrowDir` mis à jour.
+- [src/frontend/diagram/edge-rendering.js](src/frontend/diagram/edge-rendering.js) , `visEdgeProps()` active `arrows.from` quand `arrowDir === 'from'` ou `'both'`.
+- [src/frontend/diagram/ports.js](src/frontend/diagram/ports.js) , `drawPortEdge()` dessine la tête source quand `drawFrom = arrowDir === 'from' || arrowDir === 'both'`. Cela couvre les arêtes port-anchored qui contournent vis-network pour leur rendu Bezier.
 
 ### 2. Bouton `edgeBtnFrom` dans la barre de propriétés d'arête
 
-[src/frontend/diagram/edge-panel.js](src/frontend/diagram/edge-panel.js) — `showEdgePanel()` ajoute un quatrième bouton entre `edgeBtnNone` et `edgeBtnTo`. La table de correspondance `arrowDir → buttonId` est étendue, et la classe `edge-btn-active` migre vers le nouveau bouton si la valeur le justifie. Le bouton est wiré dans le HTML et i18n-isé via `data-i18n`.
+[src/frontend/diagram/edge-panel.js](src/frontend/diagram/edge-panel.js) , `showEdgePanel()` ajoute un quatrième bouton entre `edgeBtnNone` et `edgeBtnTo`. La table de correspondance `arrowDir → buttonId` est étendue, et la classe `edge-btn-active` migre vers le nouveau bouton si la valeur le justifie. Le bouton est wiré dans le HTML et i18n-isé via `data-i18n`.
 
 ### 3. Compat ascendante
 

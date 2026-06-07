@@ -11,7 +11,7 @@
 The diagram editor uses a fixed palette of 15 node colors and 8 edge colors. Users had no way to customise these palettes. Additionally, several bugs were present after the locking and free-arrow features were introduced:
 
 - Free arrows (anchor→anchor edges) were not included in copy/paste because `st.selectedNodeIds` excludes anchor nodes.
-- Locked nodes could still be dragged manually despite `fixed: { x: true, y: true }` being set — that flag only prevents physics, not pointer drag.
+- Locked nodes could still be dragged manually despite `fixed: { x: true, y: true }` being set , that flag only prevents physics, not pointer drag.
 - The label editor textarea was hardcoded at 150 px wide, not adapting to the actual rendered node width.
 - Multiline text with `textValign: 'top'` overflowed the top of the shape because `startY` was computed before the line count was known.
 
@@ -21,9 +21,9 @@ The diagram editor uses a fixed palette of 15 node colors and 8 edge colors. Use
 
 A "Diagram Color Palettes" section was added to `admin.html` with:
 
-- **15 fixed node slots** — each rendered as a colored circle swatch with an overlaid `<input type="color">` (opacity: 0). Clicking the swatch opens the native color picker.
-- **Edge palette** — swatches with a × remove button, a color picker for adding new colors, and a Reset button.
-- All palette changes (picker, add, remove, reset) update **local state only** — no API call is made. Palettes are persisted only when the user clicks **Save** on the main admin form, alongside title/theme/pattern.
+- **15 fixed node slots** , each rendered as a colored circle swatch with an overlaid `<input type="color">` (opacity: 0). Clicking the swatch opens the native color picker.
+- **Edge palette** , swatches with a × remove button, a color picker for adding new colors, and a Reset button.
+- All palette changes (picker, add, remove, reset) update **local state only** , no API call is made. Palettes are persisted only when the user clicks **Save** on the main admin form, alongside title/theme/pattern.
 
 ### HSL-based border derivation
 
@@ -38,7 +38,7 @@ The previous `deriveNodeColors` used simple RGB multiplication (`r * 0.65`) whic
 
 ### Default palettes in config
 
-`config.ts` `DEFAULTS` now contains the actual bg hex arrays for both palettes instead of `null`. This means every new `.living-doc.json` ships with the default colors explicitly stored, making them visible and editable. Existing configs with `null` continue to work — the frontend falls back to `DEFAULT_NODE_PALETTE` / `DEFAULT_EDGE_PALETTE`.
+`config.ts` `DEFAULTS` now contains the actual bg hex arrays for both palettes instead of `null`. This means every new `.living-doc.json` ships with the default colors explicitly stored, making them visible and editable. Existing configs with `null` continue to work , the frontend falls back to `DEFAULT_NODE_PALETTE` / `DEFAULT_EDGE_PALETTE`.
 
 ### nodeColorOverrides in state
 
@@ -46,13 +46,13 @@ The previous `deriveNodeColors` used simple RGB multiplication (`r * 0.65`) whic
 
 ### Bug fixes
 
-**Free arrow copy/paste** — `copySelected()` in `clipboard.js` now uses `st.network.getSelectedNodes()` (which includes anchor nodes) instead of `st.selectedNodeIds` (which excludes them). Edges are included if both endpoints are in the copied set, or if the edge is directly selected.
+**Free arrow copy/paste** , `copySelected()` in `clipboard.js` now uses `st.network.getSelectedNodes()` (which includes anchor nodes) instead of `st.selectedNodeIds` (which excludes them). Edges are included if both endpoints are in the copied set, or if the edge is directly selected.
 
-**Locked node drag** — `draggable: false` is now set alongside `fixed: { x: true, y: true }` when locking a node or anchor. `draggable: false` prevents manual pointer drag; `fixed` prevents physics displacement.
+**Locked node drag** , `draggable: false` is now set alongside `fixed: { x: true, y: true }` when locking a node or anchor. `draggable: false` prevents manual pointer drag; `fixed` prevents physics displacement.
 
-**Textarea width** — `startLabelEdit()` in `label-editor.js` reads `bn.shape.width` (the canvas-space width set by vis-network's shape resize pass) and multiplies by `network.getScale()` to get DOM pixels, clamped to a minimum of 120 px.
+**Textarea width** , `startLabelEdit()` in `label-editor.js` reads `bn.shape.width` (the canvas-space width set by vis-network's shape resize pass) and multiplies by `network.getScale()` to get DOM pixels, clamped to a minimum of 120 px.
 
-**Multiline textValign top** — In `drawLabel()` (`node-rendering.js`), `lines` is now computed before `startY` so that `textValign: 'top'` correctly anchors the first line inside the shape top padding, and `textValign: 'bottom'` anchors the last line above the bottom padding.
+**Multiline textValign top** , In `drawLabel()` (`node-rendering.js`), `lines` is now computed before `startY` so that `textValign: 'top'` correctly anchors the first line inside the shape top padding, and `textValign: 'bottom'` anchors the last line above the bottom padding.
 
 ## Consequences
 
@@ -70,4 +70,4 @@ The previous `deriveNodeColors` used simple RGB multiplication (`r * 0.65`) whic
 
 - `NODE_L_RATIOS` is duplicated between `constants.js` and `admin.html` (no ES module import in plain HTML scripts). Must be kept in sync if ratios are ever revised.
 - `draggable: false` is a vis-network internal property; it may need re-verification if vis-network is upgraded.
-- Saving palettes is now coupled to the main admin Save action — users may forget their palette changes are pending if they navigate away without saving.
+- Saving palettes is now coupled to the main admin Save action , users may forget their palette changes are pending if they navigate away without saving.

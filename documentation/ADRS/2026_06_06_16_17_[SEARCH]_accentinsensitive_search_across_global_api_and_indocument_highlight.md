@@ -14,20 +14,21 @@ Taper "meme" ne trouvait pas "même". La recherche locale dans le document (`loc
 ### Fonction deAccent
 
 ```ts
-const deAccent = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const deAccent = (s: string) =>
+  s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 ```
 
 La regex couvre les combining diacritical marks Unicode U+0300–U+036F. Appliquée symétriquement sur la query et sur le texte comparé.
 
-### Couche 1 — Filtre client sidebar (`state.svelte.ts`)
+### Couche 1 , Filtre client sidebar (`state.svelte.ts`)
 
 `filteredDocs` compare titres et catégories avec `deAccent` des deux côtés. C'est le filtre rapide avant que les résultats API arrivent.
 
-### Couche 2 — API full-text (`routes/documents.ts`, `GET /api/documents/search`)
+### Couche 2 , API full-text (`routes/documents.ts`, `GET /api/documents/search`)
 
 `deAccent` appliqué sur `rawQuery` → `query`, puis sur `doc.title`, `doc.category` et `content` avant `.includes()`. L'excerpt utilise la position trouvée dans le contenu normalisé mais tranche le contenu original pour conserver les accents dans l'affichage.
 
-### Couche 3 — Highlight in-document (`searchNotice.ts`)
+### Couche 3 , Highlight in-document (`searchNotice.ts`)
 
 **Contrainte clé** : les `TextNode` doivent être wrappés en `<mark>` sur les caractères originaux (avec accents), pas sur les normalisés.
 

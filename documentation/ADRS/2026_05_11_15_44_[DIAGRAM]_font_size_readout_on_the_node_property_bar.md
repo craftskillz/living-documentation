@@ -15,11 +15,11 @@ Le node panel exposait deux boutons `Aa−` (`btnNodeFontDecrease`) et `Aa+` (`b
 
 ### 1. Élément `#nodeFontSizeValue` entre les deux boutons
 
-[src/frontend/diagram.html](src/frontend/diagram.html) — un `<span id="nodeFontSizeValue">` est ajouté entre `btnNodeFontDecrease` et `btnNodeFontIncrease`. Style minimal : monospace, encadré, 11px, largeur min ~2.25rem pour ne pas trembler quand la valeur passe de `9` à `99`. Attribut `data-i18n-title` pour le tooltip.
+[src/frontend/diagram.html](src/frontend/diagram.html) , un `<span id="nodeFontSizeValue">` est ajouté entre `btnNodeFontDecrease` et `btnNodeFontIncrease`. Style minimal : monospace, encadré, 11px, largeur min ~2.25rem pour ne pas trembler quand la valeur passe de `9` à `99`. Attribut `data-i18n-title` pour le tooltip.
 
 ### 2. `syncNodeFontSizeValue()` dans node-panel.js
 
-[src/frontend/diagram/node-panel.js](src/frontend/diagram/node-panel.js) — la fonction lit `n.fontSize || 13` pour chaque nœud sélectionné non-anchor, puis :
+[src/frontend/diagram/node-panel.js](src/frontend/diagram/node-panel.js) , la fonction lit `n.fontSize || 13` pour chaque nœud sélectionné non-anchor, puis :
 
 - **Aucun nœud non-anchor sélectionné** → affiche `–`.
 - **Tous à la même taille** → affiche la valeur (ex. `13`).
@@ -27,8 +27,8 @@ Le node panel exposait deux boutons `Aa−` (`btnNodeFontDecrease`) et `Aa+` (`b
 
 Appelée à deux endroits :
 
-- `showNodePanel()` — à chaque ouverture du panel, pour refléter l'état courant.
-- `changeNodeFontSize(delta)` — après chaque clic sur `Aa−`/`Aa+`, pour mettre à jour l'affichage immédiatement (avant `forceRedraw()`).
+- `showNodePanel()` , à chaque ouverture du panel, pour refléter l'état courant.
+- `changeNodeFontSize(delta)` , après chaque clic sur `Aa−`/`Aa+`, pour mettre à jour l'affichage immédiatement (avant `forceRedraw()`).
 
 ### 3. Fallback `13` quand `fontSize` est absent
 
@@ -39,10 +39,10 @@ Appelée à deux endroits :
 ### PROS
 
 - L'utilisateur a un **repère numérique** pour ses ajustements de typographie. Plus besoin de tâtonner.
-- Le glyphe `–` sur une sélection mixte signale clairement qu'on agit sur des valeurs différentes — l'utilisateur peut alors uniformiser via une autre action s'il le souhaite.
+- Le glyphe `–` sur une sélection mixte signale clairement qu'on agit sur des valeurs différentes , l'utilisateur peut alors uniformiser via une autre action s'il le souhaite.
 - Coût d'implémentation minimal (+25 lignes) ; pas d'impact sur la persistance ni sur le rendu.
 
 ### CONS
 
 - Pas d'**édition directe** : l'élément reste un span en lecture seule. Pour saisir une taille précise, il faut cumuler des clics. Acceptable pour la première itération ; un champ éditable pourra venir plus tard.
-- L'élément n'est pas synchronisé après un undo/redo qui modifierait `fontSize` à distance — il l'est seulement à l'ouverture du panel et après un clic sur `Aa−`/`Aa+`. À ajouter si une plainte utilisateur émerge.
+- L'élément n'est pas synchronisé après un undo/redo qui modifierait `fontSize` à distance , il l'est seulement à l'ouverture du panel et après un clic sur `Aa−`/`Aa+`. À ajouter si une plainte utilisateur émerge.

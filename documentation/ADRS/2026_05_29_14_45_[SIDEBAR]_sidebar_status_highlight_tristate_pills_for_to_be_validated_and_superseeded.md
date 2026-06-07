@@ -1,7 +1,7 @@
 ---
 **date:** 2026-05-29
 **status:** To be validated
-**description:** Une icône certificat dans la barre latérale fait défiler un tri-état (off → V → V+S) qui peint des pastilles de cycle de vie par document dans l'arbre — « V » verte pour `To be validated`, « S » orange pour `SuperSeeded` — alimentées par un endpoint dédié `GET /api/documents/statuses`.
+**description:** Une icône certificat dans la barre latérale fait défiler un tri-état (off → V → V+S) qui peint des pastilles de cycle de vie par document dans l'arbre , « V » verte pour `To be validated`, « S » orange pour `SuperSeeded` , alimentées par un endpoint dédié `GET /api/documents/statuses`.
 **tags:** sidebar, frontmatter-status, tri-state-toggle, cycleHighlightStatus, statusPill, /api/documents/statuses, parseDocStatus, localStorage, fa-certificate, To-be-validated, SuperSeeded
 ---
 
@@ -10,7 +10,7 @@
 ## Contexte
 
 La barre latérale expose déjà des signaux par document via de petites pastilles (annotations, pièces jointes). Le cycle de vie d'un document, lui, n'était visible qu'après ouverture (le bouton « Valider » du viewer lit le `status` d u
-frontmatter). Un relecteur souhaitant repérer d'un coup d'œil *quels* documents restent à valider, ou lesquels sont obsolètes, n'avait aucune vue d'ensemble sur l'arbre.
+frontmatter). Un relecteur souhaitant repérer d'un coup d'œil _quels_ documents restent à valider, ou lesquels sont obsolètes, n'avait aucune vue d'ensemble sur l'arbre.
 
 Les valeurs canoniques de cycle de vie vivent dans la ligne `status` du
 frontmatter : un document est `To be validated` à la création et peut devenir
@@ -24,16 +24,16 @@ d'outils de la barre latérale, positionnée juste avant le bouton des pièces
 jointes. Elle fait défiler un **tri-état** de mise en évidence des statuts,
 persisté dans `localStorage` sous la clé `ld-highlight-status` :
 
-| État | Couleur de l'icône | Pastilles affichées |
-|------|--------------------|---------------------|
-| 0 | gris | aucune |
-| 1 | vert | **V** verte sur les documents `To be validated` |
-| 2 | orange | **V** verte + **S** orange sur les documents `SuperSeeded` |
+| État | Couleur de l'icône | Pastilles affichées                                        |
+| ---- | ------------------ | ---------------------------------------------------------- |
+| 0    | gris               | aucune                                                     |
+| 1    | vert               | **V** verte sur les documents `To be validated`            |
+| 2    | orange             | **V** verte + **S** orange sur les documents `SuperSeeded` |
 
 La couleur de l'icône reflète l'état actif (gris → vert → orange), illustrant la
 dernière famille de pastilles activée. La correspondance de statut est
 insensible à la casse et **exacte** : seule la valeur canonique `SuperSeeded`
-(voir `SUPERSEEDED_STATUS` dans `src/lib/status.ts`) reçoit la pastille S — les
+(voir `SUPERSEEDED_STATUS` dans `src/lib/status.ts`) reçoit la pastille S , les
 variantes non canoniques comme `SuperSeeded by …` ou `Partially SuperSeeded …`
 ne sont volontairement pas mises en évidence.
 
@@ -75,5 +75,5 @@ toggle utilise `nav.toggle_status_highlight`.
 
 ## Liens connexes
 
-- [Bouton « Valider » du viewer pour le basculement du statut frontmatter](?doc=ADRS%252F2026_05_14_12_07_%255BFRONTEND%255D_validate_button_on_viewer_for_frontmatter_status_flip) — basculement `To be validated` → `Accepted` côté viewer.
-- [Métadonnées en lecture seule pour les documents SuperSeeded](?doc=ADRS%252F2026_05_14_12_29_%255BMETADATA%255D_read_only_metadata_for_superseeded_documents) — le garde `SUPERSEEDED_STATUS` réutilisé ici.
+- [Bouton « Valider » du viewer pour le basculement du statut frontmatter](?doc=ADRS%252F2026_05_14_12_07_%255BFRONTEND%255D_validate_button_on_viewer_for_frontmatter_status_flip) , basculement `To be validated` → `Accepted` côté viewer.
+- [Métadonnées en lecture seule pour les documents SuperSeeded](?doc=ADRS%252F2026_05_14_12_29_%255BMETADATA%255D_read_only_metadata_for_superseeded_documents) , le garde `SUPERSEEDED_STATUS` réutilisé ici.

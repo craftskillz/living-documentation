@@ -182,6 +182,10 @@ export function ldParseSnippetMarkdown(
       return ldParseColoredTextSnippetMarkdown(text);
     case "colored-section":
       return ldParseColoredSectionSnippetMarkdown(text);
+    case "compare": {
+      const m = text.match(/^:::compare[ \t]*\n([\s\S]*?)\n?:::[ \t]*$/);
+      return { content: m ? m[1] : "" };
+    }
     default:
       return {};
   }

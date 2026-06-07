@@ -26,7 +26,7 @@ Le header `#home-doc-header` est **pleine largeur**, sticky `top-0`, placé comm
 
 ### Sticky zéro-travel (point critique)
 
-Un `position: sticky` placé plus bas que le haut du scroller (ici sous un header en flux normal) doit parcourir la hauteur du header AVANT de se figer — pendant ce trajet il « scrolle avec la page » (bug observé : « la table bouge avec la page puis s'arrête »).
+Un `position: sticky` placé plus bas que le haut du scroller (ici sous un header en flux normal) doit parcourir la hauteur du header AVANT de se figer , pendant ce trajet il « scrolle avec la page » (bug observé : « la table bouge avec la page puis s'arrête »).
 
 Solution : coller la TOC à `top = hauteur du header` au lieu de `top: 0`. Sa position naturelle (offsetTop) égale alors déjà sa valeur `top` → **zéro travel**, la TOC ne bouge jamais.
 

@@ -7,7 +7,7 @@ Le panneau Admin est accessible via le bouton **`⚙ Admin`** dans le header pri
 ### Changer le titre de l'application
 
 1. Ouvrez **⚙ Admin**
-2. Dans le champ **`Title`**, saisissez le nom de votre projet (ex. `Documentation — MonProjet`)
+2. Dans le champ **`Title`**, saisissez le nom de votre projet (ex. `Documentation , MonProjet`)
 3. Cliquez **`Save`**
 
 Le titre s'affiche dans l'onglet du navigateur et en haut de la sidebar.
@@ -17,9 +17,9 @@ Le titre s'affiche dans l'onglet du navigateur et en haut de la sidebar.
 ### Changer le thème
 
 1. Dans le sélecteur **`Theme`**, choisissez parmi :
-   - `system` — suit la préférence système (clair/sombre)
-   - `light` — toujours clair
-   - `dark` — toujours sombre
+   - `system` , suit la préférence système (clair/sombre)
+   - `light` , toujours clair
+   - `dark` , toujours sombre
 2. Cliquez **`Save`**
 
 > La préférence est aussi accessible depuis le bouton ☀️/🌙 dans le header, qui la persiste en `localStorage`.
@@ -31,6 +31,7 @@ Le titre s'affiche dans l'onglet du navigateur et en haut de la sidebar.
 1. Dans le champ **`Filename pattern`**, saisissez votre pattern personnalisé.
 
    Exemples valides :
+
    ```
    YYYY_MM_DD_HH_mm_[Category]_title
    [Category]_YYYY_MM_DD_title

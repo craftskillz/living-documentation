@@ -4,12 +4,13 @@
 
 Prepare a retrodocumentation packet from recent git history.
 
-Reads up to `limit` commits (default 100, hard cap 200) from the git repository that contains `sourceRoot`, ordered **oldest first** so the LLM can walk decisions in chronological order. Per commit, returns: sha, committer/author dates (ISO 8601), author name, subject, body, parent count, and `filesChanged` annotated with `changeType` (A/M/D/R/C/T), `underSourceRoot`, `existsNow`, and `godFileSuspect` (lock files, manifests — flagged as poor metadata targets per `add_metadata` guidance).
+Reads up to `limit` commits (default 100, hard cap 200) from the git repository that contains `sourceRoot`, ordered **oldest first** so the LLM can walk decisions in chronological order. Per commit, returns: sha, committer/author dates (ISO 8601), author name, subject, body, parent count, and `filesChanged` annotated with `changeType` (A/M/D/R/C/T), `underSourceRoot`, `existsNow`, and `godFileSuspect` (lock files, manifests , flagged as poor metadata targets per `add_metadata` guidance).
 
 Each commit carries a `state`:
-- `candidate` — has at least one non-deleted, non-god file under `sourceRoot`; worth a semantic look.
-- `trivial`   — no source-bearing files (docs-only, formatting, config-only); skip unless the LLM has reason.
-- `merge`     — has more than one parent; skip unless the merge introduces a documented decision.
+
+- `candidate` , has at least one non-deleted, non-god file under `sourceRoot`; worth a semantic look.
+- `trivial` , no source-bearing files (docs-only, formatting, config-only); skip unless the LLM has reason.
+- `merge` , has more than one parent; skip unless the merge introduces a documented decision.
 
 This is a factual reporting tool, not the whole workflow. Use prompt `retrodocument-adrs-from-git` when the LLM must decide whether each commit deserves a new ADR (Outcome A), should supersede an existing one (Outcome B), or be skipped (Outcome C).
 

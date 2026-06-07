@@ -48,6 +48,7 @@ const _INLINE_SNIPPET_TYPES = new Set<string>([
   "heading-2",
   "heading-3",
   "heading-4",
+  "compare",
 ]);
 
 const _INLINE_EDIT_AFFORDANCE_BY_TYPE: Record<
@@ -73,6 +74,7 @@ const _INLINE_EDIT_AFFORDANCE_BY_TYPE: Record<
   "heading-2": { labelKey: "snippet.inline_edit_btn_heading_2", iconClass: "fa-solid fa-heading" },
   "heading-3": { labelKey: "snippet.inline_edit_btn_heading_3", iconClass: "fa-solid fa-heading" },
   "heading-4": { labelKey: "snippet.inline_edit_btn_heading_4", iconClass: "fa-solid fa-heading" },
+  "compare": { labelKey: "snippet.inline_edit_btn_compare", iconClass: "fa-solid fa-table-columns" },
 };
 
 function _inlineEditAffordance(type: string) {
@@ -101,6 +103,7 @@ const _INLINE_DELETE_LABEL_KEY_BY_TYPE: Record<string, string> = {
   "heading-2": "snippet.inline_delete_btn_heading_2",
   "heading-3": "snippet.inline_delete_btn_heading_3",
   "heading-4": "snippet.inline_delete_btn_heading_4",
+  "compare": "snippet.inline_delete_btn_compare",
 };
 
 function _inlineDeleteAffordance(type: string) {
@@ -125,6 +128,7 @@ const _INLINE_TYPE_SELECTORS: { types: string[]; selector: string }[] = [
   { types: ["heading-3"], selector: "h3" },
   { types: ["heading-4"], selector: "h4" },
   { types: ["image"], selector: "img" },
+  { types: ["compare"], selector: ".ld-compare" },
   {
     types: ["anchor-doc-link", "doc-link", "anchor-link", "link"],
     selector: "a[href]",
@@ -146,7 +150,14 @@ function _inlineAddRange(ranges: InlineSnippetRange[], start: number, raw: strin
   if (!type || !_INLINE_SNIPPET_TYPES.has(type)) return;
   const end = start + raw.length;
   const candidate: InlineSnippetRange = { start, end, type };
-  if (ranges.some((existing) => _inlineRangesOverlap(existing, candidate))) {
+  if (ranges.some((existing) => {
+    if (_inlineRangesOverlap(existing, candidate)) return true;
+    // Reject any snippet whose range falls entirely inside a code-block or compare range.
+    // Fenced code/compare blocks contain literal text — patterns like tables or
+    // blockquotes inside them must not be treated as separate editable snippets.
+    if ((existing.type === "code-block" || existing.type === "compare") && start >= existing.start && end <= existing.end) return true;
+    return false;
+  })) {
     return;
   }
   ranges.push(candidate);
@@ -172,6 +183,23 @@ function _inlineLineIndentBefore(content: string, idx: number): string {
   while (i > 0 && content[i - 1] !== "\n") i -= 1;
   const prefix = content.slice(i, idx);
   return /^[ \t]+$/.test(prefix) ? prefix : "";
+}
+
+function _inlineAddCompareBlockRanges(ranges: InlineSnippetRange[], content: string): void {
+  const regex = /^:::compare[ \t]*\n[\s\S]*?^:::[ \t]*$/gm;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(content))) {
+    const raw = match[0];
+    if (!raw.trim()) {
+      if (raw.length === 0) regex.lastIndex += 1;
+      continue;
+    }
+    const start = match.index;
+    const end = start + raw.length;
+    const candidate: InlineSnippetRange = { start, end, type: "compare" };
+    if (ranges.some((existing) => _inlineRangesOverlap(existing, candidate))) continue;
+    ranges.push(candidate);
+  }
 }
 
 function _inlineAddCodeBlockRanges(ranges: InlineSnippetRange[], content: string): void {
@@ -207,6 +235,9 @@ function _inlineCollectSnippetRanges(content: string): InlineSnippetRange[] {
     content,
     /<div\b[^>]*border-left[^>]*>[\s\S]*?<\/div>/gi,
   );
+  // Compare blocks before code blocks: the guard rejects any inner ```code``` fence
+  // that falls inside a compare range, so compare must be registered first.
+  _inlineAddCompareBlockRanges(ranges, content);
   _inlineAddCodeBlockRanges(ranges, content);
   _inlineAddRegexRanges(ranges, content, /(?:^|\n\n)(#{1,4} [^\n]+)/g, 1);
   _inlineAddRegexRanges(
@@ -264,7 +295,9 @@ function _inlineAssignElements(
     const elements =
       selector === "ol" || selector === "ul"
         ? _inlineTopLevelListElements(contentEl, selector)
-        : Array.from(contentEl.querySelectorAll(selector));
+        : Array.from(contentEl.querySelectorAll(selector)).filter(
+            (el) => !el.closest(".ld-compare-render"),
+          );
     const limit = Math.min(matching.length, elements.length);
     for (let i = 0; i < limit; i += 1) {
       (elements[i] as HTMLElement).dataset.inlineSnippetIndex = String(

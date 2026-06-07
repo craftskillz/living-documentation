@@ -196,6 +196,8 @@ export function ldBuildSnippetMarkdown(type: string, data: any): string {
       return data.value;
     case "local-search":
       return `<div data-ld-local-search></div>`;
+    case "compare":
+      return `:::compare\n${data.content || ""}\n:::`;
     default:
       return "";
   }

@@ -17,8 +17,8 @@ A **🧩 Snippets** button is added between the Cancel and Save buttons in edit 
 - A `<select>` for 13 snippet types:
   - **Simple** (no editor): collapsible block (`<details>`/`<summary>`), link, link to document, anchor link, anchor link in another document, numbered list (3-level), bullet list (3-level), code block, blockquote, horizontal separator, image
   - **Complex** (dedicated editor):
-    - **Table** — dynamic grid with `+`/`−` row/column controls; generates a width-aligned Markdown table
-    - **Tree** — list of items with `←`/`→` indent controls; generates a `text` code block with `├──` / `└──` / `│` connectors at all nesting levels
+    - **Table** , dynamic grid with `+`/`−` row/column controls; generates a width-aligned Markdown table
+    - **Tree** , list of items with `←`/`→` indent controls; generates a `text` code block with `├──` / `└──` / `│` connectors at all nesting levels
 - A **live Markdown preview** updated on every field change
 - An **Insert** button that splices the generated text at the saved cursor position, replacing any selection
 
@@ -31,17 +31,17 @@ A **🧩 Snippets** button is added between the Cancel and Save buttons in edit 
 
 The cursor position (`selectionStart` / `selectionEnd`) is saved at modal open time so the insertion is deterministic regardless of focus changes inside the modal.
 
-For document/anchor-doc links the `<select>` is populated from `allDocs` (already in memory) — no extra API call.
+For document/anchor-doc links the `<select>` is populated from `allDocs` (already in memory) , no extra API call.
 
 ## Consequences
 
 ### PROS
 
 - Users can insert any complex Markdown construct without knowing the syntax
-- Round-trip editing: select a snippet, open the modal, tweak fields, re-insert — the workflow is consistent
+- Round-trip editing: select a snippet, open the modal, tweak fields, re-insert , the workflow is consistent
 - The table and tree editors eliminate the most error-prone manual formatting tasks
 - Detection covers all 13 types via regex; adding new types only requires extending `detectSnippetType` and `parseAndFillSnippet`
-- No backend change — purely frontend
+- No backend change , purely frontend
 
 ### CONS
 

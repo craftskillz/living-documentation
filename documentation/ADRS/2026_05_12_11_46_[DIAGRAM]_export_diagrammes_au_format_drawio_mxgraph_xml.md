@@ -30,17 +30,17 @@ Tout vit dans `src/frontend/diagram/drawio-export.js`, fonction publique async `
 
 ### Mapping nœuds
 
-| Shape projet | Style drawio |
-|---|---|
-| `box` | `rounded=0;whiteSpace=wrap;html=1;` + fill/stroke/font |
-| `ellipse`, `circle` | `ellipse;...` (circle force H=W) |
-| `database` | `shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=15` |
-| `actor` | `shape=actor` |
-| `post-it` | `shape=note;size=12` |
-| `text-free` | `text;html=1;strokeColor=none;fillColor=none` (fontColor préservé) |
-| `image` | `shape=image;imageAspect=0;image=<dataUri ou URL>` |
-| `custom-shape` | idem image + labelPlacement explicite (center/below/above/left/right) |
-| `anchor` | DROPPÉ (pseudo-node, voir free arrows) |
+| Shape projet        | Style drawio                                                          |
+| ------------------- | --------------------------------------------------------------------- |
+| `box`               | `rounded=0;whiteSpace=wrap;html=1;` + fill/stroke/font                |
+| `ellipse`, `circle` | `ellipse;...` (circle force H=W)                                      |
+| `database`          | `shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=15`            |
+| `actor`             | `shape=actor`                                                         |
+| `post-it`           | `shape=note;size=12`                                                  |
+| `text-free`         | `text;html=1;strokeColor=none;fillColor=none` (fontColor préservé)    |
+| `image`             | `shape=image;imageAspect=0;image=<dataUri ou URL>`                    |
+| `custom-shape`      | idem image + labelPlacement explicite (center/below/above/left/right) |
+| `anchor`            | DROPPÉ (pseudo-node, voir free arrows)                                |
 
 Couleurs : `NODE_COLORS[colorKey]` → `fillColor`/`strokeColor`/`fontColor` (les overrides config `st.nodeColorOverrides` ne sont pas appliqués car ils visent le rendu local ; le `colorKey` reste la vérité partagée).
 
@@ -59,7 +59,7 @@ Style commun : `edgeStyle=none;rounded=0;html=1;jettySize=auto;orthogonalLoop=1`
 - `arrowDir` ∈ `{to, from, both, none}` → combinaisons `startArrow`/`endArrow=classic|none`.
 - `dashes` → `dashed=1`.
 - `edgeColor`, `edgeWidth`, `fontSize`, `edgeLocked` → directs.
-- Ports : `fromPort` / `toPort` convertis en `exitX/exitY` + `entryX/entryY` via les tables `RECT_PORT_EXIT` (rectangulaire — N=(0.5,0), NE=(1,0)…), `CIRC_PORT_EXIT` (ellipse/circle — N=(0.5,0), NE=(0.5+SQRT2_INV/2, 0.5−SQRT2_INV/2)…), `DATABASE_PORT_EXIT` (cylindre — NE=(1, 0.12)…), ou anchors normalisés `{x, y}` pour les custom shapes. `exitPerimeter=0;entryPerimeter=0` garantit que drawio respecte exactement les positions calculées sans recourir au périmètre standard.
+- Ports : `fromPort` / `toPort` convertis en `exitX/exitY` + `entryX/entryY` via les tables `RECT_PORT_EXIT` (rectangulaire , N=(0.5,0), NE=(1,0)…), `CIRC_PORT_EXIT` (ellipse/circle , N=(0.5,0), NE=(0.5+SQRT2_INV/2, 0.5−SQRT2_INV/2)…), `DATABASE_PORT_EXIT` (cylindre , NE=(1, 0.12)…), ou anchors normalisés `{x, y}` pour les custom shapes. `exitPerimeter=0;entryPerimeter=0` garantit que drawio respecte exactement les positions calculées sans recourir au périmètre standard.
 - Free arrows (edge entre deux nœuds `shapeType === 'anchor'`) : edge sans `source`/`target`, géométrie avec `<mxPoint as="sourcePoint">` et `<mxPoint as="targetPoint">` aux positions des anchors. Les nœuds anchor eux-mêmes sont droppés de l'export.
 
 Edge labels : par défaut, `value=` sur l'edge. Si `edgeLabelWidth` (wrap) ou `edgeLabelOffsetX/Y` ou `labelRotation` non nul, génération d'un child `<mxCell vertex="1" connectable="0">` avec style `edgeLabel;html=1;rotation=<deg>` et géométrie `<mxGeometry x="0" y="0" relative="1"><mxPoint as="offset">` + `<mxRectangle as="alternateBounds">` pour la largeur de wrap.
@@ -114,7 +114,7 @@ Edge labels : par défaut, `value=` sur l'edge. Si `edgeLabelWidth` (wrap) ou `e
 - One-way only : pas d'import drawio → diagramme projet. À considérer comme ADR séparé si besoin.
 - Bezier des port-edges légèrement différent visuellement entre les deux outils (cf. arbitrage 3).
 - Custom shapes deviennent des `shape=image` figés dans drawio (cf. arbitrage 1).
-- Si un fetch d'image échoue (réseau, 404), l'URL d'origine est conservée — le fichier ne sera pleinement autonome que si le serveur est joignable au moment de l'ouverture. Un log console signale la défaillance mais pas de blocage de l'export.
-- Les overrides de couleurs `st.nodeColorOverrides` (admin config) ne sont pas appliqués à l'export — la couleur exportée est celle des constantes `NODE_COLORS` du `colorKey`. Choix volontaire : `colorKey` est la vérité partageable, les overrides sont locaux au déploiement.
+- Si un fetch d'image échoue (réseau, 404), l'URL d'origine est conservée , le fichier ne sera pleinement autonome que si le serveur est joignable au moment de l'ouverture. Un log console signale la défaillance mais pas de blocage de l'export.
+- Les overrides de couleurs `st.nodeColorOverrides` (admin config) ne sont pas appliqués à l'export , la couleur exportée est celle des constantes `NODE_COLORS` du `colorKey`. Choix volontaire : `colorKey` est la vérité partageable, les overrides sont locaux au déploiement.
 - `labelRotation` indépendante de `rotation` est perdue à l'export (cf. arbitrage 2).
 - Les états éditeur (`gridEnabled`, `alignGuides`, `edgesStraight` est mappé sur `curved=1`/`0`) ne sont pas tous transposables : grid/alignGuides sont purement UX projet, droppés.

@@ -10,8 +10,8 @@
 
 The viewer supports two snippet types that produce in-document or cross-document jumps:
 
-- `anchor-link` — a local `#heading-slug` jump inside the current document.
-- `anchor-doc-link` — a cross-document link `?doc=<id>#heading-slug`.
+- `anchor-link` , a local `#heading-slug` jump inside the current document.
+- `anchor-doc-link` , a cross-document link `?doc=<id>#heading-slug`.
 
 Three issues surfaced once these snippets were used in real documentation:
 
@@ -23,13 +23,13 @@ Three issues surfaced once these snippets were used in real documentation:
 
 ### 1. Propagate the anchor as an explicit parameter
 
-`openDocument(id, skipHistory, fromLink, anchor)` gained a fourth parameter. Click handlers in [src/frontend/documents.js](src/frontend/documents.js) now parse the `href` in two passes — first extract the doc id from the query string, then read `href.indexOf("#")` separately — and forward the raw anchor slug to `openDocument`. The pushed URL sets `url.hash` and the history state stores `{ id, anchor }`. After the document renders, scroll logic prefers the explicit `anchor` param and only falls back to `location.hash` when it is absent. The popstate handler in [src/frontend/boot.js](src/frontend/boot.js) reads `state.anchor || location.hash` and forwards it identically, so back/forward works the same as a fresh click.
+`openDocument(id, skipHistory, fromLink, anchor)` gained a fourth parameter. Click handlers in [src/frontend/documents.js](src/frontend/documents.js) now parse the `href` in two passes , first extract the doc id from the query string, then read `href.indexOf("#")` separately , and forward the raw anchor slug to `openDocument`. The pushed URL sets `url.hash` and the history state stores `{ id, anchor }`. After the document renders, scroll logic prefers the explicit `anchor` param and only falls back to `location.hash` when it is absent. The popstate handler in [src/frontend/boot.js](src/frontend/boot.js) reads `state.anchor || location.hash` and forwards it identically, so back/forward works the same as a fresh click.
 
 ### 2. Replace anchor text inputs by select dropdowns driven by headings
 
 The snippet panel fields `#snip-anchor-id` (for `anchor-link`) and `#snip-anchor-doc-id` (for `anchor-doc-link`) became `<select>` elements in [src/frontend/index.html](src/frontend/index.html). A helper pipeline in [src/frontend/snippets/snippets.js](src/frontend/snippets/snippets.js) fills them:
 
-- `_extractHeadingsFromMarkdown(md)` walks the raw markdown looking for ATX headings, strips inline formatting via `_stripMdInline`, and slugifies with the exact same transform used by the renderer: `text.toLowerCase().replace(/[^\w\s-]/g, "").trim().replace(/\s+/g, "-")` — so the slug in the dropdown is guaranteed to match the id produced by `documents.js`.
+- `_extractHeadingsFromMarkdown(md)` walks the raw markdown looking for ATX headings, strips inline formatting via `_stripMdInline`, and slugifies with the exact same transform used by the renderer: `text.toLowerCase().replace(/[^\w\s-]/g, "").trim().replace(/\s+/g, "-")` , so the slug in the dropdown is guaranteed to match the id produced by `documents.js`.
 - `_collectEditorHeadings()` reads the current editor buffer to feed the local `anchor-link` list.
 - `_populateAnchorSelect()` and `snippetAnchorDocChanged()` wire the `#snip-anchor-doc-select` onchange event so that picking a document fetches its content and re-populates the anchor list. The two lists become co-dependent: document first, then its anchors.
 - When `parseAndFillSnippet` is invoked on an existing snippet whose slug is not currently in the options (e.g. the underlying document has changed), a synthetic option is injected so the select still displays the current value without losing the user's previous choice.
@@ -55,13 +55,13 @@ if (fromLink === true && currentDocId && currentDocId !== id) {
 }
 ```
 
-When the clicked target is already present in the back-stack, the stack is truncated up to — but not including — that entry. `Tata → Tutu → Tata` collapses to an empty stack (identical to clicking the Tata back-button from Tutu). `Tata → Tutu → Titi → Tata` also collapses to empty. Non-cycle navigation behaves as before.
+When the clicked target is already present in the back-stack, the stack is truncated up to , but not including , that entry. `Tata → Tutu → Tata` collapses to an empty stack (identical to clicking the Tata back-button from Tutu). `Tata → Tutu → Titi → Tata` also collapses to empty. Non-cycle navigation behaves as before.
 
 ## Consequences
 
 ### PROS
 
-- Cross-document anchor links scroll to the right heading on first click, on reload, and on browser back/forward — the anchor now survives every code path that produces a navigation.
+- Cross-document anchor links scroll to the right heading on first click, on reload, and on browser back/forward , the anchor now survives every code path that produces a navigation.
 - Users no longer guess slugs: the dropdown surfaces exactly the headings the renderer will produce, so snippet creation is WYSIWYG for anchors.
 - The two-field `anchor-doc-link` picker feels like a single coherent control: pick a document, see its anchors, done.
 - navHistory no longer grows on cycles. The back-button behaviour after a cycle matches what a user would get by pressing back manually.
@@ -69,6 +69,6 @@ When the clicked target is already present in the back-stack, the stack is trunc
 
 ### CONS
 
-- The anchor dropdown is a snapshot at snippet-creation time. If the target document is renamed or its heading retitled later, the link will dead-end — same failure mode as before, but now hidden behind a dropdown that implies freshness.
+- The anchor dropdown is a snapshot at snippet-creation time. If the target document is renamed or its heading retitled later, the link will dead-end , same failure mode as before, but now hidden behind a dropdown that implies freshness.
 - `snippetAnchorDocChanged()` fetches the target document's markdown to rebuild the anchor list, which adds a network round-trip when switching documents in the picker.
 - navHistory rewind changes the semantics of repeated link clicks: pages that intentionally rely on accumulating history entries (unlikely here) would break. The rule is currently unconditional; a future "force push" flag is not provided.

@@ -30,7 +30,7 @@ diagramDefaults: {
 
 ## Portée
 
-Ces valeurs s'appliquent **uniquement** aux nouveaux projets (pas de `.living-doc.json` existant). `readAndMigrate()` fusionne `STORAGE_DEFAULTS` avec le fichier existant via `{ ...STORAGE_DEFAULTS, ...(raw as Partial<StoredConfig>) }` — les projets existants qui ont déjà `diagramDefaults` dans leur fichier ne sont pas affectés.
+Ces valeurs s'appliquent **uniquement** aux nouveaux projets (pas de `.living-doc.json` existant). `readAndMigrate()` fusionne `STORAGE_DEFAULTS` avec le fichier existant via `{ ...STORAGE_DEFAULTS, ...(raw as Partial<StoredConfig>) }` , les projets existants qui ont déjà `diagramDefaults` dans leur fichier ne sont pas affectés.
 
 Les utilisateurs peuvent modifier ces defaults à tout moment via le panneau ⚙ de l'éditeur de diagrammes.
 

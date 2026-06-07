@@ -8,6 +8,7 @@
 ## Contexte
 
 Trois bugs liés aux interactions avec les post-its (elevator pills) :
+
 1. Un post-it dont la cible est dans un `<details>` fermé provoquait un scroll vers une position invisible.
 2. Après un survol (scroll centré), un clic sur le pill re-scrollait vers `-120px` fixe → décalage visuel.
 3. La popup jaune disparaissait en 300ms, trop court pour déplacer la souris et cliquer sur Supprimer.
@@ -29,11 +30,11 @@ function openAncestorDetails(el: HTMLElement, boundary: HTMLElement) {
 
 Appelée dans `pillEnter` et `pillClick` avant tout `scrollTo`, pour rendre le mark visible et permettre une mesure de position correcte. Même pattern que dans `scrollToHeading` (DocViewer) et `scrollToMatch` (searchNotice).
 
-### `pillClick` — pas de re-scroll si popup déjà ouverte
+### `pillClick` , pas de re-scroll si popup déjà ouverte
 
 Si `readPopup?.ann.id === id` (survol déjà effectué), on annule simplement le `hideTimer` sans re-scroller. Évite le décalage entre offset de centrage (pillEnter) et offset fixe `-120` (pillClick).
 
-### `scheduleHide` — délai 300ms → 1500ms
+### `scheduleHide` , délai 300ms → 1500ms
 
 La popup reste visible 1,5 seconde après que la souris quitte le pill, laissant le temps de déplacer la souris et de cliquer sur Supprimer. `clearTimeout(hideTimer)` dans `onmouseenter` de la popup annule le timer si l'utilisateur atteint la popup.
 

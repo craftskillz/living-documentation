@@ -17,6 +17,7 @@ export function detectSnippetType(text: string): string | null {
   if (/^<span\s[^>]*color:[^>]*>[\s\S]*<\/span>$/.test(t)) return "colored-text";
   if (/^<div\s[^>]*border-left[^>]*>/.test(t)) return "colored-section";
   if (/^```text\n/.test(t) && /[├└│]/.test(t)) return "tree";
+  if (/^:::compare[ \t]*\n/.test(t)) return "compare";
   if (/^```/.test(t)) return "code-block";
   if (looksLikeTableSnippet(t)) return "table";
   if (/^<!--\s*quote-(?:type|title|icon)/.test(t) || /^> /.test(t)) return "blockquote";

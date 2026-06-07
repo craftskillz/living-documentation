@@ -30,7 +30,7 @@ w =<shape.width>   h =<shape.height>
 L =<cx - w/2>   T =<cy - h/2>
 ```
 
-`L` and `T` are the values fed directly into the snap calculation, so any discrepancy between them and the nearest grid multiple instantly reveals a snap bug. A crosshair was drawn at the visual centre — later removed in favour of the cleaner DOM approach.
+`L` and `T` are the values fed directly into the snap calculation, so any discrepancy between them and the nearest grid multiple instantly reveals a snap bug. A crosshair was drawn at the visual centre , later removed in favour of the cleaner DOM approach.
 
 The `showDiagramDebug` field is added to `LivingDocConfig` and whitelisted in the `PUT /api/config` route.
 
@@ -38,7 +38,7 @@ The `showDiagramDebug` field is added to `LivingDocConfig` and whitelisted in th
 
 ### PROS
 
-- Debug information is always available during development without modifying code — just toggle the Admin checkbox.
+- Debug information is always available during development without modifying code , just toggle the Admin checkbox.
 - DOM text is selectable and copyable, unlike canvas-rendered text.
 - The overlay repositions correctly during pan and zoom because it is rebuilt on every `afterDrawing` call using live `canvasToDOM` conversions.
 - Users who never visit the Admin panel are unaffected (button hidden, no overhead).

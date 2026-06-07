@@ -38,7 +38,7 @@ Deux types d'arêtes, deux mécanismes de verrouillage :
 
 | Type d'arête                  | Mécanisme de verrouillage                                                                                 |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------- |
-| Flèche libre (anchor→anchor)  | Verrouillée via les deux nœuds anchor (`locked: true`, `fixed: { x, y }`) — cohérent avec le node locking |
+| Flèche libre (anchor→anchor)  | Verrouillée via les deux nœuds anchor (`locked: true`, `fixed: { x, y }`) , cohérent avec le node locking |
 | Arête régulière (forme→forme) | Flag `edgeLocked: true` sur l'arête elle-même dans le DataSet vis-network                                 |
 
 `areAllSelectedEdgesLocked()` détecte le type de chaque arête pour choisir le bon mécanisme de vérification. `toggleEdgeLock()` applique le mécanisme approprié selon le type.
@@ -49,7 +49,7 @@ La suppression (`deleteSelected()` dans `main.js`) filtre également les arêtes
 
 Le champ `locked: n.locked || false` est sauvegardé dans `nodeData` par `saveDiagram()`. Au chargement, `initNetwork` applique `fixed: { x: true, y: true }` si `n.locked` est vrai.
 
-Le champ `edgeLocked: e.edgeLocked || false` est sauvegardé dans `edgeData` par `saveDiagram()`. Pas de traitement spécial au chargement — c'est un flag de données relu directement depuis le DataSet vis-network.
+Le champ `edgeLocked: e.edgeLocked || false` est sauvegardé dans `edgeData` par `saveDiagram()`. Pas de traitement spécial au chargement , c'est un flag de données relu directement depuis le DataSet vis-network.
 
 ### Pas d'indicateur visuel sur la forme
 
@@ -66,4 +66,4 @@ Après validation UX, l'indicateur cadenas dessiné sur la forme (badge top-left
 ### CONS
 
 - L'absence d'indicateur visuel sur la forme peut rendre le lock difficile à détecter au premier coup d'œil si on ne clique pas sur la forme
-- `fixed: { x: true, y: true }` est un paramètre vis-network qui doit être réappliqué au rechargement — un oubli dans la sérialisation casserait silencieusement le lock
+- `fixed: { x: true, y: true }` est un paramètre vis-network qui doit être réappliqué au rechargement , un oubli dans la sérialisation casserait silencieusement le lock

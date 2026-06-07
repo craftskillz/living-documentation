@@ -10,7 +10,7 @@
 
 ADRs (and potentially any markdown file) may contain a frontmatter block delimited by `---` at the top of the file, holding metadata fields such as `description`, `tags`, `date`, and `status`. These fields are intended for tooling (context loading, supersession detection) and not for human reading in the article view.
 
-When `marked.parse(content)` was called directly on the raw file content, the frontmatter block was rendered as visible markdown — producing a horizontal rule, bold key/value lines, and another horizontal rule at the top of every article, cluttering the reading experience.
+When `marked.parse(content)` was called directly on the raw file content, the frontmatter block was rendered as visible markdown , producing a horizontal rule, bold key/value lines, and another horizontal rule at the top of every article, cluttering the reading experience.
 
 ## Decision
 
@@ -31,11 +31,11 @@ The function is applied only to the `html` field returned by the API. The raw `c
 
 ### PROS
 
-- Frontmatter metadata is invisible in the rendered article view — no visual clutter.
+- Frontmatter metadata is invisible in the rendered article view , no visual clutter.
 - Edit mode still shows the full raw content including frontmatter, so it remains editable.
 - The fix is applied in one place (`documents.ts`) and covers both regular docs and extra files.
 - Files without frontmatter are unaffected (`startsWith("---")` guard).
 
 ### CONS
 
-- Frontmatter is a convention — any file starting with `---` followed by a closing `---` will have that block stripped, even if it was intentional content. This is an acceptable trade-off for a local documentation tool.
+- Frontmatter is a convention , any file starting with `---` followed by a closing `---` will have that block stripped, even if it was intentional content. This is an acceptable trade-off for a local documentation tool.

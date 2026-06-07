@@ -22,7 +22,7 @@ Adding `database` to `CIRCULAR_SHAPES` was tried but produced diagonal ports too
 
 ### 3. Stamp crash + missing size stamp
 
-The color and font-size stamps (`btnStampColor`, `btnStampFontSize`) never worked: `STAMP_BTNS` referenced `rotation: 'btnStampRotation'` which no longer existed in the HTML. `document.getElementById('btnStampRotation')` returned `null`, and `null.classList` crashed both `activateStamp` and `cancelStamp` silently — the stamp appeared to activate (cursor became crosshair) but the apply always failed. Additionally, no stamp existed for shape dimensions.
+The color and font-size stamps (`btnStampColor`, `btnStampFontSize`) never worked: `STAMP_BTNS` referenced `rotation: 'btnStampRotation'` which no longer existed in the HTML. `document.getElementById('btnStampRotation')` returned `null`, and `null.classList` crashed both `activateStamp` and `cancelStamp` silently , the stamp appeared to activate (cursor became crosshair) but the apply always failed. Additionally, no stamp existed for shape dimensions.
 
 ## Decision
 
@@ -81,12 +81,12 @@ const offsets =
 ### PROS
 
 - Ellipse port arrows now connect correctly to the actual ellipse boundary regardless of aspect ratio.
-- Database (cylinder) diagonal ports sit exactly at the wall/cap junction — arrowheads are fully visible and visually correct.
+- Database (cylinder) diagonal ports sit exactly at the wall/cap junction , arrowheads are fully visible and visually correct.
 - Color and font-size stamps now work reliably (the silent crash is gone).
 - Size stamp completes the format-painter trio: users can now propagate color, font size, and dimensions independently between shapes.
 - `PORT_OFFSETS_DATABASE` constant is self-documenting and easy to tune if the cylinder cap ratio (`H × 0.12`) changes.
 
 ### CONS
 
-- `PORT_OFFSETS_DATABASE` hardcodes `y = ±0.76` derived from `ry = H × 0.12`. If the database renderer's cap ratio changes, this constant must be updated manually — there is no runtime coupling between the two.
+- `PORT_OFFSETS_DATABASE` hardcodes `y = ±0.76` derived from `ry = H × 0.12`. If the database renderer's cap ratio changes, this constant must be updated manually , there is no runtime coupling between the two.
 - The size stamp copies raw `nodeWidth/nodeHeight` values; if the source shape uses default dimensions (`null`), targets are also reset to their own defaults, which may not be the intended behaviour in all cases.

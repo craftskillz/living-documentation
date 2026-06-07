@@ -11,7 +11,7 @@
 
 L'ADR [Node locking](?doc=adrs%252F2026_04_13_%255BDIAGRAM%255D_node_locking) a introduit les boutons cadenas dans les node/edge panels. Cette première version avait deux limitations :
 
-- Côté **arêtes**, `toggleEdgeLock()` était **unidirectionnel** : appuyer sur le bouton verrouillait, mais ne déverrouillait jamais. Le commentaire le formalisait : *« Locking is a one-way UI action — once locked, the only way back is the long-press on the shape itself (see unlock-hold.js). »* En pratique, l'unlock-hold ne fonctionne que sur les nœuds — sur une arête verrouillée régulière, la seule porte de sortie était la suppression.
+- Côté **arêtes**, `toggleEdgeLock()` était **unidirectionnel** : appuyer sur le bouton verrouillait, mais ne déverrouillait jamais. Le commentaire le formalisait : _« Locking is a one-way UI action , once locked, the only way back is the long-press on the shape itself (see unlock-hold.js). »_ En pratique, l'unlock-hold ne fonctionne que sur les nœuds , sur une arête verrouillée régulière, la seule porte de sortie était la suppression.
 - Le bouton affichait toujours `🔒` (avec ou sans halo orange selon l'état), ce qui ne communiquait pas clairement l'action qu'il allait déclencher.
 - La logique de détection « toutes lockées » était dupliquée entre node-panel.js et edge-panel.js, avec des subtilités différentes pour les flèches libres (`anchor→anchor`).
 
@@ -53,6 +53,6 @@ Ce dernier cas permet à un utilisateur de sélectionner « tout » et de déver
 
 ### CONS
 
-- La sémantique « toutes lockées → déverrouiller » crée un mode mixte : si l'utilisateur sélectionne 5 nœuds dont 4 sont verrouillés, le bouton montre `🔒` (verrouiller tout). Acceptable : le bouton décrit *l'action*, pas l'état global.
+- La sémantique « toutes lockées → déverrouiller » crée un mode mixte : si l'utilisateur sélectionne 5 nœuds dont 4 sont verrouillés, le bouton montre `🔒` (verrouiller tout). Acceptable : le bouton décrit _l'action_, pas l'état global.
 - L'unlock-hold sur un nœud reste fonctionnel : il existe maintenant deux chemins pour déverrouiller un nœud (bouton + long-press). C'est intentionnel, le long-press sert au cas où on n'a pas le panneau ouvert.
 - L'ADR précédente (`2026_04_13_node_locking.md`) reste **valide** : ce changement l'étend, ne la supersede pas. Lecteur futur : lire les deux ensemble.

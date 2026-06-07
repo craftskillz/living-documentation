@@ -10,15 +10,15 @@
 
 Plusieurs améliorations UX indépendantes ont été regroupées dans cette session :
 
-1. **Bouton + unique** — Le drawer ne disposait que d'un seul bouton `+` pour créer des documents. La création de dossiers était imbriquée dans la modale New Document, peu visible et réservée au moment de la sauvegarde finale.
+1. **Bouton + unique** , Le drawer ne disposait que d'un seul bouton `+` pour créer des documents. La création de dossiers était imbriquée dans la modale New Document, peu visible et réservée au moment de la sauvegarde finale.
 
-2. **Dossiers vides invisibles** — Après création d'un dossier vide (via la modale New Document ou directement sur le filesystem), celui-ci n'apparaissait pas dans le drawer car le tree était construit uniquement à partir des documents existants.
+2. **Dossiers vides invisibles** , Après création d'un dossier vide (via la modale New Document ou directement sur le filesystem), celui-ci n'apparaissait pas dans le drawer car le tree était construit uniquement à partir des documents existants.
 
-3. **Pré-remplissage de New Document** — La modale New Document s'ouvrait toujours avec `General` et `/ (root)` par défaut, même lorsqu'un document dans un sous-dossier spécifique était ouvert.
+3. **Pré-remplissage de New Document** , La modale New Document s'ouvrait toujours avec `General` et `/ (root)` par défaut, même lorsqu'un document dans un sous-dossier spécifique était ouvert.
 
-4. **Header article** — Avec l'accumulation de boutons d'action (Marker, Pleine page, PDF, Copy link, Edit…), le titre `<h1>` était compressé et ne prenait pas toute la largeur disponible.
+4. **Header article** , Avec l'accumulation de boutons d'action (Marker, Pleine page, PDF, Copy link, Edit…), le titre `<h1>` était compressé et ne prenait pas toute la largeur disponible.
 
-5. **Icônes** — Les boutons utilisaient des SVG inline et des emojis, sans système cohérent. Font Awesome n'était pas encore intégré.
+5. **Icônes** , Les boutons utilisaient des SVG inline et des emojis, sans système cohérent. Font Awesome n'était pas encore intégré.
 
 ## Decision
 
@@ -30,8 +30,8 @@ Ajout de Font Awesome 6.7.2 dans le `<head>` via cdnjs, cohérent avec la strat�
 
 Le bouton `+` unique est remplacé par deux boutons SVG inline :
 
-- **+ dossier** (`openNewFolderModal()`) — icône dossier avec croix
-- **+ document** (`openNewDocModal()`) — icône page avec croix
+- **+ dossier** (`openNewFolderModal()`) , icône dossier avec croix
+- **+ document** (`openNewDocModal()`) , icône page avec croix
 
 ### 3. Modale New Folder dédiée
 
@@ -50,7 +50,7 @@ Nouveau endpoint dans `browse.ts` qui parcourt récursivement le dossier donné 
 
 ### 5. Dossiers vides dans la sidebar
 
-`loadDocuments()` fetche maintenant aussi `GET /api/browse/alldirs?path=<docsFolder>` et stocke le résultat dans `allFolderPaths`. `buildFolderTree` injecte ces chemins comme nœuds vides dans l'arbre avant le rendu — les dossiers vides apparaissent avec un compteur `0`.
+`loadDocuments()` fetche maintenant aussi `GET /api/browse/alldirs?path=<docsFolder>` et stocke le résultat dans `allFolderPaths`. `buildFolderTree` injecte ces chemins comme nœuds vides dans l'arbre avant le rendu , les dossiers vides apparaissent avec un compteur `0`.
 
 ### 6. Pré-remplissage de New Document
 
@@ -58,7 +58,7 @@ Nouveau endpoint dans `browse.ts` qui parcourt récursivement le dossier donné 
 
 ### 7. Layout header article
 
-Le conteneur `flex items-start justify-between flex-wrap` est remplacé par `flex items-start gap-4 flex-wrap` avec `shrink min-w-0` sur le bloc titre et `ml-auto` sur le bloc actions — le titre prend sa taille naturelle, les boutons sont poussés à droite et peuvent wrapper si l'espace manque.
+Le conteneur `flex items-start justify-between flex-wrap` est remplacé par `flex items-start gap-4 flex-wrap` avec `shrink min-w-0` sur le bloc titre et `ml-auto` sur le bloc actions , le titre prend sa taille naturelle, les boutons sont poussés à droite et peuvent wrapper si l'espace manque.
 
 ## Consequences
 
@@ -72,6 +72,6 @@ Le conteneur `flex items-start justify-between flex-wrap` est remplacé par `fle
 
 ### CONS
 
-- Un fetch supplémentaire (`/api/browse/alldirs`) à chaque `loadDocuments()`, dont un fetch config pour obtenir `docsFolder` — légèrement plus lent sur les grandes arborescences
-- `POST /api/browse/mkdir` est non restreint (pas de guard docsPath) — cohérent avec la philosophie local-only du tool mais à noter
+- Un fetch supplémentaire (`/api/browse/alldirs`) à chaque `loadDocuments()`, dont un fetch config pour obtenir `docsFolder` , légèrement plus lent sur les grandes arborescences
+- `POST /api/browse/mkdir` est non restreint (pas de guard docsPath) , cohérent avec la philosophie local-only du tool mais à noter
 - La dérivation du dossier depuis `currentDocId` suppose que l'encodage URL est cohérent entre le serveur et le client (ce qui est le cas avec `encodeURIComponent`)

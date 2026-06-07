@@ -1,4 +1,4 @@
-## Extra Files — inclure des fichiers extérieurs au dossier docs
+## Extra Files , inclure des fichiers extérieurs au dossier docs
 
 Les **Extra Files** permettent d'ajouter dans Living Documentation des fichiers Markdown qui se trouvent **en dehors** du dossier de documentation principal. Typiquement : `README.md`, `CLAUDE.md`, `CONTRIBUTING.md` à la racine du dépôt.
 
@@ -9,7 +9,7 @@ Ces fichiers apparaissent toujours dans la section **General**, avant les docume
 ### Ajouter un Extra File via le panneau Admin
 
 1. Ouvrez **⚙ Admin**
-2. Descendez jusqu'à la section **General — Extra Files**
+2. Descendez jusqu'à la section **General , Extra Files**
 3. Utilisez le **navigateur de fichiers intégré** pour parcourir votre système de fichiers
 4. Naviguez jusqu'au fichier `.md` souhaité et cliquez **`Add`**
 5. Le fichier apparaît dans la liste des Extra Files
@@ -29,7 +29,7 @@ Dans la liste des Extra Files du panneau Admin, vous pouvez **réordonner** les 
 
 Cliquez sur l'icône **🗑** à droite de l'entrée dans la liste, puis **`Save`**.
 
-> Cela retire uniquement le fichier de la liste des Extra Files — le fichier sur disque n'est **pas supprimé**.
+> Cela retire uniquement le fichier de la liste des Extra Files , le fichier sur disque n'est **pas supprimé**.
 
 ---
 
@@ -57,12 +57,11 @@ Les Extra Files sont stockés dans `.living-doc.json` sous la clé `extraFiles`.
 
 ```json
 {
-  "extraFiles": [
-    "/chemin/absolu/vers/mon_fichier.md"
-  ]
+  "extraFiles": ["/chemin/absolu/vers/mon_fichier.md"]
 }
 ```
 
 **Contraintes :**
+
 - Les chemins doivent être **absolus** et se terminer par `.md`
 - Les fichiers doivent exister sur le disque au moment du chargement

@@ -28,11 +28,11 @@ Après **350 ms** sans frappe, une recherche côté serveur est déclenchée aut
 
 ### Cas d'usage
 
-| Vous cherchez…                          | Approche recommandée          |
-|-----------------------------------------|-------------------------------|
-| Un document dont vous connaissez le nom | Filtre instantané (taper le titre) |
+| Vous cherchez…                               | Approche recommandée                    |
+| -------------------------------------------- | --------------------------------------- |
+| Un document dont vous connaissez le nom      | Filtre instantané (taper le titre)      |
 | Un concept mentionné dans n'importe quel doc | Recherche plein texte (attendre 350 ms) |
-| Toutes les occurrences d'un terme       | Recherche plein texte         |
+| Toutes les occurrences d'un terme            | Recherche plein texte                   |
 
 ---
 
@@ -62,4 +62,4 @@ Les titres `##`, `###`, etc. génèrent automatiquement des **ancres navigables*
 [Voir la section Résultats](#résultats)
 ```
 
-Le scroll est déclenché après le rendu asynchrone du document — le lien fonctionne même si la page vient d'être ouverte.
+Le scroll est déclenché après le rendu asynchrone du document , le lien fonctionne même si la page vient d'être ouverte.

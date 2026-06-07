@@ -1,23 +1,23 @@
 ---
 **date:** 2026-04-28
 **status:** Draft
-**description:** Support de présentation conférence — démo live de Living Documentation en mode IA-Assisted, scénarios A (création d'ADR) et B (audit de dérive) avec un agent codant connecté au MCP
+**description:** Support de présentation conférence , démo live de Living Documentation en mode IA-Assisted, scénarios A (création d'ADR) et B (audit de dérive) avec un agent codant connecté au MCP
 **tags:** conference, talk, demo, mcp, scenario-a, scenario-b, create-adr, audit-doc-drift, live-coding, claude-code, nextjs, shadcn, drift-detection, presentation
 ---
 
-# Living Documentation — co-maintenir la doc avec un agent codant
+# Living Documentation , co-maintenir la doc avec un agent codant
 
 > Support de présentation pour une conférence (~15 min de démo + 5 min de Q&A). Le but : montrer **en live** comment la documentation cesse d'être une dette quand on la confie à un agent codant connecté au bon MCP.
 
 ## Le pitch en 3 lignes
 
 1. **Le constat** : sur tout projet qui vit, la doc dérive plus vite qu'on ne la met à jour. Au bout d'un cycle, on ne lui fait plus confiance.
-2. **La proposition** : un agent codant qui **co-maintient** la doc — un ADR par feature à la création, un audit de dérive à la demande.
+2. **La proposition** : un agent codant qui **co-maintient** la doc , un ADR par feature à la création, un audit de dérive à la demande.
 3. **Le levier technique** : un serveur MCP qui sérialise le contrat entre le LLM et la base documentaire, avec des garde-fous _enforced côté serveur_ qui empêchent l'agent d'inventer des ADR fictifs ou des diagrammes hallucinés.
 
 ---
 
-## Le problème — la doc, dette ou actif ?
+## Le problème , la doc, dette ou actif ?
 
 Trois forces tirent les docs vers le bas sur tout projet qui dure :
 
@@ -29,13 +29,13 @@ L'effet final : la doc devient **passive**. On la consulte par habitude, on lui 
 
 ---
 
-## La proposition — deux scénarios
+## La proposition , deux scénarios
 
-### Scénario A — un ADR par feature
+### Scénario A , un ADR par feature
 
 À la fin de chaque feature, l'agent invoque le prompt MCP `create-adr` qui orchestre :
 
-1. **Recherche d'un ADR à supersede** — `list_documents` puis lecture des frontmatter (`description`, `tags`) pour repérer une décision rendue obsolète. Si trouvée → `update_document` pour basculer son `**status:**` à `SuperSeeded` (jamais delete — on garde la traçabilité).
+1. **Recherche d'un ADR à supersede** , `list_documents` puis lecture des frontmatter (`description`, `tags`) pour repérer une décision rendue obsolète. Si trouvée → `update_document` pour basculer son `**status:**` à `SuperSeeded` (jamais delete , on garde la traçabilité).
 2. **Écriture du nouvel ADR** avec un frontmatter normalisé qui rend les recherches futures triviales :
 
 ```
@@ -47,38 +47,38 @@ L'effet final : la doc devient **passive**. On la consulte par habitude, on lui 
 ---
 ```
 
-3. **Liaison metadata** — `add_metadata` sur **chaque fichier source** matériellement modifié, avec exclusion explicite des god files (`package.json`, `tsconfig.json`, barrels, codegen). Le SHA-256 stocké est ce qui permettra l'audit drift plus tard.
+3. **Liaison metadata** , `add_metadata` sur **chaque fichier source** matériellement modifié, avec exclusion explicite des god files (`package.json`, `tsconfig.json`, barrels, codegen). Le SHA-256 stocké est ce qui permettra l'audit drift plus tard.
 
 > Le `**status: To be validated**` à la création est volontaire : l'agent ne **promeut jamais** un ADR à `Accepted`. C'est l'humain qui valide.
 
-### Scénario B — auditer la dérive
+### Scénario B , auditer la dérive
 
 Sur invocation de l'utilisateur (_« audite la doc »_ / _« vérifie la fiabilité de la doc »_), l'agent invoque le prompt MCP `audit-doc-drift` :
 
-1. `list_documents_below_accuracy` — liste les ADR dont la fiabilité < 80 % (fichier source modifié vs hash stocké).
+1. `list_documents_below_accuracy` , liste les ADR dont la fiabilité < 80 % (fichier source modifié vs hash stocké).
 2. Pour chaque doc dérivé : `get_accuracy` + `read_document` + `read_source_file` sur les fichiers `modified`.
 3. **Décision** :
 
 | Outcome                         | Diagnostic                                                 | Action                                                        |
 | ------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------- |
-| **A** — ADR toujours correct    | Refactor cosmétique (rename, formatting, helpers internes) | `refresh_metadata` — re-baseline                              |
-| **B** — ADR out of sync         | Changement sémantique du comportement décrit               | Réécrit le doc via `update_document`, puis `refresh_metadata` |
-| **C** — Fichier source manquant | Suppression ou rename                                      | Escaladé à l'humain (l'agent ne décide pas seul du nettoyage) |
+| **A** , ADR toujours correct    | Refactor cosmétique (rename, formatting, helpers internes) | `refresh_metadata` , re-baseline                              |
+| **B** , ADR out of sync         | Changement sémantique du comportement décrit               | Réécrit le doc via `update_document`, puis `refresh_metadata` |
+| **C** , Fichier source manquant | Suppression ou rename                                      | Escaladé à l'humain (l'agent ne décide pas seul du nettoyage) |
 
-Les changements **structurels** (la décision elle-même est remise en cause) sont escaladés explicitement — ils déclenchent un nouveau Scénario A, pas une modification silencieuse.
+Les changements **structurels** (la décision elle-même est remise en cause) sont escaladés explicitement , ils déclenchent un nouveau Scénario A, pas une modification silencieuse.
 
 ---
 
 ## Architecture en un coup d'œil
 
-[![Diagramme context — Living Documentation](/images/living_documentation_context_demo_conf.png)](/diagram?id=d1777363627693)
+[![Diagramme context , Living Documentation](/images/living_documentation_context_demo_conf.png)](/diagram?id=d1777363627693)
 
 Le diagramme contient quatre nœuds : _Coding agent_ (acteur), _Developer / Reader_ (acteur), _Living Documentation_ (système central) et _Local filesystem_ (datastore). Les edges décrivent les trois interactions clés : invocation MCP par l'agent, navigation/édition par le développeur, et lecture/écriture sur le filesystem.
 
 Le serveur MCP expose **16 tools** et **8 prompts**. Les deux qu'on déclenche en démo :
 
-- **`create-adr`** — auto-invoqué sur _« feature terminée »_
-- **`audit-doc-drift`** — auto-invoqué sur _« audite la doc »_
+- **`create-adr`** , auto-invoqué sur _« feature terminée »_
+- **`audit-doc-drift`** , auto-invoqué sur _« audite la doc »_
 
 ---
 
@@ -89,27 +89,27 @@ Le serveur MCP expose **16 tools** et **8 prompts**. Les deux qu'on déclenche e
 | Source de vérité       | Le wiki                              | Le code, vérifié par hash                                            |
 | Création               | Humain post-feature                  | Agent pendant la feature                                             |
 | Détection de dérive    | Aucune (on espère)                   | Mécanique (SHA-256, jauge visuelle)                                  |
-| Diagrammes             | À jour quand quelqu'un s'en souvient | Garde-fous serveur — impossible d'inventer un acteur absent des docs |
-| Vendor lock-in         | Total                                | Zéro — `.md` sur disque, git-friendly                                |
+| Diagrammes             | À jour quand quelqu'un s'en souvient | Garde-fous serveur , impossible d'inventer un acteur absent des docs |
+| Vendor lock-in         | Total                                | Zéro , `.md` sur disque, git-friendly                                |
 | Onboarding nouveau dev | _« Lis le wiki »_                    | _« Lance `npx living-ai-documentation .`, puis branche ton agent »_  |
 
 ---
 
-## Plan de démo — 15 min
+## Plan de démo , 15 min
 
-### Phase 1 — Setup (2 min)
+### Phase 1 , Setup (2 min)
 
 - Montrer le projet `mon-test` vide.
 - Lancer `npx living-ai-documentation ./documentation --port 4321` dans un terminal.
 - Brancher Claude Code sur le MCP : `claude mcp add --transport http living-ai-documentation http://localhost:4321/mcp`.
 - Ouvrir `http://localhost:4321` côté grand écran : sidebar vide, message _« no docs yet »_.
 
-### Phase 2 — Scénario A (5 min)
+### Phase 2 , Scénario A (5 min)
 
 Le prompt à coller dans Claude Code (à préparer sur slide pour copy-paste live) :
 
 ```
-# Pre-flight — MCP check
+# Pre-flight , MCP check
 
 Le serveur MCP `living-ai-documentation` doit être branché et accessible.
 Avant de coder quoi que ce soit :
@@ -123,14 +123,14 @@ Avant de coder quoi que ce soit :
 2. Vérifie que les tools suivants sont bien dans ton inventaire MCP :
    `create_document`, `update_document`, `add_metadata`,
    `list_documents_below_accuracy`, `refresh_metadata`,
-   `read_source_file`. Si l'un manque, le serveur n'est pas à jour —
+   `read_source_file`. Si l'un manque, le serveur n'est pas à jour ,
    stoppe et préviens-moi.
 
 3. Appelle `mcp__living-documentation__get_server_guide` pour charger
    en contexte le workflow officiel (création d'ADR, conventions
    Markdown, garde-fous diagrammes). Ce guide est ta source de vérité
    pour tout ce qui suit, *y compris si ton client n'expose pas les
-   prompts MCP au modèle* (cas fréquent — dans ce cas tu orchestres
+   prompts MCP au modèle* (cas fréquent , dans ce cas tu orchestres
    le workflow toi-même en appelant les tools un par un, comme décrit
    dans le guide).
 
@@ -180,21 +180,21 @@ Polish:
 Make sure the result is immediately playable by opening the HTML file in a browser.
 
 
-**IMPORTANT** : A chaque fois qu'une partie est terminée (feature), dis "feature terminée" — je m'attends à ce que tu déclenches le prompt MCP `create-adr` du serveur `living-ai-documentation`,
+**IMPORTANT** : A chaque fois qu'une partie est terminée (feature), dis "feature terminée" , je m'attends à ce que tu déclenches le prompt MCP `create-adr` du serveur `living-ai-documentation`,
 qui doit appeler `create_document` puis `add_metadata` :
 
 - `create_document` avec :
   - `folder: "adrs"`
   - `category: "FRONTEND"` (ou "ARCHITECTURE" si tu juges que la décision
     porte sur la structure du projet plus que sur la feature UI)
-  - `content` : frontmatter complet — date du jour, `status: To be validated`,
+  - `content` : frontmatter complet , date du jour, `status: To be validated`,
     description factuelle d'une phrase, ≥5 tags (incluant nextjs, shadcn,
     recharts, dashboard, app-router, et les noms de symboles pertinents) +
     corps Contexte / Décision / Conséquences.
 - `add_metadata` sur CHAQUE fichier source qui porte la feature (page,
   composant Card consommateur, mock-data).
 - PAS sur `package.json`, `tailwind.config.ts`, `tsconfig.json`,
-  `components.json`, ni les barrels shadcn — ce sont des god files.
+  `components.json`, ni les barrels shadcn , ce sont des god files.
 
 # Règle dure
 
@@ -202,7 +202,7 @@ Tu n'écris JAMAIS un `.md` avec ton outil Write, Edit, ou via shell. Toute
 création / modification de doc passe **exclusivement** par les tools MCP
 `create_document` / `update_document` du serveur `living-ai-documentation`.
 Si à un moment ces tools deviennent inaccessibles, arrête-toi et signale-le
-— ne fallback pas sur Write.
+, ne fallback pas sur Write.
 ```
 
 Pendant que l'agent travaille, ce qu'il faut pointer à l'audience :
@@ -212,7 +212,7 @@ Pendant que l'agent travaille, ce qu'il faut pointer à l'audience :
 - **Montrer en live** : appel à `create_document` → frontmatter conforme → `add_metadata` sur les bons fichiers, **pas** sur les god files (insister visuellement).
 - Refresh du viewer (`Cmd+R`) : nouvelle entrée dans la sidebar, jauge de fiabilité à **100 %** (vert plein).
 
-### Phase 3 — Drift volontaire + Scénario B (5 min)
+### Phase 3 , Drift volontaire + Scénario B (5 min)
 
 - Modifier _à la main_ un composant dans le code (ajouter un tooltip Recharts + axe Y formaté en `$`).
 - Refresh du viewer : la jauge tombe à ~50 % (orange).
@@ -220,13 +220,13 @@ Pendant que l'agent travaille, ce qu'il faut pointer à l'audience :
 - **Montrer en live** : `audit-doc-drift` → l'agent lit le code modifié, conclut _« modification sémantique »_, réécrit l'ADR via `update_document`, re-baseline.
 - Jauge revient à **100 %**.
 
-### Phase 4 — Diagrammes garde-fous (2 min)
+### Phase 4 , Diagrammes garde-fous (2 min)
 
 - Demander _« fais-moi un container diagram »_ → l'agent refuse / propose un Context d'abord (règle de progression C4).
 - Demander _« fais-moi un context diagram »_ → l'agent le génère **uniquement** à partir des ADR existants, pas en inventant.
 - Tenter manuellement de créer un container diagram via le MCP sans `userRequestedExplicitly: true` → erreur explicite côté serveur.
 
-### Phase 5 — Q&A (1 min de buffer)
+### Phase 5 , Q&A (1 min de buffer)
 
 ---
 
@@ -264,7 +264,7 @@ Le MCP **sérialise le contrat** entre le LLM et la base documentaire : un seul 
 
 L'audit drift d'un projet de 50 ADR avec 2-3 fichiers source attachés en moyenne consomme typiquement **< 50k tokens d'input** par cycle complet. Soit quelques cents par audit.
 
-C'est conçu pour : `list_documents_below_accuracy` retourne max 10 docs par batch, chaque `read_source_file` est borné à 512 KB, et l'agent décide quels fichiers lire — pas un balayage exhaustif. Les `tags` du frontmatter permettent un filtrage cheap avant lecture du corps.
+C'est conçu pour : `list_documents_below_accuracy` retourne max 10 docs par batch, chaque `read_source_file` est borné à 512 KB, et l'agent décide quels fichiers lire , pas un balayage exhaustif. Les `tags` du frontmatter permettent un filtrage cheap avant lecture du corps.
 
 </details>
 
@@ -284,7 +284,7 @@ Parce que **l'agent ne décide pas seul** des décisions architecturales. Il ré
 
 Concrètement, le statut n'a _aucun effet_ côté LLM (il traite `To be validated` et `Accepted` exactement pareil). C'est purement un signal pour l'humain : _« voici une décision à relire. »_
 
-Seul `SuperSeeded` est filtré côté MCP — les ADR superseded ne remontent jamais dans les recherches contextuelles, ce qui évite que l'agent ne se réfère à des décisions abandonnées.
+Seul `SuperSeeded` est filtré côté MCP , les ADR superseded ne remontent jamais dans les recherches contextuelles, ce qui évite que l'agent ne se réfère à des décisions abandonnées.
 
 </details>
 
@@ -294,7 +294,7 @@ Seul `SuperSeeded` est filtré côté MCP — les ADR superseded ne remontent ja
 Oui, et c'est un cas d'usage prévu. Le démarrage typique sur un projet existant :
 
 1. Pointer `living-ai-documentation` sur le dossier qui contient déjà les ADR.
-2. Lancer un audit `audit-doc-drift` à blanc — il flaggera tout ADR qui n'a aucune `metadata` attachée (donc qui échappe à l'audit drift) et proposera de les binder un par un.
+2. Lancer un audit `audit-doc-drift` à blanc , il flaggera tout ADR qui n'a aucune `metadata` attachée (donc qui échappe à l'audit drift) et proposera de les binder un par un.
 3. Pour chaque ADR existant : l'agent lit le code mentionné dans le corps de l'ADR, propose les `add_metadata` pertinents, l'humain valide.
 
 Une fois cette migration faite, le projet entre dans le cycle normal : nouveaux ADR via Scénario A, audit régulier via Scénario B.
@@ -318,4 +318,4 @@ Une fois cette migration faite, le projet entre dans le cycle normal : nouveaux 
 
 > ⚠️ Avant la démo : **redémarrer le serveur living-ai-documentation** pour partir d'un état propre, et **vider le cache Claude Code** (relancer la session) pour montrer une découverte du MCP en live.
 
-> 💡 Si Internet est instable : préparer un fallback offline avec un projet `mon-test` déjà bootstrappé (Next.js installé, dépendances cachées) — la phase 1 risque le `npm install` qui peut prendre 90 s en wifi conférence.
+> 💡 Si Internet est instable : préparer un fallback offline avec un projet `mon-test` déjà bootstrappé (Next.js installé, dépendances cachées) , la phase 1 risque le `npm install` qui peut prendre 90 s en wifi conférence.

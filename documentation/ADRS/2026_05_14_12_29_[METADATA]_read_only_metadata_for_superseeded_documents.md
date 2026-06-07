@@ -1,7 +1,7 @@
 ---
 **date:** 2026-05-14
 **status:** Accepted
-**description:** Les trois mutations de métadonnées (POST add, DELETE remove, POST refresh) — exposées par les routes HTTP `/api/metadata/:docId` et les outils MCP `add_metadata`, `remove_metadata`, `refresh_metadata` — rejettent via `assertNotSuperSeeded` quand le frontmatter contient un statut `SuperSeeded` sous forme `**status:**` ou `status:`, et la popup métadonnées cache les contrôles mutatifs avec un bandeau amber « Lecture seule ».
+**description:** Les trois mutations de métadonnées (POST add, DELETE remove, POST refresh) , exposées par les routes HTTP `/api/metadata/:docId` et les outils MCP `add_metadata`, `remove_metadata`, `refresh_metadata` , rejettent via `assertNotSuperSeeded` quand le frontmatter contient un statut `SuperSeeded` sous forme `**status:**` ou `status:`, et la popup métadonnées cache les contrôles mutatifs avec un bandeau amber « Lecture seule ».
 **tags:** metadata, superseded, read-only, lifecycle, adr-history, frontmatter, status, yaml, viewer, routes, mcp-tools, guard
 ---
 
@@ -9,7 +9,7 @@
 
 ## Contexte
 
-Un ADR `SuperSeeded` représente une décision **gelée** — remplacée par une décision ultérieure, mais conservée pour la traçabilité historique. Si l'on continue à mettre à jour ses métadonnées source (refresh des hashes, ajout/suppression de bindings), on falsifie l'histoire : l'ADR « ancien » se met à pointer vers le code actuel qu'il ne décrivait plus depuis longtemps. La jauge d'accuracy d'un ADR SuperSeeded n'a aucune valeur informative — la décision a déjà été remplacée — donc tout le mécanisme de drift detection appliqué à ce document est trompeur.
+Un ADR `SuperSeeded` représente une décision **gelée** , remplacée par une décision ultérieure, mais conservée pour la traçabilité historique. Si l'on continue à mettre à jour ses métadonnées source (refresh des hashes, ajout/suppression de bindings), on falsifie l'histoire : l'ADR « ancien » se met à pointer vers le code actuel qu'il ne décrivait plus depuis longtemps. La jauge d'accuracy d'un ADR SuperSeeded n'a aucune valeur informative , la décision a déjà été remplacée , donc tout le mécanisme de drift detection appliqué à ce document est trompeur.
 
 Le risque concret : un humain (ou un agent IA) qui veut « nettoyer » la liste `list_adrs_below_accuracy` pourrait être tenté de refresh un ADR SuperSeeded pour faire taire l'alerte. Ce serait précisément l'inverse du comportement attendu.
 
@@ -23,8 +23,8 @@ Les documents du projet peuvent contenir le statut sous deux formes : la convent
 
 [src/lib/status.ts](src/lib/status.ts) expose :
 
-- `parseDocStatus(content)` — extrait la valeur du champ `status` dans le bloc fencé `---`, que la ligne soit écrite `**status:** valeur` ou `status: valeur`.
-- `readDocStatus(docsPath, decodedDocId, extraFiles)` — résout l'id de document vers son chemin `.md` (en respectant `extraFiles` et la garde anti path-traversal), lit le fichier et retourne le statut.
+- `parseDocStatus(content)` , extrait la valeur du champ `status` dans le bloc fencé `---`, que la ligne soit écrite `**status:** valeur` ou `status: valeur`.
+- `readDocStatus(docsPath, decodedDocId, extraFiles)` , résout l'id de document vers son chemin `.md` (en respectant `extraFiles` et la garde anti path-traversal), lit le fichier et retourne le statut.
 - constante `SUPERSEEDED_STATUS = "SuperSeeded"`.
 - classe `DocumentSuperSeededError` (avec `code = "DOCUMENT_SUPERSEEDED"`) pour que les callers distinguent une erreur de cycle de vie d'une erreur générique.
 - `assertNotSuperSeeded(docsPath, decodedDocId)` qui lit la config (pour `extraFiles`), appelle `readDocStatus`, et `throw` la `DocumentSuperSeededError` si le statut est SuperSeeded. Pas de lecture si le doc n'a pas de frontmatter ou pas de statut → comportement neutre.
@@ -39,7 +39,7 @@ Le guard vit dans `lib/` parce que le cycle de vie d'un document (statut frontma
 - `DELETE /api/metadata/:docId` (suppression d'un binding) ;
 - `POST /api/metadata/:docId/refresh` (re-baseline des hashes).
 
-La route `GET /api/metadata/:docId` reste ouverte — la lecture est toujours autorisée.
+La route `GET /api/metadata/:docId` reste ouverte , la lecture est toujours autorisée.
 
 ### 3. Guard appliqué côté MCP
 
@@ -59,7 +59,7 @@ Les tools MCP propagent les `throw` ; le wrapper de `src/mcp/server.ts` les conv
 - le bouton `#metadata-add-btn` (nouveau id sur le bouton existant) ;
 - chaque icône corbeille `.metadata-row-remove` générée dynamiquement.
 
-Le statut est lu côté client via le helper déjà exposé `window.getDocStatus(currentDocContent)` — pas de nouvel appel réseau. Re-appel après chaque re-rendu de la liste pour que les rows générées après un fetch restent cohérentes. Ce helper accepte les mêmes deux formes de statut que `src/lib/status.ts`.
+Le statut est lu côté client via le helper déjà exposé `window.getDocStatus(currentDocContent)` , pas de nouvel appel réseau. Re-appel après chaque re-rendu de la liste pour que les rows générées après un fetch restent cohérentes. Ce helper accepte les mêmes deux formes de statut que `src/lib/status.ts`.
 
 ### 5. Bandeau d'information
 
@@ -88,6 +88,6 @@ Ce qu'il **ne peut plus** faire est cantonné aux 3 mutations. La défense en pr
 
 ### CONS
 
-- Le statut est lu **à chaque** requête mutative — pas de cache. Cost négligeable (fichier déjà sur disque, lecture synchrone) mais à surveiller si on multiplie les guards par statut.
-- `getDocStatus` côté frontend dépend de `validate.js` (helper exposé sur `window`). Si `validate.js` n'est pas chargé, `applyMetadataReadOnlyMode` part en mode "non-SuperSeeded" — c'est-à-dire qu'elle laisse tout visible. Acceptable : le backend HTTP **et** MCP rejettent quand même la mutation. À noter dans une rule si on veut formaliser la dépendance.
-- Le test E2E qui ferme la modale utilise `page.locator('button:has(.fa-xmark)').first()` (heuristique sur l'icône de fermeture) — fragile si une autre modale avec le même bouton de fermeture est dans le DOM. À remplacer par un id dédié au bouton de close de la modale métadonnées si on touche au markup.
+- Le statut est lu **à chaque** requête mutative , pas de cache. Cost négligeable (fichier déjà sur disque, lecture synchrone) mais à surveiller si on multiplie les guards par statut.
+- `getDocStatus` côté frontend dépend de `validate.js` (helper exposé sur `window`). Si `validate.js` n'est pas chargé, `applyMetadataReadOnlyMode` part en mode "non-SuperSeeded" , c'est-à-dire qu'elle laisse tout visible. Acceptable : le backend HTTP **et** MCP rejettent quand même la mutation. À noter dans une rule si on veut formaliser la dépendance.
+- Le test E2E qui ferme la modale utilise `page.locator('button:has(.fa-xmark)').first()` (heuristique sur l'icône de fermeture) , fragile si une autre modale avec le même bouton de fermeture est dans le DOM. À remplacer par un id dédié au bouton de close de la modale métadonnées si on touche au markup.

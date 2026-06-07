@@ -1,6 +1,6 @@
 ---
 **date:** 2026-01-01
-**description:** Exemple de roadmap de tickets — backlog ordonné pour livrer progressivement le produit, avec un critère d'acceptation visible par ticket. Cette roadmap est écrite par l'utilisateur, elle est fournie à titre d'exemple.
+**description:** Exemple de roadmap de tickets , backlog ordonné pour livrer progressivement le produit, avec un critère d'acceptation visible par ticket. Cette roadmap est écrite par l'utilisateur, elle est fournie à titre d'exemple.
 **tags:** roadmap, tickets, mvp, planning
 ---
 
@@ -10,8 +10,8 @@
 
 ## Convention de cochage
 
-- `[ ]` ou `[]` — ticket non démarré ;
-- `[x] ~~Ticket XX - ...~~` — ticket terminé, barré pour la lisibilité.
+- `[ ]` ou `[]` , ticket non démarré ;
+- `[x] ~~Ticket XX - ...~~` , ticket terminé, barré pour la lisibilité.
 
 ## Ordre recommandé
 

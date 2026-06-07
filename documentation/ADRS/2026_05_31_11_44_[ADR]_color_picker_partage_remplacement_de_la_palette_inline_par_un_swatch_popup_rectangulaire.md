@@ -21,11 +21,11 @@ La barre de propriétés des formes affichait une longue rangée de 15+ cercles 
 Un module `src/frontend/diagram/color-picker.js` expose :
 
 ```js
-openColorPickerPopup(trigger, entries, selectedValue, onSelect, opts)
-closeAllColorPickerPopups()
+openColorPickerPopup(trigger, entries, selectedValue, onSelect, opts);
+closeAllColorPickerPopups();
 ```
 
-- `entries` : tableau `{ value, bg, border, label }` — agnostique du domaine (fonctionne pour les couleurs de nœuds comme pour les couleurs d'arêtes).
+- `entries` : tableau `{ value, bg, border, label }` , agnostique du domaine (fonctionne pour les couleurs de nœuds comme pour les couleurs d'arêtes).
 - La popup est positionnée sous le `trigger`, décalée si proche du bord droit.
 - `z-index: 2000` pour passer au-dessus de tous les panneaux flottants.
 - Un seul `click` externe ferme la popup (listener `capture` auto-détaché).
@@ -33,7 +33,7 @@ closeAllColorPickerPopups()
 ### Node panel
 
 - `nodePaletteContainer` (div avec boutons `[data-color]`) remplacé par un unique `<button id="nodeColorSwatch">`.
-- `syncNodeColorSwatch()` met à jour la couleur du swatch à chaque `showNodePanel()` en lisant `st.nodeColorOverrides[colorKey] || NODE_COLORS[colorKey]` — les couleurs affichées dans la popup correspondent exactement au rendu réel des formes.
+- `syncNodeColorSwatch()` met à jour la couleur du swatch à chaque `showNodePanel()` en lisant `st.nodeColorOverrides[colorKey] || NODE_COLORS[colorKey]` , les couleurs affichées dans la popup correspondent exactement au rendu réel des formes.
 - `buildNodeColorEntries()` est appelé dynamiquement à l'ouverture (pas au chargement du module) pour prendre en compte les overrides appliqués au boot.
 - Le handler `[data-color]` dans `main.js` est supprimé.
 
@@ -53,5 +53,5 @@ La modal de configuration des defaults utilise le même `color-picker.js` pour l
 - La toolbar node panel est nettement plus compacte.
 - Les couleurs dans la popup sont fidèles au rendu (override-aware).
 - Un seul module à maintenir pour la logique popup.
-- `diagram.html` ne construit plus les boutons palette dynamiquement — le boot est simplifié.
+- `diagram.html` ne construit plus les boutons palette dynamiquement , le boot est simplifié.
 - Les imports `NODE_COLORS`, `DEFAULT_NODE_PALETTE`, `DEFAULT_EDGE_PALETTE` sont retirés du script inline de `diagram.html`.

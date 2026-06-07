@@ -36,7 +36,7 @@ console.log("Hello World!");
 
 > Existing quote
 >
-> — Existing author
+> , Existing author
 
 - First bullet
   continuation for first bullet
@@ -51,7 +51,7 @@ console.log("Hello World!");
    1. Nested numbered
    - Nested bullet under numbered
 
-3. Chercher le groupe lié à l'app Amplify — il est nommé selon le pattern :
+3. Chercher le groupe lié à l'app Amplify , il est nommé selon le pattern :
    ```yaml
    /aws/amplify/<app-id>
    ```

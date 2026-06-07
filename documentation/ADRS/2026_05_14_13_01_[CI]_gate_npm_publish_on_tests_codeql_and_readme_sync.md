@@ -22,10 +22,10 @@ Le job `publish` est rapide (~30s) et termine **avant** la fin de Playwright (~3
 
 `.github/workflows/publish.yml` est restructuré en 4 jobs au sein du même workflow :
 
-1. `test` — inline les étapes de `e2e.yml` (build + `npx playwright test`, avec cache navigateur et upload du report en cas d'échec).
-2. `codeql` — inline `codeql.yml` (init `javascript-typescript` + analyse `security-extended`).
-3. `readme-sync` — inline `readme-sync.yml` (compare HEAD~1 → HEAD).
-4. `publish` — `needs: [test, codeql, readme-sync]`. C'est la seule étape qui appelle `npm publish --provenance`.
+1. `test` , inline les étapes de `e2e.yml` (build + `npx playwright test`, avec cache navigateur et upload du report en cas d'échec).
+2. `codeql` , inline `codeql.yml` (init `javascript-typescript` + analyse `security-extended`).
+3. `readme-sync` , inline `readme-sync.yml` (compare HEAD~1 → HEAD).
+4. `publish` , `needs: [test, codeql, readme-sync]`. C'est la seule étape qui appelle `npm publish --provenance`.
 
 Sur un tag push :
 
@@ -47,7 +47,7 @@ Pour un projet avec un seul consommateur (le publish) et trois workflows à vér
 
 ### Pourquoi pas reusable workflows
 
-Extraire `_test.yml`, `_codeql.yml`, `_readme-sync.yml` en `workflow_call` éviterait la duplication entre les workflows standalone et `publish.yml`. Tradeoff : 3 fichiers supplémentaires, un niveau d'indirection pour comprendre ce qui tourne réellement. À reconsidérer si la maintenance des deux endroits devient pénible — pour l'instant les workflows changent rarement et la duplication est lisible.
+Extraire `_test.yml`, `_codeql.yml`, `_readme-sync.yml` en `workflow_call` éviterait la duplication entre les workflows standalone et `publish.yml`. Tradeoff : 3 fichiers supplémentaires, un niveau d'indirection pour comprendre ce qui tourne réellement. À reconsidérer si la maintenance des deux endroits devient pénible , pour l'instant les workflows changent rarement et la duplication est lisible.
 
 ### Pourquoi zizmor n'est pas gaté
 
@@ -59,15 +59,15 @@ Extraire `_test.yml`, `_codeql.yml`, `_readme-sync.yml` en `workflow_call` évit
 
 - Aucune release npm ne peut être publiée si un test, CodeQL ou la sync README échouent. Cohérent avec l'attente d'un projet open source publié.
 - Les comments inline des workflows source sont préservés dans `publish.yml`, donc une seule lecture suffit pour comprendre toute la pipeline de release.
-- Pas de modification des 4 autres workflows — le rôle de gate sur PR et le scan hebdo CodeQL restent inchangés.
+- Pas de modification des 4 autres workflows , le rôle de gate sur PR et le scan hebdo CodeQL restent inchangés.
 - La duplication est confinée à un seul fichier (`publish.yml`) ; toute évolution du test ou de la sécurité reste localisée si le standalone et le publish doivent rester alignés.
 
 ### CONS
 
-- Les checks tournent deux fois sur un tag push (une fois via le standalone sur main, une fois via `publish.yml`) — coût ~10 min de runner doublé, négligeable en pratique mais à surveiller si le projet grossit.
-- Duplication de ~140 lignes entre `publish.yml` et les 3 workflows standalone. Tout changement de procédure de test/scan/check doit être appliqué aux deux endroits — un drift potentiel à détecter manuellement.
+- Les checks tournent deux fois sur un tag push (une fois via le standalone sur main, une fois via `publish.yml`) , coût ~10 min de runner doublé, négligeable en pratique mais à surveiller si le projet grossit.
+- Duplication de ~140 lignes entre `publish.yml` et les 3 workflows standalone. Tout changement de procédure de test/scan/check doit être appliqué aux deux endroits , un drift potentiel à détecter manuellement.
 - Le check README sync utilise `HEAD~1` sur tag push (le commit précédent sur main, le tag pointant sur le bump). Fonctionne tant que `just publish` ne crée qu'un commit avant le tag ; si la procédure évolue (par exemple un changelog auto-généré dans un commit supplémentaire), il faudra ajuster.
-- Pas de couverture pour le cas où l'humain pousse un tag manuellement sans passer par `just publish` (par exemple sur un commit qui n'a jamais touché main). Acceptable car la pratique sur ce projet passe par la commande dédiée — à formaliser dans `PROJECT-USEFUL-COMMANDS.md` si nécessaire.
+- Pas de couverture pour le cas où l'humain pousse un tag manuellement sans passer par `just publish` (par exemple sur un commit qui n'a jamais touché main). Acceptable car la pratique sur ce projet passe par la commande dédiée , à formaliser dans `PROJECT-USEFUL-COMMANDS.md` si nécessaire.
 
 ### Action complémentaire recommandée hors scope
 

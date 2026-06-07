@@ -6,6 +6,7 @@ import { parseFilename, DocMetadata } from "../lib/parser";
 import { readConfig } from "../lib/config";
 import { readMetadataStore } from "../lib/metadata";
 import { parseDocStatus } from "../lib/status";
+import { preprocessCompareBlocks } from "../lib/compareBlock";
 
 const METADATA_SEARCH_PREFIX = "metadata://";
 
@@ -312,7 +313,7 @@ export function documentsRouter(docsPath: string): Router {
       try {
         const content = fs.readFileSync(filePath, "utf-8");
         const meta = parseFilename(path.basename(filePath), filenamePattern);
-        const html = decorateFileLinks(marked.parse(stripFrontmatter(content), markedOpts) as string);
+        const html = decorateFileLinks(marked.parse(preprocessCompareBlocks(stripFrontmatter(content), markedOpts), markedOpts) as string);
         res.json({
           ...meta,
           id: req.params.id,
@@ -346,7 +347,7 @@ export function documentsRouter(docsPath: string): Router {
         subdir !== "."
           ? subdir.split("/")
           : null;
-      const html = marked.parse(stripFrontmatter(content), markedOpts) as string;
+      const html = marked.parse(preprocessCompareBlocks(stripFrontmatter(content), markedOpts), markedOpts) as string;
       res.json({ ...metadata, folder, content, html });
     } catch {
       res.status(500).json({ error: "Failed to read document" });

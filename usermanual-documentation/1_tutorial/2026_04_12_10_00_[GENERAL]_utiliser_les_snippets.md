@@ -18,7 +18,7 @@ Les **snippets** sont des modèles Markdown prêts à l'emploi que vous insérez
 
 3. Choisissez **`Bloc dépliable`** (`<details>`).
 
-   Des champs apparaissent : *Titre du bloc* et *Contenu*.
+   Des champs apparaissent : _Titre du bloc_ et _Contenu_.
 
 4. Remplissez :
    - Titre : `Voir les détails`
@@ -32,6 +32,7 @@ Les **snippets** sont des modèles Markdown prêts à l'emploi que vous insérez
    <details><summary>Voir les détails</summary>
 
    Voici le contenu caché.
+
    </details>
    ```
 
@@ -51,14 +52,14 @@ Les **snippets** sont des modèles Markdown prêts à l'emploi que vous insérez
 
    ```markdown
    | Colonne 1 | Colonne 2 | Colonne 3 |
-   |-----------|-----------|-----------|
+   | --------- | --------- | --------- |
    | val 1     | val 2     | val 3     |
    | val 4     | val 5     | val 6     |
    ```
 
 ---
 
-### Mode détection — modifier un snippet existant
+### Mode détection , modifier un snippet existant
 
 1. **Sélectionnez** dans le textarea un snippet déjà présent (par exemple, un bloc `<details>…</details>` entier).
 

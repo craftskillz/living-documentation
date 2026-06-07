@@ -1,6 +1,6 @@
 ---
 **date:** 2026-01-01
-**description:** Example ticket roadmap — an ordered backlog used to deliver the product incrementally, with a visible acceptance criterion per ticket. This roadmap is written by the user; it is shipped only as an example.
+**description:** Example ticket roadmap , an ordered backlog used to deliver the product incrementally, with a visible acceptance criterion per ticket. This roadmap is written by the user; it is shipped only as an example.
 **tags:** roadmap, tickets, mvp, planning
 ---
 
@@ -10,8 +10,8 @@
 
 ## Checking convention
 
-- `[ ]` or `[]` — ticket not started;
-- `[x] ~~Ticket XX - ...~~` — ticket done, struck through for quick scanning.
+- `[ ]` or `[]` , ticket not started;
+- `[x] ~~Ticket XX - ...~~` , ticket done, struck through for quick scanning.
 
 ## Recommended order
 

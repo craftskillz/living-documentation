@@ -13,16 +13,16 @@ Le viewer affichait les images alignées à gauche sans style et les blocs de co
 
 Quatre options booléennes sont ajoutées à `StoredConfig` et exposées dans l'admin (section Appearance) :
 
-| Clé | Défaut upgrade | Effet |
-|---|---|---|
-| `imageRoundedCorners` | `true` | `[&_img]:rounded-xl` sur `#doc-content` |
-| `imageCentered` | `true` | `[&_img]:mx-auto [&_img]:block` |
-| `imageBorder` | `true` | double `box-shadow` (0 0 0 1px + 0 4px 12px) |
-| `codeBlockLightTheme` | `false` | swap hljs stylesheet dark↔light + classes Tailwind pre |
+| Clé                   | Défaut upgrade | Effet                                                  |
+| --------------------- | -------------- | ------------------------------------------------------ |
+| `imageRoundedCorners` | `true`         | `[&_img]:rounded-xl` sur `#doc-content`                |
+| `imageCentered`       | `true`         | `[&_img]:mx-auto [&_img]:block`                        |
+| `imageBorder`         | `true`         | double `box-shadow` (0 0 0 1px + 0 4px 12px)           |
+| `codeBlockLightTheme` | `false`        | swap hljs stylesheet dark↔light + classes Tailwind pre |
 
 ### Implémentation image
 
-Les classes Tailwind sont concaténées conditionnellement sur le `div#doc-content` dans `DocViewer.svelte`. Aucun CSS custom requis — les sélecteurs `[&_img]:*` de Tailwind suffisent.
+Les classes Tailwind sont concaténées conditionnellement sur le `div#doc-content` dans `DocViewer.svelte`. Aucun CSS custom requis , les sélecteurs `[&_img]:*` de Tailwind suffisent.
 
 ### Implémentation code block
 
@@ -41,6 +41,6 @@ Les quatre clés sont ajoutées à la liste `allowed` pour passer le filtre de s
 ## Conséquences
 
 - Les utilisateurs peuvent activer/désactiver chaque option indépendamment.
-- Le thème clair highlight.js ne s'applique qu'en mode clair OS/navigateur — en dark mode le thème sombre est toujours utilisé.
+- Le thème clair highlight.js ne s'applique qu'en mode clair OS/navigateur , en dark mode le thème sombre est toujours utilisé.
 - La syntaxe Shiki (plus fine) n'est pas reproduite : les couleurs hljs restent différentes.
 - Tests : `tests/e2e/admin.spec.ts` couvre la présence, la persistance et l'application des classes CSS.

@@ -56,7 +56,7 @@ Ne pas créer de documentation durable pour les corrections triviales, renommage
 Le dossier `DOCS_FOLDER/WORKLOG/` contient l'état opérationnel des tâches en cours et les points de reprise entre assistants IA. Il ne remplace pas les ADR.
 Le dossier `DOCS_FOLDER/WORKLOG/` contient trois types de fichiers complémentaires, aucun d'entre eux ne remplace les ADR durables qui vivent dans `DOCS_FOLDER/ADRS/`.
 
-### 1. `DOCS_FOLDER/WORKLOG/current-task.md` — point de reprise partagé
+### 1. `DOCS_FOLDER/WORKLOG/current-task.md` , point de reprise partagé
 
 Tout assistant doit le lire avant de reprendre une tâche et le mettre à jour avant de rendre la main lorsqu'il a commencé, terminé, interrompu ou laissé une suite connue.
 
@@ -70,11 +70,11 @@ Le worklog doit rester factuel et utile pour l'agent suivant :
 - vérifications restantes ;
 - prochaine action recommandée.
 
-### 2. `DOCS_FOLDER/WORKLOG/ROADMAP.md` — backlog de tickets
+### 2. `DOCS_FOLDER/WORKLOG/ROADMAP.md` , backlog de tickets
 
 Liste ordonnée des tickets à réaliser pour livrer le produit (ou une grande étape). Format proche d'un ADR : frontmatter (`date`, `status`, `description`, `tags`) + corps Markdown.
 
-Le starter livre une roadmap d'exemple — l'utilisateur doit la remplacer par les tickets réels du projet.
+Le starter livre une roadmap d'exemple , l'utilisateur doit la remplacer par les tickets réels du projet.
 
 Quand un ticket est terminé, l'agent :
 
@@ -83,17 +83,17 @@ Quand un ticket est terminé, l'agent :
 
 Convention de cochage dans la section « Ordre recommandé » :
 
-- `[ ]` ou `[]` — ticket non démarré ;
-- `[x] ~~Ticket XX - ...~~` — ticket terminé, barré pour visualisation rapide.
+- `[ ]` ou `[]` , ticket non démarré ;
+- `[x] ~~Ticket XX - ...~~` , ticket terminé, barré pour visualisation rapide.
 
-### 3. `DOCS_FOLDER/WORKLOG/YYYY_MM_DD_HH_mm_[WORKLOG]_ticket_XX_<slug>.md` — trace de réalisation par ticket
+### 3. `DOCS_FOLDER/WORKLOG/YYYY_MM_DD_HH_mm_[WORKLOG]_ticket_XX_<slug>.md` , trace de réalisation par ticket
 
 À chaque fois qu'un ticket de roadmap est terminé, créer un document dédié dans `DOCS_FOLDER/WORKLOG/`. Le format ressemble à un ADR (même frontmatter) mais la **sémantique est différente** :
 
 - les ADR (`DOCS_FOLDER/ADRS/`) documentent les **décisions durables** du projet : architecture, contrats publics, conventions structurantes. Ils décrivent le **QUOI** et le **POURQUOI**.
 - les documents WORKLOG par ticket documentent la **réalisation** d'un ticket de roadmap : ce qui a été fait, les choix retenus pendant l'exécution, les vérifications passées. Ils décrivent **CE QUE L'AGENT A FAIT** pour ce ticket précis.
 
-Si un choix durable est pris pendant la réalisation d'un ticket (par exemple, le choix d'une convention de structure de dossiers), créer un ADR architectural dans `DOCS_FOLDER/ADRS/` et faire pointer le document WORKLOG vers cet ADR — ne pas dupliquer le raisonnement.
+Si un choix durable est pris pendant la réalisation d'un ticket (par exemple, le choix d'une convention de structure de dossiers), créer un ADR architectural dans `DOCS_FOLDER/ADRS/` et faire pointer le document WORKLOG vers cet ADR , ne pas dupliquer le raisonnement.
 
 Frontmatter recommandé du document WORKLOG par ticket :
 
@@ -108,12 +108,12 @@ Frontmatter recommandé du document WORKLOG par ticket :
 
 Sections recommandées dans le corps :
 
-- **Contexte** — rappel du ticket et de son objectif (un paragraphe court, lien vers `ROADMAP.md`) ;
-- **Réalisation** — liste factuelle de ce qui a été fait ;
-- **Choix retenus** — décisions techniques prises pendant le ticket. Pointer vers un ADR si la décision est durable ;
-- **Vérifications** — tests passés, validations manuelles ;
-- **Suites éventuelles** — points de vigilance pour les tickets suivants ;
-- **Documents liés** — lien vers `ROADMAP.md` et ADR(s) éventuel(s).
+- **Contexte** , rappel du ticket et de son objectif (un paragraphe court, lien vers `ROADMAP.md`) ;
+- **Réalisation** , liste factuelle de ce qui a été fait ;
+- **Choix retenus** , décisions techniques prises pendant le ticket. Pointer vers un ADR si la décision est durable ;
+- **Vérifications** , tests passés, validations manuelles ;
+- **Suites éventuelles** , points de vigilance pour les tickets suivants ;
+- **Documents liés** , lien vers `ROADMAP.md` et ADR(s) éventuel(s).
 
 ## ADR
 
