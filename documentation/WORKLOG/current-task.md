@@ -1,113 +1,66 @@
 ---
-**date:** 2026-06-01
-**status:** In progress
-**description:** Point de reprise partagé entre assistants IA pour suivre la tâche courante, son statut, les fichiers touchés, les vérifications et la prochaine action.
-**tags:** worklog, handoff, progression, reprise, agents-ia, workspace, blueprint, folder-explorer, canvas, pan-zoom, prezi-zoom
+**date:** 2026-06-18
+**status:** Completed
+**description:** Alignement du runtime minimal sur Node.js 20.19.0 et remise en coherence de la documentation apres l'ajout du Survival Kit.
+**tags:** worklog, nodejs, runtime, vite8, commander14, survival-kit, svelte5, adr, metadata, documentation
 ---
 
 # Current task
 
-Ce document est le point de reprise entre assistants IA. Tout agent doit le lire avant de continuer une tâche et le mettre à jour avant de rendre la main.
-
 ## Statut courant
 
-In progress
+Completed
 
-## Tâche courante
+## Tache courante
 
-Deux chantiers parallèles complétés :
+Aligner le contrat de compatibilite Node.js avec les dependances installees, puis documenter le module Survival Kit committe dans `8a5315a` et remettre la documentation d'architecture en coherence.
 
-1. **Workspace Agentique** , nombreuses itérations sur le panel contextuel (dark mode, champs par kind, rename dossier agent, propagation model/timeout LLM→agents, boucle agentique LLM+MCP).
-2. **Blueprint** , nouvelle page `/blueprint` : canvas pan/zoom avec exploration Prezi des dossiers du sourceRoot.
+## Actions realisees
 
-## Dernière action réalisée
+### Compatibilite Node.js
 
-- Page Blueprint créée : `src/frontend/blueprint/` (index.html, app.ts, styles.css, tsconfig.json).
-- Route `GET /api/blueprint?path=` dans `src/routes/blueprint.ts` : liste les dossiers du sourceRoot en ignorant node_modules, .git, dist, etc.
-- Route `/blueprint` enregistrée dans `src/server.ts`.
-- Lien "Blueprint" ajouté dans la topbar principale (`src/frontend/index.html`).
-- Build mis à jour dans `package.json` pour compiler blueprint TypeScript.
-- Fix CSS `[hidden] { display: none !important }` dans blueprint/styles.css.
-- Chemins absolus `/blueprint/styles.css` et `/blueprint/app.js` dans index.html.
+- Runtime minimal passe de Node.js 18 a `>=20.19.0` dans `package.json` et `package-lock.json`.
+- README anglais et francais alignes avec cette exigence.
+- Jobs de test des workflows `e2e.yml` et `publish.yml` epingles sur Node.js 20.19.0 ; le job de publication reste sur Node.js 22.
+- `PROJECT-STACK.md` et `PROJECT-USEFUL-COMMANDS.md` corriges.
+- ADR Runtime cree via MCP et lie aux deux workflows CI.
 
-## Fichiers ou zones concernés
+### Survival Kit et frontend Svelte
 
-### Blueprint (nouveau)
+- ADR Survival Kit cree via MCP pour la route `/survival-kit`, l'API GET/PUT, le store Svelte, les panneaux taches/notes/liens et la persistance `.survival-kit.json`.
+- Huit fichiers source specifiques lies a l'ADR ; accuracy MCP = 1.
+- ADR de migration Svelte actualise : l'application comporte maintenant 10 ecrans et la convention d'ajout de route est explicitee.
+- Metadonnees de l'ADR de migration Svelte rafraichies ; accuracy MCP = 1.
+- `PROJECT-STACK.md` complete avec la route, le feature folder et le stockage Survival Kit.
 
-- `src/frontend/blueprint/index.html`
-- `src/frontend/blueprint/app.ts`
-- `src/frontend/blueprint/app.js` (compilé)
-- `src/frontend/blueprint/styles.css`
-- `src/frontend/blueprint/tsconfig.json`
-- `src/routes/blueprint.ts`
+## Fichiers ou zones concernes
 
-### Workspace (itérations)
-
-- `src/frontend/workspace/app.ts`
-- `src/frontend/workspace/index.html`
-- `src/frontend/workspace/styles.css`
-- `src/routes/workspace.ts`
-
-### Serveur / topbar
-
-- `src/server.ts`
-- `src/frontend/index.html`
 - `package.json`
+- `package-lock.json`
+- `README.md`
+- `README.fr.md`
+- `.github/workflows/e2e.yml`
+- `.github/workflows/publish.yml`
+- `documentation/AI/PROJECT-STACK.md`
+- `documentation/AI/PROJECT-USEFUL-COMMANDS.md`
+- `documentation/ADRS/2026_06_03_10_53_[FRONTEND]_migration_du_frontend_vers_une_application_svelte_unifiee.md`
+- `documentation/ADRS/2026_06_18_22_27_[SURVIVAL KIT]_survival_kit_dashboard_local_persiste.md`
+- `documentation/ADRS/2026_06_18_22_27_[RUNTIME]_runtime_minimal_node_20_19_pour_vite_8.md`
 
-## Vérifications réalisées
+## Verifications realisees
 
-- `npx tsc -p src/frontend/blueprint/tsconfig.json` : OK.
-- `npx tsc --noEmit` : OK.
-- `npm run build` : OK.
-- `curl http://localhost:4321/api/blueprint` : retourne les dossiers du sourceRoot.
-- Fix `[hidden]` CSS : emptyState correctement masqué quand des dossiers sont présents.
+- `npm run build` : OK sous Node.js 25.2.1 ; avertissement Vite non bloquant sur un chunk de 500.13 kB.
+- `npm run check:readme-sync` : OK.
+- `./scripts/check-workflows.sh` : OK.
+- Accuracy MCP ADR Survival Kit : 1, 8 fichiers inchanges.
+- Accuracy MCP ADR Runtime : 1, 2 fichiers inchanges.
+- Accuracy MCP ADR migration Svelte : 1, 6 fichiers inchanges.
 
-## Prochaine action recommandée
+## Verification restante
 
-- Créer l'ADR Blueprint dans `documentation/ADRS/` via MCP (quand disponible).
-- Mettre à jour l'ADR Workspace avec les dernières itérations (panel dark, agents, rename, topbar).
-- Tester le zoom Prezi en naviguant dans les sous-dossiers.
-- Envisager d'afficher le nombre de sous-dossiers sur chaque box.
+- La borne exacte Node.js 20.19.0 n'a pas ete executee localement ; elle sera exercee par les workflows CI epingles sur cette version.
+- Le Survival Kit ne possede pas encore de tests API/E2E dedies.
 
-## Notes
+## Prochaine action recommandee
 
-- Le MCP Living Documentation était déconnecté lors de cette session , les ADRs et métadonnées devront être créés au prochain redémarrage du serveur.
-- Le Blueprint est en lecture seule pour l'instant.
-- La page Workspace est maintenant appelée "Agentic Workspace" (nav.workspace i18n).
-- La topbar principale (`/`) a été alignée visuellement avec le workspace : hauteur 72px, badge LD, sous-titre dynamique depuis cfg.title.
-
-## Intervention annexe terminée - 2026-06-01
-
-- Remplacement via MCP du document `000_BLUEPRINT/2026_06_01_17_40_[SCRIPTS]_scripts` par une explication haut niveau du dossier `scripts/` : rôle, inventaire, flux build/dev/check/hooks/CI, commandes et règles de modification.
-- Métadonnées Living Documentation attachées à `scripts/copy-assets.ts`, `scripts/dev.js`, `scripts/check-frontend-js.js`, `scripts/check-readme-sync.sh`, `scripts/check-workflows.sh`, `.githooks/pre-commit`, `.github/workflows/readme-sync.yml` et `.github/workflows/publish.yml`.
-- Vérifications : `read_document` MCP du document mis à jour, `refresh_metadata`, puis `get_accuracy` à `1` avec 8 fichiers inchangés.
-
-## Intervention annexe terminée - 2026-06-03
-
-- Correction du blocage de commit zizmor sur `publish.yml` : `.github/zizmor.yml` ignore maintenant `publish.yml` (nom de base attendu par zizmor) et les commentaires inline `zizmor: ignore[cache-poisoning]` sont séparés des commentaires de version.
-- Métadonnées Living Documentation rafraîchies via MCP pour le document CI de durcissement des workflows GitHub Actions ; accuracy = 1.
-- Vérifications : `zizmor .github/workflows/publish.yml`, `zizmor .github/workflows/`, `zizmor --config .github/zizmor.yml .github/workflows/`, `./scripts/check-workflows.sh` et `.githooks/pre-commit` : OK.
-
-## Intervention annexe terminée - 2026-06-03 MCP update_document
-
-- Investigation du faux échec `update_document` observé pendant la correction zizmor : l'outil MCP fonctionne, y compris avec un Markdown multiligne contenant backticks, crochets et quotes.
-- Ajout d'un test API ciblé dans `tests/api/mcp.spec.ts` qui appelle `update_document`, relit via MCP et vérifie le contenu sur disque.
-- Cause des échecs observés : commandes locales de diagnostic dans le sandbox (`node fetch` refusé avec `EPERM`, pipelines vers `curl -d @-` instables), pas un bug du serveur MCP.
-- Vérification : `npx playwright test tests/api/mcp.spec.ts -g "update_document overwrites" --project=chromium` : OK.
-
-## Intervention annexe terminée - 2026-06-05 chemins Windows sidebar
-
-- Diagnostic confirmé depuis Windows : `GET /api/browse/alldirs?path=C:\Users\Administrator\Desktop\docs` renvoyait `AI\\rules` et `TEST\\USAGE`, ce qui créait des dossiers plats non cliquables dans la sidebar Svelte.
-- Correction serveur : normalisation POSIX des chemins relatifs renvoyés par `src/routes/browse.ts`, des chemins/id/folders de documents dans `src/routes/documents.ts`, et des chemins relatifs de l'explorateur source dans `src/routes/browse-source.ts`.
-- Test renforcé : `tests/api/browse.spec.ts` exige maintenant `a/b` et `a/b/c`, et rejette `a\\b` / `a\\b\\c`.
-- Vérifications : `npm run build`, `npx playwright test tests/api/browse.spec.ts --project=chromium`, `npx playwright test tests/api/documents.spec.ts tests/api/browse-source.spec.ts --project=chromium` : OK.
-
-## Intervention annexe terminee - 2026-06-06 snippet tableau tableur
-
-- Remplacement de l'editeur tableau global `+/- colonnes` par une grille type tableur dans `src/frontend-svelte/src/lib/home/snippets/table.ts` : nouveau tableau 2x2, navigation `Tab`/fleches, selection du contenu apres `Tab`, creation automatique de ligne/colonne aux bords, et suppression ligne/colonne par menu contextuel au clic droit.
-- `src/frontend-svelte/src/lib/home/SnippetsModal.svelte` ne garde plus que le compteur de colonnes dans la toolbar ; les controles de lignes restent disponibles.
-- Ajout des libelles i18n `snippet.table_delete_row` et `snippet.table_delete_column` dans `src/frontend-svelte/public/i18n/en.json` et `fr.json`.
-- Test E2E mis a jour : `table editor uses spreadsheet keyboard navigation and context menu deletion` dans `tests/e2e/inline-snippet-edit.spec.ts`.
-- ADR mis a jour via MCP : `ADRS/2026_06_06_21_47_[SNIPPET]_spreadsheet_style_table_snippet_editor`, avec metadonnees sur `table.ts`, `SnippetsModal.svelte`, les deux catalogues i18n et `inline-snippet-edit.spec.ts`; accuracy = 1.
-- Verifications : `npm run build`, test cible Playwright, puis `npx playwright test tests/e2e/inline-snippet-edit.spec.ts --project=chromium` : OK.
-- Note : verification visuelle via serveur local tentee ; `npm run dev` a echoue sur `EMFILE` watchers et le serveur build sur port 4322 ne servait pas l'UI attendue dans le navigateur integre. La couverture comportementale E2E est complete pour cette zone.
+Demarrer le prochain besoin sur cette base documentee. Si le prochain changement touche le Survival Kit, ajouter en priorite des tests de persistance API et un parcours CRUD E2E cible.

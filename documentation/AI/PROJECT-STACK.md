@@ -25,10 +25,10 @@ L'utilisateur lance le CLI avec un dossier de documentation relatif, par exemple
 ## Stack technique
 
 - **Langage principal** : TypeScript côté serveur/CLI ; côté frontend, application Svelte 5 (TypeScript + composants `.svelte`).
-- **Runtime** : Node.js >= 18.
-- **Framework frontend** : application **Vite + Svelte 5 (runes)** unifiée sous `src/frontend-svelte/`, routée par `pathname` dans `App.svelte`, regroupant les 9 écrans (Home, Workspace, Admin, Blueprint, Agents, Files, AI Context, Diagram, Shape-editor). Voir l'ADR `[FRONTEND] migration du frontend vers une application svelte unifiee`.
+- **Runtime** : Node.js >= 20.19.0, minimum imposé par Vite 8 ; Commander 14 requiert également Node.js >= 20.
+- **Framework frontend** : application **Vite + Svelte 5 (runes)** unifiée sous `src/frontend-svelte/`, routée par `pathname` dans `App.svelte`, regroupant les 10 écrans (Home, Workspace, Admin, Blueprint, Agents, Files, AI Context, Diagram, Shape-editor, Survival Kit). Voir l'ADR `[FRONTEND] migration du frontend vers une application svelte unifiee`.
 - **Framework backend / serveur** : Express 5.
-- **Base de données / stockage** : système de fichiers local ; `.living-doc.json`, `.metadata.json`, `.diagrams.json`, `.annotations.json`, `.shape-libraries.json` selon les fonctionnalités.
+- **Base de données / stockage** : système de fichiers local ; `.living-doc.json`, `.metadata.json`, `.diagrams.json`, `.annotations.json`, `.shape-libraries.json` et `.survival-kit.json` selon les fonctionnalités.
 - **API externes / intégrations** : MCP Streamable HTTP sur `/mcp` via `@modelcontextprotocol/sdk`; assets CDN côté frontend pour Tailwind, highlight.js, Font Awesome, mermaid et vis-network selon les routes.
 - **Authentification / autorisation** : aucune authentification applicative ; outil local-first, avec protections de path traversal côté routes.
 - **Styles / design system** : Tailwind via CDN avec plugin Typography ; CSS partagée `src/frontend-svelte/src/styles/app.css` ; thème clair/sombre piloté par config/localStorage (la Home porte le dark mode) ; syntax highlighting toujours sombre. ATTENTION : toute CSS importée par un composant Svelte est bundlée **globalement** par Vite , scoper les sélecteurs génériques (`[data-blueprint]`, `.ld-shape-editor`).
@@ -51,12 +51,14 @@ src/lib/parser.ts                  <- parsing du filenamePattern et extraction d
 src/lib/metadata.ts                <- stockage des bindings source + calcul de fiabilité
 src/lib/hash.ts                    <- hash SHA-256 des fichiers source
 src/routes/*.ts                    <- routes REST documents, config, browse, files, diagrams, metadata, context, export...
+src/routes/survival-kit.ts         <- persistance JSON du dashboard tâches, notes et liens
 src/mcp/server.ts                  <- serveur MCP Streamable HTTP exposé sur `/mcp`
 src/mcp/tools/*.ts                 <- tools MCP documents, diagrams, source, metadata
 src/frontend-svelte/index.html     <- shell HTML de l'app Vite (charge Tailwind, FA, mermaid, hljs, vis, wordcloud2)
 src/frontend-svelte/vite.config.ts <- config Vite (plugin svelte, outDir dist/frontend-svelte, proxy /api,/mcp,/images,/files)
 src/frontend-svelte/src/App.svelte <- routeur par pathname → composants de route
 src/frontend-svelte/src/routes/*.svelte        <- une route par écran (Home, Workspace, Admin, Blueprint, Agents, Files, AiContext, Diagram, ShapeEditor)
+src/frontend-svelte/src/lib/survival-kit/*     <- store et panneaux tâches, notes et liens du Survival Kit
 src/frontend-svelte/src/lib/Topbar.svelte      <- topbar partagée (nav + slots children/actions)
 src/frontend-svelte/src/lib/i18n.svelte.ts     <- store i18n runes (loadI18n + t), sert /i18n/*.json
 src/frontend-svelte/src/lib/home/*             <- domaine viewer Home : sidebar, DocViewer, annotations, metadata, recherche locale, wordcloud, modals
@@ -93,6 +95,7 @@ memory/                           <- mémoire projet locale indexée par `memory
 - **Worklog** : point de reprise opérationnel partagé entre assistants IA, scaffolde sous `WORKLOG/current-task.md` par le starter ; lu avant action, mis à jour avant handoff, pas un substitut aux ADR.
 - **Diagrammes** : vues dérivées de la documentation, stockées en JSON et éditées via vis-network ; les diagrammes MCP doivent citer leur provenance documentaire (`evidence`).
 - **Contexte IA** : page `/context` et documents `AI/*` qui exposent instructions, règles, mémoire et explorateur MCP.
+- **Survival Kit** : dashboard local `/survival-kit` pour tâches, notes structurées et liens catégorisés, persisté dans `<docsFolder>/.survival-kit.json`.
 - **Starter doc** : initialisation interactive bilingue qui scaffold un dossier docs, `AGENTS.md`, `CLAUDE.md`, `memory/MEMORY.md` et les symlinks sous `AI/`, plus un dossier `WORKLOG/` avec `current-task.md` et une règle `track-current-work` pour la reprise opérationnelle entre assistants IA.
 
 ## Conventions structurantes

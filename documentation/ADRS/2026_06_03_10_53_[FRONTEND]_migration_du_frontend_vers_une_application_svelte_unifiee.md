@@ -1,29 +1,32 @@
 ---
 **date:** 2026-06-03
 **status:** To be validated
-**description:** Remplacement du frontend multi-pages vanilla (HTML + ~50 scripts globaux) par une seule application Vite + Svelte 5 (runes) regroupant les 9 ecrans, servie en statique par Express.
-**tags:** svelte5, vite, runes, spa, migration, frontend-architecture, i18n, vis-network, strangler-fig, express-static
+**description:** Remplacement du frontend multi-pages vanilla par une application Vite + Svelte 5 unique, extensible par routes explicites et regroupant actuellement 10 écrans servis par Express.
+**tags:** svelte5, vite, runes, spa, migration, frontend-architecture, App.svelte, express-static, routing, survival-kit
 ---
 
 ## Contexte
 
-Le frontend historique etait un ensemble de pages HTML independantes (`index.html`, `admin.html`, `diagram.html`, `shape-editor.html`, `context.html`, plus `blueprint/` et `workspace/`) cablees par ~50 scripts classiques communiquant via des globals `window.*`, plus une page Blueprint deja en Vite/Svelte et une page Workspace en TS compile. L'i18n passait par `window.t` / `applyI18n` sur des attributs `data-i18n`. Cette heterogeneite rendait l'evolution couteuse et le partage de composants impossible.
+Le frontend historique etait un ensemble de pages HTML independantes (`index.html`, `admin.html`, `diagram.html`, `shape-editor.html`, `context.html`, plus `blueprint/` et `workspace/`) cablees par environ 50 scripts classiques communiquant via des globals `window.*`, plus une page Blueprint deja en Vite/Svelte et une page Workspace en TypeScript compile. L'i18n passait par `window.t` / `applyI18n` sur des attributs `data-i18n`. Cette heterogeneite rendait l'evolution couteuse et le partage de composants impossible.
 
 ## Decision
 
-Migrer l'integralite du frontend vers **une seule application Vite + Svelte 5** sous `src/frontend-svelte/`, avec routing par `pathname` dans `App.svelte`. Les 9 ecrans sont des routes Svelte : Home, Workspace, Admin, Blueprint, Agents, Files, AI Context, Diagram, Shape-editor.
+Migrer l'integralite du frontend vers **une seule application Vite + Svelte 5** sous `src/frontend-svelte/`, avec routing par `pathname` dans `App.svelte` et une liste de routes SPA explicites dans Express.
+
+L'application regroupe actuellement 10 ecrans : Home, Workspace, Admin, Blueprint, Agents, Files, AI Context, Diagram, Shape-editor et Survival Kit. L'ajout d'un ecran suit la convention suivante : composant sous `src/frontend-svelte/src/routes/`, branche de routage dans `App.svelte`, puis route SPA explicite dans `src/server.ts`.
 
 Principes retenus :
 
-- **Strangler-fig** : l'ancien code a cohabite avec le nouveau pendant toute la migration (reference/comparaison) avant suppression finale de `src/frontend/`.
-- **i18n unifie en runes** : un store `i18n.svelte.ts` (`$state` + `loadI18n` + `t`) remplace `window.t`/`applyI18n` ; tous les `data-i18n` deviennent `{t(...)}`. Les JSON `en/fr` sont servis depuis `public/i18n/`.
-- **Reutilisation des moteurs imperatifs** : Workspace (canvas HTML-in-canvas) et surtout Diagram (30 modules ES deja modulaires + `vis-network`) sont reutilises tels quels ; seul leur bootstrap est refactore en `init*()` appele dans `onMount`, et le markup est reproduit en Svelte en conservant les `id` (l'engine cable par `getElementById`). Diagram importe son `main.js` dynamiquement dans `onMount` car ses modules touchent le DOM au chargement.
-- **Topbar partagee** et dark-mode (home) ; CSS globale scopee quand necessaire (`[data-blueprint]`, `.ld-shape-editor`) car toute CSS importee par un composant est bundlee globalement par Vite.
+- **Strangler-fig** : l'ancien code a cohabite avec le nouveau pendant toute la migration avant suppression finale de `src/frontend/`.
+- **i18n unifie en runes** : un store `i18n.svelte.ts` (`$state` + `loadI18n` + `t`) remplace `window.t`/`applyI18n` ; les catalogues JSON anglais et francais sont servis depuis `public/i18n/`.
+- **Reutilisation des moteurs imperatifs** : Workspace et surtout Diagram conservent leurs moteurs existants ; leur bootstrap est expose via une fonction `init*()` appelee dans `onMount`, avec conservation des identifiants DOM requis.
+- **Topbar partagee** et dark-mode commun ; toute CSS importee par un composant etant bundlee globalement par Vite, les selecteurs generiques doivent etre scopes.
+- **Extension par feature folder** : les ecrans autonomes peuvent regrouper leur store, types et composants sous `src/frontend-svelte/src/lib/<feature>/`, comme le Survival Kit.
 
 ## Consequences
 
-- **Build simplifie** : `tsc` (backend) + `vite build` (frontend) + `copy-assets` (starter-docs uniquement). Suppression des etapes `tsc` workspace, `vite build` blueprint et de la copie de `src/frontend`. `tsconfig` exclut `src/frontend-svelte` (compile par Vite).
-- **Express decouple du frontend** : sert `dist/frontend-svelte` en statique + les routes SPA explicites (pas de catch-all) ; il ne reste que API + MCP + `/images` + `/files`.
-- **Dev** : `scripts/dev.js` lance Vite (port 5174) + nodemon backend ; le watch tsc workspace est supprime.
-- Suppression de `src/frontend/` et du script `check:frontend` (lint des `.js` vanilla, devenu sans objet).
-- Les ADR de features frontend existantes restent valides (les comportements sont reimplementes a l'identique) ; seul l'ADR du controle syntaxique frontend est supersede.
+- **Build simplifie** : `tsc` pour le backend, `vite build` pour le frontend, puis copie des starter-docs.
+- **Express decouple du frontend** : il sert `dist/frontend-svelte` en statique et uniquement les routes SPA declarees, sans catch-all.
+- **Dev** : `scripts/dev.js` lance Vite sur le port 5174 et le backend via nodemon.
+- Suppression de `src/frontend/` et du script `check:frontend` devenu sans objet.
+- Les nouvelles routes doivent etre declarees des deux cotes (`App.svelte` et `src/server.ts`) pour fonctionner en navigation directe et dans la SPA.

@@ -6,7 +6,7 @@
 
 Du Markdown sur disque, pas de cloud, pas de base de données, pas d'étape de build. Pointez l'outil vers un dossier, ouvrez `http://localhost:4321`. Branchez n'importe quel agent IA compatible MCP (Claude Code, Claude Desktop, Cursor…) et votre documentation se maintient à mesure que le code évolue.
 
-![npm](https://img.shields.io/npm/v/living-ai-documentation) ![Node.js](https://img.shields.io/badge/Node.js-18%2B-green) ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue) ![License](https://img.shields.io/badge/License-AGPL--3.0-blue) ![MCP](https://img.shields.io/badge/MCP-Streamable_HTTP-purple)
+![npm](https://img.shields.io/npm/v/living-ai-documentation) ![Node.js](https://img.shields.io/badge/Node.js-20.19%2B-green) ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue) ![License](https://img.shields.io/badge/License-AGPL--3.0-blue) ![MCP](https://img.shields.io/badge/MCP-Streamable_HTTP-purple)
 
 ```bash
 npx living-ai-documentation@latest                # assistant interactif (EN/FR)
@@ -59,6 +59,8 @@ Puis ouvrez [http://localhost:4321](http://localhost:4321) (viewer) et [http://l
 > Le chemin du dossier doit être **relatif** (`./docs`, `../shared/docs`…). Les chemins absolus et `~` sont rejetés pour que `.living-doc.json` reste portable et soit committable.
 
 ### Installation
+
+Nécessite **Node.js 20.19 ou plus récent** (Vite 8 et Commander 14 ne prennent plus en charge Node.js 18).
 
 ```bash
 npx living-ai-documentation@latest                 # sans installation

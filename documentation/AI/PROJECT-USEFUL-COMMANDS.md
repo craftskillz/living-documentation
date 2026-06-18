@@ -26,7 +26,7 @@ Indices : `package-lock.json` est présent, les scripts officiels sont dans `pac
 
 | Commande                          | Quand l'utiliser                                                        | Notes                                                                            |
 | --------------------------------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `npm install`                     | Après clone, changement de dépendances ou suppression de `node_modules` | Requiert Node.js >= 18.                                                          |
+| `npm install`                     | Après clone, changement de dépendances ou suppression de `node_modules` | Requiert Node.js >= 20.19.0 (minimum Vite 8 ; Commander 14 requiert Node.js 20). |
 | `npx playwright install chromium` | Si Playwright ne trouve pas Chromium localement                         | Généralement nécessaire dans un environnement frais ou CI sans cache navigateur. |
 
 ## Développement local

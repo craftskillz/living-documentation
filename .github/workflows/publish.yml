@@ -22,7 +22,7 @@ jobs:
         # zizmor: ignore[cache-poisoning] setup-node has no npm cache configured here.
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
-          node-version: 20
+          node-version: "20.19.0"
           # npm cache intentionally omitted on publish (tag-triggered) workflows.
       - name: Install dependencies
         # --ignore-scripts blocks postinstall hooks, the most common vector for
