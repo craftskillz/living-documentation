@@ -36,7 +36,7 @@ console.log("Hello World!");
 
 > Existing quote
 >
-> , Existing author
+> — Existing author
 
 - First bullet
   continuation for first bullet

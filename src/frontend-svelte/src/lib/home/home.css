@@ -783,7 +783,7 @@
       .ld-compare-render::before { content: "Rendu";   color: rgb(107 114 128); }
 
       .ld-compare-source {
-        background-color: rgb(249 250 251);
+        background-color: rgb(249 250 251);   /* grey */
         border-right: 1px solid rgb(229 231 235);
       }
       .dark .ld-compare-source {
@@ -807,7 +807,12 @@
         margin: 0;
         border-radius: 0.25rem;
         font-size: 0.85em;
+        background-color: #ffffff !important;   /* white code box */
       }
+      .dark .ld-compare-source > pre {
+        background-color: rgb(17 24 39) !important;
+      }
+
 
       /* On small screens, stack vertically */
       @media (max-width: 640px) {

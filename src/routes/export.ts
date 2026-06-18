@@ -2,10 +2,9 @@ import { Router, Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
 import archiver from 'archiver';
-import { marked } from 'marked';
 import { readConfig } from '../lib/config';
 import { listDocs, safeFilePath, stripFrontmatter } from './documents';
-import { preprocessCompareBlocks } from '../lib/compareBlock';
+import { renderMarkdownWithCompareBlocks } from '../lib/compareBlock';
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -236,7 +235,7 @@ export function exportRouter(docsPath: string): Router {
       if (!filePath || !fs.existsSync(filePath)) continue;
 
       const raw = fs.readFileSync(filePath, 'utf-8');
-      const bodyHtml = (marked.parse(preprocessCompareBlocks(stripFrontmatter(raw), markedOpts), markedOpts) as string)
+      const bodyHtml = renderMarkdownWithCompareBlocks(stripFrontmatter(raw), markedOpts)
         // Strip the local-search widget placeholder — feature is viewer-only
         .replace(/<div\s+data-ld-local-search(?:="[^"]*")?\s*>\s*<\/div>/gi, '');
 

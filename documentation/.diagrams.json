@@ -4647,5 +4647,14 @@
     "edgesStraight": false,
     "gridEnabled": false,
     "alignGuides": true
+  },
+  {
+    "id": "d1780861532758",
+    "title": "Nouveau diagramme",
+    "nodes": [],
+    "edges": [],
+    "edgesStraight": false,
+    "gridEnabled": false,
+    "alignGuides": true
   }
 ]

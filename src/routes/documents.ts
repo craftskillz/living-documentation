@@ -1,12 +1,11 @@
 import { Router, Request, Response } from "express";
 import fs from "fs";
 import path from "path";
-import { marked } from "marked";
 import { parseFilename, DocMetadata } from "../lib/parser";
 import { readConfig } from "../lib/config";
 import { readMetadataStore } from "../lib/metadata";
 import { parseDocStatus } from "../lib/status";
-import { preprocessCompareBlocks } from "../lib/compareBlock";
+import { renderMarkdownWithCompareBlocks } from "../lib/compareBlock";
 
 const METADATA_SEARCH_PREFIX = "metadata://";
 
@@ -313,7 +312,7 @@ export function documentsRouter(docsPath: string): Router {
       try {
         const content = fs.readFileSync(filePath, "utf-8");
         const meta = parseFilename(path.basename(filePath), filenamePattern);
-        const html = decorateFileLinks(marked.parse(preprocessCompareBlocks(stripFrontmatter(content), markedOpts), markedOpts) as string);
+        const html = decorateFileLinks(renderMarkdownWithCompareBlocks(stripFrontmatter(content), markedOpts));
         res.json({
           ...meta,
           id: req.params.id,
@@ -347,7 +346,7 @@ export function documentsRouter(docsPath: string): Router {
         subdir !== "."
           ? subdir.split("/")
           : null;
-      const html = marked.parse(preprocessCompareBlocks(stripFrontmatter(content), markedOpts), markedOpts) as string;
+      const html = renderMarkdownWithCompareBlocks(stripFrontmatter(content), markedOpts);
       res.json({ ...metadata, folder, content, html });
     } catch {
       res.status(500).json({ error: "Failed to read document" });

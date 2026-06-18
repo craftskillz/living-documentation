@@ -1,174 +1,9 @@
 # Arborescence
 
-Les arborescences de fichiers ou de répertoires se représentent avec un bloc de code sans langage spécifié (ou `text`). Les caractères `├──`, `└──`, `│` sont tapés directement , pas de syntaxe spéciale.
+Les arborescences de fichiers ou de répertoires se représentent avec un bloc de code sans langage spécifié (ou `text`).
+Les caractères `├──`, `└──`, `│` sont tapés directement , pas de syntaxe spéciale.
 
----
-
-## Arborescence simple
-
-**Syntaxe :**
-
-````markdown
-```
-mon-projet/
-├── src/
-│   ├── index.ts
-│   └── utils.ts
-├── documentation/
-└── package.json
-```
-````
-
-**Rendu :**
-
-```
-mon-projet/
-├── src/
-│   ├── index.ts
-│   └── utils.ts
-├── documentation/
-└── package.json
-```
-
----
-
-## Structure de projet complète
-
-Pour documenter l'organisation d'un projet, avec les sous-dossiers principaux.
-
-**Syntaxe :**
-
-````markdown
-```
-mon-projet/
-├── src/
-│   ├── server/
-│   │   ├── index.ts          ← point d'entrée Express
-│   │   ├── routes/
-│   │   │   ├── docs.ts
-│   │   │   └── search.ts
-│   │   └── services/
-│   │       └── markdown.ts
-│   └── frontend/
-│       ├── App.svelte
-│       ├── lib/
-│       │   ├── Viewer.svelte
-│       │   └── Sidebar.svelte
-│       └── main.ts
-├── documentation/
-│   ├── 1_concepts/
-│   ├── 2_guide/
-│   └── ADRS/
-├── .living-doc.json
-└── package.json
-```
-````
-
-**Rendu :**
-
-```
-mon-projet/
-├── src/
-│   ├── server/
-│   │   ├── index.ts          ← point d'entrée Express
-│   │   ├── routes/
-│   │   │   ├── docs.ts
-│   │   │   └── search.ts
-│   │   └── services/
-│   │       └── markdown.ts
-│   └── frontend/
-│       ├── App.svelte
-│       ├── lib/
-│       │   ├── Viewer.svelte
-│       │   └── Sidebar.svelte
-│       └── main.ts
-├── documentation/
-│   ├── 1_concepts/
-│   ├── 2_guide/
-│   └── ADRS/
-├── .living-doc.json
-└── package.json
-```
-
----
-
-## Dossier documentation seul
-
-Utile dans un ADR ou un guide pour montrer uniquement la structure des docs.
-
-**Syntaxe :**
-
-````markdown
-```
-documentation/
-├── 1_concepts/
-│   ├── 2026_04_01_[ARCHITECTURE]_vue-densemble.md
-│   └── 2026_04_01_[GLOSSAIRE]_termes-cles.md
-├── 2_guide/
-│   └── examples/
-│       ├── 2026_04_08_[SAMPLES]_arborescence.md
-│       └── 2026_06_07_[SAMPLES]_citations.md
-└── ADRS/
-    ├── 2026_04_01_[BACKEND]_choix-stack.md
-    └── 2026_06_07_[FRONTEND]_callout-boxes.md
-```
-````
-
-**Rendu :**
-
-```
-documentation/
-├── 1_concepts/
-│   ├── 2026_04_01_[ARCHITECTURE]_vue-densemble.md
-│   └── 2026_04_01_[GLOSSAIRE]_termes-cles.md
-├── 2_guide/
-│   └── examples/
-│       ├── 2026_04_08_[SAMPLES]_arborescence.md
-│       └── 2026_06_07_[SAMPLES]_citations.md
-└── ADRS/
-    ├── 2026_04_01_[BACKEND]_choix-stack.md
-    └── 2026_06_07_[FRONTEND]_callout-boxes.md
-```
-
----
-
-## Avec icônes et annotations
-
-Pour une arborescence plus visuelle dans un document de présentation.
-
-**Syntaxe :**
-
-````markdown
-```
-living-documentation/
-├── 📁 src/
-│   ├── 📁 server/           ← API Node.js
-│   │   └── 📄 index.ts
-│   └── 📁 frontend-svelte/  ← UI Svelte 5
-│       └── 📄 App.svelte
-├── 📁 documentation/        ← docs vivantes
-│   └── 📁 ADRS/             ← décisions techniques
-├── ⚙️  .living-doc.json     ← config serveur
-└── 📦 package.json
-```
-````
-
-**Rendu :**
-
-```
-living-documentation/
-├── 📁 src/
-│   ├── 📁 server/           ← API Node.js
-│   │   └── 📄 index.ts
-│   └── 📁 frontend-svelte/  ← UI Svelte 5
-│       └── 📄 App.svelte
-├── 📁 documentation/        ← docs vivantes
-│   └── 📁 ADRS/             ← décisions techniques
-├── ⚙️  .living-doc.json     ← config serveur
-└── 📦 package.json
-```
-
----
+Les agents IA proposent souvent ce type de représentations pour les structures de dossier, living documentation vous permet d'en rendre la visibilité plus agréable (Human Friendly).
 
 ## Générer une arborescence avec `tree`
 
@@ -186,3 +21,64 @@ tree -L 2 --gitignore | pbcopy
 ```
 
 Coller ensuite le résultat dans un bloc de code dans le document.
+
+## Arborescence simple
+
+:::compare
+```text
+.
+├── ADRS
+│   └── 2026_01_01_[ADR]_example_architecture_decision.md
+├── AI
+│   ├── 2026_01_01_how_to.md
+│   ├── AGENTS.md -> ../../AGENTS.md
+│   ├── CLAUDE.md -> ../../CLAUDE.md
+│   ├── MEMORY.md -> ../../memory/MEMORY.md
+│   ├── PROJECT-INSTRUCTIONS.md
+│   ├── PROJECT-STACK.md
+│   ├── PROJECT-USEFUL-COMMANDS.md
+│   └── rules
+├── AROLLA
+│   ├── awsCertificationRex.md
+│   ├── conceptsContextEngineering.md
+│   ├── formationContextEngineering.md
+│   ├── meetupAIForDevs.md
+│   └── rapportEtonnement.md
+├── CLIENTS
+│   ├── agregio.md
+│   └── mindlapse
+├── images
+│   └── resources
+├── KNOWLEDGE
+│   └── aws.md
+├── MY-CONFIGURATIONS
+│   └── colima.md
+└── WORKLOG
+    ├── current-task.md
+    └── ROADMAP.md
+```
+:::
+
+---
+
+## Avec icônes et annotations
+
+Pour une arborescence plus visuelle dans un document de présentation.
+
+:::compare
+```
+living-documentation/
+├── 📁 src/
+│   ├── 📁 server/           ← API Node.js
+│   │   └── 📄 index.ts
+│   └── 📁 frontend-svelte/  ← UI Svelte 5
+│       └── 📄 App.svelte
+├── 📁 documentation/        ← docs vivantes
+│   └── 📁 ADRS/             ← décisions techniques
+├── ⚙️  .living-doc.json     ← config serveur
+└── 📦 package.json
+```
+:::
+
+---
+

@@ -878,5 +878,11 @@
       "path": "src/frontend-svelte/src/lib/home/SnippetsModal.svelte",
       "hash": "b7d6e3e5fc0ed3740cf8082edc99b89b7957feeba0e99d969933ed0b0766c99c"
     }
+  ],
+  "2026_06_08_00_17_[FRONTEND]_compare_block_two_phase_rendering": [
+    {
+      "path": "src/lib/compareBlock.ts",
+      "hash": "f4ab8c4784d5021307b8ad50f7e3a1a32242807ef0fa43ac929d6dad0e0f9106"
+    }
   ]
 }
