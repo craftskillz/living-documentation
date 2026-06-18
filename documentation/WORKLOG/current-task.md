@@ -1,8 +1,8 @@
 ---
 **date:** 2026-06-18
 **status:** Completed
-**description:** Alignement du runtime minimal sur Node.js 20.19.0 et remise en coherence de la documentation apres l'ajout du Survival Kit.
-**tags:** worklog, nodejs, runtime, vite8, commander14, survival-kit, svelte5, adr, metadata, documentation
+**description:** Ajout de directives Markdown par commentaires pour controler la largeur relative et l'alignement horizontal des images dans le viewer Home et le snippet Image.
+**tags:** worklog, image, markdown, image-width, image-align, snippets, viewer, svelte5, playwright, documentation
 ---
 
 # Current task
@@ -13,54 +13,54 @@ Completed
 
 ## Tache courante
 
-Aligner le contrat de compatibilite Node.js avec les dependances installees, puis documenter le module Survival Kit committe dans `8a5315a` et remettre la documentation d'architecture en coherence.
+Etendre le principe de commentaires HTML des tableaux et callouts aux images Markdown afin de choisir une largeur relative et un alignement horizontal, avec rendu Home, insertion et edition inline coherents.
 
-## Actions realisees
+## Fonctionnalite livree
 
-### Compatibilite Node.js
+Deux directives facultatives et independantes sont reconnues immediatement avant une image :
 
-- Runtime minimal passe de Node.js 18 a `>=20.19.0` dans `package.json` et `package-lock.json`.
-- README anglais et francais alignes avec cette exigence.
-- Jobs de test des workflows `e2e.yml` et `publish.yml` epingles sur Node.js 20.19.0 ; le job de publication reste sur Node.js 22.
-- `PROJECT-STACK.md` et `PROJECT-USEFUL-COMMANDS.md` corriges.
-- ADR Runtime cree via MCP et lie aux deux workflows CI.
+```markdown
+<!-- image-width: 1/2 -->
+<!-- image-align: center -->
+![Schema](/images/schema.png)
+```
 
-### Survival Kit et frontend Svelte
+Valeurs supportees :
 
-- ADR Survival Kit cree via MCP pour la route `/survival-kit`, l'API GET/PUT, le store Svelte, les panneaux taches/notes/liens et la persistance `.survival-kit.json`.
-- Huit fichiers source specifiques lies a l'ADR ; accuracy MCP = 1.
-- ADR de migration Svelte actualise : l'application comporte maintenant 10 ecrans et la convention d'ajout de route est explicitee.
-- Metadonnees de l'ADR de migration Svelte rafraichies ; accuracy MCP = 1.
-- `PROJECT-STACK.md` complete avec la route, le feature folder et le stockage Survival Kit.
+- largeur : `full`, `3/4`, `2/3`, `1/2`, `1/3`, `1/4` ;
+- alignement : `left`, `center`, `right`.
 
-## Fichiers ou zones concernes
+Sans directive, le rendu existant est conserve. L'alignement local surcharge l'option globale Admin `imageCentered` uniquement pour l'image cible.
 
-- `package.json`
-- `package-lock.json`
-- `README.md`
-- `README.fr.md`
-- `.github/workflows/e2e.yml`
-- `.github/workflows/publish.yml`
-- `documentation/AI/PROJECT-STACK.md`
-- `documentation/AI/PROJECT-USEFUL-COMMANDS.md`
-- `documentation/ADRS/2026_06_03_10_53_[FRONTEND]_migration_du_frontend_vers_une_application_svelte_unifiee.md`
-- `documentation/ADRS/2026_06_18_22_27_[SURVIVAL KIT]_survival_kit_dashboard_local_persiste.md`
-- `documentation/ADRS/2026_06_18_22_27_[RUNTIME]_runtime_minimal_node_20_19_pour_vite_8.md`
+## Implementation
+
+- Nouveau module `imageAttributes.ts` : validation, parsing, collecte source, prefixe canonique et mapping ratio → classe CSS.
+- `wireContent.ts` applique les classes et attributs `data-image-width` / `data-image-align` aux images rendues.
+- `inlineSnippetEdit.ts` capture les commentaires avec l'image pour le round-trip d'edition au clic droit.
+- Builders, parsers et detection des snippets Image etendus.
+- Deux selects Largeur/Alignement ajoutes au panneau Image avec traductions EN/FR.
+- CSS responsive avec hauteur automatique, largeur maximale 100 % et alignement local prioritaire.
+- Fixture et tests E2E ajoutes pour le rendu, l'edition inline et l'insertion.
+
+## Documentation
+
+- ADR `[IMAGE] directives de largeur et alignement des images markdown` cree via MCP.
+- 9 fichiers source/tests attaches ; accuracy MCP = 1.
+- Guide `Styles, images et blocs de code` corrige et complete ; les options obsoletes ont ete retirees.
+- 4 fichiers source attaches au guide ; accuracy MCP = 1.
 
 ## Verifications realisees
 
-- `npm run build` : OK sous Node.js 25.2.1 ; avertissement Vite non bloquant sur un chunk de 500.13 kB.
-- `npm run check:readme-sync` : OK.
-- `./scripts/check-workflows.sh` : OK.
-- Accuracy MCP ADR Survival Kit : 1, 8 fichiers inchanges.
-- Accuracy MCP ADR Runtime : 1, 2 fichiers inchanges.
-- Accuracy MCP ADR migration Svelte : 1, 6 fichiers inchanges.
+- `npm run build` : OK.
+- Validation JSON des catalogues i18n : OK.
+- Tests cibles image : 2/2 OK.
+- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts --project=chromium` : 37/37 OK.
+- `git diff --check` : OK.
 
-## Verification restante
+## Note de coexistence
 
-- La borne exacte Node.js 20.19.0 n'a pas ete executee localement ; elle sera exercee par les workflows CI epingles sur cette version.
-- Le Survival Kit ne possede pas encore de tests API/E2E dedies.
+Le document `documentation/2026_05_20_13_28_[CONFERENCE]_test.md` a recu pendant la tache les directives `image-width: full` et `image-align: center`. Cette modification a ete preservee comme verification/contenu utilisateur et n'a pas ete remplacee.
 
 ## Prochaine action recommandee
 
-Demarrer le prochain besoin sur cette base documentee. Si le prochain changement touche le Survival Kit, ajouter en priorite des tests de persistance API et un parcours CRUD E2E cible.
+Valider visuellement dans Home les ratios souhaites sur une image reelle, puis accepter l'ADR si le contrat de commentaires convient.

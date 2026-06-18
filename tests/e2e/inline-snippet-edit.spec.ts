@@ -141,6 +141,86 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(firstTable).not.toHaveClass(/table-color-/);
   });
 
+  test('image width and alignment comments render and round-trip through inline edit', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    const image = page.locator('#doc-content img[alt="Styled image"]');
+    await expect(image).toHaveAttribute('data-image-width', '1/2');
+    await expect(image).toHaveAttribute('data-image-align', 'right');
+    await expect(image).toHaveClass(/ld-image-width-half/);
+    await expect(image).toHaveClass(/ld-image-align-right/);
+    await expect(image).toHaveCSS('display', 'block');
+
+    const dimensions = await image.evaluate((el) => {
+      const imageRect = el.getBoundingClientRect();
+      const parentRect = el.parentElement!.getBoundingClientRect();
+      const style = getComputedStyle(el);
+      return {
+        ratio: imageRect.width / parentRect.width,
+        marginLeft: style.marginLeft,
+        marginRight: style.marginRight,
+      };
+    });
+    expect(dimensions.ratio).toBeCloseTo(0.5, 1);
+    expect(dimensions.marginLeft).not.toBe('0px');
+    expect(dimensions.marginRight).toBe('0px');
+
+    await image.click({ button: 'right' });
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
+    await expect(page.locator('#snippet-type')).toHaveValue('image');
+    await expect(page.locator('#snip-image-alt')).toHaveValue('Styled image');
+    await expect(page.locator('#snip-image-url')).toHaveValue('/images/styled-image.png');
+    await expect(page.locator('#snip-image-width')).toHaveValue('1/2');
+    await expect(page.locator('#snip-image-align')).toHaveValue('right');
+
+    await page.locator('#snip-image-width').selectOption('1/3');
+    await page.locator('#snip-image-align').selectOption('center');
+    await page.locator('#snippet-submit-btn').click();
+
+    const updated = page.locator('#doc-content img[alt="Styled image"]');
+    await expect(updated).toHaveAttribute('data-image-width', '1/3');
+    await expect(updated).toHaveAttribute('data-image-align', 'center');
+    await expect(updated).toHaveClass(/ld-image-width-third/);
+    await expect(updated).toHaveClass(/ld-image-align-center/);
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain(
+      '<!-- image-width: 1/3 -->\n<!-- image-align: center -->\n![Styled image](/images/styled-image.png)',
+    );
+    expect(onDisk).not.toContain('<!-- image-width: 1/2 -->');
+    expect(onDisk).not.toContain('<!-- image-align: right -->');
+  });
+
+  test('inserting an image can emit independent width and alignment comments', async ({ page, ld }) => {
+    const tinyDocId = '2026_01_02_10_00_[General]_tiny';
+    const docPath = path.join(ld.docsAbs, `${tinyDocId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(tinyDocId)}`);
+    await expect(page.locator('#doc-content')).toBeVisible();
+    await page.evaluate(() => {
+      (window as any).openSnippetsModalForInlineInsert(99999);
+    });
+
+    await page.locator('#snippet-picker [data-snippet-type="image"]').click();
+    await page.locator('#snip-image-alt').fill('Inserted image');
+    await page.locator('#snip-image-url').fill('/images/inserted.png');
+    await page.locator('#snip-image-width').selectOption('2/3');
+    await page.locator('#snip-image-align').selectOption('left');
+    await page.locator('#snippet-submit-btn').click();
+
+    const image = page.locator('#doc-content img[alt="Inserted image"]');
+    await expect(image).toHaveAttribute('data-image-width', '2/3');
+    await expect(image).toHaveAttribute('data-image-align', 'left');
+    await expect(image).toHaveClass(/ld-image-width-two-thirds/);
+    await expect(image).toHaveClass(/ld-image-align-left/);
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain(
+      '<!-- image-width: 2/3 -->\n<!-- image-align: left -->\n![Inserted image](/images/inserted.png)',
+    );
+  });
+
   test('borderless tables keep horizontal separators without vertical cell borders', async ({ page, ld }) => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     const firstHeader = page.locator('#doc-content table').first().locator('thead th').first();

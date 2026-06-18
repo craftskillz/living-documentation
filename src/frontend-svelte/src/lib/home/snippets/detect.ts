@@ -11,7 +11,7 @@ export function detectSnippetType(text: string): string | null {
   if (/^\[.*?\]\(\?doc=.+#.+\)$/.test(t)) return "anchor-doc-link";
   if (/^\[.*?\]\(\?doc=.+\)$/.test(t)) return "doc-link";
   if (/^\[.*?\]\(#.+\)$/.test(t)) return "anchor-link";
-  if (/^!\[.*?\]\(.*?\)$/.test(t)) return "image";
+  if (/^<!--\s*image-(?:width|align):/.test(t) || /^!\[.*?\]\(.*?\)$/.test(t)) return "image";
   if (/^\[.*?\]\(.*?\)$/.test(t)) return "link";
   if (/^<details[\s>]/i.test(t)) return "collapsible";
   if (/^<span\s[^>]*color:[^>]*>[\s\S]*<\/span>$/.test(t)) return "colored-text";

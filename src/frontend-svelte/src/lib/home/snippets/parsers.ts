@@ -2,6 +2,7 @@
 
 import { parseTableSnippetMarkdown } from "./table";
 import { parseTreeSnippetMarkdown } from "./tree";
+import { parseImageAttributesFromMarkdown } from "../imageAttributes";
 
 function ldStripCodeBlockIndent(code: string, indent: string): string {
   if (!indent) return code;
@@ -109,9 +110,14 @@ export function ldParseBlockquoteSnippetMarkdown(markdown: string): {
 export function ldParseImageSnippetMarkdown(markdown: string): {
   alt?: string;
   url?: string;
+  width: string;
+  align: string;
 } {
-  const match = markdown.match(/^!\[([\s\S]*?)\]\(([\s\S]*?)\)$/);
-  return match ? { alt: match[1], url: match[2] } : {};
+  const attrs = parseImageAttributesFromMarkdown(markdown);
+  const match = markdown.match(/!\[([^\]\n]*?)\]\(([^\n]+?)\)\s*$/);
+  return match
+    ? { alt: match[1], url: match[2], width: attrs.width || "", align: attrs.align || "" }
+    : { width: attrs.width || "", align: attrs.align || "" };
 }
 
 export function ldParseHeadingSnippetMarkdown(

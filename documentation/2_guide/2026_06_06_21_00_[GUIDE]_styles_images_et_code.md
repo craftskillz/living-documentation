@@ -1,129 +1,90 @@
-# Styles , Images & blocs de code
+# Styles, images et blocs de code
 
-L'apparence des images et des blocs de code est configurable globalement depuis le panneau admin. Ces paramètres s'appliquent à tous les documents sans modifier leur Markdown source.
+L'apparence generale des images et des blocs de code est configurable depuis le panneau Admin. Une image Markdown peut aussi surcharger localement sa largeur et son alignement avec des commentaires places juste au-dessus.
 
----
+## Options globales dans Admin
 
-## Accéder au panneau admin
+Dans **Admin → Apparence**, les options disponibles sont :
 
-1. Cliquer sur l'icône **⚙️ Paramètres** dans la barre de navigation.
-2. Saisir le mot de passe administrateur.
-3. Naviguer vers l'onglet **Apparence**.
+| Option | Defaut | Effet |
+| --- | --- | --- |
+| Coins arrondis | active | Arrondit toutes les images du viewer |
+| Centrage | active | Centre toutes les images par defaut |
+| Bordure | active | Ajoute une bordure et une ombre legeres |
+| Theme clair des blocs de code | desactive | Utilise le theme highlight.js clair en mode clair |
+| Hauteur max des blocs de code | `400px` | Ajoute un controle afficher plus/moins au-dela de cette hauteur |
 
----
+Ces options sont stockees dans `.living-doc.json` sous `imageRoundedCorners`, `imageCentered`, `imageBorder`, `codeBlockLightTheme` et `codeBlockMaxHeight`.
 
-## Styles d'images
-
-### Options disponibles
-
-| Option         | Défaut  | Effet                                |
-| -------------- | ------- | ------------------------------------ |
-| Coins arrondis | ✅      | Ajoute `border-radius: 0.5rem`       |
-| Centrage       | ✅      | Centre l'image dans le flux de texte |
-| Bordure        | ✅      | Fine bordure grise autour de l'image |
-| Ombre          | ❌      | Ombre portée douce sous l'image      |
-| Largeur max    | `100 %` | Limite la largeur des grandes images |
-
-### Image inline standard
-
-**Syntaxe :**
+## Image Markdown standard
 
 ```markdown
-![Schéma d'architecture](./schema-architecture.png)
+![Schema d'architecture](./images/schema-architecture.png)
 ```
 
-L'image s'affiche avec les styles globaux actifs (coins arrondis, bordure, centrage si configurés).
+Sans directive locale, l'image utilise sa largeur naturelle jusqu'a la largeur maximale du document et les options globales actives.
 
-### Image cliquable , plein écran
+## Choisir la largeur d'une image
 
-En enveloppant l'image dans un lien vers elle-même, un clic l'ouvre en lightbox plein écran dans Living Documentation.
-
-**Syntaxe :**
+Ajouter `image-width` immediatement avant l'image :
 
 ```markdown
-[![Schéma d'architecture](./schema-architecture.png)](./schema-architecture.png)
+<!-- image-width: 1/2 -->
+![Schema d'architecture](./images/schema-architecture.png)
 ```
 
-### Image avec taille forcée
+Valeurs disponibles :
 
-Pour surcharger la largeur globale sur une image spécifique :
+| Valeur | Largeur |
+| --- | ---: |
+| `full` | 100 % |
+| `3/4` | 75 % |
+| `2/3` | 66,67 % |
+| `1/2` | 50 % |
+| `1/3` | 33,33 % |
+| `1/4` | 25 % |
 
-**Syntaxe :**
+La hauteur reste automatique afin de conserver les proportions de l'image.
+
+## Aligner une image
+
+Ajouter `image-align` avec `left`, `center` ou `right` :
 
 ```markdown
-<img src="./schema.png" alt="Schéma" style="width:400px;" />
+<!-- image-align: right -->
+![Schema d'architecture](./images/schema-architecture.png)
 ```
 
-**Rendu :**
+Cette directive locale prend priorite sur l'option globale de centrage.
 
-L'image s'affiche à 400 px de large, indépendamment des styles globaux.
+## Combiner largeur et alignement
 
----
+Les deux directives sont independantes et peuvent etre combinees :
 
-## Styles de blocs de code
-
-### Options disponibles
-
-| Option           | Défaut        | Effet                                       |
-| ---------------- | ------------- | ------------------------------------------- |
-| Hauteur max      | `400px`       | Au-delà, un bouton "Afficher plus" apparaît |
-| Thème syntaxique | `github-dark` | Palette de couleurs highlight.js            |
-| Bouton copier    | ✅            | Icône de copie en haut à droite du bloc     |
-| Numéros de ligne | ❌            | Affiche les numéros à gauche                |
-
-### Thèmes disponibles
-
-<!-- table-style: striped -->
-
-| Thème           | Style                            |
-| --------------- | -------------------------------- |
-| `github-dark`   | Sombre, contraste élevé , défaut |
-| `github`        | Clair, style GitHub              |
-| `atom-one-dark` | Sombre, palette Atom             |
-| `vs2015`        | Sombre, style Visual Studio      |
-| `xcode`         | Clair, style Xcode               |
-| `monokai`       | Sombre, fond noir, palette vive  |
-
----
-
-## Configuration directe dans `.living-doc.json`
-
-Les paramètres du panneau admin sont stockés dans ce fichier. On peut aussi les éditer directement.
-
-**Syntaxe :**
-
-```json
-{
-  "imageRoundedCorners": true,
-  "imageCentered": true,
-  "imageBorder": true,
-  "imageShadow": false,
-  "codeBlockMaxHeight": 400,
-  "codeBlockTheme": "github-dark",
-  "codeBlockCopyButton": true,
-  "codeBlockLineNumbers": false
-}
+```markdown
+<!-- image-width: 1/3 -->
+<!-- image-align: center -->
+![Schema d'architecture](./images/schema-architecture.png)
 ```
 
-**Ce que ça change :**
+L'ordre canonique produit par l'editeur est largeur puis alignement. Les controles correspondants sont aussi disponibles dans **Snippets → Image** et lors de l'edition inline d'une image par clic droit.
 
-Les modifications dans `.living-doc.json` sont prises en compte au prochain chargement de page, sans redémarrer le serveur.
+## Image cliquable
 
----
+Une image peut etre enveloppee dans un lien pour ouvrir sa cible :
 
-## Priorité des styles
-
-Les styles globaux s'appliquent à tous les documents. Un document peut toujours les surcharger localement avec du HTML inline :
-
-**Syntaxe :**
-
-```html
-<!-- Image sans coins arrondis, même si le style global les active -->
-<img
-  src="./screenshot.png"
-  alt="Screenshot"
-  style="width:300px; border-radius:0; border:none;"
-/>
+```markdown
+[![Schema d'architecture](./images/schema-architecture.png)](./images/schema-architecture.png)
 ```
 
-Le style inline a toujours la priorité sur les styles CSS globaux.
+## Blocs de code
+
+Les blocs fences utilisent highlight.js et proposent un bouton de copie. Quand leur hauteur depasse `codeBlockMaxHeight`, un controle permet de les developper et de les reduire.
+
+````markdown
+```typescript
+const message = "Bonjour";
+```
+````
+
+Le theme clair ne s'applique qu'en mode clair ; le mode sombre conserve le theme de code sombre.

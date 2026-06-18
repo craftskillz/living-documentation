@@ -5,6 +5,7 @@ import {
   buildOrderedListMarkdown,
   buildUnorderedListMarkdown,
 } from "./listMarkdown";
+import { buildImageAttributesPrefix } from "../imageAttributes";
 
 function ldSnippetValueOr(value: string | undefined, fallback: string): string {
   return value || fallback;
@@ -105,10 +106,17 @@ export function ldBuildHeadingSnippetMarkdown(
   return `${"#".repeat(level)} ${text}`;
 }
 
-export function ldBuildImageSnippetMarkdown(data: { alt?: string; url?: string }): string {
+export function ldBuildImageSnippetMarkdown(data: {
+  alt?: string;
+  url?: string;
+  width?: string;
+  align?: string;
+}): string {
   const alt = ldSnippetValueOr(data.alt, "image");
   const url = ldSnippetValueOr(data.url, "./images/mon-image.png");
-  return `![${alt}](${url})`;
+  const prefix = buildImageAttributesPrefix({ width: data.width, align: data.align });
+  const image = `![${alt}](${url})`;
+  return prefix ? `${prefix}\n${image}` : image;
 }
 
 export function ldBuildTableSnippetMarkdown(data: {

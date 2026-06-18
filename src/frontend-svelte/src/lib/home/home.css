@@ -3,6 +3,45 @@
         cursor: context-menu;
       }
 
+      /* Image presets — triggered by image-width/image-align comments. */
+      .prose img[class*="ld-image-width-"] {
+        max-width: 100%;
+        height: auto;
+      }
+      .prose img.ld-image-width-full {
+        width: 100%;
+      }
+      .prose img.ld-image-width-three-quarters {
+        width: 75%;
+      }
+      .prose img.ld-image-width-two-thirds {
+        width: 66.6667%;
+      }
+      .prose img.ld-image-width-half {
+        width: 50%;
+      }
+      .prose img.ld-image-width-third {
+        width: 33.3333%;
+      }
+      .prose img.ld-image-width-quarter {
+        width: 25%;
+      }
+      .prose img[class*="ld-image-align-"] {
+        display: block;
+      }
+      .prose img.ld-image-align-left {
+        margin-left: 0 !important;
+        margin-right: auto !important;
+      }
+      .prose img.ld-image-align-center {
+        margin-left: auto !important;
+        margin-right: auto !important;
+      }
+      .prose img.ld-image-align-right {
+        margin-left: auto !important;
+        margin-right: 0 !important;
+      }
+
       /* Snippet table editor: mirrors the rendered table presets live. */
       .ld-table-editor table.ld-table-edit-table {
         --tbl-accent: rgb(209 213 219);

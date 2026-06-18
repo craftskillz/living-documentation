@@ -86,3 +86,7 @@ Some intro text.
 | Name    | Age |
 | ------- | --: |
 | Youssef |  42 |
+
+<!-- image-width: 1/2 -->
+<!-- image-align: right -->
+![Styled image](/images/styled-image.png)

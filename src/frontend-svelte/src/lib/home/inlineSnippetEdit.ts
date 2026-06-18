@@ -12,6 +12,7 @@ import {
 } from "./snippets/listMarkdown";
 import { tableBlockSource } from "./tableAttributes";
 import { blockquoteBlockSource } from "./blockquoteAttributes";
+import { imageBlockSource } from "./imageAttributes";
 import { t } from "../i18n.svelte";
 
 export interface InlineSnippetRange {
@@ -259,7 +260,12 @@ function _inlineCollectSnippetRanges(content: string): InlineSnippetRange[] {
   );
   _inlineAddRegexRanges(ranges, content, orderedListBlockRegex());
   _inlineAddRegexRanges(ranges, content, unorderedListBlockRegex());
-  _inlineAddRegexRanges(ranges, content, /!\[[^\]\n]*\]\([^)]+\)/g);
+  _inlineAddRegexRanges(
+    ranges,
+    content,
+    new RegExp("(?:^|\\n)((" + imageBlockSource() + "))", "g"),
+    1,
+  );
   _inlineAddRegexRanges(ranges, content, /\[[^\]\n]+\]\([^)]+\)/g);
 
   const frontmatter = content.match(/^---\s*\n[\s\S]*?\n---/);

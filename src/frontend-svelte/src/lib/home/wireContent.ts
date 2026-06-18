@@ -3,6 +3,10 @@ import {
   collectBlockquoteAttributesFromSource,
   getCalloutIcon,
 } from "./blockquoteAttributes";
+import {
+  collectImageAttributesFromSource,
+  imageWidthClass,
+} from "./imageAttributes";
 
 declare global {
   interface Window {
@@ -29,6 +33,7 @@ export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireO
   applyTableStyles(contentEl, opts.content);
   fillEmptyTableCells(contentEl);
   applyBlockquoteStyles(contentEl, opts.content);
+  applyImageStyles(contentEl, opts.content);
   applyCompareBlockStyles(contentEl);
 
   contentEl.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach(h => {
@@ -110,6 +115,25 @@ function applyTableStyles(contentEl: HTMLElement, content: string) {
 function fillEmptyTableCells(contentEl: HTMLElement) {
   contentEl.querySelectorAll("table th, table td").forEach(cell => {
     if ((cell.textContent || "").trim() === "") cell.textContent = " ";
+  });
+}
+
+function applyImageStyles(contentEl: HTMLElement, content: string) {
+  const attrs = collectImageAttributesFromSource(typeof content === "string" ? content : "");
+  const images = Array.from(contentEl.querySelectorAll("img")).filter(
+    (img) => !img.closest(".ld-compare-render"),
+  );
+  images.forEach((image, i) => {
+    const a = attrs[i];
+    if (!a) return;
+    if (a.width) {
+      image.classList.add(imageWidthClass(a.width));
+      image.dataset.imageWidth = a.width;
+    }
+    if (a.align) {
+      image.classList.add(`ld-image-align-${a.align}`);
+      image.dataset.imageAlign = a.align;
+    }
   });
 }
 

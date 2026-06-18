@@ -597,7 +597,12 @@
       case "heading-4":
         return { text: val("snip-heading-content"), fallback: t("snippet.heading_text_placeholder") || "Titre" };
       case "image":
-        return { alt: val("snip-image-alt"), url: val("snip-image-url") };
+        return {
+          alt: val("snip-image-alt"),
+          url: val("snip-image-url"),
+          width: val("snip-image-width"),
+          align: val("snip-image-align"),
+        };
       case "table": {
         const borderedEl = byId<HTMLInputElement>("snip-table-bordered");
         return {
@@ -995,6 +1000,8 @@
           val2("snip-image-alt", parsed.alt);
           val2("snip-image-url", parsed.url);
         }
+        val2("snip-image-width", parsed.width || "");
+        val2("snip-image-align", parsed.align || "");
         break;
       case "heading-1":
       case "heading-2":
@@ -1360,6 +1367,29 @@
 
       <!-- Panel: image -->
       <div id="snip-panel-image" class="hidden space-y-3">
+        <div class="flex items-center gap-5 flex-wrap">
+          <div class="flex items-center gap-2">
+            <label for="snip-image-width" class="text-xs text-gray-500 dark:text-gray-400">{t("snippet.image_width_label")}</label>
+            <select id="snip-image-width" onchange={snippetUpdatePreview} class="text-xs rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2 py-1">
+              <option value="">{t("snippet.image_width_default")}</option>
+              <option value="full">{t("snippet.image_width_full")}</option>
+              <option value="3/4">{t("snippet.image_width_three_quarters")}</option>
+              <option value="2/3">{t("snippet.image_width_two_thirds")}</option>
+              <option value="1/2">{t("snippet.image_width_half")}</option>
+              <option value="1/3">{t("snippet.image_width_third")}</option>
+              <option value="1/4">{t("snippet.image_width_quarter")}</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <label for="snip-image-align" class="text-xs text-gray-500 dark:text-gray-400">{t("snippet.image_align_label")}</label>
+            <select id="snip-image-align" onchange={snippetUpdatePreview} class="text-xs rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2 py-1">
+              <option value="">{t("snippet.image_align_default")}</option>
+              <option value="left">{t("snippet.image_align_left")}</option>
+              <option value="center">{t("snippet.image_align_center")}</option>
+              <option value="right">{t("snippet.image_align_right")}</option>
+            </select>
+          </div>
+        </div>
         <div class="space-y-1.5">
           <label for="snip-image-alt" class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("snippet.image_alt_label")}</label>
           <input id="snip-image-alt" type="text" placeholder={t("snippet.image_alt_placeholder")} oninput={snippetUpdatePreview} class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
