@@ -221,6 +221,43 @@ test.describe('inline snippet editing from viewer', () => {
     );
   });
 
+  test('shift-click or command-click on a rendered Mermaid diagram opens the shared lightbox', async ({ page, ld }) => {
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    const mermaid = page.locator('#doc-content .mermaid');
+    await expect(mermaid).toBeVisible();
+
+    // Keep the interaction test deterministic even when the external Mermaid CDN
+    // is unavailable: wireDocContent always creates the .mermaid mount, and this
+    // SVG mirrors the element Mermaid inserts asynchronously into that mount.
+    await mermaid.evaluate((el) => {
+      if (!el.querySelector('svg')) {
+        el.innerHTML = '<svg viewBox="0 0 200 100" aria-label="Test Mermaid"><rect width="200" height="100" fill="white"/><text x="20" y="55">Start → Finish</text></svg>';
+      }
+    });
+
+    const svg = mermaid.locator('svg');
+    await svg.click({ modifiers: ['Shift'] });
+    const lightbox = page.getByTestId('content-lightbox');
+    await expect(lightbox).toBeVisible();
+    await expect(lightbox).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    const lightboxImage = page.getByTestId('lightbox-image');
+    await expect(lightboxImage).toBeVisible();
+    await expect(lightboxImage).toHaveAttribute('alt', 'Mermaid diagram');
+    await expect(lightboxImage).toHaveAttribute('src', /^data:image\/svg\+xml;charset=utf-8,/);
+
+    await page.keyboard.press('Escape');
+    await expect(lightbox).toBeHidden();
+
+    await svg.click({ modifiers: ['Meta'] });
+    await expect(lightbox).toBeVisible();
+    await expect(page.getByTestId('lightbox-image')).toHaveAttribute(
+      'src',
+      /^data:image\/svg\+xml;charset=utf-8,/,
+    );
+    await page.keyboard.press('Escape');
+    await expect(lightbox).toBeHidden();
+  });
+
   test('borderless tables keep horizontal separators without vertical cell borders', async ({ page, ld }) => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     const firstHeader = page.locator('#doc-content table').first().locator('thead th').first();

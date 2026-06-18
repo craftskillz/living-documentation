@@ -90,3 +90,8 @@ Some intro text.
 <!-- image-width: 1/2 -->
 <!-- image-align: right -->
 ![Styled image](/images/styled-image.png)
+
+```mermaid
+flowchart LR
+  A[Start] --> B[Finish]
+```

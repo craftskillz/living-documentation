@@ -430,18 +430,33 @@
 
   function exportPDF() { window.print(); }
 
-  // Lightbox: Shift+click on rendered images
+  function closeLightbox() {
+    lightboxSrc = null;
+    lightboxAlt = "";
+  }
+
+  // Lightbox: Shift+click or Command+click on rendered images or Mermaid diagrams.
+  // Option and Control are intentionally left available for other interactions.
   function onContentClick(e: MouseEvent) {
-    const img = (e.target as HTMLElement).closest("img");
-    if (!img || !e.shiftKey) return;
+    if (!e.shiftKey && !e.metaKey) return;
+    const target = e.target as HTMLElement;
+    const img = target.closest("img");
+    const mermaidSvg = target.closest(".mermaid")?.querySelector("svg");
+    if (!img && !mermaidSvg) return;
     e.preventDefault();
     e.stopPropagation();
-    lightboxSrc = (img as HTMLImageElement).src;
-    lightboxAlt = (img as HTMLImageElement).alt || "";
+    if (img) {
+      lightboxSrc = (img as HTMLImageElement).src;
+      lightboxAlt = (img as HTMLImageElement).alt || "";
+      return;
+    }
+    const svgMarkup = new XMLSerializer().serializeToString(mermaidSvg!);
+    lightboxSrc = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgMarkup)}`;
+    lightboxAlt = t("doc.mermaid_diagram_alt");
   }
 
   function onKeydown(e: KeyboardEvent) {
-    if (e.key === "Escape" && lightboxSrc) lightboxSrc = null;
+    if (e.key === "Escape" && lightboxSrc) closeLightbox();
   }
 </script>
 
@@ -656,9 +671,9 @@
 <!-- Lightbox -->
 {#if lightboxSrc}
   <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-  <div class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center cursor-pointer" onclick={() => (lightboxSrc = null)}>
+  <div data-testid="content-lightbox" class="fixed inset-0 z-50 bg-white flex items-center justify-center cursor-pointer p-4" onclick={closeLightbox}>
     <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-    <img src={lightboxSrc} alt={lightboxAlt} class="max-w-full max-h-full object-contain select-none" onclick={(e) => e.stopPropagation()} />
-    <button onclick={() => (lightboxSrc = null)} class="absolute top-4 right-4 text-white/70 hover:text-white text-2xl leading-none">×</button>
+    <img data-testid="lightbox-image" src={lightboxSrc} alt={lightboxAlt} class="max-w-full max-h-full object-contain select-none" onclick={(e) => e.stopPropagation()} />
+    <button onclick={closeLightbox} class="absolute top-4 right-4 text-gray-500 hover:text-gray-950 text-2xl leading-none">×</button>
   </div>
 {/if}

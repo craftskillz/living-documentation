@@ -124,6 +124,7 @@
   "doc.code_show_less": "▴ Show less",
   "doc.code_copy": "Copy",
   "doc.code_copied": "Copied!",
+  "doc.mermaid_diagram_alt": "Mermaid diagram",
   "metadata.button": "Metadata",
   "metadata.button_title": "Manage source-file metadata",
   "metadata.title": "Source metadata",

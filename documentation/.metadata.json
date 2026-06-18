@@ -984,5 +984,29 @@
       "path": "src/lib/config.ts",
       "hash": "034aa32d6fbb232e998017b8c58d5d11db117d4ee1efa4d27326e37751694df3"
     }
+  ],
+  "ADRS/2026_06_18_23_07_[MERMAID]_shift_click_fullscreen_pour_les_diagrammes_mermaid": [
+    {
+      "path": "src/frontend-svelte/src/lib/home/DocViewer.svelte",
+      "hash": "7deebff201686f464665404fad8470a75096a91a2558be5374ddc11d1401430d"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/wireContent.ts",
+      "hash": "7b567ef3276b528e4bc2bf11144e44c69dfec70c556f75e05d5911afaf6999e0"
+    },
+    {
+      "path": "tests/e2e/inline-snippet-edit.spec.ts",
+      "hash": "e796b3e9200212fbe4eb7a203c2c8d7fead7535652c283ba90c47a8c767e2f18"
+    }
+  ],
+  "2_guide/2026_04_08_00_04_[DOCUMENT]_utilisation_des_images_plein_ecran_lien_clickable": [
+    {
+      "path": "src/frontend-svelte/src/lib/home/DocViewer.svelte",
+      "hash": "7deebff201686f464665404fad8470a75096a91a2558be5374ddc11d1401430d"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/wireContent.ts",
+      "hash": "7b567ef3276b528e4bc2bf11144e44c69dfec70c556f75e05d5911afaf6999e0"
+    }
   ]
 }
