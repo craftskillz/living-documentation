@@ -17,6 +17,7 @@ import { exportRouter } from './routes/export';
 import { contextRouter } from './routes/context';
 import { workspaceRouter } from './routes/workspace';
 import { blueprintRouter } from './routes/blueprint';
+import { survivalKitRouter } from './routes/survival-kit';
 import { mcpRouter } from './mcp/server';
 import { writeConfig } from './lib/config';
 
@@ -56,6 +57,7 @@ export async function startServer({
   app.use('/api/context', contextRouter(docsPath));
   app.use('/api/workspace', workspaceRouter(docsPath));
   app.use('/api/blueprint', blueprintRouter(docsPath));
+  app.use('/api/survival-kit', survivalKitRouter(docsPath));
   app.use('/mcp', mcpRouter(docsPath));
 
   // Static frontend — the unified Svelte app built by Vite into dist/frontend-svelte.
@@ -71,7 +73,7 @@ export async function startServer({
   // Serve the SPA shell (index.html) for the app's client-side routes. Explicit
   // list rather than a catch-all so unknown paths still 404.
   const indexHtml = path.join(frontendPath, 'index.html');
-  const spaRoutes = ['/', '/admin', '/workspace', '/blueprint', '/diagram', '/shape-editor', '/context', '/agents', '/files'];
+  const spaRoutes = ['/', '/admin', '/workspace', '/blueprint', '/diagram', '/shape-editor', '/context', '/agents', '/files', '/survival-kit'];
   for (const route of spaRoutes) {
     app.get(route, (_req, res) => res.sendFile(indexHtml, { dotfiles: 'allow' }));
   }

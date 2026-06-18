@@ -9,6 +9,7 @@
   import Home from "./routes/Home.svelte";
   import Diagram from "./routes/Diagram.svelte";
   import ShapeEditor from "./routes/ShapeEditor.svelte";
+  import SurvivalKit from "./routes/SurvivalKit.svelte";
 
   // Normalize the pathname so trailing slashes (e.g. "/diagram/") still match the
   // exact route keys below. Express tolerates the trailing slash and serves
@@ -53,6 +54,8 @@
   <Diagram />
 {:else if path === "/shape-editor"}
   <ShapeEditor />
+{:else if path === "/survival-kit"}
+  <SurvivalKit />
 {:else if path === "/"}
   <Home />
 {:else}

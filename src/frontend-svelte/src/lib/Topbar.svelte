@@ -17,6 +17,7 @@
       { label: "Blueprint", href: "/blueprint" },
       { label: "Diagram", href: "/diagram" },
       { label: "Files", href: "/files" },
+      { label: "Survival Kit", href: "/survival-kit" },
       { label: "AI Context", href: "/context" },
       { label: "Admin", href: "/admin" },
       { label: "Home", href: "/" },
