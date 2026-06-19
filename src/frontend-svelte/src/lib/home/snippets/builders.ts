@@ -6,6 +6,7 @@ import {
   buildUnorderedListMarkdown,
 } from "./listMarkdown";
 import { buildImageAttributesPrefix } from "../imageAttributes";
+import { buildCodeBlockAttributesPrefix } from "../codeBlockAttributes";
 
 function ldSnippetValueOr(value: string | undefined, fallback: string): string {
   return value || fallback;
@@ -68,10 +69,18 @@ export function ldBuildCodeBlockSnippetMarkdown(data: {
   lang?: string;
   code?: string;
   inlineIndent?: string;
+  width?: string;
+  align?: string;
 }): string {
   const lang = data.lang || "";
   const code = ldSnippetValueOr(data.code, "// code ici");
-  const block = `\`\`\`${lang}\n${code}\n\`\`\``;
+  const prefix = buildCodeBlockAttributesPrefix({
+    language: lang,
+    width: data.width,
+    align: data.align,
+  });
+  const fenced = `\`\`\`${lang}\n${code}\n\`\`\``;
+  const block = prefix ? `${prefix}\n${fenced}` : fenced;
   if (!data.inlineIndent) return block;
   return block
     .split("\n")

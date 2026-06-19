@@ -258,6 +258,48 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(lightbox).toBeHidden();
   });
 
+  test('Mermaid layout comments are rendered and editable inline', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    const mermaid = page.locator('#doc-content .mermaid');
+    await expect(mermaid).toHaveAttribute('data-code-block-width', '2/3');
+    await expect(mermaid).toHaveAttribute('data-code-block-align', 'center');
+    await expect(mermaid).toHaveClass(/ld-mermaid-width-two-thirds/);
+    await expect(mermaid).toHaveClass(/ld-mermaid-align-center/);
+    const mermaidLayout = await mermaid.evaluate((el) => {
+      const rect = el.getBoundingClientRect();
+      const parentRect = el.parentElement!.getBoundingClientRect();
+      return {
+        ratio: rect.width / parentRect.width,
+        leftGap: rect.left - parentRect.left,
+        rightGap: parentRect.right - rect.right,
+      };
+    });
+    expect(mermaidLayout.ratio).toBeCloseTo(2 / 3, 2);
+    expect(Math.abs(mermaidLayout.leftGap - mermaidLayout.rightGap)).toBeLessThan(2);
+
+    await mermaid.click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'code-block');
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
+
+    await expect(page.locator('#snip-code-lang')).toHaveValue('mermaid');
+    await expect(page.locator('#snip-code-width')).toHaveValue('2/3');
+    await expect(page.locator('#snip-code-align')).toHaveValue('center');
+    await page.locator('#snip-code-width').selectOption('1/2');
+    await page.locator('#snip-code-align').selectOption('left');
+    await page.locator('#snippet-submit-btn').click();
+
+    const updated = page.locator('#doc-content .mermaid');
+    await expect(updated).toHaveClass(/ld-mermaid-width-half/);
+    await expect(updated).toHaveClass(/ld-mermaid-align-left/);
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain(
+      '<!-- mermaid-width: 1/2 -->\n<!-- mermaid-align: left -->\n```mermaid',
+    );
+    expect(onDisk).not.toContain('<!-- code-width: 1/2 -->\n<!-- code-align: left -->\n```mermaid');
+  });
+
   test('borderless tables keep horizontal separators without vertical cell borders', async ({ page, ld }) => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     const firstHeader = page.locator('#doc-content table').first().locator('thead th').first();
@@ -493,7 +535,22 @@ test.describe('inline snippet editing from viewer', () => {
     const docPath = path.join(ld.docsAbs, `${docId}.md`);
 
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
-    await page.locator('#doc-content pre').first().click({ button: 'right' });
+    const codeBlock = page.locator('#doc-content pre').first();
+    await expect(codeBlock).toHaveAttribute('data-code-block-width', '1/2');
+    await expect(codeBlock).toHaveAttribute('data-code-block-align', 'right');
+    await expect(codeBlock).toHaveClass(/ld-code-width-half/);
+    await expect(codeBlock).toHaveClass(/ld-code-align-right/);
+    const codeLayout = await codeBlock.evaluate((el) => {
+      const rect = el.getBoundingClientRect();
+      const parentRect = el.parentElement!.getBoundingClientRect();
+      return {
+        ratio: rect.width / parentRect.width,
+        rightGap: parentRect.right - rect.right,
+      };
+    });
+    expect(codeLayout.ratio).toBeCloseTo(1 / 2, 2);
+    expect(Math.abs(codeLayout.rightGap)).toBeLessThan(2);
+    await codeBlock.click({ button: 'right' });
     await expect(page.locator('#inline-snippet-popup')).toBeVisible();
     await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'code-block');
     await expect(page.locator('#inline-snippet-popup button[data-action="edit"]')).toContainText('Edit code block');
@@ -504,15 +561,21 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(page.locator('#snippet-preview-wrap')).toBeHidden();
     await expect(page.locator('#snip-code-lang')).toHaveValue('javascript');
     await expect(page.locator('#snip-code-content')).toHaveValue('console.log("Hello World!");');
+    await expect(page.locator('#snip-code-width')).toHaveValue('1/2');
+    await expect(page.locator('#snip-code-align')).toHaveValue('right');
 
     await page.locator('#snip-code-content').fill('console.log("Updated!");');
+    await page.locator('#snip-code-width').selectOption('1/3');
+    await page.locator('#snip-code-align').selectOption('center');
     await page.locator('#snippet-submit-btn').click();
 
     await expect(page.locator('#snippets-modal')).toBeHidden();
     await expect(page.locator('#doc-content pre').first()).toContainText('Updated!');
 
     const onDisk = fs.readFileSync(docPath, 'utf-8');
-    expect(onDisk).toContain('```javascript\nconsole.log("Updated!");\n```');
+    expect(onDisk).toContain(
+      '<!-- code-width: 1/3 -->\n<!-- code-align: center -->\n```javascript\nconsole.log("Updated!");\n```',
+    );
     expect(onDisk).not.toContain('console.log("Hello World!");');
   });
 

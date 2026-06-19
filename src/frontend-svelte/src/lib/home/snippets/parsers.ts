@@ -3,12 +3,11 @@
 import { parseTableSnippetMarkdown } from "./table";
 import { parseTreeSnippetMarkdown } from "./tree";
 import { parseImageAttributesFromMarkdown } from "../imageAttributes";
-
-function ldStripCodeBlockIndent(code: string, indent: string): string {
-  if (!indent) return code;
-  const escapedIndent = indent.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return code.replace(new RegExp("^" + escapedIndent, "gm"), "");
-}
+import {
+  normalizeCodeBlockMarkdown,
+  parseCodeBlockAttributesFromMarkdown,
+  stripCodeBlockAttributesPrefix,
+} from "../codeBlockAttributes";
 
 export function ldParseCollapsibleSnippetMarkdown(markdown: string): {
   summary?: string;
@@ -62,12 +61,17 @@ export function ldParseAnchorDocLinkSnippetMarkdown(markdown: string): {
 export function ldParseCodeBlockSnippetMarkdown(
   markdown: string,
   options: { inlineIndent?: string } = {},
-): { lang: string; code: string } {
-  const match = markdown.match(/^```[ \t]*([^\n]*)\n([\s\S]*?)\n[ \t]*```$/);
-  if (!match) return { lang: "", code: "" };
+): { lang: string; code: string; width: string; align: string } {
+  const normalized = normalizeCodeBlockMarkdown(markdown, options.inlineIndent || "");
+  const attrs = parseCodeBlockAttributesFromMarkdown(normalized);
+  const body = stripCodeBlockAttributesPrefix(normalized);
+  const match = body.match(/^```[ \t]*([^\n]*)\n([\s\S]*?)\n[ \t]*```$/);
+  if (!match) return { lang: "", code: "", width: "", align: "" };
   return {
     lang: match[1].trim(),
-    code: ldStripCodeBlockIndent(match[2], options.inlineIndent || ""),
+    code: match[2],
+    width: attrs.width || "",
+    align: attrs.align || "",
   };
 }
 
@@ -170,7 +174,7 @@ export function ldParseSnippetMarkdown(
     case "unordered-list":
       return { content: text };
     case "code-block":
-      return ldParseCodeBlockSnippetMarkdown(text, options);
+      return ldParseCodeBlockSnippetMarkdown(markdown || "", options);
     case "blockquote":
       return ldParseBlockquoteSnippetMarkdown(text);
     case "image":

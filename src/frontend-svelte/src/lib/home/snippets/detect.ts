@@ -18,7 +18,7 @@ export function detectSnippetType(text: string): string | null {
   if (/^<div\s[^>]*border-left[^>]*>/.test(t)) return "colored-section";
   if (/^```text\n/.test(t) && /[├└│]/.test(t)) return "tree";
   if (/^:::compare[ \t]*\n/.test(t)) return "compare";
-  if (/^```/.test(t)) return "code-block";
+  if (/^<!--\s*(?:code|mermaid)-(?:width|align):/.test(t) || /^```/.test(t)) return "code-block";
   if (looksLikeTableSnippet(t)) return "table";
   if (/^<!--\s*quote-(?:type|title|icon)/.test(t) || /^> /.test(t)) return "blockquote";
   const headingMatch = /^(#{1,4}) [^\n]+$/.exec(t);

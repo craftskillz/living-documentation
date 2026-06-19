@@ -2,7 +2,7 @@
 
 ## Gestes dans le viewer
 
-Dans Home, deux gestes ouvrent une image ou un diagramme Mermaid dans le lightbox plein ecran :
+Dans Home, deux gestes ouvrent une image ou un diagramme Mermaid dans le lightbox plein ecran a fond blanc :
 
 - **Shift+Click** sur toutes les plateformes ;
 - **Command+Click** sur macOS.
@@ -23,8 +23,8 @@ Une fois le diagramme affiche, effectuer Shift+Click ou Command+Click dessus pou
 Le lightbox se ferme de trois manieres :
 
 - touche `Escape` ;
-- clic sur le fond noir ;
-- bouton `×` en haut a droite.
+- clic sur le fond blanc ;
+- bouton `×` gris en haut a droite.
 
 ## Inserer une image avec l'editeur
 

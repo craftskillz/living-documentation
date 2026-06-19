@@ -42,6 +42,60 @@
         margin-right: 0 !important;
       }
 
+      /* Code and Mermaid presets — triggered by layout comments. */
+      .prose pre[class*="ld-code-width-"],
+      .prose .mermaid[class*="ld-mermaid-width-"] {
+        max-width: 100%;
+      }
+      .prose pre.ld-code-width-full,
+      .prose .mermaid.ld-mermaid-width-full {
+        width: 100%;
+      }
+      .prose pre.ld-code-width-three-quarters,
+      .prose .mermaid.ld-mermaid-width-three-quarters {
+        width: 75%;
+      }
+      .prose pre.ld-code-width-two-thirds,
+      .prose .mermaid.ld-mermaid-width-two-thirds {
+        width: 66.6667%;
+      }
+      .prose pre.ld-code-width-half,
+      .prose .mermaid.ld-mermaid-width-half {
+        width: 50%;
+      }
+      .prose pre.ld-code-width-third,
+      .prose .mermaid.ld-mermaid-width-third {
+        width: 33.3333%;
+      }
+      .prose pre.ld-code-width-quarter,
+      .prose .mermaid.ld-mermaid-width-quarter {
+        width: 25%;
+      }
+      .prose pre[class*="ld-code-align-"],
+      .prose .mermaid[class*="ld-mermaid-align-"] {
+        display: block;
+      }
+      .prose pre.ld-code-align-left,
+      .prose .mermaid.ld-mermaid-align-left {
+        margin-left: 0 !important;
+        margin-right: auto !important;
+      }
+      .prose pre.ld-code-align-center,
+      .prose .mermaid.ld-mermaid-align-center {
+        margin-left: auto !important;
+        margin-right: auto !important;
+      }
+      .prose pre.ld-code-align-right,
+      .prose .mermaid.ld-mermaid-align-right {
+        margin-left: auto !important;
+        margin-right: 0 !important;
+      }
+      .prose .mermaid[class*="ld-mermaid-width-"] svg {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+      }
+
       /* Snippet table editor: mirrors the rendered table presets live. */
       .ld-table-editor table.ld-table-edit-table {
         --tbl-accent: rgb(209 213 219);

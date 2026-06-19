@@ -126,6 +126,8 @@
   .sk-add-bar select {
     padding: 8px 8px;
     font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
     border: 1px solid var(--line);
     border-radius: 8px;
     background: var(--panel-soft);
@@ -182,41 +184,59 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 12px;
-    border: 1px solid var(--line);
-    border-left: 3px solid var(--sk-color);
+    padding: 10px 14px;
+    border: 1px solid var(--sk-border);
     border-radius: 10px;
-    background: var(--panel);
+    background: var(--sk-bg);
+    color: var(--sk-color);
   }
+  /* Full priority-tinted rows (matches the original kit). */
   .sk-task--urgent {
-    --sk-color: #ef4444;
+    --sk-color: #e11d48;
+    --sk-border: #fda4af;
+    --sk-bg: rgba(255, 228, 230, 0.85);
+    --sk-tag-bg: rgba(255, 205, 211, 0.9);
+    --sk-tag-fg: #be123c;
   }
   .sk-task--normal {
-    --sk-color: var(--accent);
+    --sk-color: #16a34a;
+    --sk-border: #bbf7d0;
+    --sk-bg: rgba(220, 252, 231, 0.85);
+    --sk-tag-bg: rgba(187, 247, 208, 0.9);
+    --sk-tag-fg: #15803d;
   }
   .sk-task--later {
-    --sk-color: #a855f7;
+    --sk-color: #78716c;
+    --sk-border: #d6d3d1;
+    --sk-bg: rgba(231, 229, 228, 0.85);
+    --sk-tag-bg: rgba(214, 211, 209, 0.9);
+    --sk-tag-fg: #57534e;
   }
   .sk-check {
     width: 18px;
     height: 18px;
     flex-shrink: 0;
-    border: 2px solid var(--line-strong);
-    border-radius: 6px;
+    border: 2px solid var(--sk-color);
+    border-radius: 50%;
     background: transparent;
     cursor: pointer;
     position: relative;
+    transition: transform 0.15s;
+  }
+  .sk-check:hover {
+    transform: scale(1.1);
   }
   .sk-check.checked {
-    background: var(--green);
-    border-color: var(--green);
+    background: var(--sk-color);
+    border-color: var(--sk-color);
   }
   .sk-check.checked::after {
     content: "✓";
     position: absolute;
     inset: 0;
     color: #fff;
-    font-size: 12px;
+    font-size: 11px;
+    font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -225,18 +245,23 @@
     flex: 1;
     min-width: 0;
     font-size: 13px;
-    color: var(--ink);
+    color: inherit;
     word-break: break-word;
+  }
+  .sk-task.done {
+    opacity: 0.5;
   }
   .sk-task.done .sk-task-text {
     text-decoration: line-through;
-    color: var(--muted);
   }
   .sk-task-tag {
     font-size: 10px;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--sk-color);
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border-radius: 5px;
+    background: var(--sk-tag-bg);
+    color: var(--sk-tag-fg);
     flex-shrink: 0;
   }
   .sk-task-del {

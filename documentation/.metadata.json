@@ -974,7 +974,7 @@
     },
     {
       "path": "src/frontend-svelte/src/lib/home/DocViewer.svelte",
-      "hash": "9534a83e1064105648f91468915733e77703bb1082d5a3201adb57e3f0b63889"
+      "hash": "929ae87838a148b00d469e3dee35c7e4e6fd6f66071f4cd8451f986f2db2a129"
     },
     {
       "path": "src/frontend-svelte/src/routes/Admin.svelte",
@@ -983,12 +983,24 @@
     {
       "path": "src/lib/config.ts",
       "hash": "034aa32d6fbb232e998017b8c58d5d11db117d4ee1efa4d27326e37751694df3"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/codeBlockAttributes.ts",
+      "hash": "bb126331426517bd2b9fa7ce3d6fb5417d29d2acfa9e6a92b82b710e73efafd0"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/wireContent.ts",
+      "hash": "58265311658d0ee77c77bd555aed9f1ddb713061f1b32716f4573ce25901ade2"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/SnippetsModal.svelte",
+      "hash": "df8cf85fc589732dce2af6f96116dc035efad709bd3cc2b65d9809011e4560c7"
     }
   ],
   "ADRS/2026_06_18_23_07_[MERMAID]_shift_click_fullscreen_pour_les_diagrammes_mermaid": [
     {
       "path": "src/frontend-svelte/src/lib/home/DocViewer.svelte",
-      "hash": "7deebff201686f464665404fad8470a75096a91a2558be5374ddc11d1401430d"
+      "hash": "929ae87838a148b00d469e3dee35c7e4e6fd6f66071f4cd8451f986f2db2a129"
     },
     {
       "path": "src/frontend-svelte/src/lib/home/wireContent.ts",
@@ -996,17 +1008,47 @@
     },
     {
       "path": "tests/e2e/inline-snippet-edit.spec.ts",
-      "hash": "e796b3e9200212fbe4eb7a203c2c8d7fead7535652c283ba90c47a8c767e2f18"
+      "hash": "2ba623e25d466ce2b114991d4d4c785bf1f07751b605e6b871fbde38ef96ff2b"
     }
   ],
   "2_guide/2026_04_08_00_04_[DOCUMENT]_utilisation_des_images_plein_ecran_lien_clickable": [
     {
       "path": "src/frontend-svelte/src/lib/home/DocViewer.svelte",
-      "hash": "7deebff201686f464665404fad8470a75096a91a2558be5374ddc11d1401430d"
+      "hash": "929ae87838a148b00d469e3dee35c7e4e6fd6f66071f4cd8451f986f2db2a129"
     },
     {
       "path": "src/frontend-svelte/src/lib/home/wireContent.ts",
       "hash": "7b567ef3276b528e4bc2bf11144e44c69dfec70c556f75e05d5911afaf6999e0"
+    }
+  ],
+  "ADRS/2026_06_18_23_24_[CODE BLOCK]_directives_de_largeur_et_alignement_des_blocs_code_et_mermaid": [
+    {
+      "path": "src/frontend-svelte/src/lib/home/codeBlockAttributes.ts",
+      "hash": "bb126331426517bd2b9fa7ce3d6fb5417d29d2acfa9e6a92b82b710e73efafd0"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/wireContent.ts",
+      "hash": "58265311658d0ee77c77bd555aed9f1ddb713061f1b32716f4573ce25901ade2"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/inlineSnippetEdit.ts",
+      "hash": "634a6070c707eb00a603421a4e668965e2128f7ab2acd47dda74518aa6ecb9ef"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/snippets/builders.ts",
+      "hash": "d95de66cff90ad4f26b322b5378297febd447f12928fd4903e922903e5cf0152"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/snippets/parsers.ts",
+      "hash": "f393e13c0b121c1e1478f06cc0721760a4491111ebb78e19a4fdd983c9026498"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/SnippetsModal.svelte",
+      "hash": "df8cf85fc589732dce2af6f96116dc035efad709bd3cc2b65d9809011e4560c7"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/home.css",
+      "hash": "a4f90a91cef6eadaed86b3bffa45f4a796804611290a4d690326a5c7f44fa4f4"
     }
   ]
 }

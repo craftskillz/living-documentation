@@ -581,7 +581,13 @@
       case "unordered-list":
         return { content: val("snip-unordered-list-content") };
       case "code-block":
-        return { lang: val("snip-code-lang"), code: val("snip-code-content"), inlineIndent };
+        return {
+          lang: val("snip-code-lang"),
+          code: val("snip-code-content"),
+          width: val("snip-code-width"),
+          align: val("snip-code-align"),
+          inlineIndent,
+        };
       case "blockquote": {
         const iconEl = byId<HTMLInputElement>("snip-blockquote-icon");
         return {
@@ -986,6 +992,8 @@
       case "code-block":
         val2("snip-code-lang", parsed.lang);
         val2("snip-code-content", parsed.code);
+        val2("snip-code-width", parsed.width || "");
+        val2("snip-code-align", parsed.align || "");
         break;
       case "blockquote": {
         val2("snip-blockquote-type", parsed.type || "");
@@ -1331,6 +1339,30 @@
           </label>
           <input id="snip-code-lang" type="text" placeholder="javascript" oninput={snippetUpdatePreview} class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
+        <div class="flex items-center gap-5 flex-wrap">
+          <div class="flex items-center gap-2">
+            <label for="snip-code-width" class="text-xs text-gray-500 dark:text-gray-400">{t("snippet.code_width_label")}</label>
+            <select id="snip-code-width" onchange={snippetUpdatePreview} class="text-xs rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2 py-1">
+              <option value="">{t("snippet.code_width_default")}</option>
+              <option value="full">{t("snippet.code_width_full")}</option>
+              <option value="3/4">{t("snippet.code_width_three_quarters")}</option>
+              <option value="2/3">{t("snippet.code_width_two_thirds")}</option>
+              <option value="1/2">{t("snippet.code_width_half")}</option>
+              <option value="1/3">{t("snippet.code_width_third")}</option>
+              <option value="1/4">{t("snippet.code_width_quarter")}</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <label for="snip-code-align" class="text-xs text-gray-500 dark:text-gray-400">{t("snippet.code_align_label")}</label>
+            <select id="snip-code-align" onchange={snippetUpdatePreview} class="text-xs rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2 py-1">
+              <option value="">{t("snippet.code_align_default")}</option>
+              <option value="left">{t("snippet.code_align_left")}</option>
+              <option value="center">{t("snippet.code_align_center")}</option>
+              <option value="right">{t("snippet.code_align_right")}</option>
+            </select>
+          </div>
+        </div>
+        <p class="text-xs text-gray-400 dark:text-gray-500">{t("snippet.code_layout_hint")}</p>
         <div class="space-y-1.5">
           <label for="snip-code-content" class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("snippet.code_content_label")}</label>
           <textarea id="snip-code-content" rows="12" placeholder={t("snippet.code_content_placeholder")} oninput={snippetUpdatePreview} class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y font-mono leading-relaxed"></textarea>

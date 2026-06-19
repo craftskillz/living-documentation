@@ -30,6 +30,8 @@ Old section body
 | s         |           |           |
 |           | s         |           |
 
+<!-- code-width: 1/2 -->
+<!-- code-align: right -->
 ```javascript
 console.log("Hello World!");
 ```
@@ -91,6 +93,8 @@ Some intro text.
 <!-- image-align: right -->
 ![Styled image](/images/styled-image.png)
 
+<!-- mermaid-width: 2/3 -->
+<!-- mermaid-align: center -->
 ```mermaid
 flowchart LR
   A[Start] --> B[Finish]

@@ -13,6 +13,7 @@ import {
 import { tableBlockSource } from "./tableAttributes";
 import { blockquoteBlockSource } from "./blockquoteAttributes";
 import { imageBlockSource } from "./imageAttributes";
+import { codeBlockSource } from "./codeBlockAttributes";
 import { t } from "../i18n.svelte";
 
 export interface InlineSnippetRange {
@@ -118,7 +119,7 @@ const _INLINE_TYPE_SELECTORS: { types: string[]; selector: string }[] = [
   { types: ["collapsible"], selector: "details" },
   { types: ["colored-section"], selector: 'div[style*="border-left"]' },
   { types: ["colored-text"], selector: 'span[style*="color"]' },
-  { types: ["tree", "code-block"], selector: "pre" },
+  { types: ["tree", "code-block"], selector: "pre, .mermaid" },
   { types: ["table"], selector: "table" },
   { types: ["blockquote"], selector: "blockquote" },
   { types: ["separator"], selector: "hr" },
@@ -179,13 +180,6 @@ function _inlineAddRegexRanges(
   }
 }
 
-function _inlineLineIndentBefore(content: string, idx: number): string {
-  let i = idx;
-  while (i > 0 && content[i - 1] !== "\n") i -= 1;
-  const prefix = content.slice(i, idx);
-  return /^[ \t]+$/.test(prefix) ? prefix : "";
-}
-
 function _inlineAddCompareBlockRanges(ranges: InlineSnippetRange[], content: string): void {
   const regex = /^:::compare[ \t]*\n[\s\S]*?^:::[ \t]*$/gm;
   let match: RegExpExecArray | null;
@@ -204,7 +198,7 @@ function _inlineAddCompareBlockRanges(ranges: InlineSnippetRange[], content: str
 }
 
 function _inlineAddCodeBlockRanges(ranges: InlineSnippetRange[], content: string): void {
-  const regex = /```[\s\S]*?```/g;
+  const regex = new RegExp(`^${codeBlockSource()}`, "gm");
   let match: RegExpExecArray | null;
   while ((match = regex.exec(content))) {
     const raw = match[0];
@@ -214,9 +208,9 @@ function _inlineAddCodeBlockRanges(ranges: InlineSnippetRange[], content: string
     }
     const type = detectSnippetType(raw);
     if (!type || !_INLINE_SNIPPET_TYPES.has(type)) continue;
-    const indent = _inlineLineIndentBefore(content, match.index);
-    const start = match.index - indent.length;
-    const end = match.index + raw.length;
+    const indent = raw.match(/^([ \t]*)(?:<!--|```)/)?.[1] || "";
+    const start = match.index;
+    const end = start + raw.length;
     const candidate: InlineSnippetRange = { start, end, type, indent };
     if (ranges.some((existing) => _inlineRangesOverlap(existing, candidate))) {
       continue;

@@ -7,6 +7,11 @@ import {
   collectImageAttributesFromSource,
   imageWidthClass,
 } from "./imageAttributes";
+import {
+  collectCodeBlockAttributesFromSource,
+  codeBlockWidthClass,
+  type CodeBlockAttrs,
+} from "./codeBlockAttributes";
 
 declare global {
   interface Window {
@@ -35,6 +40,8 @@ export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireO
   applyBlockquoteStyles(contentEl, opts.content);
   applyImageStyles(contentEl, opts.content);
   applyCompareBlockStyles(contentEl);
+  const codeBlockAttrs = collectCodeBlockAttributesFromSource(opts.content);
+  let codeBlockIndex = 0;
 
   contentEl.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach(h => {
     if (!h.id) {
@@ -47,12 +54,20 @@ export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireO
   });
 
   // Mermaid before highlight.js
-  contentEl.querySelectorAll("pre code.language-mermaid").forEach(block => {
+  contentEl.querySelectorAll("pre code").forEach(block => {
+    const inCompare = Boolean(block.closest(".ld-compare-render"));
+    const attrs = inCompare ? null : codeBlockAttrs[codeBlockIndex++];
+    const pre = block.closest("pre");
+    if (!block.classList.contains("language-mermaid")) {
+      if (pre && attrs) applyCodeBlockLayout(pre, attrs);
+      return;
+    }
     const source = block.textContent || "";
     const wrapper = document.createElement("div");
     wrapper.className = "mermaid my-4";
     wrapper.textContent = source;
-    block.closest("pre")?.replaceWith(wrapper);
+    if (attrs) applyCodeBlockLayout(wrapper, attrs);
+    pre?.replaceWith(wrapper);
   });
   if (window.mermaid && contentEl.querySelector(".mermaid")) {
     window.mermaid.run({ nodes: contentEl.querySelectorAll(".mermaid") });
@@ -95,6 +110,17 @@ export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireO
     t.parentNode?.insertBefore(wrapper, t);
     wrapper.appendChild(t);
   });
+}
+
+function applyCodeBlockLayout(element: HTMLElement, attrs: CodeBlockAttrs) {
+  if (attrs.width) {
+    element.classList.add(codeBlockWidthClass(attrs.kind, attrs.width));
+    element.dataset.codeBlockWidth = attrs.width;
+  }
+  if (attrs.align) {
+    element.classList.add(`ld-${attrs.kind}-align-${attrs.align}`);
+    element.dataset.codeBlockAlign = attrs.align;
+  }
 }
 
 function applyTableStyles(contentEl: HTMLElement, content: string) {
