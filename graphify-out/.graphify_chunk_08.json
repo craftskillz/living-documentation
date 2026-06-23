@@ -1,0 +1,1000 @@
+{
+  "nodes": [
+    {
+      "id": "adrs_2026_06_06_21_47_snippet_spreadsheet_style_table_snippet_editor_decision",
+      "label": "Spreadsheet Style Table Snippet Editor ADR",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_06_21_47_[SNIPPET]_spreadsheet_style_table_snippet_editor.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_06_06_21_47_snippet_spreadsheet_style_table_snippet_editor_table_grid",
+      "label": "2x2 Spreadsheet Table Grid",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_06_21_47_[SNIPPET]_spreadsheet_style_table_snippet_editor.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_06_06_21_47_snippet_spreadsheet_style_table_snippet_editor_round_trip",
+      "label": "Table Markdown Round Trip",
+      "file_type": "rationale",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_06_21_47_[SNIPPET]_spreadsheet_style_table_snippet_editor.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_06_06_22_32_style_images_and_codeblock_style_and_alignment_decision",
+      "label": "Images and Code Block Style Configuration ADR",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_06_22_32_[STYLE]_images_and_codeblock_style_and_alignment.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_06_06_22_32_style_images_and_codeblock_style_and_alignment_appearance_flags",
+      "label": "Appearance Configuration Flags",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_06_22_32_[STYLE]_images_and_codeblock_style_and_alignment.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_06_06_22_32_style_images_and_codeblock_style_and_alignment_config_migration",
+      "label": "Backward-Compatible Config Migration",
+      "file_type": "rationale",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_06_22_32_[STYLE]_images_and_codeblock_style_and_alignment.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_06_07_12_23_frontend_callout_boxes_via_html_comment_prefix_on_blockquotes_decision",
+      "label": "Callout Boxes Via Blockquote Comment Prefix ADR",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_07_12_23_[FRONTEND]_callout_boxes_via_html_comment_prefix_on_blockquotes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_06_07_12_23_frontend_callout_boxes_via_html_comment_prefix_on_blockquotes_comment_directives",
+      "label": "Blockquote Comment Directives",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_07_12_23_[FRONTEND]_callout_boxes_via_html_comment_prefix_on_blockquotes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_06_18_22_27_runtime_runtime_minimal_node_20_19_pour_vite_8_decision",
+      "label": "Minimum Node.js 20.19 Runtime ADR",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_22_27_[RUNTIME]_runtime_minimal_node_20_19_pour_vite_8.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_06_18_22_27_runtime_runtime_minimal_node_20_19_pour_vite_8_vite_commander_constraint",
+      "label": "Vite 8 and Commander 14 Runtime Constraint",
+      "file_type": "rationale",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_22_27_[RUNTIME]_runtime_minimal_node_20_19_pour_vite_8.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_06_18_22_27_survival_kit_survival_kit_dashboard_local_persiste_decision",
+      "label": "Survival Kit Local Dashboard ADR",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_22_27_[SURVIVAL KIT]_survival_kit_dashboard_local_persiste.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_06_18_22_27_survival_kit_survival_kit_dashboard_local_persiste_json_dashboard",
+      "label": "Local Survival Kit JSON Dashboard",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_22_27_[SURVIVAL KIT]_survival_kit_dashboard_local_persiste.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_06_18_22_37_image_directives_de_largeur_et_alignement_des_images_markdown_decision",
+      "label": "Markdown Image Width and Alignment Directives ADR",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_22_37_[IMAGE]_directives_de_largeur_et_alignement_des_images_markdown.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_06_18_22_37_image_directives_de_largeur_et_alignement_des_images_markdown_image_directives",
+      "label": "Image Width and Alignment Directives",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_22_37_[IMAGE]_directives_de_largeur_et_alignement_des_images_markdown.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_06_18_23_07_mermaid_shift_click_fullscreen_pour_les_diagrammes_mermaid_decision",
+      "label": "Mermaid Shift or Command Click Fullscreen ADR",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_23_07_[MERMAID]_shift_click_fullscreen_pour_les_diagrammes_mermaid.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_06_18_23_07_mermaid_shift_click_fullscreen_pour_les_diagrammes_mermaid_svg_lightbox",
+      "label": "Serialized SVG Lightbox",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_23_07_[MERMAID]_shift_click_fullscreen_pour_les_diagrammes_mermaid.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_06_18_23_24_code_block_directives_de_largeur_et_alignement_des_blocs_code_et_mermaid_decision",
+      "label": "Code and Mermaid Width Alignment Directives ADR",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_23_24_[CODE BLOCK]_directives_de_largeur_et_alignement_des_blocs_code_et_mermaid.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_06_18_23_24_code_block_directives_de_largeur_et_alignement_des_blocs_code_et_mermaid_code_mermaid_directives",
+      "label": "Code and Mermaid Comment Directives",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_23_24_[CODE BLOCK]_directives_de_largeur_et_alignement_des_blocs_code_et_mermaid.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_2026_01_01_how_to_ai_context_workflow",
+      "label": "AI Context Workflow Guide",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/2026_01_01_how_to.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_2026_01_01_how_to_symlinked_agent_files",
+      "label": "Symlinked Agent Entry Files",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/2026_01_01_how_to.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_agents_codex_entrypoint",
+      "label": "Codex Agent Entrypoint",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/AGENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_agents_graphify_usage_rule",
+      "label": "Graphify Usage Rule",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/AGENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_claude_claude_entrypoint",
+      "label": "Claude Agent Entrypoint",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_memory_project_memory_index",
+      "label": "Project Memory Index",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MEMORY.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_project_instructions_shared_ai_contract",
+      "label": "Shared AI Work Contract",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_project_instructions_living_documentation_mcp_workflow",
+      "label": "Living Documentation MCP Workflow",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_project_instructions_adr_metadata_reliability",
+      "label": "ADR Metadata Reliability",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_project_stack_operational_stack_summary",
+      "label": "Operational Stack Summary",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-STACK.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_project_stack_local_first_markdown_mcp_system",
+      "label": "Local-First Markdown and MCP System",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-STACK.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_project_stack_svelte_express_filesystem_architecture",
+      "label": "Svelte Express Filesystem Architecture",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-STACK.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_project_useful_commands_command_catalog",
+      "label": "Project Command Catalog",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-USEFUL-COMMANDS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_project_useful_commands_playwright_cli_verification",
+      "label": "Playwright CLI Verification Strategy",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-USEFUL-COMMANDS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "mcp_001_tool_list_adrs_below_accuracy_tool_doc",
+      "label": "list_adrs_below_accuracy Tool Documentation",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/001-tool-list-adrs-below-accuracy.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "mcp_001_tool_list_adrs_below_accuracy_adr_accuracy_inventory",
+      "label": "ADR Accuracy Inventory",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/001-tool-list-adrs-below-accuracy.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "mcp_002_prompt_audit_adrs_drift_batch_prompt",
+      "label": "Audit ADR Drift Batch Prompt",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/002-prompt-audit-adrs-drift.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "mcp_002_prompt_audit_adrs_drift_refresh_or_supersede_workflow",
+      "label": "Refresh or Supersede Drift Workflow",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/002-prompt-audit-adrs-drift.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "mcp_003_prompt_erd_erd_prompt",
+      "label": "ERD Creation Prompt",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/003-prompt-erd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "mcp_003_prompt_erd_document_first_evidence_diagrams",
+      "label": "Document-First Evidence Diagrams",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/003-prompt-erd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "mcp_004_prompt_review_adr_relevance_single_adr_prompt",
+      "label": "Single ADR Relevance Review Prompt",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/004-prompt-review-adr-relevance.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "mcp_005_tool_review_adr_relevance_tool_doc",
+      "label": "review_adr_relevance Tool Documentation",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/005-tool-review-adr-relevance.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "mcp_005_tool_review_adr_relevance_factual_review_packet",
+      "label": "Factual ADR Review Packet",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/005-tool-review-adr-relevance.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "mcp_006_prompt_retrodocument_adrs_from_git_retrodocumentation_prompt",
+      "label": "Retrodocument ADRs From Git Prompt",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/006-prompt-retrodocument-adrs-from-git.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "mcp_006_prompt_retrodocument_adrs_from_git_commit_to_adr_judgement",
+      "label": "Commit-to-ADR Judgement",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/006-prompt-retrodocument-adrs-from-git.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "mcp_007_tool_retrodocument_adrs_from_git_tool_doc",
+      "label": "retrodocument_adrs_from_git Tool Documentation",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/007-tool-retrodocument-adrs-from-git.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "mcp_007_tool_retrodocument_adrs_from_git_git_history_packet",
+      "label": "Git History Retrodocumentation Packet",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/007-tool-retrodocument-adrs-from-git.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "adrs_2026_06_06_21_47_snippet_spreadsheet_style_table_snippet_editor_decision",
+      "target": "adrs_2026_06_06_21_47_snippet_spreadsheet_style_table_snippet_editor_table_grid",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_06_21_47_[SNIPPET]_spreadsheet_style_table_snippet_editor.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "adrs_2026_06_06_21_47_snippet_spreadsheet_style_table_snippet_editor_round_trip",
+      "target": "adrs_2026_06_06_21_47_snippet_spreadsheet_style_table_snippet_editor_table_grid",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_06_21_47_[SNIPPET]_spreadsheet_style_table_snippet_editor.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "adrs_2026_06_06_22_32_style_images_and_codeblock_style_and_alignment_decision",
+      "target": "adrs_2026_06_06_22_32_style_images_and_codeblock_style_and_alignment_appearance_flags",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_06_22_32_[STYLE]_images_and_codeblock_style_and_alignment.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "adrs_2026_06_06_22_32_style_images_and_codeblock_style_and_alignment_config_migration",
+      "target": "adrs_2026_06_06_22_32_style_images_and_codeblock_style_and_alignment_appearance_flags",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_06_22_32_[STYLE]_images_and_codeblock_style_and_alignment.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "adrs_2026_06_07_12_23_frontend_callout_boxes_via_html_comment_prefix_on_blockquotes_decision",
+      "target": "adrs_2026_06_07_12_23_frontend_callout_boxes_via_html_comment_prefix_on_blockquotes_comment_directives",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_07_12_23_[FRONTEND]_callout_boxes_via_html_comment_prefix_on_blockquotes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "adrs_2026_06_18_22_27_runtime_runtime_minimal_node_20_19_pour_vite_8_vite_commander_constraint",
+      "target": "adrs_2026_06_18_22_27_runtime_runtime_minimal_node_20_19_pour_vite_8_decision",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_22_27_[RUNTIME]_runtime_minimal_node_20_19_pour_vite_8.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "adrs_2026_06_18_22_27_survival_kit_survival_kit_dashboard_local_persiste_decision",
+      "target": "adrs_2026_06_18_22_27_survival_kit_survival_kit_dashboard_local_persiste_json_dashboard",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_22_27_[SURVIVAL KIT]_survival_kit_dashboard_local_persiste.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "adrs_2026_06_18_22_37_image_directives_de_largeur_et_alignement_des_images_markdown_decision",
+      "target": "adrs_2026_06_18_22_37_image_directives_de_largeur_et_alignement_des_images_markdown_image_directives",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_22_37_[IMAGE]_directives_de_largeur_et_alignement_des_images_markdown.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "adrs_2026_06_18_23_07_mermaid_shift_click_fullscreen_pour_les_diagrammes_mermaid_decision",
+      "target": "adrs_2026_06_18_23_07_mermaid_shift_click_fullscreen_pour_les_diagrammes_mermaid_svg_lightbox",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_23_07_[MERMAID]_shift_click_fullscreen_pour_les_diagrammes_mermaid.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "adrs_2026_06_18_23_24_code_block_directives_de_largeur_et_alignement_des_blocs_code_et_mermaid_decision",
+      "target": "adrs_2026_06_18_23_24_code_block_directives_de_largeur_et_alignement_des_blocs_code_et_mermaid_code_mermaid_directives",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_23_24_[CODE BLOCK]_directives_de_largeur_et_alignement_des_blocs_code_et_mermaid.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_2026_01_01_how_to_ai_context_workflow",
+      "target": "ai_2026_01_01_how_to_symlinked_agent_files",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/2026_01_01_how_to.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_2026_01_01_how_to_ai_context_workflow",
+      "target": "ai_project_instructions_shared_ai_contract",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/2026_01_01_how_to.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_agents_codex_entrypoint",
+      "target": "ai_project_instructions_shared_ai_contract",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/AGENTS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_agents_codex_entrypoint",
+      "target": "ai_agents_graphify_usage_rule",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/AGENTS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_claude_claude_entrypoint",
+      "target": "ai_project_instructions_shared_ai_contract",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_memory_project_memory_index",
+      "target": "ai_project_instructions_shared_ai_contract",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MEMORY.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_instructions_shared_ai_contract",
+      "target": "ai_project_instructions_living_documentation_mcp_workflow",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_instructions_shared_ai_contract",
+      "target": "ai_project_instructions_adr_metadata_reliability",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_stack_operational_stack_summary",
+      "target": "ai_project_stack_local_first_markdown_mcp_system",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-STACK.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_stack_operational_stack_summary",
+      "target": "ai_project_stack_svelte_express_filesystem_architecture",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-STACK.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_stack_operational_stack_summary",
+      "target": "adrs_2026_06_18_22_27_runtime_runtime_minimal_node_20_19_pour_vite_8_decision",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-STACK.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_stack_operational_stack_summary",
+      "target": "adrs_2026_06_18_22_27_survival_kit_survival_kit_dashboard_local_persiste_decision",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-STACK.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_useful_commands_command_catalog",
+      "target": "ai_project_useful_commands_playwright_cli_verification",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-USEFUL-COMMANDS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_useful_commands_command_catalog",
+      "target": "adrs_2026_06_18_22_27_runtime_runtime_minimal_node_20_19_pour_vite_8_decision",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-USEFUL-COMMANDS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mcp_001_tool_list_adrs_below_accuracy_tool_doc",
+      "target": "mcp_001_tool_list_adrs_below_accuracy_adr_accuracy_inventory",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/001-tool-list-adrs-below-accuracy.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mcp_002_prompt_audit_adrs_drift_batch_prompt",
+      "target": "mcp_001_tool_list_adrs_below_accuracy_tool_doc",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/002-prompt-audit-adrs-drift.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mcp_002_prompt_audit_adrs_drift_batch_prompt",
+      "target": "mcp_002_prompt_audit_adrs_drift_refresh_or_supersede_workflow",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/002-prompt-audit-adrs-drift.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mcp_002_prompt_audit_adrs_drift_batch_prompt",
+      "target": "mcp_005_tool_review_adr_relevance_tool_doc",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/002-prompt-audit-adrs-drift.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mcp_003_prompt_erd_erd_prompt",
+      "target": "mcp_003_prompt_erd_document_first_evidence_diagrams",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/003-prompt-erd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mcp_003_prompt_erd_document_first_evidence_diagrams",
+      "target": "ai_project_instructions_living_documentation_mcp_workflow",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/003-prompt-erd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mcp_004_prompt_review_adr_relevance_single_adr_prompt",
+      "target": "mcp_005_tool_review_adr_relevance_tool_doc",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/004-prompt-review-adr-relevance.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mcp_004_prompt_review_adr_relevance_single_adr_prompt",
+      "target": "mcp_002_prompt_audit_adrs_drift_refresh_or_supersede_workflow",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/004-prompt-review-adr-relevance.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mcp_005_tool_review_adr_relevance_tool_doc",
+      "target": "mcp_005_tool_review_adr_relevance_factual_review_packet",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/005-tool-review-adr-relevance.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mcp_005_tool_review_adr_relevance_factual_review_packet",
+      "target": "mcp_002_prompt_audit_adrs_drift_refresh_or_supersede_workflow",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/005-tool-review-adr-relevance.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mcp_006_prompt_retrodocument_adrs_from_git_retrodocumentation_prompt",
+      "target": "mcp_006_prompt_retrodocument_adrs_from_git_commit_to_adr_judgement",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/006-prompt-retrodocument-adrs-from-git.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mcp_006_prompt_retrodocument_adrs_from_git_retrodocumentation_prompt",
+      "target": "mcp_007_tool_retrodocument_adrs_from_git_tool_doc",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/006-prompt-retrodocument-adrs-from-git.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mcp_007_tool_retrodocument_adrs_from_git_tool_doc",
+      "target": "mcp_007_tool_retrodocument_adrs_from_git_git_history_packet",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/007-tool-retrodocument-adrs-from-git.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mcp_007_tool_retrodocument_adrs_from_git_git_history_packet",
+      "target": "mcp_006_prompt_retrodocument_adrs_from_git_commit_to_adr_judgement",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/007-tool-retrodocument-adrs-from-git.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "adrs_2026_06_07_12_23_frontend_callout_boxes_via_html_comment_prefix_on_blockquotes_comment_directives",
+      "target": "adrs_2026_06_18_22_37_image_directives_de_largeur_et_alignement_des_images_markdown_image_directives",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_22_37_[IMAGE]_directives_de_largeur_et_alignement_des_images_markdown.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "adrs_2026_06_18_22_37_image_directives_de_largeur_et_alignement_des_images_markdown_image_directives",
+      "target": "adrs_2026_06_18_23_24_code_block_directives_de_largeur_et_alignement_des_blocs_code_et_mermaid_code_mermaid_directives",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_23_24_[CODE BLOCK]_directives_de_largeur_et_alignement_des_blocs_code_et_mermaid.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "adrs_2026_06_18_23_07_mermaid_shift_click_fullscreen_pour_les_diagrammes_mermaid_svg_lightbox",
+      "target": "adrs_2026_06_18_23_24_code_block_directives_de_largeur_et_alignement_des_blocs_code_et_mermaid_code_mermaid_directives",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_23_24_[CODE BLOCK]_directives_de_largeur_et_alignement_des_blocs_code_et_mermaid.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_instructions_adr_metadata_reliability",
+      "target": "mcp_001_tool_list_adrs_below_accuracy_adr_accuracy_inventory",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_instructions_adr_metadata_reliability",
+      "target": "mcp_005_tool_review_adr_relevance_factual_review_packet",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_instructions_shared_ai_contract",
+      "target": "ai_project_stack_operational_stack_summary",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_instructions_shared_ai_contract",
+      "target": "ai_project_useful_commands_command_catalog",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "markdown_comment_directive_pattern",
+      "label": "Markdown Comment Directive Pattern",
+      "nodes": [
+        "adrs_2026_06_07_12_23_frontend_callout_boxes_via_html_comment_prefix_on_blockquotes_comment_directives",
+        "adrs_2026_06_18_22_37_image_directives_de_largeur_et_alignement_des_images_markdown_image_directives",
+        "adrs_2026_06_18_23_24_code_block_directives_de_largeur_et_alignement_des_blocs_code_et_mermaid_code_mermaid_directives"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_06_18_23_24_[CODE BLOCK]_directives_de_largeur_et_alignement_des_blocs_code_et_mermaid.md"
+    },
+    {
+      "id": "ai_operational_context_documents",
+      "label": "AI Operational Context Documents",
+      "nodes": [
+        "ai_agents_codex_entrypoint",
+        "ai_claude_claude_entrypoint",
+        "ai_project_instructions_shared_ai_contract",
+        "ai_project_stack_operational_stack_summary",
+        "ai_project_useful_commands_command_catalog",
+        "ai_memory_project_memory_index"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/2026_01_01_how_to.md"
+    },
+    {
+      "id": "mcp_adr_governance_workflows",
+      "label": "MCP ADR Governance Workflows",
+      "nodes": [
+        "mcp_001_tool_list_adrs_below_accuracy_tool_doc",
+        "mcp_002_prompt_audit_adrs_drift_batch_prompt",
+        "mcp_004_prompt_review_adr_relevance_single_adr_prompt",
+        "mcp_005_tool_review_adr_relevance_tool_doc",
+        "mcp_006_prompt_retrodocument_adrs_from_git_retrodocumentation_prompt",
+        "mcp_007_tool_retrodocument_adrs_from_git_tool_doc"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/006-prompt-retrodocument-adrs-from-git.md"
+    }
+  ],
+  "input_tokens": 30000,
+  "output_tokens": 20000
+}

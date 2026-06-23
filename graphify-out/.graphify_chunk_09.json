@@ -1,0 +1,980 @@
+{
+  "nodes": [
+    {
+      "id": "mcp_008_prompt_generate_container_diagram_documentation_mining",
+      "label": "Mine existing documentation before diagramming",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/008-prompt-generate-container-diagram.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "mcp_008_prompt_generate_container_diagram_container_diagram_prompt",
+      "label": "C4 Container diagram generation prompt",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/008-prompt-generate-container-diagram.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "mcp_008_prompt_generate_container_diagram_c4_progression",
+      "label": "C4 context-to-container progression",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/008-prompt-generate-container-diagram.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "mcp_008_prompt_generate_container_diagram_c4_node_semantics",
+      "label": "C4 node kind and label semantics",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/008-prompt-generate-container-diagram.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "agent_de_listage_des_adrs_driftes_2026_06_02_17_13_agent_run_agent_de_listage_des_adrs_driftes_agent_run",
+      "label": "ADR drift listing agent run at 17:13",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/WORKSPACE/agent_de_listage_des_adrs_driftes/2026_06_02_17_13_[AGENT]_run_agent_de_listage_des_adrs_driftes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "agent_de_listage_des_adrs_driftes_2026_06_02_17_15_agent_run_agent_de_listage_des_adrs_driftes_agent_run",
+      "label": "ADR drift listing agent run at 17:15",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/WORKSPACE/agent_de_listage_des_adrs_driftes/2026_06_02_17_15_[AGENT]_run_agent_de_listage_des_adrs_driftes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "generer_diagramme_mermaid_2026_06_02_17_14_agent_run_generer_diagramme_mermaid_agent_run",
+      "label": "Mermaid diagram generation agent run",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/WORKSPACE/generer_diagramme_mermaid/2026_06_02_17_14_[AGENT]_run_generer_diagramme_mermaid.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "generer_diagramme_mermaid_2026_06_02_17_14_agent_run_generer_diagramme_mermaid_2_agent_run",
+      "label": "Second Mermaid diagram generation agent run",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/WORKSPACE/generer_diagramme_mermaid/2026_06_02_17_14_[AGENT]_run_generer_diagramme_mermaid_2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "rules_diagram_vis_network_gotchas_vis_network_gotchas",
+      "label": "vis-network diagram editor gotchas rule",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/rules/diagram-vis-network-gotchas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "rules_i18n_user_visible_strings_i18n_rule",
+      "label": "Internationalize user-visible strings rule",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/rules/i18n-user-visible-strings.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "rules_no_magic_numbers_magic_numbers_rule",
+      "label": "Avoid magic numbers rule",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/rules/no-magic-numbers.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "rules_playwright_coverage_through_cli_cli_coverage_rule",
+      "label": "Playwright coverage through real CLI rule",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/rules/playwright-coverage-through-cli.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "rules_track_current_work_worklog_tracking_rule",
+      "label": "Current worklog tracking rule",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/rules/track-current-work.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "worklog_current_task_graphify_installation",
+      "label": "Graphify installation worklog",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/WORKLOG/current-task.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "worklog_current_task_document_semantic_extraction",
+      "label": "Documentation semantic extraction prerequisite",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/WORKLOG/current-task.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "memory_memory_memory_index",
+      "label": "Project memory index",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/memory/MEMORY.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "memory_project_svelte_migration_svelte_unified_app",
+      "label": "Unified Svelte 5 application architecture",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/memory/project_svelte_migration.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "memory_project_svelte_migration_css_theme_scoping",
+      "label": "Svelte CSS multi-theme scoping",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/memory/project_svelte_migration.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "memory_project_svelte_migration_migrated_routes",
+      "label": "Migrated Svelte route inventory",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/memory/project_svelte_migration.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "memory_project_svelte_migration_vite_proxy",
+      "label": "Vite proxy routes for Svelte frontend",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/memory/project_svelte_migration.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_svelte_index_frontend_shell",
+      "label": "Svelte frontend HTML shell",
+      "file_type": "code",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/src/frontend-svelte/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_svelte_index_cdn_assets",
+      "label": "Frontend CDN assets",
+      "file_type": "code",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/src/frontend-svelte/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_svelte_index_app_mount",
+      "label": "Svelte application mount point",
+      "file_type": "code",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/src/frontend-svelte/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_01_01_adr_example_architecture_decision_adr_template",
+      "label": "Starter ADR template",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/ADRS/2026_01_01_[ADR]_example_architecture_decision.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_01_01_adr_example_architecture_decision_decision_context",
+      "label": "ADR context and consequences pattern",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/ADRS/2026_01_01_[ADR]_example_architecture_decision.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_2026_01_01_how_to_ai_context_symlinks",
+      "label": "Starter AI context symlink structure",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/2026_01_01_how_to.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_2026_01_01_how_to_ai_workflow",
+      "label": "Expected AI assistant workflow",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/2026_01_01_how_to.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_2026_01_01_how_to_mcp_explorer_verification",
+      "label": "MCP explorer verification in AI Context",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/2026_01_01_how_to.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_project_instructions_agent_startup_routine",
+      "label": "Agent startup routine",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_project_instructions_mcp_documentation_workflow",
+      "label": "MCP-first documentation workflow",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_project_instructions_worklog_convention",
+      "label": "Shared worklog convention",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_project_instructions_adr_lifecycle",
+      "label": "ADR lifecycle and supersession",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_project_instructions_metadata_reliability",
+      "label": "Metadata-backed document reliability",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_project_instructions_instruction_file_guardrails",
+      "label": "Guardrails for editing AI instruction files",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_project_stack_template_stack_inventory",
+      "label": "Project stack inventory template",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-STACK.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_project_stack_template_structuring_conventions",
+      "label": "Project structuring conventions template",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-STACK.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_project_useful_commands_command_catalog",
+      "label": "Useful commands catalog template",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-USEFUL-COMMANDS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ai_project_useful_commands_verification_strategy",
+      "label": "Smallest useful verification strategy",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-USEFUL-COMMANDS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "default_agents_codex_entrypoint",
+      "label": "Codex agent entrypoint template",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/default/AGENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "default_agents_mcp_living_documentation",
+      "label": "Living Documentation MCP usage from AGENTS",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/default/AGENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "default_claude_claude_entrypoint",
+      "label": "Claude agent entrypoint template",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/default/CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "default_claude_mcp_living_documentation",
+      "label": "Living Documentation MCP usage from CLAUDE",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/default/CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "default_memory_memory_index",
+      "label": "Starter memory index template",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/default/MEMORY.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "mcp_008_prompt_generate_container_diagram_container_diagram_prompt",
+      "target": "mcp_008_prompt_generate_container_diagram_documentation_mining",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/008-prompt-generate-container-diagram.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mcp_008_prompt_generate_container_diagram_container_diagram_prompt",
+      "target": "mcp_008_prompt_generate_container_diagram_c4_progression",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/008-prompt-generate-container-diagram.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mcp_008_prompt_generate_container_diagram_container_diagram_prompt",
+      "target": "mcp_008_prompt_generate_container_diagram_c4_node_semantics",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/008-prompt-generate-container-diagram.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mcp_008_prompt_generate_container_diagram_documentation_mining",
+      "target": "ai_project_instructions_mcp_documentation_workflow",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/MCP/008-prompt-generate-container-diagram.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "agent_de_listage_des_adrs_driftes_2026_06_02_17_13_agent_run_agent_de_listage_des_adrs_driftes_agent_run",
+      "target": "agent_de_listage_des_adrs_driftes_2026_06_02_17_15_agent_run_agent_de_listage_des_adrs_driftes_agent_run",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/WORKSPACE/agent_de_listage_des_adrs_driftes/2026_06_02_17_13_[AGENT]_run_agent_de_listage_des_adrs_driftes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "generer_diagramme_mermaid_2026_06_02_17_14_agent_run_generer_diagramme_mermaid_agent_run",
+      "target": "generer_diagramme_mermaid_2026_06_02_17_14_agent_run_generer_diagramme_mermaid_2_agent_run",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/WORKSPACE/generer_diagramme_mermaid/2026_06_02_17_14_[AGENT]_run_generer_diagramme_mermaid.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "rules_diagram_vis_network_gotchas_vis_network_gotchas",
+      "target": "mcp_008_prompt_generate_container_diagram_c4_node_semantics",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/rules/diagram-vis-network-gotchas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "rules_i18n_user_visible_strings_i18n_rule",
+      "target": "frontend_svelte_index_frontend_shell",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/rules/i18n-user-visible-strings.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "rules_no_magic_numbers_magic_numbers_rule",
+      "target": "rules_diagram_vis_network_gotchas_vis_network_gotchas",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/rules/no-magic-numbers.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "rules_playwright_coverage_through_cli_cli_coverage_rule",
+      "target": "ai_project_useful_commands_verification_strategy",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/rules/playwright-coverage-through-cli.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "rules_track_current_work_worklog_tracking_rule",
+      "target": "worklog_current_task_graphify_installation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/AI/rules/track-current-work.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "worklog_current_task_graphify_installation",
+      "target": "worklog_current_task_document_semantic_extraction",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/WORKLOG/current-task.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "memory_memory_memory_index",
+      "target": "default_memory_memory_index",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/memory/MEMORY.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "memory_project_svelte_migration_svelte_unified_app",
+      "target": "memory_project_svelte_migration_css_theme_scoping",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/memory/project_svelte_migration.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "memory_project_svelte_migration_svelte_unified_app",
+      "target": "memory_project_svelte_migration_migrated_routes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/memory/project_svelte_migration.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "memory_project_svelte_migration_svelte_unified_app",
+      "target": "memory_project_svelte_migration_vite_proxy",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/memory/project_svelte_migration.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "memory_project_svelte_migration_svelte_unified_app",
+      "target": "frontend_svelte_index_frontend_shell",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/memory/project_svelte_migration.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_svelte_index_frontend_shell",
+      "target": "frontend_svelte_index_cdn_assets",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/src/frontend-svelte/index.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_svelte_index_frontend_shell",
+      "target": "frontend_svelte_index_app_mount",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/src/frontend-svelte/index.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "adrs_2026_01_01_adr_example_architecture_decision_adr_template",
+      "target": "adrs_2026_01_01_adr_example_architecture_decision_decision_context",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/ADRS/2026_01_01_[ADR]_example_architecture_decision.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "adrs_2026_01_01_adr_example_architecture_decision_adr_template",
+      "target": "ai_project_instructions_adr_lifecycle",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/ADRS/2026_01_01_[ADR]_example_architecture_decision.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_2026_01_01_how_to_ai_context_symlinks",
+      "target": "default_agents_codex_entrypoint",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/2026_01_01_how_to.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_2026_01_01_how_to_ai_context_symlinks",
+      "target": "default_claude_claude_entrypoint",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/2026_01_01_how_to.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_2026_01_01_how_to_ai_context_symlinks",
+      "target": "default_memory_memory_index",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/2026_01_01_how_to.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_2026_01_01_how_to_ai_workflow",
+      "target": "ai_project_instructions_agent_startup_routine",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/2026_01_01_how_to.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_2026_01_01_how_to_ai_workflow",
+      "target": "ai_project_instructions_metadata_reliability",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/2026_01_01_how_to.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_2026_01_01_how_to_mcp_explorer_verification",
+      "target": "ai_project_instructions_mcp_documentation_workflow",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/2026_01_01_how_to.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_instructions_agent_startup_routine",
+      "target": "ai_project_stack_template_stack_inventory",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_instructions_agent_startup_routine",
+      "target": "ai_project_useful_commands_command_catalog",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_instructions_agent_startup_routine",
+      "target": "default_memory_memory_index",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_instructions_agent_startup_routine",
+      "target": "ai_project_instructions_worklog_convention",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_instructions_agent_startup_routine",
+      "target": "ai_project_instructions_mcp_documentation_workflow",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_instructions_mcp_documentation_workflow",
+      "target": "ai_project_instructions_metadata_reliability",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_instructions_adr_lifecycle",
+      "target": "ai_project_instructions_metadata_reliability",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_instructions_instruction_file_guardrails",
+      "target": "ai_project_instructions_agent_startup_routine",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_stack_template_stack_inventory",
+      "target": "ai_project_stack_template_structuring_conventions",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-STACK.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_stack_template_stack_inventory",
+      "target": "ai_project_instructions_adr_lifecycle",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-STACK.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ai_project_useful_commands_command_catalog",
+      "target": "ai_project_useful_commands_verification_strategy",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-USEFUL-COMMANDS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "default_agents_codex_entrypoint",
+      "target": "ai_project_instructions_agent_startup_routine",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/default/AGENTS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "default_agents_codex_entrypoint",
+      "target": "default_agents_mcp_living_documentation",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/default/AGENTS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "default_agents_mcp_living_documentation",
+      "target": "ai_project_instructions_mcp_documentation_workflow",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/default/AGENTS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "default_claude_claude_entrypoint",
+      "target": "ai_project_instructions_agent_startup_routine",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/default/CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "default_claude_claude_entrypoint",
+      "target": "default_claude_mcp_living_documentation",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/default/CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "default_claude_mcp_living_documentation",
+      "target": "ai_project_instructions_mcp_documentation_workflow",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/default/CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "default_agents_codex_entrypoint",
+      "target": "default_claude_claude_entrypoint",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/default/AGENTS.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "ai_agent_startup_document_set",
+      "label": "AI agent startup document set",
+      "nodes": [
+        "ai_project_instructions_agent_startup_routine",
+        "ai_project_stack_template_stack_inventory",
+        "ai_project_useful_commands_command_catalog",
+        "default_memory_memory_index",
+        "default_agents_codex_entrypoint",
+        "default_claude_claude_entrypoint"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md"
+    },
+    {
+      "id": "living_documentation_maintenance_workflow",
+      "label": "Living Documentation maintenance workflow",
+      "nodes": [
+        "ai_project_instructions_mcp_documentation_workflow",
+        "ai_project_instructions_worklog_convention",
+        "ai_project_instructions_adr_lifecycle",
+        "ai_project_instructions_metadata_reliability",
+        "adrs_2026_01_01_adr_example_architecture_decision_adr_template"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md"
+    },
+    {
+      "id": "svelte_frontend_runtime_shell",
+      "label": "Svelte frontend runtime shell",
+      "nodes": [
+        "memory_project_svelte_migration_svelte_unified_app",
+        "memory_project_svelte_migration_css_theme_scoping",
+        "memory_project_svelte_migration_vite_proxy",
+        "frontend_svelte_index_frontend_shell",
+        "frontend_svelte_index_cdn_assets",
+        "frontend_svelte_index_app_mount"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/memory/project_svelte_migration.md"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}
