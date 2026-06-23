@@ -7,10 +7,25 @@ import {
   resolveSourceRoot,
   assertUnderSourceRoot,
   buildReport,
+  sourceCommitForMetadata,
   MetadataEntry,
 } from "../lib/metadata";
 import { sha256File } from "../lib/hash";
+import { SourceCommit } from "../lib/git";
 import { assertNotSuperSeeded, DocumentSuperSeededError } from "../lib/status";
+
+// Builds a fresh entry, attaching the source commit (and dirty flag) when known.
+function buildEntry(
+  relPath: string,
+  hash: string,
+  src: SourceCommit | null,
+): MetadataEntry {
+  return {
+    path: relPath,
+    hash,
+    ...(src ? { commit: src.commit, dirty: src.dirty } : {}),
+  };
+}
 
 // SuperSeeded documents are read-only as far as metadata is concerned: an ADR
 // that has been replaced should keep the source bindings that prove what the
@@ -72,7 +87,7 @@ export function metadataRouter(docsPath: string): Router {
       const entries = getDocEntries(docsPath, docId);
       // replace if path already exists, else append
       const idx = entries.findIndex((e) => e.path === rel);
-      const entry: MetadataEntry = { path: rel, hash };
+      const entry: MetadataEntry = buildEntry(rel, hash, sourceCommitForMetadata(docsPath, sourceRoot));
       if (idx >= 0) entries[idx] = entry;
       else entries.push(entry);
       setDocEntries(docsPath, docId, entries);
@@ -113,11 +128,12 @@ export function metadataRouter(docsPath: string): Router {
     if (rejectIfSuperSeeded(docsPath, docId, res)) return;
     try {
       const sourceRoot = resolveSourceRoot(docsPath);
+      const src = sourceCommitForMetadata(docsPath, sourceRoot);
       const entries = getDocEntries(docsPath, docId).map((e) => {
         const abs = path.resolve(sourceRoot, e.path);
-        if (!fs.existsSync(abs)) return e; // keep stored hash, still "missing"
+        if (!fs.existsSync(abs)) return e; // keep stored hash + commit, still "missing"
         const fresh = sha256File(abs);
-        return fresh ? { path: e.path, hash: fresh } : e;
+        return fresh ? buildEntry(e.path, fresh, src) : e;
       });
       setDocEntries(docsPath, docId, entries);
       const report = buildReport(entries, sourceRoot);

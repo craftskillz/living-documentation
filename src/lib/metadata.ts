@@ -2,10 +2,21 @@ import fs from "fs";
 import path from "path";
 import { readConfig } from "./config";
 import { sha256File } from "./hash";
+import { currentSourceCommit, SourceCommit } from "./git";
 
 export interface MetadataEntry {
   path: string; // relative to sourceRoot
   hash: string;
+  // HEAD commit of the source repo when `hash` was computed. Optional so that
+  // legacy `.metadata.json` files (written before this field existed) stay
+  // valid. Stored per entry — all entries refreshed together share the same
+  // value, but `add_metadata` of a single file records the commit at its own
+  // moment. Lets an LLM run a targeted `git diff <commit>..HEAD` instead of
+  // searching the whole history.
+  commit?: string;
+  // True when the working tree was dirty at capture time: the commit is then an
+  // approximation, since `hash` reflects uncommitted working-tree content.
+  dirty?: boolean;
 }
 
 export type MetadataStore = Record<string, MetadataEntry[]>;
@@ -17,6 +28,10 @@ export interface MetadataItem {
   storedHash: string;
   currentHash: string | null;
   status: MetadataStatus;
+  // Carried through from the stored entry (see MetadataEntry). Present only when
+  // recorded; absent for legacy entries.
+  commit?: string;
+  dirty?: boolean;
 }
 
 export interface AccuracyReport {
@@ -60,6 +75,17 @@ export function resolveSourceRoot(docsPath: string): string {
   return readConfig(docsPath).sourceRoot;
 }
 
+// Captures the source-repo HEAD commit + dirty flag for a metadata write,
+// excluding the documentation folder from the dirtiness check when it lives
+// inside the source repo (otherwise every ADR write would mark `dirty: true`).
+export function sourceCommitForMetadata(
+  docsPath: string,
+  sourceRoot: string,
+): SourceCommit | null {
+  const rel = path.relative(sourceRoot, docsPath);
+  return currentSourceCommit(sourceRoot, { excludeRelPaths: [rel] });
+}
+
 export function assertUnderSourceRoot(
   relOrAbs: string,
   sourceRoot: string,
@@ -80,12 +106,15 @@ export function classifyEntry(
   sourceRoot: string,
 ): MetadataItem {
   const abs = path.resolve(sourceRoot, entry.path);
+  const { commit, dirty } = entry;
   if (!fs.existsSync(abs)) {
     return {
       path: entry.path,
       storedHash: entry.hash,
       currentHash: null,
       status: "missing",
+      ...(commit !== undefined ? { commit } : {}),
+      ...(dirty !== undefined ? { dirty } : {}),
     };
   }
   const current = sha256File(abs);
@@ -96,6 +125,8 @@ export function classifyEntry(
     storedHash: entry.hash,
     currentHash: current,
     status,
+    ...(commit !== undefined ? { commit } : {}),
+    ...(dirty !== undefined ? { dirty } : {}),
   };
 }
 

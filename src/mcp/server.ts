@@ -929,6 +929,8 @@ const TOOLS = [
       "",
       "Returns each item with status `unchanged` / `modified` / `missing`, counts, and a weighted `accuracy` in [0, 1] (missing weighs 3× a simple modification).",
       "",
+      "When recorded, each item also carries `commit` (the source-repo HEAD SHA-1 when its stored hash was computed) and `dirty` (the working tree was uncommitted at that moment, so `commit` is approximate). For a `modified` item with a `commit`, prefer a targeted `git diff <commit>..HEAD -- <path>` over searching the whole history. Legacy entries written before this feature have no `commit`.",
+      "",
       "A value close to 1 means the doc is still aligned with its source files. A value close to 0 means significant drift: read the doc and the modified source files, then update the doc.",
     ].join("\n"),
     inputSchema: {
@@ -945,6 +947,8 @@ const TOOLS = [
       "Prepare a relevance review for one ADR document.",
       "",
       "The tool accepts a document id, verifies that the document is an ADR, returns the ADR content, its frontmatter summary, the metadata accuracy report, and the source files whose hashes no longer match.",
+      "",
+      "Each metadata item may carry `commit` (the source-repo HEAD SHA-1 captured when its hash was last computed) and `dirty`. For every entry in `sourceFilesToReread` that has a `commit`, inspect the change with a targeted `git diff <commit>..HEAD -- <path>` instead of scanning the entire history; a `dirty: true` commit is approximate. Entries created before this feature have no `commit` — fall back to history search there.",
       "",
       "This is a factual reporting tool, not the whole workflow. Use prompt `review-adr-relevance` when the LLM must decide between `refresh_metadata` and user-confirmed supersession.",
     ].join("\n"),
@@ -964,7 +968,7 @@ const TOOLS = [
     description: [
       "Re-hash every source file attached to a document and overwrite the stored hashes with the current values. Call this AFTER the document has been updated to reflect the current state of its source files — it validates the doc as accurate again.",
       "",
-      "Missing files keep their stored hash and remain flagged as missing.",
+      "Each refreshed entry also records the source-repo HEAD commit (and a `dirty` flag) so a future drift review can diff from that exact point. Missing files keep their stored hash and commit and remain flagged as missing.",
     ].join("\n"),
     inputSchema: {
       type: "object",
@@ -977,7 +981,7 @@ const TOOLS = [
   {
     name: "add_metadata",
     description: [
-      "Attach a source file to a document as a metadata dependency. The file path must be under the configured `sourceRoot`. The current SHA-256 hash of the file is recorded.",
+      "Attach a source file to a document as a metadata dependency. The file path must be under the configured `sourceRoot`. The current SHA-256 hash of the file is recorded, along with the source-repo HEAD commit (and `dirty` flag) at capture time.",
       "",
       "If the document already has an entry for that path, its hash is updated.",
       "",

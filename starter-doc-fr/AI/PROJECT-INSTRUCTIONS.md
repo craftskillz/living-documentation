@@ -119,6 +119,8 @@ Sections recommandées dans le corps :
 
 Les ADR sont le journal des décisions d'architecture et de conception. Ils doivent rester courts, traçables et utiles pour décider quoi modifier plus tard.
 
+> **Pré-requis — working tree propre avant d'écrire l'ADR.** Quand une feature est terminée et que l'IA s'apprête à créer l'ADR et attacher ses fichiers source, elle doit d'abord vérifier l'état git du dépôt source. Si le `HEAD` est *dirty* (modifications non commitées), l'IA doit **s'arrêter et inviter l'utilisateur à commiter d'abord**, en expliquant pourquoi : `add_metadata` et `refresh_metadata` enregistrent, avec chaque hash, le commit `HEAD` au moment du calcul. Sur un arbre sale, le hash reflète le working tree mais le commit associé est faux/approximatif (marqué `dirty`), ce qui faussera plus tard la recherche du commit lié aux métadonnées (le `git diff <commit>..HEAD` ciblé). Ne poursuivre l'écriture de l'ADR sur un arbre sale que si l'utilisateur le demande explicitement après avoir été averti.
+
 Quand une feature change une décision durable :
 
 1. Chercher les ADR existants qui parlent du même sujet.

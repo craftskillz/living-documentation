@@ -56,6 +56,14 @@
               "D"
             ]
           ]
+        },
+        {
+          "type": "p",
+          "content": "Edition"
+        },
+        {
+          "type": "pre",
+          "content": "git reset --soft HEAD~1"
         }
       ]
     }

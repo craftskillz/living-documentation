@@ -119,6 +119,8 @@ Recommended sections in the body:
 
 ADRs are the log of architecture and design decisions. They should stay short, traceable, and useful for deciding what to change later.
 
+> **Prerequisite — clean working tree before writing the ADR.** When a feature is finished and the AI is about to create the ADR and attach its source files, it must first check the git state of the source repository. If `HEAD` is *dirty* (uncommitted changes), the AI must **stop and invite the user to commit first**, explaining why: `add_metadata` and `refresh_metadata` record, alongside each hash, the `HEAD` commit at compute time. On a dirty tree the hash reflects the working tree but the associated commit is wrong/approximate (flagged `dirty`), which later breaks finding the commit tied to the metadata (the targeted `git diff <commit>..HEAD`). Only proceed with writing the ADR on a dirty tree if the user explicitly asks after being warned.
+
 When a feature changes a durable decision:
 
 1. Search for existing ADRs about the same topic.

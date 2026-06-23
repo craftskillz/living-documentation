@@ -1,0 +1,1260 @@
+{
+  "nodes": [
+    {
+      "id": "adrs_2026_04_03_10_15_diagram_debug_overlay_dom_debug_overlay",
+      "label": "DOM debug overlay",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_10_15_[DIAGRAM]_debug_overlay.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_03_10_15_diagram_debug_overlay_showdiagramdebug_config",
+      "label": "showDiagramDebug config gate",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_10_15_[DIAGRAM]_debug_overlay.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_03_10_15_diagram_debug_overlay_canvastodom_positioning",
+      "label": "canvasToDOM positioning",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_10_15_[DIAGRAM]_debug_overlay.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_03_10_40_diagram_modularisation_javascript_diagram_es_module_architecture",
+      "label": "Diagram ES module architecture",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_10_40_[DIAGRAM]_modularisation_javascript.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_03_10_40_diagram_modularisation_javascript_single_responsibility_modules",
+      "label": "Single-responsibility diagram modules",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_10_40_[DIAGRAM]_modularisation_javascript.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_03_10_40_diagram_modularisation_javascript_shared_mutable_state_st",
+      "label": "Shared mutable state st",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_10_40_[DIAGRAM]_modularisation_javascript.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_03_11_20_diagram_snap_to_grid_snap_to_visual_edge_alignment",
+      "label": "Snap to visual edge alignment",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_11_20_[DIAGRAM]_snap_to_grid.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_03_11_20_diagram_snap_to_grid_grid_device_pixel_ratio_fix",
+      "label": "Grid devicePixelRatio fix",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_11_20_[DIAGRAM]_snap_to_grid.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_03_12_05_diagram_vis_network_z_order_patch_vis_network_drawnodes_patch",
+      "label": "vis-network _drawNodes patch",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_12_05_[DIAGRAM]_vis_network_z_order_patch.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_03_12_05_diagram_vis_network_z_order_patch_canonical_z_order",
+      "label": "Canonical z-order",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_12_05_[DIAGRAM]_vis_network_z_order_patch.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_05_10_50_frontend_word_cloud_word_cloud_feature",
+      "label": "Word Cloud feature",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_05_10_50_[FRONTEND]_word_cloud.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_05_10_50_frontend_word_cloud_wordcloud_api_route",
+      "label": "GET /api/wordcloud route",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_05_10_50_[FRONTEND]_word_cloud.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_05_10_50_frontend_word_cloud_stop_word_filtering",
+      "label": "Stop-word filtering",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_05_10_50_[FRONTEND]_word_cloud.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_08_10_30_frontend_strip_frontmatter_from_article_rendering_frontmatter_rendering_strip",
+      "label": "Frontmatter hidden from article rendering",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_10_30_[FRONTEND]_strip_frontmatter_from_article_rendering.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_08_10_30_frontend_strip_frontmatter_from_article_rendering_stripfrontmatter_helper",
+      "label": "stripFrontmatter helper",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_10_30_[FRONTEND]_strip_frontmatter_from_article_rendering.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_08_12_00_frontend_new_document_creation_modal_with_folder_browser_new_document_modal",
+      "label": "New Document modal",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_12_00_[FRONTEND]_new_document_creation_modal_with_folder_browser.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_08_12_00_frontend_new_document_creation_modal_with_folder_browser_post_documents_endpoint",
+      "label": "POST /api/documents endpoint",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_12_00_[FRONTEND]_new_document_creation_modal_with_folder_browser.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_08_12_20_filename_datetime_precision_in_filename_pattern_datetime_filename_pattern",
+      "label": "Datetime filename pattern",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_12_20_[FILENAME]_datetime_precision_in_filename_pattern.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_08_12_20_filename_datetime_precision_in_filename_pattern_optional_time_parser",
+      "label": "Backward-compatible optional time parser",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_12_20_[FILENAME]_datetime_precision_in_filename_pattern.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_08_13_00_editor_markdown_snippet_inserter_with_detection_markdown_snippet_inserter",
+      "label": "Markdown snippet inserter",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_13_00_[EDITOR]_markdown_snippet_inserter_with_detection.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_08_13_00_editor_markdown_snippet_inserter_with_detection_snippet_detection_prefill",
+      "label": "Snippet detection and pre-fill",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_13_00_[EDITOR]_markdown_snippet_inserter_with_detection.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_08_13_15_navigation_anchor_scroll_and_folder_sort_convention_heading_anchor_scroll",
+      "label": "Heading anchor scroll",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_13_15_[NAVIGATION]_anchor_scroll_and_folder_sort_convention.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_08_13_15_navigation_anchor_scroll_and_folder_sort_convention_numeric_folder_sort_prefix",
+      "label": "Numeric folder sort prefix convention",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_13_15_[NAVIGATION]_anchor_scroll_and_folder_sort_convention.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_08_diagram_edge_label_rotation_stamp_overlay_png_group_fix_edge_label_rotation",
+      "label": "Edge label rotation",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_[DIAGRAM]_edge_label_rotation_stamp_overlay_png_group_fix.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_08_diagram_edge_label_rotation_stamp_overlay_png_group_fix_clean_png_export",
+      "label": "Clean PNG export without UI outlines",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_[DIAGRAM]_edge_label_rotation_stamp_overlay_png_group_fix.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_10_annotation_marker_highlight_with_anchor_spans_and_dom_traversal_marker_annotation_feature",
+      "label": "Marker annotation feature",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_10_[ANNOTATION]_marker_highlight_with_anchor_spans_and_dom_traversal.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_10_annotation_marker_highlight_with_anchor_spans_and_dom_traversal_single_char_anchor_spans",
+      "label": "Single-character anchor spans",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_10_[ANNOTATION]_marker_highlight_with_anchor_spans_and_dom_traversal.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_10_annotation_marker_highlight_with_anchor_spans_and_dom_traversal_treewalker_mark_highlight",
+      "label": "TreeWalker mark highlighting",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_10_[ANNOTATION]_marker_highlight_with_anchor_spans_and_dom_traversal.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_12_diagram_insertion_diagramme_via_snippet_et_sauvegarde_auto_png_diagram_snippet_insertion_flow",
+      "label": "Diagram snippet insertion flow",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_12_[DIAGRAM]_insertion_diagramme_via_snippet_et_sauvegarde_auto_png.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_12_diagram_insertion_diagramme_via_snippet_et_sauvegarde_auto_png_auto_saved_diagram_png",
+      "label": "Auto-saved diagram PNG",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_12_[DIAGRAM]_insertion_diagramme_via_snippet_et_sauvegarde_auto_png.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_12_sidebar_creation_dossier_icones_font_awesome_et_dossiers_vides_dans_le_drawer_sidebar_folder_creation",
+      "label": "Sidebar folder creation",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_12_[SIDEBAR]_creation_dossier_icones_font_awesome_et_dossiers_vides_dans_le_drawer.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_12_sidebar_creation_dossier_icones_font_awesome_et_dossiers_vides_dans_le_drawer_browse_alldirs_endpoint",
+      "label": "GET /api/browse/alldirs endpoint",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_12_[SIDEBAR]_creation_dossier_icones_font_awesome_et_dossiers_vides_dans_le_drawer.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_13_diagram_node_locking_node_edge_locking",
+      "label": "Node and edge locking",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_13_[DIAGRAM]_node_locking.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_13_diagram_node_locking_locked_interaction_guards",
+      "label": "Locked interaction guards",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_13_[DIAGRAM]_node_locking.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_13_diagram_palette_couleurs_admin_et_corrections_editeur_diagram_palette_admin_config",
+      "label": "Diagram palette admin config",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_13_[DIAGRAM]_palette_couleurs_admin_et_corrections_editeur.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_13_diagram_palette_couleurs_admin_et_corrections_editeur_hsl_border_derivation",
+      "label": "HSL border derivation",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_13_[DIAGRAM]_palette_couleurs_admin_et_corrections_editeur.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_13_diagram_port_anchored_edges_free_arrows_and_edge_styling_port_anchored_edges",
+      "label": "Port-anchored edges",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_13_[DIAGRAM]_port_anchored_edges_free_arrows_and_edge_styling.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_13_diagram_port_anchored_edges_free_arrows_and_edge_styling_free_standing_arrows",
+      "label": "Free-standing arrows",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_13_[DIAGRAM]_port_anchored_edges_free_arrows_and_edge_styling.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_13_diagram_port_anchored_edges_free_arrows_and_edge_styling_edge_color_width_styling",
+      "label": "Edge color and width styling",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_13_[DIAGRAM]_port_anchored_edges_free_arrows_and_edge_styling.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_14_diagram_undo_redo_history_snapshot_based_snapshot_based_history",
+      "label": "Snapshot-based undo/redo history",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[DIAGRAM]_Undo_Redo_History_Snapshot_Based.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_14_diagram_undo_redo_history_snapshot_based_restore_state_strategy",
+      "label": "Diagram state restore strategy",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[DIAGRAM]_Undo_Redo_History_Snapshot_Based.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_14_i18n_internationalization_en_fr_with_json_translation_files_runtime_i18n_loader",
+      "label": "Runtime i18n loader",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[I18N]_internationalization_en_fr_with_json_translation_files.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_14_i18n_internationalization_en_fr_with_json_translation_files_dynamic_renderer_i18n_bootstrap",
+      "label": "Dynamic renderer i18n bootstrap",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[I18N]_internationalization_en_fr_with_json_translation_files.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_14_mcp_draft_mcp_mcp_streamable_http_server",
+      "label": "MCP Streamable HTTP server",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[MCP]_draft_mcp.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_14_mcp_draft_mcp_mcp_document_diagram_tools",
+      "label": "MCP document and diagram tools",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[MCP]_draft_mcp.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_14_snippet_colored_section_and_colored_text_snippets_colored_section_text_snippets",
+      "label": "Colored section and text snippets",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[SNIPPET]_colored_section_and_colored_text_snippets.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_14_snippet_colored_section_and_colored_text_snippets_inline_html_style_strategy",
+      "label": "Inline HTML style strategy",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[SNIPPET]_colored_section_and_colored_text_snippets.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_15_diagram_alignment_guides_center_snap_hitbox_fix_and_state_persistence_alignment_guides",
+      "label": "Alignment guides",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_15_[DIAGRAM]_alignment_guides_center_snap_hitbox_fix_and_state_persistence.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_15_diagram_alignment_guides_center_snap_hitbox_fix_and_state_persistence_center_based_snap_to_grid",
+      "label": "Center-based snap-to-grid",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_15_[DIAGRAM]_alignment_guides_center_snap_hitbox_fix_and_state_persistence.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_15_diagram_alignment_guides_center_snap_hitbox_fix_and_state_persistence_f5_hit_testing_fix",
+      "label": "F5 hit-testing fix",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_15_[DIAGRAM]_alignment_guides_center_snap_hitbox_fix_and_state_persistence.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "adrs_2026_04_15_diagram_alignment_guides_center_snap_hitbox_fix_and_state_persistence_per_diagram_layout_state",
+      "label": "Per-diagram grid and alignment state",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_15_[DIAGRAM]_alignment_guides_center_snap_hitbox_fix_and_state_persistence.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "adrs_2026_04_03_10_15_diagram_debug_overlay_dom_debug_overlay",
+      "target": "adrs_2026_04_03_10_15_diagram_debug_overlay_showdiagramdebug_config",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_10_15_[DIAGRAM]_debug_overlay.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_03_10_15_diagram_debug_overlay_dom_debug_overlay",
+      "target": "adrs_2026_04_03_10_15_diagram_debug_overlay_canvastodom_positioning",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_10_15_[DIAGRAM]_debug_overlay.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_03_10_15_diagram_debug_overlay_dom_debug_overlay",
+      "target": "adrs_2026_04_03_11_20_diagram_snap_to_grid_snap_to_visual_edge_alignment",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_10_15_[DIAGRAM]_debug_overlay.md",
+      "source_location": "Context",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_03_10_40_diagram_modularisation_javascript_diagram_es_module_architecture",
+      "target": "adrs_2026_04_03_10_40_diagram_modularisation_javascript_single_responsibility_modules",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_10_40_[DIAGRAM]_modularisation_javascript.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_03_10_40_diagram_modularisation_javascript_single_responsibility_modules",
+      "target": "adrs_2026_04_03_10_40_diagram_modularisation_javascript_shared_mutable_state_st",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_10_40_[DIAGRAM]_modularisation_javascript.md",
+      "source_location": "Partage d état entre modules",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_03_10_40_diagram_modularisation_javascript_diagram_es_module_architecture",
+      "target": "adrs_2026_04_03_12_05_diagram_vis_network_z_order_patch_vis_network_drawnodes_patch",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_10_40_[DIAGRAM]_modularisation_javascript.md",
+      "source_location": "Consequences",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_03_11_20_diagram_snap_to_grid_snap_to_visual_edge_alignment",
+      "target": "adrs_2026_04_03_11_20_diagram_snap_to_grid_grid_device_pixel_ratio_fix",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_11_20_[DIAGRAM]_snap_to_grid.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_03_11_20_diagram_snap_to_grid_snap_to_visual_edge_alignment",
+      "target": "adrs_2026_04_15_diagram_alignment_guides_center_snap_hitbox_fix_and_state_persistence_center_based_snap_to_grid",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_11_20_[DIAGRAM]_snap_to_grid.md",
+      "source_location": "status",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_03_11_20_diagram_snap_to_grid_grid_device_pixel_ratio_fix",
+      "target": "adrs_2026_04_15_diagram_alignment_guides_center_snap_hitbox_fix_and_state_persistence_alignment_guides",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_11_20_[DIAGRAM]_snap_to_grid.md",
+      "source_location": "Consequences",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_03_12_05_diagram_vis_network_z_order_patch_vis_network_drawnodes_patch",
+      "target": "adrs_2026_04_03_12_05_diagram_vis_network_z_order_patch_canonical_z_order",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_03_12_05_[DIAGRAM]_vis_network_z_order_patch.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_03_12_05_diagram_vis_network_z_order_patch_canonical_z_order",
+      "target": "adrs_2026_04_14_diagram_undo_redo_history_snapshot_based_snapshot_based_history",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[DIAGRAM]_Undo_Redo_History_Snapshot_Based.md",
+      "source_location": "Snapshot format",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_05_10_50_frontend_word_cloud_word_cloud_feature",
+      "target": "adrs_2026_04_05_10_50_frontend_word_cloud_wordcloud_api_route",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_05_10_50_[FRONTEND]_word_cloud.md",
+      "source_location": "Route backend",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_05_10_50_frontend_word_cloud_word_cloud_feature",
+      "target": "adrs_2026_04_05_10_50_frontend_word_cloud_stop_word_filtering",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_05_10_50_[FRONTEND]_word_cloud.md",
+      "source_location": "Frontend",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_05_10_50_frontend_word_cloud_word_cloud_feature",
+      "target": "adrs_2026_04_08_diagram_edge_label_rotation_stamp_overlay_png_group_fix_clean_png_export",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_05_10_50_[FRONTEND]_word_cloud.md",
+      "source_location": "Copy PNG",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_08_10_30_frontend_strip_frontmatter_from_article_rendering_frontmatter_rendering_strip",
+      "target": "adrs_2026_04_08_10_30_frontend_strip_frontmatter_from_article_rendering_stripfrontmatter_helper",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_10_30_[FRONTEND]_strip_frontmatter_from_article_rendering.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_08_10_30_frontend_strip_frontmatter_from_article_rendering_frontmatter_rendering_strip",
+      "target": "adrs_2026_04_14_mcp_draft_mcp_mcp_document_diagram_tools",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_10_30_[FRONTEND]_strip_frontmatter_from_article_rendering.md",
+      "source_location": "Context",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_08_12_00_frontend_new_document_creation_modal_with_folder_browser_new_document_modal",
+      "target": "adrs_2026_04_08_12_00_frontend_new_document_creation_modal_with_folder_browser_post_documents_endpoint",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_12_00_[FRONTEND]_new_document_creation_modal_with_folder_browser.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_08_12_00_frontend_new_document_creation_modal_with_folder_browser_new_document_modal",
+      "target": "adrs_2026_04_08_12_20_filename_datetime_precision_in_filename_pattern_datetime_filename_pattern",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_12_00_[FRONTEND]_new_document_creation_modal_with_folder_browser.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_08_12_00_frontend_new_document_creation_modal_with_folder_browser_post_documents_endpoint",
+      "target": "adrs_2026_04_08_12_20_filename_datetime_precision_in_filename_pattern_optional_time_parser",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_12_20_[FILENAME]_datetime_precision_in_filename_pattern.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_08_12_20_filename_datetime_precision_in_filename_pattern_datetime_filename_pattern",
+      "target": "adrs_2026_04_08_12_20_filename_datetime_precision_in_filename_pattern_optional_time_parser",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_12_20_[FILENAME]_datetime_precision_in_filename_pattern.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_08_12_20_filename_datetime_precision_in_filename_pattern_datetime_filename_pattern",
+      "target": "adrs_2026_04_08_12_00_frontend_new_document_creation_modal_with_folder_browser_new_document_modal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_12_20_[FILENAME]_datetime_precision_in_filename_pattern.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_08_13_00_editor_markdown_snippet_inserter_with_detection_markdown_snippet_inserter",
+      "target": "adrs_2026_04_08_13_00_editor_markdown_snippet_inserter_with_detection_snippet_detection_prefill",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_13_00_[EDITOR]_markdown_snippet_inserter_with_detection.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_08_13_00_editor_markdown_snippet_inserter_with_detection_markdown_snippet_inserter",
+      "target": "adrs_2026_04_12_diagram_insertion_diagramme_via_snippet_et_sauvegarde_auto_png_diagram_snippet_insertion_flow",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_12_[DIAGRAM]_insertion_diagramme_via_snippet_et_sauvegarde_auto_png.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_08_13_00_editor_markdown_snippet_inserter_with_detection_snippet_detection_prefill",
+      "target": "adrs_2026_04_14_snippet_colored_section_and_colored_text_snippets_colored_section_text_snippets",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[SNIPPET]_colored_section_and_colored_text_snippets.md",
+      "source_location": "Detect and re-edit",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_08_13_15_navigation_anchor_scroll_and_folder_sort_convention_heading_anchor_scroll",
+      "target": "adrs_2026_04_08_13_15_navigation_anchor_scroll_and_folder_sort_convention_numeric_folder_sort_prefix",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_13_15_[NAVIGATION]_anchor_scroll_and_folder_sort_convention.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_08_13_15_navigation_anchor_scroll_and_folder_sort_convention_heading_anchor_scroll",
+      "target": "adrs_2026_04_08_13_00_editor_markdown_snippet_inserter_with_detection_markdown_snippet_inserter",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_13_15_[NAVIGATION]_anchor_scroll_and_folder_sort_convention.md",
+      "source_location": "Context",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_08_diagram_edge_label_rotation_stamp_overlay_png_group_fix_edge_label_rotation",
+      "target": "adrs_2026_04_08_diagram_edge_label_rotation_stamp_overlay_png_group_fix_clean_png_export",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_[DIAGRAM]_edge_label_rotation_stamp_overlay_png_group_fix.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_08_diagram_edge_label_rotation_stamp_overlay_png_group_fix_edge_label_rotation",
+      "target": "adrs_2026_04_13_diagram_port_anchored_edges_free_arrows_and_edge_styling_edge_color_width_styling",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_[DIAGRAM]_edge_label_rotation_stamp_overlay_png_group_fix.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_10_annotation_marker_highlight_with_anchor_spans_and_dom_traversal_marker_annotation_feature",
+      "target": "adrs_2026_04_10_annotation_marker_highlight_with_anchor_spans_and_dom_traversal_single_char_anchor_spans",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_10_[ANNOTATION]_marker_highlight_with_anchor_spans_and_dom_traversal.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_10_annotation_marker_highlight_with_anchor_spans_and_dom_traversal_marker_annotation_feature",
+      "target": "adrs_2026_04_10_annotation_marker_highlight_with_anchor_spans_and_dom_traversal_treewalker_mark_highlight",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_10_[ANNOTATION]_marker_highlight_with_anchor_spans_and_dom_traversal.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_10_annotation_marker_highlight_with_anchor_spans_and_dom_traversal_single_char_anchor_spans",
+      "target": "adrs_2026_04_10_annotation_marker_highlight_with_anchor_spans_and_dom_traversal_treewalker_mark_highlight",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_10_[ANNOTATION]_marker_highlight_with_anchor_spans_and_dom_traversal.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_12_diagram_insertion_diagramme_via_snippet_et_sauvegarde_auto_png_diagram_snippet_insertion_flow",
+      "target": "adrs_2026_04_12_diagram_insertion_diagramme_via_snippet_et_sauvegarde_auto_png_auto_saved_diagram_png",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_12_[DIAGRAM]_insertion_diagramme_via_snippet_et_sauvegarde_auto_png.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_12_diagram_insertion_diagramme_via_snippet_et_sauvegarde_auto_png_diagram_snippet_insertion_flow",
+      "target": "adrs_2026_04_08_13_00_editor_markdown_snippet_inserter_with_detection_markdown_snippet_inserter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_12_[DIAGRAM]_insertion_diagramme_via_snippet_et_sauvegarde_auto_png.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_12_diagram_insertion_diagramme_via_snippet_et_sauvegarde_auto_png_auto_saved_diagram_png",
+      "target": "adrs_2026_04_08_diagram_edge_label_rotation_stamp_overlay_png_group_fix_clean_png_export",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_12_[DIAGRAM]_insertion_diagramme_via_snippet_et_sauvegarde_auto_png.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_12_sidebar_creation_dossier_icones_font_awesome_et_dossiers_vides_dans_le_drawer_sidebar_folder_creation",
+      "target": "adrs_2026_04_12_sidebar_creation_dossier_icones_font_awesome_et_dossiers_vides_dans_le_drawer_browse_alldirs_endpoint",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_12_[SIDEBAR]_creation_dossier_icones_font_awesome_et_dossiers_vides_dans_le_drawer.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_12_sidebar_creation_dossier_icones_font_awesome_et_dossiers_vides_dans_le_drawer_sidebar_folder_creation",
+      "target": "adrs_2026_04_08_12_00_frontend_new_document_creation_modal_with_folder_browser_new_document_modal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_12_[SIDEBAR]_creation_dossier_icones_font_awesome_et_dossiers_vides_dans_le_drawer.md",
+      "source_location": "status",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_12_sidebar_creation_dossier_icones_font_awesome_et_dossiers_vides_dans_le_drawer_sidebar_folder_creation",
+      "target": "adrs_2026_04_08_13_15_navigation_anchor_scroll_and_folder_sort_convention_numeric_folder_sort_prefix",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_12_[SIDEBAR]_creation_dossier_icones_font_awesome_et_dossiers_vides_dans_le_drawer.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_13_diagram_node_locking_node_edge_locking",
+      "target": "adrs_2026_04_13_diagram_node_locking_locked_interaction_guards",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_13_[DIAGRAM]_node_locking.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_13_diagram_node_locking_node_edge_locking",
+      "target": "adrs_2026_04_13_diagram_port_anchored_edges_free_arrows_and_edge_styling_port_anchored_edges",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_13_[DIAGRAM]_node_locking.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_13_diagram_palette_couleurs_admin_et_corrections_editeur_diagram_palette_admin_config",
+      "target": "adrs_2026_04_13_diagram_palette_couleurs_admin_et_corrections_editeur_hsl_border_derivation",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_13_[DIAGRAM]_palette_couleurs_admin_et_corrections_editeur.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_13_diagram_palette_couleurs_admin_et_corrections_editeur_diagram_palette_admin_config",
+      "target": "adrs_2026_04_13_diagram_port_anchored_edges_free_arrows_and_edge_styling_edge_color_width_styling",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_13_[DIAGRAM]_palette_couleurs_admin_et_corrections_editeur.md",
+      "source_location": "Bug fixes",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_13_diagram_palette_couleurs_admin_et_corrections_editeur_diagram_palette_admin_config",
+      "target": "adrs_2026_04_13_diagram_node_locking_node_edge_locking",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_13_[DIAGRAM]_palette_couleurs_admin_et_corrections_editeur.md",
+      "source_location": "Bug fixes",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_13_diagram_port_anchored_edges_free_arrows_and_edge_styling_port_anchored_edges",
+      "target": "adrs_2026_04_13_diagram_port_anchored_edges_free_arrows_and_edge_styling_free_standing_arrows",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_13_[DIAGRAM]_port_anchored_edges_free_arrows_and_edge_styling.md",
+      "source_location": "Flèches libres",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_13_diagram_port_anchored_edges_free_arrows_and_edge_styling_port_anchored_edges",
+      "target": "adrs_2026_04_13_diagram_port_anchored_edges_free_arrows_and_edge_styling_edge_color_width_styling",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_13_[DIAGRAM]_port_anchored_edges_free_arrows_and_edge_styling.md",
+      "source_location": "Couleur et épaisseur des flèches",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_13_diagram_port_anchored_edges_free_arrows_and_edge_styling_port_anchored_edges",
+      "target": "adrs_2026_04_03_12_05_diagram_vis_network_z_order_patch_vis_network_drawnodes_patch",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_13_[DIAGRAM]_port_anchored_edges_free_arrows_and_edge_styling.md",
+      "source_location": "Rendu bezier et ghost edge",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_13_diagram_port_anchored_edges_free_arrows_and_edge_styling_free_standing_arrows",
+      "target": "adrs_2026_04_13_diagram_node_locking_node_edge_locking",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_13_[DIAGRAM]_port_anchored_edges_free_arrows_and_edge_styling.md",
+      "source_location": "Flèches libres",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_14_diagram_undo_redo_history_snapshot_based_snapshot_based_history",
+      "target": "adrs_2026_04_14_diagram_undo_redo_history_snapshot_based_restore_state_strategy",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[DIAGRAM]_Undo_Redo_History_Snapshot_Based.md",
+      "source_location": "Restore strategy",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_14_diagram_undo_redo_history_snapshot_based_snapshot_based_history",
+      "target": "adrs_2026_04_03_10_40_diagram_modularisation_javascript_shared_mutable_state_st",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[DIAGRAM]_Undo_Redo_History_Snapshot_Based.md",
+      "source_location": "Snapshot format",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_14_diagram_undo_redo_history_snapshot_based_restore_state_strategy",
+      "target": "adrs_2026_04_03_12_05_diagram_vis_network_z_order_patch_canonical_z_order",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[DIAGRAM]_Undo_Redo_History_Snapshot_Based.md",
+      "source_location": "Restore strategy",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_14_diagram_undo_redo_history_snapshot_based_restore_state_strategy",
+      "target": "adrs_2026_04_15_diagram_alignment_guides_center_snap_hitbox_fix_and_state_persistence_f5_hit_testing_fix",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[DIAGRAM]_Undo_Redo_History_Snapshot_Based.md",
+      "source_location": "Restore strategy",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_14_i18n_internationalization_en_fr_with_json_translation_files_runtime_i18n_loader",
+      "target": "adrs_2026_04_14_i18n_internationalization_en_fr_with_json_translation_files_dynamic_renderer_i18n_bootstrap",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[I18N]_internationalization_en_fr_with_json_translation_files.md",
+      "source_location": "Update 2026-04-22",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_14_i18n_internationalization_en_fr_with_json_translation_files_runtime_i18n_loader",
+      "target": "adrs_2026_04_14_snippet_colored_section_and_colored_text_snippets_colored_section_text_snippets",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[SNIPPET]_colored_section_and_colored_text_snippets.md",
+      "source_location": "Internationalization",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_14_i18n_internationalization_en_fr_with_json_translation_files_dynamic_renderer_i18n_bootstrap",
+      "target": "adrs_2026_04_08_13_00_editor_markdown_snippet_inserter_with_detection_markdown_snippet_inserter",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[I18N]_internationalization_en_fr_with_json_translation_files.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_14_mcp_draft_mcp_mcp_streamable_http_server",
+      "target": "adrs_2026_04_14_mcp_draft_mcp_mcp_document_diagram_tools",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[MCP]_draft_mcp.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_14_mcp_draft_mcp_mcp_document_diagram_tools",
+      "target": "adrs_2026_04_08_10_30_frontend_strip_frontmatter_from_article_rendering_frontmatter_rendering_strip",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[MCP]_draft_mcp.md",
+      "source_location": "Outils exposés",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_14_mcp_draft_mcp_mcp_document_diagram_tools",
+      "target": "adrs_2026_04_08_12_00_frontend_new_document_creation_modal_with_folder_browser_new_document_modal",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[MCP]_draft_mcp.md",
+      "source_location": "Outils exposés",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_14_snippet_colored_section_and_colored_text_snippets_colored_section_text_snippets",
+      "target": "adrs_2026_04_14_snippet_colored_section_and_colored_text_snippets_inline_html_style_strategy",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[SNIPPET]_colored_section_and_colored_text_snippets.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_14_snippet_colored_section_and_colored_text_snippets_colored_section_text_snippets",
+      "target": "adrs_2026_04_08_13_00_editor_markdown_snippet_inserter_with_detection_snippet_detection_prefill",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[SNIPPET]_colored_section_and_colored_text_snippets.md",
+      "source_location": "Detect and re-edit",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_14_snippet_colored_section_and_colored_text_snippets_inline_html_style_strategy",
+      "target": "adrs_2026_04_08_10_30_frontend_strip_frontmatter_from_article_rendering_frontmatter_rendering_strip",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[SNIPPET]_colored_section_and_colored_text_snippets.md",
+      "source_location": "Context",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_15_diagram_alignment_guides_center_snap_hitbox_fix_and_state_persistence_alignment_guides",
+      "target": "adrs_2026_04_15_diagram_alignment_guides_center_snap_hitbox_fix_and_state_persistence_center_based_snap_to_grid",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_15_[DIAGRAM]_alignment_guides_center_snap_hitbox_fix_and_state_persistence.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_15_diagram_alignment_guides_center_snap_hitbox_fix_and_state_persistence_alignment_guides",
+      "target": "adrs_2026_04_15_diagram_alignment_guides_center_snap_hitbox_fix_and_state_persistence_f5_hit_testing_fix",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_15_[DIAGRAM]_alignment_guides_center_snap_hitbox_fix_and_state_persistence.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_15_diagram_alignment_guides_center_snap_hitbox_fix_and_state_persistence_alignment_guides",
+      "target": "adrs_2026_04_15_diagram_alignment_guides_center_snap_hitbox_fix_and_state_persistence_per_diagram_layout_state",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_15_[DIAGRAM]_alignment_guides_center_snap_hitbox_fix_and_state_persistence.md",
+      "source_location": "Decision",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_15_diagram_alignment_guides_center_snap_hitbox_fix_and_state_persistence_center_based_snap_to_grid",
+      "target": "adrs_2026_04_03_11_20_diagram_snap_to_grid_snap_to_visual_edge_alignment",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_15_[DIAGRAM]_alignment_guides_center_snap_hitbox_fix_and_state_persistence.md",
+      "source_location": "Context",
+      "weight": 1
+    },
+    {
+      "source": "adrs_2026_04_15_diagram_alignment_guides_center_snap_hitbox_fix_and_state_persistence_per_diagram_layout_state",
+      "target": "adrs_2026_04_14_diagram_undo_redo_history_snapshot_based_snapshot_based_history",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_15_[DIAGRAM]_alignment_guides_center_snap_hitbox_fix_and_state_persistence.md",
+      "source_location": "Per-diagram state persistence",
+      "weight": 1
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "diagram_editor_canvas_interaction_pattern",
+      "label": "Diagram editor canvas interaction pattern",
+      "nodes": [
+        "adrs_2026_04_03_10_15_diagram_debug_overlay_dom_debug_overlay",
+        "adrs_2026_04_03_11_20_diagram_snap_to_grid_snap_to_visual_edge_alignment",
+        "adrs_2026_04_03_12_05_diagram_vis_network_z_order_patch_vis_network_drawnodes_patch",
+        "adrs_2026_04_13_diagram_port_anchored_edges_free_arrows_and_edge_styling_port_anchored_edges",
+        "adrs_2026_04_13_diagram_node_locking_node_edge_locking",
+        "adrs_2026_04_14_diagram_undo_redo_history_snapshot_based_snapshot_based_history",
+        "adrs_2026_04_15_diagram_alignment_guides_center_snap_hitbox_fix_and_state_persistence_alignment_guides"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_15_[DIAGRAM]_alignment_guides_center_snap_hitbox_fix_and_state_persistence.md"
+    },
+    {
+      "id": "markdown_authoring_workflow_pattern",
+      "label": "Markdown authoring workflow pattern",
+      "nodes": [
+        "adrs_2026_04_08_12_00_frontend_new_document_creation_modal_with_folder_browser_new_document_modal",
+        "adrs_2026_04_08_12_20_filename_datetime_precision_in_filename_pattern_datetime_filename_pattern",
+        "adrs_2026_04_08_13_00_editor_markdown_snippet_inserter_with_detection_markdown_snippet_inserter",
+        "adrs_2026_04_12_diagram_insertion_diagramme_via_snippet_et_sauvegarde_auto_png_diagram_snippet_insertion_flow",
+        "adrs_2026_04_14_snippet_colored_section_and_colored_text_snippets_colored_section_text_snippets",
+        "adrs_2026_04_08_10_30_frontend_strip_frontmatter_from_article_rendering_frontmatter_rendering_strip",
+        "adrs_2026_04_08_13_15_navigation_anchor_scroll_and_folder_sort_convention_heading_anchor_scroll"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_08_13_00_[EDITOR]_markdown_snippet_inserter_with_detection.md"
+    },
+    {
+      "id": "local_first_tooling_surface_pattern",
+      "label": "Local-first tooling surface pattern",
+      "nodes": [
+        "adrs_2026_04_05_10_50_frontend_word_cloud_word_cloud_feature",
+        "adrs_2026_04_14_mcp_draft_mcp_mcp_streamable_http_server",
+        "adrs_2026_04_14_mcp_draft_mcp_mcp_document_diagram_tools",
+        "adrs_2026_04_14_i18n_internationalization_en_fr_with_json_translation_files_runtime_i18n_loader",
+        "adrs_2026_04_12_sidebar_creation_dossier_icones_font_awesome_et_dossiers_vides_dans_le_drawer_sidebar_folder_creation"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/ADRS/2026_04_14_[MCP]_draft_mcp.md"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -7,9 +7,11 @@ import {
   assertUnderSourceRoot,
   buildReport,
   getFrontmatterField,
+  sourceCommitForMetadata,
   MetadataEntry,
 } from "../../lib/metadata";
 import { sha256File } from "../../lib/hash";
+import { SourceCommit } from "../../lib/git";
 import { assertNotSuperSeeded } from "../../lib/status";
 import { listAllDocuments, resolveDocFilePath } from "./documents";
 
@@ -22,6 +24,21 @@ function jsonResult(obj: unknown) {
     content: [
       { type: "text" as const, text: JSON.stringify(obj, null, 2) },
     ],
+  };
+}
+
+// Builds a fresh entry, attaching the source commit (and dirty flag) when the
+// repo state is known. Omits the fields entirely when null so the stored JSON
+// stays clean for non-git source roots.
+function buildEntry(
+  relPath: string,
+  hash: string,
+  src: SourceCommit | null,
+): MetadataEntry {
+  return {
+    path: relPath,
+    hash,
+    ...(src ? { commit: src.commit, dirty: src.dirty } : {}),
   };
 }
 
@@ -118,11 +135,12 @@ export function toolRefreshMetadata(
   const docId = decodeDocId(args?.id);
   assertNotSuperSeeded(docsPath, docId);
   const sourceRoot = resolveSourceRoot(docsPath);
+  const src = sourceCommitForMetadata(docsPath, sourceRoot);
   const entries = getDocEntries(docsPath, docId).map((e) => {
     const abs = path.resolve(sourceRoot, e.path);
-    if (!fs.existsSync(abs)) return e;
+    if (!fs.existsSync(abs)) return e; // keep stored hash + commit, still "missing"
     const fresh = sha256File(abs);
-    return fresh ? { path: e.path, hash: fresh } : e;
+    return fresh ? buildEntry(e.path, fresh, src) : e;
   });
   setDocEntries(docsPath, docId, entries);
   const report = buildReport(entries, sourceRoot);
@@ -147,7 +165,7 @@ export function toolAddMetadata(
 
   const entries = getDocEntries(docsPath, docId);
   const idx = entries.findIndex((e) => e.path === rel);
-  const entry: MetadataEntry = { path: rel, hash };
+  const entry: MetadataEntry = buildEntry(rel, hash, sourceCommitForMetadata(docsPath, sourceRoot));
   if (idx >= 0) entries[idx] = entry;
   else entries.push(entry);
   setDocEntries(docsPath, docId, entries);

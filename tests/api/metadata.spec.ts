@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { execFileSync } from 'child_process';
 import { test, expect } from '../helpers/ld-fixture';
 
 test.describe('metadata routes on the with-metadata fixture', () => {
@@ -114,6 +115,59 @@ test.describe('metadata routes on the with-metadata fixture', () => {
     const after = (await refresh.json()) as { items: Array<{ status: string }>; accuracy: number };
     expect(after.items[0].status).toBe('unchanged');
     expect(after.accuracy).toBe(1);
+  });
+});
+
+test.describe('metadata records the source commit when sourceRoot is a git repo', () => {
+  test.use({ fixtureName: 'with-metadata' });
+
+  const DOC_ID = '2026_01_01_10_00_[General]_intro';
+  const ENCODED = encodeURIComponent(DOC_ID);
+  const SHA1 = /^[0-9a-f]{40}$/;
+
+  function git(parent: string, args: string[]): void {
+    execFileSync('git', args, {
+      cwd: parent,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      env: {
+        ...process.env,
+        GIT_AUTHOR_NAME: 'Test',
+        GIT_AUTHOR_EMAIL: 'test@example.com',
+        GIT_COMMITTER_NAME: 'Test',
+        GIT_COMMITTER_EMAIL: 'test@example.com',
+      },
+    });
+  }
+
+  test('refresh stamps a clean commit; add on a dirty tree flags dirty', async ({ request, ld }) => {
+    // The fixture sourceRoot resolves to `ld.parent`. Make it a clean repo.
+    git(ld.parent, ['init']);
+    git(ld.parent, ['add', '-A']);
+    git(ld.parent, ['commit', '-m', 'fixture baseline']);
+
+    const cleanCommit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ld.parent })
+      .toString()
+      .trim();
+
+    // Refresh on a clean tree → every entry carries the HEAD sha and dirty=false.
+    const refresh = await request.post(`${ld.baseURL}/api/metadata/${ENCODED}/refresh`, { data: {} });
+    expect(refresh.ok()).toBe(true);
+    const refreshed = (await refresh.json()) as {
+      items: Array<{ commit?: string; dirty?: boolean }>;
+    };
+    expect(refreshed.items[0].commit).toBe(cleanCommit);
+    expect(refreshed.items[0].dirty).toBe(false);
+
+    // Add a brand-new untracked file → working tree is now dirty.
+    fs.writeFileSync(path.resolve(ld.parent, 'src/second.ts'), 'export const y = 1;\n');
+    const add = await request.post(`${ld.baseURL}/api/metadata/${ENCODED}`, {
+      data: { path: 'second.ts' },
+    });
+    expect(add.ok()).toBe(true);
+    const added = (await add.json()) as { items: Array<{ path: string; commit?: string; dirty?: boolean }> };
+    const second = added.items.find((i) => i.path === 'second.ts')!;
+    expect(second.commit).toMatch(SHA1);
+    expect(second.dirty).toBe(true);
   });
 });
 

@@ -1,0 +1,985 @@
+{
+  "nodes": [
+    {
+      "id": "documentation_2026_05_20_13_28__conference__test_markdown_rendering_showcase",
+      "label": "Markdown rendering showcase",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_05_20_13_28_[CONFERENCE]_test.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "documentation_2026_05_20_13_28__conference__test_mermaid_examples",
+      "label": "Mermaid examples",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_05_20_13_28_[CONFERENCE]_test.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "documentation_2026_05_20_13_28__conference__test_render_directives",
+      "label": "Markdown render directives",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_05_20_13_28_[CONFERENCE]_test.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "documentation_2026_06_03_23_19__testing__stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions_e2e_stabilization",
+      "label": "E2E stabilization after Svelte migration",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_03_23_19_[TESTING]_stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "documentation_2026_06_03_23_19__testing__stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions_test_anchoring",
+      "label": "Mixed test anchoring convention",
+      "file_type": "rationale",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_03_23_19_[TESTING]_stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Use data-testid for new anchors while preserving load-bearing functional ids such as snip-* that application logic already depends on."
+    },
+    {
+      "id": "documentation_2026_06_03_23_19__testing__stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions_snippet_window_hooks",
+      "label": "Programmatic snippet window hooks",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_03_23_19_[TESTING]_stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "documentation_2026_06_03_23_19__testing__stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions_mount_waits",
+      "label": "Deterministic mount waits",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_03_23_19_[TESTING]_stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "documentation_2026_06_03_23_20__ci__durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials_ci_hardening",
+      "label": "GitHub Actions hardening with zizmor",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_03_23_20_[CI]_durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "documentation_2026_06_03_23_20__ci__durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials_pinned_actions",
+      "label": "Pinned GitHub Actions",
+      "file_type": "rationale",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_03_23_20_[CI]_durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Pin actions to commit SHA to prevent compromised floating tags from controlling CI runners."
+    },
+    {
+      "id": "documentation_2026_06_03_23_20__ci__durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials_least_privilege",
+      "label": "Least privilege workflow permissions",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_03_23_20_[CI]_durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "documentation_2026_06_03_23_20__ci__durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials_checkout_credentials",
+      "label": "Checkout credential hardening",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_03_23_20_[CI]_durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "documentation_2026_06_08_00_17__frontend__compare_block_two_phase_rendering_compare_block_rendering",
+      "label": "Compare block rendering",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_08_00_17_[FRONTEND]_compare_block_two_phase_rendering.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "documentation_2026_06_08_00_17__frontend__compare_block_two_phase_rendering_two_phase_placeholder",
+      "label": "Two-phase placeholder swap",
+      "file_type": "rationale",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_08_00_17_[FRONTEND]_compare_block_two_phase_rendering.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Keep rendered compare HTML out of the outer Markdown parse so blank lines inside code samples cannot terminate CommonMark HTML blocks."
+    },
+    {
+      "id": "documentation_2026_06_08_00_17__frontend__compare_block_two_phase_rendering_commonmark_html_block_risk",
+      "label": "CommonMark HTML block blank-line risk",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_08_00_17_[FRONTEND]_compare_block_two_phase_rendering.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "000_blueprint_2026_06_01_17_40__scripts__scripts_scripts_folder",
+      "label": "Scripts folder",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/000_BLUEPRINT/2026_06_01_17_40_[SCRIPTS]_scripts.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "000_blueprint_2026_06_01_17_40__scripts__scripts_automation_scripts",
+      "label": "Automation scripts",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/000_BLUEPRINT/2026_06_01_17_40_[SCRIPTS]_scripts.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "1_tutorial_2026_04_11_13_25__general__crer_vos_dossiers_folder_tutorial",
+      "label": "Folder creation tutorial",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/1_tutorial/2026_04_11_13_25_[General]_crer_vos_dossiers.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "1_tutorial_2026_04_11_13_25__general__crer_vos_dossiers_folder_taxonomy",
+      "label": "Documentation folder taxonomy",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/1_tutorial/2026_04_11_13_25_[General]_crer_vos_dossiers.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "1_tutorial_2026_04_11_18_58__general__creer_un_document_dans_un_dossier_document_creation_tutorial",
+      "label": "Create document in folder tutorial",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/1_tutorial/2026_04_11_18_58_[General]_creer_un_document_dans_un_dossier.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "1_tutorial_2026_04_11_18_58__general__creer_un_document_dans_un_dossier_prefilled_document_creation",
+      "label": "Prefilled document creation workflow",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/1_tutorial/2026_04_11_18_58_[General]_creer_un_document_dans_un_dossier.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "1_tutorial_2026_04_12_09_00__general__editer_et_sauvegarder_edit_save_tutorial",
+      "label": "Edit and save tutorial",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/1_tutorial/2026_04_12_09_00_[General]_editer_et_sauvegarder.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "1_tutorial_2026_04_12_09_00__general__editer_et_sauvegarder_browser_markdown_editor",
+      "label": "Browser Markdown editor",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/1_tutorial/2026_04_12_09_00_[General]_editer_et_sauvegarder.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "1_tutorial_2026_04_12_10_00__general__utiliser_les_snippets_snippets_tutorial",
+      "label": "Use snippets tutorial",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/1_tutorial/2026_04_12_10_00_[General]_utiliser_les_snippets.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "1_tutorial_2026_04_12_10_00__general__utiliser_les_snippets_snippet_insertion_detection",
+      "label": "Snippet insertion and detection",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/1_tutorial/2026_04_12_10_00_[General]_utiliser_les_snippets.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_08_00_04__document__utilisation_des_images_plein_ecran_lien_clickable_image_fullscreen_guide",
+      "label": "Image and Mermaid fullscreen guide",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_08_00_04_[DOCUMENT]_utilisation_des_images_plein_ecran_lien_clickable.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_08_00_04__document__utilisation_des_images_plein_ecran_lien_clickable_lightbox_gestures",
+      "label": "Modified-click lightbox gestures",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_08_00_04_[DOCUMENT]_utilisation_des_images_plein_ecran_lien_clickable.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_08_23_38__configuration__demarrage_de_living_documentation_startup_guide",
+      "label": "Living Documentation startup guide",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_08_23_38_[Configuration]_demarrage_de_living_documentation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_08_23_38__configuration__demarrage_de_living_documentation_cli_initializer",
+      "label": "CLI startup and initializer",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_08_23_38_[Configuration]_demarrage_de_living_documentation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_09_09_00__navigation__recherche_plein_texte_search_guide",
+      "label": "Search and navigation guide",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_09_00_[NAVIGATION]_recherche_plein_texte.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_09_09_00__navigation__recherche_plein_texte_full_text_search_deep_links",
+      "label": "Full-text search, deep links, and heading anchors",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_09_00_[NAVIGATION]_recherche_plein_texte.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_09_10_00__export__exporter_en_pdf_pdf_export_guide",
+      "label": "PDF export guide",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_10_00_[EXPORT]_exporter_en_pdf.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_09_10_00__export__exporter_en_pdf_print_export_modes",
+      "label": "Current and full PDF export modes",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_10_00_[EXPORT]_exporter_en_pdf.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_09_11_00__configuration__configurer_le_panneau_admin_admin_guide",
+      "label": "Admin panel guide",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_11_00_[Configuration]_configurer_le_panneau_admin.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_09_11_00__configuration__configurer_le_panneau_admin_admin_configuration",
+      "label": "Admin-managed configuration",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_11_00_[Configuration]_configurer_le_panneau_admin.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_09_12_00__configuration__extra_files_extra_files_guide",
+      "label": "Extra files guide",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_12_00_[Configuration]_extra_files.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_09_12_00__configuration__extra_files_extra_files_configuration",
+      "label": "Extra files configuration",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_12_00_[Configuration]_extra_files.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_09_13_00__wordcloud__word_cloud_word_cloud_guide",
+      "label": "Word Cloud guide",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_13_00_[WORDCLOUD]_word_cloud.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_09_13_00__wordcloud__word_cloud_token_filtering",
+      "label": "Word cloud token filtering",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_13_00_[WORDCLOUD]_word_cloud.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_09_14_00__diagram__creer_et_lier_un_diagramme_diagram_guide",
+      "label": "Diagram creation and linking guide",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_14_00_[DIAGRAM]_creer_et_lier_un_diagramme.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_09_14_00__diagram__creer_et_lier_un_diagramme_diagram_linking_workflow",
+      "label": "Diagram JSON, PNG, and deep-link workflow",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_14_00_[DIAGRAM]_creer_et_lier_un_diagramme.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_10_10_00__guide__annotations_annotations_guide",
+      "label": "Annotations guide",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_10_10_00_[GUIDE]_annotations.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_10_10_00__guide__annotations_annotation_storage_callouts",
+      "label": "Local annotations and persistent callouts",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_10_10_00_[GUIDE]_annotations.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_21_10_00__guide__fichiers_joints_attachments_guide",
+      "label": "File attachments guide",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_21_10_00_[GUIDE]_fichiers_joints.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_21_10_00__guide__fichiers_joints_attachment_storage_constraints",
+      "label": "Attachment storage constraints",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_21_10_00_[GUIDE]_fichiers_joints.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_22_10_00__guide__metadonnees_sources_source_metadata_guide",
+      "label": "Source metadata guide",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_22_10_00_[GUIDE]_metadonnees_sources.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_04_22_10_00__guide__metadonnees_sources_accuracy_hash_workflow",
+      "label": "Accuracy and source hash workflow",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_22_10_00_[GUIDE]_metadonnees_sources.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_05_17_20_00__guide__edition_inline_snippets_inline_snippets_guide",
+      "label": "Inline snippets guide",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_05_17_20_00_[GUIDE]_edition_inline_snippets.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_05_17_20_00__guide__edition_inline_snippets_markdown_source_rewrite",
+      "label": "Inline Markdown source rewrite",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_05_17_20_00_[GUIDE]_edition_inline_snippets.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_06_06_16_00__guide__table_des_matieres_toc_guide",
+      "label": "Table of contents guide",
+      "file_type": "document",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_06_06_16_00_[GUIDE]_table_des_matieres.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "2_guide_2026_06_06_16_00__guide__table_des_matieres_toc_anchor_workflow",
+      "label": "ToC anchors and intersection tracking",
+      "file_type": "concept",
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_06_06_16_00_[GUIDE]_table_des_matieres.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "documentation_2026_05_20_13_28__conference__test_markdown_rendering_showcase",
+      "target": "documentation_2026_05_20_13_28__conference__test_mermaid_examples",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_05_20_13_28_[CONFERENCE]_test.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "documentation_2026_05_20_13_28__conference__test_markdown_rendering_showcase",
+      "target": "documentation_2026_05_20_13_28__conference__test_render_directives",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_05_20_13_28_[CONFERENCE]_test.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "documentation_2026_06_03_23_19__testing__stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions_e2e_stabilization",
+      "target": "documentation_2026_06_03_23_19__testing__stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions_test_anchoring",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_03_23_19_[TESTING]_stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "documentation_2026_06_03_23_19__testing__stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions_e2e_stabilization",
+      "target": "documentation_2026_06_03_23_19__testing__stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions_snippet_window_hooks",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_03_23_19_[TESTING]_stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "documentation_2026_06_03_23_19__testing__stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions_e2e_stabilization",
+      "target": "documentation_2026_06_03_23_19__testing__stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions_mount_waits",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_03_23_19_[TESTING]_stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "documentation_2026_06_03_23_20__ci__durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials_ci_hardening",
+      "target": "documentation_2026_06_03_23_20__ci__durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials_pinned_actions",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_03_23_20_[CI]_durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "documentation_2026_06_03_23_20__ci__durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials_ci_hardening",
+      "target": "documentation_2026_06_03_23_20__ci__durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials_least_privilege",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_03_23_20_[CI]_durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "documentation_2026_06_03_23_20__ci__durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials_ci_hardening",
+      "target": "documentation_2026_06_03_23_20__ci__durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials_checkout_credentials",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_03_23_20_[CI]_durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "documentation_2026_06_08_00_17__frontend__compare_block_two_phase_rendering_compare_block_rendering",
+      "target": "documentation_2026_06_08_00_17__frontend__compare_block_two_phase_rendering_two_phase_placeholder",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_08_00_17_[FRONTEND]_compare_block_two_phase_rendering.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "documentation_2026_06_08_00_17__frontend__compare_block_two_phase_rendering_two_phase_placeholder",
+      "target": "documentation_2026_06_08_00_17__frontend__compare_block_two_phase_rendering_commonmark_html_block_risk",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2026_06_08_00_17_[FRONTEND]_compare_block_two_phase_rendering.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "000_blueprint_2026_06_01_17_40__scripts__scripts_scripts_folder",
+      "target": "000_blueprint_2026_06_01_17_40__scripts__scripts_automation_scripts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/000_BLUEPRINT/2026_06_01_17_40_[SCRIPTS]_scripts.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "1_tutorial_2026_04_11_13_25__general__crer_vos_dossiers_folder_tutorial",
+      "target": "1_tutorial_2026_04_11_13_25__general__crer_vos_dossiers_folder_taxonomy",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/1_tutorial/2026_04_11_13_25_[General]_crer_vos_dossiers.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "1_tutorial_2026_04_11_18_58__general__creer_un_document_dans_un_dossier_document_creation_tutorial",
+      "target": "1_tutorial_2026_04_11_18_58__general__creer_un_document_dans_un_dossier_prefilled_document_creation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/1_tutorial/2026_04_11_18_58_[General]_creer_un_document_dans_un_dossier.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "1_tutorial_2026_04_11_18_58__general__creer_un_document_dans_un_dossier_prefilled_document_creation",
+      "target": "1_tutorial_2026_04_11_13_25__general__crer_vos_dossiers_folder_taxonomy",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/1_tutorial/2026_04_11_18_58_[General]_creer_un_document_dans_un_dossier.md",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "1_tutorial_2026_04_12_09_00__general__editer_et_sauvegarder_edit_save_tutorial",
+      "target": "1_tutorial_2026_04_12_09_00__general__editer_et_sauvegarder_browser_markdown_editor",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/1_tutorial/2026_04_12_09_00_[General]_editer_et_sauvegarder.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "1_tutorial_2026_04_12_10_00__general__utiliser_les_snippets_snippets_tutorial",
+      "target": "1_tutorial_2026_04_12_10_00__general__utiliser_les_snippets_snippet_insertion_detection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/1_tutorial/2026_04_12_10_00_[General]_utiliser_les_snippets.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "1_tutorial_2026_04_12_10_00__general__utiliser_les_snippets_snippets_tutorial",
+      "target": "1_tutorial_2026_04_12_09_00__general__editer_et_sauvegarder_edit_save_tutorial",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/1_tutorial/2026_04_12_10_00_[General]_utiliser_les_snippets.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "2_guide_2026_04_08_00_04__document__utilisation_des_images_plein_ecran_lien_clickable_image_fullscreen_guide",
+      "target": "2_guide_2026_04_08_00_04__document__utilisation_des_images_plein_ecran_lien_clickable_lightbox_gestures",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_08_00_04_[DOCUMENT]_utilisation_des_images_plein_ecran_lien_clickable.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "2_guide_2026_04_08_00_04__document__utilisation_des_images_plein_ecran_lien_clickable_lightbox_gestures",
+      "target": "documentation_2026_05_20_13_28__conference__test_mermaid_examples",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_08_00_04_[DOCUMENT]_utilisation_des_images_plein_ecran_lien_clickable.md",
+      "source_location": null,
+      "weight": 0.75
+    },
+    {
+      "source": "2_guide_2026_04_08_23_38__configuration__demarrage_de_living_documentation_startup_guide",
+      "target": "2_guide_2026_04_08_23_38__configuration__demarrage_de_living_documentation_cli_initializer",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_08_23_38_[Configuration]_demarrage_de_living_documentation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "2_guide_2026_04_09_09_00__navigation__recherche_plein_texte_search_guide",
+      "target": "2_guide_2026_04_09_09_00__navigation__recherche_plein_texte_full_text_search_deep_links",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_09_00_[NAVIGATION]_recherche_plein_texte.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "2_guide_2026_04_09_10_00__export__exporter_en_pdf_pdf_export_guide",
+      "target": "2_guide_2026_04_09_10_00__export__exporter_en_pdf_print_export_modes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_10_00_[EXPORT]_exporter_en_pdf.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "2_guide_2026_04_09_11_00__configuration__configurer_le_panneau_admin_admin_guide",
+      "target": "2_guide_2026_04_09_11_00__configuration__configurer_le_panneau_admin_admin_configuration",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_11_00_[Configuration]_configurer_le_panneau_admin.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "2_guide_2026_04_09_11_00__configuration__configurer_le_panneau_admin_admin_configuration",
+      "target": "2_guide_2026_04_09_12_00__configuration__extra_files_extra_files_configuration",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_12_00_[Configuration]_extra_files.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "2_guide_2026_04_09_12_00__configuration__extra_files_extra_files_guide",
+      "target": "2_guide_2026_04_09_12_00__configuration__extra_files_extra_files_configuration",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_12_00_[Configuration]_extra_files.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "2_guide_2026_04_09_13_00__wordcloud__word_cloud_word_cloud_guide",
+      "target": "2_guide_2026_04_09_13_00__wordcloud__word_cloud_token_filtering",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_13_00_[WORDCLOUD]_word_cloud.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "2_guide_2026_04_09_14_00__diagram__creer_et_lier_un_diagramme_diagram_guide",
+      "target": "2_guide_2026_04_09_14_00__diagram__creer_et_lier_un_diagramme_diagram_linking_workflow",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_14_00_[DIAGRAM]_creer_et_lier_un_diagramme.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "2_guide_2026_04_09_14_00__diagram__creer_et_lier_un_diagramme_diagram_linking_workflow",
+      "target": "2_guide_2026_04_08_00_04__document__utilisation_des_images_plein_ecran_lien_clickable_lightbox_gestures",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_14_00_[DIAGRAM]_creer_et_lier_un_diagramme.md",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "2_guide_2026_04_10_10_00__guide__annotations_annotations_guide",
+      "target": "2_guide_2026_04_10_10_00__guide__annotations_annotation_storage_callouts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_10_10_00_[GUIDE]_annotations.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "2_guide_2026_04_21_10_00__guide__fichiers_joints_attachments_guide",
+      "target": "2_guide_2026_04_21_10_00__guide__fichiers_joints_attachment_storage_constraints",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_21_10_00_[GUIDE]_fichiers_joints.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "2_guide_2026_04_21_10_00__guide__fichiers_joints_attachment_storage_constraints",
+      "target": "2_guide_2026_04_09_12_00__configuration__extra_files_extra_files_configuration",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_21_10_00_[GUIDE]_fichiers_joints.md",
+      "source_location": null,
+      "weight": 0.75
+    },
+    {
+      "source": "2_guide_2026_04_22_10_00__guide__metadonnees_sources_source_metadata_guide",
+      "target": "2_guide_2026_04_22_10_00__guide__metadonnees_sources_accuracy_hash_workflow",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_22_10_00_[GUIDE]_metadonnees_sources.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "2_guide_2026_04_22_10_00__guide__metadonnees_sources_accuracy_hash_workflow",
+      "target": "documentation_2026_06_03_23_19__testing__stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions_e2e_stabilization",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_22_10_00_[GUIDE]_metadonnees_sources.md",
+      "source_location": null,
+      "weight": 0.75
+    },
+    {
+      "source": "2_guide_2026_05_17_20_00__guide__edition_inline_snippets_inline_snippets_guide",
+      "target": "2_guide_2026_05_17_20_00__guide__edition_inline_snippets_markdown_source_rewrite",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_05_17_20_00_[GUIDE]_edition_inline_snippets.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "2_guide_2026_05_17_20_00__guide__edition_inline_snippets_markdown_source_rewrite",
+      "target": "1_tutorial_2026_04_12_10_00__general__utiliser_les_snippets_snippet_insertion_detection",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_05_17_20_00_[GUIDE]_edition_inline_snippets.md",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "2_guide_2026_06_06_16_00__guide__table_des_matieres_toc_guide",
+      "target": "2_guide_2026_06_06_16_00__guide__table_des_matieres_toc_anchor_workflow",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_06_06_16_00_[GUIDE]_table_des_matieres.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "2_guide_2026_06_06_16_00__guide__table_des_matieres_toc_anchor_workflow",
+      "target": "2_guide_2026_04_09_09_00__navigation__recherche_plein_texte_full_text_search_deep_links",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_06_06_16_00_[GUIDE]_table_des_matieres.md",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "2_guide_2026_04_09_13_00__wordcloud__word_cloud_token_filtering",
+      "target": "2_guide_2026_04_09_09_00__navigation__recherche_plein_texte_full_text_search_deep_links",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_13_00_[WORDCLOUD]_word_cloud.md",
+      "source_location": null,
+      "weight": 0.75
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "markdown_authoring_and_rewrite_flow",
+      "label": "Markdown authoring and rewrite flow",
+      "nodes": [
+        "1_tutorial_2026_04_12_09_00__general__editer_et_sauvegarder_browser_markdown_editor",
+        "1_tutorial_2026_04_12_10_00__general__utiliser_les_snippets_snippet_insertion_detection",
+        "2_guide_2026_05_17_20_00__guide__edition_inline_snippets_markdown_source_rewrite",
+        "2_guide_2026_04_10_10_00__guide__annotations_annotation_storage_callouts"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/1_tutorial/2026_04_12_10_00_[General]_utiliser_les_snippets.md"
+    },
+    {
+      "id": "document_navigation_and_discovery_flow",
+      "label": "Document navigation and discovery flow",
+      "nodes": [
+        "1_tutorial_2026_04_11_13_25__general__crer_vos_dossiers_folder_taxonomy",
+        "2_guide_2026_04_09_09_00__navigation__recherche_plein_texte_full_text_search_deep_links",
+        "2_guide_2026_06_06_16_00__guide__table_des_matieres_toc_anchor_workflow",
+        "2_guide_2026_04_09_13_00__wordcloud__word_cloud_token_filtering"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_09_09_00_[NAVIGATION]_recherche_plein_texte.md"
+    },
+    {
+      "id": "documentation_quality_and_delivery_guardrails",
+      "label": "Documentation quality and delivery guardrails",
+      "nodes": [
+        "2_guide_2026_04_22_10_00__guide__metadonnees_sources_accuracy_hash_workflow",
+        "documentation_2026_06_03_23_19__testing__stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions_e2e_stabilization",
+        "documentation_2026_06_03_23_20__ci__durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials_ci_hardening",
+        "000_blueprint_2026_06_01_17_40__scripts__scripts_automation_scripts"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/documentation/2_guide/2026_04_22_10_00_[GUIDE]_metadonnees_sources.md"
+    }
+  ],
+  "input_tokens": 23000,
+  "output_tokens": 17000
+}
