@@ -99,11 +99,18 @@ test.describe('validate button', () => {
 
     await expect(page.getByTestId('validate-btn')).toBeHidden();
 
+    // The status flip (onsave) and the hash re-baseline (POST /refresh) are two
+    // separate awaited calls in validate(); the button hides as soon as the
+    // status flips, before /refresh has persisted the new hash. Poll the file
+    // so the assertion waits for the re-baseline instead of racing it.
+    await expect
+      .poll(() => JSON.parse(fs.readFileSync(metaPath, 'utf-8'))[docId][0].hash)
+      .not.toBe(hashBefore);
+
     const fileAfter = fs.readFileSync(docPath, 'utf-8');
     expect(fileAfter).toContain('**status:** Accepted');
 
     const hashAfter = JSON.parse(fs.readFileSync(metaPath, 'utf-8'))[docId][0].hash;
-    expect(hashAfter).not.toBe(hashBefore);
     expect(hashAfter).toMatch(/^[0-9a-f]{64}$/);
   });
 
