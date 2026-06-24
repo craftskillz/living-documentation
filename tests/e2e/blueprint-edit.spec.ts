@@ -146,9 +146,43 @@ test.describe('blueprint document editing reuses the Home editor', () => {
     expect(opened.ok).toBe(true);
 
     await expect(page.locator('.bpadr-form')).toBeVisible();
+    await expect(page.locator('.bpadr-title')).toContainText('Folder');
+    await expect(page.locator('.bpadr-title code')).toHaveText('/beta');
 
     // Parity with Home: the creation form offers the snippets inserter.
     await page.getByTestId('bp-form-snippets').click();
     await expect(page.locator('div.fixed.inset-0').first()).toBeVisible();
+  });
+
+  test('creating a blueprint doc keeps the folder title in the popup header only', async ({
+    page,
+    ld,
+  }) => {
+    await page.goto(`${ld.baseURL}/blueprint`);
+    await page.waitForFunction(() => {
+      const c = document.querySelector('canvas');
+      return !!c && c.width > 300 && window.innerWidth > 300;
+    });
+
+    const opened = (await page.evaluate(`(${OPEN_PURPLE_DOC})()`)) as { ok: boolean };
+    expect(opened.ok).toBe(true);
+
+    await expect(page.locator('.bpadr-form')).toBeVisible();
+    await expect(page.locator('#adr-title')).toHaveValue('beta');
+    await expect(page.locator('#adr-content')).toHaveValue('');
+    await expect(page.locator('.bpadr-title code')).toHaveText('/beta');
+    await page.locator('.bpadr-form button[type="submit"]').click();
+
+    await expect(page.locator('.bpadr-title')).toContainText('Folder');
+    await expect(page.locator('.bpadr-title code')).toHaveText('/beta');
+    await expect(page.locator('.bpadr-read #doc-content')).toContainText('beta');
+
+    const created = fs
+      .readdirSync(path.join(ld.docsAbs, '000_BLUEPRINT'))
+      .find((f) => f.includes('[BETA]_beta') && f.endsWith('.md'));
+    expect(created).toBeDefined();
+    expect(fs.readFileSync(path.join(ld.docsAbs, '000_BLUEPRINT', created!), 'utf-8')).toBe(
+      '# beta\n',
+    );
   });
 });

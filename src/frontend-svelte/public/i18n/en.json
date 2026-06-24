@@ -791,6 +791,7 @@
   "blueprint.adr.folder_create_prompt": "Create it to store Blueprint ADRs?",
   "blueprint.adr.create_folder_btn": "Create folder",
   "blueprint.adr.new_title": "New Blueprint — {folder}",
+  "blueprint.adr.folder_title": "Folder",
   "common.untitled": "Untitled",
   "blueprint.canvas.fit_view": "Fit view",
   "blueprint.canvas.drag_mode": "Toggle drag mode",

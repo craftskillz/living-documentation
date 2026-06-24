@@ -21,6 +21,12 @@
     );
   }
 
+  function modalFolderPath(box: Box): string {
+    const raw = box.folder.path || box.folder.name;
+    const clean = raw.replace(/^\/+|\/+$/g, "");
+    return `/${clean || box.folder.name}`;
+  }
+
   // "doc" shows the reused EditableMarkdown body (read + inline + snippets + edit
   // mode), giving blueprint documents the same editing experience as Home.
   type ModalView = "doc" | "form" | "folder-confirm" | "closed";
@@ -33,6 +39,7 @@
   let docContent = $state("");
   let docHtml = $state("");
   let folderName = $state("");
+  let folderPathTitle = $state("");
   let currentAdrId: string | null = null;
   let currentBox: Box | null = null;
 
@@ -58,6 +65,7 @@
     contentValue = "";
     docContent = "";
     docHtml = "";
+    folderPathTitle = modalFolderPath(box);
     modalTitle = t("blueprint.adr.new_title", { folder: box.folder.name });
     view = "form";
 
@@ -103,6 +111,7 @@
     editing = false;
     currentAdrId = null;
     currentBox = null;
+    folderPathTitle = "";
   }
 
   async function onFolderCreate() {
@@ -139,7 +148,6 @@
       title: titleValue.trim() || currentBox?.folder.name || t("common.untitled"),
       category: categoryValue,
       folder: BLUEPRINT_FOLDER,
-      content: contentValue,
     };
 
     const res = (await fetch("/api/documents/", {
@@ -172,7 +180,14 @@
   <div class="bpadr-overlay" onclick={(e) => { if (e.target === e.currentTarget) close(); }}>
     <div class="bpadr-modal">
       <header class="bpadr-header">
-        <h2 class="bpadr-title">{modalTitle}</h2>
+        <h2 class="bpadr-title">
+          {#if folderPathTitle}
+            <span>{t("blueprint.adr.folder_title")}</span>
+            <code>{folderPathTitle}</code>
+          {:else}
+            {modalTitle}
+          {/if}
+        </h2>
         <div class="bpadr-header-actions">
           {#if view === "doc" && !editing}
             <button class="bpadr-icon-btn" data-testid="bp-edit" type="button" title={t("doc.edit")} onclick={() => editable.enterEdit()}>✏️</button>

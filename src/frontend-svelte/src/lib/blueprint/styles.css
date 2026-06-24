@@ -426,6 +426,18 @@ canvas.is-panning { cursor: grabbing; }
   color: #0f172a;
 }
 
+.bpadr-title code {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: #e2e8f0;
+  color: #0f172a;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.95em;
+  font-weight: 700;
+}
+
 .bpadr-header-actions { display: flex; gap: 8px; align-items: center; }
 
 .bpadr-icon-btn {

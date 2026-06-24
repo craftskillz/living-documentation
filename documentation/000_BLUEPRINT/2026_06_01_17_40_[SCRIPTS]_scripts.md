@@ -5,8 +5,6 @@
 **tags:** scripts, build, dev, npm, hooks, ci, readme-sync, zizmor, frontend-check, copy-assets
 ---
 
-# Dossier `scripts/`
-
 Le dossier `scripts/` contient l'outillage local du projet et sert à automatiser les tâches qui entourent le développement : préparer `dist/`, lancer un environnement de dev confortable, vérifier la syntaxe du frontend statique, et appliquer quelques garde-fous avant commit ou publication.
 
 C'est un dossier volontairement petit : chaque script correspond à une responsabilité opérationnelle précise, appelée depuis `package.json`, depuis les hooks Git, ou depuis GitHub Actions.
