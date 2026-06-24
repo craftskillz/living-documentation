@@ -65,7 +65,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@d77b13a0df3134d64a457ea9003f600b09fa1c8a # v3
+        uses: github/codeql-action/init@87557b9c84dde89fdd9b10e88954ac2f4248e463 # v4.36.1
         with:
           # javascript-typescript covers .js/.ts/.tsx/.mjs/.cjs plus inline
           # <script> blocks and event handlers inside .html files — so the
@@ -76,7 +76,7 @@ jobs:
           # security-and-quality pack; trades a bit more noise for fewer misses.
           queries: security-extended
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@d77b13a0df3134d64a457ea9003f600b09fa1c8a # v3
+        uses: github/codeql-action/analyze@87557b9c84dde89fdd9b10e88954ac2f4248e463 # v4.36.1
         with:
           category: '/language:javascript-typescript'
 
