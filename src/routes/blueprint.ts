@@ -48,6 +48,31 @@ export interface BlueprintFolder {
   name: string;
   path: string; // relative to sourceRoot, posix
   hasChildren: boolean;
+  hasDoc: boolean; // true when a blueprint document already exists for this block
+}
+
+// Mirrors the frontend slug used by AdrModal: a folder name maps to an ADR
+// category. Kept identical so `hasDoc` agrees with the lookup the "D" button
+// performs (GET /blueprint-adr?category=...).
+export function slugifyCategory(name: string): string {
+  return (
+    name.normalize('NFKD').replace(/[̀-ͯ]/g, '').toUpperCase()
+      .replace(/[^A-Z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'FOLDER'
+  );
+}
+
+// Set of categories (uppercased) that already have a document under the
+// blueprint folder — the same filter as the /blueprint-adr lookup.
+function blueprintDocCategories(docsPath: string): Set<string> {
+  const { extraFiles = [], filenamePattern } = readConfig(docsPath);
+  const docs = listDocs(docsPath, extraFiles, filenamePattern);
+  const categories = new Set<string>();
+  for (const d of docs) {
+    if (Array.isArray(d.folder) && d.folder.length === 1 && d.folder[0] === BLUEPRINT_FOLDER) {
+      categories.add(d.category.toUpperCase());
+    }
+  }
+  return categories;
 }
 
 export interface BlueprintResponse {
@@ -57,7 +82,11 @@ export interface BlueprintResponse {
   folders: BlueprintFolder[];
 }
 
-function listFolders(sourceRoot: string, relPath: string): BlueprintFolder[] {
+function listFolders(
+  sourceRoot: string,
+  relPath: string,
+  docCategories: Set<string>,
+): BlueprintFolder[] {
   const absDir = path.resolve(sourceRoot, relPath);
 
   // Security: must stay inside sourceRoot
@@ -74,7 +103,8 @@ function listFolders(sourceRoot: string, relPath: string): BlueprintFolder[] {
       const childAbs = path.resolve(sourceRoot, childRel);
       const hasChildren = fs.readdirSync(childAbs, { withFileTypes: true })
         .some((e) => e.isDirectory() && !e.name.startsWith('.') && !IGNORED_DIRS.has(e.name));
-      return { name: entry.name, path: childRel, hasChildren };
+      const hasDoc = docCategories.has(slugifyCategory(entry.name));
+      return { name: entry.name, path: childRel, hasChildren, hasDoc };
     });
 }
 
@@ -114,7 +144,7 @@ export function blueprintRouter(docsPath: string): Router {
         ? req.query.path.replace(/\\/g, '/').replace(/^\/+|\/+$/g, '')
         : '';
 
-      const folders = listFolders(sourceRoot, reqPath);
+      const folders = listFolders(sourceRoot, reqPath, blueprintDocCategories(docsPath));
       const name = reqPath ? reqPath.split('/').pop()! : path.basename(sourceRoot);
 
       const response: BlueprintResponse = {

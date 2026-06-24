@@ -78,4 +78,4 @@
   </section>
 </div>
 
-<AdrModal bind:this={modal} />
+<AdrModal bind:this={modal} onchanged={() => canvas.loadPath(breadcrumb.at(-1)?.path ?? "", false)} />

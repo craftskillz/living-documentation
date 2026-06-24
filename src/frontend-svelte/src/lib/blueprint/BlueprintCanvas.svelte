@@ -6,6 +6,7 @@
     name: string;
     path: string;
     hasChildren: boolean;
+    hasDoc?: boolean;
   }
 
   interface BlueprintResponse {
@@ -335,11 +336,26 @@
     ctx.textAlign = "left";
     ctx.fillText("☰", x + 10, y + 10);
 
-    ctx.fillStyle = hovered ? "#a78bfa" : "rgba(167,139,250,0.4)";
+    // Two visual states for the "D" badge:
+    //  - written  → solid emerald "D" (a document already exists for this block)
+    //  - to-write → faint purple "D" with a small "+" (clicking creates it)
+    // The "+" affordance plus solid-vs-faint hue keeps the states distinct even
+    // without relying on colour alone.
+    const docWritten = box.folder.hasDoc === true;
+    const dx = x + 10 + MENU_ICON_SIZE + 4;
+    const docColor = docWritten
+      ? (hovered ? "#34d399" : "#10b981")
+      : (hovered ? "#a78bfa" : "rgba(167,139,250,0.4)");
+    ctx.fillStyle = docColor;
     ctx.font = `bold ${MENU_ICON_SIZE * 0.65}px Inter, ui-sans-serif, sans-serif`;
     ctx.textBaseline = "top";
     ctx.textAlign = "left";
-    ctx.fillText("D", x + 10 + MENU_ICON_SIZE + 4, y + 11);
+    ctx.fillText("D", dx, y + 11);
+    if (!docWritten) {
+      // small "+" flagging "no document yet — click to add"
+      ctx.font = `bold ${MENU_ICON_SIZE * 0.5}px Inter, ui-sans-serif, sans-serif`;
+      ctx.fillText("+", dx + MENU_ICON_SIZE * 0.6, y + 7);
+    }
 
     const iconSize = 18;
     const iconX = x + 18;

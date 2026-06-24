@@ -14,6 +14,9 @@ export default defineConfig({
     // In CI, only capture on retry to keep artefacts small.
     trace: process.env.CI ? 'on-first-retry' : 'on',
     screenshot: 'only-on-failure',
+    // Opt-in screen recording: set RECORD_VIDEO=1 to save one .webm per test
+    // under test-results/. Off by default to keep runs light.
+    video: process.env.RECORD_VIDEO ? 'on' : 'off',
   },
   projects: [
     {

@@ -39,6 +39,25 @@ test-ui-headed *args: build
 test-ui-watch:
     npx playwright test --ui
 
+# Record e2e tests to video (one .webm per test under test-results/) and build
+# an HTML report. Pass filters: just test-video blueprint
+# Runs serially so the recordings are clean and ordered.
+test-video *args: build
+    RECORD_VIDEO=1 npx playwright test tests/e2e --workers=1 --reporter=html {{args}}
+
+# Open the last HTML report — each test embeds its playable video + trace.
+test-video-show:
+    npx playwright show-report
+
+# Record then immediately open the report to watch the videos.
+test-video-watch *args: (test-video args)
+    npx playwright show-report
+
+# Replay a Playwright trace (scrubbable, per-action snapshots).
+# Pass the trace path: just test-show-trace test-results/<dir>/trace.zip
+test-show-trace trace:
+    npx playwright show-trace {{trace}}
+
 # ── Security ────────────────────────────────────────────────────────────────
 # Audit GitHub Actions workflows for security issues (supply-chain, injections…)
 # Exit codes: 0 = clean, 13 = only suppressed/ignored, 14 = active findings.
