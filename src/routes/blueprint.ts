@@ -127,6 +127,60 @@ function writePositions(docsPath: string, positions: PositionsMap): void {
   fs.renameSync(tmp, file);
 }
 
+const CLUSTERS_FILE = '.blueprint-clusters.json';
+
+// A cluster is a visual grouping: a dashed boundary + label around a set of
+// blocks. Only the membership (folder paths) and label are stored — the
+// boundary is recomputed from member positions on the client, so the cluster
+// follows the blocks when they move.
+interface Cluster {
+  id: string;
+  label: string;
+  members: string[]; // folder paths (relative to sourceRoot)
+}
+
+function clustersFilePath(docsPath: string): string {
+  return path.join(docsPath, CLUSTERS_FILE);
+}
+
+function readClusters(docsPath: string): Cluster[] {
+  const file = clustersFilePath(docsPath);
+  if (!fs.existsSync(file)) return [];
+  try {
+    const parsed = JSON.parse(fs.readFileSync(file, 'utf-8'));
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeClusters(docsPath: string, clusters: Cluster[]): void {
+  const file = clustersFilePath(docsPath);
+  const tmp = `${file}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(clusters, null, 2), 'utf-8');
+  fs.renameSync(tmp, file);
+}
+
+function sanitizeClusters(input: unknown): Cluster[] {
+  if (!Array.isArray(input)) return [];
+  const out: Cluster[] = [];
+  for (const item of input) {
+    if (typeof item !== 'object' || item === null) continue;
+    const c = item as Record<string, unknown>;
+    if (typeof c.id !== 'string' || !c.id) continue;
+    const members = Array.isArray(c.members)
+      ? c.members.filter((m): m is string => typeof m === 'string')
+      : [];
+    if (members.length === 0) continue;
+    out.push({
+      id: c.id,
+      label: typeof c.label === 'string' ? c.label : '',
+      members,
+    });
+  }
+  return out;
+}
+
 export function blueprintRouter(docsPath: string): Router {
   const router = Router();
 
@@ -274,6 +328,21 @@ export function blueprintRouter(docsPath: string): Router {
       res.json({ ok: true });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to save positions';
+      res.status(500).json({ error: message });
+    }
+  });
+
+  router.get('/clusters', (_req, res) => {
+    res.json(readClusters(docsPath));
+  });
+
+  router.put('/clusters', (req, res) => {
+    try {
+      const clusters = sanitizeClusters(req.body);
+      writeClusters(docsPath, clusters);
+      res.json({ ok: true });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to save clusters';
       res.status(500).json({ error: message });
     }
   });

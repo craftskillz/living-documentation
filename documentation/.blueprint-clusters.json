@@ -1,0 +1,51 @@
+[
+  {
+    "id": "cl_mqshefwm_xnqtl",
+    "label": "Project Core",
+    "members": [
+      "src"
+    ]
+  },
+  {
+    "id": "cl_mqshesya_5roz6",
+    "label": "Tests",
+    "members": [
+      "tests",
+      "test-results",
+      "playwright-report"
+    ]
+  },
+  {
+    "id": "cl_mqshf0ut_kak8b",
+    "label": "Gen AI Helpers (Claude, Codex ...)",
+    "members": [
+      "graphify-out",
+      "memory"
+    ]
+  },
+  {
+    "id": "cl_mqshfsdv_12h03",
+    "label": "Living Documentation & ReadMe Images",
+    "members": [
+      "documentation",
+      "images",
+      "usermanual-documentation"
+    ]
+  },
+  {
+    "id": "cl_mqshgi3j_dv8aq",
+    "label": "Dev and CI/CD scripts",
+    "members": [
+      "scripts"
+    ]
+  },
+  {
+    "id": "cl_mqshh0nd_9new3",
+    "label": "Entry Point, Command Line Wizard and starters",
+    "members": [
+      "bin",
+      "starter-doc-fr",
+      "starter-doc"
+    ]
+  }
+]

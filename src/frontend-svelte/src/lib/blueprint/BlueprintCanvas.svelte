@@ -31,6 +31,12 @@
 
   type PositionEntry = { x: number; y: number; expanded?: boolean };
 
+  interface Cluster {
+    id: string;
+    label: string;
+    members: string[]; // folder paths
+  }
+
   // ── Props ─────────────────────────────────────────────────────────────────────
 
   let {
@@ -103,6 +109,21 @@
   let animFrame: number | null = null;
   let positions: Record<string, PositionEntry> = {};
   let saveTimer: number | null = null;
+
+  // ── Visual clusters ─────────────────────────────────────────────────────────
+  // A cluster is a dashed boundary + label around a set of blocks. Only the
+  // membership (folder paths) + label are persisted; the boundary is recomputed
+  // from member positions each frame so it follows the blocks.
+  let clusters = $state<Cluster[]>([]);
+  let clustersSaveTimer: number | null = null;
+  let selCount = $state(0); // reactive mirror of selectedIndices.size (drives the Group button)
+  // Label overlays are HTML (crisp text + clickable rename/delete), positioned
+  // over the canvas; recomputed in render() so they track pan/zoom/drag.
+  let clusterOverlays = $state<{ id: string; label: string; x: number; y: number }[]>([]);
+  let editingClusterId = $state<string | null>(null);
+
+  const CLUSTER_PAD = 24;
+  const CLUSTER_STROKE = "#a78bfa";
 
   let animStartX = 0;
   let animStartY = 0;
@@ -257,6 +278,8 @@
     ctx.translate(cameraX, cameraY);
     ctx.scale(zoom, zoom);
 
+    drawClusters();
+
     for (let i = 0; i < boxes.length; i++) {
       drawBox(boxes[i], i === hoverIndex, i === draggingIndex, selectedIndices.has(i));
     }
@@ -276,6 +299,40 @@
     }
 
     ctx.restore();
+  }
+
+  // Draws each cluster's dashed boundary (behind the boxes) and collects the
+  // screen-space positions for its HTML label overlay (rename + delete).
+  function drawClusters() {
+    const overlays: { id: string; label: string; x: number; y: number }[] = [];
+    for (const cluster of clusters) {
+      const members = boxes.filter((b) => cluster.members.includes(b.folder.path));
+      if (members.length === 0) continue; // not in the current view
+      const { minX, minY, maxX, maxY } = boundsOfBoxes(members);
+      const x = minX - CLUSTER_PAD;
+      const y = minY - CLUSTER_PAD;
+      const w = maxX - minX + CLUSTER_PAD * 2;
+      const h = maxY - minY + CLUSTER_PAD * 2;
+
+      ctx.save();
+      ctx.strokeStyle = CLUSTER_STROKE;
+      ctx.globalAlpha = 0.55;
+      ctx.lineWidth = 1.5 / zoom;
+      ctx.setLineDash([8 / zoom, 6 / zoom]);
+      roundRect(x, y, w, h, CORNER_R);
+      ctx.stroke();
+      ctx.restore();
+
+      // Label tag rides the top-left of the boundary; rendered as HTML overlay.
+      overlays.push({
+        id: cluster.id,
+        label: cluster.label,
+        x: cameraX + x * zoom + 10 * zoom,
+        // Anchor on the boundary's top line; CSS straddles the tag over it.
+        y: cameraY + y * zoom,
+      });
+    }
+    clusterOverlays = overlays;
   }
 
   function drawGrid(W: number, H: number) {
@@ -428,6 +485,56 @@
         body: JSON.stringify(positions),
       });
     }, 600);
+  }
+
+  async function loadClusters(): Promise<void> {
+    try {
+      const data = (await fetch("/api/blueprint/clusters").then((r) => r.json())) as Cluster[];
+      clusters = Array.isArray(data) ? data : [];
+    } catch {
+      clusters = [];
+    }
+  }
+
+  function scheduleSaveClusters(): void {
+    if (clustersSaveTimer !== null) clearTimeout(clustersSaveTimer);
+    clustersSaveTimer = window.setTimeout(() => {
+      clustersSaveTimer = null;
+      void fetch("/api/blueprint/clusters", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(clusters),
+      });
+    }, 600);
+  }
+
+  function syncSelection(): void {
+    selCount = selectedIndices.size;
+  }
+
+  // Group the current selection into a new cluster, then clear the selection.
+  function groupSelection(): void {
+    const members = [...selectedIndices].map((i) => boxes[i]?.folder.path).filter(Boolean) as string[];
+    if (members.length === 0) return;
+    const id = `cl_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
+    clusters = [...clusters, { id, label: t("blueprint.cluster.default_label"), members }];
+    scheduleSaveClusters();
+    selectedIndices.clear();
+    syncSelection();
+    scheduleRender();
+  }
+
+  function renameCluster(id: string, label: string): void {
+    clusters = clusters.map((c) => (c.id === id ? { ...c, label } : c));
+    scheduleSaveClusters();
+    scheduleRender();
+  }
+
+  function deleteCluster(id: string): void {
+    clusters = clusters.filter((c) => c.id !== id);
+    if (editingClusterId === id) editingClusterId = null;
+    scheduleSaveClusters();
+    scheduleRender();
   }
 
   // ── API ───────────────────────────────────────────────────────────────────────
@@ -612,10 +719,12 @@
         if (dragModeActive && e.shiftKey) {
           if (selectedIndices.has(draggingIndex)) selectedIndices.delete(draggingIndex);
           else selectedIndices.add(draggingIndex);
+          syncSelection();
           scheduleRender();
         } else if (dragModeActive) {
           selectedIndices.clear();
           selectedIndices.add(draggingIndex);
+          syncSelection();
           scheduleRender();
         } else if (isOnDocIcon(box, wx, wy)) {
           onopenAdr(box);
@@ -646,6 +755,7 @@
           }
         }
       }
+      syncSelection();
       scheduleRender();
       return;
     }
@@ -657,6 +767,7 @@
       if (Math.hypot(dx, dy) <= DRAG_THRESHOLD) {
         if (dragModeActive) {
           selectedIndices.clear();
+          syncSelection();
           scheduleRender();
         }
       }
@@ -680,10 +791,21 @@
     fitToBoxes(true);
   }
 
+  // Opens the file explorer for the folder we are currently inside — same as a
+  // box's burger (☰) menu, but targeting `currentCanvasPath` rather than a child.
+  function openCurrentExplorer() {
+    const name = currentCanvasPath ? currentCanvasPath.split("/").pop()! : "";
+    onopenexplorer({
+      folder: { name, path: currentCanvasPath, hasChildren: true },
+      x: 0, y: 0, w: 0, h: 0,
+    });
+  }
+
   function onDragToggle() {
     dragModeActive = !dragModeActive;
     if (!dragModeActive) {
       selectedIndices.clear();
+      syncSelection();
       scheduleRender();
     }
     canvasEl.style.cursor = dragModeActive && hoverIndex >= 0 ? "grab" : "default";
@@ -694,7 +816,7 @@
   onMount(() => {
     ctx = canvasEl.getContext("2d")!;
     window.addEventListener("resize", scheduleRender);
-    void loadPositions().then(async () => {
+    void Promise.all([loadPositions(), loadClusters()]).then(async () => {
       await loadPath("", false);
     });
     return () => {
@@ -712,6 +834,20 @@
     title={t("blueprint.canvas.drag_mode")}
     onclick={onDragToggle}
   >⠿</button>
+  <button
+    class="tool-button"
+    type="button"
+    title={t("blueprint.canvas.create_cluster")}
+    disabled={selCount === 0}
+    onclick={groupSelection}
+  >⬚</button>
+  <button
+    class="tool-button"
+    class:active={activeExplorerPath === currentCanvasPath}
+    type="button"
+    title={t("blueprint.canvas.browse_current")}
+    onclick={openCurrentExplorer}
+  >☰</button>
 </nav>
 
 <canvas
@@ -722,6 +858,32 @@
   onpointerup={onPointerup}
   onwheel={onWheel}
 ></canvas>
+
+<!-- Cluster label tags: HTML overlay positioned over the canvas (crisp text +
+     clickable rename/delete). Positions are recomputed each render. -->
+<div class="cluster-overlays">
+  {#each clusterOverlays as ov (ov.id)}
+    <div class="cluster-tag" style="left:{ov.x}px; top:{ov.y}px;">
+      {#if editingClusterId === ov.id}
+        <!-- svelte-ignore a11y_autofocus -->
+        <input
+          class="cluster-tag-input"
+          autofocus
+          value={ov.label}
+          onkeydown={(e) => { if (e.key === "Enter") (e.currentTarget as HTMLInputElement).blur(); else if (e.key === "Escape") editingClusterId = null; }}
+          onblur={(e) => { renameCluster(ov.id, (e.currentTarget as HTMLInputElement).value.trim() || ov.label); editingClusterId = null; }}
+        />
+      {:else}
+        <button class="cluster-tag-label" type="button" title={t("blueprint.cluster.rename")} onclick={() => (editingClusterId = ov.id)}>
+          {ov.label || t("blueprint.cluster.default_label")}
+        </button>
+      {/if}
+      {#if dragModeActive}
+        <button class="cluster-tag-del" type="button" title={t("blueprint.cluster.delete")} onclick={() => deleteCluster(ov.id)}>×</button>
+      {/if}
+    </div>
+  {/each}
+</div>
 
 {#if !emptyStateHidden}
   <div class="empty-state">
