@@ -40,7 +40,7 @@
     "semantic_hash": ""
   },
   "documentation/.living-doc.json": {
-    "mtime": 1782322772.736302,
+    "mtime": 1782324586.0179377,
     "ast_hash": "137f85c763a7340bfe0856e53a951f48",
     "semantic_hash": ""
   },
@@ -630,8 +630,8 @@
     "semantic_hash": ""
   },
   "src/mcp/server.ts": {
-    "mtime": 1782244912.577186,
-    "ast_hash": "dc269acb184b228c4b1e1d846b6d7d2a",
+    "mtime": 1782324584.8448427,
+    "ast_hash": "09b30ef64ad49d72cd78dca163827586",
     "semantic_hash": ""
   },
   "src/mcp/tools/diagrams.ts": {
@@ -665,8 +665,8 @@
     "semantic_hash": ""
   },
   "src/routes/blueprint.ts": {
-    "mtime": 1782300526.8881514,
-    "ast_hash": "9d5235969400eb8cb660cab33385ea9f",
+    "mtime": 1782324525.154368,
+    "ast_hash": "a4524e62118fc3b42d25bace5591fdcf",
     "semantic_hash": ""
   },
   "src/routes/browse-source.ts": {
@@ -820,8 +820,8 @@
     "semantic_hash": ""
   },
   "tests/api/mcp.spec.ts": {
-    "mtime": 1780522456.8176963,
-    "ast_hash": "dbaa870e412789a371c84899224dac3d",
+    "mtime": 1782324614.0864632,
+    "ast_hash": "0dc7c05b42e0feba3259ac816eb70f20",
     "semantic_hash": ""
   },
   "tests/api/metadata.spec.ts": {
@@ -2005,8 +2005,8 @@
     "semantic_hash": ""
   },
   "documentation/WORKLOG/current-task.md": {
-    "mtime": 1782323673.3747659,
-    "ast_hash": "480972b1a4eba8ce6028c7f54fcd8427",
+    "mtime": 1782324216.416615,
+    "ast_hash": "bb0f55afda415727c338264067512567",
     "semantic_hash": ""
   },
   "memory/MEMORY.md": {
@@ -2842,6 +2842,16 @@
   "usermanual-documentation/images/the_living_documentation_tool.png": {
     "mtime": 1776784189.167536,
     "ast_hash": "4dad5167bfc6b01f4edff06b03b372ff",
+    "semantic_hash": ""
+  },
+  "src/lib/blueprint.ts": {
+    "mtime": 1782324512.493292,
+    "ast_hash": "84f6fcb04798344a54974bd582c3b69b",
+    "semantic_hash": ""
+  },
+  "src/mcp/tools/blueprint.ts": {
+    "mtime": 1782324560.9335625,
+    "ast_hash": "5956111ad445c94687578aaf13963f34",
     "semantic_hash": ""
   }
 }

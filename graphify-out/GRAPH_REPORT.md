@@ -1,16 +1,16 @@
 # Graph Report - living-documentation  (2026-06-24)
 
 ## Corpus Check
-- 471 files · ~1,221,863 words
+- 473 files · ~1,222,281 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3821 nodes · 5186 edges · 398 communities (336 shown, 62 thin omitted)
+- 3830 nodes · 5211 edges · 397 communities (335 shown, 62 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 159 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `5f909814`
+- Built from commit: `b246b3ab`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -216,7 +216,6 @@
 - [[_COMMUNITY_Community 205|Community 205]]
 - [[_COMMUNITY_Community 206|Community 206]]
 - [[_COMMUNITY_Community 207|Community 207]]
-- [[_COMMUNITY_Community 208|Community 208]]
 - [[_COMMUNITY_Community 209|Community 209]]
 - [[_COMMUNITY_Community 210|Community 210]]
 - [[_COMMUNITY_Community 211|Community 211]]
@@ -395,7 +394,7 @@
 3. `pushSnapshot()` - 50 edges
 4. `t()` - 39 edges
 5. `../lib/i18n.svelte` - 32 edges
-6. `readConfig()` - 27 edges
+6. `readConfig()` - 29 edges
 7. `test` - 27 edges
 8. `st` - 23 edges
 9. `Living Documentation` - 22 edges
@@ -455,7 +454,7 @@
 - **Navigation and Documentation Structure Model** — 4_reference_2026_04_12_14_07__fundamentals__dossiers_et_catgories_folders_vs_categories, 4_reference_2026_04_12_14_07__fundamentals__dossiers_et_catgories_sidebar_ordering, 4_reference_2026_04_09_02_00__reference__tokens_pattern_nommage_tokens, 2_guide_2026_04_09_09_00__navigation__recherche_plein_texte_deep_links [INFERRED 0.85]
 - **AI-assisted Documentation Reliability Cycle** — 5_talks_2026_04_28_09_48__conference__demo_living_documentation_mcp_en_conference_mcp_contract, 5_talks_2026_04_28_09_48__conference__demo_living_documentation_mcp_en_conference_create_adr_workflow, 5_talks_2026_04_28_09_48__conference__demo_living_documentation_mcp_en_conference_audit_drift_workflow, 5_talks_2026_04_28_09_48__conference__demo_living_documentation_mcp_en_conference_metadata_hash_binding, 5_talks_2026_04_28_09_48__conference__demo_living_documentation_mcp_en_conference_human_validation [EXTRACTED 1.00]
 
-## Communities (398 total, 62 thin omitted)
+## Communities (397 total, 62 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.15
@@ -475,7 +474,7 @@ Nodes (48): canvasToDOM positioning, DOM debug overlay, showDiagramDebug config 
 
 ### Community 4 - "Community 4"
 Cohesion: 0.11
-Nodes (26): getShapeDefaults(), activateStamp(), applyStamp(), cancelStamp(), changeNodeFontSize(), changeZOrder(), CUSTOM_LABEL_PLACEMENTS, forceRedraw() (+18 more)
+Nodes (37): pasteClipboard(), resetEdgeLabelOffset(), resetEdgeLabelWidth(), stepEdgeLabelOffset(), stepEdgeLabelRotation(), groupNodes(), ungroupNodes(), pushSnapshot() (+29 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.09
@@ -486,12 +485,12 @@ Cohesion: 0.08
 Nodes (33): boundaryPoint(), Bounds, ChildDistanceOptions, cloneEntities(), collisionRadius(), cross(), drawConfigSurface(), drawConnections() (+25 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.06
-Nodes (8): deAccent(), highlightMatches(), SearchMatch, home, HomeState, DocDetail, DocSummary, TreeNode
+Cohesion: 0.05
+Nodes (9): deAccent(), highlightMatches(), SearchMatch, home, HomeState, DocDetail, DocSummary, TableAttrs (+1 more)
 
 ### Community 8 - "Community 8"
 Cohesion: 0.12
-Nodes (32): hideEdgePanel(), expandSelectionToGroup(), autoResizeTextarea(), commitLabelEdit(), labelInput, startEdgeLabelEdit(), startLabelEdit(), navigateNodeLink() (+24 more)
+Nodes (30): hideEdgePanel(), expandSelectionToGroup(), promptImageName(), autoResizeTextarea(), labelInput, startEdgeLabelEdit(), startLabelEdit(), navigateNodeLink() (+22 more)
 
 ### Community 9 - "Community 9"
 Cohesion: 0.11
@@ -506,16 +505,16 @@ Cohesion: 0.06
 Nodes (18): ArrowDir, COLOR_ALIASES, DiagramEdgeInput, DiagramNodeInput, EDGE_STYLE_KEYS, EvidenceInput, EXPLICIT_ONLY_TYPES, KIND_DEFAULTS (+10 more)
 
 ### Community 12 - "Community 12"
-Cohesion: 0.17
-Nodes (22): applyAlignGuidesState(), applyGridState(), resetHistory(), hideLabelInput(), _createAndLinkDiagram(), hideLinkPanel(), removeLinkPanel(), saveLinkPanel() (+14 more)
+Cohesion: 0.13
+Nodes (28): activeGuides, applyAlignGuidesState(), clearAlignGuides(), collectCandidates(), drawAlignmentGuides(), findSnapAxes(), onDragging(), pickBest() (+20 more)
 
 ### Community 13 - "Community 13"
-Cohesion: 0.16
-Nodes (26): changeEdgeFontSize(), changeEdgeWidth(), clearEdgePorts(), _edgePaletteEntries, initEdgeColorSwatch(), persistFreeArrowStyle(), resetEdgeLabelOffset(), resetEdgeLabelWidth() (+18 more)
+Cohesion: 0.10
+Nodes (31): closeAllColorPickerPopups(), openColorPickerPopup(), ARROW_SYSTEM_DEFAULTS, buildColorSwatch(), effectiveNodeColor(), getArrowDefaults(), getDiagramDefaults(), getShapeDefaults() (+23 more)
 
 ### Community 14 - "Community 14"
-Cohesion: 0.11
-Nodes (21): customShapeImageOffsetY(), customShapeLayout(), getCachedImage(), getNodeColor(), hexToRgba(), _imgCache, isExternalCustomLabelPlacement(), makeActorRenderer() (+13 more)
+Cohesion: 0.12
+Nodes (20): customShapeImageOffsetY(), customShapeLayout(), getCachedImage(), getNodeColor(), hexToRgba(), _imgCache, isExternalCustomLabelPlacement(), makeActorRenderer() (+12 more)
 
 ### Community 15 - "Community 15"
 Cohesion: 0.06
@@ -534,8 +533,8 @@ Cohesion: 0.24
 Nodes (10): ./AccuracyGauge.svelte, ./Annotations.svelte, ../lib/home/DocViewer.svelte, ./annotationHighlight, ./docStatus, ./inlineSnippetEdit, ./localSearch, ./metadata.svelte (+2 more)
 
 ### Community 19 - "Community 19"
-Cohesion: 0.16
-Nodes (26): getCustomShapeAnchors(), getCustomShapeDefinition(), getCustomShapeLabelPlacement(), applyCustomShapeLabelPlacement(), buildGroups(), buildImageMap(), CIRC_PORT_EXIT, DATABASE_PORT_EXIT (+18 more)
+Cohesion: 0.18
+Nodes (22): applyCustomShapeLabelPlacement(), buildGroups(), buildImageMap(), CIRC_PORT_EXIT, DATABASE_PORT_EXIT, diagramToDrawioXml(), drawioImageValue(), edgeToCell() (+14 more)
 
 ### Community 20 - "Community 20"
 Cohesion: 0.26
@@ -550,12 +549,12 @@ Cohesion: 0.14
 Nodes (21): mcpRouter(), annotationsRouter(), blueprintRouter(), browseRouter(), browseSourceRouter(), configRouter(), contextRouter(), diagramsRouter() (+13 more)
 
 ### Community 23 - "Community 23"
-Cohesion: 0.17
-Nodes (19): drawEdgeLabels(), bezierAt(), centerPos(), CIRCULAR_SHAPES, controlNormalForEdge(), customPortOffset(), distanceToPortEdge(), _distToBezier() (+11 more)
+Cohesion: 0.15
+Nodes (24): drawEdgeLabels(), bezierAt(), centerPos(), CIRCULAR_SHAPES, controlNormalForEdge(), customPortOffset(), distanceToPortEdge(), _distToBezier() (+16 more)
 
 ### Community 24 - "Community 24"
 Cohesion: 0.14
-Nodes (24): ALLOWED_TYPES, BlockquoteAttrs, blockquoteBlockSource(), canonicalType(), collectBlockquoteAttributesFromSource(), getCalloutIcon(), ICONS, TYPE_ALIASES (+16 more)
+Nodes (23): ALLOWED_TYPES, BlockquoteAttrs, blockquoteBlockSource(), canonicalType(), collectBlockquoteAttributesFromSource(), getCalloutIcon(), ICONS, TYPE_ALIASES (+15 more)
 
 ### Community 25 - "Community 25"
 Cohesion: 0.14
@@ -570,16 +569,16 @@ Cohesion: 0.29
 Nodes (6): ../lib/home/WordCloudModal.svelte, ../lib/survival-kit/LinksPanel.svelte, ../lib/survival-kit/NotesPanel.svelte, ../lib/survival-kit/TasksPanel.svelte, ../lib/survival-kit/store.svelte, ./types
 
 ### Community 28 - "Community 28"
-Cohesion: 0.36
-Nodes (8): visEdgeProps(), captureState(), redo(), _redoStack, _restoreState(), undo(), _undoStack, visNodeProps()
+Cohesion: 0.19
+Nodes (11): drawDebugOverlay(), toggleDebug(), visEdgeProps(), drawGroupOutlines(), captureState(), redo(), _redoStack, _restoreState() (+3 more)
 
 ### Community 29 - "Community 29"
 Cohesion: 0.13
 Nodes (10): AI_MCP_DIR, AI_RULES_DIR, AiRule, createRuleMarkdown(), deleteInstructionFile(), describePath(), FileSummary, frontmatterArray() (+2 more)
 
 ### Community 30 - "Community 30"
-Cohesion: 0.14
-Nodes (27): ALLOWED_BORDERS, ALLOWED_COLORS, ALLOWED_STYLES, buildTableAttributesPrefix(), isMarkdownTableSeparatorLine(), LEGACY_BORDER_STYLES, parseMarkdownTableCells(), parsePrefix() (+19 more)
+Cohesion: 0.26
+Nodes (16): addTableColumn(), addTableRow(), currentTableClassNames(), ensureRectangularTable(), esc(), focusTableCell(), handleTableKeydown(), hideTableContextMenu() (+8 more)
 
 ### Community 31 - "Community 31"
 Cohesion: 0.11
@@ -590,8 +589,8 @@ Cohesion: 0.21
 Nodes (16): copyDir(), createInitInstructionFiles(), docsFolderReference(), InitInstructionFile, initInstructionFiles(), InitLanguage, isMissingOrEmptyFile(), parseInitLanguage() (+8 more)
 
 ### Community 33 - "Community 33"
-Cohesion: 0.18
-Nodes (15): snapToGrid(), customShapeImageFrame(), nodeBounds(), onLabelRotateEnd(), onLabelRotateStart(), onResizeDrag(), onResizeEnd(), onResizeStart() (+7 more)
+Cohesion: 0.17
+Nodes (16): snapToGrid(), SHAPE_DEFAULTS, customShapeImageFrame(), nodeBounds(), onLabelRotateEnd(), onLabelRotateStart(), onResizeDrag(), onResizeEnd() (+8 more)
 
 ### Community 34 - "Community 34"
 Cohesion: 0.06
@@ -614,12 +613,12 @@ Cohesion: 0.08
 Nodes (24): For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands, Part A - Structural extraction for code files (+16 more)
 
 ### Community 39 - "Community 39"
-Cohesion: 0.12
-Nodes (28): ALLOWED_ALIGNS, ALLOWED_WIDTHS, buildCodeBlockAttributesPrefix(), CodeBlockAlign, CodeBlockKind, codeBlockKindForLanguage(), CodeBlockWidth, collectCodeBlockAttributesFromSource() (+20 more)
+Cohesion: 0.11
+Nodes (30): ALLOWED_ALIGNS, ALLOWED_WIDTHS, buildCodeBlockAttributesPrefix(), CodeBlockAlign, CodeBlockAttrs, CodeBlockKind, codeBlockKindForLanguage(), CodeBlockWidth (+22 more)
 
 ### Community 40 - "Community 40"
-Cohesion: 0.15
-Nodes (16): DEFAULT_BLOCKED_FILE_EXTENSIONS, DEFAULT_DIAGRAM_EDGE_PALETTE, DEFAULT_DIAGRAM_NODE_PALETTE, DiagramDefaults, DiagramShapeDefault, getConfigPath(), LivingDocConfig, readAndMigrate() (+8 more)
+Cohesion: 0.13
+Nodes (24): DEFAULT_BLOCKED_FILE_EXTENSIONS, DEFAULT_DIAGRAM_EDGE_PALETTE, DEFAULT_DIAGRAM_NODE_PALETTE, DiagramDefaults, DiagramShapeDefault, getConfigPath(), LivingDocConfig, readAndMigrate() (+16 more)
 
 ### Community 41 - "Community 41"
 Cohesion: 0.13
@@ -630,12 +629,12 @@ Cohesion: 0.06
 Nodes (30): Consequences, Contexte, Conventions de dessin par defaut pour les diagrammes MCP, create_diagram defaults, Decision, Consequences, Contexte, Decision (+22 more)
 
 ### Community 43 - "Community 43"
-Cohesion: 0.15
-Nodes (10): DEFAULT_CUSTOM_ANCHORS, initShapeEditor(), CustomShape, filePath(), loadStore(), sanitizeStore(), saveStore(), ShapeAnchor (+2 more)
+Cohesion: 0.19
+Nodes (8): CustomShape, filePath(), loadStore(), sanitizeStore(), saveStore(), ShapeAnchor, ShapeLibrary, ShapeLibraryStore
 
 ### Community 44 - "Community 44"
-Cohesion: 0.14
-Nodes (18): activeGuides, clearAlignGuides(), collectCandidates(), drawAlignmentGuides(), findSnapAxes(), onDragging(), pickBest(), snapToAlignGuides() (+10 more)
+Cohesion: 0.25
+Nodes (9): DEFAULT_CUSTOM_ANCHORS, getCustomShapeAnchors(), getCustomShapeDefaultSize(), getCustomShapeDefinition(), getCustomShapeLabelPlacement(), loadCustomShapeLibraries(), renderCustomShapeBar(), effectiveCustomShapeLabelPlacement() (+1 more)
 
 ### Community 45 - "Community 45"
 Cohesion: 0.10
@@ -651,7 +650,7 @@ Nodes (13): ADR: Export diagrammes drawio mxGraph XML, One-way drawio export, Pr
 
 ### Community 48 - "Community 48"
 Cohesion: 0.11
-Nodes (31): copySelected(), copySelectionAsPng(), pasteClipboard(), saveSelectionAsPng(), _selectionToBlob(), DEFAULT_EDGE_PALETTE, DEFAULT_NODE_PALETTE, deriveNodeColors() (+23 more)
+Nodes (28): copySelected(), copySelectionAsPng(), saveSelectionAsPng(), _selectionToBlob(), DEFAULT_EDGE_PALETTE, DEFAULT_NODE_PALETTE, deriveNodeColors(), NODE_COLORS (+20 more)
 
 ### Community 49 - "Community 49"
 Cohesion: 0.35
@@ -682,8 +681,8 @@ Cohesion: 0.24
 Nodes (15): Starter AI context symlink structure, ADR lifecycle and supersession, MCP-first documentation maintenance, Rules memory and verification discipline, Shared AI working contract, Startup Routine, Project stack template, Smallest useful verification guidance (+7 more)
 
 ### Community 56 - "Community 56"
-Cohesion: 0.22
-Nodes (10): cancelHold(), hitTestLocked(), installUnlockHold(), isEdgeLocked(), onMove(), onUp(), performUnlock(), positionOverlay() (+2 more)
+Cohesion: 0.24
+Nodes (9): cancelHold(), hitTestLocked(), installUnlockHold(), isEdgeLocked(), onMove(), onUp(), positionOverlay(), tick() (+1 more)
 
 ### Community 57 - "Community 57"
 Cohesion: 0.27
@@ -766,12 +765,12 @@ Cohesion: 0.22
 Nodes (9): CodeQL JavaScript TypeScript Security Analysis, Dependabot Dependency Updates, Manual Major Update Policy, Playwright E2E CI, npm Provenance Publishing, npm Publish Release Gate, Build and Test Pipeline, Zizmor Cache-Poisoning Ignore (+1 more)
 
 ### Community 77 - "Community 77"
-Cohesion: 0.18
-Nodes (15): closeAllColorPickerPopups(), openColorPickerPopup(), ARROW_SYSTEM_DEFAULTS, buildColorSwatch(), effectiveNodeColor(), getArrowDefaults(), getDiagramDefaults(), initDiagramDefaults() (+7 more)
+Cohesion: 0.27
+Nodes (9): ALLOWED_BORDERS, ALLOWED_COLORS, ALLOWED_STYLES, buildTableAttributesPrefix(), isMarkdownTableSeparatorLine(), LEGACY_BORDER_STYLES, parseMarkdownTableCells(), parsePrefix() (+1 more)
 
 ### Community 78 - "Community 78"
-Cohesion: 0.17
-Nodes (15): currentSourceCommit(), SourceCommit, SourceCommitOptions, sha256File(), AccuracyReport, classifyEntry(), MetadataEntry, MetadataItem (+7 more)
+Cohesion: 0.16
+Nodes (35): currentSourceCommit(), SourceCommit, SourceCommitOptions, sha256File(), AccuracyReport, assertUnderSourceRoot(), buildReport(), classifyEntry() (+27 more)
 
 ### Community 79 - "Community 79"
 Cohesion: 0.28
@@ -886,8 +885,8 @@ Cohesion: 0.33
 Nodes (6): isActorNode(), isCentralSystemNode(), isDatabaseNode(), isExternalSystemNode(), nodeKind(), nodeLabel()
 
 ### Community 107 - "Community 107"
-Cohesion: 0.39
-Nodes (18): assertUnderSourceRoot(), buildReport(), getDocEntries(), getFrontmatterField(), resolveSourceRoot(), sourceCommitForMetadata(), createMcpServer(), buildEntry() (+10 more)
+Cohesion: 0.52
+Nodes (6): _createAndLinkDiagram(), hideLinkPanel(), removeLinkPanel(), saveLinkPanel(), showLinkPanel(), _syncLinkPanelVisibility()
 
 ### Community 108 - "Community 108"
 Cohesion: 0.60
@@ -1018,8 +1017,8 @@ Cohesion: 0.19
 Nodes (8): ../lib/blueprint/BlueprintCanvas.svelte, ../lib/blueprint/FileExplorer.svelte, ../lib/AiRules.svelte, ../lib/ConfirmDialog.svelte, ../lib/InstructionFiles.svelte, ../lib/McpExplorer.svelte, ../lib/blueprint/styles.css, ../lib/i18n.svelte
 
 ### Community 164 - "Community 164"
-Cohesion: 0.15
-Nodes (10): BlueprintFolder, BlueprintResponse, EXT_TO_LANGUAGE, IGNORED_DIRS, IMAGE_EXTS, positionsFilePath(), PositionsMap, readPositions() (+2 more)
+Cohesion: 0.13
+Nodes (18): BLUEPRINT_IGNORED_DIRS, BlueprintBoxListing, BlueprintDirectoryEntry, isBlueprintIgnoredDir(), listBlueprintBox(), normalizeBlueprintPath(), safeResolveBlueprintPath(), BlueprintFolder (+10 more)
 
 ### Community 165 - "Community 165"
 Cohesion: 0.14
@@ -1192,10 +1191,6 @@ Nodes (10): Dangerous Or Costly Commands, Focused Tests, Initial Setup, Local De
 ### Community 207 - "Community 207"
 Cohesion: 0.18
 Nodes (10): Qualité, Commandes dangereuses ou coûteuses, Développement local, Installation, Notes pour l'IA, Package manager, PROJECT-USEFUL-COMMANDS - Template, Règle de maintenance (+2 more)
-
-### Community 208 - "Community 208"
-Cohesion: 0.36
-Nodes (10): readConfig(), buildFilename(), DocSummary, listAllDocuments(), resolveDocFilePath(), safeResolve(), toolCreateDocument(), toolListDocuments() (+2 more)
 
 ### Community 209 - "Community 209"
 Cohesion: 0.25
@@ -1702,24 +1697,24 @@ Cohesion: 0.67
 Nodes (3): MCP reference, Prompts (10), Tools (19)
 
 ## Knowledge Gaps
-- **1737 isolated node(s):** `program`, `InitLanguage`, `InitInstructionFile`, `name`, `version` (+1732 more)
+- **1739 isolated node(s):** `program`, `InitLanguage`, `InitInstructionFile`, `name`, `version` (+1734 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **62 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `../lib/diagram/main` connect `Community 48` to `Community 33`, `Community 4`, `Community 8`, `Community 44`, `Community 13`, `Community 77`, `Community 12`, `Community 49`, `Community 19`, `Community 21`, `Community 28`?**
-  _High betweenness centrality (0.037) - this node is a cross-community bridge._
+- **Why does `initShapeEditor()` connect `Community 44` to `Community 43`?**
+  _High betweenness centrality (0.044) - this node is a cross-community bridge._
+- **Why does `loadStore()` connect `Community 43` to `Community 44`?**
+  _High betweenness centrality (0.044) - this node is a cross-community bridge._
+- **Why does `../lib/diagram/main` connect `Community 48` to `Community 33`, `Community 4`, `Community 8`, `Community 107`, `Community 12`, `Community 13`, `Community 44`, `Community 49`, `Community 19`, `Community 21`, `Community 28`?**
+  _High betweenness centrality (0.038) - this node is a cross-community bridge._
 - **What connects `program`, `InitLanguage`, `InitInstructionFile` to the rest of the system?**
-  _1761 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _1763 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.05443371378402107 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.125 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
   _Cohesion score 0.04964539007092199 - nodes in this community are weakly interconnected._
-- **Should `Community 4` be split into smaller, more focused modules?**
-  _Cohesion score 0.10967741935483871 - nodes in this community are weakly interconnected._
-- **Should `Community 5` be split into smaller, more focused modules?**
-  _Cohesion score 0.0944741532976827 - nodes in this community are weakly interconnected._

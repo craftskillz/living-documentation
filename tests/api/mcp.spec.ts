@@ -14,6 +14,7 @@ test('tools/list exposes the expected tool set', async ({ request, ld }) => {
       'list_diagrams',
       'read_diagram',
       'create_diagram',
+      'list_blueprint_box',
       'list_source_files',
       'read_source_file',
       'search_source',
@@ -155,6 +156,42 @@ test('create_document writes a new .md file through the MCP server', async ({
     .find((f: string) => f.includes('via_mcp') && f.endsWith('.md'));
   expect(newFile).toBeDefined();
   expect(fs.readFileSync(path.join(ld.docsAbs, newFile!), 'utf-8')).toContain('Hello from the tool call');
+});
+
+test('list_blueprint_box returns immediate folder and file names with source paths', async ({
+  request,
+  ld,
+}) => {
+  const sourceRoot = path.dirname(ld.docsAbs);
+  fs.mkdirSync(path.join(sourceRoot, 'tests/api/fixtures'), { recursive: true });
+  fs.mkdirSync(path.join(sourceRoot, 'tests/api/helpers'), { recursive: true });
+  fs.mkdirSync(path.join(sourceRoot, 'tests/api/.cache'), { recursive: true });
+  fs.writeFileSync(path.join(sourceRoot, 'tests/api/documents.spec.ts'), 'export const docs = true;\n', 'utf-8');
+  fs.writeFileSync(path.join(sourceRoot, 'tests/api/mcp.spec.ts'), 'export const mcp = true;\n', 'utf-8');
+  fs.writeFileSync(path.join(sourceRoot, 'tests/api/.hidden'), 'hidden\n', 'utf-8');
+
+  const result = await callTool<{
+    sourceRoot: string;
+    path: string;
+    folders: Array<{ name: string; path: string }>;
+    files: Array<{ name: string; path: string }>;
+  }>(request, ld.baseURL, 'list_blueprint_box', { path: 'tests/api' });
+
+  expect(result.sourceRoot).toBe(sourceRoot);
+  expect(result.path).toBe('tests/api');
+  expect(result.folders).toEqual([
+    { name: 'fixtures', path: 'tests/api/fixtures' },
+    { name: 'helpers', path: 'tests/api/helpers' },
+  ]);
+  expect(result.files).toEqual([
+    { name: 'documents.spec.ts', path: 'tests/api/documents.spec.ts' },
+    { name: 'mcp.spec.ts', path: 'tests/api/mcp.spec.ts' },
+  ]);
+});
+
+test('list_blueprint_box rejects paths outside sourceRoot', async ({ request, ld }) => {
+  await expect(callTool(request, ld.baseURL, 'list_blueprint_box', { path: '../outside' }))
+    .rejects.toThrow(/path escapes sourceRoot|MCP tool error/i);
 });
 
 test.describe('diagram MCP tools on the with-diagrams fixture', () => {

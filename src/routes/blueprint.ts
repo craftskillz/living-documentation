@@ -1,10 +1,15 @@
 import { Router } from 'express';
 import fs from 'fs';
 import path from 'path';
+import {
+  BLUEPRINT_FOLDER,
+  isBlueprintIgnoredDir,
+  listBlueprintBox,
+  normalizeBlueprintPath,
+  safeResolveBlueprintPath,
+} from '../lib/blueprint';
 import { readConfig } from '../lib/config';
 import { listDocs } from './documents';
-
-export const BLUEPRINT_FOLDER = '000_BLUEPRINT';
 
 const MAX_TEXT_BYTES = 1024 * 1024; // 1 MB
 
@@ -32,17 +37,6 @@ function isBinary(buffer: Buffer): boolean {
   }
   return false;
 }
-
-function safeResolvePath(sourceRoot: string, relPath: string): string | null {
-  const abs = path.resolve(sourceRoot, relPath.replace(/\\/g, '/').replace(/^\/+/, ''));
-  if (!abs.startsWith(sourceRoot + path.sep) && abs !== sourceRoot) return null;
-  return abs;
-}
-
-const IGNORED_DIRS = new Set([
-  'node_modules', '.git', '.svn', 'dist', 'build', 'out', 'coverage',
-  '.next', '.nuxt', '.cache', '.turbo', '__pycache__', '.venv', 'venv',
-]);
 
 export interface BlueprintFolder {
   name: string;
@@ -96,13 +90,13 @@ function listFolders(
   if (!fs.existsSync(absDir)) return [];
 
   return fs.readdirSync(absDir, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && !entry.name.startsWith('.') && !IGNORED_DIRS.has(entry.name))
+    .filter((entry) => entry.isDirectory() && !isBlueprintIgnoredDir(entry.name))
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((entry) => {
       const childRel = relPath ? `${relPath}/${entry.name}` : entry.name;
       const childAbs = path.resolve(sourceRoot, childRel);
       const hasChildren = fs.readdirSync(childAbs, { withFileTypes: true })
-        .some((e) => e.isDirectory() && !e.name.startsWith('.') && !IGNORED_DIRS.has(e.name));
+        .some((e) => e.isDirectory() && !isBlueprintIgnoredDir(e.name));
       const hasDoc = docCategories.has(slugifyCategory(entry.name));
       return { name: entry.name, path: childRel, hasChildren, hasDoc };
     });
@@ -141,7 +135,7 @@ export function blueprintRouter(docsPath: string): Router {
       const config = readConfig(docsPath);
       const sourceRoot = config.sourceRoot;
       const reqPath = typeof req.query.path === 'string'
-        ? req.query.path.replace(/\\/g, '/').replace(/^\/+|\/+$/g, '')
+        ? normalizeBlueprintPath(req.query.path)
         : '';
 
       const folders = listFolders(sourceRoot, reqPath, blueprintDocCategories(docsPath));
@@ -199,7 +193,7 @@ export function blueprintRouter(docsPath: string): Router {
     try {
       const config = readConfig(docsPath);
       const filePath = typeof req.query.path === 'string' ? req.query.path : '';
-      const abs = safeResolvePath(config.sourceRoot, filePath);
+      const abs = safeResolveBlueprintPath(config.sourceRoot, filePath);
       if (!abs) { res.status(400).json({ error: 'Invalid path' }); return; }
       if (!fs.existsSync(abs) || !fs.statSync(abs).isFile()) {
         res.status(404).json({ error: 'File not found' }); return;
@@ -229,7 +223,7 @@ export function blueprintRouter(docsPath: string): Router {
     try {
       const config = readConfig(docsPath);
       const filePath = typeof req.query.path === 'string' ? req.query.path : '';
-      const abs = safeResolvePath(config.sourceRoot, filePath);
+      const abs = safeResolveBlueprintPath(config.sourceRoot, filePath);
       if (!abs) { res.status(400).end(); return; }
       if (!fs.existsSync(abs) || !fs.statSync(abs).isFile()) { res.status(404).end(); return; }
       res.sendFile(abs);
@@ -239,22 +233,12 @@ export function blueprintRouter(docsPath: string): Router {
   router.get('/files', (req, res) => {
     try {
       const config = readConfig(docsPath);
-      const sourceRoot = config.sourceRoot;
       const reqPath = typeof req.query.path === 'string'
-        ? req.query.path.replace(/\\/g, '/').replace(/^\/+|\/+$/g, '')
+        ? normalizeBlueprintPath(req.query.path)
         : '';
-      const absDir = path.resolve(sourceRoot, reqPath);
-      if (!absDir.startsWith(sourceRoot + path.sep) && absDir !== sourceRoot) {
-        res.status(400).json({ error: 'path escapes sourceRoot' }); return;
-      }
-      if (!fs.existsSync(absDir)) { res.json({ folders: [], files: [] }); return; }
-      const entries = fs.readdirSync(absDir, { withFileTypes: true });
-      const folders = entries
-        .filter((e) => e.isDirectory() && !e.name.startsWith('.') && !IGNORED_DIRS.has(e.name))
-        .map((e) => e.name).sort();
-      const files = entries
-        .filter((e) => e.isFile() && !e.name.startsWith('.'))
-        .map((e) => e.name).sort();
+      const listing = listBlueprintBox(config.sourceRoot, reqPath);
+      const folders = listing.folders.map((entry) => entry.name);
+      const files = listing.files.map((entry) => entry.name);
       res.json({ folders, files });
     } catch (error) {
       res.status(400).json({ error: error instanceof Error ? error.message : 'error' });

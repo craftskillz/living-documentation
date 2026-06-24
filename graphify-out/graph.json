@@ -1795,7 +1795,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_alignment",
-      "community": 44,
+      "community": 12,
       "norm_label": "alignment.js"
     },
     {
@@ -1805,7 +1805,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "diagram_alignment_activeguides",
-      "community": 44,
+      "community": 12,
       "norm_label": "activeguides"
     },
     {
@@ -1825,7 +1825,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "diagram_alignment_togglealignguides",
-      "community": 44,
+      "community": 12,
       "norm_label": "togglealignguides()"
     },
     {
@@ -1835,7 +1835,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "diagram_alignment_pickbest",
-      "community": 44,
+      "community": 12,
       "norm_label": "pickbest()"
     },
     {
@@ -1845,7 +1845,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "diagram_alignment_collectcandidates",
-      "community": 44,
+      "community": 12,
       "norm_label": "collectcandidates()"
     },
     {
@@ -1855,7 +1855,7 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "diagram_alignment_findsnapaxes",
-      "community": 44,
+      "community": 12,
       "norm_label": "findsnapaxes()"
     },
     {
@@ -1865,7 +1865,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "diagram_alignment_snaptoalignguides",
-      "community": 44,
+      "community": 12,
       "norm_label": "snaptoalignguides()"
     },
     {
@@ -1875,7 +1875,7 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "diagram_alignment_clearalignguides",
-      "community": 44,
+      "community": 12,
       "norm_label": "clearalignguides()"
     },
     {
@@ -1885,7 +1885,7 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "diagram_alignment_ondragging",
-      "community": 44,
+      "community": 12,
       "norm_label": "ondragging()"
     },
     {
@@ -1895,7 +1895,7 @@
       "source_location": "L138",
       "_origin": "ast",
       "id": "diagram_alignment_drawalignmentguides",
-      "community": 44,
+      "community": 12,
       "norm_label": "drawalignmentguides()"
     },
     {
@@ -1955,7 +1955,7 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "diagram_clipboard_pasteclipboard",
-      "community": 48,
+      "community": 4,
       "norm_label": "pasteclipboard()"
     },
     {
@@ -1965,7 +1965,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_color_picker",
-      "community": 77,
+      "community": 13,
       "norm_label": "color-picker.js"
     },
     {
@@ -1975,7 +1975,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "diagram_color_picker_closeallcolorpickerpopups",
-      "community": 77,
+      "community": 13,
       "norm_label": "closeallcolorpickerpopups()"
     },
     {
@@ -1985,7 +1985,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "diagram_color_picker_opencolorpickerpopup",
-      "community": 77,
+      "community": 13,
       "norm_label": "opencolorpickerpopup()"
     },
     {
@@ -2065,7 +2065,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_custom_shapes",
-      "community": 48,
+      "community": 44,
       "norm_label": "custom-shapes.js"
     },
     {
@@ -2075,7 +2075,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "diagram_custom_shapes_default_custom_anchors",
-      "community": 43,
+      "community": 44,
       "norm_label": "default_custom_anchors"
     },
     {
@@ -2105,7 +2105,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "diagram_custom_shapes_getcustomshapedefinition",
-      "community": 19,
+      "community": 44,
       "norm_label": "getcustomshapedefinition()"
     },
     {
@@ -2115,7 +2115,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "diagram_custom_shapes_getcustomshapedefaultsize",
-      "community": 48,
+      "community": 44,
       "norm_label": "getcustomshapedefaultsize()"
     },
     {
@@ -2125,7 +2125,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "diagram_custom_shapes_getcustomshapeanchors",
-      "community": 19,
+      "community": 44,
       "norm_label": "getcustomshapeanchors()"
     },
     {
@@ -2135,7 +2135,7 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "diagram_custom_shapes_getcustomshapelabelplacement",
-      "community": 19,
+      "community": 44,
       "norm_label": "getcustomshapelabelplacement()"
     },
     {
@@ -2145,7 +2145,7 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "diagram_custom_shapes_loadcustomshapelibraries",
-      "community": 48,
+      "community": 44,
       "norm_label": "loadcustomshapelibraries()"
     },
     {
@@ -2155,7 +2155,7 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "diagram_custom_shapes_rendercustomshapebar",
-      "community": 48,
+      "community": 44,
       "norm_label": "rendercustomshapebar()"
     },
     {
@@ -2165,7 +2165,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_debug",
-      "community": 44,
+      "community": 28,
       "norm_label": "debug.js"
     },
     {
@@ -2175,7 +2175,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "diagram_debug_toggledebug",
-      "community": 44,
+      "community": 28,
       "norm_label": "toggledebug()"
     },
     {
@@ -2185,7 +2185,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "diagram_debug_drawdebugoverlay",
-      "community": 44,
+      "community": 28,
       "norm_label": "drawdebugoverlay()"
     },
     {
@@ -2195,7 +2195,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_defaults_modal",
-      "community": 77,
+      "community": 13,
       "norm_label": "defaults-modal.js"
     },
     {
@@ -2205,7 +2205,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "diagram_defaults_modal_effectivenodecolor",
-      "community": 77,
+      "community": 13,
       "norm_label": "effectivenodecolor()"
     },
     {
@@ -2215,7 +2215,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "diagram_defaults_modal_shape_keys",
-      "community": 77,
+      "community": 13,
       "norm_label": "shape_keys"
     },
     {
@@ -2225,7 +2225,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "diagram_defaults_modal_shape_system_defaults",
-      "community": 77,
+      "community": 13,
       "norm_label": "shape_system_defaults"
     },
     {
@@ -2235,7 +2235,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "diagram_defaults_modal_arrow_system_defaults",
-      "community": 77,
+      "community": 13,
       "norm_label": "arrow_system_defaults"
     },
     {
@@ -2245,7 +2245,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "diagram_defaults_modal_initdiagramdefaults",
-      "community": 77,
+      "community": 13,
       "norm_label": "initdiagramdefaults()"
     },
     {
@@ -2255,7 +2255,7 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "diagram_defaults_modal_getdiagramdefaults",
-      "community": 77,
+      "community": 13,
       "norm_label": "getdiagramdefaults()"
     },
     {
@@ -2265,7 +2265,7 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "diagram_defaults_modal_getshapedefaults",
-      "community": 4,
+      "community": 13,
       "norm_label": "getshapedefaults()"
     },
     {
@@ -2275,7 +2275,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "diagram_defaults_modal_getarrowdefaults",
-      "community": 77,
+      "community": 13,
       "norm_label": "getarrowdefaults()"
     },
     {
@@ -2285,7 +2285,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "diagram_defaults_modal_buildnodecolorentries",
-      "community": 77,
+      "community": 13,
       "norm_label": "buildnodecolorentries()"
     },
     {
@@ -2295,7 +2295,7 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "diagram_defaults_modal_buildcolorswatch",
-      "community": 77,
+      "community": 13,
       "norm_label": "buildcolorswatch()"
     },
     {
@@ -2305,7 +2305,7 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "diagram_defaults_modal_rendermodal",
-      "community": 77,
+      "community": 13,
       "norm_label": "rendermodal()"
     },
     {
@@ -2315,7 +2315,7 @@
       "source_location": "L300",
       "_origin": "ast",
       "id": "diagram_defaults_modal_opendefaultsmodal",
-      "community": 77,
+      "community": 13,
       "norm_label": "opendefaultsmodal()"
     },
     {
@@ -2625,7 +2625,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "diagram_edge_panel_getlastfreearrowstyle",
-      "community": 77,
+      "community": 13,
       "norm_label": "getlastfreearrowstyle()"
     },
     {
@@ -2695,7 +2695,7 @@
       "source_location": "L185",
       "_origin": "ast",
       "id": "diagram_edge_panel_resetedgelabelwidth",
-      "community": 13,
+      "community": 4,
       "norm_label": "resetedgelabelwidth()"
     },
     {
@@ -2725,7 +2725,7 @@
       "source_location": "L233",
       "_origin": "ast",
       "id": "diagram_edge_panel_saveedgeasdefault",
-      "community": 77,
+      "community": 13,
       "norm_label": "saveedgeasdefault()"
     },
     {
@@ -2785,7 +2785,7 @@
       "source_location": "L348",
       "_origin": "ast",
       "id": "diagram_edge_panel_stepedgelabelrotation",
-      "community": 13,
+      "community": 4,
       "norm_label": "stepedgelabelrotation()"
     },
     {
@@ -2795,7 +2795,7 @@
       "source_location": "L367",
       "_origin": "ast",
       "id": "diagram_edge_panel_stepedgelabeloffset",
-      "community": 13,
+      "community": 4,
       "norm_label": "stepedgelabeloffset()"
     },
     {
@@ -2805,7 +2805,7 @@
       "source_location": "L383",
       "_origin": "ast",
       "id": "diagram_edge_panel_resetedgelabeloffset",
-      "community": 13,
+      "community": 4,
       "norm_label": "resetedgelabeloffset()"
     },
     {
@@ -2955,7 +2955,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_grid",
-      "community": 44,
+      "community": 12,
       "norm_label": "grid.js"
     },
     {
@@ -2975,7 +2975,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "diagram_grid_togglegrid",
-      "community": 44,
+      "community": 12,
       "norm_label": "togglegrid()"
     },
     {
@@ -2985,7 +2985,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "diagram_grid_drawgrid",
-      "community": 44,
+      "community": 12,
       "norm_label": "drawgrid()"
     },
     {
@@ -3005,7 +3005,7 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "diagram_grid_ondragend",
-      "community": 44,
+      "community": 12,
       "norm_label": "ondragend()"
     },
     {
@@ -3015,7 +3015,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_groups",
-      "community": 13,
+      "community": 28,
       "norm_label": "groups.js"
     },
     {
@@ -3025,7 +3025,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "diagram_groups_groupnodes",
-      "community": 13,
+      "community": 4,
       "norm_label": "groupnodes()"
     },
     {
@@ -3035,7 +3035,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "diagram_groups_ungroupnodes",
-      "community": 13,
+      "community": 4,
       "norm_label": "ungroupnodes()"
     },
     {
@@ -3055,7 +3055,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "diagram_groups_nodebounds",
-      "community": 13,
+      "community": 28,
       "norm_label": "nodebounds()"
     },
     {
@@ -3065,7 +3065,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "diagram_groups_drawgroupoutlines",
-      "community": 13,
+      "community": 28,
       "norm_label": "drawgroupoutlines()"
     },
     {
@@ -3115,7 +3115,7 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "diagram_history_pushsnapshot",
-      "community": 13,
+      "community": 4,
       "norm_label": "pushsnapshot()"
     },
     {
@@ -3165,7 +3165,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_image_name_modal",
-      "community": 48,
+      "community": 8,
       "norm_label": "image-name-modal.js"
     },
     {
@@ -3175,7 +3175,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "diagram_image_name_modal_promptimagename",
-      "community": 48,
+      "community": 8,
       "norm_label": "promptimagename()"
     },
     {
@@ -3275,7 +3275,7 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "diagram_label_editor_commitlabeledit",
-      "community": 8,
+      "community": 4,
       "norm_label": "commitlabeledit()"
     },
     {
@@ -3305,7 +3305,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_link_panel",
-      "community": 12,
+      "community": 107,
       "norm_label": "link-panel.js"
     },
     {
@@ -3315,7 +3315,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "diagram_link_panel_showlinkpanel",
-      "community": 12,
+      "community": 107,
       "norm_label": "showlinkpanel()"
     },
     {
@@ -3325,7 +3325,7 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "diagram_link_panel_hidelinkpanel",
-      "community": 12,
+      "community": 107,
       "norm_label": "hidelinkpanel()"
     },
     {
@@ -3335,7 +3335,7 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "diagram_link_panel_synclinkpanelvisibility",
-      "community": 12,
+      "community": 107,
       "norm_label": "_synclinkpanelvisibility()"
     },
     {
@@ -3345,7 +3345,7 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "diagram_link_panel_savelinkpanel",
-      "community": 12,
+      "community": 107,
       "norm_label": "savelinkpanel()"
     },
     {
@@ -3355,7 +3355,7 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "diagram_link_panel_createandlinkdiagram",
-      "community": 12,
+      "community": 107,
       "norm_label": "_createandlinkdiagram()"
     },
     {
@@ -3365,7 +3365,7 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "diagram_link_panel_removelinkpanel",
-      "community": 12,
+      "community": 107,
       "norm_label": "removelinkpanel()"
     },
     {
@@ -3526,7 +3526,7 @@
       "source_location": "L1226",
       "_origin": "ast",
       "id": "diagram_network_onanchorsnapconnect",
-      "community": 8,
+      "community": 4,
       "norm_label": "_onanchorsnapconnect()"
     },
     {
@@ -3656,7 +3656,7 @@
       "source_location": "L1777",
       "_origin": "ast",
       "id": "diagram_network_pickandcreateimagenode",
-      "community": 48,
+      "community": 8,
       "norm_label": "pickandcreateimagenode()"
     },
     {
@@ -3666,7 +3666,7 @@
       "source_location": "L1796",
       "_origin": "ast",
       "id": "diagram_network_createimagenode",
-      "community": 8,
+      "community": 48,
       "norm_label": "createimagenode()"
     },
     {
@@ -3676,7 +3676,7 @@
       "source_location": "L1868",
       "_origin": "ast",
       "id": "diagram_network_toggleedgestraight",
-      "community": 13,
+      "community": 4,
       "norm_label": "toggleedgestraight()"
     },
     {
@@ -3796,7 +3796,7 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "diagram_node_panel_getlastnodestyle",
-      "community": 4,
+      "community": 8,
       "norm_label": "getlastnodestyle()"
     },
     {
@@ -3866,7 +3866,7 @@
       "source_location": "L142",
       "_origin": "ast",
       "id": "diagram_node_panel_effectivecustomshapelabelplacement",
-      "community": 19,
+      "community": 44,
       "norm_label": "effectivecustomshapelabelplacement()"
     },
     {
@@ -3896,7 +3896,7 @@
       "source_location": "L181",
       "_origin": "ast",
       "id": "diagram_node_panel_shownodepanel",
-      "community": 48,
+      "community": 8,
       "norm_label": "shownodepanel()"
     },
     {
@@ -3926,7 +3926,7 @@
       "source_location": "L214",
       "_origin": "ast",
       "id": "diagram_node_panel_saveshapeasdefault",
-      "community": 77,
+      "community": 13,
       "norm_label": "saveshapeasdefault()"
     },
     {
@@ -4366,7 +4366,7 @@
       "source_location": "L899",
       "_origin": "ast",
       "id": "diagram_node_rendering_shape_defaults",
-      "community": 13,
+      "community": 33,
       "norm_label": "shape_defaults"
     },
     {
@@ -4376,7 +4376,7 @@
       "source_location": "L914",
       "_origin": "ast",
       "id": "diagram_node_rendering_visnodeprops",
-      "community": 28,
+      "community": 8,
       "norm_label": "visnodeprops()"
     },
     {
@@ -4546,7 +4546,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "diagram_ports_nodegeometry",
-      "community": 14,
+      "community": 23,
       "norm_label": "nodegeometry()"
     },
     {
@@ -4556,7 +4556,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "diagram_ports_getportkeys",
-      "community": 8,
+      "community": 23,
       "norm_label": "getportkeys()"
     },
     {
@@ -4596,7 +4596,7 @@
       "source_location": "L122",
       "_origin": "ast",
       "id": "diagram_ports_getportposition",
-      "community": 8,
+      "community": 23,
       "norm_label": "getportposition()"
     },
     {
@@ -4606,7 +4606,7 @@
       "source_location": "L143",
       "_origin": "ast",
       "id": "diagram_ports_getnearestport",
-      "community": 8,
+      "community": 23,
       "norm_label": "getnearestport()"
     },
     {
@@ -4616,7 +4616,7 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "diagram_ports_drawportdots",
-      "community": 8,
+      "community": 23,
       "norm_label": "drawportdots()"
     },
     {
@@ -4876,7 +4876,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_shapeeditor",
-      "community": 43,
+      "community": 44,
       "norm_label": "shapeeditor.ts"
     },
     {
@@ -4886,7 +4886,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "diagram_shapeeditor_initshapeeditor",
-      "community": 43,
+      "community": 44,
       "norm_label": "initshapeeditor()"
     },
     {
@@ -4896,7 +4896,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_state",
-      "community": 44,
+      "community": 28,
       "norm_label": "state.js"
     },
     {
@@ -4906,7 +4906,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "diagram_state_st",
-      "community": 44,
+      "community": 28,
       "norm_label": "st"
     },
     {
@@ -4916,7 +4916,7 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "diagram_state_markdirty",
-      "community": 13,
+      "community": 4,
       "norm_label": "markdirty()"
     },
     {
@@ -5026,7 +5026,7 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "diagram_unlock_hold_performunlock",
-      "community": 56,
+      "community": 4,
       "norm_label": "performunlock()"
     },
     {
@@ -5086,7 +5086,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_zoom",
-      "community": 44,
+      "community": 48,
       "norm_label": "zoom.js"
     },
     {
@@ -5096,7 +5096,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "diagram_zoom_adjustzoom",
-      "community": 44,
+      "community": 48,
       "norm_label": "adjustzoom()"
     },
     {
@@ -5106,7 +5106,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "diagram_zoom_resetzoom",
-      "community": 44,
+      "community": 48,
       "norm_label": "resetzoom()"
     },
     {
@@ -5116,7 +5116,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "diagram_zoom_updatezoomdisplay",
-      "community": 44,
+      "community": 48,
       "norm_label": "updatezoomdisplay()"
     },
     {
@@ -5816,7 +5816,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "home_codeblockattributes_codeblockattrs",
-      "community": 24,
+      "community": 39,
       "norm_label": "codeblockattrs"
     },
     {
@@ -7406,7 +7406,7 @@
       "source_location": "L315",
       "_origin": "ast",
       "id": "snippets_table_parsetablesnippetmarkdown",
-      "community": 30,
+      "community": 39,
       "norm_label": "parsetablesnippetmarkdown()"
     },
     {
@@ -7696,7 +7696,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "home_tableattributes",
-      "community": 30,
+      "community": 77,
       "norm_label": "tableattributes.ts"
     },
     {
@@ -7716,7 +7716,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "home_tableattributes_allowed_styles",
-      "community": 30,
+      "community": 77,
       "norm_label": "allowed_styles"
     },
     {
@@ -7726,7 +7726,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "home_tableattributes_allowed_borders",
-      "community": 30,
+      "community": 77,
       "norm_label": "allowed_borders"
     },
     {
@@ -7736,7 +7736,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "home_tableattributes_legacy_border_styles",
-      "community": 30,
+      "community": 77,
       "norm_label": "legacy_border_styles"
     },
     {
@@ -7746,7 +7746,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "home_tableattributes_allowed_colors",
-      "community": 30,
+      "community": 77,
       "norm_label": "allowed_colors"
     },
     {
@@ -7756,7 +7756,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "home_tableattributes_parseprefix",
-      "community": 30,
+      "community": 77,
       "norm_label": "parseprefix()"
     },
     {
@@ -7766,7 +7766,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "home_tableattributes_parsetableattributesfrommarkdown",
-      "community": 30,
+      "community": 77,
       "norm_label": "parsetableattributesfrommarkdown()"
     },
     {
@@ -7776,7 +7776,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "home_tableattributes_buildtableattributesprefix",
-      "community": 30,
+      "community": 77,
       "norm_label": "buildtableattributesprefix()"
     },
     {
@@ -7786,7 +7786,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "home_tableattributes_parsemarkdowntablecells",
-      "community": 30,
+      "community": 77,
       "norm_label": "parsemarkdowntablecells()"
     },
     {
@@ -7796,7 +7796,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "home_tableattributes_ismarkdowntableseparatorline",
-      "community": 30,
+      "community": 77,
       "norm_label": "ismarkdowntableseparatorline()"
     },
     {
@@ -7966,7 +7966,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "home_types_tableattrs",
-      "community": 30,
+      "community": 7,
       "norm_label": "tableattrs"
     },
     {
@@ -9734,6 +9734,96 @@
       "norm_label": "onwarn()"
     },
     {
+      "label": "blueprint.ts",
+      "file_type": "code",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "lib_blueprint",
+      "community": 164,
+      "norm_label": "blueprint.ts"
+    },
+    {
+      "label": "BLUEPRINT_IGNORED_DIRS",
+      "file_type": "code",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "lib_blueprint_blueprint_ignored_dirs",
+      "community": 164,
+      "norm_label": "blueprint_ignored_dirs"
+    },
+    {
+      "label": "BlueprintDirectoryEntry",
+      "file_type": "code",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "lib_blueprint_blueprintdirectoryentry",
+      "community": 164,
+      "norm_label": "blueprintdirectoryentry"
+    },
+    {
+      "label": "BlueprintBoxListing",
+      "file_type": "code",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "lib_blueprint_blueprintboxlisting",
+      "community": 164,
+      "norm_label": "blueprintboxlisting"
+    },
+    {
+      "label": "normalizeBlueprintPath()",
+      "file_type": "code",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "lib_blueprint_normalizeblueprintpath",
+      "community": 164,
+      "norm_label": "normalizeblueprintpath()"
+    },
+    {
+      "label": "safeResolveBlueprintPath()",
+      "file_type": "code",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L27",
+      "_origin": "ast",
+      "id": "lib_blueprint_saferesolveblueprintpath",
+      "community": 164,
+      "norm_label": "saferesolveblueprintpath()"
+    },
+    {
+      "label": "isBlueprintIgnoredDir()",
+      "file_type": "code",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L34",
+      "_origin": "ast",
+      "id": "lib_blueprint_isblueprintignoreddir",
+      "community": 164,
+      "norm_label": "isblueprintignoreddir()"
+    },
+    {
+      "label": "childPath()",
+      "file_type": "code",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L38",
+      "_origin": "ast",
+      "id": "lib_blueprint_childpath",
+      "community": 164,
+      "norm_label": "childpath()"
+    },
+    {
+      "label": "listBlueprintBox()",
+      "file_type": "code",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L42",
+      "_origin": "ast",
+      "id": "lib_blueprint_listblueprintbox",
+      "community": 164,
+      "norm_label": "listblueprintbox()"
+    },
+    {
       "label": "compareBlock.ts",
       "file_type": "code",
       "source_file": "src/lib/compareBlock.ts",
@@ -9920,7 +10010,7 @@
       "source_location": "L261",
       "_origin": "ast",
       "id": "lib_config_readconfig",
-      "community": 208,
+      "community": 40,
       "norm_label": "readconfig()"
     },
     {
@@ -10090,7 +10180,7 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "lib_metadata_resolvesourceroot",
-      "community": 107,
+      "community": 78,
       "norm_label": "resolvesourceroot()"
     },
     {
@@ -10100,7 +10190,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "lib_metadata_sourcecommitformetadata",
-      "community": 107,
+      "community": 78,
       "norm_label": "sourcecommitformetadata()"
     },
     {
@@ -10110,7 +10200,7 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "lib_metadata_assertundersourceroot",
-      "community": 107,
+      "community": 78,
       "norm_label": "assertundersourceroot()"
     },
     {
@@ -10130,7 +10220,7 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "lib_metadata_buildreport",
-      "community": 107,
+      "community": 78,
       "norm_label": "buildreport()"
     },
     {
@@ -10140,7 +10230,7 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "lib_metadata_getdocentries",
-      "community": 107,
+      "community": 78,
       "norm_label": "getdocentries()"
     },
     {
@@ -10160,7 +10250,7 @@
       "source_location": "L176",
       "_origin": "ast",
       "id": "lib_metadata_getfrontmatterfield",
-      "community": 107,
+      "community": 78,
       "norm_label": "getfrontmatterfield()"
     },
     {
@@ -10317,7 +10407,7 @@
       "label": "CREATE_DIAGRAM_DESCRIPTION",
       "file_type": "code",
       "source_file": "src/mcp/server.ts",
-      "source_location": "L342",
+      "source_location": "L345",
       "_origin": "ast",
       "id": "mcp_server_create_diagram_description",
       "community": 0,
@@ -10327,7 +10417,7 @@
       "label": "CREATE_DOCUMENT_DESCRIPTION",
       "file_type": "code",
       "source_file": "src/mcp/server.ts",
-      "source_location": "L407",
+      "source_location": "L410",
       "_origin": "ast",
       "id": "mcp_server_create_document_description",
       "community": 0,
@@ -10337,7 +10427,7 @@
       "label": "TOOLS",
       "file_type": "code",
       "source_file": "src/mcp/server.ts",
-      "source_location": "L457",
+      "source_location": "L460",
       "_origin": "ast",
       "id": "mcp_server_tools",
       "community": 0,
@@ -10347,7 +10437,7 @@
       "label": "PROMPTS",
       "file_type": "code",
       "source_file": "src/mcp/server.ts",
-      "source_location": "L1106",
+      "source_location": "L1130",
       "_origin": "ast",
       "id": "mcp_server_prompts",
       "community": 0,
@@ -10357,7 +10447,7 @@
       "label": "PromptName",
       "file_type": "code",
       "source_file": "src/mcp/server.ts",
-      "source_location": "L1238",
+      "source_location": "L1262",
       "_origin": "ast",
       "id": "mcp_server_promptname",
       "community": 0,
@@ -10367,7 +10457,7 @@
       "label": "PREAMBLE",
       "file_type": "code",
       "source_file": "src/mcp/server.ts",
-      "source_location": "L1241",
+      "source_location": "L1265",
       "_origin": "ast",
       "id": "mcp_server_preamble",
       "community": 0,
@@ -10377,7 +10467,7 @@
       "label": "buildPromptTemplate()",
       "file_type": "code",
       "source_file": "src/mcp/server.ts",
-      "source_location": "L1307",
+      "source_location": "L1331",
       "_origin": "ast",
       "id": "mcp_server_buildprompttemplate",
       "community": 0,
@@ -10387,7 +10477,7 @@
       "label": "umlTypeGuidance()",
       "file_type": "code",
       "source_file": "src/mcp/server.ts",
-      "source_location": "L2039",
+      "source_location": "L2063",
       "_origin": "ast",
       "id": "mcp_server_umltypeguidance",
       "community": 0,
@@ -10397,21 +10487,41 @@
       "label": "createMcpServer()",
       "file_type": "code",
       "source_file": "src/mcp/server.ts",
-      "source_location": "L2074",
+      "source_location": "L2098",
       "_origin": "ast",
       "id": "mcp_server_createmcpserver",
-      "community": 107,
+      "community": 78,
       "norm_label": "createmcpserver()"
     },
     {
       "label": "mcpRouter()",
       "file_type": "code",
       "source_file": "src/mcp/server.ts",
-      "source_location": "L2216",
+      "source_location": "L2242",
       "_origin": "ast",
       "id": "mcp_server_mcprouter",
       "community": 22,
       "norm_label": "mcprouter()"
+    },
+    {
+      "label": "blueprint.ts",
+      "file_type": "code",
+      "source_file": "src/mcp/tools/blueprint.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tools_blueprint",
+      "community": 164,
+      "norm_label": "blueprint.ts"
+    },
+    {
+      "label": "toolListBlueprintBox()",
+      "file_type": "code",
+      "source_file": "src/mcp/tools/blueprint.ts",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "tools_blueprint_toollistblueprintbox",
+      "community": 164,
+      "norm_label": "toollistblueprintbox()"
     },
     {
       "label": "diagrams.ts",
@@ -10980,7 +11090,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tools_documents",
-      "community": 208,
+      "community": 40,
       "norm_label": "documents.ts"
     },
     {
@@ -10990,7 +11100,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "tools_documents_buildfilename",
-      "community": 208,
+      "community": 40,
       "norm_label": "buildfilename()"
     },
     {
@@ -11000,7 +11110,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "tools_documents_saferesolve",
-      "community": 208,
+      "community": 40,
       "norm_label": "saferesolve()"
     },
     {
@@ -11010,7 +11120,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "tools_documents_docsummary",
-      "community": 208,
+      "community": 40,
       "norm_label": "docsummary"
     },
     {
@@ -11020,7 +11130,7 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "tools_documents_listalldocuments",
-      "community": 208,
+      "community": 78,
       "norm_label": "listalldocuments()"
     },
     {
@@ -11030,7 +11140,7 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "tools_documents_resolvedocfilepath",
-      "community": 208,
+      "community": 40,
       "norm_label": "resolvedocfilepath()"
     },
     {
@@ -11040,7 +11150,7 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "tools_documents_toollistdocuments",
-      "community": 208,
+      "community": 78,
       "norm_label": "toollistdocuments()"
     },
     {
@@ -11050,7 +11160,7 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "tools_documents_toolreaddocument",
-      "community": 208,
+      "community": 40,
       "norm_label": "toolreaddocument()"
     },
     {
@@ -11060,7 +11170,7 @@
       "source_location": "L122",
       "_origin": "ast",
       "id": "tools_documents_toolupdatedocument",
-      "community": 208,
+      "community": 40,
       "norm_label": "toolupdatedocument()"
     },
     {
@@ -11070,7 +11180,7 @@
       "source_location": "L159",
       "_origin": "ast",
       "id": "tools_documents_toolcreatedocument",
-      "community": 208,
+      "community": 40,
       "norm_label": "toolcreatedocument()"
     },
     {
@@ -11190,7 +11300,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tools_metadata",
-      "community": 107,
+      "community": 78,
       "norm_label": "metadata.ts"
     },
     {
@@ -11200,7 +11310,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "tools_metadata_jsonresult",
-      "community": 107,
+      "community": 78,
       "norm_label": "jsonresult()"
     },
     {
@@ -11210,7 +11320,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "tools_metadata_buildentry",
-      "community": 107,
+      "community": 78,
       "norm_label": "buildentry()"
     },
     {
@@ -11220,7 +11330,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "tools_metadata_decodedocid",
-      "community": 107,
+      "community": 78,
       "norm_label": "decodedocid()"
     },
     {
@@ -11230,7 +11340,7 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "tools_metadata_isadrdocument",
-      "community": 107,
+      "community": 78,
       "norm_label": "isadrdocument()"
     },
     {
@@ -11240,7 +11350,7 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "tools_metadata_toollistmetadata",
-      "community": 107,
+      "community": 78,
       "norm_label": "toollistmetadata()"
     },
     {
@@ -11250,7 +11360,7 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "tools_metadata_toolgetaccuracy",
-      "community": 107,
+      "community": 78,
       "norm_label": "toolgetaccuracy()"
     },
     {
@@ -11260,7 +11370,7 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "tools_metadata_toolreviewadrrelevance",
-      "community": 107,
+      "community": 78,
       "norm_label": "toolreviewadrrelevance()"
     },
     {
@@ -11270,7 +11380,7 @@
       "source_location": "L131",
       "_origin": "ast",
       "id": "tools_metadata_toolrefreshmetadata",
-      "community": 107,
+      "community": 78,
       "norm_label": "toolrefreshmetadata()"
     },
     {
@@ -11280,7 +11390,7 @@
       "source_location": "L150",
       "_origin": "ast",
       "id": "tools_metadata_tooladdmetadata",
-      "community": 107,
+      "community": 78,
       "norm_label": "tooladdmetadata()"
     },
     {
@@ -11290,7 +11400,7 @@
       "source_location": "L182",
       "_origin": "ast",
       "id": "tools_metadata_toolremovemetadata",
-      "community": 107,
+      "community": 78,
       "norm_label": "toolremovemetadata()"
     },
     {
@@ -11300,7 +11410,7 @@
       "source_location": "L210",
       "_origin": "ast",
       "id": "tools_metadata_toollistadrsbelowaccuracy",
-      "community": 107,
+      "community": 78,
       "norm_label": "toollistadrsbelowaccuracy()"
     },
     {
@@ -11507,7 +11617,7 @@
       "label": "IMAGE_EXTS",
       "file_type": "code",
       "source_file": "src/routes/blueprint.ts",
-      "source_location": "L11",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "routes_blueprint_image_exts",
       "community": 164,
@@ -11517,7 +11627,7 @@
       "label": "VIDEO_EXTS",
       "file_type": "code",
       "source_file": "src/routes/blueprint.ts",
-      "source_location": "L12",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "routes_blueprint_video_exts",
       "community": 164,
@@ -11527,7 +11637,7 @@
       "label": "EXT_TO_LANGUAGE",
       "file_type": "code",
       "source_file": "src/routes/blueprint.ts",
-      "source_location": "L14",
+      "source_location": "L19",
       "_origin": "ast",
       "id": "routes_blueprint_ext_to_language",
       "community": 164,
@@ -11537,37 +11647,17 @@
       "label": "isBinary()",
       "file_type": "code",
       "source_file": "src/routes/blueprint.ts",
-      "source_location": "L28",
+      "source_location": "L33",
       "_origin": "ast",
       "id": "routes_blueprint_isbinary",
       "community": 164,
       "norm_label": "isbinary()"
     },
     {
-      "label": "safeResolvePath()",
-      "file_type": "code",
-      "source_file": "src/routes/blueprint.ts",
-      "source_location": "L36",
-      "_origin": "ast",
-      "id": "routes_blueprint_saferesolvepath",
-      "community": 164,
-      "norm_label": "saferesolvepath()"
-    },
-    {
-      "label": "IGNORED_DIRS",
-      "file_type": "code",
-      "source_file": "src/routes/blueprint.ts",
-      "source_location": "L42",
-      "_origin": "ast",
-      "id": "routes_blueprint_ignored_dirs",
-      "community": 164,
-      "norm_label": "ignored_dirs"
-    },
-    {
       "label": "BlueprintFolder",
       "file_type": "code",
       "source_file": "src/routes/blueprint.ts",
-      "source_location": "L47",
+      "source_location": "L41",
       "_origin": "ast",
       "id": "routes_blueprint_blueprintfolder",
       "community": 164,
@@ -11577,7 +11667,7 @@
       "label": "slugifyCategory()",
       "file_type": "code",
       "source_file": "src/routes/blueprint.ts",
-      "source_location": "L57",
+      "source_location": "L51",
       "_origin": "ast",
       "id": "routes_blueprint_slugifycategory",
       "community": 164,
@@ -11587,7 +11677,7 @@
       "label": "blueprintDocCategories()",
       "file_type": "code",
       "source_file": "src/routes/blueprint.ts",
-      "source_location": "L66",
+      "source_location": "L60",
       "_origin": "ast",
       "id": "routes_blueprint_blueprintdoccategories",
       "community": 5,
@@ -11597,7 +11687,7 @@
       "label": "BlueprintResponse",
       "file_type": "code",
       "source_file": "src/routes/blueprint.ts",
-      "source_location": "L78",
+      "source_location": "L72",
       "_origin": "ast",
       "id": "routes_blueprint_blueprintresponse",
       "community": 164,
@@ -11607,7 +11697,7 @@
       "label": "listFolders()",
       "file_type": "code",
       "source_file": "src/routes/blueprint.ts",
-      "source_location": "L85",
+      "source_location": "L79",
       "_origin": "ast",
       "id": "routes_blueprint_listfolders",
       "community": 164,
@@ -11617,7 +11707,7 @@
       "label": "PositionsMap",
       "file_type": "code",
       "source_file": "src/routes/blueprint.ts",
-      "source_location": "L113",
+      "source_location": "L107",
       "_origin": "ast",
       "id": "routes_blueprint_positionsmap",
       "community": 164,
@@ -11627,7 +11717,7 @@
       "label": "positionsFilePath()",
       "file_type": "code",
       "source_file": "src/routes/blueprint.ts",
-      "source_location": "L115",
+      "source_location": "L109",
       "_origin": "ast",
       "id": "routes_blueprint_positionsfilepath",
       "community": 164,
@@ -11637,7 +11727,7 @@
       "label": "readPositions()",
       "file_type": "code",
       "source_file": "src/routes/blueprint.ts",
-      "source_location": "L119",
+      "source_location": "L113",
       "_origin": "ast",
       "id": "routes_blueprint_readpositions",
       "community": 164,
@@ -11647,7 +11737,7 @@
       "label": "writePositions()",
       "file_type": "code",
       "source_file": "src/routes/blueprint.ts",
-      "source_location": "L129",
+      "source_location": "L123",
       "_origin": "ast",
       "id": "routes_blueprint_writepositions",
       "community": 164,
@@ -11657,7 +11747,7 @@
       "label": "blueprintRouter()",
       "file_type": "code",
       "source_file": "src/routes/blueprint.ts",
-      "source_location": "L136",
+      "source_location": "L130",
       "_origin": "ast",
       "id": "routes_blueprint_blueprintrouter",
       "community": 22,
@@ -29037,7 +29127,7 @@
       "label": "Fichiers concern\u00e9s",
       "file_type": "document",
       "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L28",
+      "source_location": "L27",
       "_origin": "ast",
       "id": "worklog_current_task_fichiers_concern\u00e9s",
       "community": 234,
@@ -29047,7 +29137,7 @@
       "label": "Verifications",
       "file_type": "document",
       "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L39",
+      "source_location": "L38",
       "_origin": "ast",
       "id": "worklog_current_task_verifications",
       "community": 234,
@@ -29057,7 +29147,7 @@
       "label": "Points d'attention",
       "file_type": "document",
       "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L45",
+      "source_location": "L44",
       "_origin": "ast",
       "id": "worklog_current_task_points_d_attention",
       "community": 234,
@@ -29067,7 +29157,7 @@
       "label": "Prochaine action recommandee",
       "file_type": "document",
       "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L49",
+      "source_location": "L48",
       "_origin": "ast",
       "id": "worklog_current_task_prochaine_action_recommandee",
       "community": 234,
@@ -62942,6 +63032,218 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "lib_blueprint",
+      "target": "lib_blueprint_blueprint_ignored_dirs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "lib_blueprint",
+      "target": "lib_blueprint_blueprintboxlisting",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "lib_blueprint",
+      "target": "lib_blueprint_blueprintdirectoryentry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "lib_blueprint",
+      "target": "lib_blueprint_childpath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "lib_blueprint",
+      "target": "lib_blueprint_isblueprintignoreddir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "lib_blueprint",
+      "target": "lib_blueprint_listblueprintbox",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "lib_blueprint",
+      "target": "lib_blueprint_normalizeblueprintpath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "lib_blueprint",
+      "target": "lib_blueprint_saferesolveblueprintpath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/routes/blueprint.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_routes_blueprint_ts_routes_blueprint",
+      "target": "lib_blueprint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/mcp/tools/blueprint.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "tools_blueprint",
+      "target": "lib_blueprint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "lib_blueprint_listblueprintbox",
+      "target": "lib_blueprint_normalizeblueprintpath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "lib_blueprint_saferesolveblueprintpath",
+      "target": "lib_blueprint_normalizeblueprintpath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/routes/blueprint.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_routes_blueprint_ts_routes_blueprint",
+      "target": "lib_blueprint_normalizeblueprintpath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/blueprint.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "lib_blueprint_listblueprintbox",
+      "target": "lib_blueprint_saferesolveblueprintpath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/routes/blueprint.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_routes_blueprint_ts_routes_blueprint",
+      "target": "lib_blueprint_saferesolveblueprintpath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/routes/blueprint.ts",
+      "source_location": "L93",
+      "weight": 1.0,
+      "source": "routes_blueprint_listfolders",
+      "target": "lib_blueprint_isblueprintignoreddir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/routes/blueprint.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_routes_blueprint_ts_routes_blueprint",
+      "target": "lib_blueprint_isblueprintignoreddir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/routes/blueprint.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_routes_blueprint_ts_routes_blueprint",
+      "target": "lib_blueprint_listblueprintbox",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/mcp/tools/blueprint.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "tools_blueprint",
+      "target": "lib_blueprint_listblueprintbox",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/mcp/tools/blueprint.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "tools_blueprint_toollistblueprintbox",
+      "target": "lib_blueprint_listblueprintbox"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src/lib/compareBlock.ts",
       "source_location": "L29",
       "weight": 1.0,
@@ -63299,6 +63601,17 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "src/mcp/tools/blueprint.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tools_blueprint",
+      "target": "lib_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "src/mcp/tools/documents.ts",
       "source_location": "L3",
       "weight": 1.0,
@@ -63590,6 +63903,28 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "src_routes_workspace_ts_routes_workspace",
+      "target": "lib_config_readconfig"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/mcp/tools/blueprint.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tools_blueprint",
+      "target": "lib_config_readconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/mcp/tools/blueprint.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "tools_blueprint_toollistblueprintbox",
       "target": "lib_config_readconfig"
     },
     {
@@ -65227,6 +65562,28 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/mcp/server.ts",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "mcp_server",
+      "target": "tools_blueprint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/mcp/server.ts",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "mcp_server",
+      "target": "tools_blueprint_toollistblueprintbox",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/mcp/server.ts",
       "source_location": "L16",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -65502,6 +65859,17 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/mcp/server.ts",
+      "source_location": "L2185",
+      "weight": 1.0,
+      "source": "mcp_server_createmcpserver",
+      "target": "tools_blueprint_toollistblueprintbox",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/mcp/server.ts",
       "source_location": "L2132",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -65716,6 +66084,16 @@
       "weight": 1.0,
       "source": "src_server_startserver",
       "target": "mcp_server_mcprouter"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/mcp/tools/blueprint.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "tools_blueprint",
+      "target": "tools_blueprint_toollistblueprintbox",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -67517,16 +67895,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/routes/blueprint.ts",
-      "source_location": "L42",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_routes_blueprint_ts_routes_blueprint",
-      "target": "routes_blueprint_ignored_dirs"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/routes/blueprint.ts",
       "source_location": "L11",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -67582,16 +67950,6 @@
       "confidence_score": 1.0,
       "source": "src_routes_blueprint_ts_routes_blueprint",
       "target": "routes_blueprint_readpositions"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/routes/blueprint.ts",
-      "source_location": "L36",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_routes_blueprint_ts_routes_blueprint",
-      "target": "routes_blueprint_saferesolvepath"
     },
     {
       "relation": "contains",
@@ -95036,5 +95394,5 @@
       "source_file": "usermanual-documentation/5_talks/2026_04_28_09_48_[CONFERENCE]_demo_living_documentation_mcp_en_conference.md"
     }
   ],
-  "built_at_commit": "5f90981464bcef2d5d44f8055fe17e5988012110"
+  "built_at_commit": "b246b3ab612acbd15b60e558eaa0763b1531c8cf"
 }

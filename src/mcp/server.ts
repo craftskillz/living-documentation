@@ -23,6 +23,7 @@ import {
   toolReadSourceFile,
   toolSearchSource,
 } from "./tools/source";
+import { toolListBlueprintBox } from "./tools/blueprint";
 import {
   toolListMetadata,
   toolGetAccuracy,
@@ -265,6 +266,8 @@ Three tools expose read-only access to the project source under \`sourceRoot\`
 - \`list_source_files(pattern?, maxResults?)\`
 - \`read_source_file(path)\`
 - \`search_source(query, pattern?, maxResults?, caseSensitive?)\`
+- \`list_blueprint_box(path)\` for immediate Blueprint folder/file listings
+  with both names and sourceRoot-relative paths.
 
 **Rules**:
 1. Documentation tools come first. Use source tools only when the docs do not
@@ -856,6 +859,27 @@ const TOOLS = [
         },
       },
       required: ["title", "diagramType", "nodes", "edges"],
+    },
+  },
+  {
+    name: "list_blueprint_box",
+    description: [
+      "List the immediate folders and files inside a Blueprint source folder under `sourceRoot`.",
+      "",
+      "Use this when the user refers to a Blueprint box such as `tests/api` and needs the names and sourceRoot-relative paths of the folders and files it contains.",
+      "",
+      "The path is relative to `sourceRoot`; path traversal is rejected. The same ignored folders as the Blueprint UI are skipped (`node_modules`, `.git`, `dist`, `build`, `coverage`, etc.).",
+    ].join("\n"),
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: {
+          type: "string",
+          description:
+            "Folder path relative to sourceRoot, e.g. `tests/api`. Use an empty string for the sourceRoot itself.",
+        },
+      },
+      required: ["path"],
     },
   },
   {
@@ -2157,6 +2181,8 @@ function createMcpServer(docsPath: string): Server {
             docsPath,
             args as { pattern?: string; maxResults?: number },
           );
+        case "list_blueprint_box":
+          return toolListBlueprintBox(docsPath, args as { path: string });
         case "read_source_file":
           return toolReadSourceFile(docsPath, args as { path: string });
         case "search_source":
