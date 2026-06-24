@@ -1,8 +1,8 @@
 ---
 **date:** 2026-06-24
 **status:** Completed
-**description:** Ajout du tool MCP `list_blueprint_box` pour lister les dossiers et fichiers immédiats d'une boîte Blueprint.
-**tags:** worklog, blueprint, mcp, list_blueprint_box, sourceRoot, file-explorer, path-traversal, playwright
+**description:** Génération du document Blueprint `SRC` avec un style fonctionnel court.
+**tags:** worklog, blueprint, src, serveur, routes, mcp, frontend-svelte, api, metadata
 ---
 
 # Current task
@@ -13,40 +13,38 @@ Completed
 
 ## Tache realisee
 
-Le MCP expose désormais un tool `list_blueprint_box` qui accepte un chemin de boîte Blueprint relatif à `sourceRoot`, par exemple `tests/api`, et retourne les dossiers et fichiers immédiats avec leurs noms et chemins relatifs.
+Le document Blueprint `000_BLUEPRINT/2026_06_24_20_57_[SRC]_src` a été rempli pour cartographier le dossier `src/` à haut niveau.
 
-## Implementation
+Le document suit le style validé pour les Blueprints : texte court, fonctionnel, humainement consultable, sans détail de maintenance interne.
 
-- Création de `src/lib/blueprint.ts` pour partager les règles Blueprint entre REST et MCP : normalisation de chemin, garde path traversal, dossiers ignorés et listing dossiers/fichiers.
-- Refactor léger de `src/routes/blueprint.ts` pour réutiliser cette lib partagée, tout en conservant le format REST existant `{ folders: string[], files: string[] }`.
-- Ajout de `src/mcp/tools/blueprint.ts` avec `toolListBlueprintBox`.
-- Ajout du tool `list_blueprint_box` dans `TOOLS`, dans le guide MCP et dans le dispatcher `tools/call`.
-- Sortie du tool : `{ sourceRoot, path, folders: [{ name, path }], files: [{ name, path }] }`.
-- Ajout de tests MCP pour `tools/list`, le listing de `tests/api`, le filtrage des dossiers ignorés/dotfiles, et le rejet d'un path traversal.
+## Contenu produit
 
-## Fichiers concernés
+`src/` est décrit comme le cœur applicatif de Living Documentation : serveur local, API, MCP, logique partagée et interface Svelte.
 
-- `src/lib/blueprint.ts`
-- `src/routes/blueprint.ts`
-- `src/mcp/tools/blueprint.ts`
+La vue d'ensemble reste compacte : `server.ts` démarre l'application, `routes/` expose les fonctionnalités HTTP, `lib/` porte les règles partagées, `mcp/` ouvre les outils pour les agents IA, et `frontend-svelte/` contient l'interface utilisateur.
+
+## Contexte utilise
+
+- Mémoire de style : `memory/blueprint-documentation-style.md`.
+- Inventaire Blueprint de `src/` via l'implémentation partagée `listBlueprintBox()`.
+- Requête Graphify sur le rôle de `src/`.
+- Lecture de `PROJECT-STACK`, `src/server.ts`, `src/frontend-svelte/src/App.svelte` et des listes de fichiers des zones principales.
+
+## Metadata Living Documentation
+
+Fichiers attachés au Blueprint `SRC` :
+
+- `documentation/AI/PROJECT-STACK.md`
+- `src/server.ts`
+- `src/lib/config.ts`
 - `src/mcp/server.ts`
-- `tests/api/mcp.spec.ts`
-- `graphify-out/graph.json`
-- `graphify-out/graph.html`
-- `graphify-out/GRAPH_REPORT.md`
+- `src/routes/documents.ts`
+- `src/frontend-svelte/src/App.svelte`
 
-## Verifications
+Accuracy vérifiée : `1` / `unchanged`.
 
-- `npm run build` : OK.
-- `npx playwright test tests/api/mcp.spec.ts --project=chromium` : OK, 38 tests passés.
-- `npx playwright test tests/e2e/blueprint-edit.spec.ts --project=chromium` : OK, 4 tests passés.
-- `graphify update .` : OK.
+## Point d'attention
 
-## Points d'attention
+Les métadonnées ont été attachées alors que le working tree contenait déjà des modifications documentaires ; le commit stocké dans les métadonnées est donc marqué `dirty: true`.
 
-- Aucun ADR durable n'a été créé pour l'instant car le working tree est déjà dirty. Les règles projet demandent de créer/mettre à jour l'ADR après commit ou validation explicite de l'utilisateur dans cet état.
-- Des fichiers déjà modifiés ou générés avant cette tâche restent présents dans le working tree, notamment `graphify-out/`.
-
-## Prochaine action recommandee
-
-Après stabilisation/commit du working tree, créer un ADR pour documenter le contrat MCP `list_blueprint_box` et l'attacher à `src/lib/blueprint.ts`, `src/mcp/tools/blueprint.ts`, `src/mcp/server.ts` et `src/routes/blueprint.ts`.
+Aucun test n'a été lancé pour cette étape, car elle modifie uniquement de la documentation.

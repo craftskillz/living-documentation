@@ -13,6 +13,7 @@ memory/project-overview.md
 memory/architecture.md
 memory/testing.md
 memory/domain-language.md
+memory/blueprint-documentation-style.md
 ```
 
 ## Règle d'usage
