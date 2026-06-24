@@ -29037,7 +29037,7 @@
       "label": "Fichiers concern\u00e9s",
       "file_type": "document",
       "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L31",
+      "source_location": "L28",
       "_origin": "ast",
       "id": "worklog_current_task_fichiers_concern\u00e9s",
       "community": 234,
@@ -29047,7 +29047,7 @@
       "label": "Verifications",
       "file_type": "document",
       "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L41",
+      "source_location": "L39",
       "_origin": "ast",
       "id": "worklog_current_task_verifications",
       "community": 234,
@@ -29057,7 +29057,7 @@
       "label": "Points d'attention",
       "file_type": "document",
       "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L47",
+      "source_location": "L45",
       "_origin": "ast",
       "id": "worklog_current_task_points_d_attention",
       "community": 234,
@@ -29067,7 +29067,7 @@
       "label": "Prochaine action recommandee",
       "file_type": "document",
       "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L52",
+      "source_location": "L49",
       "_origin": "ast",
       "id": "worklog_current_task_prochaine_action_recommandee",
       "community": 234,
@@ -72936,9 +72936,9 @@
       "source_file": "documentation/000_BLUEPRINT/2026_06_01_17_40_[SCRIPTS]_scripts.md",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "000_blueprint_2026_06_01_17_40_scripts_scripts",
-      "target": "000_blueprint_2026_06_01_17_40_scripts_scripts_vue_d_ensemble",
-      "confidence_score": 1.0
+      "target": "000_blueprint_2026_06_01_17_40_scripts_scripts_vue_d_ensemble"
     },
     {
       "relation": "contains",
@@ -95036,5 +95036,5 @@
       "source_file": "usermanual-documentation/5_talks/2026_04_28_09_48_[CONFERENCE]_demo_living_documentation_mcp_en_conference.md"
     }
   ],
-  "built_at_commit": "0bebea2a8234914b999d0cbe802df28e946173be"
+  "built_at_commit": "5f90981464bcef2d5d44f8055fe17e5988012110"
 }

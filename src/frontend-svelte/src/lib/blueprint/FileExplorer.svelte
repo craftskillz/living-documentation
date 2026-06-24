@@ -27,6 +27,7 @@
   let files = $state<string[]>([]);
   let loading = $state(false);
   let error = $state(false);
+  let copiedSection = $state<"folders" | "files" | null>(null);
 
   type PreviewState =
     | { status: "idle" }
@@ -119,6 +120,17 @@
   function childPath(name: string) {
     return currentPath ? `${currentPath}/${name}` : name;
   }
+
+  async function copyNames(kind: "folders" | "files", names: string[]) {
+    if (!names.length) return;
+    try {
+      await navigator.clipboard.writeText(names.join("\n"));
+      copiedSection = kind;
+      setTimeout(() => {
+        if (copiedSection === kind) copiedSection = null;
+      }, 1800);
+    } catch {}
+  }
 </script>
 
 <aside class="file-explorer">
@@ -151,7 +163,18 @@
         <div class="explorer-section-label">{t("blueprint.explorer.empty")}</div>
       {:else}
         {#if folders.length}
-          <div class="explorer-section-label">{t("blueprint.explorer.folders")}</div>
+          <div class="explorer-section-label with-action">
+            <span>{t("blueprint.explorer.folders")}</span>
+            <button
+              class="explorer-copy-btn {copiedSection === 'folders' ? 'copied' : ''}"
+              type="button"
+              data-testid="copy-blueprint-folders"
+              title={t("blueprint.explorer.copy_folders")}
+              onclick={() => copyNames("folders", folders)}
+            >
+              <i class="fa-{copiedSection === 'folders' ? 'solid fa-check' : 'regular fa-copy'}" aria-hidden="true"></i>
+            </button>
+          </div>
           {#each folders as name}
             <button
               class="explorer-item is-folder"
@@ -164,7 +187,18 @@
           {/each}
         {/if}
         {#if files.length}
-          <div class="explorer-section-label">{t("blueprint.explorer.files")}</div>
+          <div class="explorer-section-label with-action">
+            <span>{t("blueprint.explorer.files")}</span>
+            <button
+              class="explorer-copy-btn {copiedSection === 'files' ? 'copied' : ''}"
+              type="button"
+              data-testid="copy-blueprint-files"
+              title={t("blueprint.explorer.copy_files")}
+              onclick={() => copyNames("files", files)}
+            >
+              <i class="fa-{copiedSection === 'files' ? 'solid fa-check' : 'regular fa-copy'}" aria-hidden="true"></i>
+            </button>
+          </div>
           {#each files as name}
             <button
               class="explorer-item is-file"

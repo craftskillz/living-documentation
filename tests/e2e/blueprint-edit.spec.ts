@@ -37,6 +37,37 @@ const OPEN_ALPHA_DOC = `async () => {
   return { ok: true };
 }`;
 
+const OPEN_ALPHA_EXPLORER = `async () => {
+  const c = document.querySelector('canvas');
+  const ctx = c.getContext('2d');
+  const r = c.getBoundingClientRect();
+  let cx = 0, cy = 0, found = false;
+  for (let attempt = 0; attempt < 40 && !found; attempt++) {
+    const img = ctx.getImageData(0, 0, c.width, c.height).data;
+    let sx = 0, sy = 0, n = 0;
+    for (let py = 0; py < c.height; py += 2) {
+      for (let px = 0; px < c.width; px += 2) {
+        const i = (py * c.width + px) * 4;
+        const R = img[i], G = img[i + 1], B = img[i + 2];
+        if (G > 150 && R < 120 && B > 90 && B < 190 && G - R > 70 && G - B > 30) { sx += px; sy += py; n++; }
+      }
+    }
+    if (n) { cx = r.left + (sx / n) * (r.width / c.width); cy = r.top + (sy / n) * (r.height / c.height); found = true; }
+    else await new Promise((res) => setTimeout(res, 100));
+  }
+  if (!found) return { ok: false };
+  const mx = cx - 24;
+  const my = cy;
+  const os = c.setPointerCapture, orl = c.releasePointerCapture;
+  c.setPointerCapture = () => {}; c.releasePointerCapture = () => {};
+  const pe = (type, x, y) => new PointerEvent(type, { bubbles: true, cancelable: true, clientX: x, clientY: y, button: 0, buttons: type === 'pointerdown' ? 1 : 0, pointerId: 1, isPrimary: true, view: window });
+  c.dispatchEvent(pe('pointerdown', mx, my));
+  await new Promise((res) => setTimeout(res, 40));
+  c.dispatchEvent(pe('pointerup', mx, my));
+  c.setPointerCapture = os; c.releasePointerCapture = orl;
+  return { ok: true };
+}`;
+
 // Same approach for a block WITHOUT a doc: its "D+" badge is faint purple. In
 // this fixture only the "beta" block is purple (alpha is green), so the purple
 // centroid lands on beta's badge.
@@ -91,6 +122,7 @@ test.describe('blueprint document editing reuses the Home editor', () => {
     const content = page.locator('.bpadr-read #doc-content');
     await expect(content).toBeVisible();
     await expect(content).toContainText('Alpha block');
+    await expect(page.getByTestId('bp-copy-doc-id')).toHaveAttribute('title', 'Copy MCP document id');
 
     // Inline snippet editing: right-click a rendered block opens the popup, and
     // it must layer above the modal overlay.
@@ -148,10 +180,46 @@ test.describe('blueprint document editing reuses the Home editor', () => {
     await expect(page.locator('.bpadr-form')).toBeVisible();
     await expect(page.locator('.bpadr-title')).toContainText('Folder');
     await expect(page.locator('.bpadr-title code')).toHaveText('/beta');
+    await expect(page.getByTestId('bp-copy-doc-id')).toBeHidden();
 
     // Parity with Home: the creation form offers the snippets inserter.
     await page.getByTestId('bp-form-snippets').click();
     await expect(page.locator('div.fixed.inset-0').first()).toBeVisible();
+  });
+
+  test('file explorer section copy buttons copy folder and file names', async ({ page, ld }) => {
+    const sourceRoot = path.resolve(ld.docsAbs, '../src');
+    fs.mkdirSync(path.join(sourceRoot, 'alpha/api'), { recursive: true });
+    fs.mkdirSync(path.join(sourceRoot, 'alpha/e2e'), { recursive: true });
+    fs.writeFileSync(path.join(sourceRoot, 'alpha/tsconfig.json'), '{}\n', 'utf-8');
+
+    await page.goto(`${ld.baseURL}/blueprint`);
+    await page.waitForFunction(() => {
+      const c = document.querySelector('canvas');
+      return !!c && c.width > 300 && window.innerWidth > 300;
+    });
+    await page.evaluate(() => {
+      Object.defineProperty(navigator, 'clipboard', {
+        configurable: true,
+        value: {
+          writeText: async (text: string) => {
+            (window as unknown as { __copiedText: string }).__copiedText = text;
+          },
+        },
+      });
+    });
+
+    const opened = (await page.evaluate(`(${OPEN_ALPHA_EXPLORER})()`)) as { ok: boolean };
+    expect(opened.ok).toBe(true);
+
+    await expect(page.locator('.file-explorer')).toBeVisible();
+    await expect(page.getByTestId('copy-blueprint-folders')).toHaveAttribute('title', 'Copy folder names');
+    await page.getByTestId('copy-blueprint-folders').click();
+    await expect.poll(() => page.evaluate(() => (window as unknown as { __copiedText?: string }).__copiedText)).toBe('api\ne2e');
+
+    await expect(page.getByTestId('copy-blueprint-files')).toHaveAttribute('title', 'Copy file names');
+    await page.getByTestId('copy-blueprint-files').click();
+    await expect.poll(() => page.evaluate(() => (window as unknown as { __copiedText?: string }).__copiedText)).toBe('index.ts\ntsconfig.json');
   });
 
   test('creating a blueprint doc keeps the folder title in the popup header only', async ({
@@ -175,6 +243,7 @@ test.describe('blueprint document editing reuses the Home editor', () => {
 
     await expect(page.locator('.bpadr-title')).toContainText('Folder');
     await expect(page.locator('.bpadr-title code')).toHaveText('/beta');
+    await expect(page.getByTestId('bp-copy-doc-id')).toHaveAttribute('title', 'Copy MCP document id');
     await expect(page.locator('.bpadr-read #doc-content')).toContainText('beta');
 
     const created = fs

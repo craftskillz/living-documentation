@@ -40,8 +40,8 @@
   let docHtml = $state("");
   let folderName = $state("");
   let folderPathTitle = $state("");
-  let currentAdrId: string | null = null;
-  let currentBox: Box | null = null;
+  let currentAdrId = $state<string | null>(null);
+  let currentBox = $state<Box | null>(null);
 
   // EditableMarkdown wiring
   let editable = $state<EditableMarkdown>(null!);
@@ -53,6 +53,7 @@
   let formSnippetsOpen = $state(false);
 
   let confirmingDelete = $state(false);
+  let copiedId = $state(false);
 
   export async function open(box: Box) {
     currentBox = box;
@@ -112,6 +113,16 @@
     currentAdrId = null;
     currentBox = null;
     folderPathTitle = "";
+    copiedId = false;
+  }
+
+  async function copyMcpId() {
+    if (!currentAdrId) return;
+    try {
+      await navigator.clipboard.writeText(decodeURIComponent(currentAdrId));
+      copiedId = true;
+      setTimeout(() => (copiedId = false), 1800);
+    } catch {}
   }
 
   async function onFolderCreate() {
@@ -180,14 +191,27 @@
   <div class="bpadr-overlay" onclick={(e) => { if (e.target === e.currentTarget) close(); }}>
     <div class="bpadr-modal">
       <header class="bpadr-header">
-        <h2 class="bpadr-title">
-          {#if folderPathTitle}
-            <span>{t("blueprint.adr.folder_title")}</span>
-            <code>{folderPathTitle}</code>
-          {:else}
-            {modalTitle}
+        <div class="bpadr-title-row">
+          <h2 class="bpadr-title">
+            {#if folderPathTitle}
+              <span>{t("blueprint.adr.folder_title")}</span>
+              <code>{folderPathTitle}</code>
+            {:else}
+              {modalTitle}
+            {/if}
+          </h2>
+          {#if currentAdrId}
+            <button
+              type="button"
+              data-testid="bp-copy-doc-id"
+              onclick={copyMcpId}
+              title={t("doc.copy_mcp_id")}
+              class="bpadr-copy-btn {copiedId ? 'copied' : ''}"
+            >
+              <i class="fa-{copiedId ? 'solid fa-check' : 'regular fa-copy'}" aria-hidden="true"></i>
+            </button>
           {/if}
-        </h2>
+        </div>
         <div class="bpadr-header-actions">
           {#if view === "doc" && !editing}
             <button class="bpadr-icon-btn" data-testid="bp-edit" type="button" title={t("doc.edit")} onclick={() => editable.enterEdit()}>✏️</button>

@@ -357,12 +357,46 @@ canvas.is-panning { cursor: grabbing; }
 }
 
 .explorer-section-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   padding: 12px 20px 4px;
   font-size: 11px;
   font-weight: 700;
   color: #475569;
   text-transform: uppercase;
   letter-spacing: 0.06em;
+}
+
+.explorer-section-label.with-action {
+  padding-right: 16px;
+}
+
+.explorer-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border: 1px solid rgb(148 163 184 / 18%);
+  border-radius: 6px;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.explorer-copy-btn:hover {
+  border-color: rgb(96 165 250 / 45%);
+  background: rgb(96 165 250 / 10%);
+  color: #93c5fd;
+}
+
+.explorer-copy-btn.copied {
+  color: #34d399;
+  border-color: rgb(52 211 153 / 45%);
 }
 
 .empty-state {
@@ -419,11 +453,19 @@ canvas.is-panning { cursor: grabbing; }
   flex-shrink: 0;
 }
 
+.bpadr-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
 .bpadr-title {
   font-size: 16px;
   font-weight: 760;
   margin: 0;
   color: #0f172a;
+  min-width: 0;
 }
 
 .bpadr-title code {
@@ -436,6 +478,30 @@ canvas.is-panning { cursor: grabbing; }
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size: 0.95em;
   font-weight: 700;
+}
+
+.bpadr-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.bpadr-copy-btn:hover {
+  background: #f8fafc;
+  color: #2563eb;
+}
+
+.bpadr-copy-btn.copied {
+  color: #16a34a;
 }
 
 .bpadr-header-actions { display: flex; gap: 8px; align-items: center; }

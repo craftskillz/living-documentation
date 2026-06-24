@@ -780,6 +780,8 @@
   "blueprint.explorer.empty": "Dossier vide",
   "blueprint.explorer.folders": "Dossiers",
   "blueprint.explorer.files": "Fichiers",
+  "blueprint.explorer.copy_folders": "Copier les noms des dossiers",
+  "blueprint.explorer.copy_files": "Copier les noms des fichiers",
   "blueprint.preview.placeholder": "Cliquez sur un fichier pour le prévisualiser",
   "blueprint.preview.loading": "Chargement…",
   "blueprint.preview.error": "Erreur lors du chargement",

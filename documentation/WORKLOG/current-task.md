@@ -1,8 +1,8 @@
 ---
 **date:** 2026-06-24
 **status:** Completed
-**description:** Ajustement de l'entête des popups Blueprint pour afficher le dossier source sans modifier le contenu initial des documents.
-**tags:** worklog, blueprint, popup-header, document-creation, svelte, i18n, e2e
+**description:** Ajout de boutons de copie dans le panneau fichiers Blueprint pour copier les listes de dossiers et fichiers.
+**tags:** worklog, blueprint, file-explorer, clipboard, copy-folders, copy-files, svelte, i18n, e2e
 ---
 
 # Current task
@@ -13,19 +13,20 @@ Completed
 
 ## Tache realisee
 
-Les popups de documents ouvertes depuis la page Blueprint affichent désormais un entête de dossier explicite, par exemple `Dossier /bin` en français, au lieu du seul titre de document `bin`.
+Le panneau latéral fichiers de la page Blueprint affiche désormais une icône de copie à droite des sections `Dossiers` et `Fichiers`. Chaque bouton copie les noms visibles de la section correspondante, un nom par ligne.
 
 ## Implementation
 
-- Le titre visuel de la popup Blueprint rend un libellé localisé (`Dossier` / `Folder`) suivi du chemin source dans un élément `code`, par exemple `/bin`.
-- Le contenu Markdown initial n'est plus modifié par Blueprint : la création de document reste le comportement standard de `POST /api/documents`.
-- Le nom de document et le flux Home restent inchangés.
-- Les styles Blueprint ajoutent uniquement le rendu du `code` dans l'entête de popup.
-- Le test E2E Blueprint vérifie le titre de popup `/beta`, le formulaire de création, puis la création complète avec un contenu standard `# beta`.
+- Ajout de `copyNames(kind, names)` dans `FileExplorer.svelte`, qui écrit `names.join("\n")` dans `navigator.clipboard`.
+- Ajout d'un état `copiedSection` pour basculer temporairement l'icône copie en coche après action.
+- Ajout des boutons `copy-blueprint-folders` et `copy-blueprint-files` dans les en-têtes de section, uniquement quand la section existe.
+- Ajout des styles compacts `.explorer-copy-btn` et de l'alignement `.explorer-section-label.with-action`.
+- Ajout des tooltips i18n : `blueprint.explorer.copy_folders` et `blueprint.explorer.copy_files` en français et anglais.
+- Le test E2E Blueprint ouvre le panneau de la boîte `alpha`, crée des sous-dossiers/fichiers dans la fixture, intercepte le clipboard et vérifie les contenus copiés.
 
 ## Fichiers concernés
 
-- `src/frontend-svelte/src/lib/blueprint/AdrModal.svelte`
+- `src/frontend-svelte/src/lib/blueprint/FileExplorer.svelte`
 - `src/frontend-svelte/src/lib/blueprint/styles.css`
 - `src/frontend-svelte/public/i18n/en.json`
 - `src/frontend-svelte/public/i18n/fr.json`
@@ -37,14 +38,13 @@ Les popups de documents ouvertes depuis la page Blueprint affichent désormais u
 ## Verifications
 
 - `npm run build` : OK.
-- `npx playwright test tests/e2e/blueprint-edit.spec.ts --project=chromium` : OK, 3 tests passés.
-- `graphify update .` : OK après approbation escaladée.
+- `npx playwright test tests/e2e/blueprint-edit.spec.ts --project=chromium` : OK, 4 tests passés.
+- `graphify update .` : OK.
 
 ## Points d'attention
 
-- Le build signale toujours un warning Svelte existant : `currentAdrId` est modifié sans `$state(...)` dans `AdrModal.svelte`.
-- Des fichiers déjà modifiés avant cette tâche n'ont pas été remis à zéro : `documentation/.blueprint-positions.json`, `documentation/.living-doc.json` et `documentation/000_BLUEPRINT/2026_06_24_19_32_[BIN]_bin.md`.
+- Des fichiers déjà modifiés ou générés avant cette tâche restent présents dans le working tree, notamment `graphify-out/`.
 
 ## Prochaine action recommandee
 
-Tester manuellement depuis `/blueprint` sur le dossier `bin` pour valider visuellement l'entête `Dossier /bin`.
+Tester manuellement depuis `/blueprint` sur un dossier contenant à la fois des sous-dossiers et des fichiers, puis coller le presse-papiers pour vérifier le format ligne par ligne.
