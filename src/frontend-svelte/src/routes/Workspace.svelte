@@ -200,9 +200,3 @@
     </section>
   </div>
 </div>
-
-<!-- Toast -->
-<div id="workspaceToast" class="workspace-toast" role="status" aria-live="polite" hidden>
-  <span id="workspaceToastIcon" class="toast-icon" aria-hidden="true">✓</span>
-  <span id="workspaceToastMessage">Workspace saved</span>
-</div>

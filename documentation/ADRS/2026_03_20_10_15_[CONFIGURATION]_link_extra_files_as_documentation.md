@@ -3,33 +3,33 @@
 **date:** 2026-03-20
 **status:** SuperSeeded
 **superseded_by:** 2026_04_24_[CONFIGURATION]_portable_living_doc_json_with_relative_paths.md
-**description:** Support for including Markdown files outside the docs folder via an extraFiles config array, with a filesystem browser in the admin panel. [SuperSeeded: the path-storage format moved from absolute to relative; the feature itself (whitelist security, admin browser, ordering, sidebar placement, document-id scheme) is preserved in the new ADR.]
+**description:** Prise en charge de l'inclusion de fichiers Markdown situés en dehors du dossier docs via un tableau de configuration extraFiles, avec un explorateur de système de fichiers dans le panneau d'administration. [SuperSeeded : le format de stockage des chemins est passé d'absolu à relatif ; la fonctionnalité elle-même (sécurité par liste blanche, explorateur admin, ordonnancement, placement dans la barre latérale, schéma d'identifiant de document) est conservée dans la nouvelle ADR.]
 **tags:** configuration, extraFiles, sidebar, security, api, browse, path-traversal, document-id, superseded
 ---
 
-## Context
+## Contexte
 
-The tool was designed to serve all Markdown files from a single docs folder. A common real-world need emerged: projects often have important Markdown files at the repository root (e.g. `README.md`, `CLAUDE.md`) that are not inside the dedicated docs folder, but should still be surfaced in the viewer alongside the documentation.
+L'outil a été conçu pour servir tous les fichiers Markdown à partir d'un dossier docs unique. Un besoin courant est apparu dans la pratique : les projets ont souvent des fichiers Markdown importants à la racine du dépôt (par exemple `README.md`, `CLAUDE.md`) qui ne se trouvent pas dans le dossier docs dédié, mais qui devraient tout de même être présentés dans le visualiseur aux côtés de la documentation.
 
-## Decision
+## Décision
 
-Introduce an `extraFiles` field in `.living-doc.json` , an ordered list of absolute paths to Markdown files that live outside the docs folder. These files are always assigned to the **General** category and appear before regular General documents in the sidebar.
+Introduire un champ `extraFiles` dans `.living-doc.json`, une liste ordonnée de chemins absolus vers des fichiers Markdown situés en dehors du dossier docs. Ces fichiers sont toujours assignés à la catégorie **General** et apparaissent avant les documents General ordinaires dans la barre latérale.
 
-An admin UI was added to browse the filesystem and add/remove/reorder extra files without editing the config file manually.
+Une interface d'administration a été ajoutée pour parcourir le système de fichiers et ajouter/supprimer/réordonner les fichiers supplémentaires sans modifier le fichier de configuration manuellement.
 
-A new API endpoint `GET /api/browse?path=...` returns the directories and `.md` files at a given path, allowing the admin panel to navigate the filesystem.
+Un nouveau point de terminaison API `GET /api/browse?path=...` renvoie les répertoires et les fichiers `.md` présents à un chemin donné, permettant au panneau d'administration de naviguer dans le système de fichiers.
 
-## Consequences
+## Conséquences
 
-### PROS
+### AVANTAGES
 
-- Important files like `README.md` or `CLAUDE.md` at the repository root can be surfaced in the viewer without moving them into the docs folder.
-- The admin UI allows managing extra files without manually editing `.living-doc.json`.
-- Extra files maintain their user-defined config order (not date-sorted), giving full control over priority via the reorder UI.
-- Security is preserved: only paths present in the `extraFiles` whitelist can be read; only `.md` files are accepted both at browse time and at config-write time.
+- Les fichiers importants comme `README.md` ou `CLAUDE.md` à la racine du dépôt peuvent être présentés dans le visualiseur sans avoir à les déplacer dans le dossier docs.
+- L'interface d'administration permet de gérer les fichiers supplémentaires sans modifier manuellement `.living-doc.json`.
+- Les fichiers supplémentaires conservent l'ordre défini par l'utilisateur dans la configuration (et non triés par date), offrant un contrôle total sur la priorité via l'interface de réordonnancement.
+- La sécurité est préservée : seuls les chemins présents dans la liste blanche `extraFiles` peuvent être lus ; seuls les fichiers `.md` sont acceptés, tant au moment de la navigation qu'à l'écriture de la configuration.
 
-### CONS
+### INCONVÉNIENTS
 
-- Extra files bypass the `docsPath` path traversal guard (intentional, but widens the accessible surface).
-- Absolute paths in config are not portable between machines or users.
-- The document ID scheme becomes more complex: extra files use `encodeURIComponent(absolutePathWithoutExtension)` instead of `encodeURIComponent(filename)`, and the `/:id` route must detect extra files by checking `path.isAbsolute(decodedId)`.
+- Les fichiers supplémentaires contournent la garde de traversée de chemin `docsPath` (intentionnel, mais élargit la surface accessible).
+- Les chemins absolus dans la configuration ne sont pas portables entre machines ou utilisateurs.
+- Le schéma d'identifiant de document devient plus complexe : les fichiers supplémentaires utilisent `encodeURIComponent(absolutePathWithoutExtension)` au lieu de `encodeURIComponent(filename)`, et la route `/:id` doit détecter les fichiers supplémentaires en vérifiant `path.isAbsolute(decodedId)`.

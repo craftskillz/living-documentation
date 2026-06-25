@@ -23,6 +23,23 @@
       { label: "Home", href: "/" },
     ].filter((link) => link.href !== currentPath)
   );
+
+  function handleNavClick(event: MouseEvent, href: string) {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    history.pushState(null, "", href);
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  }
 </script>
 
 <header class="topbar">
@@ -40,7 +57,13 @@
 
   <div class="topbar-right">
     {#each allNav as link}
-      <a href={link.href} class="ghost-button">{link.label}</a>
+      <a
+        href={link.href}
+        class="ghost-button"
+        onclick={(event) => handleNavClick(event, link.href)}
+      >
+        {link.label}
+      </a>
     {/each}
     {#if actions}{@render actions()}{/if}
   </div>

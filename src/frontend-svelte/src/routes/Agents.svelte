@@ -2,6 +2,10 @@
   import { onMount } from "svelte";
   import Topbar from "../lib/Topbar.svelte";
   import { t, loadI18n } from "../lib/i18n.svelte";
+  import {
+    showPersistentLoadingToast,
+    showPersistentToast,
+  } from "../lib/persistentToast";
 
   interface AgentConfig {
     systemPrompt?: string;
@@ -23,6 +27,7 @@
   }
 
   type RunState = "idle" | "loading" | "success" | "error";
+  const AGENT_COMPLETION_TOAST_MS = 10 * 60 * 1000;
 
   let agents = $state<Agent[]>([]);
   let loading = $state(true);
@@ -80,6 +85,70 @@
     userInput = "";
   }
 
+  function errorDetails(error: unknown): {
+    name: string;
+    message: string;
+    stack: string;
+  } {
+    if (error instanceof Error) {
+      return {
+        name: error.name || "Error",
+        message: error.message || String(error),
+        stack: error.stack || "",
+      };
+    }
+    return {
+      name: typeof error,
+      message: String(error),
+      stack: "",
+    };
+  }
+
+  async function responseJsonOrDetail(response: Response): Promise<any> {
+    const text = await response.text();
+    if (!text.trim()) {
+      return {
+        ok: false,
+        error: `HTTP ${response.status} ${response.statusText}`.trim(),
+      };
+    }
+
+    try {
+      return JSON.parse(text);
+    } catch {
+      return {
+        ok: false,
+        error: `HTTP ${response.status} ${response.statusText}`.trim(),
+        detail: text.slice(0, 4000),
+      };
+    }
+  }
+
+  async function createFailureDocument(
+    agentId: string,
+    input: string,
+    error: unknown,
+  ): Promise<any | null> {
+    const details = errorDetails(error);
+    try {
+      const response = await fetch("/api/workspace/run-agent-document-failure", {
+        method: "POST",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          agentId,
+          userInput: input,
+          errorName: details.name,
+          errorMessage: details.message,
+          errorStack: details.stack,
+          phase: "client-fetch",
+        }),
+      });
+      return await responseJsonOrDetail(response);
+    } catch {
+      return null;
+    }
+  }
+
   async function submitInput() {
     if (!selectedAgent) return;
     const agentId = selectedAgent.id;
@@ -93,6 +162,9 @@
     runState = "loading";
     runTitle = t("agents.loading");
     runMessage = agent?.label ?? "";
+    const runToastId = showPersistentLoadingToast(
+      `${t("agents.loading")} ${agent?.label ?? ""}`.trim(),
+    );
 
     try {
       const res = await fetch("/api/workspace/run-agent-document", {
@@ -100,22 +172,64 @@
         headers: { Accept: "application/json", "Content-Type": "application/json" },
         body: JSON.stringify({ agentId, userInput: input }),
       });
-      const result = await res.json();
+      const result = await responseJsonOrDetail(res);
       if (result.document?.id) createdDocumentId = result.document.id;
 
       if (res.ok && result.ok) {
         runState = "success";
         runTitle = t("agents.success");
         runMessage = result.document?.filename ?? "";
+        showPersistentToast(
+          `${t("agents.success")} ${result.document?.filename ?? ""}`.trim(),
+          "success",
+          AGENT_COMPLETION_TOAST_MS,
+          {
+            id: runToastId,
+            href: result.document?.id
+              ? `/?doc=${encodeURIComponent(result.document.id)}`
+              : undefined,
+            linkLabel: t("agents.open_document"),
+          },
+        );
       } else {
         runState = "error";
         runTitle = t("agents.failure");
-        runMessage = result.error ?? t("agents.run_failed");
+        runMessage = result.detail
+          ? `${result.error ?? t("agents.run_failed")}\n\n${result.detail}`
+          : result.error ?? t("agents.run_failed");
+        showPersistentToast(
+          result.error ?? t("agents.run_failed"),
+          "error",
+          AGENT_COMPLETION_TOAST_MS,
+          result.document?.id
+            ? {
+                id: runToastId,
+                href: `/?doc=${encodeURIComponent(result.document.id)}`,
+                linkLabel: t("agents.open_document"),
+              }
+            : runToastId,
+        );
       }
     } catch (err: unknown) {
+      const failure = await createFailureDocument(agentId, input, err);
+      if (failure?.document?.id) createdDocumentId = failure.document.id;
+
       runState = "error";
       runTitle = t("agents.failure");
-      runMessage = err instanceof Error ? err.message : t("agents.run_failed");
+      const details = errorDetails(err);
+      runMessage = `${details.name}: ${details.message}`;
+      showPersistentToast(
+        runMessage,
+        "error",
+        AGENT_COMPLETION_TOAST_MS,
+        failure?.document?.id
+          ? {
+              id: runToastId,
+              href: `/?doc=${encodeURIComponent(failure.document.id)}`,
+              linkLabel: t("agents.open_document"),
+            }
+          : runToastId,
+      );
     }
   }
 
@@ -185,26 +299,6 @@
             </button>
           </footer>
         </section>
-      </div>
-    {/if}
-
-    <!-- Run toast -->
-    {#if runState !== "idle"}
-      <div class="agent-toast agent-toast--{runState}">
-        <span class="agent-toast-icon">
-          {#if runState === "loading"}⟳{:else if runState === "success"}✓{:else}!{/if}
-        </span>
-        <div class="agent-toast-body">
-          <p class="agent-toast-title">{runTitle}</p>
-          <p class="agent-toast-message">{runMessage}</p>
-          {#if createdDocumentId}
-            <a
-              href="/?doc={encodeURIComponent(createdDocumentId)}"
-              class="agent-toast-link"
-            >{t("agents.open_document")}</a>
-          {/if}
-        </div>
-        <button class="agent-toast-close" type="button" onclick={() => runState = "idle"}>×</button>
       </div>
     {/if}
   </div>
@@ -286,48 +380,6 @@
   .agent-input-dialog {
     border-color: var(--line-strong);
   }
-
-  .agent-toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    max-width: min(420px, calc(100vw - 48px));
-    padding: 14px 16px;
-    border-radius: 14px;
-    border: 1px solid var(--line);
-    background: var(--panel);
-    box-shadow: 0 8px 32px rgb(16 24 40 / 14%);
-    z-index: 50;
-  }
-
-  .agent-toast-icon {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    font-size: 12px;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-
-  .agent-toast--loading .agent-toast-icon {
-    border: 2px solid var(--accent);
-    border-top-color: transparent;
-    animation: spin 0.8s linear infinite;
-  }
-
-  .agent-toast--success .agent-toast-icon { background: var(--green); color: #fff; }
-  .agent-toast--error .agent-toast-icon { background: var(--red); color: #fff; }
-
-  .agent-toast-body { flex: 1; min-width: 0; }
-  .agent-toast-title { font-size: 13px; font-weight: 700; color: var(--ink); margin: 0; }
-  .agent-toast-message { font-size: 12px; color: var(--muted); margin: 2px 0 0; word-break: break-word; }
-  .agent-toast-link { font-size: 12px; color: var(--accent); text-decoration: underline; display: inline-block; margin-top: 4px; }
-  .agent-toast-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; padding: 0; line-height: 1; flex-shrink: 0; }
 
   @keyframes spin { to { transform: rotate(360deg); } }
 </style>

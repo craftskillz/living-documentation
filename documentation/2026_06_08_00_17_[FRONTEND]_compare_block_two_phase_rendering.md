@@ -1,40 +1,40 @@
 ---
 **date:** 2026-06-08
-**status:** To be validated
-**description:** Render :::compare blocks via a placeholder + post-parse swap instead of injecting rendered HTML before marked.parse(), so inner code blocks containing blank lines no longer break the document.
+**status:** À valider
+**description:** Rendu des blocs :::compare via un placeholder + remplacement post-parse au lieu d'injecter le HTML rendu avant marked.parse(), afin que les blocs de code internes contenant des lignes vides ne brisent plus le document.
 **tags:** compare, marked, rendering, html-block, commonmark, preprocessCompareBlocks, renderMarkdownWithCompareBlocks, placeholder, documents, export
 ---
 
-## Context
+## Contexte
 
-The `:::compare … :::` directive renders a side-by-side view: a raw-Markdown source column and a rendered-HTML column. The original implementation (`preprocessCompareBlocks`) replaced each `:::compare` block with its fully rendered `<div class="ld-compare">…<pre><code>…</code></pre>…</div>` **inside the Markdown source**, and then ran the outer `marked.parse()` over the whole document.
+La directive `:::compare … :::` produit une vue côte à côte : une colonne source en Markdown brut et une colonne HTML rendu. L'implémentation d'origine (`preprocessCompareBlocks`) remplaçait chaque bloc `:::compare` par son `<div class="ld-compare">…<pre><code>…</code></pre>…</div>` entièrement rendu **à l'intérieur de la source Markdown**, puis exécutait `marked.parse()` sur l'ensemble du document.
 
-This is unsafe. Per CommonMark, an HTML block is **terminated by the first blank line**. When the inner code sample contained a blank line (e.g. a blank line between an `interface` and an `async function` in a TypeScript example), `marked` stopped treating the injected `<div>` as raw HTML at that blank line and re-parsed the remainder of the document as Markdown. The result was a cascading corruption: the rendered column was flattened to paragraph text, following headings lost their `<h2>`, and subsequent `:::compare` blocks were emitted as raw HTML.
+Ceci est dangereux. Selon CommonMark, un bloc HTML est **terminé par la première ligne vide**. Lorsque l'échantillon de code interne contenait une ligne vide (par ex. une ligne vide entre une `interface` et une `async function` dans un exemple TypeScript), `marked` cessait de traiter le `<div>` injecté comme du HTML brut à cette ligne vide et re-parsait le reste du document en Markdown. Le résultat était une corruption en cascade : la colonne rendue était aplatie en texte de paragraphe, les titres suivants perdaient leur `<h2>`, et les blocs `:::compare` subséquents étaient émis sous forme de HTML brut.
 
-Observed symptom: a JavaScript compare block (no internal blank line) rendered fine, while a TypeScript block with an internal blank line broke — and destroyed everything after it.
+Symptôme observé : un bloc compare JavaScript (sans ligne vide interne) s'affichait correctement, tandis qu'un bloc TypeScript avec une ligne vide interne cassait — et détruisait tout ce qui suivait.
 
-## Decision
+## Décision
 
-Replace `preprocessCompareBlocks` with `renderMarkdownWithCompareBlocks(source, markedOpts)` in `src/lib/compareBlock.ts`, using a two-phase placeholder approach:
+Remplacer `preprocessCompareBlocks` par `renderMarkdownWithCompareBlocks(source, markedOpts)` dans `src/lib/compareBlock.ts`, en utilisant une approche de placeholder en deux phases :
 
-1. Each `:::compare` block is rendered separately and stored in an array; in the source it is replaced by a standalone HTML-comment placeholder `<!--LD_COMPARE_BLOCK_N-->` (a single-line HTML block with no blank lines, passed through verbatim by `marked`).
-2. The document is parsed with `marked.parse()`.
-3. The placeholders are swapped back for the rendered compare `<div>`s **after** parsing (tolerating a `<p>…</p>` wrapper marked may add).
+1. Chaque bloc `:::compare` est rendu séparément et stocké dans un tableau ; dans la source, il est remplacé par un placeholder de commentaire HTML autonome `<!--LD_COMPARE_BLOCK_N-->` (un bloc HTML d'une seule ligne sans ligne vide, transmis tel quel par `marked`).
+2. Le document est parsé avec `marked.parse()`.
+3. Les placeholders sont réinjectés avec les `<div>` de compare rendus **après** le parsing (en tolérant un wrapper `<p>…</p>` que marked peut ajouter).
 
-Because the rendered HTML — including any blank lines inside `<pre><code>` — never sits in the source during the outer parse, it can no longer terminate an HTML block or disturb the rest of the document.
+Parce que le HTML rendu — y compris toute ligne vide à l'intérieur de `<pre><code>` — ne se trouve jamais dans la source pendant le parsing externe, il ne peut plus terminer un bloc HTML ni perturber le reste du document.
 
-All three call sites were migrated from `marked.parse(preprocessCompareBlocks(...))` to `renderMarkdownWithCompareBlocks(...)`: two in `src/routes/documents.ts` and one in `src/routes/export.ts`. The now-unused `marked` imports in those two route files were removed.
+Les trois sites d'appel ont été migrés de `marked.parse(preprocessCompareBlocks(...))` vers `renderMarkdownWithCompareBlocks(...)` : deux dans `src/routes/documents.ts` et un dans `src/routes/export.ts`. Les imports `marked` désormais inutilisés dans ces deux fichiers de route ont été supprimés.
 
-## Consequences
+## Conséquences
 
-### PROS
+### AVANTAGES
 
-- `:::compare` blocks with internal blank lines (the common case for real code samples) render correctly.
-- The corruption is fully contained: a malformed/edge-case compare block can no longer cascade into the rest of the document.
-- Single source of truth: rendering logic lives in one function reused by document API and HTML export.
-- Covered by a regression test (`tests/unit/compare-block.spec.ts`), including the blank-line case.
+- Les blocs `:::compare` avec des lignes vides internes (le cas courant pour de vrais échantillons de code) s'affichent correctement.
+- La corruption est entièrement contenue : un bloc compare malformé ou cas-limite ne peut plus se propager en cascade dans le reste du document.
+- Source unique de vérité : la logique de rendu réside dans une seule fonction réutilisée par l'API document et l'export HTML.
+- Couvert par un test de régression (`tests/unit/compare-block.spec.ts`), incluant le cas de la ligne vide.
 
-### CONS
+### INCONVÉNIENTS
 
-- The render path is now two-pass (replace → parse → replace), marginally more work than the single inline pass. Negligible for document-sized inputs.
-- The placeholder token `LD_COMPARE_BLOCK_N` is a reserved internal marker; authored content containing that exact comment would be misinterpreted (extremely unlikely, acceptable for a local documentation tool).
+- Le chemin de rendu est désormais en deux passes (remplacer → parser → remplacer), marginalement plus de travail que la passe inline unique. Négligeable pour des entrées de la taille d'un document.
+- Le token placeholder `LD_COMPARE_BLOCK_N` est un marqueur interne réservé ; un contenu rédigé contenant ce commentaire exact serait mal interprété (extrêmement improbable, acceptable pour un outil de documentation local).

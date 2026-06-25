@@ -3,9 +3,14 @@ import {
   saveWorkspaceState,
   testLlmConnection,
   listLlmModels,
-  runAgentPrompt,
+  runAgentPromptStream,
+  type AgentRunStreamEvent,
   type PersistedWorkspaceDocument,
 } from "./persistence.js";
+import {
+  showPersistentLoadingToast,
+  showPersistentToast,
+} from "../persistentToast.js";
 
 type WorkspaceCanvasContext = globalThis.CanvasRenderingContext2D & {
   drawElementImage?: (
@@ -132,7 +137,7 @@ const ROOT_CLUSTER_RELAXATION_ATTEMPTS = 7;
 const ROOT_CLUSTER_MAX_DISTANCE =
   ROOT_CHILD_DISTANCE + ROOT_CHILD_MAX_EXTRA_DISTANCE + 260;
 const SAVE_DEBOUNCE_MS = 450;
-const SAVE_TOAST_MS = 2600;
+const AGENT_COMPLETION_TOAST_MS = 10 * 60 * 1000;
 
 // ── Module-level DOM refs (assigned in initWorkspace) ─────────────────────────
 let canvas!: WorkspaceCanvasElement;
@@ -163,10 +168,6 @@ let executeAgentRunButton!: HTMLButtonElement;
 let fallbackPanelHost!: HTMLElement;
 let configSurface!: HTMLFormElement;
 let form!: HTMLFormElement;
-let workspaceToast!: HTMLElement;
-let workspaceToastIcon!: HTMLElement;
-let workspaceToastMessage!: HTMLElement;
-let toastTimerId: number | null = null;
 let savedAgentLabel: string | null = null;
 let savedAgentFolder: string | null = null;
 let agentRunTargetId: string | null = null;
@@ -257,14 +258,6 @@ export function initWorkspace(): () => void {
   ) as HTMLElement;
   configSurface = document.getElementById("configSurface") as HTMLFormElement;
   form = configSurface;
-  workspaceToast = document.getElementById("workspaceToast") as HTMLElement;
-  workspaceToastIcon = document.getElementById(
-    "workspaceToastIcon",
-  ) as HTMLElement;
-  workspaceToastMessage = document.getElementById(
-    "workspaceToastMessage",
-  ) as HTMLElement;
-  toastTimerId = null;
   savedAgentLabel = null;
   savedAgentFolder = null;
   agentRunTargetId = null;
@@ -593,7 +586,6 @@ export function initWorkspace(): () => void {
   return () => {
     resizeObserver.disconnect();
     if (state?.saveTimerId) clearTimeout(state.saveTimerId);
-    if (toastTimerId) clearTimeout(toastTimerId);
   };
 }
 
@@ -764,32 +756,17 @@ async function saveWorkspaceNow(notify = false) {
   }
 }
 
-function showLoadingToast(message: string) {
-  if (toastTimerId) {
-    clearTimeout(toastTimerId);
-    toastTimerId = null;
-  }
-  workspaceToast.dataset.state = "loading";
-  workspaceToastIcon.textContent = "↻";
-  workspaceToastMessage.textContent = message;
-  workspaceToast.hidden = false;
+function showLoadingToast(message: string, id?: string): string {
+  return showPersistentLoadingToast(message, id);
 }
 
 function showSaveToast(
   message: string,
   state: "success" | "error" = "success",
+  durationMs?: number,
+  id?: string,
 ) {
-  if (toastTimerId) {
-    clearTimeout(toastTimerId);
-  }
-  workspaceToast.dataset.state = state;
-  workspaceToastIcon.textContent = state === "error" ? "✕" : "✓";
-  workspaceToastMessage.textContent = message;
-  workspaceToast.hidden = false;
-  toastTimerId = window.setTimeout(() => {
-    workspaceToast.hidden = true;
-    toastTimerId = null;
-  }, SAVE_TOAST_MS);
+  return showPersistentToast(message, state, durationMs, id);
 }
 
 function serializeWorkspace(): PersistedWorkspaceDocument {
@@ -1416,31 +1393,132 @@ async function executeAgentRunFromDialog() {
 
   executeAgentRunButton.disabled = true;
   executeAgentRunButton.textContent = "Running…";
-  showAgentRunResult("loading", "Running agent…");
+  const toastId = showLoadingToast("Running agent…");
+  startAgentRunTimeline();
 
   const mcpEntity = state.entities.find((e) => e.kind === "mcp");
 
-  const result = await runAgentPrompt({
-    endpoint: llm.config.endpoint,
-    token: llm.config.token,
-    model: llm.config.model,
-    systemPrompt: selected.config.systemPrompt,
-    userInput: agentRunInput.value.trim() || undefined,
-    timeout: llm.config.timeout,
-    mcpEndpoint: mcpEntity?.config.endpoint || undefined,
-    expectedOutputMarker: selected.config.expectedOutputMarker || undefined,
-  });
+  let receivedErrorEvent = false;
+  const result = await runAgentPromptStream(
+    {
+      endpoint: llm.config.endpoint,
+      token: llm.config.token,
+      model: llm.config.model,
+      systemPrompt: selected.config.systemPrompt,
+      userInput: agentRunInput.value.trim() || undefined,
+      timeout: llm.config.timeout,
+      mcpEndpoint: mcpEntity?.config.endpoint || undefined,
+      expectedOutputMarker: selected.config.expectedOutputMarker || undefined,
+    },
+    (event) => {
+      if (event.type === "error") receivedErrorEvent = true;
+      if (event.type !== "final" && event.type !== "error") {
+        showLoadingToast(agentToastMessage(event), toastId);
+      }
+      appendAgentRunTimelineEvent(event);
+    },
+  );
 
   executeAgentRunButton.disabled = false;
   executeAgentRunButton.textContent = "Run";
 
   if (result.ok && result.content) {
-    showAgentRunResult("success", result.content);
-    showSaveToast("Agent responded.", "success");
+    showAgentRunFinalResult(result.content);
+    showSaveToast(
+      "Agent responded. Result saved in AI/WORKSPACE.",
+      "success",
+      AGENT_COMPLETION_TOAST_MS,
+      toastId,
+    );
   } else {
-    showAgentRunResult("error", result.error ?? "Agent failed.");
-    showSaveToast(result.error ?? "Agent failed.", "error");
+    if (!receivedErrorEvent) {
+      appendAgentRunTimelineEvent({
+        type: "error",
+        message: result.error ?? "Agent failed.",
+      });
+    }
+    agentRunResult.dataset.state = "error";
+    showSaveToast(
+      result.error ?? "Agent failed.",
+      "error",
+      AGENT_COMPLETION_TOAST_MS,
+      toastId,
+    );
   }
+}
+
+function agentToastMessage(event: AgentRunStreamEvent): string {
+  if (event.type === "tool_call" && event.toolName) {
+    return `Agent tool call: ${event.toolName}`;
+  }
+  if (event.type === "tool_result" && event.toolName) {
+    return `Agent tool result: ${event.toolName}`;
+  }
+  return `Agent: ${event.message}`;
+}
+
+function startAgentRunTimeline() {
+  agentRunResult.hidden = false;
+  agentRunResult.dataset.state = "loading";
+  agentRunResult.textContent = "";
+  appendAgentRunTimelineEvent({
+    type: "status",
+    message: "Preparing agent request",
+  });
+}
+
+function appendAgentRunTimelineEvent(event: AgentRunStreamEvent) {
+  agentRunResult.hidden = false;
+  if (event.type === "error") {
+    agentRunResult.dataset.state = "error";
+  }
+
+  const row = document.createElement("div");
+  row.className = `agent-run-event agent-run-event-${event.type.replace("_", "-")}`;
+
+  const dot = document.createElement("span");
+  dot.className = "agent-run-event-dot";
+  dot.setAttribute("aria-hidden", "true");
+
+  const body = document.createElement("div");
+  body.className = "agent-run-event-body";
+
+  const title = document.createElement("p");
+  title.className = "agent-run-event-title";
+  title.textContent = event.message;
+  body.appendChild(title);
+
+  const metaParts = [];
+  if (event.turn) metaParts.push(`Turn ${event.turn}`);
+  if (event.toolName) metaParts.push(event.toolName);
+  if (event.detail) metaParts.push(event.detail);
+  if (metaParts.length) {
+    const meta = document.createElement("p");
+    meta.className = "agent-run-event-meta";
+    meta.textContent = metaParts.join(" · ");
+    body.appendChild(meta);
+  }
+
+  row.append(dot, body);
+  agentRunResult.appendChild(row);
+  agentRunResult.scrollTop = agentRunResult.scrollHeight;
+}
+
+function showAgentRunFinalResult(content: string) {
+  agentRunResult.dataset.state = "success";
+
+  const finalBlock = document.createElement("section");
+  finalBlock.className = "agent-run-final";
+
+  const title = document.createElement("h3");
+  title.textContent = "Final response";
+
+  const body = document.createElement("pre");
+  body.textContent = content;
+
+  finalBlock.append(title, body);
+  agentRunResult.appendChild(finalBlock);
+  agentRunResult.scrollTop = agentRunResult.scrollHeight;
 }
 
 function showAgentRunResult(

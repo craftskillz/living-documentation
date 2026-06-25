@@ -30,8 +30,8 @@
     "semantic_hash": ""
   },
   "documentation/.blueprint-positions.json": {
-    "mtime": 1782322196.6096663,
-    "ast_hash": "53afd3f862ec9ab71b73b62298e9f464",
+    "mtime": 1782329249.7664042,
+    "ast_hash": "3ccf198432ad199678565cde7d0a2d71",
     "semantic_hash": ""
   },
   "documentation/.diagrams.json": {
@@ -40,13 +40,13 @@
     "semantic_hash": ""
   },
   "documentation/.living-doc.json": {
-    "mtime": 1782324586.0179377,
-    "ast_hash": "137f85c763a7340bfe0856e53a951f48",
+    "mtime": 1782420644.2819679,
+    "ast_hash": "c4124251ea44fb55edc825740f799bef",
     "semantic_hash": ""
   },
   "documentation/.metadata.json": {
-    "mtime": 1782247481.6183994,
-    "ast_hash": "8b025dca9883a917f4187630d9eeb307",
+    "mtime": 1782411604.3525949,
+    "ast_hash": "c5205d3c837365eec680b8233ac081a0",
     "semantic_hash": ""
   },
   "documentation/.survival-kit.json": {
@@ -55,8 +55,8 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1782317626.2860548,
-    "ast_hash": "79ce963b6a9b8786ed4eceb02c243755",
+    "mtime": 1782394486.638974,
+    "ast_hash": "ab71fe3d6eb9265fef2adb7a8b5b851c",
     "semantic_hash": ""
   },
   "playwright.config.ts": {
@@ -85,13 +85,13 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/public/i18n/en.json": {
-    "mtime": 1782324106.87676,
-    "ast_hash": "439499e440f667c107491ff3a216e5e1",
+    "mtime": 1782408447.127798,
+    "ast_hash": "d16281f81a9db974605da9eefb3b709d",
     "semantic_hash": ""
   },
   "src/frontend-svelte/public/i18n/fr.json": {
-    "mtime": 1782324106.7993073,
-    "ast_hash": "847f397f8f3343d75bbab30832b3eb72",
+    "mtime": 1782408456.6259387,
+    "ast_hash": "14dd02d05a779b60f50bb8e8a700dddf",
     "semantic_hash": ""
   },
   "src/frontend-svelte/public/wordcloud2.js": {
@@ -100,8 +100,8 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/App.svelte": {
-    "mtime": 1781804672.853245,
-    "ast_hash": "8783cf3d4711a6169fe30cc80efa7882",
+    "mtime": 1782420018.8677645,
+    "ast_hash": "2a2bf6d39005cfe855df53eb86b015ca",
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/AiRules.svelte": {
@@ -140,8 +140,8 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/Topbar.svelte": {
-    "mtime": 1781804680.7053134,
-    "ast_hash": "d8f5f01f6e831cc80eaa3a23619596c6",
+    "mtime": 1782416130.9174542,
+    "ast_hash": "70d900f7a61bffff3a33ab93b6247be8",
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/blueprint/AdrModal.svelte": {
@@ -150,8 +150,8 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/blueprint/BlueprintCanvas.svelte": {
-    "mtime": 1782300746.2458744,
-    "ast_hash": "9e6078a84965580c488fb22fb8fa6ca6",
+    "mtime": 1782395781.5112085,
+    "ast_hash": "1c4e6d0d1559b382e4fefc294ae5a88f",
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/blueprint/FileExplorer.svelte": {
@@ -525,28 +525,28 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/workspace/app.ts": {
-    "mtime": 1780476254.4072056,
-    "ast_hash": "7c61e93a7649f29b61026ada2eded9ed",
+    "mtime": 1782420205.2384605,
+    "ast_hash": "ffb75e8dbd2df99b34e297d7d4edc5d2",
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/workspace/persistence.ts": {
-    "mtime": 1780476254.4075592,
-    "ast_hash": "bfe352c1dbb20a7fe9eb5b31c64f3ec0",
+    "mtime": 1782412810.1239414,
+    "ast_hash": "b9074d5700e7039bd2ec406105a99b66",
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/main.ts": {
-    "mtime": 1780401685.621904,
-    "ast_hash": "506822de51f3b85c26147cab65351e14",
+    "mtime": 1782419022.8083386,
+    "ast_hash": "ba7b27a9a6656ddbd4c42bd2ecd74981",
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/routes/Admin.svelte": {
-    "mtime": 1780740471.8440506,
-    "ast_hash": "909d48af32f38fef3a83e18c0ff5752f",
+    "mtime": 1782408393.2544756,
+    "ast_hash": "6dc358b4de4ac622a61f0fcad5774fa2",
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/routes/Agents.svelte": {
-    "mtime": 1780412884.3712308,
-    "ast_hash": "248554259c1b093d0bfe118059361f83",
+    "mtime": 1782420664.8211906,
+    "ast_hash": "fafcea75fe068a18ff94c3ce8871ad42",
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/routes/AiContext.svelte": {
@@ -585,8 +585,8 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/routes/Workspace.svelte": {
-    "mtime": 1780476281.571908,
-    "ast_hash": "94c9d2f055b55f3d2ab772b3b1a641ed",
+    "mtime": 1782413524.570186,
+    "ast_hash": "1bb6fad71f75ba517fe537fab53fb2b1",
     "semantic_hash": ""
   },
   "src/frontend-svelte/vite.config.ts": {
@@ -600,8 +600,8 @@
     "semantic_hash": ""
   },
   "src/lib/config.ts": {
-    "mtime": 1780740403.1879244,
-    "ast_hash": "7b032eafb8231b07f156b39991b57d1f",
+    "mtime": 1782408245.1603475,
+    "ast_hash": "c222b6b627914fbe5c31f1d37cf19fa6",
     "semantic_hash": ""
   },
   "src/lib/git.ts": {
@@ -665,8 +665,8 @@
     "semantic_hash": ""
   },
   "src/routes/blueprint.ts": {
-    "mtime": 1782324525.154368,
-    "ast_hash": "a4524e62118fc3b42d25bace5591fdcf",
+    "mtime": 1782328140.9846618,
+    "ast_hash": "051add5b8f4348f7731265705335bbbd",
     "semantic_hash": ""
   },
   "src/routes/browse-source.ts": {
@@ -680,8 +680,8 @@
     "semantic_hash": ""
   },
   "src/routes/config.ts": {
-    "mtime": 1780740407.375854,
-    "ast_hash": "96b807645a19c7c88a179979f8e46396",
+    "mtime": 1782408270.8593569,
+    "ast_hash": "6d62d26ff1626bf26f4db4b17b16ecff",
     "semantic_hash": ""
   },
   "src/routes/context.ts": {
@@ -735,8 +735,8 @@
     "semantic_hash": ""
   },
   "src/routes/workspace.ts": {
-    "mtime": 1780183108.5316713,
-    "ast_hash": "dcc0f30fb5f0aa7ea798c1de3bcdbf14",
+    "mtime": 1782420642.5728757,
+    "ast_hash": "8a1c53b1dafce3bbf7c1d48495a39e24",
     "semantic_hash": ""
   },
   "src/server.ts": {
@@ -1170,8 +1170,8 @@
     "semantic_hash": ""
   },
   "documentation/000_BLUEPRINT/2026_06_24_19_32_[BIN]_bin.md": {
-    "mtime": 1782323174.3865156,
-    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "mtime": 1782326060.473477,
+    "ast_hash": "714ac19fb1704594bef836ba3be06fcf",
     "semantic_hash": ""
   },
   "documentation/1_tutorial/2026_04_11_13_25_[General]_crer_vos_dossiers.md": {
@@ -1220,8 +1220,8 @@
     "semantic_hash": ""
   },
   "documentation/2026_06_08_00_17_[FRONTEND]_compare_block_two_phase_rendering.md": {
-    "mtime": 1780870657.0634084,
-    "ast_hash": "1150d75a38a4f1c8cb0e1b96f436b4f4",
+    "mtime": 1782412264.550482,
+    "ast_hash": "767140b2b721f8c10aafe266724ff495",
     "semantic_hash": ""
   },
   "documentation/2_guide/2026_04_08_00_04_[DOCUMENT]_utilisation_des_images_plein_ecran_lien_clickable.md": {
@@ -1385,8 +1385,8 @@
     "semantic_hash": ""
   },
   "documentation/ADRS/2026_03_20_10_15_[CONFIGURATION]_link_extra_files_as_documentation.md": {
-    "mtime": 1780834080.496083,
-    "ast_hash": "8c70da491cac5cdcae5c10b3a8ea851b",
+    "mtime": 1782413187.9205017,
+    "ast_hash": "e48df593f810e96a929a94acf146922d",
     "semantic_hash": ""
   },
   "documentation/ADRS/2026_03_21_10_25_[CONFIGURATION]_general_category_and_sidebar_defaults.md": {
@@ -1785,8 +1785,8 @@
     "semantic_hash": ""
   },
   "documentation/ADRS/2026_05_30_22_14_[FRONTEND]_workspace_configuration_graph_avec_agents_llm_et_tool_use_mcp.md": {
-    "mtime": 1780834081.3845913,
-    "ast_hash": "8479f7f38cb2fc718dff590db6177f06",
+    "mtime": 1782411541.617917,
+    "ast_hash": "8980ca045555576f927efa4955703c92",
     "semantic_hash": ""
   },
   "documentation/ADRS/2026_05_31_11_43_[ADR]_diagram_defaults_valeurs_par_defaut_de_creation_persistees_dans_livingdocjson.md": {
@@ -1940,8 +1940,8 @@
     "semantic_hash": ""
   },
   "documentation/AI/MEMORY.md": {
-    "mtime": 1778518230.9186156,
-    "ast_hash": "23343842db04312c3ac7fefd90f838a5",
+    "mtime": 1782325943.2019446,
+    "ast_hash": "fdcae31dc46acfa97084fce62bf86312",
     "semantic_hash": ""
   },
   "documentation/AI/PROJECT-INSTRUCTIONS.md": {
@@ -2005,13 +2005,13 @@
     "semantic_hash": ""
   },
   "documentation/WORKLOG/current-task.md": {
-    "mtime": 1782324216.416615,
-    "ast_hash": "bb0f55afda415727c338264067512567",
+    "mtime": 1782420544.2609959,
+    "ast_hash": "b261c1f216dd1a9552f98043b55e5113",
     "semantic_hash": ""
   },
   "memory/MEMORY.md": {
-    "mtime": 1778518230.9186156,
-    "ast_hash": "23343842db04312c3ac7fefd90f838a5",
+    "mtime": 1782325943.2019446,
+    "ast_hash": "fdcae31dc46acfa97084fce62bf86312",
     "semantic_hash": ""
   },
   "memory/project_svelte_migration.md": {
@@ -2852,6 +2852,166 @@
   "src/mcp/tools/blueprint.ts": {
     "mtime": 1782324560.9335625,
     "ast_hash": "5956111ad445c94687578aaf13963f34",
+    "semantic_hash": ""
+  },
+  "documentation/.blueprint-clusters.json": {
+    "mtime": 1782371790.9996154,
+    "ast_hash": "5c5058c906a6f2e5fca3731ff0f39fe5",
+    "semantic_hash": ""
+  },
+  "tests/e2e/blueprint-clusters.spec.ts": {
+    "mtime": 1782329434.9592686,
+    "ast_hash": "c13e5f1cfa34ebd5664dd4488318db90",
+    "semantic_hash": ""
+  },
+  "documentation/000_BLUEPRINT/2026_06_24_20_34_[DOCUMENTATION]_documentation.md": {
+    "mtime": 1782326212.2451515,
+    "ast_hash": "7f660001f90906e860edb0b1f05a0874",
+    "semantic_hash": ""
+  },
+  "documentation/000_BLUEPRINT/2026_06_24_20_37_[STARTER_DOC_FR]_starterdocfr.md": {
+    "mtime": 1782326343.8246996,
+    "ast_hash": "db547fb4020f23cdeb76834a111fa038",
+    "semantic_hash": ""
+  },
+  "documentation/000_BLUEPRINT/2026_06_24_20_38_[STARTER_DOC]_starterdoc.md": {
+    "mtime": 1782326343.836819,
+    "ast_hash": "befc1ff24ed8b60fa8ad945be8e21b67",
+    "semantic_hash": ""
+  },
+  "documentation/000_BLUEPRINT/2026_06_24_20_52_[TESTS]_tests.md": {
+    "mtime": 1782327224.9389067,
+    "ast_hash": "76eedfad79f14b3bbcd4526aafc44265",
+    "semantic_hash": ""
+  },
+  "documentation/000_BLUEPRINT/2026_06_24_20_54_[TEST_RESULTS]_testresults.md": {
+    "mtime": 1782327321.3247364,
+    "ast_hash": "1fafe59eeb37221e4cb4d2613c65716f",
+    "semantic_hash": ""
+  },
+  "documentation/000_BLUEPRINT/2026_06_24_20_55_[PLAYWRIGHT_REPORT]_playwrightreport.md": {
+    "mtime": 1782327405.493524,
+    "ast_hash": "68aa33352dbcaa12944c0566faeb47fe",
+    "semantic_hash": ""
+  },
+  "documentation/000_BLUEPRINT/2026_06_24_20_56_[GRAPHIFY_OUT]_graphifyout.md": {
+    "mtime": 1782327492.439745,
+    "ast_hash": "0cc8070bbb4162ce4db55004c0f64ffc",
+    "semantic_hash": ""
+  },
+  "documentation/000_BLUEPRINT/2026_06_24_20_57_[SRC]_src.md": {
+    "mtime": 1782327667.9559114,
+    "ast_hash": "4dc890527b0867097195166a10a9c920",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_25_20_31_[AGENT]_run_traducteur_anglais_vers_francais.md": {
+    "mtime": 1782412273.5586839,
+    "ast_hash": "e9fd56aee20e7619912b677c61467839",
+    "semantic_hash": ""
+  },
+  "memory/blueprint-documentation-style.md": {
+    "mtime": 1782325943.1241083,
+    "ast_hash": "74c4c76bd32ca2561dbe54c5e5a6a6e3",
+    "semantic_hash": ""
+  },
+  "src/frontend-svelte/src/lib/persistentToast.ts": {
+    "mtime": 1782420503.500109,
+    "ast_hash": "a55e343900aff45a5163f04a342a0f73",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_25_20_46_[AGENT]_run_traducteur_anglais_vers_francais.md": {
+    "mtime": 1782413195.2870898,
+    "ast_hash": "24ec8726f9007587b8fdc4e5d5f5c87d",
+    "semantic_hash": ""
+  },
+  "documentation/AI/MCP/009-tool-list-documents.md": {
+    "mtime": 1782415404.2868843,
+    "ast_hash": "950857637b398f009cf68040f51454c7",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/calculate_mathematical_operation/2026_06_25_20_48_[AGENT]_run_agent_2.md": {
+    "mtime": 1782413290.727733,
+    "ast_hash": "c41e8f96e73559a94439a22316b9ef46",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/calculate_mathematical_operation/2026_06_25_21_20_[AGENT]_run_agent_2.md": {
+    "mtime": 1782415240.6263564,
+    "ast_hash": "60110ea5ff858f134cf0d8b699aa0c61",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/find_english_documents/2026_06_25_21_31_[AGENT]_run_find_english_documents.md": {
+    "mtime": 1782415915.3438263,
+    "ast_hash": "e70a87e1f35bdc92a5f0260bd076c4c5",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/calculate_mathematical_operation/2026_06_25_21_40_[AGENT]_run_calculate_mathematical_operation.md": {
+    "mtime": 1782416445.8136349,
+    "ast_hash": "5c93e5a680281581f8fed8175b96ecbf",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/calculate_mathematical_operation/2026_06_25_21_42_[AGENT]_run_calculate_mathematical_operation.md": {
+    "mtime": 1782416520.265146,
+    "ast_hash": "36bd03feae7d6629f5ea6551b2a55fee",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/calculate_mathematical_operation/2026_06_25_22_19_[AGENT]_run_calculate_mathematical_operation.md": {
+    "mtime": 1782418789.0276346,
+    "ast_hash": "111019e04aa58ad02cbc73ffebeef9d8",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/calculate_mathematical_operation/2026_06_25_22_20_[AGENT]_run_calculate_mathematical_operation.md": {
+    "mtime": 1782418803.5388722,
+    "ast_hash": "26b6fe70e6db00d89138475a049ac121",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/find_english_documents/2026_06_25_22_21_[AGENT]_run_find_english_documents.md": {
+    "mtime": 1782418889.1521547,
+    "ast_hash": "f04fad47c9b4584b2fbcd4c98913c2aa",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/find_english_documents/2026_06_25_22_30_[AGENT]_run_find_english_documents.md": {
+    "mtime": 1782419408.738571,
+    "ast_hash": "fb2123424236b5eaafbf583b938dc4b0",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/find_english_documents/2026_06_25_22_30_[AGENT]_run_find_english_documents_2.md": {
+    "mtime": 1782419427.319754,
+    "ast_hash": "b9368c61dcd23f756556e181f21af7c1",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/calculate_mathematical_operation/2026_06_25_22_36_[AGENT]_run_calculate_mathematical_operation.md": {
+    "mtime": 1782419804.601599,
+    "ast_hash": "818d2550c054828bf53fb1461b524618",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/calculate_mathematical_operation/2026_06_25_22_37_[AGENT]_run_calculate_mathematical_operation.md": {
+    "mtime": 1782419831.9715002,
+    "ast_hash": "10625fc27484e680cd2e710fba8afa23",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/calculate_mathematical_operation/2026_06_25_22_37_[AGENT]_run_calculate_mathematical_operation_2.md": {
+    "mtime": 1782419848.8949983,
+    "ast_hash": "76fc3dde0edefce49d3cea8535bb09c4",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/agent_1/2026_06_25_22_46_[AGENT]_run_agent_1.md": {
+    "mtime": 1782420403.4228487,
+    "ast_hash": "d7bffc364a5df05f65b4d454feb683e8",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/calculate_mathematical_operation/2026_06_25_22_46_[AGENT]_run_calculate_mathematical_operation.md": {
+    "mtime": 1782420398.1911707,
+    "ast_hash": "e6dd3281f23c2e27c582389013dac14f",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/calculate_mathematical_operation/2026_06_25_22_47_[AGENT]_run_calculate_mathematical_operation.md": {
+    "mtime": 1782420427.5496142,
+    "ast_hash": "f36c672f0c7537c2a3ce5ebbc68ced2a",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/find_english_documents/2026_06_25_22_48_[AGENT]_run_find_english_documents.md": {
+    "mtime": 1782420535.8042083,
+    "ast_hash": "73695342e31622cecba5d41551253da8",
     "semantic_hash": ""
   }
 }

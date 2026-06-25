@@ -503,40 +503,34 @@
   ],
   "ADRS/2026_05_30_22_14_[FRONTEND]_workspace_configuration_graph_avec_agents_llm_et_tool_use_mcp": [
     {
-      "path": "src/frontend/workspace/app.ts",
-      "hash": "fe28d92cc067c226e9d88415f2ad85f8424fb87cffaa6d93e6f4de246eec35ad"
-    },
-    {
-      "path": "src/frontend/workspace/persistence.ts",
-      "hash": "0ee0a98a7341580c5fc41b896a7d18e72571941100f8029a38842bc06e659b03"
-    },
-    {
-      "path": "src/frontend/workspace/index.html",
-      "hash": "bfe76faf912b5dbfce0900b1a53375856fd7a132ded6c14109d1c027b4673018"
-    },
-    {
       "path": "src/routes/workspace.ts",
-      "hash": "c48c18c3918aef88b3c85fb5301991817dc15f07663f0b72165dfd887007fa3f"
+      "hash": "f7547638be1f4bbbe6be59c946e63c96b65d17656a93915e2df66bc04481509c",
+      "commit": "9b1baf6fc181cd4be44abbf5ebdbca1304d1b54d",
+      "dirty": false
     },
     {
-      "path": "src/frontend/agents.js",
-      "hash": "13d05535a0f5be5deb77d785d6084db931944f8f335f194b79361c5fbbff913a"
+      "path": "src/frontend-svelte/src/routes/Workspace.svelte",
+      "hash": "f463adb35124142fec652bb282939963863948b4a2742248b853769bc3098d37",
+      "commit": "9b1baf6fc181cd4be44abbf5ebdbca1304d1b54d",
+      "dirty": false
     },
     {
-      "path": "src/frontend/index.html",
-      "hash": "438469fda8e548f0dced760b053b1964cf350786c02bdf1783d0ec15f52d5c39"
+      "path": "src/frontend-svelte/src/lib/workspace/app.ts",
+      "hash": "40957f7836ba0ca13822588a1e2e7d66ec93ce1974db44bd90f8d4d42ff646ee",
+      "commit": "9b1baf6fc181cd4be44abbf5ebdbca1304d1b54d",
+      "dirty": false
     },
     {
-      "path": "src/frontend/i18n/en.json",
-      "hash": "6231147901e8bbc3a1b352feb3d662f180eda3e13e92e8dbb40e623d9684bce6"
+      "path": "src/frontend-svelte/src/lib/workspace/persistence.ts",
+      "hash": "0ee0a98a7341580c5fc41b896a7d18e72571941100f8029a38842bc06e659b03",
+      "commit": "9b1baf6fc181cd4be44abbf5ebdbca1304d1b54d",
+      "dirty": false
     },
     {
-      "path": "src/frontend/i18n/fr.json",
-      "hash": "abd9d2ea0f1d22dc4d593add2c20cc6e82453be0cb221dfc9c80552bb0b799d5"
-    },
-    {
-      "path": "src/frontend/workspace/styles.css",
-      "hash": "6ee8a4061b7840e69637c4998e82a3f85320c9d4bf2b5a8c07748caeac7c691c"
+      "path": "src/frontend-svelte/src/lib/workspace/styles.css",
+      "hash": "9515b85cfd68886de39b7e673ee101b771d315074b74ef2c8c9d5965e27f0626",
+      "commit": "9b1baf6fc181cd4be44abbf5ebdbca1304d1b54d",
+      "dirty": false
     }
   ],
   "ADRS/2026_05_31_11_43_[ADR]_diagram_defaults_valeurs_par_defaut_de_creation_persistees_dans_livingdocjson": [

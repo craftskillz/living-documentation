@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-25T18:11:54.622Z",
+  "updatedAt": "2026-06-25T20:34:14.781Z",
   "entities": [
     {
       "id": "root",
@@ -28,8 +28,8 @@
       "label": "MCP",
       "kind": "mcp",
       "parentId": "root",
-      "x": 1.567547902908612e-14,
-      "y": -256,
+      "x": 1.8614631347039768e-14,
+      "y": -304,
       "angle": -1.5707963267948966,
       "config": {
         "endpoint": "http://localhost:4321/mcp",
@@ -154,8 +154,8 @@
       "label": "Qwen 3.6",
       "kind": "llm",
       "parentId": "root",
-      "x": -150.4730245868731,
-      "y": 207.10835055998655,
+      "x": -206.9004088069505,
+      "y": 284.77398201998153,
       "angle": 2.199114857512855,
       "config": {
         "endpoint": "http://localhost:11434",
@@ -175,8 +175,8 @@
       "label": "Agent 1",
       "kind": "agent",
       "parentId": "provider-mpwryxsk",
-      "x": -275.09685510401073,
-      "y": 378.63833774363854,
+      "x": -331.52423932408817,
+      "y": 456.3039692036335,
       "angle": 2.199114857512855,
       "config": {
         "endpoint": "",
@@ -196,8 +196,8 @@
       "label": "OpenRouter Test",
       "kind": "llm",
       "parentId": "root",
-      "x": -243.47046817155933,
-      "y": -79.1083505599865,
+      "x": -380.42260651806146,
+      "y": -123.60679774997891,
       "angle": 3.4557519189487724,
       "config": {
         "endpoint": "https://openrouter.ai/api/v1",
@@ -214,29 +214,71 @@
     },
     {
       "id": "agent-mqtqxfnt",
-      "label": "Agent 1",
+      "label": "Traducteur Anglais vers Français",
       "kind": "agent",
       "parentId": "provider-mqtqt25p",
-      "x": -445.11606175649445,
-      "y": -144.62697557430772,
-      "angle": -2.827433388230814,
+      "x": -413.59026797635215,
+      "y": 85.80557502053406,
+      "angle": -4.555309347705201,
       "config": {
         "endpoint": "",
         "token": "",
         "model": "deepseek/deepseek-v4-pro",
         "timeout": 180,
-        "systemPrompt": "calculate the expression",
+        "systemPrompt": "You are a professional technical translator specialized in software documentation.\nYour task is to translate a Living Documentation document from English to French.\n\nInstructions:\n1. Call read_document with the document ID provided in the user message.\n2. Translate the full content from English to French. Rules:\n   - Translate with maximum fidelity to the original meaning — do not paraphrase.\n   - Preserve all Markdown formatting exactly (headings, bold, lists, code blocks, frontmatter).\n   - Do NOT translate: code snippets, file paths, technical identifiers, proper nouns, tool names, MCP tool names, field names, JSON keys.\n   - Translate frontmatter values (description, tags) but keep the keys in English.\n   - Keep the same document structure and section order.\n3. Call update_document with the document ID and the fully translated Markdown content.\n4. Confirm with a short summary of what was translated.",
         "requiresUserInput": true,
-        "userInputDescription": "Type a calculation, for instance\n2 + 3",
+        "userInputDescription": "Document Id",
         "expectedOutputMarker": "",
         "description": "Runs focused automation against documentation, source, or quality signals.",
-        "workspaceFolder": "AI/WORKSPACE/agent_1_2"
+        "workspaceFolder": "AI/WORKSPACE/traducteur_anglais_vers_francais"
+      }
+    },
+    {
+      "id": "agent-mqtusxsr",
+      "label": "Calculate Mathematical Operation",
+      "kind": "agent",
+      "parentId": "provider-mqtqt25p",
+      "x": -582.0682001029966,
+      "y": -189.12542276429997,
+      "angle": -2.8274333882308147,
+      "config": {
+        "endpoint": "",
+        "token": "",
+        "model": "deepseek/deepseek-v4-pro",
+        "timeout": 180,
+        "systemPrompt": "Calculer le resultat de l'operation suivante",
+        "requiresUserInput": true,
+        "userInputDescription": "Some operation e.g \n1+5 or sqt(25) + 32",
+        "expectedOutputMarker": "",
+        "description": "Runs focused automation against documentation, source, or quality signals.",
+        "workspaceFolder": "AI/WORKSPACE/calculate_mathematical_operation"
+      }
+    },
+    {
+      "id": "agent-mqtw0wfs",
+      "label": "Find English Documents",
+      "kind": "agent",
+      "parentId": "provider-mqtqt25p",
+      "x": -284.1663039394124,
+      "y": -312.52042841191826,
+      "angle": -1.099557428756428,
+      "config": {
+        "endpoint": "",
+        "token": "",
+        "model": "deepseek/deepseek-v4-pro",
+        "timeout": 180,
+        "systemPrompt": "Return to the end user the list of written english documents under a folder\nYou can use tools, here are the instructions : \n\n1. Call list_documents that are under the folder name provided in the user message.\n2. When you receive the list look at the title and see if it is written in french or english\n3. If it is written in english read the document using read_document and its document ID\n4. If its content is in english retain you'll return this document  id in the list returned to the end user",
+        "requiresUserInput": true,
+        "userInputDescription": "Enter folder name under which you want to find english written documents",
+        "expectedOutputMarker": "",
+        "description": "Runs focused automation against documentation, source, or quality signals.",
+        "workspaceFolder": "AI/WORKSPACE/find_english_documents"
       }
     }
   ],
   "camera": {
-    "x": 467.5613907881477,
-    "y": 379.9525171666321,
-    "zoom": 0.8023462448006398
+    "x": 628.6610139635077,
+    "y": 372.2798311031677,
+    "zoom": 0.7289026899755392
   }
 }

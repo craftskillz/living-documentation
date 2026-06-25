@@ -68,11 +68,41 @@ interface AgentRunConfig {
   expectedOutputMarker: string;
 }
 
+type AgentRunEventType =
+  | 'status'
+  | 'mcp_tools'
+  | 'model_call'
+  | 'tool_call'
+  | 'tool_result'
+  | 'fallback'
+  | 'final'
+  | 'error';
+
+interface AgentRunEvent {
+  type: AgentRunEventType;
+  message: string;
+  turn?: number;
+  toolName?: string;
+  detail?: string;
+  content?: string;
+}
+
+type AgentRunReporter = (event: AgentRunEvent) => void;
+
 interface AgentRunDocumentResult {
   id: string;
   filename: string;
   title: string;
   ok: boolean;
+}
+
+interface AgentRunFailureRequest {
+  agentId?: unknown;
+  userInput?: unknown;
+  errorMessage?: unknown;
+  errorName?: unknown;
+  errorStack?: unknown;
+  phase?: unknown;
 }
 
 function workspaceFilePath(docsPath: string): string {
@@ -311,6 +341,47 @@ function isRecord(input: unknown): input is Record<string, unknown> {
   return typeof input === 'object' && input !== null && !Array.isArray(input);
 }
 
+function summarizeForEvent(value: unknown, maxLength = 240): string {
+  let text = '';
+  if (typeof value === 'string') {
+    text = value;
+  } else {
+    try {
+      text = JSON.stringify(value);
+    } catch {
+      text = String(value);
+    }
+  }
+  text = text ?? String(value);
+  const normalized = text.replace(/\s+/g, ' ').trim();
+  return normalized.length > maxLength ? `${normalized.slice(0, maxLength - 1)}…` : normalized;
+}
+
+function errorReportMarkdown(error: unknown, phase: string, extra: Record<string, string> = {}): string {
+  const name = error instanceof Error ? error.name : typeof error;
+  const message = error instanceof Error ? error.message : String(error);
+  const stack = error instanceof Error && error.stack ? error.stack : '';
+  const lines = [
+    `## Error summary`,
+    ``,
+    `- Phase: ${phase}`,
+    `- Name: ${name}`,
+    `- Message: ${message}`,
+  ];
+
+  for (const [key, value] of Object.entries(extra)) {
+    if (value.trim()) {
+      lines.push(`- ${key}: ${value}`);
+    }
+  }
+
+  if (stack.trim()) {
+    lines.push(``, `## Stack trace`, ``, '```text', stack, '```');
+  }
+
+  return lines.join('\n');
+}
+
 // True when the endpoint's origin (protocol + host) is in the configured "no /v1" list,
 // i.e. the provider serves model listing at `{base}/models` rather than `{base}/v1/models`
 // (e.g. DeepSeek). Invalid URLs simply don't match.
@@ -459,7 +530,7 @@ async function callMcp(endpoint: string, method: string, params: unknown): Promi
   throw new Error('No valid MCP response');
 }
 
-async function runAgent(config: AgentRunConfig): Promise<string> {
+async function runAgent(config: AgentRunConfig, report?: AgentRunReporter): Promise<string> {
   if (!config.endpoint.trim()) throw new Error('endpoint is required');
   if (!config.model.trim()) throw new Error('model is required');
   if (!config.systemPrompt.trim()) throw new Error('systemPrompt is required');
@@ -475,6 +546,7 @@ async function runAgent(config: AgentRunConfig): Promise<string> {
 
   let mcpTools: unknown[] = [];
   if (config.mcpEndpoint) {
+    report?.({ type: 'status', message: 'Loading MCP tools' });
     try {
       const toolsRes = await callMcp(config.mcpEndpoint, 'tools/list', {});
       if (isRecord(toolsRes) && Array.isArray(toolsRes.tools)) {
@@ -490,9 +562,22 @@ async function runAgent(config: AgentRunConfig): Promise<string> {
           };
         }).filter(Boolean);
       }
+      report?.({
+        type: 'mcp_tools',
+        message: `${mcpTools.length} MCP tool${mcpTools.length === 1 ? '' : 's'} available`,
+      });
     } catch {
       mcpTools = [];
+      report?.({
+        type: 'mcp_tools',
+        message: 'MCP tools unavailable; running without tool calls',
+      });
     }
+  } else {
+    report?.({
+      type: 'mcp_tools',
+      message: 'No MCP endpoint configured; running without tool calls',
+    });
   }
 
   const messages: unknown[] = [{ role: 'system', content: config.systemPrompt.trim() }];
@@ -508,6 +593,11 @@ async function runAgent(config: AgentRunConfig): Promise<string> {
 
   try {
     for (let turn = 0; turn < 5; turn += 1) {
+      report?.({
+        type: 'model_call',
+        turn: turn + 1,
+        message: `Calling model ${config.model.trim()}${toolsSupported && mcpTools.length > 0 ? ' with tools' : ''}`,
+      });
       const llmBody: Record<string, unknown> = { model: config.model.trim(), messages };
       if (toolsSupported && mcpTools.length > 0) llmBody.tools = mcpTools;
 
@@ -521,6 +611,11 @@ async function runAgent(config: AgentRunConfig): Promise<string> {
       // Model doesn't support tool use — retry once without tools
       if (!response.ok && response.status === 400 && toolsSupported) {
         toolsSupported = false;
+        report?.({
+          type: 'fallback',
+          turn: turn + 1,
+          message: 'Model rejected tool calling; retrying without tools',
+        });
         // Inject tool descriptions as context in the system message
         const toolDescriptions = mcpTools
           .map((t) => {
@@ -555,6 +650,13 @@ async function runAgent(config: AgentRunConfig): Promise<string> {
           const fnArgs = typeof toolCall.function.arguments === 'string'
             ? JSON.parse(toolCall.function.arguments) as unknown
             : (toolCall.function.arguments ?? {});
+          report?.({
+            type: 'tool_call',
+            turn: turn + 1,
+            toolName: fnName,
+            detail: summarizeForEvent(fnArgs),
+            message: `Calling tool ${fnName}`,
+          });
           let toolResult = '';
           try {
             const mcpResult = await callMcp(config.mcpEndpoint, 'tools/call', { name: fnName, arguments: fnArgs });
@@ -566,8 +668,22 @@ async function runAgent(config: AgentRunConfig): Promise<string> {
             } else {
               toolResult = JSON.stringify(mcpResult);
             }
+            report?.({
+              type: 'tool_result',
+              turn: turn + 1,
+              toolName: fnName,
+              detail: `${toolResult.length.toLocaleString()} character${toolResult.length === 1 ? '' : 's'}`,
+              message: `Tool ${fnName} returned`,
+            });
           } catch (error) {
             toolResult = `Tool error: ${error instanceof Error ? error.message : String(error)}`;
+            report?.({
+              type: 'tool_result',
+              turn: turn + 1,
+              toolName: fnName,
+              detail: summarizeForEvent(toolResult),
+              message: `Tool ${fnName} failed`,
+            });
           }
           messages.push({ role: 'tool', tool_call_id: toolCall.id ?? '', content: toolResult });
         }
@@ -577,8 +693,14 @@ async function runAgent(config: AgentRunConfig): Promise<string> {
       if (typeof msg.content === 'string' && msg.content.trim()) {
         const content = msg.content.trim();
         if (!expectedOutputMarker || content.includes(expectedOutputMarker)) {
+          report?.({ type: 'final', message: 'Final response received', content });
           return content;
         }
+        report?.({
+          type: 'status',
+          turn: turn + 1,
+          message: `Final response missed required marker "${expectedOutputMarker}"`,
+        });
         messages.push({
           role: 'user',
           content:
@@ -651,6 +773,37 @@ function createAgentRunDocument(
     title,
     ok,
   };
+}
+
+function createAgentFailureDocumentFromRequest(
+  docsPath: string,
+  input: AgentRunFailureRequest,
+): AgentRunDocumentResult {
+  if (typeof input.agentId !== 'string' || !input.agentId.trim()) {
+    throw new Error('agentId is required');
+  }
+
+  const state = readWorkspaceState(docsPath);
+  ensureProviderWorkspaceFolders(docsPath, state);
+  writeWorkspaceState(docsPath, state);
+
+  const { agent, provider } = findWorkspaceAgentRunContext(state, input.agentId.trim());
+  const userInput = typeof input.userInput === 'string' ? input.userInput.trim() : '';
+  const error = new Error(
+    typeof input.errorMessage === 'string' && input.errorMessage.trim()
+      ? input.errorMessage.trim()
+      : 'Agent run failed before the server returned a response',
+  );
+  error.name =
+    typeof input.errorName === 'string' && input.errorName.trim()
+      ? input.errorName.trim()
+      : 'ClientFetchError';
+  if (typeof input.errorStack === 'string' && input.errorStack.trim()) {
+    error.stack = input.errorStack;
+  }
+
+  const content = errorReportMarkdown(error, safeOptionalString(input.phase, 'client-fetch', MAX_LABEL_LENGTH));
+  return createAgentRunDocument(docsPath, agent, provider, false, userInput, content);
 }
 
 function findWorkspaceAgentRunContext(state: WorkspaceState, agentId: string): {
@@ -794,13 +947,108 @@ export function workspaceRouter(docsPath: string): Router {
         res.json({ ok: true, content, document });
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Agent run failed';
-        const document = createAgentRunDocument(docsPath, agent, provider, false, userInput, message);
-        res.status(502).json({ ok: false, error: message, document });
+        const content = errorReportMarkdown(error, 'server-agent-run', {
+          Agent: agent.label,
+          Provider: provider.label,
+          Model: agent.config.model || provider.config.model,
+        });
+        const document = createAgentRunDocument(docsPath, agent, provider, false, userInput, content);
+        res.status(502).json({ ok: false, error: message, detail: content, document });
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Agent run failed';
       const status = message === 'agent not found' ? 404 : 400;
-      res.status(status).json({ ok: false, error: message });
+      res.status(status).json({
+        ok: false,
+        error: message,
+        detail: errorReportMarkdown(error, 'server-request-validation'),
+      });
+    }
+  });
+
+  router.post('/run-agent-document-failure', (req, res) => {
+    try {
+      const document = createAgentFailureDocumentFromRequest(
+        docsPath,
+        req.body as AgentRunFailureRequest,
+      );
+      res.status(502).json({
+        ok: false,
+        error:
+          typeof req.body?.errorMessage === 'string' && req.body.errorMessage.trim()
+            ? req.body.errorMessage.trim()
+            : 'Agent run failed before the server returned a response',
+        document,
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Agent run failed';
+      const status = message === 'agent not found' ? 404 : 400;
+      res.status(status).json({
+        ok: false,
+        error: message,
+        detail: errorReportMarkdown(error, 'client-failure-document'),
+      });
+    }
+  });
+
+  router.post('/run-agent-stream', async (req, res) => {
+    const writeEvent = (event: AgentRunEvent): void => {
+      res.write(`${JSON.stringify(event)}\n`);
+    };
+
+    try {
+      const body = req.body as {
+        endpoint?: unknown; token?: unknown; model?: unknown;
+        systemPrompt?: unknown; userInput?: unknown; timeout?: unknown; mcpEndpoint?: unknown; expectedOutputMarker?: unknown;
+      };
+      if (typeof body.endpoint !== 'string' || !body.endpoint.trim()) {
+        res.status(400).json({ ok: false, error: 'endpoint is required' }); return;
+      }
+      if (typeof body.model !== 'string' || !body.model.trim()) {
+        res.status(400).json({ ok: false, error: 'model is required' }); return;
+      }
+      if (typeof body.systemPrompt !== 'string' || !body.systemPrompt.trim()) {
+        res.status(400).json({ ok: false, error: 'systemPrompt is required' }); return;
+      }
+
+      res.status(200);
+      res.setHeader('Content-Type', 'application/x-ndjson; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache, no-transform');
+      res.setHeader('Connection', 'keep-alive');
+      res.flushHeaders?.();
+
+      writeEvent({ type: 'status', message: 'Starting agent run' });
+
+      try {
+        await runAgent(
+          {
+            endpoint: body.endpoint,
+            token: typeof body.token === 'string' ? body.token : '',
+            model: body.model,
+            systemPrompt: body.systemPrompt,
+            userInput: typeof body.userInput === 'string' ? body.userInput : '',
+            timeout: clamp(safeFiniteNumber(body.timeout, 180), 1, 600),
+            mcpEndpoint: typeof body.mcpEndpoint === 'string' ? body.mcpEndpoint : '',
+            expectedOutputMarker:
+              typeof body.expectedOutputMarker === 'string' ? body.expectedOutputMarker : '',
+          },
+          writeEvent,
+        );
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Agent run failed';
+        writeEvent({ type: 'error', message });
+      } finally {
+        res.end();
+      }
+    } catch (error) {
+      if (res.headersSent) {
+        const message = error instanceof Error ? error.message : 'Agent run failed';
+        writeEvent({ type: 'error', message });
+        res.end();
+        return;
+      }
+      const message = error instanceof Error ? error.message : 'Agent run failed';
+      res.status(400).json({ ok: false, error: message });
     }
   });
 

@@ -113,6 +113,23 @@ export interface AgentRunResult {
   error?: string;
 }
 
+export interface AgentRunStreamEvent {
+  type:
+    | "status"
+    | "mcp_tools"
+    | "model_call"
+    | "tool_call"
+    | "tool_result"
+    | "fallback"
+    | "final"
+    | "error";
+  message: string;
+  turn?: number;
+  toolName?: string;
+  detail?: string;
+  content?: string;
+}
+
 export async function runAgentPrompt(
   input: AgentRunInput,
 ): Promise<AgentRunResult> {
@@ -126,6 +143,81 @@ export async function runAgentPrompt(
       body: JSON.stringify(input),
     });
     return (await response.json()) as AgentRunResult;
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error.message : "Agent run failed",
+    };
+  }
+}
+
+export async function runAgentPromptStream(
+  input: AgentRunInput,
+  onEvent: (event: AgentRunStreamEvent) => void,
+): Promise<AgentRunResult> {
+  try {
+    const response = await fetch(`${WORKSPACE_API_URL}/run-agent-stream`, {
+      method: "POST",
+      headers: {
+        Accept: "application/x-ndjson, application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(input),
+    });
+
+    if (!response.ok) {
+      const error = await response
+        .json()
+        .then((body) =>
+          typeof body?.error === "string" ? body.error : "Agent run failed",
+        )
+        .catch(() => "Agent run failed");
+      return { ok: false, error };
+    }
+
+    if (!response.body) {
+      return { ok: false, error: "Agent stream is unavailable" };
+    }
+
+    const decoder = new TextDecoder();
+    const reader = response.body.getReader();
+    let buffer = "";
+    let finalContent = "";
+    let finalError = "";
+
+    const consumeLine = (line: string) => {
+      if (!line.trim()) return;
+      const event = JSON.parse(line) as AgentRunStreamEvent;
+      onEvent(event);
+      if (event.type === "final" && typeof event.content === "string") {
+        finalContent = event.content;
+      }
+      if (event.type === "error") {
+        finalError = event.message || "Agent run failed";
+      }
+    };
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+      for (const line of lines) {
+        consumeLine(line);
+      }
+    }
+
+    buffer += decoder.decode();
+    consumeLine(buffer);
+
+    if (finalError) {
+      return { ok: false, error: finalError };
+    }
+    if (finalContent) {
+      return { ok: true, content: finalContent };
+    }
+    return { ok: false, error: "Agent did not produce a response" };
   } catch (error) {
     return {
       ok: false,

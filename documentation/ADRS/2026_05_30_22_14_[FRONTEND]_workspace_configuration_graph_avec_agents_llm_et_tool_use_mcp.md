@@ -1,8 +1,8 @@
 ---
 **date:** 2026-05-30
 **status:** To be validated
-**description:** Workspace de configuration graphique servi sur /workspace, avec graphe hierarchique pan/zoom, panneau contextuel dark mode par kind, persistence JSON, providers LLM configurables, agents avec system prompt, boucle tool use MCP et selection de modele dynamique.
-**tags:** workspace, html-in-canvas, typescript, configuration-graph, llm-provider, agent, mcp, tool-use, pan-zoom, panel, persistence, ollama, chat-completions, model-select, run-agent, dark-mode, blueprint, topbar
+**description:** Workspace de configuration graphique servi sur /workspace dans l'application Svelte, avec graphe hierarchique pan/zoom, persistence JSON, providers LLM configurables, agents avec system prompt, boucle tool use MCP et selection de modele dynamique.
+**tags:** workspace, svelte5, html-in-canvas, typescript, configuration-graph, llm-provider, agent, mcp, tool-use, pan-zoom, panel, persistence, ollama, chat-completions, model-select, run-agent, workspace-route
 ---
 
 # Workspace de configuration graphe avec agents LLM et tool use MCP
@@ -13,7 +13,7 @@ Le projet Living Documentation doit pouvoir orchestrer des agents LLM qui consul
 
 ## Décision
 
-Implémenter `src/frontend/workspace/` comme workspace de configuration complet, servi par Express sur `/workspace`, compilé en TypeScript vers `app.js` avant la copie des assets.
+Implémenter `/workspace` comme route Svelte (`src/frontend-svelte/src/routes/Workspace.svelte`) qui initialise le moteur de graphe TypeScript situé dans `src/frontend-svelte/src/lib/workspace/`. L'état du graphe est persisté côté backend dans `.workspace` via `src/routes/workspace.ts`.
 
 ## Architecture du graphe
 
@@ -26,24 +26,24 @@ Le modèle est hiérarchique avec quatre types de nœuds :
 
 ## Panel contextuel , dark mode par kind
 
-Le panel est rendu en dark (`#111827`) avec des champs semi-transparents. Les champs affichés varient selon le kind :
+Le panel est rendu dans le canvas quand l'API HTML-in-Canvas est disponible, avec un fallback DOM hors canvas sinon. Les champs affichés varient selon le kind :
 
 | Kind  | Champs visibles                                                                                 |
 | ----- | ----------------------------------------------------------------------------------------------- |
-| llm   | Endpoint, API token, Model (selectbox dynamique), Workspace folder ignoré, Timeout, Description |
-| agent | System prompt, User input, Workspace folder (readonly), réponses scrollables                    |
+| llm   | Endpoint, API token, Model (selectbox dynamique), Timeout, Description                          |
+| agent | Workspace folder readonly, System prompt, User input optionnel, Required output marker, Description |
 | mcp   | Inventaire des tools/prompts uniquement                                                         |
 | root  | Aucun panel (clic ignoré)                                                                       |
 
-**Bouton ×** (jaune) = fermer le panel. **Bouton Delete** (rouge, footer droite) = ouvre la popup de confirmation. **Bouton Test** (footer gauche, LLM uniquement) = test de connexion. **Bouton Clear** (footer gauche, agent uniquement) = vide les réponses.
+Le bouton `+` est contextuel : sans provider LLM sélectionné, il ajoute un provider ; depuis un provider LLM ou un agent enfant, il ajoute un agent sous le provider. Le bouton `Test` teste un provider LLM ou ouvre la popup d'exécution d'un agent selon la sélection.
 
 ## Sélection de modèle dynamique
 
-Le champ Model est une `<select>` peuplée via `POST /api/workspace/list-models` avec animation spinner sur le bouton ↻. Le bouton Test est désactivé si aucun modèle n'est sélectionné.
+Le champ Model est une `<select>` peuplée via `POST /api/workspace/list-models` avec animation spinner sur le bouton de rechargement. Le bouton Test est désactivé pour un LLM si aucun modèle n'est sélectionné.
 
 ## Dossiers workspace pour agents
 
-À chaque save, le backend crée `AI/WORKSPACE/<slug>` pour chaque nœud **agent** (pas LLM). Renommage de l'agent → popup de confirmation avec les chemins source/destination → `fs.renameSync` côté backend si confirmé.
+À chaque sauvegarde, le backend crée `AI/WORKSPACE/<slug>` pour chaque nœud **agent** (pas LLM). Si le libellé d'un agent change et que son dossier existant doit être renommé, l'interface demande confirmation avant que le backend déplace le dossier.
 
 ## Propagation LLM → agents
 
@@ -65,19 +65,18 @@ Quand model ou timeout change sur un nœud LLM, tous ses agents enfants reçoive
 4. Boucle jusqu'à 5 tours max, timeout configurable jusqu'à 600s (défaut 180s).
 5. Si le modèle retourne 400 avec tools (ex: deepseek-r1) → retry sans tools avec descriptions en contexte.
 
-## Topbar principale alignée
-
-La topbar de `/` a été alignée visuellement avec le workspace : hauteur 72px, badge LD, sous-titre dynamique depuis `cfg.title`, boutons ghost-button (bordure, 34px, font 700), ordre : Workspace | Blueprint | Word Cloud | Diagram | AI Context | Files | Admin | dark toggle | Search.
+`POST /api/workspace/run-agent-document` exécute le même agent depuis son identifiant stocké dans `.workspace` et écrit un document Markdown de résultat dans le dossier `AI/WORKSPACE/<slug>` de l'agent.
 
 ## Routes backend
 
-| Route                             | Description                       |
-| --------------------------------- | --------------------------------- |
-| `GET /api/workspace`              | Lecture état workspace            |
-| `PUT /api/workspace`              | Sauvegarde état workspace         |
-| `POST /api/workspace/list-models` | Liste modèles depuis `/v1/models` |
-| `POST /api/workspace/test-llm`    | Test connexion LLM                |
-| `POST /api/workspace/run-agent`   | Boucle agentique LLM + MCP        |
+| Route                                      | Description                                      |
+| ------------------------------------------ | ------------------------------------------------ |
+| `GET /api/workspace`                       | Lecture état workspace depuis `.workspace`       |
+| `PUT /api/workspace`                       | Sauvegarde état workspace et dossiers agents     |
+| `POST /api/workspace/list-models`          | Liste modèles depuis `/v1/models` ou `/models`   |
+| `POST /api/workspace/test-llm`             | Test connexion LLM                               |
+| `POST /api/workspace/run-agent`            | Boucle agentique LLM + MCP depuis configuration  |
+| `POST /api/workspace/run-agent-document`   | Exécution d'un agent persistant + document run   |
 
 ## Conséquences
 
@@ -87,9 +86,10 @@ La topbar de `/` a été alignée visuellement avec le workspace : hauteur 72px,
 - Boucle agentique générique : n'importe quel tool MCP peut être appelé selon le prompt.
 - Fallback DOM assure l'utilisabilité sans flag navigateur expérimental.
 - Persistence locale transparente (auto-save).
+- La route Workspace suit maintenant l'architecture frontend Svelte unifiée du projet.
 
 ### CONS
 
-- `app.js` reste un artefact commité (pas de bundler frontend dédié).
-- Le rendu HTML-in-Canvas reste dépendant d'une API expérimentale.
+- Le rendu HTML-in-Canvas reste dépendant d'une API expérimentale et conserve un fallback DOM.
 - La boucle agentique ne streame pas les réponses intermédiaires.
+- Les runs agentiques persistés créent des documents Markdown dans `AI/WORKSPACE/`, ce qui peut nécessiter un nettoyage documentaire périodique.
