@@ -1401,8 +1401,8 @@ async function executeAgentRunFromDialog() {
   let receivedErrorEvent = false;
   const result = await runAgentPromptStream(
     {
+      providerId: llm.id,
       endpoint: llm.config.endpoint,
-      token: llm.config.token,
       model: llm.config.model,
       systemPrompt: selected.config.systemPrompt,
       userInput: agentRunInput.value.trim() || undefined,

@@ -31,6 +31,7 @@
   let edgePalette = $state<string[]>([]);
   let llmNoV1Hosts = $state<string[]>([]);
   let newLlmHost = $state("");
+  let debugAgents = $state(false);
 
   function addLlmHost() {
     const raw = newLlmHost.trim();
@@ -172,6 +173,7 @@
         ? [...cfg.diagramEdgePalette]
         : ["#ffffff","#a8a29e","#374151","#3b82f6","#14b8a6","#22c55e","#f97316","#ef4444","#a855f7"];
       llmNoV1Hosts = Array.isArray(cfg.llmModelsNoV1Hosts) ? [...cfg.llmModelsNoV1Hosts] : [];
+      debugAgents = !!cfg.debugAgents;
       fileBrowser.loadBrowse(cfg.docsFolder || "/");
     } catch {
       showMsg("Failed to load configuration.", "error");
@@ -200,6 +202,7 @@
       sourceRoot: sourceRoot === "" ? null : sourceRoot,
       blockedFileExtensions: blocked,
       llmModelsNoV1Hosts: [...llmNoV1Hosts],
+      debugAgents,
     };
     try {
       const res = await fetch("/api/config", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
@@ -437,6 +440,13 @@
               <span>{t("admin.appearance.debug_label")}</span>
             </label>
             <p class="field-hint checkbox-hint">{t("admin.appearance.debug_hint")}</p>
+          </div>
+          <div class="field-group">
+            <label class="checkbox-label">
+              <input type="checkbox" bind:checked={debugAgents} />
+              <span>{t("admin.developer.debug_agents_label")}</span>
+            </label>
+            <p class="field-hint checkbox-hint">{t("admin.developer.debug_agents_hint")}</p>
           </div>
         </ConfigSection>
 

@@ -49,6 +49,9 @@ export interface StoredConfig {
   imageBorder: boolean;
   codeBlockLightTheme: boolean;
   diagramDefaults: DiagramDefaults | null;
+  // When true, agent-run Markdown documents include a Debug section (prompts sent/received,
+  // tool loading, tool-call chain). Off by default — debug traces are verbose.
+  debugAgents: boolean;
   // LLM base URLs whose model-listing endpoint is `{base}/models` (not `{base}/v1/models`),
   // e.g. DeepSeek. Matched by origin (protocol + host). Chat completions are unaffected.
   llmModelsNoV1Hosts: string[];
@@ -145,6 +148,7 @@ const STORAGE_DEFAULTS: StoredConfig = {
     },
   },
   llmModelsNoV1Hosts: ['https://api.deepseek.com'],
+  debugAgents: false,
 };
 
 export function getConfigPath(docsPath: string): string {

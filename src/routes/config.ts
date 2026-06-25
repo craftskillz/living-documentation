@@ -40,6 +40,7 @@ export function configRouter(docsPath: string): Router {
         'codeBlockLightTheme',
         'diagramDefaults',
         'llmModelsNoV1Hosts',
+        'debugAgents',
       ];
       const safe: Partial<StoredConfig> = {};
       for (const key of allowed) {
@@ -127,6 +128,10 @@ export function configRouter(docsPath: string): Router {
         } else {
           return res.status(400).json({ error: 'llmModelsNoV1Hosts must be an array of strings' });
         }
+      }
+      // debugAgents: coerce to a strict boolean.
+      if ('debugAgents' in patch) {
+        safe.debugAgents = patch.debugAgents === true;
       }
       // codeBlockMaxHeight: non-negative integer pixels (0 disables); clamped to [0, 5000]
       if ('codeBlockMaxHeight' in patch) {

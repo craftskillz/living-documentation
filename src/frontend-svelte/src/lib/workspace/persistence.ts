@@ -107,10 +107,28 @@ export interface AgentRunInput {
   expectedOutputMarker?: string;
 }
 
+export interface AgentRunStreamInput {
+  providerId: string;
+  endpoint: string;
+  model: string;
+  systemPrompt: string;
+  userInput?: string;
+  timeout: number;
+  mcpEndpoint?: string;
+  expectedOutputMarker?: string;
+}
+
 export interface AgentRunResult {
   ok: boolean;
   content?: string;
   error?: string;
+}
+
+export interface AgentRunDocumentInfo {
+  id: string;
+  filename: string;
+  title: string;
+  ok: boolean;
 }
 
 export interface AgentRunStreamEvent {
@@ -122,12 +140,14 @@ export interface AgentRunStreamEvent {
     | "tool_result"
     | "fallback"
     | "final"
+    | "document"
     | "error";
   message: string;
   turn?: number;
   toolName?: string;
   detail?: string;
   content?: string;
+  document?: AgentRunDocumentInfo;
 }
 
 export async function runAgentPrompt(
@@ -152,7 +172,7 @@ export async function runAgentPrompt(
 }
 
 export async function runAgentPromptStream(
-  input: AgentRunInput,
+  input: AgentRunStreamInput,
   onEvent: (event: AgentRunStreamEvent) => void,
 ): Promise<AgentRunResult> {
   try {
@@ -216,6 +236,84 @@ export async function runAgentPromptStream(
     }
     if (finalContent) {
       return { ok: true, content: finalContent };
+    }
+    return { ok: false, error: "Agent did not produce a response" };
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error.message : "Agent run failed",
+    };
+  }
+}
+
+export async function runAgentDocumentStream(
+  agentId: string,
+  userInput: string,
+  onEvent: (event: AgentRunStreamEvent) => void,
+): Promise<{ ok: boolean; error?: string; document?: AgentRunDocumentInfo }> {
+  try {
+    const response = await fetch(`${WORKSPACE_API_URL}/run-agent-document-stream`, {
+      method: "POST",
+      headers: {
+        Accept: "application/x-ndjson, application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ agentId, userInput }),
+    });
+
+    if (!response.ok) {
+      const error = await response
+        .json()
+        .then((body) =>
+          typeof body?.error === "string" ? body.error : "Agent run failed",
+        )
+        .catch(() => "Agent run failed");
+      return { ok: false, error };
+    }
+
+    if (!response.body) {
+      return { ok: false, error: "Agent stream is unavailable" };
+    }
+
+    const decoder = new TextDecoder();
+    const reader = response.body.getReader();
+    let buffer = "";
+    let finalDocument: AgentRunDocumentInfo | undefined;
+    let finalError = "";
+    let hasError = false;
+
+    const consumeLine = (line: string) => {
+      if (!line.trim()) return;
+      const event = JSON.parse(line) as AgentRunStreamEvent;
+      onEvent(event);
+      if (event.type === "document" && event.document) {
+        finalDocument = event.document;
+      }
+      if (event.type === "error") {
+        finalError = event.message || "Agent run failed";
+        hasError = true;
+      }
+    };
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+      for (const line of lines) {
+        consumeLine(line);
+      }
+    }
+
+    buffer += decoder.decode();
+    consumeLine(buffer);
+
+    if (finalDocument) {
+      return { ok: finalDocument.ok, document: finalDocument, error: hasError ? finalError : undefined };
+    }
+    if (finalError) {
+      return { ok: false, error: finalError };
     }
     return { ok: false, error: "Agent did not produce a response" };
   } catch (error) {

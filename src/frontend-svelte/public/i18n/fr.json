@@ -547,6 +547,8 @@
   "admin.section.diagram.desc": "Personnalisez les couleurs disponibles dans l'éditeur de diagrammes.",
   "admin.section.developer.title": "Développeur",
   "admin.section.developer.desc": "Options avancées pour utilisateurs expérimentés.",
+  "admin.developer.debug_agents_label": "Debug agents",
+  "admin.developer.debug_agents_hint": "Si activé, le Markdown généré par l'exécution d'un agent inclut une section Debug : prompts envoyés et reçus, chargement des tools MCP, et la chaîne complète des tool calls.",
   "admin.section.llm.title": "Endpoints LLM",
   "admin.section.llm.desc": "Configurez la façon dont le workspace dialogue avec les fournisseurs LLM en ligne.",
   "admin.llm.no_v1_label": "Fournisseurs exposant les modèles sur /models (sans /v1)",

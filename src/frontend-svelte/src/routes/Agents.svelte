@@ -6,6 +6,10 @@
     showPersistentLoadingToast,
     showPersistentToast,
   } from "../lib/persistentToast";
+  import {
+    runAgentDocumentStream,
+    type AgentRunStreamEvent,
+  } from "../lib/workspace/persistence";
 
   interface AgentConfig {
     systemPrompt?: string;
@@ -39,6 +43,7 @@
   let runTitle = $state("");
   let runMessage = $state("");
   let createdDocumentId = $state<string | null>(null);
+  let timelineEvents = $state<AgentRunStreamEvent[]>([]);
 
   function agentStatus(agent: Agent): "ready" | "requires_input" | "not_ready" {
     const p = agent.provider;
@@ -104,51 +109,6 @@
     };
   }
 
-  async function responseJsonOrDetail(response: Response): Promise<any> {
-    const text = await response.text();
-    if (!text.trim()) {
-      return {
-        ok: false,
-        error: `HTTP ${response.status} ${response.statusText}`.trim(),
-      };
-    }
-
-    try {
-      return JSON.parse(text);
-    } catch {
-      return {
-        ok: false,
-        error: `HTTP ${response.status} ${response.statusText}`.trim(),
-        detail: text.slice(0, 4000),
-      };
-    }
-  }
-
-  async function createFailureDocument(
-    agentId: string,
-    input: string,
-    error: unknown,
-  ): Promise<any | null> {
-    const details = errorDetails(error);
-    try {
-      const response = await fetch("/api/workspace/run-agent-document-failure", {
-        method: "POST",
-        headers: { Accept: "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify({
-          agentId,
-          userInput: input,
-          errorName: details.name,
-          errorMessage: details.message,
-          errorStack: details.stack,
-          phase: "client-fetch",
-        }),
-      });
-      return await responseJsonOrDetail(response);
-    } catch {
-      return null;
-    }
-  }
-
   async function submitInput() {
     if (!selectedAgent) return;
     const agentId = selectedAgent.id;
@@ -159,6 +119,7 @@
   async function run(agentId: string, input: string) {
     const agent = agents.find(a => a.id === agentId);
     createdDocumentId = null;
+    timelineEvents = [];
     runState = "loading";
     runTitle = t("agents.loading");
     runMessage = agent?.label ?? "";
@@ -167,36 +128,40 @@
     );
 
     try {
-      const res = await fetch("/api/workspace/run-agent-document", {
-        method: "POST",
-        headers: { Accept: "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify({ agentId, userInput: input }),
+      const result = await runAgentDocumentStream(agentId, input, (event) => {
+        if (event.type !== "document") {
+          timelineEvents = [...timelineEvents, event];
+        }
+        if (event.type !== "final" && event.type !== "error" && event.type !== "document") {
+          showPersistentLoadingToast(
+            event.toolName
+              ? `Agent: ${event.message} (${event.toolName})`
+              : `Agent: ${event.message}`,
+            runToastId,
+          );
+        }
       });
-      const result = await responseJsonOrDetail(res);
+
       if (result.document?.id) createdDocumentId = result.document.id;
 
-      if (res.ok && result.ok) {
+      if (result.ok && result.document) {
         runState = "success";
         runTitle = t("agents.success");
-        runMessage = result.document?.filename ?? "";
+        runMessage = result.document.filename;
         showPersistentToast(
-          `${t("agents.success")} ${result.document?.filename ?? ""}`.trim(),
+          `${t("agents.success")} ${result.document.filename}`.trim(),
           "success",
           AGENT_COMPLETION_TOAST_MS,
           {
             id: runToastId,
-            href: result.document?.id
-              ? `/?doc=${encodeURIComponent(result.document.id)}`
-              : undefined,
+            href: `/?doc=${encodeURIComponent(result.document.id)}`,
             linkLabel: t("agents.open_document"),
           },
         );
       } else {
         runState = "error";
         runTitle = t("agents.failure");
-        runMessage = result.detail
-          ? `${result.error ?? t("agents.run_failed")}\n\n${result.detail}`
-          : result.error ?? t("agents.run_failed");
+        runMessage = result.error ?? t("agents.run_failed");
         showPersistentToast(
           result.error ?? t("agents.run_failed"),
           "error",
@@ -211,25 +176,11 @@
         );
       }
     } catch (err: unknown) {
-      const failure = await createFailureDocument(agentId, input, err);
-      if (failure?.document?.id) createdDocumentId = failure.document.id;
-
       runState = "error";
       runTitle = t("agents.failure");
       const details = errorDetails(err);
       runMessage = `${details.name}: ${details.message}`;
-      showPersistentToast(
-        runMessage,
-        "error",
-        AGENT_COMPLETION_TOAST_MS,
-        failure?.document?.id
-          ? {
-              id: runToastId,
-              href: `/?doc=${encodeURIComponent(failure.document.id)}`,
-              linkLabel: t("agents.open_document"),
-            }
-          : runToastId,
-      );
+      showPersistentToast(runMessage, "error", AGENT_COMPLETION_TOAST_MS, runToastId);
     }
   }
 
@@ -270,6 +221,43 @@
             <span class="agent-badge agent-badge--{status}">{t(`agents.${status}`)}</span>
           </button>
         {/each}
+      </div>
+    {/if}
+
+    <!-- Agent run timeline -->
+    {#if runState !== "idle"}
+      <div class="run-timeline" class:run-timeline--success={runState === "success"} class:run-timeline--error={runState === "error"}>
+        <div class="run-timeline-header">
+          <span class="run-timeline-title">{runTitle}</span>
+          {#if createdDocumentId}
+            <a class="run-timeline-link" href="/?doc={encodeURIComponent(createdDocumentId)}">
+              {t("agents.open_document")}
+            </a>
+          {/if}
+        </div>
+        <div class="run-timeline-events">
+          {#each timelineEvents as event}
+            <div class="run-event run-event--{event.type.replace('_', '-')}">
+              <span class="run-event-dot" aria-hidden="true"></span>
+              <div class="run-event-body">
+                <p class="run-event-title">{event.message}</p>
+                {#if event.turn || event.toolName || event.detail}
+                  <p class="run-event-meta">
+                    {[event.turn ? `Turn ${event.turn}` : null, event.toolName, event.detail].filter(Boolean).join(" · ")}
+                  </p>
+                {/if}
+              </div>
+            </div>
+          {/each}
+          {#if runState === "loading"}
+            <div class="run-event run-event--status run-event--pulse">
+              <span class="run-event-dot" aria-hidden="true"></span>
+              <div class="run-event-body">
+                <p class="run-event-title">{runMessage}</p>
+              </div>
+            </div>
+          {/if}
+        </div>
       </div>
     {/if}
 
@@ -382,4 +370,102 @@
   }
 
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Agent run timeline */
+  .run-timeline {
+    margin-top: 32px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--panel);
+    overflow: hidden;
+  }
+
+  .run-timeline--success { border-color: var(--green); }
+  .run-timeline--error { border-color: var(--red); }
+
+  .run-timeline-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel-soft);
+  }
+
+  .run-timeline-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .run-timeline-link {
+    font-size: 12px;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .run-timeline-link:hover { text-decoration: underline; }
+
+  .run-timeline-events {
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+
+  .run-event {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .run-event-dot {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
+    margin-top: 5px;
+  }
+
+  .run-event--model-call .run-event-dot { background: var(--accent); }
+  .run-event--tool-call .run-event-dot,
+  .run-event--tool-result .run-event-dot { background: var(--green); }
+  .run-event--final .run-event-dot { background: var(--green); }
+  .run-event--error .run-event-dot { background: var(--red); }
+  .run-event--fallback .run-event-dot { background: #f59e0b; }
+
+  .run-event--pulse .run-event-dot {
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .run-event-body { flex: 1; min-width: 0; }
+
+  .run-event-title {
+    font-size: 13px;
+    color: var(--ink);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .run-event--error .run-event-title { color: var(--red); }
+
+  .run-event-meta {
+    font-size: 11px;
+    color: var(--muted);
+    margin: 1px 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 </style>
