@@ -1292,5 +1292,67 @@
       "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
       "dirty": true
     }
+  ],
+  "ADRS/2026_06_25_22_58_[WORKSPACE]_workspace_runs_agents_en_streaming_llm_tout_fournisseur_et_secrets_par_variable_d_environnement": [
+    {
+      "path": "src/routes/workspace.ts",
+      "hash": "df208e1bad0c5d0e641a91d6cb45bacdc274f5b471d303d1d7792c139b148df7",
+      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "dirty": false
+    },
+    {
+      "path": "src/lib/config.ts",
+      "hash": "e76e4310ecb7008bda801ffb6b39d49fa1c83015567a25656a221b9cb21e858a",
+      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "dirty": false
+    },
+    {
+      "path": "src/routes/config.ts",
+      "hash": "20f565abb5e14570e0aff9ffcc2a42b1cf1abe7725b61c6469c60b084ab05b45",
+      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "dirty": false
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/persistentToast.ts",
+      "hash": "58cff868b02aa0c4b60d73a568b3f7f5c011c7e5ce737dd67125f6b873df27db",
+      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "dirty": false
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/workspace/persistence.ts",
+      "hash": "de0d4f1348ddbca177afd1d81ce0a0dc727750515520e221424da75f40e06924",
+      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "dirty": false
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/workspace/app.ts",
+      "hash": "61047e59b98c901680c42e411c87014e9813e809d29e8ed111a6506ad6fbb669",
+      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "dirty": false
+    },
+    {
+      "path": "src/frontend-svelte/src/routes/Workspace.svelte",
+      "hash": "a1c0c9ce308c7da22a57d8ec4255dfd2992b9b58b0f6aad67bfb01aca22df32e",
+      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "dirty": false
+    },
+    {
+      "path": "src/frontend-svelte/src/routes/Admin.svelte",
+      "hash": "e12fa295872e65b9c2304b3fed8e153f58905400a87ffcdd4e82feadf68c036c",
+      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "dirty": false
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/Topbar.svelte",
+      "hash": "076046a753bcd6023f32a56f0963fbbdc633a28a788776a0ec911f35016a7649",
+      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "dirty": false
+    },
+    {
+      "path": "src/frontend-svelte/src/App.svelte",
+      "hash": "46f9aa2f924c883283c601bb66915174f5cf35cd0d46aba882260ce992865a2d",
+      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "dirty": false
+    }
   ]
 }
