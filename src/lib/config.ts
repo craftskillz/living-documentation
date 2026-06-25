@@ -49,6 +49,9 @@ export interface StoredConfig {
   imageBorder: boolean;
   codeBlockLightTheme: boolean;
   diagramDefaults: DiagramDefaults | null;
+  // LLM base URLs whose model-listing endpoint is `{base}/models` (not `{base}/v1/models`),
+  // e.g. DeepSeek. Matched by origin (protocol + host). Chat completions are unaffected.
+  llmModelsNoV1Hosts: string[];
 }
 
 // Runtime shape: what consumers receive from readConfig.
@@ -141,6 +144,7 @@ const STORAGE_DEFAULTS: StoredConfig = {
       'text-free':{ width: 123, height: 44,  fontSize: 16, colorKey: 'c-gray'   },
     },
   },
+  llmModelsNoV1Hosts: ['https://api.deepseek.com'],
 };
 
 export function getConfigPath(docsPath: string): string {

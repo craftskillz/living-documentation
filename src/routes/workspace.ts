@@ -170,7 +170,9 @@ function sanitizeConfig(input: unknown): WorkspaceEntityConfig {
   const config = isRecord(input) ? input : {};
   return {
     endpoint: safeOptionalString(config.endpoint, '', MAX_TEXT_FIELD_LENGTH),
-    token: safeOptionalString(config.token, '', MAX_TEXT_FIELD_LENGTH),
+    // Only an environment-variable reference (env:NAME or ${NAME}) may be persisted — never a
+    // literal secret, since .workspace is git-tracked. Any other value is dropped to ''.
+    token: sanitizeTokenRef(safeOptionalString(config.token, '', MAX_TEXT_FIELD_LENGTH)),
     model: safeOptionalString(config.model, '', MAX_LABEL_LENGTH),
     timeout: clamp(safeFiniteNumber(config.timeout, 180), 1, 600),
     systemPrompt: safeOptionalString(config.systemPrompt, '', MAX_TEXT_FIELD_LENGTH),
@@ -309,11 +311,46 @@ function isRecord(input: unknown): input is Record<string, unknown> {
   return typeof input === 'object' && input !== null && !Array.isArray(input);
 }
 
-function llmModelsUrl(endpoint: string): URL {
+// True when the endpoint's origin (protocol + host) is in the configured "no /v1" list,
+// i.e. the provider serves model listing at `{base}/models` rather than `{base}/v1/models`
+// (e.g. DeepSeek). Invalid URLs simply don't match.
+function endpointServesModelsWithoutV1(endpoint: string, noV1Hosts: string[]): boolean {
+  if (!noV1Hosts.length) return false;
+  try {
+    return noV1Hosts.includes(new URL(endpoint).origin);
+  } catch {
+    return false;
+  }
+}
+
+// API tokens are stored ONLY as environment-variable references (env:NAME or ${NAME}) — never as
+// literal secrets, since .workspace is git-tracked. This regex captures the variable name.
+const ENV_REF_PATTERN = /^(?:env:([A-Za-z_][A-Za-z0-9_]*)|\$\{([A-Za-z_][A-Za-z0-9_]*)\})$/;
+
+// Keep a value only if it is a valid env-var reference; otherwise drop it to ''. Used at the
+// persistence boundary so a pasted literal token never lands in the workspace file.
+function sanitizeTokenRef(raw: string): string {
+  const value = raw.trim();
+  return ENV_REF_PATTERN.test(value) ? value : '';
+}
+
+// Resolve an env-var token reference to its secret value from process.env. Returns '' for an
+// unset variable or a non-reference value (literals are not accepted as bearer tokens).
+function resolveSecret(raw: unknown): string {
+  const value = typeof raw === 'string' ? raw.trim() : '';
+  const match = ENV_REF_PATTERN.exec(value);
+  if (!match) return '';
+  const name = match[1] ?? match[2];
+  return (process.env[name] ?? '').trim();
+}
+
+function llmModelsUrl(endpoint: string, noV1 = false): URL {
   const url = new URL(endpoint);
   const cleanPath = url.pathname.replace(/\/+$/, '');
   if (cleanPath.endsWith('/models')) {
     url.pathname = cleanPath;
+  } else if (noV1) {
+    url.pathname = `${cleanPath}/models`;
   } else if (cleanPath.endsWith('/v1')) {
     url.pathname = `${cleanPath}/models`;
   } else {
@@ -322,7 +359,7 @@ function llmModelsUrl(endpoint: string): URL {
   return url;
 }
 
-async function testLlmConnection(input: LlmConnectionTestRequest): Promise<Record<string, unknown>> {
+async function testLlmConnection(input: LlmConnectionTestRequest, noV1 = false): Promise<Record<string, unknown>> {
   if (typeof input.endpoint !== 'string' || !input.endpoint.trim()) {
     throw new Error('endpoint is required');
   }
@@ -332,8 +369,9 @@ async function testLlmConnection(input: LlmConnectionTestRequest): Promise<Recor
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutSeconds * 1000 || DEFAULT_LLM_TEST_TIMEOUT_MS);
   const headers: Record<string, string> = { Accept: 'application/json', 'Content-Type': 'application/json' };
-  if (typeof input.token === 'string' && input.token.trim()) {
-    headers.Authorization = `Bearer ${input.token.trim()}`;
+  const resolvedToken = resolveSecret(input.token);
+  if (resolvedToken) {
+    headers.Authorization = `Bearer ${resolvedToken}`;
   }
 
   if (model) {
@@ -371,7 +409,7 @@ async function testLlmConnection(input: LlmConnectionTestRequest): Promise<Recor
     }
   }
 
-  const url = llmModelsUrl(input.endpoint.trim());
+  const url = llmModelsUrl(input.endpoint.trim(), noV1);
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -430,8 +468,9 @@ async function runAgent(config: AgentRunConfig): Promise<string> {
   const base = config.endpoint.trim();
   const chatUrl = new URL(base.endsWith('/v1') ? `${base}/chat/completions` : `${base}/v1/chat/completions`);
   const llmHeaders: Record<string, string> = { Accept: 'application/json', 'Content-Type': 'application/json' };
-  if (config.token.trim()) {
-    llmHeaders.Authorization = `Bearer ${config.token.trim()}`;
+  const resolvedToken = resolveSecret(config.token);
+  if (resolvedToken) {
+    llmHeaders.Authorization = `Bearer ${resolvedToken}`;
   }
 
   let mcpTools: unknown[] = [];
@@ -689,10 +728,13 @@ export function workspaceRouter(docsPath: string): Router {
         res.status(400).json({ ok: false, error: 'endpoint is required' });
         return;
       }
-      const url = llmModelsUrl(body.endpoint.trim());
+      const noV1Hosts = readConfig(docsPath).llmModelsNoV1Hosts;
+      const noV1 = endpointServesModelsWithoutV1(body.endpoint.trim(), noV1Hosts);
+      const url = llmModelsUrl(body.endpoint.trim(), noV1);
       const headers: Record<string, string> = { Accept: 'application/json' };
-      if (typeof body.token === 'string' && body.token.trim()) {
-        headers.Authorization = `Bearer ${body.token.trim()}`;
+      const resolvedToken = resolveSecret(body.token);
+      if (resolvedToken) {
+        headers.Authorization = `Bearer ${resolvedToken}`;
       }
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), DEFAULT_LLM_TEST_TIMEOUT_MS);
@@ -708,7 +750,11 @@ export function workspaceRouter(docsPath: string): Router {
               .filter((id): id is string => id !== null);
           }
         } catch { /* ignore */ }
-        res.json({ ok: response.ok, models });
+        // Surface a real reason on failure so the UI doesn't just say "No models found".
+        const error = response.ok
+          ? undefined
+          : `${url.toString()} → ${response.status} ${response.statusText}`.trim();
+        res.json({ ok: response.ok, models, error });
       } finally {
         clearTimeout(timeout);
       }
@@ -794,7 +840,11 @@ export function workspaceRouter(docsPath: string): Router {
 
   router.post('/test-llm', async (req, res) => {
     try {
-      const result = await testLlmConnection(req.body as LlmConnectionTestRequest);
+      const testBody = req.body as LlmConnectionTestRequest;
+      const noV1 =
+        typeof testBody.endpoint === 'string' &&
+        endpointServesModelsWithoutV1(testBody.endpoint.trim(), readConfig(docsPath).llmModelsNoV1Hosts);
+      const result = await testLlmConnection(testBody, noV1);
       res.status(result.ok ? 200 : 502).json(result);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to test LLM connection';

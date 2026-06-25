@@ -524,6 +524,19 @@
     scheduleRender();
   }
 
+  // Add the current selection to an existing cluster (incremental membership).
+  function addSelectionToCluster(id: string): void {
+    const sel = [...selectedIndices].map((i) => boxes[i]?.folder.path).filter(Boolean) as string[];
+    if (sel.length === 0) return;
+    clusters = clusters.map((c) =>
+      c.id === id ? { ...c, members: [...new Set([...c.members, ...sel])] } : c,
+    );
+    scheduleSaveClusters();
+    selectedIndices.clear();
+    syncSelection();
+    scheduleRender();
+  }
+
   function renameCluster(id: string, label: string): void {
     clusters = clusters.map((c) => (c.id === id ? { ...c, label } : c));
     scheduleSaveClusters();
@@ -834,12 +847,14 @@
     title={t("blueprint.canvas.drag_mode")}
     onclick={onDragToggle}
   >⠿</button>
-  <button
-    class="tool-button"
-    type="button"
-    title={t("blueprint.canvas.create_cluster")}
-    onclick={groupSelection}
-  >{"⬚︎"}</button>
+  {#if dragModeActive}
+    <button
+      class="tool-button"
+      type="button"
+      title={t("blueprint.canvas.create_cluster")}
+      onclick={groupSelection}
+    >{"⬚︎"}</button>
+  {/if}
   <button
     class="tool-button"
     class:active={activeExplorerPath === currentCanvasPath}
@@ -876,6 +891,9 @@
         <button class="cluster-tag-label" type="button" title={t("blueprint.cluster.rename")} onclick={() => (editingClusterId = ov.id)}>
           {ov.label || t("blueprint.cluster.default_label")}
         </button>
+      {/if}
+      {#if dragModeActive && selCount > 0}
+        <button class="cluster-tag-add" type="button" title={t("blueprint.cluster.add_selection")} onclick={() => addSelectionToCluster(ov.id)}>+</button>
       {/if}
       {#if dragModeActive}
         <button class="cluster-tag-del" type="button" title={t("blueprint.cluster.delete")} onclick={() => deleteCluster(ov.id)}>×</button>

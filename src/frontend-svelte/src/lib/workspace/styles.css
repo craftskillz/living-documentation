@@ -271,6 +271,23 @@ h1 {
   font-weight: 720;
 }
 
+.field-note {
+  display: block;
+  margin-top: 5px;
+  color: var(--panel-muted, #475467);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.field-note code {
+  font-family: monospace;
+  font-size: 10.5px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: var(--panel-soft, rgba(0, 0, 0, 0.06));
+}
+
 .title-input {
   width: 100%;
   min-width: 0;

@@ -1452,6 +1452,17 @@ function showAgentRunResult(
   agentRunResult.textContent = message;
 }
 
+// API tokens may only be environment-variable references (env:NAME or ${NAME}) — never literal
+// secrets, since the workspace file is git-tracked. Returns true when a non-empty value is not
+// a valid reference.
+const ENV_REF_PATTERN = /^(?:env:[A-Za-z_][A-Za-z0-9_]*|\$\{[A-Za-z_][A-Za-z0-9_]*\})$/;
+function tokenRefInvalid(token: string): boolean {
+  const value = token.trim();
+  return value !== "" && !ENV_REF_PATTERN.test(value);
+}
+const TOKEN_REF_HINT =
+  "API token must reference an environment variable, e.g. env:OPENROUTER_API_KEY";
+
 async function loadModelsForSelect() {
   const selected = selectedEntity();
   if (!selected || selected.kind !== "llm") return;
@@ -1460,6 +1471,10 @@ async function loadModelsForSelect() {
   const endpoint = selected.config.endpoint;
   if (!endpoint) {
     showSaveToast("Set an endpoint first.");
+    return;
+  }
+  if (tokenRefInvalid(selected.config.token)) {
+    showSaveToast(TOKEN_REF_HINT);
     return;
   }
 
@@ -1507,6 +1522,10 @@ async function testSelectedLlmConnection() {
   }
 
   syncSelectedFromForm();
+  if (tokenRefInvalid(selected.config.token)) {
+    showSaveToast(TOKEN_REF_HINT);
+    return;
+  }
   testNodeButton.disabled = true;
   showLoadingToast(`Testing ${selected.config.model}…`);
   scheduleRender();

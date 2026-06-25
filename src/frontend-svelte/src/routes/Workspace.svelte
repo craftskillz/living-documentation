@@ -61,7 +61,8 @@
             </label>
             <label class="field wide">
               <span>API token</span>
-              <input id="nodeToken" name="nodeToken" type="password" placeholder="Optional bearer token" />
+              <input id="nodeToken" name="nodeToken" type="text" autocomplete="off" spellcheck="false" placeholder="env:OPENROUTER_API_KEY" />
+              <small class="field-note">Reference an environment variable only — <code>env:VAR_NAME</code> (or <code>&#123;VAR_NAME&#125;</code>). The secret is read from the server environment at request time; literal tokens are not stored (the workspace file is tracked by git).</small>
             </label>
             <div class="field wide model-field-row">
               <span>Model</span>

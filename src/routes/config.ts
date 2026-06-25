@@ -39,6 +39,7 @@ export function configRouter(docsPath: string): Router {
         'imageBorder',
         'codeBlockLightTheme',
         'diagramDefaults',
+        'llmModelsNoV1Hosts',
       ];
       const safe: Partial<StoredConfig> = {};
       for (const key of allowed) {
@@ -101,6 +102,30 @@ export function configRouter(docsPath: string): Router {
             .filter((e) => /^[a-z0-9]+$/.test(e));
         } else {
           return res.status(400).json({ error: 'blockedFileExtensions must be an array of strings' });
+        }
+      }
+      // llmModelsNoV1Hosts: array of LLM base URLs that serve `{base}/models` (not /v1/models).
+      // Normalize to origin (protocol + host), drop invalid/non-http(s) URLs, dedupe.
+      if ('llmModelsNoV1Hosts' in patch) {
+        const v = patch.llmModelsNoV1Hosts;
+        if (Array.isArray(v)) {
+          const seen = new Set<string>();
+          const origins: string[] = [];
+          for (const entry of v as unknown[]) {
+            if (typeof entry !== 'string' || !entry.trim()) continue;
+            try {
+              const url = new URL(entry.trim());
+              if (url.protocol !== 'http:' && url.protocol !== 'https:') continue;
+              if (seen.has(url.origin)) continue;
+              seen.add(url.origin);
+              origins.push(url.origin);
+            } catch {
+              // Not a valid absolute URL — skip silently.
+            }
+          }
+          safe.llmModelsNoV1Hosts = origins;
+        } else {
+          return res.status(400).json({ error: 'llmModelsNoV1Hosts must be an array of strings' });
         }
       }
       // codeBlockMaxHeight: non-negative integer pixels (0 disables); clamped to [0, 5000]

@@ -29,6 +29,28 @@
   let extraFiles = $state<string[]>([]);
   let nodePalette = $state<string[]>([]);
   let edgePalette = $state<string[]>([]);
+  let llmNoV1Hosts = $state<string[]>([]);
+  let newLlmHost = $state("");
+
+  function addLlmHost() {
+    const raw = newLlmHost.trim();
+    if (!raw) return;
+    let origin: string;
+    try {
+      const url = new URL(raw);
+      if (url.protocol !== "http:" && url.protocol !== "https:") throw new Error("protocol");
+      origin = url.origin;
+    } catch {
+      showMsg("Enter a valid http(s) URL, e.g. https://api.deepseek.com", "error");
+      return;
+    }
+    if (!llmNoV1Hosts.includes(origin)) llmNoV1Hosts = [...llmNoV1Hosts, origin];
+    newLlmHost = "";
+  }
+
+  function removeLlmHost(host: string) {
+    llmNoV1Hosts = llmNoV1Hosts.filter((h) => h !== host);
+  }
 
   let saveMsg = $state<{ text: string; type: "ok" | "error" } | null>(null);
   let saveMsgTimer: number | null = null;
@@ -149,6 +171,7 @@
       edgePalette = Array.isArray(cfg.diagramEdgePalette) && cfg.diagramEdgePalette.length
         ? [...cfg.diagramEdgePalette]
         : ["#ffffff","#a8a29e","#374151","#3b82f6","#14b8a6","#22c55e","#f97316","#ef4444","#a855f7"];
+      llmNoV1Hosts = Array.isArray(cfg.llmModelsNoV1Hosts) ? [...cfg.llmModelsNoV1Hosts] : [];
       fileBrowser.loadBrowse(cfg.docsFolder || "/");
     } catch {
       showMsg("Failed to load configuration.", "error");
@@ -176,6 +199,7 @@
       diagramEdgePalette: [...edgePalette],
       sourceRoot: sourceRoot === "" ? null : sourceRoot,
       blockedFileExtensions: blocked,
+      llmModelsNoV1Hosts: [...llmNoV1Hosts],
     };
     try {
       const res = await fetch("/api/config", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
@@ -374,6 +398,35 @@
         <!-- Diagram palettes -->
         <ConfigSection icon="🎨" title={t("admin.section.diagram.title")} description={t("admin.section.diagram.desc")}>
           <DiagramPalettes bind:nodePalette bind:edgePalette />
+        </ConfigSection>
+
+        <!-- LLM endpoints -->
+        <ConfigSection icon="🤖" title={t("admin.section.llm.title")} description={t("admin.section.llm.desc")}>
+          <div class="field-group">
+            <label class="field-label" for="field-llm-host">{t("admin.llm.no_v1_label")}</label>
+            <div class="llm-host-add">
+              <input
+                id="field-llm-host"
+                type="text"
+                class="field-input field-input--mono"
+                bind:value={newLlmHost}
+                placeholder="https://api.deepseek.com"
+                onkeydown={(e) => { if (e.key === "Enter") { e.preventDefault(); addLlmHost(); } }}
+              />
+              <button type="button" class="llm-host-btn" onclick={addLlmHost}>{t("admin.llm.add")}</button>
+            </div>
+            <p class="field-hint">{t("admin.llm.no_v1_hint")}</p>
+            {#if llmNoV1Hosts.length}
+              <ul class="llm-host-list">
+                {#each llmNoV1Hosts as host (host)}
+                  <li class="llm-host-chip">
+                    <span class="llm-host-chip__url">{host}</span>
+                    <button type="button" class="llm-host-chip__remove" aria-label={t("admin.llm.remove")} onclick={() => removeLlmHost(host)}>×</button>
+                  </li>
+                {/each}
+              </ul>
+            {/if}
+          </div>
         </ConfigSection>
 
         <!-- Developer -->

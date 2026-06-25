@@ -996,6 +996,55 @@ h1 {
 
 .field-input--mono { font-family: monospace; font-size: 12px; }
 
+.llm-host-add { display: flex; gap: 8px; align-items: stretch; }
+.llm-host-add .field-input { flex: 1; }
+.llm-host-btn {
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  font-size: 13px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.llm-host-btn:hover { opacity: 0.88; }
+.llm-host-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.llm-host-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px 4px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--panel-soft);
+}
+.llm-host-chip__url { font-family: monospace; font-size: 12px; color: var(--ink); }
+.llm-host-chip__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.llm-host-chip__remove:hover { background: var(--accent-soft); color: var(--accent); }
+
 .checkbox-label {
   display: flex;
   align-items: center;

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-02T23:03:48.313Z",
+  "updatedAt": "2026-06-25T18:11:54.622Z",
   "entities": [
     {
       "id": "root",
@@ -49,9 +49,9 @@
       "label": "DEVSTRAL SMALL 2",
       "kind": "llm",
       "parentId": "root",
-      "x": 256,
-      "y": 0,
-      "angle": 0,
+      "x": 289.12118095372665,
+      "y": -93.94116628998401,
+      "angle": -0.3141592653589793,
       "config": {
         "endpoint": "http://localhost:11434",
         "token": "",
@@ -70,9 +70,9 @@
       "label": "Agent de listage des ADRS driftés",
       "kind": "agent",
       "parentId": "provider-mpsmymtb",
-      "x": 352.2563025786491,
-      "y": -188.91363066193927,
-      "angle": -1.0995574287564276,
+      "x": 322.2888424120175,
+      "y": -303.3535390604969,
+      "angle": -1.413716694115407,
       "config": {
         "endpoint": "",
         "token": "",
@@ -91,9 +91,9 @@
       "label": "Générer Diagramme Mermaid",
       "kind": "agent",
       "parentId": "provider-mpsmymtb",
-      "x": 352.2563025786491,
-      "y": 188.91363066193927,
-      "angle": 1.0995574287564276,
+      "x": 439.0438870992403,
+      "y": 55.981539855529604,
+      "angle": 0.7853981633974483,
       "config": {
         "endpoint": "",
         "token": "",
@@ -112,9 +112,9 @@
       "label": "Gemma 4",
       "kind": "llm",
       "parentId": "root",
-      "x": 1.567547902908612e-14,
-      "y": 256,
-      "angle": 1.5707963267948966,
+      "x": 178.68671669691184,
+      "y": 245.94116628998404,
+      "angle": 0.9424777960769379,
       "config": {
         "endpoint": "http://localhost:11434",
         "token": "",
@@ -133,9 +133,9 @@
       "label": "Traducteur Anglais Français",
       "kind": "agent",
       "parentId": "provider-mpsyqgb7",
-      "x": 2.865812656447829e-14,
-      "y": 468.02272433866153,
-      "angle": 1.5707963267948966,
+      "x": 303.3105472140495,
+      "y": 417.47115347363604,
+      "angle": 0.9424777960769379,
       "config": {
         "endpoint": "",
         "token": "",
@@ -154,9 +154,9 @@
       "label": "Qwen 3.6",
       "kind": "llm",
       "parentId": "root",
-      "x": -256,
-      "y": 3.135095805817224e-14,
-      "angle": 3.141592653589793,
+      "x": -150.4730245868731,
+      "y": 207.10835055998655,
+      "angle": 2.199114857512855,
       "config": {
         "endpoint": "http://localhost:11434",
         "token": "",
@@ -175,9 +175,9 @@
       "label": "Agent 1",
       "kind": "agent",
       "parentId": "provider-mpwryxsk",
-      "x": -468.02272433866153,
-      "y": 5.731625312895658e-14,
-      "angle": 3.141592653589793,
+      "x": -275.09685510401073,
+      "y": 378.63833774363854,
+      "angle": 2.199114857512855,
       "config": {
         "endpoint": "",
         "token": "",
@@ -190,11 +190,53 @@
         "description": "Runs focused automation against documentation, source, or quality signals.",
         "workspaceFolder": "AI/WORKSPACE/agent_1"
       }
+    },
+    {
+      "id": "provider-mqtqt25p",
+      "label": "OpenRouter Test",
+      "kind": "llm",
+      "parentId": "root",
+      "x": -243.47046817155933,
+      "y": -79.1083505599865,
+      "angle": 3.4557519189487724,
+      "config": {
+        "endpoint": "https://openrouter.ai/api/v1",
+        "token": "env:OPENROUTER_API_KEY",
+        "model": "deepseek/deepseek-v4-pro",
+        "timeout": 180,
+        "systemPrompt": "",
+        "requiresUserInput": false,
+        "userInputDescription": "",
+        "expectedOutputMarker": "",
+        "description": "Test DeepSeek",
+        "workspaceFolder": ""
+      }
+    },
+    {
+      "id": "agent-mqtqxfnt",
+      "label": "Agent 1",
+      "kind": "agent",
+      "parentId": "provider-mqtqt25p",
+      "x": -445.11606175649445,
+      "y": -144.62697557430772,
+      "angle": -2.827433388230814,
+      "config": {
+        "endpoint": "",
+        "token": "",
+        "model": "deepseek/deepseek-v4-pro",
+        "timeout": 180,
+        "systemPrompt": "calculate the expression",
+        "requiresUserInput": true,
+        "userInputDescription": "Type a calculation, for instance\n2 + 3",
+        "expectedOutputMarker": "",
+        "description": "Runs focused automation against documentation, source, or quality signals.",
+        "workspaceFolder": "AI/WORKSPACE/agent_1_2"
+      }
     }
   ],
   "camera": {
-    "x": 594.9097060789986,
-    "y": 270.77888660503675,
-    "zoom": 0.6855439484405442
+    "x": 467.5613907881477,
+    "y": 379.9525171666321,
+    "zoom": 0.8023462448006398
   }
 }
