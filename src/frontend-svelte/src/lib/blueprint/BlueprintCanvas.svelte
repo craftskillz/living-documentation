@@ -838,9 +838,8 @@
     class="tool-button"
     type="button"
     title={t("blueprint.canvas.create_cluster")}
-    disabled={selCount === 0}
     onclick={groupSelection}
-  >⬚</button>
+  >{"⬚︎"}</button>
   <button
     class="tool-button"
     class:active={activeExplorerPath === currentCanvasPath}
