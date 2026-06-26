@@ -225,6 +225,9 @@ export async function runAgentPromptStream(
       buffer = lines.pop() ?? "";
       for (const line of lines) {
         consumeLine(line);
+        // Yield to the browser between events so each toast update gets painted,
+        // even when multiple lines arrive in the same TCP chunk.
+        await new Promise((r) => setTimeout(r, 0));
       }
     }
 
@@ -303,6 +306,7 @@ export async function runAgentDocumentStream(
       buffer = lines.pop() ?? "";
       for (const line of lines) {
         consumeLine(line);
+        await new Promise((r) => setTimeout(r, 0));
       }
     }
 

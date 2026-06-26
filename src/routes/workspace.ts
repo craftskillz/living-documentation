@@ -798,6 +798,47 @@ function renderAgentDebug(debug: AgentDebugLog | undefined): string {
   return debug.sections.join('\n\n');
 }
 
+// Filename used to persist an agent's cross-run memory inside its workspace
+// folder. A plain (non-dotted) name so it is visible/inspectable in the UI.
+const AGENT_CONTEXT_FILENAME = 'context.md';
+
+// Build the effective system prompt for an agent run: the author's prompt plus
+// a "Run memory" section that (a) injects the context saved at the end of the
+// previous run, and (b) tells the agent which folder to pass to `save_context`.
+// This makes the load side automatic — the model never has to call a tool to
+// recall its prior state — while the save side stays an explicit decision.
+function agentSystemPromptWithMemory(docsPath: string, agent: WorkspaceEntity): string {
+  const base = agent.config.systemPrompt.trim();
+  const folder = sanitizeWorkspaceFolder(agent.config.workspaceFolder);
+  if (!folder) return base;
+
+  let previous = '';
+  try {
+    const ctxPath = path.resolve(docsPath, folder, AGENT_CONTEXT_FILENAME);
+    const docsRoot = path.resolve(docsPath);
+    if (
+      (ctxPath === docsRoot || ctxPath.startsWith(`${docsRoot}${path.sep}`)) &&
+      fs.existsSync(ctxPath)
+    ) {
+      previous = fs.readFileSync(ctxPath, 'utf-8').trim();
+    }
+  } catch {
+    previous = '';
+  }
+
+  const memory = [
+    '---',
+    '## Run memory',
+    `Your workspace folder is \`${folder}\`.`,
+    previous
+      ? `Context you saved at the end of your previous run:\n\n${previous}`
+      : 'No context was saved by a previous run yet.',
+    `When you finish, call \`save_context\` with folder="${folder}" and a SHORT \`content\` holding only what the next run needs to resume (e.g. a cursor or a few ids). Keep it minimal — it is re-injected here next time.`,
+  ].join('\n\n');
+
+  return `${base}\n\n${memory}`;
+}
+
 function createAgentRunDocument(
   docsPath: string,
   agent: WorkspaceEntity,
@@ -1003,7 +1044,7 @@ export function workspaceRouter(docsPath: string): Router {
             endpoint: provider.config.endpoint,
             token: provider.config.token,
             model: agent.config.model || provider.config.model,
-            systemPrompt: agent.config.systemPrompt,
+            systemPrompt: agentSystemPromptWithMemory(docsPath, agent),
             userInput,
             timeout: agent.config.timeout || provider.config.timeout,
             mcpEndpoint: mcp?.config.endpoint ?? '',
@@ -1072,7 +1113,7 @@ export function workspaceRouter(docsPath: string): Router {
             endpoint: provider.config.endpoint,
             token: provider.config.token,
             model: agent.config.model || provider.config.model,
-            systemPrompt: agent.config.systemPrompt,
+            systemPrompt: agentSystemPromptWithMemory(docsPath, agent),
             userInput,
             timeout: agent.config.timeout || provider.config.timeout,
             mcpEndpoint: mcp?.config.endpoint ?? '',

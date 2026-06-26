@@ -816,7 +816,7 @@ h1 {
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  width: 100%;
+  width: min(360px, calc(100vw - 48px));
   padding: 14px 16px;
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -863,6 +863,14 @@ h1 {
   font-size: 12px;
   line-height: 1.4;
   word-break: break-word;
+  /* Reserve a stable two-line area so streamed status updates of varying
+     length don't resize the toast; longer text is clamped with an ellipsis. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  min-height: calc(2 * 1.4em);
 }
 
 .workspace-toast-link {

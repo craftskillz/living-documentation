@@ -1,27 +1,26 @@
 ---
-`🗄️ ADR : 2026_03_22_11_10_[STYLE]_always_dark_syntax_highlighting.md`
 **date:** 2026-03-22
 **status:** Accepted
-**description:** Always use the github-dark highlight.js theme regardless of light/dark mode, removing the light stylesheet entirely.
-**tags:** style, syntax-highlighting, dark-mode, highlight.js, frontend, github-dark, prose
+**description:** Utiliser systématiquement le thème github-dark de highlight.js quel que soit le mode clair ou sombre, en supprimant entièrement la feuille de style claire.
+**tags:** style, coloration-syntaxique, mode-sombre, highlight.js, frontend, github-dark, prose
 ---
 
-## Context
+## Contexte
 
-The viewer previously loaded two highlight.js stylesheets , `github.min.css` (light) and `github-dark.min.css` (dark) , and toggled between them using the `disabled` attribute when the user switched themes. The light theme rendered code blocks with a white background that blended into the page background, making them hard to distinguish from regular prose.
+Le visualiseur chargeait auparavant deux feuilles de style highlight.js, `github.min.css` (clair) et `github-dark.min.css` (sombre), et basculait entre elles via l'attribut `disabled` lorsque l'utilisateur changeait de thème. Le thème clair affichait les blocs de code avec un fond blanc qui se confondait avec l'arrière-plan de la page, les rendant difficiles à distinguer de la prose.
 
-## Decision
+## Décision
 
-Remove the light stylesheet entirely. Always load `github-dark.min.css` regardless of the current theme (light or dark mode). The `pre` background is hardcoded to `#0d1117` (the github-dark background) via the Tailwind `prose-pre:bg-[#0d1117]` utility.
+Supprimer entièrement la feuille de style claire. Toujours charger `github-dark.min.css` quel que soit le thème actif (mode clair ou sombre). L'arrière-plan des `pre` est codé en dur à `#0d1117` (le fond de github-dark) via l'utilitaire Tailwind `prose-pre:bg-[#0d1117]`.
 
-## Consequences
+## Conséquences
 
-### PROS
+### AVANTAGES
 
-- Code blocks have a consistently dark, high-contrast appearance in both light and dark mode.
-- The dark block visually separates code from prose in both modes, improving scanability.
-- The JS dark-mode toggle no longer needs to manipulate any stylesheet `disabled` flags, simplifying `applyDarkMode` and `setupDarkToggle`.
+- Les blocs de code ont une apparence sombre et à fort contraste, constante en mode clair comme en mode sombre.
+- Le bloc sombre sépare visuellement le code de la prose dans les deux modes, améliorant la lisibilité.
+- Le basculement de mode sombre en JS n'a plus besoin de manipuler les flags `disabled` des feuilles de style, ce qui simplifie `applyDarkMode` et `setupDarkToggle`.
 
-### CONS
+### INCONVÉNIENTS
 
-- This is an intentional UX trade-off: code readability is prioritised over strict theme consistency (light mode has dark code blocks).
+- Il s'agit d'un compromis UX assumé : la lisibilité du code est priorisée par rapport à une cohérence stricte du thème (le mode clair comporte des blocs de code sombres).

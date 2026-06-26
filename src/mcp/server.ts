@@ -12,6 +12,7 @@ import {
   toolReadDocument,
   toolCreateDocument,
   toolUpdateDocument,
+  toolSaveContext,
 } from "./tools/documents";
 import {
   toolListDiagrams,
@@ -466,12 +467,29 @@ const TOOLS = [
   },
   {
     name: "list_documents",
-    description: `List all documents with their id, title, category, folder, and \`linkHref\` (the ready-to-paste \`?doc=...\` segment for a Markdown cross-doc link — copy it verbatim, do not re-encode). Documents are the source of truth — read them before creating or updating any diagram. ${GUIDE_HINT}`,
-    inputSchema: { type: "object", properties: {} },
+    description: `List documents with pagination. Returns \`{ total, page, pageSize, totalPages, hasNextPage, nextPage, folder, documents }\` where each document has id, title, category, folder, and \`linkHref\` (the ready-to-paste \`?doc=...\` segment — copy verbatim, do not re-encode). Default page size is 50, max 200. Pass \`folder\` to list only documents under a given folder (case-insensitive, matches the folder and anything beneath it). Call repeatedly with \`nextPage\` until \`hasNextPage\` is false. Documents are the source of truth — read them before creating or updating any diagram. ${GUIDE_HINT}`,
+    inputSchema: {
+      type: "object",
+      properties: {
+        page: {
+          type: "number",
+          description: "Page number, 1-based (default: 1)",
+        },
+        pageSize: {
+          type: "number",
+          description: "Number of documents per page, max 200 (default: 50)",
+        },
+        folder: {
+          type: "string",
+          description:
+            "Optional folder scope, e.g. \"ADRS\" or \"AI/WORKSPACE\". Only documents whose folder equals this value or sits beneath it are returned. Case-insensitive; path separators are normalised.",
+        },
+      },
+    },
   },
   {
     name: "read_document",
-    description: `Read the raw Markdown content of a document by its id. Use this to gather facts (actors, systems, flows) before creating a diagram. Ignore documents whose frontmatter contains \`status: SuperSeeded\`. ${GUIDE_HINT}`,
+    description: `Read the raw Markdown content of a document by its id. Use this to gather facts (actors, systems, flows) before creating a diagram. Ignore documents whose frontmatter contains \`status: SuperSeeded\`. Pass \`maxLines\` and/or \`maxChars\` to fetch only the head of the document (an excerpt) — useful when you only need the opening lines (e.g. language detection) and want to keep your context small. ${GUIDE_HINT}`,
     inputSchema: {
       type: "object",
       properties: {
@@ -479,8 +497,38 @@ const TOOLS = [
           type: "string",
           description: "Document id as returned by list_documents",
         },
+        maxLines: {
+          type: "number",
+          description:
+            "Optional. Return only the first N lines of the document. Omit to read the whole file.",
+        },
+        maxChars: {
+          type: "number",
+          description:
+            "Optional. Cap the returned excerpt to N characters (applied after maxLines). Omit for no character cap.",
+        },
       },
       required: ["id"],
+    },
+  },
+  {
+    name: "save_context",
+    description: `Persist a SHORT memory for the current agent so its next run can resume. Writes \`context.md\` inside the agent's workspace folder; this same content is automatically re-injected into the agent's prompt at the start of the next run. Pass the exact \`folder\` value given to you in the "Run memory" section of your system prompt. Keep \`content\` minimal (a cursor, a few ids) — it is capped at 8 KB. ${GUIDE_HINT}`,
+    inputSchema: {
+      type: "object",
+      properties: {
+        folder: {
+          type: "string",
+          description:
+            "The agent workspace folder to write into (e.g. \"AI/WORKSPACE/your_agent\"). Use the value provided in the Run memory section of your system prompt. Must be under AI/WORKSPACE.",
+        },
+        content: {
+          type: "string",
+          description:
+            "Short Markdown/text memory to persist for the next run. Store only what is needed to resume.",
+        },
+      },
+      required: ["folder", "content"],
     },
   },
   {
@@ -2133,9 +2181,11 @@ function createMcpServer(docsPath: string): Server {
         case "get_server_guide":
           return { content: [{ type: "text" as const, text: SERVER_GUIDE }] };
         case "list_documents":
-          return toolListDocuments(docsPath);
+          return toolListDocuments(docsPath, args as { page?: number; pageSize?: number; folder?: string });
         case "read_document":
-          return toolReadDocument(docsPath, args as { id: string });
+          return toolReadDocument(docsPath, args as { id: string; maxLines?: number; maxChars?: number });
+        case "save_context":
+          return toolSaveContext(docsPath, args as { folder: string; content: string });
         case "create_document":
           return toolCreateDocument(
             docsPath,

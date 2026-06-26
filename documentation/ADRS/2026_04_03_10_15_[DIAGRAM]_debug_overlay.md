@@ -2,48 +2,48 @@
 `🗄️ ADR : 2026_04_03_10_15_[DIAGRAM]_debug_overlay.md`
 **date:** 2026-04-03
 **status:** Accepted
-**description:** DOM-based debug overlay for diagram nodes showing centre coordinates and shape dimensions, gated by a showDiagramDebug config flag toggled from the Admin panel.
-**tags:** diagram, debug, overlay, config, admin, vis-network, canvasToDOM, showDiagramDebug
+**description:** Overlay de débogage DOM pour les nœuds de diagramme affichant les coordonnées du centre et les dimensions de la forme, contrôlé par un indicateur de configuration showDiagramDebug activé depuis le panneau Admin.
+**tags:** diagramme, débogage, overlay, config, admin, vis-network, canvasToDOM, showDiagramDebug
 ---
 
-## Context
+## Contexte
 
-Diagnosing snap-to-grid and rendering issues in the diagram editor requires knowing, for each node, its exact canvas centre coordinates and the dimensions that the snap logic actually uses. Without this information it is impossible to determine whether a visual misalignment comes from the snap calculation, the grid drawing, or something else.
+Le diagnostic des problèmes d'accrochage à la grille (snap-to-grid) et de rendu dans l'éditeur de diagrammes nécessite de connaître, pour chaque nœud, ses coordonnées exactes du centre sur le canevas ainsi que les dimensions que la logique d'accrochage utilise réellement. Sans ces informations, il est impossible de déterminer si un désalignement visuel provient du calcul d'accrochage, du dessin de la grille ou d'autre chose.
 
-A canvas-based overlay (`ctx.fillText`) was considered first but ruled out: canvas text is rendered as pixels and cannot be selected or copied by the user, making it impractical for sharing values during a debugging session.
+Une superposition basée sur le canevas (`ctx.fillText`) a d'abord été envisagée mais écartée : le texte sur canevas est rendu sous forme de pixels et ne peut pas être sélectionné ni copié par l'utilisateur, ce qui le rend impraticable pour partager des valeurs lors d'une session de débogage.
 
-## Decision
+## Décision
 
-Add a DOM-based debug overlay that is:
+Ajouter une superposition de débogage basée sur le DOM qui est :
 
-- **Gated by a config flag** (`showDiagramDebug: boolean` in `.living-doc.json`, default `false`). The "Debug" button in the diagram editor's top bar is hidden unless this flag is `true`. It is toggled from the Admin panel ("Show debug button in diagram editor" checkbox).
-- **Rendered as DOM elements** (`div.debug-box`), positioned absolutely over the canvas using `network.canvasToDOM({x, y})` to convert world coordinates to screen coordinates. This makes the text selectable and copyable.
-- **Updated on every `afterDrawing` event** by recycling existing `div` elements (keyed by node id) to avoid layout thrashing.
-- **Non-intrusive**: the overlay container (`#debugLayer`) has `pointer-events: none`; individual boxes have `pointer-events: auto` only for text selection.
+- **Contrôlée par un indicateur de configuration** (`showDiagramDebug: boolean` dans `.living-doc.json`, `false` par défaut). Le bouton « Debug » dans la barre supérieure de l'éditeur de diagrammes est masqué sauf si cet indicateur est `true`. Il est activé depuis le panneau Admin (case à cocher « Show debug button in diagram editor »).
+- **Rendue sous forme d'éléments DOM** (`div.debug-box`), positionnés de manière absolue par-dessus le canevas en utilisant `network.canvasToDOM({x, y})` pour convertir les coordonnées monde en coordonnées écran. Cela rend le texte sélectionnable et copiable.
+- **Mise à jour à chaque événement `afterDrawing`** en recyclant les éléments `div` existants (indexés par identifiant de nœud) afin d'éviter le thrashing de mise en page.
+- **Non intrusive** : le conteneur de superposition (`#debugLayer`) a `pointer-events: none` ; les boîtes individuelles ont `pointer-events: auto` uniquement pour la sélection de texte.
 
-Each box displays, for its node:
+Chaque boîte affiche, pour son nœud :
 
 ```
 id : <nodeId>
-cx=<center x>  cy=<center y>
+cx=<centre x>  cy=<centre y>
 w =<shape.width>   h =<shape.height>
 L =<cx - w/2>   T =<cy - h/2>
 ```
 
-`L` and `T` are the values fed directly into the snap calculation, so any discrepancy between them and the nearest grid multiple instantly reveals a snap bug. A crosshair was drawn at the visual centre , later removed in favour of the cleaner DOM approach.
+`L` et `T` sont les valeurs directement injectées dans le calcul d'accrochage, de sorte que tout écart entre elles et le multiple de grille le plus proche révèle instantanément un bogue d'accrochage. Un réticule a été dessiné au centre visuel, supprimé par la suite au profit de l'approche DOM plus propre.
 
-The `showDiagramDebug` field is added to `LivingDocConfig` and whitelisted in the `PUT /api/config` route.
+Le champ `showDiagramDebug` est ajouté à `LivingDocConfig` et mis en liste blanche dans la route `PUT /api/config`.
 
-## Consequences
+## Conséquences
 
-### PROS
+### AVANTAGES
 
-- Debug information is always available during development without modifying code , just toggle the Admin checkbox.
-- DOM text is selectable and copyable, unlike canvas-rendered text.
-- The overlay repositions correctly during pan and zoom because it is rebuilt on every `afterDrawing` call using live `canvasToDOM` conversions.
-- Users who never visit the Admin panel are unaffected (button hidden, no overhead).
+- Les informations de débogage sont toujours disponibles pendant le développement sans modifier le code, il suffit d'activer la case à cocher Admin.
+- Le texte DOM est sélectionnable et copiable, contrairement au texte rendu sur canevas.
+- La superposition se repositionne correctement lors du panoramique et du zoom car elle est reconstruite à chaque appel `afterDrawing` en utilisant les conversions `canvasToDOM` en direct.
+- Les utilisateurs qui ne visitent jamais le panneau Admin ne sont pas affectés (bouton masqué, aucun surcoût).
 
-### CONS
+### INCONVÉNIENTS
 
-- `showDiagramDebug` should remain `false` in production; there is no server-side enforcement of this.
-- Rebuilding DOM elements on every `afterDrawing` event has a minor layout cost at high frame rates.
+- `showDiagramDebug` doit rester `false` en production ; il n'y a pas d'application côté serveur de cette règle.
+- La reconstruction des éléments DOM à chaque événement `afterDrawing` a un coût de mise en page mineur à des fréquences d'images élevées.

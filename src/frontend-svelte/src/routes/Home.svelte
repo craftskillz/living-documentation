@@ -11,7 +11,7 @@
   import NewDocModal from "../lib/home/NewDocModal.svelte";
   import ExportModal from "../lib/home/ExportModal.svelte";
   import WordCloudModal from "../lib/home/WordCloudModal.svelte";
-  import type { DocDetail } from "../lib/home/types";
+  import type { DocDetail, DocSummary } from "../lib/home/types";
 
   let newFolderOpen = $state(false);
   let newDocOpen = $state(false);
@@ -163,18 +163,40 @@
     home.fileAttachmentCounts = next;
   }
 
+  /** After deleting a doc, find the next sibling in the same folder to auto-select. */
+  function pickNextSibling(deletedId: string): string | null {
+    const deleted = home.allDocs.find(d => d.id === deletedId);
+    if (!deleted) return null;
+    const deletedFolder = (deleted.folder || []).join("/");
+    const inSameFolder = (d: DocSummary) => (d.folder || []).join("/") === deletedFolder;
+    // Match the sidebar's ordering: flat mode lists every doc of the folder by
+    // filename; category mode keeps same-category docs in their insertion order.
+    const siblings = home.hideCategories
+      ? home.allDocs.filter(inSameFolder).slice().sort((a, b) => (a.filename || "").localeCompare(b.filename || ""))
+      : home.allDocs.filter(d => inSameFolder(d) && d.category === deleted.category);
+    const idx = siblings.findIndex(d => d.id === deletedId);
+    if (idx === -1) return null;
+    const next = siblings[idx + 1] ?? siblings[idx - 1];
+    return next ? next.id : null;
+  }
+
   async function deleteDoc() {
     if (!currentDoc) return;
     const id = currentDoc.id;
     const res = await fetch("/api/documents/" + encodeURIComponent(id), { method: "DELETE" });
     if (!res.ok) return;
+    const nextId = pickNextSibling(id);
     home.allDocs = home.allDocs.filter(d => d.id !== id);
     if (Array.isArray(home.searchResults)) home.searchResults = home.searchResults.filter(d => d.id !== id);
     const counts = { ...home.annotationCounts }; delete counts[id]; home.annotationCounts = counts;
     const fcounts = { ...home.fileAttachmentCounts }; delete fcounts[id]; home.fileAttachmentCounts = fcounts;
-    home.currentDocId = null;
-    currentDoc = null;
-    history.pushState({}, "", location.pathname);
+    if (nextId) {
+      await openDoc(nextId);
+    } else {
+      home.currentDocId = null;
+      currentDoc = null;
+      history.pushState({}, "", location.pathname);
+    }
   }
 
   async function loadDocuments() {
@@ -226,7 +248,16 @@
       if (id) openDoc(id, true, false, anchor);
     };
     window.addEventListener("popstate", onPop);
-    return () => window.removeEventListener("popstate", onPop);
+
+    // An agent run (or any global action) created/changed documents: refresh the
+    // sidebar tree in place by re-fetching the list, without a full page reload.
+    const onDocumentsChanged = () => { void loadDocuments(); };
+    window.addEventListener("ld:documents-changed", onDocumentsChanged);
+
+    return () => {
+      window.removeEventListener("popstate", onPop);
+      window.removeEventListener("ld:documents-changed", onDocumentsChanged);
+    };
   });
 </script>
 

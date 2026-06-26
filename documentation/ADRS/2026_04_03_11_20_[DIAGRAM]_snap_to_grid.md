@@ -2,47 +2,49 @@
 `🗄️ ADR : 2026_04_03_11_20_[DIAGRAM]_snap_to_grid.md`
 **date:** 2026-04-03
 **status:** SuperSeeded by 2026_04_15_[DIAGRAM]_alignment_guides_center_snap_hitbox_fix_and_state_persistence.md
-**description:** Fix snap-to-grid using shape.width/height for visual edge alignment, and fix grid DPR mismatch on Retina displays by multiplying vis.js CSS-pixel coordinates by devicePixelRatio.
-**tags:** diagram, snap-to-grid, grid, DPR, retina, vis-network, rendering, bounding-box, shape
+**description:** Correction du snap-to-grid utilisant shape.width/height pour l'alignement visuel des bords, et correction du décalage DPR de la grille sur les écrans Retina en multipliant les coordonnées CSS-pixels de vis.js par devicePixelRatio.
+**tags:** diagram, snap-to-grid, grille, DPR, retina, vis-network, rendu, bounding-box, shape
 ---
 
-## Context
+# Snap to Grid
 
-The diagram editor supports a snap-to-grid feature (40px world-unit grid). When the user drops a node after dragging, it should snap so that its **left edge aligns on a vertical grid line** and its **top edge aligns on a horizontal grid line**.
+## Contexte
 
-Two bugs were present.
+L'éditeur de diagrammes propose une fonctionnalité de snap-to-grid (grille de 40px en unités monde). Lorsque l'utilisateur relâche un nœud après l'avoir déplacé, celui-ci doit s'aligner de sorte que son **bord gauche s'aligne sur une ligne verticale de la grille** et son **bord supérieur s'aligne sur une ligne horizontale de la grille**.
 
-### Bug 1 , Snap was applied to the center, not the visual edge
+Deux bugs étaient présents.
 
-The original implementation snapped `(x, y)` (the vis.js node centre) to the nearest multiple of `GRID_SIZE`:
+### Bug 1 , Le snap s'appliquait au centre, pas au bord visuel
+
+L'implémentation d'origine appliquait un snap de `(x, y)` (le centre du nœud vis.js) au multiple le plus proche de `GRID_SIZE` :
 
 ```js
 network.moveNode(id, snapToGrid(p.x), snapToGrid(p.y));
 ```
 
-Because node dimensions are not multiples of 40, the visual left/top edges would land at arbitrary positions between grid lines.
+Les dimensions des nœuds n'étant pas des multiples de 40, les bords visuels gauche et supérieur atterrissaient à des positions arbitraires entre les lignes de la grille.
 
-A second attempt used `network.getBoundingBox(id)` to get `{left, top, right, bottom}` and snapped those. This was also incorrect:
+Une deuxième tentative utilisait `network.getBoundingBox(id)` pour obtenir `{left, top, right, bottom}` et appliquait le snap sur ces valeurs. Cela était également incorrect :
 
-- For `box` shapes, `getBoundingBox` inflates the box by `borderRadius` (default 5 px) on all sides, so `bb.left ≠` the visual left edge of the drawn rectangle.
-- For `actor` (custom `ctxRenderer`), `shape.updateBoundingBox` uses `this.options.size` (default 25) rather than the declared `nodeDimensions` (30 × 52), so the bounding box is entirely wrong.
+- Pour les formes `box`, `getBoundingBox` gonfle la boîte de `borderRadius` (5px par défaut) de tous les côtés, donc `bb.left ≠` le bord visuel gauche du rectangle dessiné.
+- Pour `actor` (`ctxRenderer` personnalisé), `shape.updateBoundingBox` utilise `this.options.size` (25 par défaut) plutôt que `nodeDimensions` déclaré (30 × 52), donc la boîte englobante est entièrement erronée.
 
-### Bug 2 , Grid lines were misaligned on Retina/HiDPI displays
+### Bug 2 , Les lignes de la grille étaient désalignées sur les écrans Retina/HiDPI
 
-`drawGrid` draws in physical pixel space (after `ctx.setTransform(1,0,0,1,0,0)`), but computed the step and offset in CSS pixel units:
+`drawGrid` dessine dans l'espace des pixels physiques (après `ctx.setTransform(1,0,0,1,0,0)`), mais calculait le pas et le décalage en unités de pixels CSS :
 
 ```js
-const step = GRID_SIZE * scale; // CSS pixels , wrong in physical space
+const step = GRID_SIZE * scale; // pixels CSS , incorrect dans l'espace physique
 const offsetX = (((W / 2 - center.x * scale) % step) + step) % step;
 ```
 
-`canvas.width` (`W`) is in physical pixels; `center.x` and `scale` are in vis.js CSS-pixel coordinates. On a Retina display (DPR = 2) this causes the grid to be rendered at half the correct spacing and shifted, so even correctly-snapped nodes appear misaligned with the visible grid lines.
+`canvas.width` (`W`) est en pixels physiques ; `center.x` et `scale` sont en coordonnées CSS-pixels de vis.js. Sur un écran Retina (DPR = 2), cela entraîne un rendu de la grille à la moitié de l'espacement correct et décalé, de sorte que même les nœuds correctement alignés paraissent désalignés par rapport aux lignes visibles de la grille.
 
-## Decision
+## Décision
 
-### Snap fix
+### Correction du snap
 
-Read the actual visual dimensions directly from `network.body.nodes[id].shape.width` and `.shape.height`, which are set by the shape's `resize()` method on every draw call and reflect the true rendered size for all shape types (`box`, `ellipse`, `circle`, `database`, `actor`).
+Lire les dimensions visuelles réelles directement depuis `network.body.nodes[id].shape.width` et `.shape.height`, qui sont définies par la méthode `resize()` de la forme à chaque appel de rendu et reflètent la taille réelle affichée pour tous les types de formes (`box`, `ellipse`, `circle`, `database`, `actor`).
 
 ```js
 const bodyNode = network.body.nodes[id];
@@ -55,11 +57,11 @@ const snappedTop = Math.round((cy - h / 2) / GRID_SIZE) * GRID_SIZE;
 network.moveNode(id, snappedLeft + w / 2, snappedTop + h / 2);
 ```
 
-This works uniformly for all shape types: `cx - w/2` is always the visual left edge and `cy - h/2` is always the visual top edge, regardless of border radius, label extension, or custom renderer.
+Cela fonctionne uniformément pour tous les types de formes : `cx - w/2` est toujours le bord visuel gauche et `cy - h/2` est toujours le bord visuel supérieur, indépendamment du rayon de bordure, de l'extension d'étiquette ou du renderer personnalisé.
 
-### Grid DPR fix
+### Correction du DPR de la grille
 
-Multiply step and offset by `window.devicePixelRatio` when working in physical pixel space:
+Multiplier le pas et le décalage par `window.devicePixelRatio` lorsqu'on travaille dans l'espace des pixels physiques :
 
 ```js
 const dpr = window.devicePixelRatio || 1;
@@ -68,17 +70,17 @@ const offsetX = (((W / 2 - center.x * scale * dpr) % step) + step) % step;
 const offsetY = (((H / 2 - center.y * scale * dpr) % step) + step) % step;
 ```
 
-`beforeDrawing` is emitted after vis.js calls `ctx.save()`, `ctx.translate(tx, ty)`, and `ctx.scale(vs, vs)` on top of the DPR scaling. After `ctx.setTransform(1,0,0,1,0,0)` the space is physical pixels, so all vis.js CSS-pixel quantities must be multiplied by DPR to match.
+`beforeDrawing` est émis après que vis.js appelle `ctx.save()`, `ctx.translate(tx, ty)` et `ctx.scale(vs, vs)` en plus de la mise à l'échelle DPR. Après `ctx.setTransform(1,0,0,1,0,0)`, l'espace est en pixels physiques, donc toutes les quantités CSS-pixels de vis.js doivent être multipliées par DPR pour correspondre.
 
-## Consequences
+## Conséquences
 
-### PROS
+### AVANTAGES
 
-- Node left/top edges now land exactly on grid lines after a drag, for all shape types.
-- Grid lines and snapped node edges are visually coincident on both standard (DPR=1) and Retina (DPR=2+) displays.
-- The fix is uniform across all shape types , no special cases per shape.
+- Les bords gauche et supérieur des nœuds atterrissent désormais exactement sur les lignes de la grille après un glisser-déposer, pour tous les types de formes.
+- Les lignes de la grille et les bords des nœuds alignés sont visuellement coïncidents sur les écrans standard (DPR=1) comme sur les écrans Retina (DPR=2+).
+- La correction est uniforme pour tous les types de formes , pas de cas particuliers par forme.
 
-### CONS
+### INCONVÉNIENTS
 
-- `shape.width/height` are internal vis-network properties , they should be re-verified if vis-network is upgraded.
-- `network.getBoundingBox()` is **not** suitable for snap calculations and must not be used for this purpose.
+- `shape.width/height` sont des propriétés internes de vis-network , elles doivent être revérifiées en cas de mise à niveau de vis-network.
+- `network.getBoundingBox()` n'est **pas** adapté aux calculs de snap et ne doit pas être utilisé à cette fin.

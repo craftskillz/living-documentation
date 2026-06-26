@@ -129,48 +129,95 @@ function pruneExpired(toasts: PersistedToast[]): PersistedToast[] {
   return toasts.filter((toast) => !toast.expiresAt || toast.expiresAt > now);
 }
 
+function buildToastElement(toast: PersistedToast): HTMLElement {
+  const root = document.createElement("div");
+  root.className = "workspace-toast";
+  root.dataset.state = toast.state;
+  root.dataset.toastId = toast.id;
+
+  const icon = document.createElement("span");
+  icon.className = "toast-icon";
+  icon.setAttribute("aria-hidden", "true");
+  icon.textContent = iconForState(toast.state);
+
+  const body = document.createElement("div");
+  body.className = "workspace-toast-body";
+
+  const message = document.createElement("p");
+  message.className = "workspace-toast-message";
+  message.textContent = toast.message;
+  body.append(message);
+
+  if (toast.href) {
+    const link = document.createElement("a");
+    link.className = "workspace-toast-link";
+    link.href = toast.href;
+    link.textContent = toast.linkLabel || "Open";
+    body.append(link);
+  }
+
+  const close = document.createElement("button");
+  close.className = "workspace-toast-close";
+  close.type = "button";
+  close.setAttribute("aria-label", "Close notification");
+  close.textContent = "×";
+  close.addEventListener("click", () => removePersistentToast(toast.id));
+
+  root.append(icon, body, close);
+  return root;
+}
+
 function renderToasts(input: PersistedToast[]) {
   const stack = ensureToastStack();
   const toasts = pruneExpired(input);
 
-  stack.replaceChildren();
   stack.hidden = toasts.length === 0;
 
-  for (const toast of toasts) {
-    const root = document.createElement("div");
-    root.className = "workspace-toast";
-    root.dataset.state = toast.state;
+  const newIds = new Set(toasts.map((t) => t.id));
 
-    const icon = document.createElement("span");
-    icon.className = "toast-icon";
-    icon.setAttribute("aria-hidden", "true");
-    icon.textContent = iconForState(toast.state);
-
-    const body = document.createElement("div");
-    body.className = "workspace-toast-body";
-
-    const message = document.createElement("p");
-    message.className = "workspace-toast-message";
-    message.textContent = toast.message;
-    body.append(message);
-
-    if (toast.href) {
-      const link = document.createElement("a");
-      link.className = "workspace-toast-link";
-      link.href = toast.href;
-      link.textContent = toast.linkLabel || "Open";
-      body.append(link);
+  // Remove toasts that are no longer in the list
+  for (const el of Array.from(stack.querySelectorAll<HTMLElement>("[data-toast-id]"))) {
+    if (!newIds.has(el.dataset.toastId ?? "")) {
+      el.remove();
     }
+  }
 
-    const close = document.createElement("button");
-    close.className = "workspace-toast-close";
-    close.type = "button";
-    close.setAttribute("aria-label", "Close notification");
-    close.textContent = "×";
-    close.addEventListener("click", () => removePersistentToast(toast.id));
-
-    root.append(icon, body, close);
-    stack.append(root);
+  // Update existing toasts in place, create new ones
+  for (const toast of toasts) {
+    const existing = Array.from(stack.querySelectorAll<HTMLElement>("[data-toast-id]")).find(
+      (el) => el.dataset.toastId === toast.id,
+    );
+    if (existing) {
+      // Update message text in place — no DOM recreation, no animation restart
+      const msgEl = existing.querySelector(".workspace-toast-message");
+      if (msgEl && msgEl.textContent !== toast.message) {
+        msgEl.textContent = toast.message;
+      }
+      // Update state (e.g. loading → success)
+      if (existing.dataset.state !== toast.state) {
+        existing.dataset.state = toast.state;
+        const iconEl = existing.querySelector(".toast-icon");
+        if (iconEl) iconEl.textContent = iconForState(toast.state);
+      }
+      // Update link
+      const existingLink = existing.querySelector<HTMLAnchorElement>(".workspace-toast-link");
+      if (toast.href) {
+        if (existingLink) {
+          existingLink.href = toast.href;
+          existingLink.textContent = toast.linkLabel || "Open";
+        } else {
+          const link = document.createElement("a");
+          link.className = "workspace-toast-link";
+          link.href = toast.href;
+          link.textContent = toast.linkLabel || "Open";
+          existing.querySelector(".workspace-toast-body")?.append(link);
+        }
+      } else if (existingLink) {
+        existingLink.remove();
+      }
+    } else {
+      stack.append(buildToastElement(toast));
+    }
   }
 
   if (toasts.length !== input.length) {

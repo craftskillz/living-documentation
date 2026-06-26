@@ -87,15 +87,54 @@ export function resolveDocFilePath(docsPath: string, doc: DocSummary): string | 
   return resolved && fs.existsSync(resolved) ? resolved : null;
 }
 
-export function toolListDocuments(docsPath: string) {
-  const docs = listAllDocuments(docsPath).map(d => ({
+export function toolListDocuments(
+  docsPath: string,
+  args?: { page?: number; pageSize?: number; folder?: string },
+) {
+  let all = listAllDocuments(docsPath).map(d => ({
     ...d,
     linkHref: `?doc=${encodeURIComponent(d.id)}`,
   }));
-  return { content: [{ type: 'text' as const, text: JSON.stringify(docs, null, 2) }] };
+
+  // Optional folder scope: keep documents whose folder equals the requested
+  // folder or sits beneath it. Case-insensitive and separator-normalised so the
+  // caller can pass "ADRS" or "AI/WORKSPACE" without worrying about the OS path
+  // separator. A document at the docs root has folder === null and only matches
+  // when no folder filter is supplied.
+  const folderFilter = typeof args?.folder === 'string' ? args.folder.trim() : '';
+  const normFolder = (f: string) => f.replace(/\\/g, '/').replace(/^\/+|\/+$/g, '').toLowerCase();
+  if (folderFilter) {
+    const needle = normFolder(folderFilter);
+    all = all.filter(d => {
+      const folder = normFolder(d.folder ?? '');
+      return folder === needle || folder.startsWith(`${needle}/`);
+    });
+  }
+
+  const total = all.length;
+  const pageSize = Math.min(Math.max(1, Math.round(args?.pageSize ?? 50)), 200);
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const page = Math.min(Math.max(1, Math.round(args?.page ?? 1)), totalPages);
+  const start = (page - 1) * pageSize;
+  const documents = all.slice(start, start + pageSize);
+
+  const result = {
+    total,
+    page,
+    pageSize,
+    totalPages,
+    hasNextPage: page < totalPages,
+    nextPage: page < totalPages ? page + 1 : null,
+    folder: folderFilter || null,
+    documents,
+  };
+  return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
 }
 
-export function toolReadDocument(docsPath: string, args: { id: string }) {
+export function toolReadDocument(
+  docsPath: string,
+  args: { id: string; maxLines?: number; maxChars?: number },
+) {
   if (!args || typeof args.id !== 'string' || !args.id) {
     throw new Error("Missing required parameter 'id'");
   }
@@ -115,8 +154,91 @@ export function toolReadDocument(docsPath: string, args: { id: string }) {
   }
 
   if (!fs.existsSync(filePath)) throw new Error(`Document not found: ${args.id}`);
-  const content = fs.readFileSync(filePath, 'utf-8');
-  return { content: [{ type: 'text' as const, text: content }] };
+  const full = fs.readFileSync(filePath, 'utf-8');
+
+  // Optional excerpt: when maxLines and/or maxChars are provided, return only the
+  // head of the document. This keeps the model's context small for tasks that
+  // only need the opening lines (e.g. language detection) and avoids overflowing
+  // the context window on large documents. When neither is set, behaviour is
+  // unchanged: the full content is returned.
+  const maxLines =
+    typeof args.maxLines === 'number' && Number.isFinite(args.maxLines) && args.maxLines > 0
+      ? Math.floor(args.maxLines)
+      : null;
+  const maxChars =
+    typeof args.maxChars === 'number' && Number.isFinite(args.maxChars) && args.maxChars > 0
+      ? Math.floor(args.maxChars)
+      : null;
+
+  let text = full;
+  let truncated = false;
+
+  if (maxLines !== null) {
+    const lines = text.split(/\r?\n/);
+    if (lines.length > maxLines) {
+      text = lines.slice(0, maxLines).join('\n');
+      truncated = true;
+    }
+  }
+  if (maxChars !== null && text.length > maxChars) {
+    text = text.slice(0, maxChars);
+    truncated = true;
+  }
+
+  if (truncated) {
+    text += `\n\n…[excerpt truncated — full document is ${full.length.toLocaleString()} characters]`;
+  }
+
+  return { content: [{ type: 'text' as const, text }] };
+}
+
+// Persist an agent's cross-run memory as `context.md` inside its workspace
+// folder. The folder is supplied by the caller (injected into the agent's system
+// prompt by the run route) and must resolve inside AI/WORKSPACE. Content is
+// capped so a bloated memory cannot blow up the next run's context window.
+const MAX_AGENT_CONTEXT_BYTES = 8 * 1024;
+
+export function toolSaveContext(docsPath: string, args: { folder: string; content: string }) {
+  if (!args || typeof args.folder !== 'string' || !args.folder.trim()) {
+    throw new Error("Missing required parameter 'folder'");
+  }
+  if (typeof args.content !== 'string') {
+    throw new Error("Missing required parameter 'content'");
+  }
+
+  const workspaceRoot = path.resolve(docsPath, 'AI', 'WORKSPACE');
+  const targetDir = path.resolve(docsPath, args.folder.trim());
+  if (targetDir !== workspaceRoot && !targetDir.startsWith(`${workspaceRoot}${path.sep}`)) {
+    throw new Error('Access denied: context folder must be under AI/WORKSPACE');
+  }
+
+  let content = args.content;
+  let truncated = false;
+  if (Buffer.byteLength(content, 'utf-8') > MAX_AGENT_CONTEXT_BYTES) {
+    // Trim from the end until within the byte budget (chars ≥ bytes once ASCII).
+    content = content.slice(0, MAX_AGENT_CONTEXT_BYTES);
+    while (Buffer.byteLength(content, 'utf-8') > MAX_AGENT_CONTEXT_BYTES) {
+      content = content.slice(0, -64);
+    }
+    truncated = true;
+  }
+
+  fs.mkdirSync(targetDir, { recursive: true });
+  const filePath = path.join(targetDir, 'context.md');
+  fs.writeFileSync(filePath, content, 'utf-8');
+
+  const relativePath = path.relative(docsPath, filePath);
+  return {
+    content: [{
+      type: 'text' as const,
+      text: JSON.stringify({
+        success: true,
+        path: relativePath,
+        bytes: Buffer.byteLength(content, 'utf-8'),
+        truncated,
+      }, null, 2),
+    }],
+  };
 }
 
 export function toolUpdateDocument(docsPath: string, args: { id: string; content: string }) {

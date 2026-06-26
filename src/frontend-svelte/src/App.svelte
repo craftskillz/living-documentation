@@ -6,7 +6,6 @@
   import Workspace from "./routes/Workspace.svelte";
   import Files from "./routes/Files.svelte";
   import AiContext from "./routes/AiContext.svelte";
-  import Agents from "./routes/Agents.svelte";
   import Home from "./routes/Home.svelte";
   import Diagram from "./routes/Diagram.svelte";
   import ShapeEditor from "./routes/ShapeEditor.svelte";
@@ -28,7 +27,6 @@
     "/diagram",
     "/shape-editor",
     "/context",
-    "/agents",
     "/files",
     "/survival-kit",
   ]);
@@ -48,6 +46,13 @@
     history.pushState(null, "", nextLocation);
     path = normalized;
     initPersistentToast();
+
+    // Notify the active page that the location changed. Pages like Home only
+    // react to the `?doc=` query on mount and on popstate; without this dispatch,
+    // navigating to `/?doc=...` (e.g. the agent toast "open document" link) would
+    // update the address bar but never load the document until a manual F5.
+    // Mirrors the pushState + popstate pattern already used by the Topbar nav.
+    window.dispatchEvent(new PopStateEvent("popstate"));
   }
 
   function handleInternalLinkClick(event: MouseEvent) {
@@ -114,8 +119,6 @@
   <Files />
 {:else if path === "/context"}
   <AiContext {navigate} />
-{:else if path === "/agents"}
-  <Agents />
 {:else if path === "/diagram"}
   <Diagram />
 {:else if path === "/shape-editor"}

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-25T20:34:14.781Z",
+  "updatedAt": "2026-06-26T20:23:58.137Z",
   "entities": [
     {
       "id": "root",
@@ -256,7 +256,7 @@
     },
     {
       "id": "agent-mqtw0wfs",
-      "label": "Find English Documents",
+      "label": "Find Written English Documents",
       "kind": "agent",
       "parentId": "provider-mqtqt25p",
       "x": -284.1663039394124,
@@ -267,18 +267,18 @@
         "token": "",
         "model": "deepseek/deepseek-v4-pro",
         "timeout": 180,
-        "systemPrompt": "Return to the end user the list of written english documents under a folder\nYou can use tools, here are the instructions : \n\n1. Call list_documents that are under the folder name provided in the user message.\n2. When you receive the list look at the title and see if it is written in french or english\n3. If it is written in english read the document using read_document and its document ID\n4. If its content is in english retain you'll return this document  id in the list returned to the end user",
+        "systemPrompt": "You return up to Ten English-written documents found under a folder, advancing one page per run and remembering your progress across runs.\n\nThe user message is a FOLDER NAME (e.g. \"ADRS\").\n\nRead the \"Run memory\" section of this prompt:\n- If it holds a saved context for the SAME folder, resume at its lastPage + 1.\n- Otherwise (no memory, or a different folder), start at page 1.\n\nThen:\n1. Call list_documents with folder = the folder name, pageSize = 2, page = the page you resume at. It returns at most 10 documents plus totalPages / hasNextPage / nextPage.\n2. For EACH returned document, call read_document with its id and maxLines: 4. NEVER read the full document — only this 4-line excerpt, to keep your context small.\n3. From the excerpt body text (not the title), decide if it is written in English or French.\n4. Keep the id of each document whose excerpt is in English.\n5. Process at most these 10 documents.\n\nBefore answering, call save_context with folder = <the workspace folder given in Run memory> and content = a SHORT JSON like {\"folder\":\"ADRS\",\"lastPage\":<the page you just processed>}.\n\nReturn to the user:\n- The English document ids you kept.\n- \"Page <page> of <totalPages> processed.\"\n- If hasNextPage is true: \"Run me again on the same folder to continue.\"",
         "requiresUserInput": true,
-        "userInputDescription": "Enter folder name under which you want to find english written documents",
+        "userInputDescription": "Folder name to scan for English documents (e.g. \"ADRS\"). Run me again on the same folder to process the next 2 documents — I remember where I stopped.",
         "expectedOutputMarker": "",
-        "description": "Runs focused automation against documentation, source, or quality signals.",
-        "workspaceFolder": "AI/WORKSPACE/find_english_documents"
+        "description": "Looks for english written documents in a folder passed in parameter (maximum 10 document at each use)",
+        "workspaceFolder": "AI/WORKSPACE/find_written_english_documents"
       }
     }
   ],
   "camera": {
-    "x": 628.6610139635077,
-    "y": 372.2798311031677,
-    "zoom": 0.7289026899755392
+    "x": 651.4546532047326,
+    "y": 370.967784887311,
+    "zoom": 0.7863516895105755
   }
 }

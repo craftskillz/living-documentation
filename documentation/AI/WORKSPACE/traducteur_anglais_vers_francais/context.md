@@ -1,0 +1,1 @@
+Dernière traduction : ADRS/2026_04_08_12_00_[FRONTEND]_new_document_creation_modal_with_folder_browser — traduit EN → FR, 3724 octets.

@@ -2,40 +2,40 @@
 `🗄️ ADR : 2026_04_03_12_05_[DIAGRAM]_vis_network_z_order_patch.md`
 **date:** 2026-04-03
 **status:** Accepted
-**description:** Monkey-patch vis-network _drawNodes to perform a single pass in canonical order, preserving user-defined z-order against hover/select reordering.
+**description:** Monkey-patch de `_drawNodes` de vis-network pour effectuer un seul passage en ordre canonique, préservant l'ordre z défini par l'utilisateur contre le réordonnancement au survol/sélection.
 **tags:** diagram, vis-network, z-order, rendering, monkey-patch, canvas, _drawNodes, canonicalOrder
 ---
 
-## Context
+## Contexte
 
-The diagram editor (`src/frontend/diagram.html`) uses vis-network 9.1.9 to render nodes on a canvas. vis.js's `CanvasRenderer._drawNodes` performs **three rendering passes** on every frame:
+L'éditeur de diagrammes (`src/frontend/diagram.html`) utilise vis-network 9.1.9 pour afficher les nœuds sur un canvas. La méthode `CanvasRenderer._drawNodes` de vis.js effectue **trois passes de rendu** à chaque image :
 
-1. Normal nodes (in `nodeIndices` order)
-2. Selected nodes (always on top)
-3. Hovered nodes (always on top of selected)
+1. Nœuds normaux (dans l'ordre de `nodeIndices`)
+2. Nœuds sélectionnés (toujours au-dessus)
+3. Nœuds survolés (toujours au-dessus des nœuds sélectionnés)
 
-This means that hovering or selecting a node always brings it visually to the front, regardless of the user-defined z-order. The "bring to front / send to back" feature became effectively non-functional as soon as the user interacted with any node.
+Cela signifie que survoler ou sélectionner un nœud le ramène toujours visuellement au premier plan, quel que soit l'ordre z défini par l'utilisateur. La fonctionnalité « premier plan / arrière-plan » devenait ainsi effectivement non fonctionnelle dès que l'utilisateur interagissait avec un nœud.
 
-A first attempt intercepted `network.body.nodeIndices` via `Object.defineProperty` to prevent vis.js from reordering them. This did not work because vis.js never reorders `nodeIndices` , it simply does separate passes in addition to the main one.
+Une première tentative a intercepté `network.body.nodeIndices` via `Object.defineProperty` pour empêcher vis.js de les réordonner. Cela n'a pas fonctionné car vis.js ne réorganise jamais `nodeIndices` — il effectue simplement des passes séparées en plus de la passe principale.
 
-## Decision
+## Décision
 
-Replace `network.renderer._drawNodes` with a patched version (instance-level monkey-patch, applied immediately after `new vis.Network(...)`) that performs a **single rendering pass** in `_canonicalOrder` , an array maintained by the application that holds the user-defined z-order.
+Remplacer `network.renderer._drawNodes` par une version corrigée (monkey-patch au niveau de l'instance, appliqué immédiatement après `new vis.Network(...)`) qui effectue une **passe de rendu unique** dans `_canonicalOrder`, un tableau maintenu par l'application qui contient l'ordre z défini par l'utilisateur.
 
-The patched function replicates the original's viewport culling logic (`isBoundingBoxOverlappingWith`) and `drawExternalLabel` callback collection, but removes the selected/hovered reordering. `this` inside the patch correctly refers to the renderer because vis.js calls it as a method (`this._drawNodes(ctx, hidden)`).
+La fonction corrigée reproduit la logique de culling de viewport de l'original (`isBoundingBoxOverlappingWith`) et la collecte des callbacks `drawExternalLabel`, mais supprime le réordonnancement sélection/survol. `this` à l'intérieur du patch fait correctement référence au renderer car vis.js l'appelle comme une méthode (`this._drawNodes(ctx, hidden)`).
 
-`_canonicalOrder` is kept in sync with the vis.js `DataSet` via `nodes.on('add', ...)` and `nodes.on('remove', ...)` listeners, so structural changes (add node, delete, paste) are reflected automatically.
+`_canonicalOrder` est maintenu synchronisé avec le `DataSet` de vis.js via les écouteurs `nodes.on('add', ...)` et `nodes.on('remove', ...)`, de sorte que les changements structurels (ajout de nœud, suppression, collage) sont reflétés automatiquement.
 
-## Consequences
+## Conséquences
 
-### PROS
+### AVANTAGES
 
-- Hover and selection no longer change the visual stacking order , the user-defined z-order is always respected.
-- `changeZOrder(+1/-1)` (bring to front / send to back) now works correctly and visually.
-- `saveDiagram` uses `_canonicalOrder` to persist nodes in z-order so reloading restores the same stacking.
-- The patch is re-applied every time `initNetwork` is called (network destroy + recreate), so it survives network resets.
+- Le survol et la sélection ne changent plus l'ordre visuel d'empilement — l'ordre z défini par l'utilisateur est toujours respecté.
+- `changeZOrder(+1/-1)` (premier plan / arrière-plan) fonctionne désormais correctement et visuellement.
+- `saveDiagram` utilise `_canonicalOrder` pour persister les nœuds dans l'ordre z afin que le rechargement restaure le même empilement.
+- Le patch est réappliqué à chaque appel de `initNetwork` (destruction + recréation du réseau), ce qui lui permet de survivre aux réinitialisations du réseau.
 
-### CONS
+### INCONVÉNIENTS
 
-- The patch is fragile if vis-network is upgraded: `_drawNodes`'s internal signature must be re-verified against the new version's source before upgrading.
-- Instance-level monkey-patching is not a clean abstraction , it relies on internal vis-network implementation details.
+- Le patch est fragile en cas de mise à niveau de vis-network : la signature interne de `_drawNodes` doit être revérifiée par rapport au code source de la nouvelle version avant toute mise à niveau.
+- Le monkey-patching au niveau de l'instance n'est pas une abstraction propre — il repose sur des détails d'implémentation internes de vis-network.

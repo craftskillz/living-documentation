@@ -1,4 +1,6 @@
 <script lang="ts">
+  import AgentsMenu from "./AgentsMenu.svelte";
+
   let { title, subtitle, nav = [], children, actions }: {
     title: string;
     subtitle: string;
@@ -13,7 +15,6 @@
     [
       ...nav,
       { label: "Workspace", href: "/workspace" },
-      { label: "Agents", href: "/agents" },
       { label: "Blueprint", href: "/blueprint" },
       { label: "Diagram", href: "/diagram" },
       { label: "Files", href: "/files" },
@@ -65,6 +66,7 @@
         {link.label}
       </a>
     {/each}
+    <AgentsMenu />
     {#if actions}{@render actions()}{/if}
   </div>
 </header>
