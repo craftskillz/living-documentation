@@ -6,7 +6,7 @@ import { test, expect } from '../helpers/ld-fixture';
 const SELECT_ALL_AND_GROUP = `async () => {
   const c = document.querySelector('canvas');
   c.setPointerCapture = () => {}; c.releasePointerCapture = () => {};
-  const rail = [...document.querySelectorAll('.rail .tool-button')];
+  let rail = [...document.querySelectorAll('.rail .tool-button')];
   rail[1].click(); // enable drag / select mode
   await new Promise((r) => setTimeout(r, 120));
   const pe = (t, x, y) => new PointerEvent(t, { bubbles: true, cancelable: true, clientX: x, clientY: y, button: 0, buttons: t === 'pointerup' ? 0 : 1, pointerId: 1, isPrimary: true, shiftKey: true, view: window });
@@ -14,8 +14,10 @@ const SELECT_ALL_AND_GROUP = `async () => {
   c.dispatchEvent(pe('pointermove', window.innerWidth - 60, window.innerHeight - 60));
   c.dispatchEvent(pe('pointerup', window.innerWidth - 60, window.innerHeight - 60));
   await new Promise((r) => setTimeout(r, 150));
-  const grouped = !rail[2].disabled;
-  rail[2].click(); // create cluster from selection
+  rail = [...document.querySelectorAll('.rail .tool-button')];
+  const groupButton = rail[2];
+  const grouped = !!groupButton && !groupButton.disabled;
+  groupButton?.click(); // create cluster from selection
   await new Promise((r) => setTimeout(r, 150));
   return { hadSelection: grouped };
 }`;

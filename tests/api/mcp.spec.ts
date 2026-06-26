@@ -1,7 +1,28 @@
 import fs from 'fs';
 import path from 'path';
+import type { APIRequestContext } from '@playwright/test';
 import { test, expect } from '../helpers/ld-fixture';
 import { callTool, getPrompt, listTools, listPrompts } from '../helpers/mcp';
+
+type McpDocumentSummary = { id: string; title: string; category: string; folder: string | null };
+type ListDocumentsResult = {
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  nextPage: number | null;
+  folder: string | null;
+  documents: McpDocumentSummary[];
+};
+
+async function listDocuments(
+  request: APIRequestContext,
+  baseURL: string,
+  args: Record<string, unknown> = {},
+): Promise<ListDocumentsResult> {
+  return callTool<ListDocumentsResult>(request, baseURL, 'list_documents', args);
+}
 
 test('tools/list exposes the expected tool set', async ({ request, ld }) => {
   const tools = await listTools(request, ld.baseURL);
@@ -71,22 +92,23 @@ test('prompts/get returns the create-adr and audit-adrs-drift templates over Str
 });
 
 test('list_documents returns the three fixture docs', async ({ request, ld }) => {
-  const docs = await callTool<Array<{ title: string }>>(
-    request,
-    ld.baseURL,
-    'list_documents',
-  );
-  const titles = docs.map((d) => d.title).sort();
+  const result = await listDocuments(request, ld.baseURL);
+  expect(result).toEqual(expect.objectContaining({
+    total: 3,
+    page: 1,
+    pageSize: 50,
+    totalPages: 1,
+    hasNextPage: false,
+    nextPage: null,
+    folder: null,
+  }));
+  const titles = result.documents.map((d) => d.title).sort();
   expect(titles).toEqual(['Advanced', 'Intro', 'Quickstart']);
 });
 
 test('read_document returns raw markdown content for a specific doc', async ({ request, ld }) => {
-  const docs = await callTool<Array<{ id: string; title: string }>>(
-    request,
-    ld.baseURL,
-    'list_documents',
-  );
-  const intro = docs.find((d) => d.title === 'Intro');
+  const { documents } = await listDocuments(request, ld.baseURL);
+  const intro = documents.find((d) => d.title === 'Intro');
   expect(intro).toBeDefined();
   // read_document returns the raw markdown as a text-content response, not JSON.
   const content = await callTool<string>(request, ld.baseURL, 'read_document', {
@@ -96,12 +118,8 @@ test('read_document returns raw markdown content for a specific doc', async ({ r
 });
 
 test('update_document overwrites an existing document with multiline markdown', async ({ request, ld }) => {
-  const docs = await callTool<Array<{ id: string; title: string }>>(
-    request,
-    ld.baseURL,
-    'list_documents',
-  );
-  const intro = docs.find((d) => d.title === 'Intro');
+  const { documents } = await listDocuments(request, ld.baseURL);
+  const intro = documents.find((d) => d.title === 'Intro');
   expect(intro).toBeDefined();
 
   const updatedContent = [
@@ -703,12 +721,8 @@ test.describe('metadata MCP tools on the with-metadata fixture', () => {
   test.use({ fixtureName: 'with-metadata' });
 
   test('list_metadata + get_accuracy mirror the REST responses', async ({ request, ld }) => {
-    const docs = await callTool<Array<{ id: string; title: string }>>(
-      request,
-      ld.baseURL,
-      'list_documents',
-    );
-    const intro = docs.find((d) => d.title === 'Intro')!;
+    const { documents } = await listDocuments(request, ld.baseURL);
+    const intro = documents.find((d) => d.title === 'Intro')!;
     const listed = await callTool<{ items: Array<unknown> }>(
       request,
       ld.baseURL,
@@ -733,12 +747,8 @@ test.describe('metadata MCP tools on the with-metadata fixture', () => {
     const secondPath = path.resolve(ld.parent, 'src/second.ts');
     fs.writeFileSync(secondPath, 'export const y = 1;\n');
 
-    const docs = await callTool<Array<{ id: string; title: string }>>(
-      request,
-      ld.baseURL,
-      'list_documents',
-    );
-    const intro = docs.find((d) => d.title === 'Intro')!;
+    const { documents } = await listDocuments(request, ld.baseURL);
+    const intro = documents.find((d) => d.title === 'Intro')!;
     // toolAddMetadata returns { id, added, total, accuracy } — verify the added entry,
     // then cross-check the full list via list_metadata.
     const add = await callTool<{ added: { path: string }; total: number }>(
@@ -769,12 +779,8 @@ test.describe('metadata MCP tools on the with-metadata fixture', () => {
       'export const x = 99; // drift\n',
     );
 
-    const docs = await callTool<Array<{ id: string; title: string }>>(
-      request,
-      ld.baseURL,
-      'list_documents',
-    );
-    const intro = docs.find((d) => d.title === 'Intro')!;
+    const { documents } = await listDocuments(request, ld.baseURL);
+    const intro = documents.find((d) => d.title === 'Intro')!;
     const beforeRefresh = await callTool<{ items: Array<{ status: string }> }>(
       request,
       ld.baseURL,
@@ -838,12 +844,8 @@ test.describe('metadata MCP tools on the with-metadata fixture', () => {
   });
 
   test('review_adr_relevance rejects non-ADR documents', async ({ request, ld }) => {
-    const docs = await callTool<Array<{ id: string; title: string }>>(
-      request,
-      ld.baseURL,
-      'list_documents',
-    );
-    const intro = docs.find((d) => d.title === 'Intro')!;
+    const { documents } = await listDocuments(request, ld.baseURL);
+    const intro = documents.find((d) => d.title === 'Intro')!;
 
     await expect(
       callTool(request, ld.baseURL, 'review_adr_relevance', { id: intro.id }),
@@ -879,12 +881,8 @@ test.describe('metadata MCP tools on the with-metadata fixture', () => {
     request,
     ld,
   }) => {
-    const docs = await callTool<Array<{ id: string; title: string }>>(
-      request,
-      ld.baseURL,
-      'list_documents',
-    );
-    const intro = docs.find((d) => d.title === 'Intro')!;
+    const { documents } = await listDocuments(request, ld.baseURL);
+    const intro = documents.find((d) => d.title === 'Intro')!;
     const result = await callTool<{ removed: { path: string } | null; total: number }>(
       request,
       ld.baseURL,
@@ -907,12 +905,8 @@ test.describe('metadata MCP tools on the with-metadata fixture', () => {
     request,
     ld,
   }) => {
-    const docs = await callTool<Array<{ id: string; title: string }>>(
-      request,
-      ld.baseURL,
-      'list_documents',
-    );
-    const intro = docs.find((d) => d.title === 'Intro')!;
+    const { documents } = await listDocuments(request, ld.baseURL);
+    const intro = documents.find((d) => d.title === 'Intro')!;
     const result = await callTool<{ removed: null; total: number }>(
       request,
       ld.baseURL,
@@ -929,12 +923,8 @@ test.describe('metadata MCP tools on the with-metadata fixture', () => {
   }) => {
     // Create a directory inside sourceRoot and try to bind it.
     fs.mkdirSync(path.resolve(ld.parent, 'src/adirectory'), { recursive: true });
-    const docs = await callTool<Array<{ id: string; title: string }>>(
-      request,
-      ld.baseURL,
-      'list_documents',
-    );
-    const intro = docs.find((d) => d.title === 'Intro')!;
+    const { documents } = await listDocuments(request, ld.baseURL);
+    const intro = documents.find((d) => d.title === 'Intro')!;
     await expect(
       callTool(request, ld.baseURL, 'add_metadata', {
         id: intro.id,
