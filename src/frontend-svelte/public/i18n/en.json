@@ -814,6 +814,7 @@
   "blueprint.cluster.default_label": "Cluster",
   "blueprint.cluster.rename": "Rename cluster",
   "blueprint.cluster.add_selection": "Add the selection to this cluster",
+  "blueprint.cluster.remove_selection": "Remove the selection from this cluster",
   "blueprint.cluster.delete": "Delete cluster",
   "wc.min_files_hint": "Only show words that appear in at least this many distinct files. Higher values filter out noise specific to a single file and surface terms shared across the codebase.",
   "wc.apply_hint": "Recompute the cloud using the current “min files” threshold.",

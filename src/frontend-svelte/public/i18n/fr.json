@@ -814,6 +814,7 @@
   "blueprint.cluster.default_label": "Cluster",
   "blueprint.cluster.rename": "Renommer le cluster",
   "blueprint.cluster.add_selection": "Ajouter la sélection à ce cluster",
+  "blueprint.cluster.remove_selection": "Retirer la sélection de ce cluster",
   "blueprint.cluster.delete": "Supprimer le cluster",
   "wc.min_files_hint": "N'affiche que les mots présents dans au moins ce nombre de fichiers distincts. Une valeur plus élevée filtre le bruit propre à un seul fichier et fait ressortir les termes partagés dans le code.",
   "wc.apply_hint": "Recalcule le nuage avec le seuil « Fichiers min. » courant.",

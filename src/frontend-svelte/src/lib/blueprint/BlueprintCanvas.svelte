@@ -537,6 +537,23 @@
     scheduleRender();
   }
 
+  // Remove the current selection from a cluster's membership. If that empties
+  // the cluster, it is dropped entirely.
+  function removeSelectionFromCluster(id: string): void {
+    const sel = new Set(
+      [...selectedIndices].map((i) => boxes[i]?.folder.path).filter(Boolean) as string[],
+    );
+    if (sel.size === 0) return;
+    clusters = clusters
+      .map((c) => (c.id === id ? { ...c, members: c.members.filter((m) => !sel.has(m)) } : c))
+      .filter((c) => c.members.length > 0);
+    if (!clusters.some((c) => c.id === id) && editingClusterId === id) editingClusterId = null;
+    scheduleSaveClusters();
+    selectedIndices.clear();
+    syncSelection();
+    scheduleRender();
+  }
+
   function renameCluster(id: string, label: string): void {
     clusters = clusters.map((c) => (c.id === id ? { ...c, label } : c));
     scheduleSaveClusters();
@@ -894,6 +911,7 @@
       {/if}
       {#if dragModeActive && selCount > 0}
         <button class="cluster-tag-add" type="button" title={t("blueprint.cluster.add_selection")} onclick={() => addSelectionToCluster(ov.id)}>+</button>
+        <button class="cluster-tag-remove" type="button" title={t("blueprint.cluster.remove_selection")} onclick={() => removeSelectionFromCluster(ov.id)}>−</button>
       {/if}
       {#if dragModeActive}
         <button class="cluster-tag-del" type="button" title={t("blueprint.cluster.delete")} onclick={() => deleteCluster(ov.id)}>×</button>

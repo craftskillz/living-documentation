@@ -186,7 +186,8 @@ canvas.is-panning { cursor: grabbing; }
 }
 
 .cluster-tag-del,
-.cluster-tag-add {
+.cluster-tag-add,
+.cluster-tag-remove {
   display: grid;
   place-items: center;
   width: 18px;
@@ -208,6 +209,11 @@ canvas.is-panning { cursor: grabbing; }
 .cluster-tag-add:hover {
   background: #16a34a;
   border-color: #22c55e;
+}
+
+.cluster-tag-remove:hover {
+  background: #d97706;
+  border-color: #f59e0b;
 }
 
 [data-blueprint] .tool-button {
