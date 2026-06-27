@@ -96,7 +96,7 @@
   let isSelecting = false;
   let selectStartWorld = { x: 0, y: 0 };
   let selectCurrentWorld = { x: 0, y: 0 };
-  let currentCanvasPath = "";
+  let currentCanvasPath = $state("");
   let dragOffsetX = 0;
   let dragOffsetY = 0;
   let isDragging = false;

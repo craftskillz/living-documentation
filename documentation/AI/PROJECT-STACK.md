@@ -29,7 +29,7 @@ L'utilisateur lance le CLI avec un dossier de documentation relatif, par exemple
 - **Framework frontend** : application **Vite + Svelte 5 (runes)** unifiée sous `src/frontend-svelte/`, routée par `pathname` dans `App.svelte`, regroupant les 10 écrans (Home, Workspace, Admin, Blueprint, Agents, Files, AI Context, Diagram, Shape-editor, Survival Kit). Voir l'ADR `[FRONTEND] migration du frontend vers une application svelte unifiee`.
 - **Framework backend / serveur** : Express 5.
 - **Base de données / stockage** : système de fichiers local ; `.living-doc.json`, `.metadata.json`, `.diagrams.json`, `.annotations.json`, `.shape-libraries.json` et `.survival-kit.json` selon les fonctionnalités.
-- **API externes / intégrations** : MCP Streamable HTTP sur `/mcp` via `@modelcontextprotocol/sdk`; assets CDN côté frontend pour Tailwind, highlight.js, Font Awesome, mermaid et vis-network selon les routes.
+- **API externes / intégrations** : MCP Streamable HTTP sur `/mcp` via `@modelcontextprotocol/sdk`; assets CDN côté frontend pour Tailwind, highlight.js, Font Awesome, mermaid et vis-network selon les routes; TTS local optionnel via `kokoro-js` pour l'anglais.
 - **Authentification / autorisation** : aucune authentification applicative ; outil local-first, avec protections de path traversal côté routes.
 - **Styles / design system** : Tailwind via CDN avec plugin Typography ; CSS partagée `src/frontend-svelte/src/styles/app.css` ; thème clair/sombre piloté par config/localStorage (la Home porte le dark mode) ; syntax highlighting toujours sombre. ATTENTION : toute CSS importée par un composant Svelte est bundlée **globalement** par Vite , scoper les sélecteurs génériques (`[data-blueprint]`, `.ld-shape-editor`).
 - **Gestion d'état frontend** : runes Svelte (`$state`) , stores réactifs (ex. `lib/home/state.svelte.ts`, `lib/i18n.svelte.ts`) ; les moteurs impératifs réutilisés (Workspace canvas, Diagram vis-network) gardent un état mutable (`lib/diagram/state.js`) ; persistance ciblée via `localStorage`.
@@ -50,6 +50,8 @@ src/lib/config.ts                  <- lecture/écriture `.living-doc.json`, chem
 src/lib/parser.ts                  <- parsing du filenamePattern et extraction date/catégorie/titre
 src/lib/metadata.ts                <- stockage des bindings source + calcul de fiabilité
 src/lib/hash.ts                    <- hash SHA-256 des fichiers source
+src/lib/documentLanguage.ts        <- lecture/ecriture de la langue documentaire dans le frontmatter Markdown
+src/lib/tts/*                      <- port TTS serveur et adapter Kokoro
 src/routes/*.ts                    <- routes REST documents, config, browse, files, diagrams, metadata, context, export...
 src/routes/survival-kit.ts         <- persistance JSON du dashboard tâches, notes et liens
 src/mcp/server.ts                  <- serveur MCP Streamable HTTP exposé sur `/mcp`
@@ -97,6 +99,7 @@ memory/                           <- mémoire projet locale indexée par `memory
 - **Contexte IA** : page `/context` et documents `AI/*` qui exposent instructions, règles, mémoire et explorateur MCP.
 - **Survival Kit** : dashboard local `/survival-kit` pour tâches, notes structurées et liens catégorisés, persisté dans `<docsFolder>/.survival-kit.json`.
 - **Starter doc** : initialisation interactive bilingue qui scaffold un dossier docs, `AGENTS.md`, `CLAUDE.md`, `memory/MEMORY.md` et les symlinks sous `AI/`, plus un dossier `WORKLOG/` avec `current-task.md` et une règle `track-current-work` pour la reprise opérationnelle entre assistants IA.
+- **Lecture TTS** : le viewer Home lit la langue dans le frontmatter (`language`, `lang`, `locale`, `langue`) ou la demande à l'utilisateur; la lecture passe par le port serveur `TtsEngine`/Kokoro, qui supporte actuellement `en` et renvoie une erreur explicite pour `fr`.
 
 ## Conventions structurantes
 

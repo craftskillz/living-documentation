@@ -18,6 +18,7 @@ import { contextRouter } from './routes/context';
 import { workspaceRouter } from './routes/workspace';
 import { blueprintRouter } from './routes/blueprint';
 import { survivalKitRouter } from './routes/survival-kit';
+import { ttsRouter } from './routes/tts';
 import { mcpRouter } from './mcp/server';
 import { writeConfig } from './lib/config';
 
@@ -58,6 +59,7 @@ export async function startServer({
   app.use('/api/workspace', workspaceRouter(docsPath));
   app.use('/api/blueprint', blueprintRouter(docsPath));
   app.use('/api/survival-kit', survivalKitRouter(docsPath));
+  app.use('/api/tts', ttsRouter());
   app.use('/mcp', mcpRouter(docsPath));
 
   // Static frontend — the unified Svelte app built by Vite into dist/frontend-svelte.

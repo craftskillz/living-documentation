@@ -1,6 +1,7 @@
 ---
 `🗄️ ADR : 2026_03_20_10_15_[CONFIGURATION]_link_extra_files_as_documentation.md`
 **date:** 2026-03-20
+**language:** fr
 **status:** SuperSeeded
 **superseded_by:** 2026_04_24_[CONFIGURATION]_portable_living_doc_json_with_relative_paths.md
 **description:** Prise en charge de l'inclusion de fichiers Markdown situés en dehors du dossier docs via un tableau de configuration extraFiles, avec un explorateur de système de fichiers dans le panneau d'administration. [SuperSeeded : le format de stockage des chemins est passé d'absolu à relatif ; la fonctionnalité elle-même (sécurité par liste blanche, explorateur admin, ordonnancement, placement dans la barre latérale, schéma d'identifiant de document) est conservée dans la nouvelle ADR.]

@@ -920,3 +920,12 @@
           border-bottom-color: rgb(55 65 81);
         }
       }
+
+/* ── Text-to-speech reading highlight (fallback only) ───────────────────────
+   The `::highlight(tts-sentence)` rule is injected at runtime by ttsPlayer
+   because the CSS minifier (lightningcss) drops unknown pseudo-elements.
+   `.tts-active` is the fallback for browsers without the Highlight API. */
+.tts-active {
+  background-color: rgba(250, 204, 21, 0.35);
+  border-radius: 3px;
+}

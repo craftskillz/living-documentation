@@ -30,8 +30,8 @@
     "semantic_hash": ""
   },
   "documentation/.blueprint-positions.json": {
-    "mtime": 1782329249.7664042,
-    "ast_hash": "3ccf198432ad199678565cde7d0a2d71",
+    "mtime": 1782552671.7188885,
+    "ast_hash": "2d42131c50df4730da81f07e1b21c238",
     "semantic_hash": ""
   },
   "documentation/.diagrams.json": {
@@ -40,8 +40,8 @@
     "semantic_hash": ""
   },
   "documentation/.living-doc.json": {
-    "mtime": 1782504233.762461,
-    "ast_hash": "d39cad7e902cef72815171a2b25f8314",
+    "mtime": 1782574822.7787113,
+    "ast_hash": "6658a26f801052eb14a3b539301409bf",
     "semantic_hash": ""
   },
   "documentation/.metadata.json": {
@@ -55,8 +55,8 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1782394486.638974,
-    "ast_hash": "ab71fe3d6eb9265fef2adb7a8b5b851c",
+    "mtime": 1782566367.8471248,
+    "ast_hash": "941570f3c23d2dfca63a62ffa8d56115",
     "semantic_hash": ""
   },
   "playwright.config.ts": {
@@ -85,13 +85,13 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/public/i18n/en.json": {
-    "mtime": 1782497580.7618344,
-    "ast_hash": "db4f9fc69d3fabf81d3096b74cbfb385",
+    "mtime": 1782575115.1389863,
+    "ast_hash": "2f61d2686bd994dd507bd8bdad3c6082",
     "semantic_hash": ""
   },
   "src/frontend-svelte/public/i18n/fr.json": {
-    "mtime": 1782497604.499725,
-    "ast_hash": "9f7a377c467d1edb26862826cb6114ad",
+    "mtime": 1782575115.2304544,
+    "ast_hash": "22452c9d060e0a73f1e2908f9076bd27",
     "semantic_hash": ""
   },
   "src/frontend-svelte/public/wordcloud2.js": {
@@ -150,8 +150,8 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/blueprint/BlueprintCanvas.svelte": {
-    "mtime": 1782395781.5112085,
-    "ast_hash": "1c4e6d0d1559b382e4fefc294ae5a88f",
+    "mtime": 1782572035.4489784,
+    "ast_hash": "2b9c326025fa02107f819ac8b3f2362a",
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/blueprint/FileExplorer.svelte": {
@@ -325,8 +325,8 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/home/DocViewer.svelte": {
-    "mtime": 1782303256.1107237,
-    "ast_hash": "25520db2f5d1e569a75a14a75c9a17c5",
+    "mtime": 1782575115.0481527,
+    "ast_hash": "afe482490ddf093225cc2736d5a43f86",
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/home/EditableMarkdown.svelte": {
@@ -735,8 +735,8 @@
     "semantic_hash": ""
   },
   "src/server.ts": {
-    "mtime": 1781804975.004023,
-    "ast_hash": "f05cebc4d7b7e068217e51e0d7d09d70",
+    "mtime": 1782555237.4791305,
+    "ast_hash": "13d45b54fd1ef6af05640c39a441f75c",
     "semantic_hash": ""
   },
   "starter-doc-fr/.living-doc.json": {
@@ -880,8 +880,8 @@
     "semantic_hash": ""
   },
   "tests/e2e/viewer.spec.ts": {
-    "mtime": 1780493956.253439,
-    "ast_hash": "97a85a8556e08aed85a913d027f2f24e",
+    "mtime": 1782575115.3258693,
+    "ast_hash": "4cd2d41d3e7658b5d85cc86fb147616b",
     "semantic_hash": ""
   },
   "tests/fixtures/blueprint-edit/src/alpha/index.ts": {
@@ -1155,8 +1155,8 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1781814401.3282561,
-    "ast_hash": "29d59ac72659997870407c132d23f346",
+    "mtime": 1782572988.2530746,
+    "ast_hash": "ec7e733f4133a5e6f9ddbaf7154e026f",
     "semantic_hash": ""
   },
   "documentation/000_BLUEPRINT/2026_06_01_17_40_[SCRIPTS]_scripts.md": {
@@ -1380,8 +1380,8 @@
     "semantic_hash": ""
   },
   "documentation/ADRS/2026_03_20_10_15_[CONFIGURATION]_link_extra_files_as_documentation.md": {
-    "mtime": 1782413187.9205017,
-    "ast_hash": "e48df593f810e96a929a94acf146922d",
+    "mtime": 1782572971.4733877,
+    "ast_hash": "b7e2e61c5d2577f248ffdc49f6319267",
     "semantic_hash": ""
   },
   "documentation/ADRS/2026_03_21_10_25_[CONFIGURATION]_general_category_and_sidebar_defaults.md": {
@@ -1405,8 +1405,8 @@
     "semantic_hash": ""
   },
   "documentation/ADRS/2026_04_03_11_20_[DIAGRAM]_snap_to_grid.md": {
-    "mtime": 1782425934.0433364,
-    "ast_hash": "5ac22d3e0b05c2165eaa3cc63d44f27a",
+    "mtime": 1782506793.8790336,
+    "ast_hash": "41d5e28822120b478a792af46e44d3b9",
     "semantic_hash": ""
   },
   "documentation/ADRS/2026_04_03_12_05_[DIAGRAM]_vis_network_z_order_patch.md": {
@@ -1430,18 +1430,18 @@
     "semantic_hash": ""
   },
   "documentation/ADRS/2026_04_08_12_20_[FILENAME]_datetime_precision_in_filename_pattern.md": {
-    "mtime": 1780834081.875204,
-    "ast_hash": "dd0dd42a5b5e9020dc9933f6dc845e09",
+    "mtime": 1782506862.3940334,
+    "ast_hash": "2225194d767a7ae3edb4c6c8617e4764",
     "semantic_hash": ""
   },
   "documentation/ADRS/2026_04_08_13_00_[EDITOR]_markdown_snippet_inserter_with_detection.md": {
-    "mtime": 1780834081.087458,
-    "ast_hash": "f72ce7648ea1c960a24a7a26b354b2ac",
+    "mtime": 1782506948.9647937,
+    "ast_hash": "93e275708cb4894b6f780069e6cbda44",
     "semantic_hash": ""
   },
   "documentation/ADRS/2026_04_08_13_15_[NAVIGATION]_anchor_scroll_and_folder_sort_convention.md": {
-    "mtime": 1780834079.3043087,
-    "ast_hash": "2dfcd459cb305f18bc635879e80b60a9",
+    "mtime": 1782507085.2581131,
+    "ast_hash": "7e61e2a9aa44c9e3b578a71eb5b9fee8",
     "semantic_hash": ""
   },
   "documentation/ADRS/2026_04_08_[DIAGRAM]_edge_label_rotation_stamp_overlay_png_group_fix.md": {
@@ -1945,13 +1945,13 @@
     "semantic_hash": ""
   },
   "documentation/AI/PROJECT-STACK.md": {
-    "mtime": 1781814401.486485,
-    "ast_hash": "8837ca77b5881b8e1b809267b60a9438",
+    "mtime": 1782575115.4113636,
+    "ast_hash": "550b57b60904cfd33c248e9d0da8f8b0",
     "semantic_hash": ""
   },
   "documentation/AI/PROJECT-USEFUL-COMMANDS.md": {
-    "mtime": 1781814401.5669644,
-    "ast_hash": "e195f536da1b9135a7abf314cd535ffd",
+    "mtime": 1782575115.497917,
+    "ast_hash": "c147d306ee9e2029e73ac1ac5f271188",
     "semantic_hash": ""
   },
   "documentation/AI/WORKSPACE/agent_de_listage_des_adrs_driftes/2026_06_02_17_15_[AGENT]_run_agent_de_listage_des_adrs_driftes.md": {
@@ -1995,8 +1995,8 @@
     "semantic_hash": ""
   },
   "documentation/WORKLOG/current-task.md": {
-    "mtime": 1782420689.7769547,
-    "ast_hash": "baa3c5c5327bc5abaaa1cee1e2307a36",
+    "mtime": 1782575115.5806608,
+    "ast_hash": "232c9130bb888c2c97eed220964d5a3e",
     "semantic_hash": ""
   },
   "memory/MEMORY.md": {
@@ -2845,13 +2845,13 @@
     "semantic_hash": ""
   },
   "documentation/.blueprint-clusters.json": {
-    "mtime": 1782371790.9996154,
-    "ast_hash": "5c5058c906a6f2e5fca3731ff0f39fe5",
+    "mtime": 1782553007.2410133,
+    "ast_hash": "9be60b960d2598f7b7afeea34adc9bfb",
     "semantic_hash": ""
   },
   "tests/e2e/blueprint-clusters.spec.ts": {
-    "mtime": 1782506341.6602077,
-    "ast_hash": "dc2c8948f22bf4f8397bd13ee8ce1731",
+    "mtime": 1782552535.712714,
+    "ast_hash": "eff38018d929fd174b1df3ed8e4c8b5d",
     "semantic_hash": ""
   },
   "documentation/000_BLUEPRINT/2026_06_24_20_34_[DOCUMENTATION]_documentation.md": {
@@ -2950,8 +2950,8 @@
     "semantic_hash": ""
   },
   "documentation/AI/WORKSPACE/find_written_english_documents/context.md": {
-    "mtime": 1782505535.5140386,
-    "ast_hash": "23e570095ac19867b2cdfbcbbec51e44",
+    "mtime": 1782507545.5600371,
+    "ast_hash": "d7c3671fec0091dcaa97e75fabb2852c",
     "semantic_hash": ""
   },
   "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_26_22_28_[AGENT]_run_traducteur_anglais_vers_francais.md": {
@@ -2965,8 +2965,68 @@
     "semantic_hash": ""
   },
   "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/context.md": {
-    "mtime": 1782505832.7032945,
-    "ast_hash": "cace0c062cf3ea911924b7fff1d2abaf",
+    "mtime": 1782507090.1440394,
+    "ast_hash": "982ff57d2d90bec81c84b21094db0aa5",
+    "semantic_hash": ""
+  },
+  "src/frontend-svelte/src/lib/home/readingScript.ts": {
+    "mtime": 1782566535.0215821,
+    "ast_hash": "eaa34e279e8d1462c471c02c8fb1e288",
+    "semantic_hash": ""
+  },
+  "src/frontend-svelte/src/lib/home/ttsPlayer.svelte.ts": {
+    "mtime": 1782575114.9600484,
+    "ast_hash": "339a85415854627fbae0efb93cbc3757",
+    "semantic_hash": ""
+  },
+  "src/lib/documentLanguage.ts": {
+    "mtime": 1782572941.5895908,
+    "ast_hash": "c6c1f66ca9ce7fa615b878879cb2a0f3",
+    "semantic_hash": ""
+  },
+  "src/lib/tts/adapters/kokoro.ts": {
+    "mtime": 1782572859.206334,
+    "ast_hash": "773591a4f03ccda0dc8242fea04f178e",
+    "semantic_hash": ""
+  },
+  "src/lib/tts/index.ts": {
+    "mtime": 1782574821.2514234,
+    "ast_hash": "6d40f3c2e6cf9cce0009dc49f71e35eb",
+    "semantic_hash": ""
+  },
+  "src/lib/tts/types.ts": {
+    "mtime": 1782574821.1705294,
+    "ast_hash": "400f909458311969fb6c0f242e3d8350",
+    "semantic_hash": ""
+  },
+  "src/routes/tts.ts": {
+    "mtime": 1782574821.3956234,
+    "ast_hash": "3d7db2342de27e41e2f220226a5c41fb",
+    "semantic_hash": ""
+  },
+  "tests/unit/document-language.spec.ts": {
+    "mtime": 1782572888.349531,
+    "ast_hash": "33a89af98626f78a393e86465b8bae55",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/find_written_english_documents/2026_06_26_22_59_[AGENT]_run_find_written_english_documents.md": {
+    "mtime": 1782507545.5756319,
+    "ast_hash": "458fc8bbdd14c319064aecf747491b73",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_26_22_47_[AGENT]_run_traducteur_anglais_vers_francais.md": {
+    "mtime": 1782506869.815405,
+    "ast_hash": "a23be70ff9ffa1e46a3e75550eb783f5",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_26_22_49_[AGENT]_run_traducteur_anglais_vers_francais.md": {
+    "mtime": 1782506956.874185,
+    "ast_hash": "1ed3830df43f3ef0801ad45792b23308",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_26_22_51_[AGENT]_run_traducteur_anglais_vers_francais.md": {
+    "mtime": 1782507095.6953387,
+    "ast_hash": "90b15e4bb935a7130b38adc8cde13488",
     "semantic_hash": ""
   }
 }

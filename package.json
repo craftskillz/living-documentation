@@ -58,6 +58,9 @@
     "express": "5.2.1",
     "marked": "12.0.2"
   },
+  "optionalDependencies": {
+    "kokoro-js": "^1.2.1"
+  },
   "overrides": {
     "glob": "^13.0.0"
   },

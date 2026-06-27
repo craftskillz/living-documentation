@@ -1,1 +1,1 @@
-Dernière traduction : ADRS/2026_04_08_13_15_[NAVIGATION]_anchor_scroll_and_folder_sort_convention — traduit EN → FR, 3648 octets.
+Dernière traduction : README.fr — traduit EN → FR depuis le README anglais, 30389 octets. Frontmatter `**language:** fr` ajouté.

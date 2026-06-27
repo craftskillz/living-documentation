@@ -41,6 +41,14 @@ Indices : `package-lock.json` est présent, les scripts officiels sont dans `pac
 | `just dev`                                                | Raccourci local pour `npm run dev -- ./documentation`                 | Optionnel ; `just` est déclaré dans `mise.toml`.                                                                                                                                                                                                                     |
 | `just start`                                              | Raccourci local pour `npm run start -- ./documentation`               | Nécessite un build à jour.                                                                                                                                                                                                                                           |
 
+### Configuration TTS locale
+
+Le TTS est low footprint : l'anglais utilise `kokoro-js` côté serveur si l'optional dependency est installée. Le français peut être choisi et persisté dans le frontmatter, mais Kokoro renvoie une erreur explicite tant qu'un moteur de qualité comparable n'est pas disponible.
+
+| Commande / variable                                  | Effet                                                                     |
+| ---------------------------------------------------- | ------------------------------------------------------------------------- |
+| `LD_TTS_ENGINE=kokoro npm run dev -- ./documentation` | Force l'adapter serveur Kokoro pour les appels `/api/tts` côté anglais.   |
+
 ## Build et qualité
 
 | Commande                                                     | Effet                                                                                                                         | Quand la lancer                                                                     |

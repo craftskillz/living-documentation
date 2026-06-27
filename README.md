@@ -1,3 +1,7 @@
+---
+**language:** en
+---
+
 # Living Documentation
 
 [🇫🇷 Lire en français](./README.fr.md)
