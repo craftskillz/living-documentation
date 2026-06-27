@@ -2,23 +2,23 @@
 `🗄️ ADR : 2026_04_08_13_15_[NAVIGATION]_anchor_scroll_and_folder_sort_convention.md`
 **date:** 2026-04-08
 **status:** Accepted
-**description:** Auto-generate heading IDs after async document render to enable in-page anchor scroll; introduce a numeric prefix convention (1_NAME) for controlling folder sort order in the sidebar while hiding the prefix in the UI.
-**tags:** navigation, anchor, heading, scroll, sidebar, folder, sort, convention, prefix, frontend, marked, breadcrumbs
+**description:** Génération automatique des IDs de titres après le rendu asynchrone du document pour permettre le défilement par ancre ; introduction d'une convention de préfixe numérique (1_NOM) pour contrôler l'ordre de tri des dossiers dans la barre latérale tout en masquant le préfixe dans l'interface.
+**tags:** navigation, ancre, titre, défilement, barre-latérale, dossier, tri, convention, préfixe, frontend, marked, fil-d-ariane
 ---
 
-## Context
+## Contexte
 
-Two independent UX gaps were identified:
+Deux lacunes UX indépendantes ont été identifiées :
 
-1. **Anchor navigation broken**: `marked` v12 does not generate `id` attributes on headings. Links like `[See section](#consequences)` or `?doc=...#consequences` silently failed , the page loaded but never scrolled to the target, because the heading element had no `id` to match.
+1. **Navigation par ancre cassée** : `marked` v12 ne génère pas d'attributs `id` sur les titres. Les liens comme `[Voir la section](#consequences)` ou `?doc=...#consequences` échouaient silencieusement, la page se chargeait mais ne défilait jamais jusqu'à la cible, car l'élément de titre n'avait pas d'`id` à cibler.
 
-2. **Folder sort order not controllable**: Sidebar folders are sorted alphabetically. Users with a specific reading order in mind (e.g. Tutorial → Reference → Advanced) had no way to enforce it without renaming folders to non-semantic names.
+2. **Ordre de tri des dossiers non contrôlable** : Les dossiers de la barre latérale sont triés alphabétiquement. Les utilisateurs ayant un ordre de lecture spécifique en tête (ex. Tutoriel → Référence → Avancé) n'avaient aucun moyen de l'imposer sans renommer les dossiers avec des noms non sémantiques.
 
-## Decision
+## Décision
 
-### Anchor scroll
+### Défilement par ancre
 
-After injecting `doc.html` into the DOM, a post-render pass iterates over all `h1`–`h6` elements and assigns an `id` if none is present:
+Après injection de `doc.html` dans le DOM, une passe post-rendu parcourt tous les éléments `h1`–`h6` et leur attribue un `id` s'il n'en ont pas :
 
 ```js
 h.id = h.textContent
@@ -28,11 +28,11 @@ h.id = h.textContent
   .replace(/\s+/g, "-");
 ```
 
-After this pass, if `window.location.hash` is set, the matching element is scrolled into view with `scrollIntoView({ behavior: "smooth" })`. The `docView.scrollTop = 0` reset is skipped when a hash is present.
+Après cette passe, si `window.location.hash` est défini, l'élément correspondant est défilé jusqu'à la vue avec `scrollIntoView({ behavior: "smooth" })`. La réinitialisation `docView.scrollTop = 0` est ignorée lorsqu'un hash est présent.
 
-### Folder sort convention
+### Convention de tri des dossiers
 
-Directories can be prefixed with a number and underscore (`1_TUTORIAL`, `2_REFERENCE`) to control their alphabetical sort position. The `folderLabel(seg)` helper strips the prefix for display:
+Les répertoires peuvent être préfixés d'un nombre suivi d'un tiret bas (`1_TUTORIAL`, `2_REFERENCE`) pour contrôler leur position de tri alphabétique. La fonction utilitaire `folderLabel(seg)` supprime le préfixe pour l'affichage :
 
 ```js
 function folderLabel(seg) {
@@ -40,24 +40,24 @@ function folderLabel(seg) {
 }
 ```
 
-`folderLabel` is applied in two places:
+`folderLabel` est appliquée à deux endroits :
 
-- The sidebar folder button label (`📁 TUTORIAL`)
-- The violet breadcrumb pills in the article header
+- Le libellé du bouton de dossier dans la barre latérale (`📁 TUTORIAL`)
+- Les pastilles violettes du fil d'ariane dans l'en-tête de l'article
 
-In both places the raw segment name is kept in a `title` attribute so the full name is visible on hover. The sort order itself is untouched , the filesystem name drives it.
+Aux deux endroits, le nom brut du segment est conservé dans un attribut `title` afin que le nom complet soit visible au survol. L'ordre de tri lui-même est inchangé, c'est le nom du système de fichiers qui le détermine.
 
-## Consequences
+## Conséquences
 
-### PROS
+### AVANTAGES
 
-- Anchor links in documents now work reliably regardless of `marked` version
-- The heading ID algorithm is deterministic and matches common Markdown renderer conventions
-- Folder sort convention is zero-config , no admin UI, no persisted state; the filesystem name is the single source of truth
-- Existing folders without a prefix are unaffected
+- Les liens d'ancrage dans les documents fonctionnent désormais de manière fiable, quelle que soit la version de `marked`
+- L'algorithme d'ID de titres est déterministe et correspond aux conventions courantes des moteurs de rendu Markdown
+- La convention de tri des dossiers est sans configuration, sans interface d'administration, sans état persistant ; le nom du système de fichiers est la source unique de vérité
+- Les dossiers existants sans préfixe ne sont pas affectés
 
-### CONS
+### INCONVÉNIENTS
 
-- Heading IDs are generated client-side; server-side rendered HTML still has no `id` attributes (acceptable since the viewer is always client-rendered)
-- The slug algorithm strips non-ASCII punctuation which may produce collisions for headings that differ only in special characters
-- The `1_` prefix convention is implicit , nothing enforces or documents it within the tool itself beyond the README
+- Les IDs de titres sont générés côté client ; le HTML rendu côté serveur n'a toujours pas d'attributs `id` (acceptable puisque le visualiseur est toujours rendu côté client)
+- L'algorithme de slug supprime la ponctuation non-ASCII, ce qui peut produire des collisions pour des titres qui ne diffèrent que par des caractères spéciaux
+- La convention de préfixe `1_` est implicite, rien ne l'impose ni ne la documente dans l'outil lui-même au-delà du README

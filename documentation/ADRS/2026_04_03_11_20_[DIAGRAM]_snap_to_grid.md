@@ -6,8 +6,6 @@
 **tags:** diagram, snap-to-grid, grille, DPR, retina, vis-network, rendu, bounding-box, shape
 ---
 
-# Snap to Grid
-
 ## Contexte
 
 L'éditeur de diagrammes propose une fonctionnalité de snap-to-grid (grille de 40px en unités monde). Lorsque l'utilisateur relâche un nœud après l'avoir déplacé, celui-ci doit s'aligner de sorte que son **bord gauche s'aligne sur une ligne verticale de la grille** et son **bord supérieur s'aligne sur une ligne horizontale de la grille**.

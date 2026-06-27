@@ -2,36 +2,36 @@
 `🗄️ ADR : 2026_04_08_12_20_[FILENAME]_datetime_precision_in_filename_pattern.md`
 **date:** 2026-04-08
 **status:** Accepted
-**description:** Extend the default filename pattern from YYYY_MM_DD to YYYY_MM_DD_HH_mm to allow multiple documents per day to coexist without naming conflicts, while preserving backward compatibility with existing YYYY_MM_DD files.
-**tags:** filename, pattern, datetime, parser, config, backward-compatibility, HH, mm, date, documents
+**description:** Extension du motif de nom de fichier par défaut de YYYY_MM_DD à YYYY_MM_DD_HH_mm pour permettre à plusieurs documents par jour de coexister sans conflit de nommage, tout en préservant la rétrocompatibilité avec les fichiers YYYY_MM_DD existants.
+**tags:** filename, pattern, datetime, parser, config, rétrocompatibilité, HH, mm, date, documents
 ---
 
-## Context
+## Contexte
 
-The previous default pattern `YYYY_MM_DD_[Category]_title` only had day-level granularity. Users creating multiple documents on the same day with similar titles could run into filename conflicts, and had no way to distinguish documents temporally within a day.
+Le motif par défaut précédent `YYYY_MM_DD_[Category]_title` n'offrait qu'une granularité au niveau du jour. Les utilisateurs créant plusieurs documents le même jour avec des titres similaires pouvaient rencontrer des conflits de nom de fichier, et n'avaient aucun moyen de distinguer temporellement les documents au sein d'une même journée.
 
-## Decision
+## Décision
 
-The default `filenamePattern` was changed from `YYYY_MM_DD_[Category]_title` to `YYYY_MM_DD_HH_mm_[Category]_title` across the entire codebase:
+Le `filenamePattern` par défaut a été modifié de `YYYY_MM_DD_[Category]_title` à `YYYY_MM_DD_HH_mm_[Category]_title` dans l'ensemble du code source :
 
-- **`src/lib/config.ts`** , updated default
-- **`src/lib/parser.ts`** , two new tokens `HH` and `mm` detected via `/HH.*mm/`; when present, the date capture group becomes `(\d{4}_\d{2}_\d{2}(?:_\d{2}_\d{2})?)` , the time portion is **optional** so old `YYYY_MM_DD` files continue to match; `dateStrToISO()` converts `YYYY_MM_DD_HH_mm` → `YYYY-MM-DDTHH:MM` and `YYYY_MM_DD` → `YYYY-MM-DD`; `formatDate()` appends the time when present
-- **`src/routes/documents.ts`** , `buildFilename()` now substitutes `HH` and `mm` from `new Date()` at creation time
-- **`src/frontend/index.html`** , live filename preview in the New Document modal includes hours and minutes
-- **`src/frontend/admin.html`** , pattern preview examples, `buildPatternsFromFormat`, `parsePreview`, placeholder and fallback strings all updated
-- **`README.md`, `CLAUDE.md`, `memory/project_overview.md`** , documentation updated with new format and examples
-- **All existing ADR files** , renamed to include `HH_mm` and their internal `🗄️ ADR :` frontmatter references updated accordingly
+- **`src/lib/config.ts`** — valeur par défaut mise à jour
+- **`src/lib/parser.ts`** — deux nouveaux jetons `HH` et `mm` détectés via `/HH.*mm/` ; lorsqu'ils sont présents, le groupe de capture de date devient `(\d{4}_\d{2}_\d{2}(?:_\d{2}_\d{2})?)`, la portion horaire est **optionnelle** afin que les anciens fichiers `YYYY_MM_DD` continuent d'être reconnus ; `dateStrToISO()` convertit `YYYY_MM_DD_HH_mm` → `YYYY-MM-DDTHH:MM` et `YYYY_MM_DD` → `YYYY-MM-DD` ; `formatDate()` ajoute l'heure lorsqu'elle est présente
+- **`src/routes/documents.ts`** — `buildFilename()` substitue désormais `HH` et `mm` à partir de `new Date()` au moment de la création
+- **`src/frontend/index.html`** — l'aperçu en direct du nom de fichier dans la fenêtre modale Nouveau Document inclut les heures et les minutes
+- **`src/frontend/admin.html`** — exemples d'aperçu du motif, `buildPatternsFromFormat`, `parsePreview`, chaînes de substitution et de secours, tous mis à jour
+- **`README.md`, `CLAUDE.md`, `memory/project_overview.md`** — documentation mise à jour avec le nouveau format et des exemples
+- **Tous les fichiers ADR existants** — renommés pour inclure `HH_mm` et leurs références internes `🗄️ ADR :` dans le frontmatter mises à jour en conséquence
 
-## Consequences
+## Conséquences
 
-### PROS
+### AVANTAGES
 
-- Multiple documents created on the same day are naturally ordered and distinguishable
-- Full backward compatibility: existing `YYYY_MM_DD` files parse correctly without any migration
-- The time is captured at actual creation time, reflecting when the document was truly authored
+- Plusieurs documents créés le même jour sont naturellement ordonnés et distinguables
+- Rétrocompatibilité totale : les fichiers `YYYY_MM_DD` existants sont analysés correctement sans aucune migration
+- L'heure est capturée au moment réel de la création, reflétant le moment où le document a véritablement été rédigé
 
-### CONS
+### INCONVÉNIENTS
 
-- Filenames are longer and slightly less readable at a glance
-- The optional time group in the regex adds a small complexity to the parser
-- Users who had customised their `filenamePattern` to `YYYY_MM_DD_...` are not automatically migrated , they need to update their `.living-doc.json` manually
+- Les noms de fichiers sont plus longs et légèrement moins lisibles au premier coup d'œil
+- Le groupe horaire optionnel dans l'expression régulière ajoute une petite complexité à l'analyseur syntaxique
+- Les utilisateurs ayant personnalisé leur `filenamePattern` en `YYYY_MM_DD_...` ne sont pas migrés automatiquement — ils doivent mettre à jour leur `.living-doc.json` manuellement

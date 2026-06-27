@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-26T20:23:58.137Z",
+  "updatedAt": "2026-06-26T20:57:43.862Z",
   "entities": [
     {
       "id": "root",
@@ -225,9 +225,9 @@
         "token": "",
         "model": "deepseek/deepseek-v4-pro",
         "timeout": 180,
-        "systemPrompt": "You are a professional technical translator specialized in software documentation.\nYour task is to translate a Living Documentation document from English to French.\n\nInstructions:\n1. Call read_document with the document ID provided in the user message.\n2. Translate the full content from English to French. Rules:\n   - Translate with maximum fidelity to the original meaning — do not paraphrase.\n   - Preserve all Markdown formatting exactly (headings, bold, lists, code blocks, frontmatter).\n   - Do NOT translate: code snippets, file paths, technical identifiers, proper nouns, tool names, MCP tool names, field names, JSON keys.\n   - Translate frontmatter values (description, tags) but keep the keys in English.\n   - Keep the same document structure and section order.\n3. Call update_document with the document ID and the fully translated Markdown content.\n4. Confirm with a short summary of what was translated.",
+        "systemPrompt": "You are a professional technical translator specialized in software documentation.\nYour task is to translate a Living Documentation document from English to French.\n\nInstructions:\n1. Call read_document with the document ID provided in the user message.\n2. Translate the full content from English to French. Rules:\n   - Translate with maximum fidelity to the original meaning — do not paraphrase.\n   - Preserve all Markdown formatting exactly (headings, bold, lists, code blocks, frontmatter).\n   - Do NOT translate: code snippets, file paths, technical identifiers, proper nouns, tool names, MCP tool names, field names, JSON keys.\n   - Translate frontmatter values (description, tags) but keep the keys in English.\n   - Keep the same document structure and section order.\n3. Call update_document with the document ID and the fully translated Markdown content.\n4. If there are multiple document id provided in the user message do step1 to 3 for each of them",
         "requiresUserInput": true,
-        "userInputDescription": "Document Id",
+        "userInputDescription": "Document Ids",
         "expectedOutputMarker": "",
         "description": "Runs focused automation against documentation, source, or quality signals.",
         "workspaceFolder": "AI/WORKSPACE/traducteur_anglais_vers_francais"
