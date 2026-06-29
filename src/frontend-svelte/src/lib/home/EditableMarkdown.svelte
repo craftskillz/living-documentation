@@ -219,7 +219,7 @@
       const base64 = await readAsBase64(file);
       const res = await fetch("/api/files/upload", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: base64, name: file.name }),
+        body: JSON.stringify({ data: base64, name: file.name, documentId: docId }),
       });
       if (!res.ok) {
         let msg = ""; try { msg = (await res.json()).error || ""; } catch { msg = await res.text(); }
@@ -318,6 +318,7 @@
   open={snippetsOpen}
   editor={editorEl}
   mode={snippetMode}
+  docId={docId}
   content={content}
   range={snippetRange}
   insertPos={snippetInsertPos}

@@ -9,12 +9,15 @@
   interface FileEntry {
     filename: string;
     displayName: string;
+    folder: string;
     size: number;
     uploadedAt: string;
     url: string;
   }
 
   let files = $state<FileEntry[]>([]);
+  let folders = $state<string[]>([]);
+  let selectedFolder = $state("");
   let loading = $state(true);
   let loadError = $state("");
   let actionError = $state<Record<string, string>>({});
@@ -22,6 +25,11 @@
   let deleting = $state<Record<string, boolean>>({});
 
   const MAX_BYTES = 19 * 1024 * 1024;
+  const filteredFiles = $derived(
+    selectedFolder
+      ? files.filter((entry) => entry.folder === selectedFolder || entry.folder.startsWith(selectedFolder + "/"))
+      : files,
+  );
 
   function formatSize(bytes: number): string {
     if (bytes < 1024) return t("files.size_bytes").replace("{n}", String(bytes));
@@ -45,6 +53,8 @@
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       files = Array.isArray(data.files) ? data.files : [];
+      folders = Array.isArray(data.folders) ? data.folders : [];
+      if (selectedFolder && !folders.includes(selectedFolder)) selectedFolder = "";
     } catch (err: unknown) {
       loadError = t("files.error_load") + (err instanceof Error ? err.message : String(err));
     } finally {
@@ -160,8 +170,27 @@
     {:else if files.length === 0}
       <p class="files-msg files-msg--empty">{t("files.empty")}</p>
     {:else}
+      {#if folders.length > 0}
+        <div class="files-toolbar">
+          <label for="files-folder-filter">{t("files.filter_label")}</label>
+          <select
+            id="files-folder-filter"
+            data-testid="files-folder-filter"
+            value={selectedFolder}
+            onchange={(e) => (selectedFolder = (e.target as HTMLSelectElement).value)}
+          >
+            <option value="">{t("files.filter_all")}</option>
+            {#each folders as folder (folder)}
+              <option value={folder}>{folder}</option>
+            {/each}
+          </select>
+        </div>
+      {/if}
+      {#if filteredFiles.length === 0}
+        <p class="files-msg files-msg--empty">{t("files.empty_filter")}</p>
+      {:else}
       <ul class="files-list">
-        {#each files as entry}
+        {#each filteredFiles as entry}
           <li class="files-row">
             <span class="files-icon">📎</span>
             <div class="files-info">
@@ -169,7 +198,7 @@
                 {entry.displayName || entry.filename}
               </a>
               <div class="files-meta">
-                {#if entry.uploadedAt}{formatDate(entry.uploadedAt)} · {/if}{formatSize(entry.size || 0)}
+                {#if entry.folder}<span class="files-folder">{entry.folder}</span> · {/if}{#if entry.uploadedAt}{formatDate(entry.uploadedAt)} · {/if}{formatSize(entry.size || 0)}
               </div>
               {#if actionError[entry.filename]}
                 <p class="files-row-error">{actionError[entry.filename]}</p>
@@ -196,6 +225,7 @@
           </li>
         {/each}
       </ul>
+      {/if}
     {/if}
   </div>
 </div>
@@ -216,6 +246,32 @@
 
   .files-msg--error { color: var(--red); }
   .files-msg--empty { font-style: italic; }
+
+  .files-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .files-toolbar label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  .files-toolbar select {
+    min-width: 220px;
+    max-width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--ink);
+    font: inherit;
+    font-size: 13px;
+    padding: 6px 10px;
+  }
 
   .files-list {
     list-style: none;
@@ -263,6 +319,10 @@
     font-size: 12px;
     color: var(--muted);
     margin-top: 2px;
+  }
+
+  .files-folder {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   }
 
   .files-row-error {

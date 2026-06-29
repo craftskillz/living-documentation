@@ -7,9 +7,9 @@ const TEXT_B64 = Buffer.from("hello living-ai-documentation").toString(
   "base64",
 );
 
-async function uploadSample(request: any, baseURL: string, name = "note.txt") {
+async function uploadSample(request: any, baseURL: string, name = "note.txt", documentId?: string) {
   const res = await request.post(`${baseURL}/api/files/upload`, {
-    data: { data: TEXT_B64, name },
+    data: { data: TEXT_B64, name, documentId },
   });
   expect(res.ok()).toBe(true);
   return (await res.json()) as { filename: string; url: string; size: number };
@@ -73,6 +73,50 @@ test("GET /api/files lists uploaded files with display name + timestamp", async 
   const entry = body.files.find((f) => f.displayName === "readme.md");
   expect(entry).toBeDefined();
   expect(entry!.uploadedAt).not.toBeNull();
+});
+
+test.describe("nested attachment folders", () => {
+  test.use({ fixtureName: "with-subfolders" });
+
+  test("upload stores attachments under files/<document-folder> and lists folder filters", async ({
+    request,
+    ld,
+  }) => {
+    const docId = encodeURIComponent("tutorials/advanced/2026_01_03_10_00_[Guide]_deep");
+    const { filename, url } = await uploadSample(request, ld.baseURL, "deep note.txt", docId);
+
+    expect(filename).toMatch(/^tutorials\/advanced\/\d{14}_[a-z0-9]{4}_deep_note\.txt$/);
+    expect(url).toBe(`/files/${filename}`);
+    expect(fs.existsSync(path.join(ld.docsAbs, "files", filename))).toBe(true);
+
+    const res = await request.get(`${ld.baseURL}/api/files`);
+    const body = (await res.json()) as {
+      folders: string[];
+      files: Array<{ filename: string; folder: string; displayName: string }>;
+    };
+    expect(body.folders).toEqual(["tutorials", "tutorials/advanced"]);
+    expect(body.files).toContainEqual(expect.objectContaining({
+      filename,
+      folder: "tutorials/advanced",
+      displayName: "deep_note.txt",
+    }));
+  });
+
+  test("PUT and DELETE accept nested attachment filenames", async ({ request, ld }) => {
+    const docId = encodeURIComponent("tutorials/2026_01_02_10_00_[Guide]_nested");
+    const { filename } = await uploadSample(request, ld.baseURL, "nested.txt", docId);
+    const newContent = Buffer.from("nested replacement").toString("base64");
+
+    const put = await request.put(`${ld.baseURL}/api/files/${encodeURIComponent(filename)}`, {
+      data: { data: newContent },
+    });
+    expect(put.ok()).toBe(true);
+    expect(fs.readFileSync(path.join(ld.docsAbs, "files", filename), "utf-8")).toBe("nested replacement");
+
+    const del = await request.delete(`${ld.baseURL}/api/files/${encodeURIComponent(filename)}`);
+    expect(del.ok()).toBe(true);
+    expect(fs.existsSync(path.join(ld.docsAbs, "files", filename))).toBe(false);
+  });
 });
 
 test("PUT /api/files/:filename replaces an existing file in place", async ({

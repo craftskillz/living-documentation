@@ -39,6 +39,7 @@
   let {
     open,
     editor,
+    docId,
     onclose,
     mode = "insert",
     content = "",
@@ -48,6 +49,7 @@
   }: {
     open: boolean;
     editor: HTMLTextAreaElement | null;
+    docId?: string;
     onclose: () => void;
     mode?: "insert" | "inline-edit" | "inline-insert";
     content?: string;
@@ -810,7 +812,7 @@
         const res = await fetch("/api/files/upload", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ data: dataUrl, name: file.name }),
+          body: JSON.stringify({ data: dataUrl, name: file.name, documentId: docId }),
         });
         if (!res.ok) {
           const err = await res.json().catch(() => ({}));

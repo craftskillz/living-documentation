@@ -23,58 +23,113 @@ function isSafeFilename(filename: string): boolean {
     && filename !== '..';
 }
 
+function isSafeRelativePath(value: string): boolean {
+  if (typeof value !== 'string') return false;
+  if (!value || value.startsWith('/') || value.startsWith('\\')) return false;
+  const segments = value.split(/[\\/]+/).filter(Boolean);
+  if (!segments.length) return false;
+  return segments.every((segment) => isSafeFilename(segment) && segment !== '.' && segment !== '..');
+}
+
+function toPosixPath(value: string): string {
+  return value.split(path.sep).join('/');
+}
+
 function resolveFilePathSafe(filesDir: string, filename: string): string | null {
-  if (!isSafeFilename(filename)) return null;
+  if (!isSafeRelativePath(filename)) return null;
   const resolvedDir = path.resolve(filesDir);
   const resolved = path.resolve(filesDir, filename);
-  if (resolved !== path.join(resolvedDir, filename)) return null;
+  if (!resolved.startsWith(resolvedDir + path.sep)) return null;
   return resolved;
+}
+
+function collectFilePaths(dir: string, baseDir: string): string[] {
+  const results: string[] = [];
+  if (!fs.existsSync(dir)) return results;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.name.startsWith('.')) continue;
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results.push(...collectFilePaths(fullPath, baseDir));
+    } else if (entry.isFile()) {
+      results.push(toPosixPath(path.relative(baseDir, fullPath)));
+    }
+  }
+  return results;
+}
+
+function collectFolderPaths(dir: string, baseDir: string): string[] {
+  const results: string[] = [];
+  if (!fs.existsSync(dir)) return results;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (!entry.isDirectory() || entry.name.startsWith('.')) continue;
+    const fullPath = path.join(dir, entry.name);
+    results.push(toPosixPath(path.relative(baseDir, fullPath)));
+    results.push(...collectFolderPaths(fullPath, baseDir));
+  }
+  return results;
+}
+
+function folderFromDocumentId(documentId: unknown): string {
+  if (typeof documentId !== 'string' || !documentId.trim()) return '';
+  let decoded = documentId;
+  try {
+    decoded = decodeURIComponent(documentId);
+  } catch {
+    return '';
+  }
+  if (path.isAbsolute(decoded)) return '';
+  const docDir = path.posix.dirname(decoded.split(path.sep).join('/'));
+  if (docDir === '.') return '';
+  return isSafeRelativePath(docDir) ? docDir : '';
+}
+
+function parseUploadedAt(filename: string): { uploadedAt: string | null; displayName: string } {
+  const base = path.posix.basename(filename);
+  const match = base.match(/^(\d{14})_[a-z0-9]{4}_(.+)$/);
+  if (!match) return { uploadedAt: null, displayName: base };
+  const ts = match[1];
+  const d = new Date(
+    parseInt(ts.slice(0, 4), 10),
+    parseInt(ts.slice(4, 6), 10) - 1,
+    parseInt(ts.slice(6, 8), 10),
+    parseInt(ts.slice(8, 10), 10),
+    parseInt(ts.slice(10, 12), 10),
+    parseInt(ts.slice(12, 14), 10),
+  );
+  return {
+    uploadedAt: isNaN(d.getTime()) ? null : d.toISOString(),
+    displayName: match[2],
+  };
 }
 
 export function filesRouter(docsPath: string): Router {
   const router = Router();
 
-  // GET /api/files — list files in DOCS_FOLDER/files/ (sorted lex = chronological
-  // because filenames start with YYYYMMDDHHmmss).
+  // GET /api/files — recursively list files in DOCS_FOLDER/files/.
   router.get('/', (_req: Request, res: Response) => {
     const filesDir = path.join(docsPath, 'files');
     if (!fs.existsSync(filesDir)) {
-      return res.json({ files: [] });
+      return res.json({ files: [], folders: [] });
     }
-    const entries = fs
-      .readdirSync(filesDir, { withFileTypes: true })
-      .filter((e) => e.isFile())
-      .map((e) => e.name)
-      .sort((a, b) => a.localeCompare(b));
 
+    const entries = collectFilePaths(filesDir, filesDir).sort((a, b) => a.localeCompare(b));
+    const folders = collectFolderPaths(filesDir, filesDir).sort((a, b) => a.localeCompare(b));
     const files = entries.map((filename) => {
       const stat = fs.statSync(path.join(filesDir, filename));
-      const match = filename.match(/^(\d{14})_[a-z0-9]{4}_(.+)$/);
-      let uploadedAt: string | null = null;
-      let displayName = filename;
-      if (match) {
-        const ts = match[1];
-        const d = new Date(
-          parseInt(ts.slice(0, 4), 10),
-          parseInt(ts.slice(4, 6), 10) - 1,
-          parseInt(ts.slice(6, 8), 10),
-          parseInt(ts.slice(8, 10), 10),
-          parseInt(ts.slice(10, 12), 10),
-          parseInt(ts.slice(12, 14), 10),
-        );
-        uploadedAt = isNaN(d.getTime()) ? null : d.toISOString();
-        displayName = match[2];
-      }
+      const { uploadedAt, displayName } = parseUploadedAt(filename);
+      const folder = path.posix.dirname(filename) === '.' ? '' : path.posix.dirname(filename);
       return {
         filename,
         displayName,
+        folder,
         uploadedAt,
         size: stat.size,
         url: `/files/${filename}`,
       };
     });
 
-    res.json({ files });
+    res.json({ files, folders });
   });
 
   // PUT /api/files/:filename — overwrite existing file (same filename, no history).
@@ -133,7 +188,7 @@ export function filesRouter(docsPath: string): Router {
 
   // POST /api/files/upload — base64-encoded arbitrary file saved to DOCS_FOLDER/files/
   router.post('/upload', (req: Request, res: Response) => {
-    const { data, name } = req.body as { data?: string; name?: string };
+    const { data, name, documentId } = req.body as { data?: string; name?: string; documentId?: string };
 
     if (typeof data !== 'string' || !data) {
       return res.status(400).json({ error: 'data is required' });
@@ -166,7 +221,8 @@ export function filesRouter(docsPath: string): Router {
       });
     }
 
-    const filesDir = path.join(docsPath, 'files');
+    const folder = folderFromDocumentId(documentId);
+    const filesDir = path.join(docsPath, 'files', folder);
     if (!fs.existsSync(filesDir)) {
       fs.mkdirSync(filesDir, { recursive: true });
     }
@@ -178,11 +234,11 @@ export function filesRouter(docsPath: string): Router {
       `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}` +
       `${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
     const random = Math.random().toString(36).slice(2, 6);
-    const filename = `${timestamp}_${random}_${baseWithoutExt}.${rawExt}`;
-    const filePath = path.join(filesDir, filename);
+    const basename = `${timestamp}_${random}_${baseWithoutExt}.${rawExt}`;
+    const filename = folder ? `${folder}/${basename}` : basename;
 
     try {
-      fs.writeFileSync(filePath, buffer);
+      fs.writeFileSync(path.join(filesDir, basename), buffer);
       res.json({
         filename,
         url: `/files/${filename}`,
