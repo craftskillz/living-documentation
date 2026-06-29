@@ -24,6 +24,11 @@ jobs:
         with:
           node-version: "20.19.0"
           # npm cache intentionally omitted on publish (tag-triggered) workflows.
+      - name: Align npm with the lockfile generator (npm 11)
+        # The lockfile is generated locally with npm 11, which omits foreign-platform
+        # optional deps (e.g. @emnapi on Linux) that npm 10's `npm ci` then reports as
+        # "missing". Node 20.19.0 ships npm 10, so upgrade to keep `npm ci` in sync.
+        run: npm install -g npm@11
       - name: Install dependencies
         # --ignore-scripts blocks postinstall hooks, the most common vector for
         # supply-chain attacks in compromised packages. None of our runtime deps
@@ -115,5 +120,8 @@ jobs:
         with:
           node-version: "22"
           registry-url: "https://registry.npmjs.org"
+      # Node 22 ships npm 10; the lockfile is generated with npm 11. Align to avoid
+      # `npm ci` reporting foreign-platform optional deps as missing.
+      - run: npm install -g npm@11
       - run: npm ci
       - run: npx -y npm@latest publish --provenance
