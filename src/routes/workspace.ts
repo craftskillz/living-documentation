@@ -370,6 +370,50 @@ function isRecord(input: unknown): input is Record<string, unknown> {
   return typeof input === 'object' && input !== null && !Array.isArray(input);
 }
 
+function errorMessageWithCause(error: unknown, fallback: string): string {
+  const base = error instanceof Error && error.message.trim()
+    ? error.message.trim()
+    : fallback;
+  const cause = error instanceof Error && 'cause' in error
+    ? (error as Error & { cause?: unknown }).cause
+    : undefined;
+
+  if (!cause || !isRecord(cause)) {
+    return base;
+  }
+
+  const details: string[] = [];
+  const causeMessage = cause.message;
+  if (typeof causeMessage === 'string' && causeMessage.trim() && causeMessage.trim() !== base) {
+    details.push(causeMessage.trim());
+  }
+
+  for (const key of ['code', 'errno', 'syscall', 'hostname', 'address', 'port']) {
+    const value = cause[key];
+    if (typeof value === 'string' || typeof value === 'number') {
+      details.push(`${key}=${value}`);
+    }
+  }
+
+  return details.length > 0 ? `${base} (${details.join(', ')})` : base;
+}
+
+function summarizeResponseBody(text: string, maxLength = 500): string {
+  return text.replace(/\s+/g, ' ').trim().slice(0, maxLength);
+}
+
+function upstreamHttpError(label: string, url: URL, response: Response, body: string): string {
+  const detail = summarizeResponseBody(body);
+  const suffix = detail ? `: ${detail}` : '';
+  return `${label} ${url.toString()} → ${response.status} ${response.statusText}${suffix}`.trim();
+}
+
+function workspaceErrorMessage(scope: string, error: unknown, fallback: string): string {
+  const message = errorMessageWithCause(error, fallback);
+  console.error(`[workspace] ${scope}:`, message);
+  return message;
+}
+
 function summarizeForEvent(value: unknown, maxLength = 240): string {
   let text = '';
   if (typeof value === 'string') {
@@ -388,7 +432,7 @@ function summarizeForEvent(value: unknown, maxLength = 240): string {
 
 function errorReportMarkdown(error: unknown, phase: string, extra: Record<string, string> = {}): string {
   const name = error instanceof Error ? error.name : typeof error;
-  const message = error instanceof Error ? error.message : String(error);
+  const message = errorMessageWithCause(error, String(error));
   const stack = error instanceof Error && error.stack ? error.stack : '';
   const lines = [
     `## Error summary`,
@@ -502,7 +546,7 @@ async function testLlmConnection(input: LlmConnectionTestRequest, noV1 = false):
         url: chatUrl.toString(),
         detail: response.ok
           ? `Model ${replyModel ?? model} responded`
-          : `Chat completion failed (${response.status})`,
+          : upstreamHttpError('LLM chat completion', chatUrl, response, text),
       };
     } finally {
       clearTimeout(timeout);
@@ -532,7 +576,7 @@ async function testLlmConnection(input: LlmConnectionTestRequest, noV1 = false):
         ? modelCount !== null
           ? `Connection OK (${modelCount} model${modelCount === 1 ? '' : 's'})`
           : `Connection OK (${response.status})`
-        : `Connection failed (${response.status})`,
+        : upstreamHttpError('LLM models', url, response, text),
     };
   } finally {
     clearTimeout(timeout);
@@ -540,12 +584,22 @@ async function testLlmConnection(input: LlmConnectionTestRequest, noV1 = false):
 }
 
 async function callMcp(endpoint: string, method: string, params: unknown): Promise<unknown> {
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' },
-    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
-  });
+  let url: URL;
+  let response: Response;
+  try {
+    url = new URL(endpoint);
+    response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
+    });
+  } catch (error) {
+    throw new Error(`MCP request failed: ${errorMessageWithCause(error, 'fetch failed')}`);
+  }
   const text = await response.text();
+  if (!response.ok) {
+    throw new Error(upstreamHttpError('MCP request', url, response, text));
+  }
   // Handle SSE (data: ...) or plain JSON
   for (const line of text.split('\n')) {
     const trimmed = line.startsWith('data:') ? line.slice(5).trim() : line.trim();
@@ -602,13 +656,14 @@ async function runAgent(
       debug?.sections.push(
         `### Tools MCP chargés (${mcpTools.length})\n\nEndpoint MCP : \`${config.mcpEndpoint}\`\n\n${debugBlock(mcpTools)}`,
       );
-    } catch {
+    } catch (error) {
+      const message = errorMessageWithCause(error, 'MCP tools unavailable');
       mcpTools = [];
       report?.({
         type: 'mcp_tools',
-        message: 'MCP tools unavailable; running without tool calls',
+        message: `MCP tools unavailable; running without tool calls (${message})`,
       });
-      debug?.sections.push('### Tools MCP\n\nIndisponibles — exécution sans tool calls.');
+      debug?.sections.push(`### Tools MCP\n\nIndisponibles — exécution sans tool calls.\n\n${message}`);
     }
   } else {
     report?.({
@@ -649,6 +704,7 @@ async function runAgent(
         signal: controller.signal,
         body: JSON.stringify(llmBody),
       });
+      const responseText = await response.text();
 
       // Model doesn't support tool use — retry once without tools
       if (!response.ok && response.status === 400 && toolsSupported) {
@@ -677,10 +733,10 @@ async function runAgent(
       }
 
       if (!response.ok) {
-        throw new Error(`LLM error (${response.status})`);
+        throw new Error(upstreamHttpError('LLM chat completion', chatUrl, response, responseText));
       }
 
-      const parsed = JSON.parse(await response.text()) as unknown;
+      const parsed = JSON.parse(responseText) as unknown;
       if (!isRecord(parsed) || !Array.isArray(parsed.choices) || !parsed.choices.length) break;
 
       const choice = parsed.choices[0] as unknown;
@@ -1017,7 +1073,7 @@ export function workspaceRouter(docsPath: string): Router {
         clearTimeout(timeout);
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to list models';
+      const message = workspaceErrorMessage('list-models failed', error, 'Failed to list models');
       res.status(400).json({ ok: false, error: message });
     }
   });
@@ -1056,7 +1112,7 @@ export function workspaceRouter(docsPath: string): Router {
         const document = createAgentRunDocument(docsPath, agent, provider, true, userInput, content, renderAgentDebug(debug));
         res.json({ ok: true, content, document });
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Agent run failed';
+        const message = workspaceErrorMessage('run-agent-document failed', error, 'Agent run failed');
         const content = errorReportMarkdown(error, 'server-agent-run', {
           Agent: agent.label,
           Provider: provider.label,
@@ -1124,7 +1180,7 @@ export function workspaceRouter(docsPath: string): Router {
         );
         ok = true;
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Agent run failed';
+        const message = workspaceErrorMessage('run-agent-document-stream failed', error, 'Agent run failed');
         writeEvent({ type: 'error', message });
         content = errorReportMarkdown(error, 'server-agent-run', {
           Agent: agent.label,
@@ -1144,7 +1200,7 @@ export function workspaceRouter(docsPath: string): Router {
       res.end();
     } catch (error) {
       if (res.headersSent) {
-        const message = error instanceof Error ? error.message : 'Agent run failed';
+        const message = workspaceErrorMessage('run-agent-document-stream failed', error, 'Agent run failed');
         res.write(`${JSON.stringify({ type: 'error', message } as AgentRunEvent)}\n`);
         res.end();
         return;
@@ -1233,14 +1289,14 @@ export function workspaceRouter(docsPath: string): Router {
           writeEvent,
         );
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Agent run failed';
+        const message = workspaceErrorMessage('run-agent-stream failed', error, 'Agent run failed');
         writeEvent({ type: 'error', message });
       } finally {
         res.end();
       }
     } catch (error) {
       if (res.headersSent) {
-        const message = error instanceof Error ? error.message : 'Agent run failed';
+        const message = workspaceErrorMessage('run-agent-stream failed', error, 'Agent run failed');
         writeEvent({ type: 'error', message });
         res.end();
         return;
@@ -1279,7 +1335,7 @@ export function workspaceRouter(docsPath: string): Router {
       });
       res.json({ ok: true, content });
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Agent run failed';
+      const message = workspaceErrorMessage('run-agent failed', error, 'Agent run failed');
       res.status(400).json({ ok: false, error: message });
     }
   });
@@ -1293,7 +1349,10 @@ export function workspaceRouter(docsPath: string): Router {
       const result = await testLlmConnection(testBody, noV1);
       res.status(result.ok ? 200 : 502).json(result);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to test LLM connection';
+      const message = errorMessageWithCause(error, 'Failed to test LLM connection');
+      if (message !== 'endpoint is required') {
+        console.error('[workspace] test-llm failed:', message);
+      }
       res.status(400).json({ ok: false, error: message });
     }
   });

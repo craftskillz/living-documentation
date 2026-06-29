@@ -1539,7 +1539,7 @@ function tokenRefInvalid(token: string): boolean {
   return value !== "" && !ENV_REF_PATTERN.test(value);
 }
 const TOKEN_REF_HINT =
-  "API token must reference an environment variable, e.g. env:OPENROUTER_API_KEY";
+  "API token must reference an environment variable, e.g. env:LLM_API_KEY";
 
 async function loadModelsForSelect() {
   const selected = selectedEntity();

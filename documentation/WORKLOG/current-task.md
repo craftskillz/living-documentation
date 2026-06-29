@@ -1,8 +1,8 @@
 ---
 **date:** 2026-06-29
 **status:** Completed
-**description:** Les créations de dossiers Home normalisent désormais les espaces, accents et caractères spéciaux en segments sûrs avec underscores.
-**tags:** worklog, home, folder, normalization, accents, spaces, mkdir, svelte, api, playwright
+**description:** Les endpoints Workspace qui contactent des services externes exposent maintenant les causes réseau et les erreurs HTTP upstream utiles.
+**tags:** worklog, workspace, llm, list-models, test-llm, run-agent, mcp, fetch, error-cause, backend-logs
 ---
 
 # Current task
@@ -13,52 +13,36 @@ Completed
 
 ## Tache realisee
 
-La création de dossiers depuis la page Home a été corrigée pour produire des noms de dossiers normalisés.
+La gestion d'erreurs de `src/routes/workspace.ts` a ete verifiee endpoint par endpoint, puis uniformisee pour les chemins qui contactent des services externes.
 
-Le flux retenu est :
+Les changements principaux :
 
-- un segment de dossier est normalisé par suppression des accents ;
-- les espaces et caractères spéciaux sont remplacés par `_` ;
-- les underscores multiples sont compactés ;
-- les underscores en début/fin sont retirés ;
-- `204_CONNAISSANCE PERSONNE` devient `204_CONNAISSANCE_PERSONNE` ;
-- la normalisation est appliquée dans la modale `Nouveau dossier` ;
-- la normalisation est appliquée dans la création de sous-dossier inline depuis `Nouveau document` ;
-- l'API `POST /api/browse/mkdir` normalise aussi le dernier segment reçu, pour garder le comportement robuste même si un client ancien envoie un nom brut.
+- `errorMessageWithCause()` extrait les details utiles de `error.cause` quand Node/Undici renvoie un `fetch failed` ;
+- `upstreamHttpError()` ajoute l'URL appelee, le statut HTTP et un extrait court du body de reponse pour les erreurs fournisseur LLM/MCP ;
+- `workspaceErrorMessage()` journalise en console backend les erreurs reseau/upstream avec un prefixe `[workspace]` ;
+- `test-llm`, `list-models`, `run-agent`, `run-agent-stream`, `run-agent-document` et `run-agent-document-stream` propagent des messages plus exploitables ;
+- `callMcp()` detaille les echecs de connexion MCP et les reponses HTTP non-OK ;
+- les documents d'erreur agent incluent aussi les details issus de `error.cause`.
+
+Les erreurs de validation attendues restent simples (`endpoint is required`, `model is required`, etc.) et ne sont pas traitees comme des erreurs backend bruyantes.
 
 ## Contenu modifie
 
-- Ajout de `src/lib/folderName.ts` avec `normalizeFolderSegment` et `normalizeFolderPath`.
-- Extension de `NewFolderModal.svelte` pour normaliser la saisie et l'aperçu.
-- Extension de `NewDocModal.svelte` pour normaliser le nouveau sous-dossier inline.
-- Extension de `src/routes/browse.ts` pour normaliser côté serveur le nom de dossier créé.
-- Ajout de tests unitaires, API et E2E ciblés.
-
-## Fichiers concernes
-
-- `src/lib/folderName.ts`
-- `src/frontend-svelte/src/lib/home/NewFolderModal.svelte`
-- `src/frontend-svelte/src/lib/home/NewDocModal.svelte`
-- `src/routes/browse.ts`
-- `tests/unit/folder-name.spec.ts`
-- `tests/api/browse.spec.ts`
-- `tests/e2e/folder-creation.spec.ts`
+- `src/routes/workspace.ts`
+- `documentation/WORKLOG/current-task.md`
 - `graphify-out/*`
 
 ## Verifications realisees
 
 - `npm run build` : OK.
-- `npx playwright test tests/unit/folder-name.spec.ts --project=chromium` : OK, 3 tests passes.
-- `npx playwright test tests/api/browse.spec.ts --project=chromium` : OK, 7 tests passes.
-- `npx playwright test tests/e2e/folder-creation.spec.ts --project=chromium` : OK, 1 test passe.
+- `git diff --check` : OK.
 - `graphify update .` : OK.
 
 ## Limites connues
 
-- Les dossiers déjà créés avec espaces ou accents ne sont pas migrés automatiquement.
-- La correction se limite à la création de dossiers ; elle ne renomme pas les chemins existants dans les documents.
-- Aucun ADR n'a été créé pendant cette passe : l'arbre Git contient déjà des modifications non commitées, et les métadonnées Living Documentation seraient marquées sur un état dirty.
+- Les endpoints de lecture/sauvegarde locale du workspace gardent leur gestion simple : ils ne contactent pas de service externe et ne beneficient pas de `error.cause` reseau.
+- Les extraits de body upstream sont volontairement tronques a 500 caracteres pour rester lisibles.
 
 ## Prochaine action recommandee
 
-Valider manuellement dans Home avec un nom comme `204_CONNAISSANCE PERSONNE déjà!`, puis committer la correction avec la feature Files précédente ou créer un commit séparé selon le découpage souhaité.
+Relancer le serveur local et reproduire les erreurs LLM/MCP : le body JSON et la console backend doivent maintenant afficher une cause exploitable au lieu d'un simple `fetch failed`.
