@@ -3,7 +3,7 @@
   "title": "Projet Living Documentation",
   "theme": "system",
   "language": "fr",
-  "port": 4399,
+  "port": 4321,
   "extraFiles": [
     "../README.md",
     "../README.fr.md"
