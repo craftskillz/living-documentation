@@ -50,6 +50,22 @@ test('POST /api/browse/mkdir creates a directory', async ({ request, ld }) => {
   expect(fs.statSync(newDir).isDirectory()).toBe(true);
 });
 
+test('POST /api/browse/mkdir normalizes spaces, accents, and special characters', async ({
+  request,
+  ld,
+}) => {
+  const rawDir = path.join(ld.docsAbs, '204_CONNAISSANCE PERSONNE déjà!');
+  const normalizedDir = path.join(ld.docsAbs, '204_CONNAISSANCE_PERSONNE_deja');
+  const res = await request.post(`${ld.baseURL}/api/browse/mkdir`, {
+    data: { path: rawDir },
+  });
+  expect(res.ok()).toBe(true);
+  const body = (await res.json()) as { created: string };
+  expect(body.created).toBe(normalizedDir);
+  expect(fs.existsSync(normalizedDir)).toBe(true);
+  expect(fs.existsSync(rawDir)).toBe(false);
+});
+
 test('POST /api/browse/mkdir rejects the reserved "files" folder at docs root', async ({
   request,
   ld,

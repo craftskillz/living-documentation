@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
+import { normalizeFolderSegment } from '../lib/folderName';
 
 const RESERVED_SUBFOLDERS = new Set(['files', 'images']);
 
@@ -90,15 +91,20 @@ export function browseRouter(docsPath: string): Router {
     }
     const resolved = path.resolve(dirPath);
     const parent = path.dirname(resolved);
-    const name = path.basename(resolved);
+    const rawName = path.basename(resolved);
+    const name = normalizeFolderSegment(rawName);
+    if (!name) {
+      return res.status(400).json({ error: 'Invalid folder name' });
+    }
     if (isReservedAtDocsRoot(parent, name, docsPath)) {
       return res.status(400).json({
         error: `"${name}" is a reserved folder name at the docs root`,
       });
     }
+    const normalizedPath = path.join(parent, name);
     try {
-      fs.mkdirSync(resolved, { recursive: true });
-      res.json({ created: resolved });
+      fs.mkdirSync(normalizedPath, { recursive: true });
+      res.json({ created: normalizedPath });
     } catch {
       res.status(500).json({ error: 'Failed to create directory' });
     }

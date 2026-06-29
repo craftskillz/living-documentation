@@ -1,6 +1,7 @@
 <script lang="ts">
   import { t } from "../i18n.svelte";
   import { home } from "./state.svelte";
+  import { normalizeFolderSegment } from "../../../../lib/folderName";
 
   let { open, onclose, onsuccess }: {
     open: boolean;
@@ -62,14 +63,19 @@
   }
 
   const preview = $derived.by(() => {
-    const trimmed = name.trim();
-    if (!trimmed) return t("modal.new_folder.enter_name");
+    const normalized = normalizeFolderSegment(name);
+    if (!normalized) return t("modal.new_folder.enter_name");
     const base = selectedPath || docsFolder;
     const rel = base.startsWith(docsFolder)
       ? base.slice(docsFolder.length).replace(/^\//, "")
       : "";
-    return (rel ? rel + "/" : "") + trimmed;
+    return (rel ? rel + "/" : "") + normalized;
   });
+
+  function sanitizeFolderNameInput() {
+    const normalized = normalizeFolderSegment(name);
+    if (name !== normalized) name = normalized;
+  }
 
   function toggleBrowser() {
     browserOpen = !browserOpen;
@@ -111,22 +117,22 @@
   }
 
   async function create() {
-    const trimmed = name.trim();
+    const normalized = normalizeFolderSegment(name);
     error = "";
 
-    if (!trimmed) { error = t("modal.new_folder.error_empty"); return; }
-    if (!/^[a-zA-Z0-9_\-. ]+$/.test(trimmed)) {
+    if (!normalized) { error = t("modal.new_folder.error_empty"); return; }
+    if (!/^[a-zA-Z0-9_.-]+$/.test(normalized)) {
       error = t("modal.new_folder.error_invalid_chars");
       return;
     }
 
     const base = selectedPath || docsFolder;
     const atDocsRoot = base === docsFolder;
-    if (atDocsRoot && (trimmed === "files" || trimmed === "images")) {
+    if (atDocsRoot && (normalized === "files" || normalized === "images")) {
       error = t("modal.new_folder.error_reserved");
       return;
     }
-    const fullPath = base.endsWith("/") ? base + trimmed : base + "/" + trimmed;
+    const fullPath = base.endsWith("/") ? base + normalized : base + "/" + normalized;
 
     creating = true;
     try {
@@ -165,6 +171,7 @@
           id="new-folder-name"
           bind:this={nameInputEl}
           bind:value={name}
+          oninput={sanitizeFolderNameInput}
           type="text"
           placeholder={t("modal.new_folder.name_placeholder")}
           class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"

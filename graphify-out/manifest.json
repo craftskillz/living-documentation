@@ -40,7 +40,7 @@
     "semantic_hash": ""
   },
   "documentation/.living-doc.json": {
-    "mtime": 1782726620.1590962,
+    "mtime": 1782738976.602605,
     "ast_hash": "b97b9fd032a8d1b947304db588f89e16",
     "semantic_hash": ""
   },
@@ -55,8 +55,8 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1782725252.462439,
-    "ast_hash": "4ef342643a050ce6681168fcbf71dcdd",
+    "mtime": 1782727328.0406828,
+    "ast_hash": "b7a97201f1114d867731c58f0a9dd535",
     "semantic_hash": ""
   },
   "playwright.config.ts": {
@@ -345,13 +345,13 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/home/NewDocModal.svelte": {
-    "mtime": 1780434036.5902069,
-    "ast_hash": "26f3bf648f71efe0191ebf440485f42c",
+    "mtime": 1782738964.0292947,
+    "ast_hash": "387ba9416f8580f8c8591284c2d3da4e",
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/home/NewFolderModal.svelte": {
-    "mtime": 1780433990.1764038,
-    "ast_hash": "af2e661a7b100461501de7d85608a33d",
+    "mtime": 1782738951.6318624,
+    "ast_hash": "346ea230aaddecf8bd35adb91fac5ddf",
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/home/Sidebar.svelte": {
@@ -670,8 +670,8 @@
     "semantic_hash": ""
   },
   "src/routes/browse.ts": {
-    "mtime": 1780693466.722761,
-    "ast_hash": "3fdcda6beed35c34c0d9ce6a70d485f4",
+    "mtime": 1782738974.7235434,
+    "ast_hash": "6dc30ecdbdc0ff07b157731df93b9439",
     "semantic_hash": ""
   },
   "src/routes/config.ts": {
@@ -760,8 +760,8 @@
     "semantic_hash": ""
   },
   "tests/api/browse.spec.ts": {
-    "mtime": 1780693466.8352242,
-    "ast_hash": "5a45a824afe17aaabe9a4224374f0da7",
+    "mtime": 1782739004.073005,
+    "ast_hash": "0bcf7ce65ce306d49ee6aa6ed2de7f85",
     "semantic_hash": ""
   },
   "tests/api/cli.spec.ts": {
@@ -1995,8 +1995,8 @@
     "semantic_hash": ""
   },
   "documentation/WORKLOG/current-task.md": {
-    "mtime": 1782575928.9677517,
-    "ast_hash": "232c9130bb888c2c97eed220964d5a3e",
+    "mtime": 1782726830.1916485,
+    "ast_hash": "41cadce3b0ba462a31770f913ce7d8b1",
     "semantic_hash": ""
   },
   "memory/MEMORY.md": {
@@ -2905,7 +2905,7 @@
     "semantic_hash": ""
   },
   "documentation/AI/MCP/009-tool-list-documents.md": {
-    "mtime": 1782415404.2868843,
+    "mtime": 1782727249.8929646,
     "ast_hash": "950857637b398f009cf68040f51454c7",
     "semantic_hash": ""
   },
@@ -3027,6 +3027,21 @@
   "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md": {
     "mtime": 1782575928.9674168,
     "ast_hash": "9520c6ed006d5d7cc98da67a9301a3f1",
+    "semantic_hash": ""
+  },
+  "src/lib/folderName.ts": {
+    "mtime": 1782738937.1770952,
+    "ast_hash": "700450d56bf02b3e474440a0d7a9b3d5",
+    "semantic_hash": ""
+  },
+  "tests/e2e/folder-creation.spec.ts": {
+    "mtime": 1782739014.381645,
+    "ast_hash": "41b1957f980a3180c8874265a481c222",
+    "semantic_hash": ""
+  },
+  "tests/unit/folder-name.spec.ts": {
+    "mtime": 1782738993.3641117,
+    "ast_hash": "60e595a4064718df74274bec3b18cd82",
     "semantic_hash": ""
   }
 }

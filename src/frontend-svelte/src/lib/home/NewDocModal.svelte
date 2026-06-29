@@ -1,6 +1,7 @@
 <script lang="ts">
   import { t } from "../i18n.svelte";
   import { home } from "./state.svelte";
+  import { normalizeFolderSegment } from "../../../../lib/folderName";
 
   let { open, onclose, onsuccess }: {
     open: boolean;
@@ -106,6 +107,11 @@
     if (category !== normalized) category = normalized;
   }
 
+  function sanitizeNewFolderNameInput() {
+    const normalized = normalizeFolderSegment(newFolderName);
+    if (newFolderName !== normalized) newFolderName = normalized;
+  }
+
   const filenamePreview = $derived.by(() => {
     const trimmed = title.trim();
     if (!trimmed) return t("modal.new_doc.title_placeholder");
@@ -171,16 +177,16 @@
   }
 
   function createFolder() {
-    const trimmed = newFolderName.trim();
-    if (!trimmed) return;
+    const normalized = normalizeFolderSegment(newFolderName);
+    if (!normalized) return;
     const parent = browseCurrent || docsFolder;
     const atDocsRoot = parent === docsFolder;
-    if (atDocsRoot && (trimmed === "files" || trimmed === "images")) {
+    if (atDocsRoot && (normalized === "files" || normalized === "images")) {
       error = t("modal.new_folder.error_reserved");
       return;
     }
     error = "";
-    const newRelPath = (absToRel(parent) ? absToRel(parent) + "/" : "") + trimmed;
+    const newRelPath = (absToRel(parent) ? absToRel(parent) + "/" : "") + normalized;
     selectedFolder = newRelPath;
     folderDisplay = "/" + newRelPath;
     newFolderName = "";
@@ -300,6 +306,7 @@
             <div class="border-t border-gray-200 dark:border-gray-700 flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800/50">
               <input
                 bind:value={newFolderName}
+                oninput={sanitizeNewFolderNameInput}
                 onkeydown={(e) => { if (e.key === "Enter") createFolder(); }}
                 type="text"
                 placeholder={t("modal.new_doc.new_folder_placeholder")}

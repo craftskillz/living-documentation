@@ -1572,7 +1572,7 @@
       "confidence": "EXTRACTED",
       "_origin": "ast",
       "id": "svelte",
-      "community": 21,
+      "community": 92,
       "norm_label": "svelte"
     },
     {
@@ -1593,7 +1593,7 @@
       "_origin": "ast",
       "source_location": "L1",
       "id": "routes_admin",
-      "community": 21,
+      "community": 92,
       "norm_label": "admin.svelte"
     },
     {
@@ -1615,7 +1615,7 @@
       "_origin": "ast",
       "source_location": "L1",
       "id": "src_frontend_svelte_src_routes_workspace_svelte_routes_workspace",
-      "community": 21,
+      "community": 92,
       "norm_label": "workspace.svelte"
     },
     {
@@ -1626,7 +1626,7 @@
       "_origin": "ast",
       "source_location": "L1",
       "id": "src_frontend_svelte_src_routes_files_svelte_routes_files",
-      "community": 21,
+      "community": 92,
       "norm_label": "files.svelte"
     },
     {
@@ -1637,7 +1637,7 @@
       "_origin": "ast",
       "source_location": "L1",
       "id": "routes_aicontext",
-      "community": 92,
+      "community": 27,
       "norm_label": "aicontext.svelte"
     },
     {
@@ -1732,7 +1732,7 @@
       "confidence": "EXTRACTED",
       "_origin": "ast",
       "id": "users_ymedaghri_documents_repositories_medaghri_alaoui_repositories_09_my_published_projects_living_documentation_src_frontend_svelte_src_lib_i18n_svelte",
-      "community": 92,
+      "community": 27,
       "norm_label": "../lib/i18n.svelte"
     },
     {
@@ -1753,7 +1753,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "lib_airules",
-      "community": 92,
+      "community": 27,
       "norm_label": "../lib/airules.svelte"
     },
     {
@@ -1764,7 +1764,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "lib_configsection",
-      "community": 21,
+      "community": 92,
       "norm_label": "../lib/configsection.svelte"
     },
     {
@@ -1775,7 +1775,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "lib_confirmdialog",
-      "community": 27,
+      "community": 60,
       "norm_label": "../lib/confirmdialog.svelte"
     },
     {
@@ -1786,7 +1786,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "lib_diagrampalettes",
-      "community": 21,
+      "community": 92,
       "norm_label": "../lib/diagrampalettes.svelte"
     },
     {
@@ -1796,7 +1796,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "lib_diagrampalettes_hsltohex",
-      "community": 21,
+      "community": 92,
       "norm_label": "hsltohex()"
     },
     {
@@ -1807,7 +1807,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "lib_filebrowser",
-      "community": 21,
+      "community": 92,
       "norm_label": "../lib/filebrowser.svelte"
     },
     {
@@ -1818,7 +1818,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "lib_instructionfiles",
-      "community": 92,
+      "community": 27,
       "norm_label": "../lib/instructionfiles.svelte"
     },
     {
@@ -1829,7 +1829,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "lib_mcpexplorer",
-      "community": 92,
+      "community": 27,
       "norm_label": "../lib/mcpexplorer.svelte"
     },
     {
@@ -1839,7 +1839,7 @@
       "source_location": "L251",
       "_origin": "ast",
       "id": "lib_mcpexplorer_for",
-      "community": 92,
+      "community": 27,
       "norm_label": "for()"
     },
     {
@@ -1850,7 +1850,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "lib_topbar",
-      "community": 21,
+      "community": 92,
       "norm_label": "../lib/topbar.svelte"
     },
     {
@@ -2095,7 +2095,7 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "diagram_clipboard_pasteclipboard",
-      "community": 57,
+      "community": 416,
       "norm_label": "pasteclipboard()"
     },
     {
@@ -2135,7 +2135,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_constants",
-      "community": 120,
+      "community": 48,
       "norm_label": "constants.js"
     },
     {
@@ -2145,7 +2145,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "diagram_constants_tool_btn_map",
-      "community": 120,
+      "community": 48,
       "norm_label": "tool_btn_map"
     },
     {
@@ -2155,7 +2155,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "diagram_constants_node_colors",
-      "community": 120,
+      "community": 48,
       "norm_label": "node_colors"
     },
     {
@@ -2165,7 +2165,7 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "diagram_constants_default_node_palette",
-      "community": 120,
+      "community": 48,
       "norm_label": "default_node_palette"
     },
     {
@@ -2175,7 +2175,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "diagram_constants_default_edge_palette",
-      "community": 120,
+      "community": 48,
       "norm_label": "default_edge_palette"
     },
     {
@@ -2185,7 +2185,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "diagram_constants_node_l_ratios",
-      "community": 120,
+      "community": 48,
       "norm_label": "node_l_ratios"
     },
     {
@@ -2195,7 +2195,7 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "diagram_constants_derivenodecolors",
-      "community": 120,
+      "community": 48,
       "norm_label": "derivenodecolors()"
     },
     {
@@ -2205,7 +2205,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_custom_shapes",
-      "community": 120,
+      "community": 19,
       "norm_label": "custom-shapes.js"
     },
     {
@@ -2225,7 +2225,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "diagram_custom_shapes_iscustomshapetool",
-      "community": 120,
+      "community": 48,
       "norm_label": "iscustomshapetool()"
     },
     {
@@ -2235,7 +2235,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "diagram_custom_shapes_customshapeidfromtool",
-      "community": 120,
+      "community": 48,
       "norm_label": "customshapeidfromtool()"
     },
     {
@@ -2255,7 +2255,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "diagram_custom_shapes_getcustomshapedefaultsize",
-      "community": 120,
+      "community": 19,
       "norm_label": "getcustomshapedefaultsize()"
     },
     {
@@ -2285,7 +2285,7 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "diagram_custom_shapes_loadcustomshapelibraries",
-      "community": 120,
+      "community": 19,
       "norm_label": "loadcustomshapelibraries()"
     },
     {
@@ -2295,7 +2295,7 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "diagram_custom_shapes_rendercustomshapebar",
-      "community": 120,
+      "community": 19,
       "norm_label": "rendercustomshapebar()"
     },
     {
@@ -2305,7 +2305,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_debug",
-      "community": 120,
+      "community": 56,
       "norm_label": "debug.js"
     },
     {
@@ -2315,7 +2315,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "diagram_debug_toggledebug",
-      "community": 120,
+      "community": 56,
       "norm_label": "toggledebug()"
     },
     {
@@ -2325,7 +2325,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "diagram_debug_drawdebugoverlay",
-      "community": 120,
+      "community": 56,
       "norm_label": "drawdebugoverlay()"
     },
     {
@@ -2405,7 +2405,7 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "diagram_defaults_modal_getshapedefaults",
-      "community": 416,
+      "community": 48,
       "norm_label": "getshapedefaults()"
     },
     {
@@ -2705,7 +2705,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_edge_panel",
-      "community": 57,
+      "community": 416,
       "norm_label": "edge-panel.js"
     },
     {
@@ -2715,7 +2715,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "diagram_edge_panel_edgepaletteentries",
-      "community": 57,
+      "community": 416,
       "norm_label": "_edgepaletteentries"
     },
     {
@@ -2725,7 +2725,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "diagram_edge_panel_syncedgefontsizevalue",
-      "community": 57,
+      "community": 416,
       "norm_label": "syncedgefontsizevalue()"
     },
     {
@@ -2735,7 +2735,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "diagram_edge_panel_syncedgecolorswatch",
-      "community": 57,
+      "community": 416,
       "norm_label": "syncedgecolorswatch()"
     },
     {
@@ -2745,7 +2745,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "diagram_edge_panel_initedgecolorswatch",
-      "community": 57,
+      "community": 48,
       "norm_label": "initedgecolorswatch()"
     },
     {
@@ -2755,7 +2755,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "diagram_edge_panel_persistfreearrowstyle",
-      "community": 57,
+      "community": 416,
       "norm_label": "persistfreearrowstyle()"
     },
     {
@@ -2775,7 +2775,7 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "diagram_edge_panel_isedgelocked",
-      "community": 57,
+      "community": 416,
       "norm_label": "isedgelocked()"
     },
     {
@@ -2785,7 +2785,7 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "diagram_edge_panel_selectededgelockstate",
-      "community": 57,
+      "community": 416,
       "norm_label": "selectededgelockstate()"
     },
     {
@@ -2795,7 +2795,7 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "diagram_edge_panel_syncedgelockbutton",
-      "community": 57,
+      "community": 416,
       "norm_label": "syncedgelockbutton()"
     },
     {
@@ -2805,7 +2805,7 @@
       "source_location": "L117",
       "_origin": "ast",
       "id": "diagram_edge_panel_setedgelocked",
-      "community": 57,
+      "community": 416,
       "norm_label": "setedgelocked()"
     },
     {
@@ -2815,7 +2815,7 @@
       "source_location": "L133",
       "_origin": "ast",
       "id": "diagram_edge_panel_showedgepanel",
-      "community": 57,
+      "community": 416,
       "norm_label": "showedgepanel()"
     },
     {
@@ -2825,7 +2825,7 @@
       "source_location": "L165",
       "_origin": "ast",
       "id": "diagram_edge_panel_toggleedgelock",
-      "community": 57,
+      "community": 416,
       "norm_label": "toggleedgelock()"
     },
     {
@@ -2835,7 +2835,7 @@
       "source_location": "L185",
       "_origin": "ast",
       "id": "diagram_edge_panel_resetedgelabelwidth",
-      "community": 57,
+      "community": 416,
       "norm_label": "resetedgelabelwidth()"
     },
     {
@@ -2845,7 +2845,7 @@
       "source_location": "L194",
       "_origin": "ast",
       "id": "diagram_edge_panel_clearedgeports",
-      "community": 57,
+      "community": 416,
       "norm_label": "clearedgeports()"
     },
     {
@@ -2855,7 +2855,7 @@
       "source_location": "L215",
       "_origin": "ast",
       "id": "diagram_edge_panel_setedgecolor",
-      "community": 57,
+      "community": 416,
       "norm_label": "setedgecolor()"
     },
     {
@@ -2875,7 +2875,7 @@
       "source_location": "L280",
       "_origin": "ast",
       "id": "diagram_edge_panel_changeedgewidth",
-      "community": 57,
+      "community": 416,
       "norm_label": "changeedgewidth()"
     },
     {
@@ -2895,7 +2895,7 @@
       "source_location": "L302",
       "_origin": "ast",
       "id": "diagram_edge_panel_setedgearrow",
-      "community": 57,
+      "community": 416,
       "norm_label": "setedgearrow()"
     },
     {
@@ -2905,7 +2905,7 @@
       "source_location": "L318",
       "_origin": "ast",
       "id": "diagram_edge_panel_setedgedashes",
-      "community": 57,
+      "community": 416,
       "norm_label": "setedgedashes()"
     },
     {
@@ -2915,7 +2915,7 @@
       "source_location": "L334",
       "_origin": "ast",
       "id": "diagram_edge_panel_changeedgefontsize",
-      "community": 57,
+      "community": 416,
       "norm_label": "changeedgefontsize()"
     },
     {
@@ -2925,7 +2925,7 @@
       "source_location": "L348",
       "_origin": "ast",
       "id": "diagram_edge_panel_stepedgelabelrotation",
-      "community": 57,
+      "community": 416,
       "norm_label": "stepedgelabelrotation()"
     },
     {
@@ -2935,7 +2935,7 @@
       "source_location": "L367",
       "_origin": "ast",
       "id": "diagram_edge_panel_stepedgelabeloffset",
-      "community": 57,
+      "community": 416,
       "norm_label": "stepedgelabeloffset()"
     },
     {
@@ -2945,7 +2945,7 @@
       "source_location": "L383",
       "_origin": "ast",
       "id": "diagram_edge_panel_resetedgelabeloffset",
-      "community": 57,
+      "community": 416,
       "norm_label": "resetedgelabeloffset()"
     },
     {
@@ -2955,7 +2955,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_edge_rendering",
-      "community": 277,
+      "community": 426,
       "norm_label": "edge-rendering.js"
     },
     {
@@ -2965,7 +2965,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "diagram_edge_rendering_visedgeprops",
-      "community": 277,
+      "community": 426,
       "norm_label": "visedgeprops()"
     },
     {
@@ -3055,7 +3055,7 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "diagram_evidence_initevidencemode",
-      "community": 120,
+      "community": 48,
       "norm_label": "initevidencemode()"
     },
     {
@@ -3155,7 +3155,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_groups",
-      "community": 57,
+      "community": 56,
       "norm_label": "groups.js"
     },
     {
@@ -3165,7 +3165,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "diagram_groups_groupnodes",
-      "community": 57,
+      "community": 416,
       "norm_label": "groupnodes()"
     },
     {
@@ -3175,7 +3175,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "diagram_groups_ungroupnodes",
-      "community": 57,
+      "community": 416,
       "norm_label": "ungroupnodes()"
     },
     {
@@ -3195,7 +3195,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "diagram_groups_nodebounds",
-      "community": 57,
+      "community": 56,
       "norm_label": "nodebounds()"
     },
     {
@@ -3205,7 +3205,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "diagram_groups_drawgroupoutlines",
-      "community": 57,
+      "community": 56,
       "norm_label": "drawgroupoutlines()"
     },
     {
@@ -3215,7 +3215,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_history",
-      "community": 277,
+      "community": 426,
       "norm_label": "history.js"
     },
     {
@@ -3225,7 +3225,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "diagram_history_undostack",
-      "community": 277,
+      "community": 426,
       "norm_label": "_undostack"
     },
     {
@@ -3235,7 +3235,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "diagram_history_redostack",
-      "community": 277,
+      "community": 426,
       "norm_label": "_redostack"
     },
     {
@@ -3245,7 +3245,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "diagram_history_capturestate",
-      "community": 277,
+      "community": 426,
       "norm_label": "capturestate()"
     },
     {
@@ -3255,7 +3255,7 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "diagram_history_pushsnapshot",
-      "community": 57,
+      "community": 416,
       "norm_label": "pushsnapshot()"
     },
     {
@@ -3265,7 +3265,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "diagram_history_resethistory",
-      "community": 8,
+      "community": 33,
       "norm_label": "resethistory()"
     },
     {
@@ -3275,7 +3275,7 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "diagram_history_undo",
-      "community": 277,
+      "community": 426,
       "norm_label": "undo()"
     },
     {
@@ -3285,7 +3285,7 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "diagram_history_redo",
-      "community": 277,
+      "community": 426,
       "norm_label": "redo()"
     },
     {
@@ -3295,7 +3295,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "diagram_history_restorestate",
-      "community": 277,
+      "community": 426,
       "norm_label": "_restorestate()"
     },
     {
@@ -3305,7 +3305,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_image_name_modal",
-      "community": 120,
+      "community": 8,
       "norm_label": "image-name-modal.js"
     },
     {
@@ -3315,7 +3315,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "diagram_image_name_modal_promptimagename",
-      "community": 120,
+      "community": 8,
       "norm_label": "promptimagename()"
     },
     {
@@ -3425,7 +3425,7 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "diagram_label_editor_hidelabelinput",
-      "community": 8,
+      "community": 33,
       "norm_label": "hidelabelinput()"
     },
     {
@@ -3526,7 +3526,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "diagram_main",
-      "community": 120,
+      "community": 48,
       "norm_label": "../lib/diagram/main"
     },
     {
@@ -3536,7 +3536,7 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "diagram_main_settool",
-      "community": 120,
+      "community": 48,
       "norm_label": "settool()"
     },
     {
@@ -3546,7 +3546,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "diagram_main_selectall",
-      "community": 8,
+      "community": 48,
       "norm_label": "selectall()"
     },
     {
@@ -3556,7 +3556,7 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "diagram_main_deleteselected",
-      "community": 8,
+      "community": 33,
       "norm_label": "deleteselected()"
     },
     {
@@ -3566,7 +3566,7 @@
       "source_location": "L117",
       "_origin": "ast",
       "id": "diagram_main_togglesidebar",
-      "community": 120,
+      "community": 48,
       "norm_label": "togglesidebar()"
     },
     {
@@ -3576,7 +3576,7 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "diagram_main_toggledark",
-      "community": 120,
+      "community": 48,
       "norm_label": "toggledark()"
     },
     {
@@ -3586,7 +3586,7 @@
       "source_location": "L132",
       "_origin": "ast",
       "id": "diagram_main_writeclipboardtext",
-      "community": 426,
+      "community": 48,
       "norm_label": "writeclipboardtext()"
     },
     {
@@ -3596,7 +3596,7 @@
       "source_location": "L154",
       "_origin": "ast",
       "id": "diagram_main_copycurrentdiagramid",
-      "community": 426,
+      "community": 48,
       "norm_label": "copycurrentdiagramid()"
     },
     {
@@ -3606,7 +3606,7 @@
       "source_location": "L179",
       "_origin": "ast",
       "id": "diagram_main_initdiagram",
-      "community": 120,
+      "community": 48,
       "norm_label": "initdiagram()"
     },
     {
@@ -3656,7 +3656,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "diagram_network_initnetwork",
-      "community": 8,
+      "community": 33,
       "norm_label": "initnetwork()"
     },
     {
@@ -3666,7 +3666,7 @@
       "source_location": "L1226",
       "_origin": "ast",
       "id": "diagram_network_onanchorsnapconnect",
-      "community": 57,
+      "community": 416,
       "norm_label": "_onanchorsnapconnect()"
     },
     {
@@ -3796,7 +3796,7 @@
       "source_location": "L1777",
       "_origin": "ast",
       "id": "diagram_network_pickandcreateimagenode",
-      "community": 426,
+      "community": 8,
       "norm_label": "pickandcreateimagenode()"
     },
     {
@@ -3806,7 +3806,7 @@
       "source_location": "L1796",
       "_origin": "ast",
       "id": "diagram_network_createimagenode",
-      "community": 8,
+      "community": 48,
       "norm_label": "createimagenode()"
     },
     {
@@ -3816,7 +3816,7 @@
       "source_location": "L1868",
       "_origin": "ast",
       "id": "diagram_network_toggleedgestraight",
-      "community": 57,
+      "community": 416,
       "norm_label": "toggleedgestraight()"
     },
     {
@@ -3936,7 +3936,7 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "diagram_node_panel_getlastnodestyle",
-      "community": 416,
+      "community": 8,
       "norm_label": "getlastnodestyle()"
     },
     {
@@ -4506,7 +4506,7 @@
       "source_location": "L899",
       "_origin": "ast",
       "id": "diagram_node_rendering_shape_defaults",
-      "community": 57,
+      "community": 56,
       "norm_label": "shape_defaults"
     },
     {
@@ -4516,7 +4516,7 @@
       "source_location": "L914",
       "_origin": "ast",
       "id": "diagram_node_rendering_visnodeprops",
-      "community": 277,
+      "community": 14,
       "norm_label": "visnodeprops()"
     },
     {
@@ -4526,7 +4526,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_persistence",
-      "community": 8,
+      "community": 33,
       "norm_label": "persistence.js"
     },
     {
@@ -4536,7 +4536,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "diagram_persistence_escapehtml",
-      "community": 8,
+      "community": 33,
       "norm_label": "escapehtml()"
     },
     {
@@ -4546,7 +4546,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "diagram_persistence_renderdiagramlist",
-      "community": 8,
+      "community": 33,
       "norm_label": "renderdiagramlist()"
     },
     {
@@ -4556,7 +4556,7 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "diagram_persistence_loaddiagramlist",
-      "community": 8,
+      "community": 33,
       "norm_label": "loaddiagramlist()"
     },
     {
@@ -4566,7 +4566,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "diagram_persistence_opendiagram",
-      "community": 8,
+      "community": 33,
       "norm_label": "opendiagram()"
     },
     {
@@ -4576,7 +4576,7 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "diagram_persistence_newdiagram",
-      "community": 8,
+      "community": 33,
       "norm_label": "newdiagram()"
     },
     {
@@ -4586,7 +4586,7 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "diagram_persistence_deletediagram",
-      "community": 8,
+      "community": 33,
       "norm_label": "deletediagram()"
     },
     {
@@ -4596,7 +4596,7 @@
       "source_location": "L118",
       "_origin": "ast",
       "id": "diagram_persistence_savediagram",
-      "community": 8,
+      "community": 33,
       "norm_label": "savediagram()"
     },
     {
@@ -4746,7 +4746,7 @@
       "source_location": "L143",
       "_origin": "ast",
       "id": "diagram_ports_getnearestport",
-      "community": 57,
+      "community": 13,
       "norm_label": "getnearestport()"
     },
     {
@@ -4906,7 +4906,7 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "diagram_selection_overlay_hideselectionoverlay",
-      "community": 8,
+      "community": 33,
       "norm_label": "hideselectionoverlay()"
     },
     {
@@ -5036,7 +5036,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_state",
-      "community": 120,
+      "community": 56,
       "norm_label": "state.js"
     },
     {
@@ -5046,7 +5046,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "diagram_state_st",
-      "community": 120,
+      "community": 56,
       "norm_label": "st"
     },
     {
@@ -5056,7 +5056,7 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "diagram_state_markdirty",
-      "community": 57,
+      "community": 416,
       "norm_label": "markdirty()"
     },
     {
@@ -5066,7 +5066,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_t",
-      "community": 426,
+      "community": 33,
       "norm_label": "t.js"
     },
     {
@@ -5166,7 +5166,7 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "diagram_unlock_hold_performunlock",
-      "community": 56,
+      "community": 416,
       "norm_label": "performunlock()"
     },
     {
@@ -5226,7 +5226,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_zoom",
-      "community": 120,
+      "community": 56,
       "norm_label": "zoom.js"
     },
     {
@@ -5236,7 +5236,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "diagram_zoom_adjustzoom",
-      "community": 120,
+      "community": 56,
       "norm_label": "adjustzoom()"
     },
     {
@@ -5246,7 +5246,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "diagram_zoom_resetzoom",
-      "community": 120,
+      "community": 56,
       "norm_label": "resetzoom()"
     },
     {
@@ -5256,7 +5256,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "diagram_zoom_updatezoomdisplay",
-      "community": 120,
+      "community": 56,
       "norm_label": "updatezoomdisplay()"
     },
     {
@@ -5298,7 +5298,7 @@
       "confidence": "EXTRACTED",
       "_origin": "ast",
       "id": "users_ymedaghri_documents_repositories_medaghri_alaoui_repositories_09_my_published_projects_living_documentation_src_frontend_svelte_src_lib_home_state_svelte",
-      "community": 25,
+      "community": 18,
       "norm_label": "../lib/home/state.svelte"
     },
     {
@@ -5329,7 +5329,7 @@
       "confidence": "EXTRACTED",
       "_origin": "ast",
       "id": "users_ymedaghri_documents_repositories_medaghri_alaoui_repositories_09_my_published_projects_living_documentation_src_frontend_svelte_src_lib_home_tree",
-      "community": 25,
+      "community": 57,
       "norm_label": "./tree"
     },
     {
@@ -5496,6 +5496,16 @@
       "norm_label": "../lib/home/newdocmodal.svelte"
     },
     {
+      "label": "../../../../lib/folderName",
+      "file_type": "code",
+      "source_file": "src/lib/folderName",
+      "confidence": "EXTRACTED",
+      "_origin": "ast",
+      "id": "users_ymedaghri_documents_repositories_medaghri_alaoui_repositories_09_my_published_projects_living_documentation_src_lib_foldername",
+      "community": 25,
+      "norm_label": "../../../../lib/foldername"
+    },
+    {
       "label": "../lib/home/NewFolderModal.svelte",
       "file_type": "code",
       "source_file": "src/frontend-svelte/src/lib/home/NewFolderModal.svelte",
@@ -5514,7 +5524,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "home_sidebar",
-      "community": 25,
+      "community": 57,
       "norm_label": "../lib/home/sidebar.svelte"
     },
     {
@@ -5524,7 +5534,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "home_sidebar_startresize",
-      "community": 25,
+      "community": 57,
       "norm_label": "startresize()"
     },
     {
@@ -5535,7 +5545,7 @@
       "_origin": "ast",
       "source_location": "L1",
       "id": "home_treenode",
-      "community": 25,
+      "community": 57,
       "norm_label": "treenode.svelte"
     },
     {
@@ -5645,7 +5655,7 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "home_treenode_docitem",
-      "community": 25,
+      "community": 57,
       "norm_label": "docitem()"
     },
     {
@@ -5655,7 +5665,7 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "home_treenode_foldergroup",
-      "community": 25,
+      "community": 57,
       "norm_label": "foldergroup()"
     },
     {
@@ -5665,7 +5675,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "home_treenode_categorygroup",
-      "community": 25,
+      "community": 57,
       "norm_label": "categorygroup()"
     },
     {
@@ -5675,7 +5685,7 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "home_treenode_snippet",
-      "community": 25,
+      "community": 57,
       "norm_label": "#snippet()"
     },
     {
@@ -8596,7 +8606,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "lib_i18n_svelte",
-      "community": 426,
+      "community": 33,
       "norm_label": "i18n.svelte.ts"
     },
     {
@@ -8606,7 +8616,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "lib_i18n_svelte_dict",
-      "community": 426,
+      "community": 33,
       "norm_label": "dict"
     },
     {
@@ -8616,7 +8626,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "lib_i18n_svelte_loadi18n",
-      "community": 426,
+      "community": 33,
       "norm_label": "loadi18n()"
     },
     {
@@ -8626,7 +8636,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "lib_i18n_svelte_t",
-      "community": 426,
+      "community": 33,
       "norm_label": "t()"
     },
     {
@@ -9230,7 +9240,7 @@
       "source_location": "L198",
       "_origin": "ast",
       "id": "workspace_app_initworkspace",
-      "community": 418,
+      "community": 6,
       "norm_label": "initworkspace()"
     },
     {
@@ -9240,7 +9250,7 @@
       "source_location": "L592",
       "_origin": "ast",
       "id": "workspace_app_isolatepanelevents",
-      "community": 418,
+      "community": 6,
       "norm_label": "isolatepanelevents()"
     },
     {
@@ -9250,7 +9260,7 @@
       "source_location": "L599",
       "_origin": "ast",
       "id": "workspace_app_isolateconfirmevents",
-      "community": 418,
+      "community": 6,
       "norm_label": "isolateconfirmevents()"
     },
     {
@@ -9320,7 +9330,7 @@
       "source_location": "L759",
       "_origin": "ast",
       "id": "workspace_app_showloadingtoast",
-      "community": 51,
+      "community": 70,
       "norm_label": "showloadingtoast()"
     },
     {
@@ -9330,7 +9340,7 @@
       "source_location": "L763",
       "_origin": "ast",
       "id": "workspace_app_showsavetoast",
-      "community": 51,
+      "community": 70,
       "norm_label": "showsavetoast()"
     },
     {
@@ -9400,7 +9410,7 @@
       "source_location": "L840",
       "_origin": "ast",
       "id": "workspace_app_cloneentities",
-      "community": 418,
+      "community": 6,
       "norm_label": "cloneentities()"
     },
     {
@@ -9420,7 +9430,7 @@
       "source_location": "L857",
       "_origin": "ast",
       "id": "workspace_app_workspacefolderforprovider",
-      "community": 418,
+      "community": 51,
       "norm_label": "workspacefolderforprovider()"
     },
     {
@@ -9430,7 +9440,7 @@
       "source_location": "L861",
       "_origin": "ast",
       "id": "workspace_app_slugify",
-      "community": 418,
+      "community": 51,
       "norm_label": "slugify()"
     },
     {
@@ -9520,7 +9530,7 @@
       "source_location": "L991",
       "_origin": "ast",
       "id": "workspace_app_relaxrootclusterdistances",
-      "community": 46,
+      "community": 6,
       "norm_label": "relaxrootclusterdistances()"
     },
     {
@@ -9700,7 +9710,7 @@
       "source_location": "L1376",
       "_origin": "ast",
       "id": "workspace_app_executeagentrunfromdialog",
-      "community": 52,
+      "community": 6,
       "norm_label": "executeagentrunfromdialog()"
     },
     {
@@ -9720,7 +9730,7 @@
       "source_location": "L1460",
       "_origin": "ast",
       "id": "workspace_app_startagentruntimeline",
-      "community": 52,
+      "community": 6,
       "norm_label": "startagentruntimeline()"
     },
     {
@@ -9730,7 +9740,7 @@
       "source_location": "L1470",
       "_origin": "ast",
       "id": "workspace_app_appendagentruntimelineevent",
-      "community": 52,
+      "community": 6,
       "norm_label": "appendagentruntimelineevent()"
     },
     {
@@ -9740,7 +9750,7 @@
       "source_location": "L1507",
       "_origin": "ast",
       "id": "workspace_app_showagentrunfinalresult",
-      "community": 52,
+      "community": 6,
       "norm_label": "showagentrunfinalresult()"
     },
     {
@@ -9750,7 +9760,7 @@
       "source_location": "L1524",
       "_origin": "ast",
       "id": "workspace_app_showagentrunresult",
-      "community": 52,
+      "community": 6,
       "norm_label": "showagentrunresult()"
     },
     {
@@ -9860,7 +9870,7 @@
       "source_location": "L1672",
       "_origin": "ast",
       "id": "workspace_app_render",
-      "community": 6,
+      "community": 64,
       "norm_label": "render()"
     },
     {
@@ -9870,7 +9880,7 @@
       "source_location": "L1692",
       "_origin": "ast",
       "id": "workspace_app_drawgrid",
-      "community": 6,
+      "community": 64,
       "norm_label": "drawgrid()"
     },
     {
@@ -9940,7 +9950,7 @@
       "source_location": "L1841",
       "_origin": "ast",
       "id": "workspace_app_drawconfigsurface",
-      "community": 6,
+      "community": 64,
       "norm_label": "drawconfigsurface()"
     },
     {
@@ -10050,7 +10060,7 @@
       "source_location": "L2056",
       "_origin": "ast",
       "id": "workspace_app_screentoworld",
-      "community": 6,
+      "community": 64,
       "norm_label": "screentoworld()"
     },
     {
@@ -10140,7 +10150,7 @@
       "source_location": "L2168",
       "_origin": "ast",
       "id": "workspace_app_clusterbounds",
-      "community": 46,
+      "community": 6,
       "norm_label": "clusterbounds()"
     },
     {
@@ -10170,7 +10180,7 @@
       "source_location": "L2204",
       "_origin": "ast",
       "id": "workspace_app_paddedboundsoverlap",
-      "community": 46,
+      "community": 6,
       "norm_label": "paddedboundsoverlap()"
     },
     {
@@ -10220,7 +10230,7 @@
       "source_location": "L2269",
       "_origin": "ast",
       "id": "workspace_app_drawline",
-      "community": 6,
+      "community": 64,
       "norm_label": "drawline()"
     },
     {
@@ -10370,7 +10380,7 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "workspace_persistence_runagentprompt",
-      "community": 52,
+      "community": 6,
       "norm_label": "runagentprompt()"
     },
     {
@@ -10380,7 +10390,7 @@
       "source_location": "L174",
       "_origin": "ast",
       "id": "workspace_persistence_runagentpromptstream",
-      "community": 52,
+      "community": 6,
       "norm_label": "runagentpromptstream()"
     },
     {
@@ -10420,7 +10430,7 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "routes_admin_if",
-      "community": 21,
+      "community": 92,
       "norm_label": "if()"
     },
     {
@@ -10490,7 +10500,7 @@
       "confidence": "EXTRACTED",
       "_origin": "ast",
       "id": "users_ymedaghri_documents_repositories_medaghri_alaoui_repositories_09_my_published_projects_living_documentation_src_frontend_svelte_src_lib_workspace_app",
-      "community": 21,
+      "community": 92,
       "norm_label": "../lib/workspace/app"
     },
     {
@@ -10884,6 +10894,36 @@
       "norm_label": "setdocumentlanguage()"
     },
     {
+      "label": "folderName.ts",
+      "file_type": "code",
+      "source_file": "src/lib/folderName.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "lib_foldername",
+      "community": 429,
+      "norm_label": "foldername.ts"
+    },
+    {
+      "label": "normalizeFolderSegment()",
+      "file_type": "code",
+      "source_file": "src/lib/folderName.ts",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "lib_foldername_normalizefoldersegment",
+      "community": 429,
+      "norm_label": "normalizefoldersegment()"
+    },
+    {
+      "label": "normalizeFolderPath()",
+      "file_type": "code",
+      "source_file": "src/lib/folderName.ts",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "lib_foldername_normalizefolderpath",
+      "community": 429,
+      "norm_label": "normalizefolderpath()"
+    },
+    {
       "label": "git.ts",
       "file_type": "code",
       "source_file": "src/lib/git.ts",
@@ -11040,7 +11080,7 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "lib_metadata_resolvesourceroot",
-      "community": 405,
+      "community": 78,
       "norm_label": "resolvesourceroot()"
     },
     {
@@ -11060,7 +11100,7 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "lib_metadata_assertundersourceroot",
-      "community": 405,
+      "community": 78,
       "norm_label": "assertundersourceroot()"
     },
     {
@@ -11080,7 +11120,7 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "lib_metadata_buildreport",
-      "community": 405,
+      "community": 78,
       "norm_label": "buildreport()"
     },
     {
@@ -11090,7 +11130,7 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "lib_metadata_getdocentries",
-      "community": 405,
+      "community": 78,
       "norm_label": "getdocentries()"
     },
     {
@@ -11100,7 +11140,7 @@
       "source_location": "L161",
       "_origin": "ast",
       "id": "lib_metadata_setdocentries",
-      "community": 405,
+      "community": 78,
       "norm_label": "setdocentries()"
     },
     {
@@ -11110,7 +11150,7 @@
       "source_location": "L176",
       "_origin": "ast",
       "id": "lib_metadata_getfrontmatterfield",
-      "community": 405,
+      "community": 78,
       "norm_label": "getfrontmatterfield()"
     },
     {
@@ -11190,7 +11230,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "lib_status",
-      "community": 427,
+      "community": 5,
       "norm_label": "status.ts"
     },
     {
@@ -11200,7 +11240,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "lib_status_parsedocstatus",
-      "community": 427,
+      "community": 5,
       "norm_label": "parsedocstatus()"
     },
     {
@@ -11210,7 +11250,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "lib_status_resolvedocfilepath",
-      "community": 427,
+      "community": 5,
       "norm_label": "resolvedocfilepath()"
     },
     {
@@ -11220,7 +11260,7 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "lib_status_readdocstatus",
-      "community": 427,
+      "community": 5,
       "norm_label": "readdocstatus()"
     },
     {
@@ -11230,7 +11270,7 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "lib_status_documentsuperseedederror",
-      "community": 427,
+      "community": 5,
       "norm_label": "documentsuperseedederror"
     },
     {
@@ -11240,7 +11280,7 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "lib_status_documentsuperseedederror_constructor",
-      "community": 427,
+      "community": 5,
       "norm_label": ".constructor()"
     },
     {
@@ -11250,7 +11290,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "lib_status_assertnotsuperseeded",
-      "community": 427,
+      "community": 5,
       "norm_label": "assertnotsuperseeded()"
     },
     {
@@ -11600,7 +11640,7 @@
       "source_location": "L2146",
       "_origin": "ast",
       "id": "mcp_server_createmcpserver",
-      "community": 405,
+      "community": 78,
       "norm_label": "createmcpserver()"
     },
     {
@@ -12240,7 +12280,7 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "tools_documents_listalldocuments",
-      "community": 340,
+      "community": 78,
       "norm_label": "listalldocuments()"
     },
     {
@@ -12260,7 +12300,7 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "tools_documents_toollistdocuments",
-      "community": 340,
+      "community": 78,
       "norm_label": "toollistdocuments()"
     },
     {
@@ -12310,7 +12350,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tools_git",
-      "community": 409,
+      "community": 340,
       "norm_label": "git.ts"
     },
     {
@@ -12320,7 +12360,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "tools_git_god_file_basenames",
-      "community": 409,
+      "community": 340,
       "norm_label": "god_file_basenames"
     },
     {
@@ -12330,7 +12370,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "tools_git_resolvesourceroot",
-      "community": 409,
+      "community": 340,
       "norm_label": "resolvesourceroot()"
     },
     {
@@ -12340,7 +12380,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "tools_git_ensuregitrepo",
-      "community": 409,
+      "community": 340,
       "norm_label": "ensuregitrepo()"
     },
     {
@@ -12350,7 +12390,7 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "tools_git_changetype",
-      "community": 409,
+      "community": 340,
       "norm_label": "changetype"
     },
     {
@@ -12360,7 +12400,7 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "tools_git_changedfile",
-      "community": 409,
+      "community": 340,
       "norm_label": "changedfile"
     },
     {
@@ -12370,7 +12410,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "tools_git_commitentry",
-      "community": 409,
+      "community": 340,
       "norm_label": "commitentry"
     },
     {
@@ -12380,7 +12420,7 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "tools_git_buildprettyformat",
-      "community": 409,
+      "community": 340,
       "norm_label": "buildprettyformat()"
     },
     {
@@ -12390,7 +12430,7 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "tools_git_parsefileline",
-      "community": 409,
+      "community": 340,
       "norm_label": "parsefileline()"
     },
     {
@@ -12400,7 +12440,7 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "tools_git_parsegitlog",
-      "community": 409,
+      "community": 340,
       "norm_label": "parsegitlog()"
     },
     {
@@ -12410,7 +12450,7 @@
       "source_location": "L199",
       "_origin": "ast",
       "id": "tools_git_toolretrodocumentadrsfromgit",
-      "community": 409,
+      "community": 340,
       "norm_label": "toolretrodocumentadrsfromgit()"
     },
     {
@@ -12420,7 +12460,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tools_metadata",
-      "community": 405,
+      "community": 78,
       "norm_label": "metadata.ts"
     },
     {
@@ -12430,7 +12470,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "tools_metadata_jsonresult",
-      "community": 405,
+      "community": 78,
       "norm_label": "jsonresult()"
     },
     {
@@ -12440,7 +12480,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "tools_metadata_buildentry",
-      "community": 405,
+      "community": 78,
       "norm_label": "buildentry()"
     },
     {
@@ -12450,7 +12490,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "tools_metadata_decodedocid",
-      "community": 405,
+      "community": 78,
       "norm_label": "decodedocid()"
     },
     {
@@ -12460,7 +12500,7 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "tools_metadata_isadrdocument",
-      "community": 405,
+      "community": 78,
       "norm_label": "isadrdocument()"
     },
     {
@@ -12470,7 +12510,7 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "tools_metadata_toollistmetadata",
-      "community": 405,
+      "community": 78,
       "norm_label": "toollistmetadata()"
     },
     {
@@ -12480,7 +12520,7 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "tools_metadata_toolgetaccuracy",
-      "community": 405,
+      "community": 78,
       "norm_label": "toolgetaccuracy()"
     },
     {
@@ -12490,7 +12530,7 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "tools_metadata_toolreviewadrrelevance",
-      "community": 405,
+      "community": 78,
       "norm_label": "toolreviewadrrelevance()"
     },
     {
@@ -12500,7 +12540,7 @@
       "source_location": "L131",
       "_origin": "ast",
       "id": "tools_metadata_toolrefreshmetadata",
-      "community": 405,
+      "community": 78,
       "norm_label": "toolrefreshmetadata()"
     },
     {
@@ -12510,7 +12550,7 @@
       "source_location": "L150",
       "_origin": "ast",
       "id": "tools_metadata_tooladdmetadata",
-      "community": 405,
+      "community": 78,
       "norm_label": "tooladdmetadata()"
     },
     {
@@ -12520,7 +12560,7 @@
       "source_location": "L182",
       "_origin": "ast",
       "id": "tools_metadata_toolremovemetadata",
-      "community": 405,
+      "community": 78,
       "norm_label": "toolremovemetadata()"
     },
     {
@@ -12530,7 +12570,7 @@
       "source_location": "L210",
       "_origin": "ast",
       "id": "tools_metadata_toollistadrsbelowaccuracy",
-      "community": 405,
+      "community": 78,
       "norm_label": "toollistadrsbelowaccuracy()"
     },
     {
@@ -12660,7 +12700,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "routes_annotations",
-      "community": 420,
+      "community": 22,
       "norm_label": "annotations.ts"
     },
     {
@@ -12670,7 +12710,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "routes_annotations_annotation",
-      "community": 420,
+      "community": 22,
       "norm_label": "annotation"
     },
     {
@@ -12680,7 +12720,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "routes_annotations_annotationsstore",
-      "community": 420,
+      "community": 22,
       "norm_label": "annotationsstore"
     },
     {
@@ -12690,7 +12730,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "routes_annotations_annotationspath",
-      "community": 420,
+      "community": 22,
       "norm_label": "annotationspath()"
     },
     {
@@ -12700,7 +12740,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "routes_annotations_readannotations",
-      "community": 420,
+      "community": 22,
       "norm_label": "readannotations()"
     },
     {
@@ -12710,7 +12750,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "routes_annotations_writeannotations",
-      "community": 420,
+      "community": 22,
       "norm_label": "writeannotations()"
     },
     {
@@ -12930,7 +12970,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "routes_browse_source",
-      "community": 430,
+      "community": 22,
       "norm_label": "browse-source.ts"
     },
     {
@@ -12940,7 +12980,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "routes_browse_source_ignored_dirs",
-      "community": 430,
+      "community": 22,
       "norm_label": "ignored_dirs"
     },
     {
@@ -12950,7 +12990,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "routes_browse_source_isignoreddir",
-      "community": 430,
+      "community": 22,
       "norm_label": "isignoreddir()"
     },
     {
@@ -12960,7 +13000,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "routes_browse_source_toposixpath",
-      "community": 430,
+      "community": 22,
       "norm_label": "toposixpath()"
     },
     {
@@ -12987,7 +13027,7 @@
       "label": "RESERVED_SUBFOLDERS",
       "file_type": "code",
       "source_file": "src/routes/browse.ts",
-      "source_location": "L5",
+      "source_location": "L6",
       "_origin": "ast",
       "id": "routes_browse_reserved_subfolders",
       "community": 429,
@@ -12997,7 +13037,7 @@
       "label": "toPosixPath()",
       "file_type": "code",
       "source_file": "src/routes/browse.ts",
-      "source_location": "L7",
+      "source_location": "L8",
       "_origin": "ast",
       "id": "routes_browse_toposixpath",
       "community": 429,
@@ -13007,7 +13047,7 @@
       "label": "isReservedAtDocsRoot()",
       "file_type": "code",
       "source_file": "src/routes/browse.ts",
-      "source_location": "L11",
+      "source_location": "L12",
       "_origin": "ast",
       "id": "routes_browse_isreservedatdocsroot",
       "community": 429,
@@ -13017,7 +13057,7 @@
       "label": "browseRouter()",
       "file_type": "code",
       "source_file": "src/routes/browse.ts",
-      "source_location": "L22",
+      "source_location": "L23",
       "_origin": "ast",
       "id": "routes_browse_browserouter",
       "community": 22,
@@ -13700,7 +13740,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "routes_metadata_rejectifsuperseeded",
-      "community": 427,
+      "community": 5,
       "norm_label": "rejectifsuperseeded()"
     },
     {
@@ -15084,6 +15124,16 @@
       "norm_label": "upload()"
     },
     {
+      "label": "folder-creation.spec.ts",
+      "file_type": "code",
+      "source_file": "tests/e2e/folder-creation.spec.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "e2e_folder_creation_spec",
+      "community": 1,
+      "norm_label": "folder-creation.spec.ts"
+    },
+    {
       "label": "inline-snippet-edit.spec.ts",
       "file_type": "code",
       "source_file": "tests/e2e/inline-snippet-edit.spec.ts",
@@ -15562,6 +15612,16 @@
       "id": "unit_document_language_spec",
       "community": 424,
       "norm_label": "document-language.spec.ts"
+    },
+    {
+      "label": "folder-name.spec.ts",
+      "file_type": "code",
+      "source_file": "tests/unit/folder-name.spec.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "unit_folder_name_spec",
+      "community": 429,
+      "norm_label": "folder-name.spec.ts"
     },
     {
       "label": "parser.spec.ts",
@@ -33097,7 +33157,7 @@
       "label": "Contenu modifie",
       "file_type": "document",
       "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L26",
+      "source_location": "L28",
       "_origin": "ast",
       "id": "worklog_current_task_contenu_modifie",
       "community": 234,
@@ -33107,7 +33167,7 @@
       "label": "Fichiers concernes",
       "file_type": "document",
       "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L36",
+      "source_location": "L37",
       "_origin": "ast",
       "id": "worklog_current_task_fichiers_concernes",
       "community": 234,
@@ -33117,7 +33177,7 @@
       "label": "Verifications realisees",
       "file_type": "document",
       "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L51",
+      "source_location": "L49",
       "_origin": "ast",
       "id": "worklog_current_task_verifications_realisees",
       "community": 234,
@@ -33127,27 +33187,17 @@
       "label": "Limites connues",
       "file_type": "document",
       "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L59",
+      "source_location": "L57",
       "_origin": "ast",
       "id": "worklog_current_task_limites_connues",
       "community": 234,
       "norm_label": "limites connues"
     },
     {
-      "label": "Point documentaire",
-      "file_type": "document",
-      "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L65",
-      "_origin": "ast",
-      "id": "worklog_current_task_point_documentaire",
-      "community": 234,
-      "norm_label": "point documentaire"
-    },
-    {
       "label": "Prochaine action recommandee",
       "file_type": "document",
       "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L71",
+      "source_location": "L63",
       "_origin": "ast",
       "id": "worklog_current_task_prochaine_action_recommandee",
       "community": 234,
@@ -45888,9 +45938,9 @@
       "source_file": "package.json",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package",
-      "target": "package_packagemanager",
-      "confidence_score": 1.0
+      "target": "package_packagemanager"
     },
     {
       "relation": "contains",
@@ -46148,9 +46198,9 @@
       "source_file": "package.json",
       "source_location": "L75",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_autoprefixer",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_autoprefixer"
     },
     {
       "relation": "contains",
@@ -46188,9 +46238,9 @@
       "source_file": "package.json",
       "source_location": "L78",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_postcss",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_postcss"
     },
     {
       "relation": "contains",
@@ -46228,9 +46278,9 @@
       "source_file": "package.json",
       "source_location": "L81",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_tailwindcss",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_tailwindcss"
     },
     {
       "relation": "contains",
@@ -46238,9 +46288,9 @@
       "source_file": "package.json",
       "source_location": "L71",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_tailwindcss_typography",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_tailwindcss_typography"
     },
     {
       "relation": "contains",
@@ -46491,9 +46541,9 @@
       "source_file": "src/frontend-svelte/postcss.config.js",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_svelte_postcss_config",
-      "target": "frontend_svelte_postcss_config_path",
-      "confidence_score": 1.0
+      "target": "frontend_svelte_postcss_config_path"
     },
     {
       "relation": "contains",
@@ -58969,6 +59019,22 @@
       "target": "home_exportmodal_flabel"
     },
     {
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src/frontend-svelte/src/lib/home/NewDocModal.svelte",
+      "source": "home_newdocmodal",
+      "target": "users_ymedaghri_documents_repositories_medaghri_alaoui_repositories_09_my_published_projects_living_documentation_src_lib_foldername",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "src/frontend-svelte/src/lib/home/NewFolderModal.svelte",
+      "source": "home_newfoldermodal",
+      "target": "users_ymedaghri_documents_repositories_medaghri_alaoui_repositories_09_my_published_projects_living_documentation_src_lib_foldername",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/frontend-svelte/src/lib/home/Sidebar.svelte",
@@ -68570,9 +68636,9 @@
       "source_file": "src/frontend-svelte/tailwind.config.js",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_svelte_tailwind_config",
-      "target": "frontend_svelte_tailwind_config_path",
-      "confidence_score": 1.0
+      "target": "frontend_svelte_tailwind_config_path"
     },
     {
       "relation": "contains",
@@ -69718,6 +69784,70 @@
       "confidence_score": 1.0,
       "source": "unit_document_language_spec",
       "target": "lib_documentlanguage_setdocumentlanguage"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/folderName.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "lib_foldername",
+      "target": "lib_foldername_normalizefolderpath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/folderName.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "lib_foldername",
+      "target": "lib_foldername_normalizefoldersegment",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/routes/browse.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "routes_browse",
+      "target": "lib_foldername",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/routes/browse.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "routes_browse",
+      "target": "lib_foldername_normalizefoldersegment",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/folder-name.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "unit_folder_name_spec",
+      "target": "lib_foldername_normalizefoldersegment",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/unit/folder-name.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "unit_folder_name_spec",
+      "target": "lib_foldername_normalizefolderpath",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -75357,9 +75487,9 @@
       "source_file": "src/routes/files.ts",
       "source_location": "L46",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_routes_files_ts_routes_files",
-      "target": "routes_files_collectfilepaths",
-      "confidence_score": 1.0
+      "target": "routes_files_collectfilepaths"
     },
     {
       "relation": "contains",
@@ -75367,9 +75497,9 @@
       "source_file": "src/routes/files.ts",
       "source_location": "L61",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_routes_files_ts_routes_files",
-      "target": "routes_files_collectfolderpaths",
-      "confidence_score": 1.0
+      "target": "routes_files_collectfolderpaths"
     },
     {
       "relation": "contains",
@@ -75387,9 +75517,9 @@
       "source_file": "src/routes/files.ts",
       "source_location": "L73",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_routes_files_ts_routes_files",
-      "target": "routes_files_folderfromdocumentid",
-      "confidence_score": 1.0
+      "target": "routes_files_folderfromdocumentid"
     },
     {
       "relation": "contains",
@@ -75407,9 +75537,9 @@
       "source_file": "src/routes/files.ts",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_routes_files_ts_routes_files",
-      "target": "routes_files_issaferelativepath",
-      "confidence_score": 1.0
+      "target": "routes_files_issaferelativepath"
     },
     {
       "relation": "contains",
@@ -75417,9 +75547,9 @@
       "source_file": "src/routes/files.ts",
       "source_location": "L87",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_routes_files_ts_routes_files",
-      "target": "routes_files_parseuploadedat",
-      "confidence_score": 1.0
+      "target": "routes_files_parseuploadedat"
     },
     {
       "relation": "contains",
@@ -75447,9 +75577,9 @@
       "source_file": "src/routes/files.ts",
       "source_location": "L34",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_routes_files_ts_routes_files",
-      "target": "routes_files_toposixpath",
-      "confidence_score": 1.0
+      "target": "routes_files_toposixpath"
     },
     {
       "relation": "calls",
@@ -75469,9 +75599,9 @@
       "source_file": "src/routes/files.ts",
       "source_location": "L84",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_files_folderfromdocumentid",
-      "target": "routes_files_issaferelativepath",
-      "confidence_score": 1.0
+      "target": "routes_files_issaferelativepath"
     },
     {
       "relation": "calls",
@@ -75480,9 +75610,9 @@
       "source_file": "src/routes/files.ts",
       "source_location": "L39",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_files_resolvefilepathsafe",
-      "target": "routes_files_issaferelativepath",
-      "confidence_score": 1.0
+      "target": "routes_files_issaferelativepath"
     },
     {
       "relation": "calls",
@@ -75491,9 +75621,9 @@
       "source_file": "src/routes/files.ts",
       "source_location": "L55",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_files_collectfilepaths",
-      "target": "routes_files_toposixpath",
-      "confidence_score": 1.0
+      "target": "routes_files_toposixpath"
     },
     {
       "relation": "calls",
@@ -75502,9 +75632,9 @@
       "source_file": "src/routes/files.ts",
       "source_location": "L67",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_files_collectfolderpaths",
-      "target": "routes_files_toposixpath",
-      "confidence_score": 1.0
+      "target": "routes_files_toposixpath"
     },
     {
       "relation": "imports",
@@ -78121,9 +78251,9 @@
       "source_file": "tests/e2e/files.spec.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "e2e_files_spec",
-      "target": "e2e_files_spec_text_b64",
-      "confidence_score": 1.0
+      "target": "e2e_files_spec_text_b64"
     },
     {
       "relation": "contains",
@@ -78131,9 +78261,9 @@
       "source_file": "tests/e2e/files.spec.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "e2e_files_spec",
-      "target": "e2e_files_spec_upload",
-      "confidence_score": 1.0
+      "target": "e2e_files_spec_upload"
     },
     {
       "relation": "imports_from",
@@ -78142,9 +78272,9 @@
       "source_file": "tests/e2e/files.spec.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "e2e_files_spec",
-      "target": "helpers_ld_fixture",
-      "confidence_score": 1.0
+      "target": "helpers_ld_fixture"
     },
     {
       "relation": "imports",
@@ -78153,7 +78283,29 @@
       "source_file": "tests/e2e/files.spec.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "e2e_files_spec",
+      "target": "helpers_ld_fixture_test"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/e2e/folder-creation.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "e2e_folder_creation_spec",
+      "target": "helpers_ld_fixture",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/e2e/folder-creation.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "e2e_folder_creation_spec",
       "target": "helpers_ld_fixture_test",
       "confidence_score": 1.0
     },
@@ -79645,9 +79797,9 @@
       "source_file": "README.fr.md",
       "source_location": "L120",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_fr_living_documentation",
-      "target": "readme_fr_concepts_cl\u00e9s",
-      "confidence_score": 1.0
+      "target": "readme_fr_concepts_cl\u00e9s"
     },
     {
       "relation": "contains",
@@ -79665,9 +79817,9 @@
       "source_file": "README.fr.md",
       "source_location": "L76",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_fr_living_documentation",
-      "target": "readme_fr_connectez_votre_agent_ia",
-      "confidence_score": 1.0
+      "target": "readme_fr_connectez_votre_agent_ia"
     },
     {
       "relation": "contains",
@@ -79675,9 +79827,9 @@
       "source_file": "README.fr.md",
       "source_location": "L24",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_fr_living_documentation",
-      "target": "readme_fr_deux_fa\u00e7ons_de_l_utiliser",
-      "confidence_score": 1.0
+      "target": "readme_fr_deux_fa\u00e7ons_de_l_utiliser"
     },
     {
       "relation": "contains",
@@ -79745,9 +79897,9 @@
       "source_file": "README.fr.md",
       "source_location": "L269",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_fr_living_documentation",
-      "target": "readme_fr_surfaces_de_l_ui",
-      "confidence_score": 1.0
+      "target": "readme_fr_surfaces_de_l_ui"
     },
     {
       "relation": "contains",
@@ -79765,9 +79917,9 @@
       "source_file": "README.fr.md",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_fr_deux_fa\u00e7ons_de_l_utiliser",
-      "target": "readme_fr_1_avec_un_agent_de_code_ia_la_fonctionnalit\u00e9_phare",
-      "confidence_score": 1.0
+      "target": "readme_fr_1_avec_un_agent_de_code_ia_la_fonctionnalit\u00e9_phare"
     },
     {
       "relation": "contains",
@@ -79775,9 +79927,9 @@
       "source_file": "README.fr.md",
       "source_location": "L40",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_fr_deux_fa\u00e7ons_de_l_utiliser",
-      "target": "readme_fr_2_en_solo_sans_ia",
-      "confidence_score": 1.0
+      "target": "readme_fr_2_en_solo_sans_ia"
     },
     {
       "relation": "contains",
@@ -79795,9 +79947,9 @@
       "source_file": "README.fr.md",
       "source_location": "L78",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_fr_connectez_votre_agent_ia",
-      "target": "readme_fr_claude_code",
-      "confidence_score": 1.0
+      "target": "readme_fr_claude_code"
     },
     {
       "relation": "contains",
@@ -79805,9 +79957,9 @@
       "source_file": "README.fr.md",
       "source_location": "L97",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_fr_connectez_votre_agent_ia",
-      "target": "readme_fr_claude_desktop",
-      "confidence_score": 1.0
+      "target": "readme_fr_claude_desktop"
     },
     {
       "relation": "contains",
@@ -79815,9 +79967,9 @@
       "source_file": "README.fr.md",
       "source_location": "L112",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_fr_connectez_votre_agent_ia",
-      "target": "readme_fr_cursor_continue_tout_client_mcp",
-      "confidence_score": 1.0
+      "target": "readme_fr_cursor_continue_tout_client_mcp"
     },
     {
       "relation": "contains",
@@ -94335,9 +94487,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L602",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_agents_md_claude_md_memory_memory_md_at_the_project_root_and_symlinks",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_agents_md_claude_md_memory_memory_md_at_the_project_root_and_symlinks"
     },
     {
       "relation": "contains",
@@ -94345,9 +94497,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L817",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_agents_md_claude_md_memory_memory_md_\u00e0_la_racine_du_projet_et_fait_des_symlinks",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_agents_md_claude_md_memory_memory_md_\u00e0_la_racine_du_projet_et_fait_des_symlinks"
     },
     {
       "relation": "contains",
@@ -94355,9 +94507,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L816",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_assistant_interactif_cr\u00e9e_un_dossier_de_doc_de_d\u00e9marrage_en_ou_fr_scaffold",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_assistant_interactif_cr\u00e9e_un_dossier_de_doc_de_d\u00e9marrage_en_ou_fr_scaffold"
     },
     {
       "relation": "contains",
@@ -94365,9 +94517,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L818",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_dans_docs_ai_pour_que_les_agents_ia_les_trouvent",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_dans_docs_ai_pour_que_les_agents_ia_les_trouvent"
     },
     {
       "relation": "contains",
@@ -94375,9 +94527,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L601",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_interactive_wizard_creates_a_starter_doc_folder_en_or_fr_scaffolds",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_interactive_wizard_creates_a_starter_doc_folder_en_or_fr_scaffolds"
     },
     {
       "relation": "contains",
@@ -94385,9 +94537,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L606",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_or_serve_an_existing_folder",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_or_serve_an_existing_folder"
     },
     {
       "relation": "contains",
@@ -94395,9 +94547,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L821",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_ou_servir_un_dossier_existant",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_ou_servir_un_dossier_existant"
     },
     {
       "relation": "contains",
@@ -94405,9 +94557,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_run_traducteur_anglais_vers_fran\u00e7ais",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_run_traducteur_anglais_vers_fran\u00e7ais"
     },
     {
       "relation": "contains",
@@ -94415,9 +94567,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L603",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_them_into_docs_ai_so_ai_agents_can_find_them",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_them_into_docs_ai_so_ai_agents_can_find_them"
     },
     {
       "relation": "contains",
@@ -94425,9 +94577,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L41",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_run_traducteur_anglais_vers_fran\u00e7ais",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_debug",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_debug"
     },
     {
       "relation": "contains",
@@ -94435,9 +94587,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L23",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_run_traducteur_anglais_vers_fran\u00e7ais",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_error_summary",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_error_summary"
     },
     {
       "relation": "contains",
@@ -94445,9 +94597,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_run_traducteur_anglais_vers_fran\u00e7ais",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_execution",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_execution"
     },
     {
       "relation": "contains",
@@ -94455,9 +94607,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L21",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_run_traducteur_anglais_vers_fran\u00e7ais",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_response",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_response"
     },
     {
       "relation": "contains",
@@ -94465,9 +94617,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L32",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_run_traducteur_anglais_vers_fran\u00e7ais",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_stack_trace",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_stack_trace"
     },
     {
       "relation": "contains",
@@ -94475,9 +94627,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L17",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_run_traducteur_anglais_vers_fran\u00e7ais",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_user_input",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_user_input"
     },
     {
       "relation": "contains",
@@ -94485,9 +94637,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L43",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_debug",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tools_mcp_charg\u00e9s_21",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tools_mcp_charg\u00e9s_21"
     },
     {
       "relation": "contains",
@@ -94495,9 +94647,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L167",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_debug",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_1_prompt_envoy\u00e9",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_1_prompt_envoy\u00e9"
     },
     {
       "relation": "contains",
@@ -94505,9 +94657,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L265",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_debug",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_1_r\u00e9ponse_re\u00e7ue",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_1_r\u00e9ponse_re\u00e7ue"
     },
     {
       "relation": "contains",
@@ -94515,9 +94667,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L295",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_debug",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_1_tool_call_list_documents",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_1_tool_call_list_documents"
     },
     {
       "relation": "contains",
@@ -94525,9 +94677,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L306",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_debug",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_1_tool_result_list_documents",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_1_tool_result_list_documents"
     },
     {
       "relation": "contains",
@@ -94535,9 +94687,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L460",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_debug",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_2_prompt_envoy\u00e9",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_2_prompt_envoy\u00e9"
     },
     {
       "relation": "contains",
@@ -94545,9 +94697,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L508",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_debug",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_2_r\u00e9ponse_re\u00e7ue",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_2_r\u00e9ponse_re\u00e7ue"
     },
     {
       "relation": "contains",
@@ -94555,9 +94707,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L538",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_debug",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_2_tool_call_read_document",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_2_tool_call_read_document"
     },
     {
       "relation": "contains",
@@ -94565,9 +94717,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L548",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_debug",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_2_tool_result_read_document",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_2_tool_result_read_document"
     },
     {
       "relation": "contains",
@@ -94575,9 +94727,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L679",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_or_serve_an_existing_folder",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_3_prompt_envoy\u00e9",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_3_prompt_envoy\u00e9"
     },
     {
       "relation": "contains",
@@ -94585,9 +94737,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L727",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_or_serve_an_existing_folder",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_3_r\u00e9ponse_re\u00e7ue",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_3_r\u00e9ponse_re\u00e7ue"
     },
     {
       "relation": "contains",
@@ -94595,9 +94747,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L757",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_or_serve_an_existing_folder",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_3_tool_call_read_document",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_3_tool_call_read_document"
     },
     {
       "relation": "contains",
@@ -94605,9 +94757,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L767",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_or_serve_an_existing_folder",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_3_tool_result_read_document",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_3_tool_result_read_document"
     },
     {
       "relation": "contains",
@@ -94615,9 +94767,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L893",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_ou_servir_un_dossier_existant",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_4_prompt_envoy\u00e9",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_4_prompt_envoy\u00e9"
     },
     {
       "relation": "contains",
@@ -94625,9 +94777,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L941",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_ou_servir_un_dossier_existant",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_4_r\u00e9ponse_re\u00e7ue",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_4_r\u00e9ponse_re\u00e7ue"
     },
     {
       "relation": "contains",
@@ -94635,9 +94787,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L960",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_ou_servir_un_dossier_existant",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_4_tool_call_update_document",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_4_tool_call_update_document"
     },
     {
       "relation": "contains",
@@ -94645,9 +94797,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L971",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_ou_servir_un_dossier_existant",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_4_tool_result_update_document",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_4_tool_result_update_document"
     },
     {
       "relation": "contains",
@@ -94655,9 +94807,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L981",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_ou_servir_un_dossier_existant",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_5_prompt_envoy\u00e9",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_5_prompt_envoy\u00e9"
     },
     {
       "relation": "contains",
@@ -94665,9 +94817,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L1029",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_ou_servir_un_dossier_existant",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_5_r\u00e9ponse_re\u00e7ue",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_5_r\u00e9ponse_re\u00e7ue"
     },
     {
       "relation": "contains",
@@ -94675,9 +94827,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L1059",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_ou_servir_un_dossier_existant",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_5_tool_call_save_context",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_5_tool_call_save_context"
     },
     {
       "relation": "contains",
@@ -94685,9 +94837,9 @@
       "source_file": "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_27_17_51_[AGENT]_run_traducteur_anglais_vers_francais.md",
       "source_location": "L1070",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_ou_servir_un_dossier_existant",
-      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_5_tool_result_save_context",
-      "confidence_score": 1.0
+      "target": "traducteur_anglais_vers_francais_2026_06_27_17_51_agent_run_traducteur_anglais_vers_francais_tour_5_tool_result_save_context"
     },
     {
       "relation": "contains",
@@ -94738,16 +94890,6 @@
       "confidence_score": 1.0,
       "source": "documentation_worklog_current_task_md_worklog_current_task_current_task",
       "target": "worklog_current_task_limites_connues"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L39",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "documentation_worklog_current_task_md_worklog_current_task_current_task",
-      "target": "worklog_current_task_point_documentaire"
     },
     {
       "relation": "contains",
@@ -104595,5 +104737,5 @@
       "source_file": "usermanual-documentation/5_talks/2026_04_28_09_48_[CONFERENCE]_demo_living_documentation_mcp_en_conference.md"
     }
   ],
-  "built_at_commit": "0e91db70402b080a8ad0973f024605190c6395e3"
+  "built_at_commit": "74b653934ce2836e1ab5c2d1d534325331969b08"
 }
