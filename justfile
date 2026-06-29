@@ -5,6 +5,13 @@ default:
 dev:
     npm run dev -- ./documentation
 
+# Regenerate package-lock.json with npm 10 — it writes a platform-complete lock
+# (incl. Linux-only optional deps like @emnapi). npm 11 strips them and breaks
+# `npm ci` on the Linux CI. Always manage dependencies through this recipe, e.g.
+# `just lock` after editing package.json, instead of a bare `npm install`.
+lock:
+    npx -y npm@10.8.2 install
+
 build:
     npm run build
 

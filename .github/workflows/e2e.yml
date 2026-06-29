@@ -24,12 +24,9 @@ jobs:
         with:
           node-version: "20.19.0"
           cache: npm
-
-      - name: Align npm with the lockfile generator (npm 11)
-        # The lockfile is generated locally with npm 11, which omits foreign-platform
-        # optional deps (e.g. @emnapi on Linux) that npm 10's `npm ci` then reports as
-        # "missing". Node 20.19.0 ships npm 10, so upgrade to keep `npm ci` in sync.
-        run: npm install -g npm@11
+          # npm 10 (bundled with node 20) is intentional: it writes/reads a
+          # platform-complete lockfile (incl. Linux-only optional deps like @emnapi).
+          # npm 11 strips foreign-platform optional deps, which breaks `npm ci`.
 
       - name: Install dependencies
         # --ignore-scripts blocks postinstall hooks, the most common vector for
