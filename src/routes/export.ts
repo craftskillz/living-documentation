@@ -8,6 +8,12 @@ import { renderMarkdownWithCompareBlocks } from '../lib/compareBlock';
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
+interface ExportImageAsset {
+  sourceRoot: 'images' | 'images-ai';
+  sourcePath: string;
+  archivePath: string;
+}
+
 function escapeHtml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
@@ -23,6 +29,30 @@ function sanitizeFilename(name: string): string {
 /** Group key used to decide which ZIP folder a doc goes into. */
 function docGroup(doc: { folder?: string[] | null; category?: string }): string {
   return doc.folder?.[0] ?? doc.category ?? 'General';
+}
+
+function safeAssetRelativePath(value: string): string | null {
+  const normalized = path.posix.normalize(value.replace(/\\/g, '/'));
+  if (!normalized || normalized === '.' || normalized.startsWith('../') || path.posix.isAbsolute(normalized)) {
+    return null;
+  }
+  return normalized;
+}
+
+function addExportImageAsset(
+  assets: Map<string, ExportImageAsset>,
+  sourceRoot: ExportImageAsset['sourceRoot'],
+  sourcePath: string,
+  archivePath: string,
+): void {
+  const safeSourcePath = safeAssetRelativePath(sourcePath);
+  const safeArchivePath = safeAssetRelativePath(archivePath);
+  if (!safeSourcePath || !safeArchivePath) return;
+  assets.set(`${sourceRoot}/${safeSourcePath}->${safeArchivePath}`, {
+    sourceRoot,
+    sourcePath: safeSourcePath,
+    archivePath: safeArchivePath,
+  });
 }
 
 /** Minimal HTML wrapper for exported pages. */
@@ -69,8 +99,8 @@ ${body}
  * @param mediaSubfolder  Optional subfolder name for media (used by Confluence mode).
  *                        When provided, images are referenced as `./{mediaSubfolder}/{basename}`.
  */
-function processHtml(html: string, mediaSubfolder?: string): { html: string; images: Set<string> } {
-  const images = new Set<string>();
+function processHtml(html: string, mediaSubfolder?: string): { html: string; images: ExportImageAsset[] } {
+  const images = new Map<string, ExportImageAsset>();
   const imgPrefix = mediaSubfolder ? `./${mediaSubfolder}/` : './';
 
   // Remove diagram link wrappers but keep inner content (e.g. the screenshot img).
@@ -84,7 +114,7 @@ function processHtml(html: string, mediaSubfolder?: string): { html: string; ima
     /(<img\b[^>]*?\s)src=["']((?:\.\/|\/)?images\/([^"'?#\s]+))["']/gi,
     (_match, before, _fullSrc, filename) => {
       const basename = path.basename(filename);
-      images.add(basename);
+      addExportImageAsset(images, 'images', basename, mediaSubfolder ? `${mediaSubfolder}/${basename}` : basename);
       return `${before}src="${imgPrefix}${basename}"`;
     },
   );
@@ -93,12 +123,37 @@ function processHtml(html: string, mediaSubfolder?: string): { html: string; ima
     /(<img\b)(\s+)src=["']((?:\.\/|\/)?images\/([^"'?#\s]+))["']/gi,
     (_match, tag, space, _fullSrc, filename) => {
       const basename = path.basename(filename);
-      images.add(basename);
+      addExportImageAsset(images, 'images', basename, mediaSubfolder ? `${mediaSubfolder}/${basename}` : basename);
       return `${tag}${space}src="${imgPrefix}${basename}"`;
     },
   );
 
-  return { html, images };
+  html = html.replace(
+    /(<img\b[^>]*?\s)src=["']((?:\.\/|\/)?images-ai\/([^"'?#\s]+))["']/gi,
+    (_match, before, _fullSrc, filename) => {
+      const relativePath = safeAssetRelativePath(filename);
+      if (!relativePath) return _match;
+      const archivePath = mediaSubfolder
+        ? `${mediaSubfolder}/images-ai/${relativePath}`
+        : `images-ai/${relativePath}`;
+      addExportImageAsset(images, 'images-ai', relativePath, archivePath);
+      return `${before}src="./${archivePath}"`;
+    },
+  );
+  html = html.replace(
+    /(<img\b)(\s+)src=["']((?:\.\/|\/)?images-ai\/([^"'?#\s]+))["']/gi,
+    (_match, tag, space, _fullSrc, filename) => {
+      const relativePath = safeAssetRelativePath(filename);
+      if (!relativePath) return _match;
+      const archivePath = mediaSubfolder
+        ? `${mediaSubfolder}/images-ai/${relativePath}`
+        : `images-ai/${relativePath}`;
+      addExportImageAsset(images, 'images-ai', relativePath, archivePath);
+      return `${tag}${space}src="./${archivePath}"`;
+    },
+  );
+
+  return { html, images: Array.from(images.values()) };
 }
 
 /**
@@ -143,8 +198,8 @@ function rewriteDocLinks(md: string, currentGroup: string): string {
  *  3. Rewrite HTML <img src="./images/xxx"> to <img src="./xxx">.
  *  4. Collect referenced image basenames.
  */
-function processMarkdown(md: string, currentGroup: string): { md: string; images: Set<string> } {
-  const images = new Set<string>();
+function processMarkdown(md: string, currentGroup: string): { md: string; images: ExportImageAsset[] } {
+  const images = new Map<string, ExportImageAsset>();
 
   // Rewrite ?doc= internal navigation links to relative file links.
   md = rewriteDocLinks(md, currentGroup);
@@ -154,8 +209,19 @@ function processMarkdown(md: string, currentGroup: string): { md: string; images
     /!\[([^\]]*)\]\(((?:\.\/|\/)?images\/([^)"'\s#?]+))([^)]*)\)/g,
     (_match, alt, _fullSrc, filename, rest) => {
       const basename = path.basename(filename);
-      images.add(basename);
+      addExportImageAsset(images, 'images', basename, basename);
       return `![${alt}](./${basename}${rest})`;
+    },
+  );
+
+  md = md.replace(
+    /!\[([^\]]*)\]\(((?:\.\/|\/)?images-ai\/([^)"'\s#?]+))([^)]*)\)/g,
+    (_match, alt, _fullSrc, filename, rest) => {
+      const relativePath = safeAssetRelativePath(filename);
+      if (!relativePath) return _match;
+      const archivePath = `images-ai/${relativePath}`;
+      addExportImageAsset(images, 'images-ai', relativePath, archivePath);
+      return `![${alt}](./${archivePath}${rest})`;
     },
   );
 
@@ -164,7 +230,7 @@ function processMarkdown(md: string, currentGroup: string): { md: string; images
     /(<img\b[^>]*?\s)src=["']((?:\.\/|\/)?images\/([^"'?#\s]+))["']/gi,
     (_match, before, _fullSrc, filename) => {
       const basename = path.basename(filename);
-      images.add(basename);
+      addExportImageAsset(images, 'images', basename, basename);
       return `${before}src="./${basename}"`;
     },
   );
@@ -172,12 +238,33 @@ function processMarkdown(md: string, currentGroup: string): { md: string; images
     /(<img\b)(\s+)src=["']((?:\.\/|\/)?images\/([^"'?#\s]+))["']/gi,
     (_match, tag, space, _fullSrc, filename) => {
       const basename = path.basename(filename);
-      images.add(basename);
+      addExportImageAsset(images, 'images', basename, basename);
       return `${tag}${space}src="./${basename}"`;
     },
   );
 
-  return { md, images };
+  md = md.replace(
+    /(<img\b[^>]*?\s)src=["']((?:\.\/|\/)?images-ai\/([^"'?#\s]+))["']/gi,
+    (_match, before, _fullSrc, filename) => {
+      const relativePath = safeAssetRelativePath(filename);
+      if (!relativePath) return _match;
+      const archivePath = `images-ai/${relativePath}`;
+      addExportImageAsset(images, 'images-ai', relativePath, archivePath);
+      return `${before}src="./${archivePath}"`;
+    },
+  );
+  md = md.replace(
+    /(<img\b)(\s+)src=["']((?:\.\/|\/)?images-ai\/([^"'?#\s]+))["']/gi,
+    (_match, tag, space, _fullSrc, filename) => {
+      const relativePath = safeAssetRelativePath(filename);
+      if (!relativePath) return _match;
+      const archivePath = `images-ai/${relativePath}`;
+      addExportImageAsset(images, 'images-ai', relativePath, archivePath);
+      return `${tag}${space}src="./${archivePath}"`;
+    },
+  );
+
+  return { md, images: Array.from(images.values()) };
 }
 
 // ── Route ─────────────────────────────────────────────────────────────────────
@@ -251,14 +338,13 @@ export function exportRouter(docsPath: string): Router {
 
       archive.append(fullHtml, { name: `${group}/${htmlFilename}` });
 
-      for (const imageName of images) {
-        const imageDir = isConfluence ? `${group}/${baseName}` : group;
-        const key = `${imageDir}/${imageName}`;
+      for (const image of images) {
+        const key = `${group}/${image.archivePath}`;
         if (addedImages.has(key)) continue;
         addedImages.add(key);
-        const imagePath = path.join(docsPath, 'images', imageName);
+        const imagePath = path.join(docsPath, image.sourceRoot, ...image.sourcePath.split('/'));
         if (fs.existsSync(imagePath)) {
-          archive.file(imagePath, { name: key });
+          archive.file(imagePath, { name: `${group}/${image.archivePath}` });
         }
       }
     }
@@ -310,13 +396,13 @@ export function exportRouter(docsPath: string): Router {
 
       archive.append(processedMd, { name: `${group}/${baseName}.md` });
 
-      for (const imageName of images) {
-        const key = `${group}/${imageName}`;
+      for (const image of images) {
+        const key = `${group}/${image.archivePath}`;
         if (addedImages.has(key)) continue;
         addedImages.add(key);
-        const imagePath = path.join(docsPath, 'images', imageName);
+        const imagePath = path.join(docsPath, image.sourceRoot, ...image.sourcePath.split('/'));
         if (fs.existsSync(imagePath)) {
-          archive.file(imagePath, { name: key });
+          archive.file(imagePath, { name: `${group}/${image.archivePath}` });
         }
       }
     }

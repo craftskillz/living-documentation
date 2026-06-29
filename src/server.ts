@@ -68,8 +68,9 @@ export async function startServer({
   const frontendPath = path.join(__dirname, '..', 'frontend-svelte');
   app.use(express.static(frontendPath, { dotfiles: 'allow' }));
 
-  // Static assets from docs folder (images, attached files).
+  // Static assets from docs folder (images, AI-generated images, attached files).
   app.use('/images', express.static(path.join(docsPath, 'images'), { dotfiles: 'allow' }));
+  app.use('/images-ai', express.static(path.join(docsPath, 'images-ai'), { dotfiles: 'allow' }));
   app.use('/files', express.static(path.join(docsPath, 'files'), { dotfiles: 'allow' }));
 
   // Serve the SPA shell (index.html) for the app's client-side routes. Explicit

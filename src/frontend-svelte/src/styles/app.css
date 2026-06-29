@@ -389,6 +389,71 @@ h1 {
   color: var(--panel-ink, var(--ink));
 }
 
+.tool-mode-field {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0;
+  border: 0;
+}
+
+.tool-mode-field legend {
+  grid-column: 1 / -1;
+  margin-bottom: 7px;
+  color: var(--panel-muted, var(--muted));
+  font-size: 12px;
+  font-weight: 780;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.radio-card {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 9px;
+  min-height: 74px;
+  padding: 11px;
+  border: 1px solid var(--panel-line, var(--line));
+  border-radius: 12px;
+  background: var(--panel-field-bg, #fff);
+  color: var(--panel-ink, var(--ink));
+  cursor: pointer;
+}
+
+.radio-card input {
+  width: 16px;
+  height: 16px;
+  margin: 2px 0 0;
+  accent-color: #2563eb;
+}
+
+.radio-card span {
+  display: grid;
+  gap: 4px;
+}
+
+.radio-card strong {
+  font-size: 13px;
+  font-weight: 780;
+}
+
+.radio-card small {
+  color: var(--panel-muted, var(--muted));
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.radio-card code {
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", monospace;
+  font-size: 10px;
+}
+
+.radio-card:has(input:checked) {
+  border-color: #60a5fa;
+  background: rgb(96 165 250 / 12%);
+}
+
 .field input:focus,
 .field select:focus,
 .field textarea:focus,
@@ -434,7 +499,8 @@ h1 {
   align-items: center;
 }
 
-.model-select-wrap select {
+.model-select-wrap select,
+.model-select-wrap input {
   flex: 1;
   margin-top: 0;
 }

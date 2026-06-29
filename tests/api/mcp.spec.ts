@@ -32,6 +32,7 @@ test('tools/list exposes the expected tool set', async ({ request, ld }) => {
       'list_documents',
       'read_document',
       'create_document',
+      'generate_image',
       'list_diagrams',
       'read_diagram',
       'create_diagram',

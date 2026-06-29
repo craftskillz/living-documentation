@@ -67,6 +67,7 @@ export interface LlmConnectionTestResult {
 export interface LlmListModelsInput {
   endpoint: string;
   token: string;
+  providerType?: "chat" | "image";
 }
 
 export interface LlmListModelsResult {
@@ -104,6 +105,7 @@ export interface AgentRunInput {
   userInput?: string;
   timeout: number;
   mcpEndpoint?: string;
+  toolMode?: "tools" | "chat";
   expectedOutputMarker?: string;
 }
 
@@ -115,6 +117,7 @@ export interface AgentRunStreamInput {
   userInput?: string;
   timeout: number;
   mcpEndpoint?: string;
+  toolMode?: "tools" | "chat";
   expectedOutputMarker?: string;
 }
 

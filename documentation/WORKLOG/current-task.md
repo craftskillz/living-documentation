@@ -1,8 +1,8 @@
 ---
 **date:** 2026-06-29
 **status:** Completed
-**description:** Les endpoints Workspace qui contactent des services externes exposent maintenant les causes réseau et les erreurs HTTP upstream utiles.
-**tags:** worklog, workspace, llm, list-models, test-llm, run-agent, mcp, fetch, error-cause, backend-logs
+**description:** Les images produites par generate_image sont separees des pieces jointes et stockees sous images-ai.
+**tags:** worklog, workspace, run-agent-document, generate_image, agentRunArtifacts, markdown-image, images-ai, export, mcp
 ---
 
 # Current task
@@ -13,36 +13,45 @@ Completed
 
 ## Tache realisee
 
-La gestion d'erreurs de `src/routes/workspace.ts` a ete verifiee endpoint par endpoint, puis uniformisee pour les chemins qui contactent des services externes.
+Correction du stockage des images generees par IA : `generate_image` n'ecrit plus sous `files/`, qui reste reserve aux pieces jointes utilisateur. Les images IA sont maintenant ecrites sous `images-ai/<dossier du document>/...`.
 
-Les changements principaux :
+Le tool retourne maintenant :
 
-- `errorMessageWithCause()` extrait les details utiles de `error.cause` quand Node/Undici renvoie un `fetch failed` ;
-- `upstreamHttpError()` ajoute l'URL appelee, le statut HTTP et un extrait court du body de reponse pour les erreurs fournisseur LLM/MCP ;
-- `workspaceErrorMessage()` journalise en console backend les erreurs reseau/upstream avec un prefixe `[workspace]` ;
-- `test-llm`, `list-models`, `run-agent`, `run-agent-stream`, `run-agent-document` et `run-agent-document-stream` propagent des messages plus exploitables ;
-- `callMcp()` detaille les echecs de connexion MCP et les reponses HTTP non-OK ;
-- les documents d'erreur agent incluent aussi les details issus de `error.cause`.
+```markdown
+![image](./images-ai/ADRS/generated-image.png)
+```
 
-Les erreurs de validation attendues restent simples (`endpoint is required`, `model is required`, etc.) et ne sont pas traitees comme des erreurs backend bruyantes.
+Le serveur expose `docsPath/images-ai` via `/images-ai`, donc les images restent rendues dans les documents et dans les documents de run agent.
+
+Le comportement precedent reste conserve cote run agent : quand un run persistant appelle `generate_image`, le backend collecte le champ JSON `markdown` retourne par le tool et l'ajoute automatiquement sous `## Response`, apres le texte final du modele, sans doublon si le modele l'a deja cite.
+
+Les exports Markdown et HTML reconnaissent aussi `./images-ai/...` et copient ces assets dans un sous-dossier `images-ai/` du ZIP.
 
 ## Contenu modifie
 
+- `src/mcp/tools/images.ts`
+- `src/server.ts`
+- `src/routes/export.ts`
+- `src/mcp/server.ts`
 - `src/routes/workspace.ts`
+- `tests/api/workspace.spec.ts`
+- `tests/api/export.spec.ts`
+- `documentation/ADRS/2026_06_29_22_36_[WORKSPACE]_workspace_image_providers_and_generate_image_tool.md`
+- `documentation/.metadata.json`
 - `documentation/WORKLOG/current-task.md`
-- `graphify-out/*`
+
+## Documentation
+
+ADR mis a jour : `documentation/ADRS/2026_06_29_22_36_[WORKSPACE]_workspace_image_providers_and_generate_image_tool.md`.
+
+Metadonnees ADR rafraichies pour les fichiers source et tests portant la feature. Note : les metadonnees ont ete rafraichies sur un working tree dirty, conformement a l'etat courant deja non commite de la feature Workspace/image.
 
 ## Verifications realisees
 
 - `npm run build` : OK.
-- `git diff --check` : OK.
-- `graphify update .` : OK.
-
-## Limites connues
-
-- Les endpoints de lecture/sauvegarde locale du workspace gardent leur gestion simple : ils ne contactent pas de service externe et ne beneficient pas de `error.cause` reseau.
-- Les extraits de body upstream sont volontairement tronques a 500 caracteres pour rester lisibles.
+- `npx playwright test tests/api/workspace.spec.ts` : OK, 2 passed.
+- `npx playwright test tests/api/export.spec.ts` : OK, 6 passed.
 
 ## Prochaine action recommandee
 
-Relancer le serveur local et reproduire les erreurs LLM/MCP : le body JSON et la console backend doivent maintenant afficher une cause exploitable au lieu d'un simple `fetch failed`.
+Tester manuellement un agent reel qui appelle `read_document`, `generate_image`, puis termine par un court message. Le document de run doit afficher le message sous `## Response`, puis le Markdown image `./images-ai/...` juste apres. Verifier aussi que le dossier `files/` ne recoit plus les images generees.

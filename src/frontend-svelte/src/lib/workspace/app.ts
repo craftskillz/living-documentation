@@ -28,11 +28,15 @@ type WorkspaceCanvasElement = globalThis.HTMLCanvasElement & {
 };
 
 type NodeKind = "system" | "llm" | "agent" | "mcp";
+type ProviderType = "chat" | "image";
+type ToolMode = "tools" | "chat";
 
 interface EntityConfig {
   endpoint: string;
   token: string;
   model: string;
+  providerType: ProviderType;
+  toolMode: ToolMode;
   timeout: number;
   description: string;
   workspaceFolder: string;
@@ -68,6 +72,17 @@ interface Bounds {
 interface ChildDistanceOptions {
   spread?: number;
   includeSubtree?: boolean;
+}
+
+interface EntityCanvasStyle {
+  fill: string;
+  stroke: string;
+  selectedFill: string;
+  selectedStroke: string;
+  text: string;
+  selectedText: string;
+  shadow: string;
+  connection: string;
 }
 
 interface WorkspaceState {
@@ -174,9 +189,17 @@ let agentRunTargetId: string | null = null;
 let fields!: {
   name: HTMLInputElement;
   kind: HTMLSelectElement;
+  providerIdField: HTMLElement;
+  providerId: HTMLInputElement;
+  copyProviderId: HTMLButtonElement;
   endpoint: HTMLInputElement;
   token: HTMLInputElement;
   model: HTMLSelectElement;
+  providerTypeChat: HTMLInputElement;
+  providerTypeImage: HTMLInputElement;
+  toolModeField: HTMLElement;
+  toolModeTools: HTMLInputElement;
+  toolModeChat: HTMLInputElement;
   workspaceField: HTMLElement;
   workspaceFolder: HTMLInputElement;
   timeout: HTMLInputElement;
@@ -265,9 +288,27 @@ export function initWorkspace(): () => void {
   fields = {
     name: document.getElementById("nodeName") as HTMLInputElement,
     kind: document.getElementById("nodeKind") as HTMLSelectElement,
+    providerIdField: document.getElementById("providerIdField") as HTMLElement,
+    providerId: document.getElementById("nodeProviderId") as HTMLInputElement,
+    copyProviderId: document.getElementById(
+      "copyProviderIdButton",
+    ) as HTMLButtonElement,
     endpoint: document.getElementById("nodeEndpoint") as HTMLInputElement,
     token: document.getElementById("nodeToken") as HTMLInputElement,
     model: document.getElementById("nodeModel") as HTMLSelectElement,
+    providerTypeChat: document.getElementById(
+      "nodeProviderTypeChat",
+    ) as HTMLInputElement,
+    providerTypeImage: document.getElementById(
+      "nodeProviderTypeImage",
+    ) as HTMLInputElement,
+    toolModeField: document.getElementById("toolModeField") as HTMLElement,
+    toolModeTools: document.getElementById(
+      "nodeToolModeTools",
+    ) as HTMLInputElement,
+    toolModeChat: document.getElementById(
+      "nodeToolModeChat",
+    ) as HTMLInputElement,
     workspaceField: document.getElementById(
       "agentWorkspaceField",
     ) as HTMLElement,
@@ -516,6 +557,10 @@ export function initWorkspace(): () => void {
     void loadModelsForSelect();
   });
 
+  fields.copyProviderId.addEventListener("click", () => {
+    void copySelectedProviderId();
+  });
+
   fields.name.addEventListener("blur", () => {
     const selected = selectedEntity();
     if (!selected || selected.kind !== "agent") return;
@@ -706,6 +751,8 @@ function hydrateEntity(input: unknown): Entity | null {
       endpoint: stringValue(config.endpoint) || defaultEndpoint(id, kind),
       token: stringValue(config.token),
       model: stringValue(config.model),
+      providerType: providerTypeValue(config.providerType),
+      toolMode: toolModeValue(config.toolMode),
       timeout: finiteNumber(config.timeout, 180),
       description: stringValue(config.description) || defaultDescription(kind),
       workspaceFolder:
@@ -741,12 +788,37 @@ async function saveWorkspaceNow(notify = false) {
     state.saveTimerId = null;
   }
 
+  const tokenDraft =
+    state.selectedId &&
+    document.activeElement === fields.token &&
+    tokenRefInvalid(fields.token.value)
+      ? {
+          entityId: state.selectedId,
+          value: fields.token.value,
+          selectionStart: fields.token.selectionStart,
+          selectionEnd: fields.token.selectionEnd,
+        }
+      : null;
+
   const saved = await saveWorkspaceState(serializeWorkspace());
   if (saved) {
     state.entities = hydrateEntities(saved.entities);
+    if (tokenDraft && state.selectedId === tokenDraft.entityId) {
+      const selected = selectedEntity();
+      if (selected?.kind === "llm") {
+        selected.config.token = tokenDraft.value;
+      }
+    }
     state.lastSaveAt = new Date(saved.updatedAt);
     if (selectedEntity()) {
       syncPanelFromSelection();
+    }
+    if (tokenDraft && state.selectedId === tokenDraft.entityId) {
+      fields.token.value = tokenDraft.value;
+      fields.token.setSelectionRange(
+        tokenDraft.selectionStart,
+        tokenDraft.selectionEnd,
+      );
     }
     if (notify) {
       showSaveToast("Workspace saved");
@@ -773,16 +845,22 @@ function serializeWorkspace(): PersistedWorkspaceDocument {
   return {
     version: 1,
     updatedAt: new Date().toISOString(),
-    entities: state.entities.map((entity) => ({
-      id: entity.id,
-      label: entity.label,
-      kind: entity.kind,
-      parentId: entity.parentId,
-      x: entity.x,
-      y: entity.y,
-      angle: entity.angle,
-      config: { ...entity.config },
-    })),
+    entities: state.entities.map((entity) => {
+      const config = {
+        ...entity.config,
+        token: tokenValueForPersistence(entity.config.token),
+      };
+      return {
+        id: entity.id,
+        label: entity.label,
+        kind: entity.kind,
+        parentId: entity.parentId,
+        x: entity.x,
+        y: entity.y,
+        angle: entity.angle,
+        config,
+      };
+    }),
     camera: {
       x: state.cameraX,
       y: state.cameraY,
@@ -808,6 +886,14 @@ function nodeKindValue(input: unknown): NodeKind | null {
     : null;
 }
 
+function toolModeValue(input: unknown): ToolMode {
+  return input === "chat" ? "chat" : "tools";
+}
+
+function providerTypeValue(input: unknown): ProviderType {
+  return input === "image" ? "image" : "chat";
+}
+
 function finiteNumber(input: unknown, fallback: number) {
   return typeof input === "number" && Number.isFinite(input) ? input : fallback;
 }
@@ -825,6 +911,8 @@ function createEntity(id, label, kind, parentId) {
       endpoint: defaultEndpoint(id, kind),
       token: "",
       model: "",
+      providerType: "chat",
+      toolMode: "tools",
       timeout: 180,
       description: defaultDescription(kind),
       workspaceFolder:
@@ -884,7 +972,8 @@ function addContextualNode() {
   const selected = selectedEntity();
   const parent =
     selected?.kind === "llm" ? selected : entityById(selected?.parentId);
-  const shouldAddAgent = selected?.kind === "llm" || parent?.kind === "llm";
+  const shouldAddAgent =
+    parent?.kind === "llm" && parent.config.providerType !== "image";
 
   if (shouldAddAgent) {
     addAgent(parent.id);
@@ -1240,17 +1329,23 @@ function syncPanelFromSelection() {
 
   fields.name.value = selected.label;
   fields.kind.value = selected.kind;
+  fields.providerId.value = selected.kind === "llm" ? selected.id : "";
   fields.endpoint.value = selected.config.endpoint;
   fields.token.value = selected.config.token;
   restoreModelSelect(selected.config.model);
+  fields.providerTypeChat.checked = selected.config.providerType !== "image";
+  fields.providerTypeImage.checked = selected.config.providerType === "image";
+  fields.toolModeTools.checked = selected.config.toolMode !== "chat";
+  fields.toolModeChat.checked = selected.config.toolMode === "chat";
   fields.workspaceFolder.value = selected.config.workspaceFolder;
   fields.workspaceField.hidden = selected.kind !== "agent";
   fields.timeout.value = String(selected.config.timeout);
   fields.description.value = selected.config.description;
-  fields.typeBadge.textContent = labelForBadge(selected.kind);
+  fields.typeBadge.textContent = labelForEntityBadge(selected);
   fields.kind.disabled = true;
   fields.llmFields.hidden =
     selected.kind === "mcp" || selected.kind === "agent";
+  syncLlmProviderTypeVisibility(selected);
   fields.mcpInventory.hidden = selected.kind !== "mcp";
   fields.agentSection.hidden = selected.kind !== "agent";
   fields.systemPrompt.value = selected.config.systemPrompt;
@@ -1265,8 +1360,10 @@ function syncPanelFromSelection() {
     selected.kind === "llm"
       ? !selected.config.model
       : selected.kind !== "agent";
+  const agentParent =
+    selected.kind === "llm" ? selected : entityById(selected.parentId);
   addButton.title =
-    selected.kind === "llm" || entityById(selected.parentId)?.kind === "llm"
+    agentParent?.kind === "llm" && agentParent.config.providerType !== "image"
       ? "Add agent"
       : "Add LLM provider";
 }
@@ -1282,6 +1379,10 @@ function syncSelectedFromForm() {
   selected.config.endpoint = fields.endpoint.value;
   selected.config.token = fields.token.value;
   selected.config.model = fields.model.value;
+  selected.config.providerType = fields.providerTypeImage.checked
+    ? "image"
+    : "chat";
+  selected.config.toolMode = fields.toolModeChat.checked ? "chat" : "tools";
   selected.config.timeout = Number(fields.timeout.value || 30);
   selected.config.description = fields.description.value;
   selected.config.systemPrompt = fields.systemPrompt.value;
@@ -1289,7 +1390,8 @@ function syncSelectedFromForm() {
   selected.config.userInputDescription = fields.userInputDescription.value;
   selected.config.expectedOutputMarker = fields.expectedOutputMarker.value;
   syncUserInputDescriptionVisibility();
-  fields.typeBadge.textContent = labelForBadge(selected.kind);
+  syncLlmProviderTypeVisibility(selected);
+  fields.typeBadge.textContent = labelForEntityBadge(selected);
 
   // Propagate model + timeout to child agents
   if (selected.kind === "llm") {
@@ -1307,6 +1409,19 @@ function syncUserInputDescriptionVisibility() {
     selectedEntity()?.kind === "agent" && fields.requiresUserInput.checked;
   fields.userInputDescriptionField.hidden = !shouldShow;
   fields.userInputDescription.required = shouldShow;
+}
+
+function syncLlmProviderTypeVisibility(selected: Entity) {
+  const isLlm = selected.kind === "llm";
+  const isImageProvider = selected.config.providerType === "image";
+  fields.providerIdField.hidden = !isLlm;
+  fields.toolModeField.hidden = !isLlm || isImageProvider;
+  loadModelsButton.title = isImageProvider
+    ? "Load image models from endpoint"
+    : "Load chat models from endpoint";
+  testNodeButton.title = isImageProvider
+    ? "Test image provider configuration"
+    : "Test chat provider configuration";
 }
 
 function restoreModelSelect(savedModel: string) {
@@ -1407,7 +1522,9 @@ async function executeAgentRunFromDialog() {
       systemPrompt: selected.config.systemPrompt,
       userInput: agentRunInput.value.trim() || undefined,
       timeout: llm.config.timeout,
-      mcpEndpoint: mcpEntity?.config.endpoint || undefined,
+      mcpEndpoint:
+        llm.config.toolMode === "chat" ? undefined : mcpEntity?.config.endpoint || undefined,
+      toolMode: llm.config.toolMode,
       expectedOutputMarker: selected.config.expectedOutputMarker || undefined,
     },
     (event) => {
@@ -1538,6 +1655,12 @@ function tokenRefInvalid(token: string): boolean {
   const value = token.trim();
   return value !== "" && !ENV_REF_PATTERN.test(value);
 }
+
+function tokenValueForPersistence(token: string): string {
+  const value = token.trim();
+  return tokenRefInvalid(value) ? "" : value;
+}
+
 const TOKEN_REF_HINT =
   "API token must reference an environment variable, e.g. env:LLM_API_KEY";
 
@@ -1563,6 +1686,7 @@ async function loadModelsForSelect() {
   const result = await listLlmModels({
     endpoint,
     token: selected.config.token,
+    providerType: selected.config.providerType,
   });
 
   loadModelsButton.classList.remove("loading");
@@ -1608,12 +1732,15 @@ async function testSelectedLlmConnection() {
   showLoadingToast(`Testing ${selected.config.model}…`);
   scheduleRender();
 
-  const result = await testLlmConnection({
-    endpoint: selected.config.endpoint,
-    token: selected.config.token,
-    model: selected.config.model,
-    timeout: selected.config.timeout,
-  });
+  const result =
+    selected.config.providerType === "image"
+      ? await testSelectedImageProvider(selected)
+      : await testLlmConnection({
+          endpoint: selected.config.endpoint,
+          token: selected.config.token,
+          model: selected.config.model,
+          timeout: selected.config.timeout,
+        });
 
   testNodeButton.disabled = false;
   if (result.ok) {
@@ -1627,6 +1754,42 @@ async function testSelectedLlmConnection() {
   scheduleRender();
 }
 
+async function testSelectedImageProvider(selected: Entity) {
+  const result = await listLlmModels({
+    endpoint: selected.config.endpoint,
+    token: selected.config.token,
+    providerType: "image",
+  });
+  if (!result.ok) {
+    return { ok: false, error: result.error ?? "Image provider test failed" };
+  }
+  const model = selected.config.model.trim();
+  if (model && result.models?.length && !result.models.includes(model)) {
+    return {
+      ok: false,
+      error: `Image models loaded, but "${model}" was not found.`,
+    };
+  }
+  return {
+    ok: true,
+    detail: `${result.models?.length ?? 0} image model${result.models?.length === 1 ? "" : "s"} available`,
+  };
+}
+
+async function copySelectedProviderId() {
+  const selected = selectedEntity();
+  if (!selected || selected.kind !== "llm") {
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(selected.id);
+    showSaveToast("Provider ID copied", "success");
+  } catch {
+    fields.providerId.select();
+    showSaveToast("Provider ID selected", "success");
+  }
+}
+
 function labelForBadge(kind) {
   const labels = {
     system: "System",
@@ -1635,6 +1798,13 @@ function labelForBadge(kind) {
     mcp: "MCP",
   };
   return labels[kind] || "Node";
+}
+
+function labelForEntityBadge(entity: Entity) {
+  if (entity.kind === "llm" && entity.config.providerType === "image") {
+    return "Image provider";
+  }
+  return labelForBadge(entity.kind);
 }
 
 function selectedEntity() {
@@ -1722,7 +1892,6 @@ function drawTopology() {
 
 function drawConnections() {
   ctx.save();
-  ctx.strokeStyle = "#111827";
   ctx.lineWidth = 2 / state.zoom;
 
   for (const entity of state.entities) {
@@ -1734,6 +1903,7 @@ function drawConnections() {
     const angle = Math.atan2(entity.y - parent.y, entity.x - parent.x);
     const from = boundaryPoint(parent, angle);
     const to = boundaryPoint(entity, angle + Math.PI);
+    ctx.strokeStyle = entityCanvasStyle(entity).connection;
     ctx.beginPath();
     ctx.moveTo(from.x, from.y);
     ctx.lineTo(to.x, to.y);
@@ -1754,6 +1924,7 @@ function drawEntity(entity) {
 
 function drawPolygonEntity(entity) {
   const selected = entity.id === state.selectedId;
+  const style = entityCanvasStyle(entity);
   const radius = entity.kind === "system" ? ROOT_RADIUS : PROVIDER_RADIUS;
   const children = childrenOf(entity.id);
   const sides = Math.max(MIN_POLYGON_SIDES, children.length);
@@ -1769,17 +1940,17 @@ function drawPolygonEntity(entity) {
     }
   });
   ctx.closePath();
-  ctx.fillStyle = selected ? "#111827" : "#ffffff";
-  ctx.strokeStyle = "#0f172a";
+  ctx.fillStyle = selected ? style.selectedFill : style.fill;
+  ctx.strokeStyle = selected ? style.selectedStroke : style.stroke;
   ctx.lineWidth = (selected ? 3 : 2) / state.zoom;
-  ctx.shadowColor = "rgb(15 23 42 / 8%)";
+  ctx.shadowColor = style.shadow;
   ctx.shadowBlur = entity.kind === "system" ? 20 : 14;
   ctx.shadowOffsetY = entity.kind === "system" ? 8 : 5;
   ctx.fill();
   ctx.shadowColor = "transparent";
   ctx.stroke();
 
-  ctx.fillStyle = selected ? "#ffffff" : "#111827";
+  ctx.fillStyle = selected ? style.selectedText : style.text;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.font =
@@ -1800,18 +1971,23 @@ function drawPolygonEntity(entity) {
 
 function drawLeafEntity(entity) {
   const selected = entity.id === state.selectedId;
+  const style = entityCanvasStyle(entity);
   const width = entity.kind === "mcp" ? 116 : LEAF_WIDTH;
   const height = entity.kind === "mcp" ? 58 : LEAF_HEIGHT;
 
   ctx.save();
   roundedRect(entity.x - width / 2, entity.y - height / 2, width, height, 20);
-  ctx.fillStyle = selected ? "#111827" : "#ffffff";
-  ctx.strokeStyle = entity.kind === "mcp" ? "#276ef1" : "#0f172a";
+  ctx.fillStyle = selected ? style.selectedFill : style.fill;
+  ctx.strokeStyle = selected ? style.selectedStroke : style.stroke;
   ctx.lineWidth = (selected ? 3 : 2) / state.zoom;
+  ctx.shadowColor = style.shadow;
+  ctx.shadowBlur = 10;
+  ctx.shadowOffsetY = 4;
   ctx.fill();
+  ctx.shadowColor = "transparent";
   ctx.stroke();
 
-  ctx.fillStyle = selected ? "#ffffff" : "#111827";
+  ctx.fillStyle = selected ? style.selectedText : style.text;
   ctx.font = "760 15px Inter, system-ui, sans-serif";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -1819,6 +1995,79 @@ function drawLeafEntity(entity) {
 
   drawSelectedDot(entity, selected, Math.max(width, height) / 2);
   ctx.restore();
+}
+
+function entityCanvasStyle(entity: Entity): EntityCanvasStyle {
+  if (entity.kind === "system") {
+    return {
+      fill: "#111827",
+      stroke: "#111827",
+      selectedFill: "#111827",
+      selectedStroke: "#111827",
+      text: "#ffffff",
+      selectedText: "#ffffff",
+      shadow: "rgb(17 24 39 / 18%)",
+      connection: "#475569",
+    };
+  }
+  if (entity.kind === "llm" && entity.config.providerType === "image") {
+    return {
+      fill: "#facc15",
+      stroke: "#ca8a04",
+      selectedFill: "#eab308",
+      selectedStroke: "#a16207",
+      text: "#111827",
+      selectedText: "#111827",
+      shadow: "rgb(250 204 21 / 22%)",
+      connection: "#ca8a04",
+    };
+  }
+  if (entity.kind === "llm") {
+    return {
+      fill: "#f97316",
+      stroke: "#ea580c",
+      selectedFill: "#fb923c",
+      selectedStroke: "#c2410c",
+      text: "#431407",
+      selectedText: "#431407",
+      shadow: "rgb(249 115 22 / 20%)",
+      connection: "#ea580c",
+    };
+  }
+  if (entity.kind === "mcp") {
+    return {
+      fill: "#64748b",
+      stroke: "#475569",
+      selectedFill: "#475569",
+      selectedStroke: "#334155",
+      text: "#ffffff",
+      selectedText: "#ffffff",
+      shadow: "rgb(100 116 139 / 18%)",
+      connection: "#64748b",
+    };
+  }
+  if (entity.kind === "agent") {
+    return {
+      fill: "#fdba74",
+      stroke: "#f97316",
+      selectedFill: "#fb923c",
+      selectedStroke: "#ea580c",
+      text: "#111827",
+      selectedText: "#111827",
+      shadow: "rgb(249 115 22 / 18%)",
+      connection: "#f97316",
+    };
+  }
+  return {
+    fill: "#ffffff",
+    stroke: "#0f172a",
+    selectedFill: "#111827",
+    selectedStroke: "#0f172a",
+    text: "#111827",
+    selectedText: "#ffffff",
+    shadow: "rgb(15 23 42 / 8%)",
+    connection: "#111827",
+  };
 }
 
 function drawSelectedDot(entity, selected, radius) {

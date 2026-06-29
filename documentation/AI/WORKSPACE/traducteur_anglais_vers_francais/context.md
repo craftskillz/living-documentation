@@ -1,1 +1,1 @@
-Dernière traduction : README.fr — traduit EN → FR depuis le README anglais, 30389 octets. Frontmatter `**language:** fr` ajouté.
+Dernière traduction : ADRS/2026_04_14_[I18N]_internationalization_en_fr_with_json_translation_files — traduit EN → FR, 7257 octets.

@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { test, expect } from '../helpers/ld-fixture';
 
 function sniffZipMagic(buf: Buffer): boolean {
@@ -50,4 +52,24 @@ test('POST /api/export/markdown returns a zip of all documents', async ({ reques
   expect(res.headers()['content-type']).toMatch(/application\/zip/);
   const buf = Buffer.from(await res.body());
   expect(sniffZipMagic(buf)).toBe(true);
+});
+
+test('POST /api/export/markdown includes AI-generated images from images-ai', async ({
+  request,
+  ld,
+}) => {
+  const imagePath = path.join(ld.docsAbs, 'images-ai', 'ADRS', 'generated.png');
+  fs.mkdirSync(path.dirname(imagePath), { recursive: true });
+  fs.writeFileSync(imagePath, 'fake image', 'utf-8');
+  fs.appendFileSync(
+    path.join(ld.docsAbs, '2026_01_01_10_00_[General]_intro.md'),
+    '\n\n![generated](./images-ai/ADRS/generated.png)\n',
+    'utf-8',
+  );
+
+  const res = await request.post(`${ld.baseURL}/api/export/markdown`, { data: {} });
+  expect(res.ok()).toBe(true);
+  const buf = Buffer.from(await res.body());
+  expect(sniffZipMagic(buf)).toBe(true);
+  expect(buf.toString('utf-8')).toContain('General/images-ai/ADRS/generated.png');
 });

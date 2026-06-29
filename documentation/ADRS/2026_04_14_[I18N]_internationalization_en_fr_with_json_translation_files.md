@@ -2,63 +2,63 @@
 `🗄️ ADR : 2026_04_14_[I18N]_internationalization_en_fr_with_json_translation_files.md`
 **date:** 2026-04-14
 **status:** Accepted
-**description:** Add full internationalization support to all three pages (index.html, admin.html, diagram.html) via a shared i18n.js loader, two JSON translation files (en.json, fr.json), and four data attributes (data-i18n, data-i18n-title, data-i18n-placeholder, data-i18n-html). Language is persisted in config as "en" | "fr" and selected from the Admin panel. Updated 2026-04-22: dynamically rendered content must await initI18n before its first render to avoid raw keys being displayed (diagram sidebar bootstrap fix).
+**description:** Ajout du support complet d'internationalisation sur les trois pages (index.html, admin.html, diagram.html) via un chargeur partagé i18n.js, deux fichiers de traduction JSON (en.json, fr.json) et quatre attributs de données (data-i18n, data-i18n-title, data-i18n-placeholder, data-i18n-html). La langue est persistée dans la configuration en tant que "en" | "fr" et sélectionnée depuis le panneau Admin. Mis à jour le 22/04/2026 : le contenu rendu dynamiquement doit attendre initI18n avant son premier rendu pour éviter l'affichage de clés brutes (correction du bootstrap de la barre latérale du diagramme).
 **tags:** i18n, internationalization, language, translation, en, fr, json, data-i18n, i18n.js, config, admin, frontend, index, diagram, window.t, applyI18n, initI18n, bootstrap, loadDiagramList, dynamic-rendering
 ---
 
-## Context
+## Contexte
 
-All user-visible strings in the three frontend pages (index.html, admin.html, diagram.html) were hardcoded in English directly in the HTML and JavaScript. As the application grew, adding a second language became necessary without requiring a build step or a JS framework.
+Toutes les chaînes visibles par l'utilisateur dans les trois pages frontend (index.html, admin.html, diagram.html) étaient codées en dur en anglais directement dans le HTML et le JavaScript. À mesure que l'application grandissait, l'ajout d'une seconde langue est devenu nécessaire sans nécessiter d'étape de build ni de framework JS.
 
-The constraints were:
+Les contraintes étaient les suivantes :
 
-- No build step , all three pages use Tailwind and highlight.js via CDN; adding a bundler was not acceptable.
-- The solution must work uniformly across all three pages with a single shared mechanism.
-- Language preference must be persisted server-side (in `.living-doc.json`) so all pages load in the correct language on the first render, without a flash of untranslated content.
+- Aucune étape de build : les trois pages utilisent Tailwind et highlight.js via CDN ; l'ajout d'un bundler n'était pas acceptable.
+- La solution doit fonctionner uniformément sur les trois pages avec un mécanisme partagé unique.
+- La préférence de langue doit être persistée côté serveur (dans `.living-doc.json`) afin que toutes les pages se chargent dans la bonne langue au premier rendu, sans flash de contenu non traduit.
 
-## Decision
+## Décision
 
-### i18n.js , shared loader
+### i18n.js, chargeur partagé
 
-A plain IIFE script `src/frontend/i18n.js` exposes three globals:
+Un script IIFE simple `src/frontend/i18n.js` expose trois globales :
 
-- **`window.t(key)`** , returns the translation for `key`, or the key itself as fallback (so untranslated keys degrade gracefully).
-- **`window.initI18n(lang)`** , fetches `/i18n/<lang>.json` and populates the internal dictionary. Called once at page load, after `/api/config` resolves the configured language.
-- **`window.applyI18n()`** , walks the DOM and applies translations using four data attributes (see below). Called after `initI18n` resolves.
+- **`window.t(key)`** : retourne la traduction pour `key`, ou la clé elle-même comme fallback (les clés non traduites se dégradent donc de manière gracieuse).
+- **`window.initI18n(lang)`** : récupère `/i18n/<lang>.json` et peuple le dictionnaire interne. Appelé une fois au chargement de la page, après que `/api/config` a résolu la langue configurée.
+- **`window.applyI18n()`** : parcourt le DOM et applique les traductions en utilisant quatre attributs de données (voir ci-dessous). Appelé après la résolution de `initI18n`.
 
-The script is a regular `<script>` (not an ES module) so it loads identically in all three pages without import coordination.
+Le script est une balise `<script>` classique (pas un module ES), il se charge donc de manière identique dans les trois pages sans coordination d'imports.
 
-### Translation files
+### Fichiers de traduction
 
-Two JSON files under `src/frontend/i18n/`:
+Deux fichiers JSON sous `src/frontend/i18n/` :
 
-- `en.json` , English (default)
-- `fr.json` , French
+- `en.json` : anglais (par défaut)
+- `fr.json` : français
 
-Each file is a flat key→string map. Keys are namespaced by domain, e.g. `nav.diagram`, `admin.config.title`, `diagram.toolbar.save`. Served statically by Express at `/i18n/*.json`.
+Chaque fichier est une map clé → chaîne plate. Les clés sont organisées par domaine, par exemple `nav.diagram`, `admin.config.title`, `diagram.toolbar.save`. Servis de manière statique par Express à `/i18n/*.json`.
 
-### Data attributes
+### Attributs de données
 
-| Attribute               | Sets             | Use case                       |
-| ----------------------- | ---------------- | ------------------------------ |
-| `data-i18n`             | `el.textContent` | Labels, button text, headings  |
-| `data-i18n-title`       | `el.title`       | Tooltip titles                 |
-| `data-i18n-placeholder` | `el.placeholder` | Input/textarea placeholders    |
-| `data-i18n-html`        | `el.innerHTML`   | Strings containing HTML markup |
+| Attribut                | Définit           | Cas d'usage                         |
+| ----------------------- | ----------------- | ----------------------------------- |
+| `data-i18n`             | `el.textContent`  | Libellés, texte de bouton, titres   |
+| `data-i18n-title`       | `el.title`        | Titres d'infobulle                  |
+| `data-i18n-placeholder` | `el.placeholder`  | Placeholders input/textarea         |
+| `data-i18n-html`        | `el.innerHTML`    | Chaînes contenant du balisage HTML  |
 
-HTML elements keep their original English text as a pre-`applyI18n` fallback, so the page is readable even if the JSON fetch fails.
+Les éléments HTML conservent leur texte anglais d'origine comme fallback pré-`applyI18n`, de sorte que la page reste lisible même si la récupération du JSON échoue.
 
-### Config field
+### Champ de configuration
 
-`language: "en" | "fr"` added to `LivingDocConfig` with default `"en"`. Accepted server-side in `PUT /api/config` , only `"en"` and `"fr"` are accepted, any other value is silently dropped.
+`language: "en" | "fr"` ajouté à `LivingDocConfig` avec la valeur par défaut `"en"`. Accepté côté serveur dans `PUT /api/config`, seules les valeurs `"en"` et `"fr"` sont acceptées, toute autre valeur est silencieusement ignorée.
 
-### Admin panel selector
+### Sélecteur du panneau Admin
 
-A `<select id="field-language">` in the Admin panel lets users switch language. The change is saved via `PUT /api/config` and takes effect on next page load.
+Un `<select id="field-language">` dans le panneau Admin permet aux utilisateurs de changer de langue. Le changement est enregistré via `PUT /api/config` et prend effet au prochain chargement de page.
 
-### Page integration pattern
+### Schéma d'intégration par page
 
-Each page follows the same boot sequence:
+Chaque page suit la même séquence de démarrage :
 
 ```js
 const cfg = await fetch("/api/config").then((r) => r.json());
@@ -66,39 +66,39 @@ await window.initI18n(cfg.language || "en");
 window.applyI18n();
 ```
 
-With a fallback to `'en'` if the config fetch fails.
+Avec un fallback vers `'en'` si la récupération de la configuration échoue.
 
-### Update 2026-04-22 , dynamic renderers must await initI18n
+### Mise à jour du 22/04/2026 : les moteurs de rendu dynamiques doivent attendre initI18n
 
-`applyI18n()` handles static DOM nodes, but JS-rendered content calls `window.t()` inline. If that render runs **before** `initI18n()` resolves, the dictionary is still empty and `t(key)` returns the raw key (e.g. `diagram.sidebar.empty` shown literally in the diagram sidebar).
+`applyI18n()` gère les nœuds DOM statiques, mais le contenu rendu par JS appelle `window.t()` en ligne. Si ce rendu s'exécute **avant** que `initI18n()` ne soit résolu, le dictionnaire est encore vide et `t(key)` retourne la clé brute (par exemple `diagram.sidebar.empty` affiché littéralement dans la barre latérale du diagramme).
 
-Rule: any dynamic renderer that depends on `window.t()` for its first paint must be invoked from the same IIFE that awaits `initI18n()`, **after** `applyI18n()`. In `diagram.html`, `loadDiagramList()` was moved out of `diagram/main.js` (where it ran at module-load time, racing `initI18n`) into the inline bootstrap IIFE, after `window.applyI18n()`.
+Règle : tout moteur de rendu dynamique qui dépend de `window.t()` pour son premier affichage doit être invoqué depuis la même IIFE qui attend `initI18n()`, **après** `applyI18n()`. Dans `diagram.html`, `loadDiagramList()` a été déplacé hors de `diagram/main.js` (où il s'exécutait au moment du chargement du module, en concurrence avec `initI18n`) vers l'IIFE de bootstrap en ligne, après `window.applyI18n()`.
 
-Pattern for future pages:
+Schéma pour les futures pages :
 
 ```js
 (async () => {
   const cfg = await fetch("/api/config").then((r) => r.json());
   await window.initI18n(cfg.language || "en");
   window.applyI18n();
-  // Dynamic renderers that call window.t() go here:
+  // Les moteurs de rendu dynamiques qui appellent window.t() vont ici :
   loadDiagramList();
 })();
 ```
 
-## Consequences
+## Conséquences
 
-### PROS
+### AVANTAGES
 
-- Zero build step , translation files are plain JSON fetched at runtime.
-- Single shared mechanism across all pages , one `i18n.js`, same four attributes everywhere.
-- Graceful degradation , missing keys display the key itself; a failed JSON fetch leaves the English fallback text intact.
-- Language is server-persisted , no flash of wrong language across page navigations.
-- Adding a new language requires only a new JSON file and an extra `<option>` in the admin selector.
+- Aucune étape de build : les fichiers de traduction sont du JSON simple récupéré à l'exécution.
+- Mécanisme partagé unique sur toutes les pages : un seul `i18n.js`, les quatre mêmes attributs partout.
+- Dégradation gracieuse : les clés manquantes affichent la clé elle-même ; un échec de récupération du JSON laisse le texte de fallback anglais intact.
+- La langue est persistée côté serveur : pas de flash de mauvaise langue lors des navigations entre pages.
+- L'ajout d'une nouvelle langue ne nécessite qu'un nouveau fichier JSON et une `<option>` supplémentaire dans le sélecteur admin.
 
-### CONS
+### INCONVÉNIENTS
 
-- `applyI18n()` runs after the DOM is painted , there is a brief moment where the English fallback text is visible before translations are applied (no true SSR).
-- Dynamically rendered HTML (e.g. sidebar items built by JS) must call `window.t()` inline at render time; `applyI18n()` only applies to elements present in the DOM at call time.
-- Dynamic renderers must be invoked after `initI18n()` resolves, otherwise `t(key)` returns the raw key , race condition fixed on 2026-04-22 for the diagram sidebar.
-- All strings added to the codebase must be manually added to both JSON files , there is no compile-time check for missing keys.
+- `applyI18n()` s'exécute après le rendu du DOM : il y a un bref instant où le texte de fallback anglais est visible avant l'application des traductions (pas de véritable SSR).
+- Le HTML rendu dynamiquement (par exemple les éléments de la barre latérale construits par JS) doit appeler `window.t()` en ligne au moment du rendu ; `applyI18n()` ne s'applique qu'aux éléments présents dans le DOM au moment de l'appel.
+- Les moteurs de rendu dynamiques doivent être invoqués après la résolution de `initI18n()`, sinon `t(key)` retourne la clé brute : condition de concurrence corrigée le 22/04/2026 pour la barre latérale du diagramme.
+- Toutes les chaînes ajoutées à la base de code doivent être ajoutées manuellement aux deux fichiers JSON : il n'y a pas de vérification à la compilation pour les clés manquantes.

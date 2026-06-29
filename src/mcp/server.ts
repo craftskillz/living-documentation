@@ -35,6 +35,7 @@ import {
   toolListAdrsBelowAccuracy,
 } from "./tools/metadata";
 import { toolRetrodocumentAdrsFromGit } from "./tools/git";
+import { toolGenerateImage } from "./tools/images";
 
 // ── Server guide ──────────────────────────────────────────────────────────────
 // Shared by the `instructions` field (sent on MCP initialize) and the
@@ -529,6 +530,61 @@ const TOOLS = [
         },
       },
       required: ["folder", "content"],
+    },
+  },
+  {
+    name: "generate_image",
+    description: [
+      "Generate an image with a Workspace LLM node configured as Image generation, save it as an AI-generated documentation image, and return a Markdown image link.",
+      "",
+      "Use this when a document needs an illustrative asset, cover image, visual explanation, or generated screenshot-like image. For Mermaid, C4, UML, or other editable diagrams, prefer text/diagram tools instead of generating pixels.",
+      "",
+      "Recommended workflow:",
+      "1. `read_document(documentId)` first when the image should be grounded in a document.",
+      "2. Compose a precise image prompt from the document facts.",
+      "3. Call `generate_image` with the copied `imageProviderId` from the Workspace image provider node.",
+      "4. Insert the returned `markdown` into the document with `update_document` if requested.",
+      "",
+      "The generated file is saved under `images-ai/<document folder>/...` so AI-generated images stay separate from user attachments in `files/`.",
+      GUIDE_HINT,
+    ].join("\n"),
+    inputSchema: {
+      type: "object",
+      properties: {
+        imageProviderId: {
+          type: "string",
+          description: "Workspace LLM node id configured as Image generation. Copy it from the LLM node panel.",
+        },
+        prompt: {
+          type: "string",
+          description: "Detailed image prompt to send to the image model.",
+        },
+        documentId: {
+          type: "string",
+          description: "Document id used to choose the images-ai/<document folder>/ save location.",
+        },
+        filename: {
+          type: "string",
+          description: "Optional human-readable output filename, e.g. architecture-overview.png.",
+        },
+        aspectRatio: {
+          type: "string",
+          description: "Optional model/provider aspect ratio, e.g. 16:9, 4:3, or 1:1.",
+        },
+        size: {
+          type: "string",
+          description: "Optional provider size/resolution, e.g. 1024x1024 or 2K when supported.",
+        },
+        quality: {
+          type: "string",
+          description: "Optional provider quality setting when supported.",
+        },
+        outputFormat: {
+          type: "string",
+          description: "Optional output extension/format, e.g. png, jpg, webp, or svg.",
+        },
+      },
+      required: ["imageProviderId", "prompt", "documentId"],
     },
   },
   {
@@ -2186,6 +2242,20 @@ function createMcpServer(docsPath: string): Server {
           return toolReadDocument(docsPath, args as { id: string; maxLines?: number; maxChars?: number });
         case "save_context":
           return toolSaveContext(docsPath, args as { folder: string; content: string });
+        case "generate_image":
+          return await toolGenerateImage(
+            docsPath,
+            args as {
+              imageProviderId: string;
+              prompt: string;
+              documentId: string;
+              filename?: string;
+              aspectRatio?: string;
+              size?: string;
+              quality?: string;
+              outputFormat?: string;
+            },
+          );
         case "create_document":
           return toolCreateDocument(
             docsPath,

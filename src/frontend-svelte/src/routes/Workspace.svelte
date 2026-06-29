@@ -55,6 +55,14 @@
           </label>
 
           <div id="llmFields" class="contents">
+            <div id="providerIdField" class="field wide">
+              <span>Provider ID</span>
+              <div class="model-select-wrap">
+                <input id="nodeProviderId" name="nodeProviderId" type="text" readonly />
+                <button id="copyProviderIdButton" class="icon-button" type="button" title="Copy provider ID">⧉</button>
+              </div>
+              <small class="field-note">Use this id as <code>imageProviderId</code> when an agent calls <code>generate_image</code>.</small>
+            </div>
             <label class="field wide">
               <span>Endpoint</span>
               <input id="nodeEndpoint" name="nodeEndpoint" type="url" placeholder="http://localhost:11434" />
@@ -73,6 +81,40 @@
                 <button id="loadModelsButton" class="icon-button" type="button" title="Load models from endpoint">↻</button>
               </div>
             </div>
+            <fieldset class="field wide tool-mode-field">
+              <legend>Provider type</legend>
+              <label class="radio-card">
+                <input id="nodeProviderTypeChat" name="nodeProviderType" type="radio" value="chat" />
+                <span>
+                  <strong>Chat completion</strong>
+                  <small>Uses OpenAI-compatible <code>/chat/completions</code>.</small>
+                </span>
+              </label>
+              <label class="radio-card">
+                <input id="nodeProviderTypeImage" name="nodeProviderType" type="radio" value="image" />
+                <span>
+                  <strong>Image generation</strong>
+                  <small>Used by <code>generate_image</code> with the provider id above.</small>
+                </span>
+              </label>
+            </fieldset>
+            <fieldset id="toolModeField" class="field wide tool-mode-field">
+              <legend>Tool calling</legend>
+              <label class="radio-card">
+                <input id="nodeToolModeTools" name="nodeToolMode" type="radio" value="tools" />
+                <span>
+                  <strong>Allow MCP tools</strong>
+                  <small>Agents can send OpenAI-compatible <code>tools</code> payloads.</small>
+                </span>
+              </label>
+              <label class="radio-card">
+                <input id="nodeToolModeChat" name="nodeToolMode" type="radio" value="chat" />
+                <span>
+                  <strong>Chat only</strong>
+                  <small>Agents never send tools, even when an MCP endpoint exists.</small>
+                </span>
+              </label>
+            </fieldset>
             <label class="field">
               <span>Timeout</span>
               <input id="nodeTimeout" name="nodeTimeout" type="number" min="1" max="600" step="1" />

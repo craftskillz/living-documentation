@@ -72,8 +72,10 @@
     return (rel ? rel + "/" : "") + normalized;
   });
 
-  function sanitizeFolderNameInput() {
-    const normalized = normalizeFolderSegment(name);
+  function sanitizeFolderNameInput(event: Event) {
+    const input = event.currentTarget as HTMLInputElement;
+    const normalized = normalizeFolderSegment(input.value);
+    if (input.value !== normalized) input.value = normalized;
     if (name !== normalized) name = normalized;
   }
 

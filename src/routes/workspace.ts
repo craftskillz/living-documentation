@@ -12,11 +12,15 @@ const WORKSPACE_PROVIDER_ROOT = path.join('AI', 'WORKSPACE');
 const DEFAULT_LLM_TEST_TIMEOUT_MS = 5000;
 
 type WorkspaceNodeKind = 'system' | 'llm' | 'agent' | 'mcp';
+type WorkspaceProviderType = 'chat' | 'image';
+type WorkspaceToolMode = 'tools' | 'chat';
 
 interface WorkspaceEntityConfig {
   endpoint: string;
   token: string;
   model: string;
+  providerType: WorkspaceProviderType;
+  toolMode: WorkspaceToolMode;
   timeout: number;
   description: string;
   workspaceFolder: string;
@@ -65,6 +69,7 @@ interface AgentRunConfig {
   userInput: string;
   timeout: number;
   mcpEndpoint: string;
+  toolsEnabled: boolean;
   expectedOutputMarker: string;
 }
 
@@ -77,6 +82,12 @@ interface AgentDebugLog {
 
 // Cap any single captured value so a debug trace stays readable and the document doesn't explode.
 const DEBUG_VALUE_MAX = 6000;
+const CHAT_ONLY_TOOL_NOTICE = [
+  'Runtime constraint: MCP tool calling is disabled for this run.',
+  'You cannot call read_document, update_document, save_context, or any other MCP tool.',
+  'Do not emit pseudo tool calls such as XML tags, JSON function-call objects, or tool-call placeholders.',
+  'If the user request or agent instructions require tool access, say clearly that the task cannot be completed in chat-only mode because tools are disabled.',
+].join('\n');
 
 function debugBlock(value: unknown): string {
   let text: string;
@@ -123,6 +134,16 @@ interface AgentRunDocumentResult {
   filename: string;
   title: string;
   ok: boolean;
+}
+
+interface GeneratedImageArtifact {
+  filename: string;
+  url: string;
+  markdown: string;
+}
+
+interface AgentRunArtifacts {
+  generatedImages: GeneratedImageArtifact[];
 }
 
 interface AgentRunFailureRequest {
@@ -233,6 +254,8 @@ function sanitizeConfig(input: unknown): WorkspaceEntityConfig {
     // literal secret, since .workspace is git-tracked. Any other value is dropped to ''.
     token: sanitizeTokenRef(safeOptionalString(config.token, '', MAX_TEXT_FIELD_LENGTH)),
     model: safeOptionalString(config.model, '', MAX_LABEL_LENGTH),
+    providerType: config.providerType === 'image' ? 'image' : 'chat',
+    toolMode: config.toolMode === 'chat' ? 'chat' : 'tools',
     timeout: clamp(safeFiniteNumber(config.timeout, 180), 1, 600),
     systemPrompt: safeOptionalString(config.systemPrompt, '', MAX_TEXT_FIELD_LENGTH),
     requiresUserInput: config.requiresUserInput === true,
@@ -503,6 +526,21 @@ function llmModelsUrl(endpoint: string, noV1 = false): URL {
   return url;
 }
 
+function imageModelsUrl(endpoint: string): URL {
+  const url = new URL(endpoint);
+  const cleanPath = url.pathname.replace(/\/+$/, '');
+  if (cleanPath.endsWith('/images/models')) {
+    url.pathname = cleanPath;
+  } else if (cleanPath.endsWith('/images')) {
+    url.pathname = `${cleanPath}/models`;
+  } else if (cleanPath.endsWith('/v1')) {
+    url.pathname = `${cleanPath}/images/models`;
+  } else {
+    url.pathname = `${cleanPath}/v1/images/models`;
+  }
+  return url;
+}
+
 async function testLlmConnection(input: LlmConnectionTestRequest, noV1 = false): Promise<Record<string, unknown>> {
   if (typeof input.endpoint !== 'string' || !input.endpoint.trim()) {
     throw new Error('endpoint is required');
@@ -617,6 +655,7 @@ async function runAgent(
   config: AgentRunConfig,
   report?: AgentRunReporter,
   debug?: AgentDebugLog,
+  artifacts?: AgentRunArtifacts,
 ): Promise<string> {
   if (!config.endpoint.trim()) throw new Error('endpoint is required');
   if (!config.model.trim()) throw new Error('model is required');
@@ -632,7 +671,13 @@ async function runAgent(
   }
 
   let mcpTools: unknown[] = [];
-  if (config.mcpEndpoint) {
+  if (!config.toolsEnabled) {
+    report?.({
+      type: 'mcp_tools',
+      message: 'MCP tools disabled by LLM provider configuration',
+    });
+    debug?.sections.push('### Tools MCP\n\nDésactivés par la configuration du provider LLM.');
+  } else if (config.mcpEndpoint) {
     report?.({ type: 'status', message: 'Loading MCP tools' });
     try {
       const toolsRes = await callMcp(config.mcpEndpoint, 'tools/list', {});
@@ -673,7 +718,10 @@ async function runAgent(
     debug?.sections.push('### Tools MCP\n\nAucun endpoint MCP configuré — exécution sans tool calls.');
   }
 
-  const messages: unknown[] = [{ role: 'system', content: config.systemPrompt.trim() }];
+  const systemPrompt = config.toolsEnabled
+    ? config.systemPrompt.trim()
+    : `${config.systemPrompt.trim()}\n\n${CHAT_ONLY_TOOL_NOTICE}`;
+  const messages: unknown[] = [{ role: 'system', content: systemPrompt }];
   const expectedOutputMarker = config.expectedOutputMarker.trim();
   if (config.userInput.trim()) {
     messages.push({ role: 'user', content: config.userInput.trim() });
@@ -748,7 +796,7 @@ async function runAgent(
         `### Tour ${turn + 1} — Réponse reçue\n\n${debugBlock(msg)}`,
       );
 
-      if (Array.isArray(msg.tool_calls) && msg.tool_calls.length > 0 && config.mcpEndpoint) {
+      if (Array.isArray(msg.tool_calls) && msg.tool_calls.length > 0 && config.toolsEnabled && config.mcpEndpoint) {
         for (const toolCall of msg.tool_calls as unknown[]) {
           if (!isRecord(toolCall) || !isRecord(toolCall.function)) continue;
           const fnName = typeof toolCall.function.name === 'string' ? toolCall.function.name : '';
@@ -796,6 +844,7 @@ async function runAgent(
           debug?.sections.push(
             `### Tour ${turn + 1} — Tool result : \`${fnName}\`\n\n${debugBlock(toolResult)}`,
           );
+          collectGeneratedImageArtifact(fnName, toolResult, artifacts);
           messages.push({ role: 'tool', tool_call_id: toolCall.id ?? '', content: toolResult });
         }
         continue;
@@ -833,6 +882,51 @@ async function runAgent(
   );
 }
 
+function collectGeneratedImageArtifact(
+  toolName: string,
+  toolResult: string,
+  artifacts: AgentRunArtifacts | undefined,
+): void {
+  if (!artifacts || toolName !== 'generate_image') return;
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(toolResult);
+  } catch {
+    return;
+  }
+  if (!isRecord(parsed) || parsed.success !== true || typeof parsed.markdown !== 'string') return;
+
+  const markdown = parsed.markdown.trim();
+  if (!markdown) return;
+  const filename = typeof parsed.filename === 'string' ? parsed.filename.trim() : '';
+  const url = typeof parsed.url === 'string' ? parsed.url.trim() : '';
+  const duplicate = artifacts.generatedImages.some((image) => {
+    return image.markdown === markdown || (!!filename && image.filename === filename) || (!!url && image.url === url);
+  });
+  if (!duplicate) {
+    artifacts.generatedImages.push({ filename, url, markdown });
+  }
+}
+
+function contentWithGeneratedImages(content: string, artifacts: AgentRunArtifacts | undefined): string {
+  const generatedImages = artifacts?.generatedImages ?? [];
+  if (generatedImages.length === 0) return content;
+
+  const imageBlocks = generatedImages
+    .map((image) => image.markdown.trim())
+    .filter((markdown, index) => {
+      if (!markdown) return false;
+      const image = generatedImages[index];
+      return !content.includes(markdown)
+        && (!image.filename || !content.includes(image.filename))
+        && (!image.url || !content.includes(image.url));
+    });
+
+  if (imageBlocks.length === 0) return content;
+  return `${content.trimEnd()}\n\n${imageBlocks.join('\n\n')}`;
+}
+
 function agentRunMarkdown(args: {
   title: string;
   agent: WorkspaceEntity;
@@ -841,11 +935,13 @@ function agentRunMarkdown(args: {
   userInput: string;
   content: string;
   debug?: string;
+  artifacts?: AgentRunArtifacts;
 }): string {
   const status = args.ok ? 'Success' : 'Failed';
   const userInput = args.userInput.trim() || '_No user input._';
+  const responseContent = contentWithGeneratedImages(args.content, args.artifacts);
   const debugSection = args.debug && args.debug.trim() ? `\n## Debug\n\n${args.debug.trim()}\n` : '';
-  return `---\n**date:** ${new Date().toISOString()}\n**status:** ${status}\n**description:** Resultat d'execution de l'agent ${args.agent.label} via ${args.provider.label}.\n**tags:** agent, run-agent, workspace, llm, ${slugify(args.agent.label)}\n---\n\n# ${args.title}\n\n## Execution\n\n- Agent: ${args.agent.label}\n- Provider: ${args.provider.label}\n- Model: ${args.provider.config.model}\n- Status: ${status}\n\n## User input\n\n${userInput}\n\n## Response\n\n${args.content}\n${debugSection}`;
+  return `---\n**date:** ${new Date().toISOString()}\n**status:** ${status}\n**description:** Resultat d'execution de l'agent ${args.agent.label} via ${args.provider.label}.\n**tags:** agent, run-agent, workspace, llm, ${slugify(args.agent.label)}\n---\n\n# ${args.title}\n\n## Execution\n\n- Agent: ${args.agent.label}\n- Provider: ${args.provider.label}\n- Model: ${args.provider.config.model}\n- Status: ${status}\n\n## User input\n\n${userInput}\n\n## Response\n\n${responseContent}\n${debugSection}`;
 }
 
 // Render an accumulated debug log into a Markdown block. Returns '' when nothing was captured.
@@ -903,6 +999,7 @@ function createAgentRunDocument(
   userInput: string,
   content: string,
   debug?: string,
+  artifacts?: AgentRunArtifacts,
 ): AgentRunDocumentResult {
   const folder = sanitizeWorkspaceFolder(agent.config.workspaceFolder);
   if (!folder) throw new Error('agent workspace folder is missing');
@@ -926,7 +1023,7 @@ function createAgentRunDocument(
     suffix += 1;
   }
 
-  fs.writeFileSync(filePath, agentRunMarkdown({ title, agent, provider, ok, userInput, content, debug }), 'utf-8');
+  fs.writeFileSync(filePath, agentRunMarkdown({ title, agent, provider, ok, userInput, content, debug, artifacts }), 'utf-8');
   const relativePath = path.relative(docsPath, filePath);
   return {
     id: encodeURIComponent(relativePath.slice(0, -3)),
@@ -980,6 +1077,9 @@ function findWorkspaceAgentRunContext(state: WorkspaceState, agentId: string): {
   const provider = state.entities.find((entity) => entity.id === agent.parentId && entity.kind === 'llm');
   if (!provider) {
     throw new Error('agent parent LLM provider not found');
+  }
+  if (provider.config.providerType === 'image') {
+    throw new Error('agents must be attached to a Chat completion provider; use Image generation providers through generate_image');
   }
 
   return {
@@ -1037,14 +1137,16 @@ export function workspaceRouter(docsPath: string): Router {
 
   router.post('/list-models', async (req, res) => {
     try {
-      const body = req.body as { endpoint?: unknown; token?: unknown };
+      const body = req.body as { endpoint?: unknown; token?: unknown; providerType?: unknown };
       if (typeof body.endpoint !== 'string' || !body.endpoint.trim()) {
         res.status(400).json({ ok: false, error: 'endpoint is required' });
         return;
       }
       const noV1Hosts = readConfig(docsPath).llmModelsNoV1Hosts;
       const noV1 = endpointServesModelsWithoutV1(body.endpoint.trim(), noV1Hosts);
-      const url = llmModelsUrl(body.endpoint.trim(), noV1);
+      const url = body.providerType === 'image'
+        ? imageModelsUrl(body.endpoint.trim())
+        : llmModelsUrl(body.endpoint.trim(), noV1);
       const headers: Record<string, string> = { Accept: 'application/json' };
       const resolvedToken = resolveSecret(body.token);
       if (resolvedToken) {
@@ -1093,6 +1195,7 @@ export function workspaceRouter(docsPath: string): Router {
       const { agent, provider, mcp } = findWorkspaceAgentRunContext(state, body.agentId.trim());
       const userInput = typeof body.userInput === 'string' ? body.userInput.trim() : '';
       const debug: AgentDebugLog | undefined = readConfig(docsPath).debugAgents ? { sections: [] } : undefined;
+      const artifacts: AgentRunArtifacts = { generatedImages: [] };
 
       try {
         const content = await runAgent(
@@ -1104,12 +1207,14 @@ export function workspaceRouter(docsPath: string): Router {
             userInput,
             timeout: agent.config.timeout || provider.config.timeout,
             mcpEndpoint: mcp?.config.endpoint ?? '',
+            toolsEnabled: provider.config.toolMode !== 'chat',
             expectedOutputMarker: agent.config.expectedOutputMarker,
           },
           undefined,
           debug,
+          artifacts,
         );
-        const document = createAgentRunDocument(docsPath, agent, provider, true, userInput, content, renderAgentDebug(debug));
+        const document = createAgentRunDocument(docsPath, agent, provider, true, userInput, content, renderAgentDebug(debug), artifacts);
         res.json({ ok: true, content, document });
       } catch (error) {
         const message = workspaceErrorMessage('run-agent-document failed', error, 'Agent run failed');
@@ -1118,7 +1223,7 @@ export function workspaceRouter(docsPath: string): Router {
           Provider: provider.label,
           Model: agent.config.model || provider.config.model,
         });
-        const document = createAgentRunDocument(docsPath, agent, provider, false, userInput, content, renderAgentDebug(debug));
+        const document = createAgentRunDocument(docsPath, agent, provider, false, userInput, content, renderAgentDebug(debug), artifacts);
         res.status(502).json({ ok: false, error: message, detail: content, document });
       }
     } catch (error) {
@@ -1151,6 +1256,7 @@ export function workspaceRouter(docsPath: string): Router {
       const { agent, provider, mcp } = findWorkspaceAgentRunContext(state, body.agentId.trim());
       const userInput = typeof body.userInput === 'string' ? body.userInput.trim() : '';
       const debug: AgentDebugLog | undefined = readConfig(docsPath).debugAgents ? { sections: [] } : undefined;
+      const artifacts: AgentRunArtifacts = { generatedImages: [] };
 
       res.status(200);
       res.setHeader('Content-Type', 'application/x-ndjson; charset=utf-8');
@@ -1173,10 +1279,12 @@ export function workspaceRouter(docsPath: string): Router {
             userInput,
             timeout: agent.config.timeout || provider.config.timeout,
             mcpEndpoint: mcp?.config.endpoint ?? '',
+            toolsEnabled: provider.config.toolMode !== 'chat',
             expectedOutputMarker: agent.config.expectedOutputMarker,
           },
           writeEvent,
           debug,
+          artifacts,
         );
         ok = true;
       } catch (error) {
@@ -1190,7 +1298,7 @@ export function workspaceRouter(docsPath: string): Router {
       }
 
       try {
-        const document = createAgentRunDocument(docsPath, agent, provider, ok, userInput, content, renderAgentDebug(debug));
+        const document = createAgentRunDocument(docsPath, agent, provider, ok, userInput, content, renderAgentDebug(debug), artifacts);
         writeEvent({ type: 'document', message: ok ? 'Document saved' : 'Error document saved', document });
       } catch (docError) {
         const msg = docError instanceof Error ? docError.message : 'Failed to save document';
@@ -1243,7 +1351,7 @@ export function workspaceRouter(docsPath: string): Router {
     try {
       const body = req.body as {
         providerId?: unknown; endpoint?: unknown; model?: unknown;
-        systemPrompt?: unknown; userInput?: unknown; timeout?: unknown; mcpEndpoint?: unknown; expectedOutputMarker?: unknown;
+        systemPrompt?: unknown; userInput?: unknown; timeout?: unknown; mcpEndpoint?: unknown; toolMode?: unknown; expectedOutputMarker?: unknown;
       };
       if (typeof body.endpoint !== 'string' || !body.endpoint.trim()) {
         res.status(400).json({ ok: false, error: 'endpoint is required' }); return;
@@ -1257,12 +1365,19 @@ export function workspaceRouter(docsPath: string): Router {
 
       // Resolve token server-side from workspace state — never accept a raw token from the client.
       let resolvedProviderToken = '';
+      let toolsEnabled = body.toolMode !== 'chat';
       if (typeof body.providerId === 'string' && body.providerId.trim()) {
         const state = readWorkspaceState(docsPath);
         const provider = state.entities.find(
           (e) => e.id === body.providerId && e.kind === 'llm',
         );
-        if (provider) resolvedProviderToken = provider.config.token;
+        if (provider) {
+          if (provider.config.providerType === 'image') {
+            throw new Error('run-agent-stream requires a Chat completion provider');
+          }
+          resolvedProviderToken = provider.config.token;
+          toolsEnabled = provider.config.toolMode !== 'chat';
+        }
       }
 
       res.status(200);
@@ -1283,6 +1398,7 @@ export function workspaceRouter(docsPath: string): Router {
             userInput: typeof body.userInput === 'string' ? body.userInput : '',
             timeout: clamp(safeFiniteNumber(body.timeout, 180), 1, 600),
             mcpEndpoint: typeof body.mcpEndpoint === 'string' ? body.mcpEndpoint : '',
+            toolsEnabled,
             expectedOutputMarker:
               typeof body.expectedOutputMarker === 'string' ? body.expectedOutputMarker : '',
           },
@@ -1310,7 +1426,7 @@ export function workspaceRouter(docsPath: string): Router {
     try {
       const body = req.body as {
         endpoint?: unknown; token?: unknown; model?: unknown;
-        systemPrompt?: unknown; userInput?: unknown; timeout?: unknown; mcpEndpoint?: unknown; expectedOutputMarker?: unknown;
+        systemPrompt?: unknown; userInput?: unknown; timeout?: unknown; mcpEndpoint?: unknown; toolMode?: unknown; expectedOutputMarker?: unknown;
       };
       if (typeof body.endpoint !== 'string' || !body.endpoint.trim()) {
         res.status(400).json({ ok: false, error: 'endpoint is required' }); return;
@@ -1330,6 +1446,7 @@ export function workspaceRouter(docsPath: string): Router {
         userInput: typeof body.userInput === 'string' ? body.userInput : '',
         timeout: clamp(safeFiniteNumber(body.timeout, 180), 1, 600),
         mcpEndpoint: typeof body.mcpEndpoint === 'string' ? body.mcpEndpoint : '',
+        toolsEnabled: body.toolMode !== 'chat',
         expectedOutputMarker:
           typeof body.expectedOutputMarker === 'string' ? body.expectedOutputMarker : '',
       });

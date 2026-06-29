@@ -107,8 +107,10 @@
     if (category !== normalized) category = normalized;
   }
 
-  function sanitizeNewFolderNameInput() {
-    const normalized = normalizeFolderSegment(newFolderName);
+  function sanitizeNewFolderNameInput(event: Event) {
+    const input = event.currentTarget as HTMLInputElement;
+    const normalized = normalizeFolderSegment(input.value);
+    if (input.value !== normalized) input.value = normalized;
     if (newFolderName !== normalized) newFolderName = normalized;
   }
 
