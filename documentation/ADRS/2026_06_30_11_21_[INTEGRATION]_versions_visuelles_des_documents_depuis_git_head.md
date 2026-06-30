@@ -50,6 +50,8 @@ La modale affiche un bouton `<` sur le premier rang de chaque hunk. Le clic ne f
 
 Un bouton `Enregistrer`, place au-dessus du diff, reste desactive tant qu'aucun bloc n'a ete applique. Lorsqu'il est clique, il appelle `onsave()` de `DocViewer.svelte` avec le contenu local. C'est donc uniquement ce bouton qui declenche la sauvegarde backend et, par consequence, l'autocommit Git si l'integration est active.
 
+Si la modale est fermee par le bouton `X`, par un clic sur le fond, ou par un changement parent qui passe `open` a `false`, le contenu local restaure est abandonne et reinitialise au contenu courant. Le brouillon local n'est donc jamais conserve entre deux ouvertures de `Versions`.
+
 Avant d'appliquer un hunk, la modale compare la plage attendue avec le contenu local courant. Si ce contenu ne correspond plus au hunk affiche, l'application est bloquee et l'utilisateur doit rafraichir les versions. Apres une sauvegarde reussie, la modale recharge le diff pour afficher le nouveau `HEAD`.
 
 ## Consequences
@@ -61,6 +63,7 @@ Avant d'appliquer un hunk, la modale compare la plage attendue avec le contenu l
 - La pastille selectionnee rend explicite le point de comparaison.
 - La restauration `<` permet de recuperer seulement un bloc du commit visite, sans revenir integralement au document ancien.
 - Plusieurs blocs peuvent etre prepares avant une seule sauvegarde, evitant un autocommit par bloc.
+- Une fermeture de la modale abandonne clairement les restaurations non enregistrees au lieu de conserver un brouillon cache.
 - Le sens visuel du bouton `<` est coherent : la source historique est a droite et la cible courante est a gauche.
 - La feature respecte le bornage de l'integration Git : elle ne lit que les documents sous `docsFolder`.
 - Le bouton n'apparait pas si Git n'est pas effectivement utilisable, ce qui evite une action morte dans les projets non configures.
