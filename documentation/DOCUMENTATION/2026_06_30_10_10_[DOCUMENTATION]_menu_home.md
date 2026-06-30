@@ -5,7 +5,7 @@
 **tags:** home, menu, navigation, dossiers, categories, documents, recherche
 ---
 
-<div class="flex flex-col bg-red-200">
+<div class="border flex flex-col bg-red-200">
 <div>a</div>
 <div>b</div>
 </div>
