@@ -1,1 +1,1 @@
-raw-work-to-living-documentation illustration generated
+documentation-workspace-visualization-generated
