@@ -14,12 +14,11 @@
 
 ## Pour commencer
 
-<!-- quote-type: success -->
-<!-- quote-title: Succès -->
-<!-- quote-icon -->
-> Citation ici
+<!-- quote-type: info -->
+<!-- quote-title: Info -->
+> Pour commencer, choisissez le chemin qui vous intéresse
 >
-> — Auteur
+>
 
 <div style="background:#fffbeb;border-left:4px solid #f59e0b;color:#451a03;padding:1rem 1.25rem;border-radius:0.375rem;margin:1rem 0;">
 
