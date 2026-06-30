@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T14:21:20.434Z",
+  "updatedAt": "2026-06-30T14:21:27.621Z",
   "entities": [
     {
       "id": "root",
@@ -30,8 +30,8 @@
       "label": "MCP",
       "kind": "mcp",
       "parentId": "root",
-      "x": 2.2039093979392633e-14,
-      "y": -359.9257189050281,
+      "x": 2.497824629734628e-14,
+      "y": -407.9257189050281,
       "angle": -1.5707963267948966,
       "config": {
         "endpoint": "http://localhost:4321/mcp",
@@ -53,8 +53,8 @@
       "label": "LOCAL OLLAMA QWEN 3.6",
       "kind": "llm",
       "parentId": "root",
-      "x": 254.5059165611885,
-      "y": -254.50591656118849,
+      "x": 288.4470420581428,
+      "y": -288.44704205814276,
       "angle": -0.7853981633974483,
       "config": {
         "endpoint": "http://localhost:11434",
@@ -76,8 +76,8 @@
       "label": "Agent de listage des ADRS driftés",
       "kind": "agent",
       "parentId": "provider-mpsmymtb",
-      "x": 188.9872915468673,
-      "y": -456.1515101461236,
+      "x": 222.92841704382164,
+      "y": -490.09263564307787,
       "angle": -1.8849555921538759,
       "config": {
         "endpoint": "",
@@ -99,8 +99,8 @@
       "label": "Générer Diagramme Mermaid",
       "kind": "agent",
       "parentId": "provider-mpsmymtb",
-      "x": 456.1515101461236,
-      "y": -188.9872915468673,
+      "x": 490.09263564307787,
+      "y": -222.92841704382158,
       "angle": 0.3141592653589793,
       "config": {
         "endpoint": "",
@@ -329,8 +329,8 @@
       "label": "ChatOnly OpenRouter Deepseek V4 Pro",
       "kind": "llm",
       "parentId": "root",
-      "x": -359.9257189050281,
-      "y": 4.4078187958785266e-14,
+      "x": -407.9257189050281,
+      "y": 4.995649259469256e-14,
       "angle": 3.141592653589793,
       "config": {
         "endpoint": "https://openrouter.ai/api/v1",
@@ -352,8 +352,8 @@
       "label": "Ask The LLM",
       "kind": "agent",
       "parentId": "provider-mqzqd7z0",
-      "x": -571.9484432436896,
-      "y": 7.004348302956962e-14,
+      "x": -619.9484432436896,
+      "y": 7.592178766547691e-14,
       "angle": 3.141592653589793,
       "config": {
         "endpoint": "",
@@ -375,8 +375,8 @@
       "label": "Chat OpenRouter Cohere Mini Free",
       "kind": "llm",
       "parentId": "root",
-      "x": -254.50591656118857,
-      "y": -254.50591656118849,
+      "x": -356.3292930520514,
+      "y": -356.3292930520513,
       "angle": 3.9269908169872414,
       "config": {
         "endpoint": "https://openrouter.ai/api/v1",
@@ -398,9 +398,9 @@
       "label": "Ask The LLM",
       "kind": "agent",
       "parentId": "provider-mqzqtzbv",
-      "x": -456.15151014612366,
-      "y": -188.9872915468673,
-      "angle": -3.4557519189487724,
+      "x": -480.9531235691891,
+      "y": -184.79930586839936,
+      "angle": -4.084070449666731,
       "config": {
         "endpoint": "",
         "token": "",
@@ -421,9 +421,9 @@
       "label": "Opened Prompt to Create Image",
       "kind": "agent",
       "parentId": "provider-mqzqtzbv",
-      "x": -188.98729154686737,
-      "y": -456.15151014612354,
-      "angle": -1.2566370614359172,
+      "x": -506.25199919756506,
+      "y": -506.25199919756494,
+      "angle": -2.356194490192345,
       "config": {
         "endpoint": "",
         "token": "",
@@ -438,10 +438,33 @@
         "description": "Opened prompt to create image",
         "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image"
       }
+    },
+    {
+      "id": "agent-mr0qiy2i",
+      "label": "Agent 3",
+      "kind": "agent",
+      "parentId": "provider-mqzqtzbv",
+      "x": -184.7993058683994,
+      "y": -480.95312356918885,
+      "angle": -0.6283185307179582,
+      "config": {
+        "endpoint": "",
+        "token": "",
+        "model": "",
+        "providerType": "chat",
+        "toolMode": "tools",
+        "timeout": 180,
+        "systemPrompt": "",
+        "requiresUserInput": false,
+        "userInputDescription": "",
+        "expectedOutputMarker": "",
+        "description": "Runs focused automation against documentation, source, or quality signals.",
+        "workspaceFolder": "AI/WORKSPACE/agent_3"
+      }
     }
   ],
   "camera": {
-    "x": 797.6715026717369,
+    "x": 619.3033867180129,
     "y": 387.4588498522253,
     "zoom": 0.7516657738368119
   }
