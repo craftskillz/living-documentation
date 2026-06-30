@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T14:10:41.677Z",
+  "updatedAt": "2026-06-30T14:10:57.351Z",
   "entities": [
     {
       "id": "root",
@@ -260,9 +260,9 @@
       "label": "Find Written English Documents",
       "kind": "agent",
       "parentId": "provider-mqtqt25p",
-      "x": 5.559580774046034e-14,
-      "y": 907.9484432436897,
-      "angle": 1.5707963267948966,
+      "x": 115.47585198506577,
+      "y": 873.7429375434695,
+      "angle": 0.9948376736367677,
       "config": {
         "endpoint": "",
         "token": "",
@@ -306,9 +306,9 @@
       "label": "Document Image Summary",
       "kind": "agent",
       "parentId": "provider-mqtqt25p",
-      "x": -209.41237277051292,
-      "y": 662.7580574467373,
-      "angle": 3.2986722862692828,
+      "x": -115.4758519850656,
+      "y": 873.7429375434696,
+      "angle": 2.146754979953025,
       "config": {
         "endpoint": "",
         "token": "",
@@ -414,6 +414,29 @@
         "expectedOutputMarker": "",
         "description": "Simply ask an LLM on one subject using one prompt.",
         "workspaceFolder": "AI/WORKSPACE/ask_the_llm_2"
+      }
+    },
+    {
+      "id": "agent-mr0q5fqy",
+      "label": "Agent 4",
+      "kind": "agent",
+      "parentId": "provider-mqtqt25p",
+      "x": -209.41237277051292,
+      "y": 662.7580574467373,
+      "angle": 3.2986722862692828,
+      "config": {
+        "endpoint": "",
+        "token": "",
+        "model": "",
+        "providerType": "chat",
+        "toolMode": "tools",
+        "timeout": 180,
+        "systemPrompt": "",
+        "requiresUserInput": false,
+        "userInputDescription": "",
+        "expectedOutputMarker": "",
+        "description": "Runs focused automation against documentation, source, or quality signals.",
+        "workspaceFolder": "AI/WORKSPACE/agent_4"
       }
     }
   ],
