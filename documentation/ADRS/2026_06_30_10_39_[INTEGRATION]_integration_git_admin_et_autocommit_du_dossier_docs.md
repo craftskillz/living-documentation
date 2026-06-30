@@ -58,7 +58,8 @@ Le frontend ajoute `gitToast.ts` :
 
 - au chargement, au changement de route et apres les requetes de sauvegarde, il interroge `/api/git/status` ;
 - en etat `unconfigured`, il affiche le toast `Veuillez configurer l'integration Git dans la page Admin.` avec un lien vers `/admin` ;
-- en etat `enabled`, il affiche les erreurs de configuration Git, de commit, de push, ou les changements hors du chemin absolu de `docsFolder` qui seront ignores.
+- en etat `enabled`, il affiche les erreurs de configuration Git, de commit, de push, ou les changements hors du chemin absolu de `docsFolder` qui seront ignores ;
+- quand Git remonte `cannot lock ref 'HEAD' ... but expected ...`, le toast remplace cette erreur technique de concurrence par `un autre commit a modifié HEAD pendant l'autocommit. Réessayez l'enregistrement.`.
 
 Admin expose une section `Integration Git` avec les radios `Non configure`, `Desactive`, `Active`, puis les options de commit/push lorsque Git est active.
 
@@ -71,9 +72,11 @@ Admin expose une section `Integration Git` avec les radios `Non configure`, `Des
 - Les changements hors `docsFolder` sont visibles mais non bloquants.
 - Le push cadence s'appuie sur l'etat Git reel plutot que sur un compteur applicatif fragile.
 - Les sauvegardes provenant des routes REST et des tools MCP d'ecriture entrent dans le meme mecanisme.
+- Le toast d'erreur evite d'exposer le message Git brut quand deux commits concurrents font avancer `HEAD` pendant l'autocommit.
 
 ### Limites
 
 - L'autocommit utilise le binaire `git` local du serveur Node ; si Git ou l'identite utilisateur ne sont pas configures, le commit echoue et l'utilisateur est informe par toast.
 - Le push automatique suppose une branche upstream deja configuree.
 - Les commits sont generiques et regroupent tous les changements presents sous `docsFolder` au moment de la sauvegarde, y compris des changements documentaires faits hors UI mais non encore committes.
+- La normalisation du toast ne serialise pas encore les autocommits concurrents ; elle rend seulement l'erreur comprehensible et actionnable.
