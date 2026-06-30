@@ -5,12 +5,13 @@ import { resolveDocFilePath } from "./documents";
 const MAX_GENERATED_IMAGE_BYTES = 19 * 1024 * 1024;
 const IMAGE_GENERATION_TIMEOUT_MS = 10 * 60 * 1000;
 const GENERATED_IMAGE_FOLDER = "images-ai";
-const ENV_REF_PATTERN = /^(?:env:([A-Za-z_][A-Za-z0-9_]*)|\$\{([A-Za-z_][A-Za-z0-9_]*)\})$/;
+const ENV_REF_PATTERN =
+  /^(?:env:([A-Za-z_][A-Za-z0-9_]*)|\$\{([A-Za-z_][A-Za-z0-9_]*)\})$/;
 
 interface GenerateImageArgs {
   imageProviderId: string;
   prompt: string;
-  documentId: string;
+  folder?: string;
   filename?: string;
   aspectRatio?: string;
   size?: string;
@@ -28,9 +29,7 @@ interface WorkspaceImageProvider {
 
 function jsonResult(obj: unknown) {
   return {
-    content: [
-      { type: "text" as const, text: JSON.stringify(obj, null, 2) },
-    ],
+    content: [{ type: "text" as const, text: JSON.stringify(obj, null, 2) }],
   };
 }
 
@@ -74,11 +73,13 @@ function slugify(name: string): string {
 }
 
 function isSafeFilename(filename: string): boolean {
-  return typeof filename === "string"
-    && filename.length > 0
-    && !/[\\/]/.test(filename)
-    && !filename.startsWith(".")
-    && filename !== "..";
+  return (
+    typeof filename === "string" &&
+    filename.length > 0 &&
+    !/[\\/]/.test(filename) &&
+    !filename.startsWith(".") &&
+    filename !== ".."
+  );
 }
 
 function isSafeRelativePath(value: string): boolean {
@@ -86,24 +87,13 @@ function isSafeRelativePath(value: string): boolean {
   if (!value || value.startsWith("/") || value.startsWith("\\")) return false;
   const segments = value.split(/[\\/]+/).filter(Boolean);
   if (!segments.length) return false;
-  return segments.every((segment) => isSafeFilename(segment) && segment !== "." && segment !== "..");
+  return segments.every(
+    (segment) => isSafeFilename(segment) && segment !== "." && segment !== "..",
+  );
 }
 
 function toPosixPath(value: string): string {
   return value.split(path.sep).join("/");
-}
-
-function folderFromDocumentId(documentId: string): string {
-  let decoded = documentId;
-  try {
-    decoded = decodeURIComponent(documentId);
-  } catch {
-    return "";
-  }
-  if (path.isAbsolute(decoded)) return "";
-  const docDir = path.posix.dirname(decoded.split(path.sep).join("/"));
-  if (docDir === ".") return "";
-  return isSafeRelativePath(docDir) ? docDir : "";
 }
 
 function extensionFromMediaType(mediaType: unknown): string {
@@ -117,15 +107,19 @@ function extensionFromMediaType(mediaType: unknown): string {
 }
 
 function safeExtension(raw: unknown, fallback = "png"): string {
-  const value = typeof raw === "string" ? raw.trim().toLowerCase().replace(/^\./, "") : "";
+  const value =
+    typeof raw === "string" ? raw.trim().toLowerCase().replace(/^\./, "") : "";
   return /^[a-z0-9]+$/.test(value) ? value : fallback;
 }
 
 function timestampedFilename(requestedName: unknown, ext: string): string {
-  const originalName = typeof requestedName === "string" && requestedName.trim()
-    ? requestedName.trim()
-    : `generated-image.${ext}`;
-  const baseWithoutExt = slugify(path.basename(originalName, path.extname(originalName))) || "generated_image";
+  const originalName =
+    typeof requestedName === "string" && requestedName.trim()
+      ? requestedName.trim()
+      : `generated-image.${ext}`;
+  const baseWithoutExt =
+    slugify(path.basename(originalName, path.extname(originalName))) ||
+    "generated_image";
   const now = new Date();
   const pad = (n: number) => String(n).padStart(2, "0");
   const timestamp =
@@ -135,7 +129,10 @@ function timestampedFilename(requestedName: unknown, ext: string): string {
   return `${timestamp}_${random}_${baseWithoutExt}.${ext}`;
 }
 
-function readImageProvider(docsPath: string, providerId: string): WorkspaceImageProvider {
+function readImageProvider(
+  docsPath: string,
+  providerId: string,
+): WorkspaceImageProvider {
   if (!providerId.trim()) throw new Error("imageProviderId is required");
   const filePath = workspaceFilePath(docsPath);
   if (!fs.existsSync(filePath)) throw new Error("Workspace is not configured");
@@ -147,45 +144,49 @@ function readImageProvider(docsPath: string, providerId: string): WorkspaceImage
   const entity = parsed.entities.find((candidate) => {
     return isRecord(candidate) && candidate.id === providerId;
   });
-  if (!isRecord(entity)) throw new Error(`Image provider not found: ${providerId}`);
-  if (entity.kind !== "llm") throw new Error(`Provider ${providerId} is not an LLM node`);
+  if (!isRecord(entity))
+    throw new Error(`Image provider not found: ${providerId}`);
+  if (entity.kind !== "llm")
+    throw new Error(`Provider ${providerId} is not an LLM node`);
   const config = isRecord(entity.config) ? entity.config : {};
   if (config.providerType !== "image") {
-    throw new Error(`Provider ${providerId} is not configured as Image generation`);
+    throw new Error(
+      `Provider ${providerId} is not configured as Image generation`,
+    );
   }
 
-  const endpoint = typeof config.endpoint === "string" ? config.endpoint.trim() : "";
+  const endpoint =
+    typeof config.endpoint === "string" ? config.endpoint.trim() : "";
   const token = typeof config.token === "string" ? config.token.trim() : "";
   const model = typeof config.model === "string" ? config.model.trim() : "";
   const label = typeof entity.label === "string" ? entity.label : providerId;
-  if (!endpoint) throw new Error(`Image provider ${providerId} has no endpoint`);
+  if (!endpoint)
+    throw new Error(`Image provider ${providerId} has no endpoint`);
   if (!model) throw new Error(`Image provider ${providerId} has no model`);
   return { id: providerId, label, endpoint, token, model };
 }
 
-function assertDocumentExists(docsPath: string, documentId: string) {
-  const doc = { id: documentId, title: "", category: "", folder: null };
-  const filePath = resolveDocFilePath(docsPath, doc);
-  if (!filePath) throw new Error(`Document not found: ${documentId}`);
-}
-
-export async function toolGenerateImage(docsPath: string, args: GenerateImageArgs) {
+export async function toolGenerateImage(
+  docsPath: string,
+  args: GenerateImageArgs,
+) {
   if (!args || typeof args !== "object") throw new Error("Missing arguments");
-  if (typeof args.imageProviderId !== "string" || !args.imageProviderId.trim()) {
+  if (
+    typeof args.imageProviderId !== "string" ||
+    !args.imageProviderId.trim()
+  ) {
     throw new Error("Missing required parameter 'imageProviderId'");
   }
   if (typeof args.prompt !== "string" || !args.prompt.trim()) {
     throw new Error("Missing required parameter 'prompt'");
   }
-  if (typeof args.documentId !== "string" || !args.documentId.trim()) {
-    throw new Error("Missing required parameter 'documentId'");
-  }
 
-  assertDocumentExists(docsPath, args.documentId);
   const provider = readImageProvider(docsPath, args.imageProviderId.trim());
   const resolvedToken = resolveSecret(provider.token);
   if (provider.token && !resolvedToken) {
-    throw new Error(`Image provider token reference is unset: ${provider.token}`);
+    throw new Error(
+      `Image provider token reference is unset: ${provider.token}`,
+    );
   }
 
   const url = imageGenerationUrl(provider.endpoint);
@@ -214,7 +215,10 @@ export async function toolGenerateImage(docsPath: string, args: GenerateImageArg
   }
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), IMAGE_GENERATION_TIMEOUT_MS);
+  const timeout = setTimeout(
+    () => controller.abort(),
+    IMAGE_GENERATION_TIMEOUT_MS,
+  );
   let response: Response;
   let text: string;
   try {
@@ -230,7 +234,9 @@ export async function toolGenerateImage(docsPath: string, args: GenerateImageArg
   }
   if (!response.ok) {
     const detail = text.trim().slice(0, 2000);
-    throw new Error(`Image generation failed: ${url.toString()} -> ${response.status} ${response.statusText}${detail ? `: ${detail}` : ""}`);
+    throw new Error(
+      `Image generation failed: ${url.toString()} -> ${response.status} ${response.statusText}${detail ? `: ${detail}` : ""}`,
+    );
   }
 
   let parsed: unknown;
@@ -243,8 +249,14 @@ export async function toolGenerateImage(docsPath: string, args: GenerateImageArg
     throw new Error("Image generation response did not contain data[]");
   }
   const first = parsed.data[0];
-  if (!isRecord(first) || typeof first.b64_json !== "string" || !first.b64_json.trim()) {
-    throw new Error("Image generation response did not contain data[0].b64_json");
+  if (
+    !isRecord(first) ||
+    typeof first.b64_json !== "string" ||
+    !first.b64_json.trim()
+  ) {
+    throw new Error(
+      "Image generation response did not contain data[0].b64_json",
+    );
   }
 
   const mediaType = first.media_type ?? first.mime_type;
@@ -252,13 +264,18 @@ export async function toolGenerateImage(docsPath: string, args: GenerateImageArg
     args.outputFormat,
     extensionFromMediaType(mediaType) || "png",
   );
-  const buffer = Buffer.from(first.b64_json.replace(/^data:[^;]+;base64,/, ""), "base64");
+  const buffer = Buffer.from(
+    first.b64_json.replace(/^data:[^;]+;base64,/, ""),
+    "base64",
+  );
   if (!buffer.length) throw new Error("Generated image was empty");
   if (buffer.length > MAX_GENERATED_IMAGE_BYTES) {
-    throw new Error(`Generated image is too large (${(buffer.length / 1024 / 1024).toFixed(1)} MB)`);
+    throw new Error(
+      `Generated image is too large (${(buffer.length / 1024 / 1024).toFixed(1)} MB)`,
+    );
   }
 
-  const folder = folderFromDocumentId(args.documentId);
+  const folder = args.folder || '';
   const imagesDir = path.join(docsPath, GENERATED_IMAGE_FOLDER, folder);
   fs.mkdirSync(imagesDir, { recursive: true });
   const basename = timestampedFilename(args.filename, ext);
@@ -278,6 +295,9 @@ export async function toolGenerateImage(docsPath: string, args: GenerateImageArg
     url: urlPath,
     markdown,
     size: buffer.length,
-    revisedPrompt: isRecord(first) && typeof first.revised_prompt === "string" ? first.revised_prompt : undefined,
+    revisedPrompt:
+      isRecord(first) && typeof first.revised_prompt === "string"
+        ? first.revised_prompt
+        : undefined,
   });
 }

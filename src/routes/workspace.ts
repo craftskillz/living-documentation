@@ -651,6 +651,48 @@ async function callMcp(endpoint: string, method: string, params: unknown): Promi
   throw new Error('No valid MCP response');
 }
 
+// Match a tool name as a whole token in free text. Tool names are snake_case identifiers,
+// so a `\w` boundary on each side prevents `search` from matching inside `research`. Match is
+// case-insensitive so a prompt author can write the name in any casing.
+function systemPromptMentionsTool(systemPrompt: string, toolName: string): boolean {
+  if (!toolName) return false;
+  const escaped = toolName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`(?<!\\w)${escaped}(?!\\w)`, 'i').test(systemPrompt);
+}
+
+// Keep only the MCP tools whose exact name is named (as a whole word) in the agent's system
+// prompt, so the model is offered just the tools the prompt actually asks for — fewer tokens
+// and fewer spurious tool calls, especially on small models.
+// If the prompt names no tool at all, the result is empty: the author is expected to name the
+// tools the agent may use, so an unnamed tool is intentionally withheld (no implicit full list).
+function selectToolsForSystemPrompt(
+  tools: unknown[],
+  systemPrompt: string,
+): { tools: unknown[]; matched: number; total: number } {
+  const total = tools.length;
+  if (total === 0) {
+    return { tools, matched: 0, total };
+  }
+  const matched = tools.filter((tool) => {
+    if (!isRecord(tool) || !isRecord(tool.function)) return false;
+    const name = typeof tool.function.name === 'string' ? tool.function.name : '';
+    return systemPromptMentionsTool(systemPrompt, name);
+  });
+  return { tools: matched, matched: matched.length, total };
+}
+
+function toolNamesList(tools: unknown[]): string {
+  return tools
+    .map((tool) =>
+      isRecord(tool) && isRecord(tool.function) && typeof tool.function.name === 'string'
+        ? tool.function.name
+        : '',
+    )
+    .filter(Boolean)
+    .map((name) => `\`${name}\``)
+    .join(', ');
+}
+
 async function runAgent(
   config: AgentRunConfig,
   report?: AgentRunReporter,
@@ -716,6 +758,27 @@ async function runAgent(
       message: 'No MCP endpoint configured; running without tool calls',
     });
     debug?.sections.push('### Tools MCP\n\nAucun endpoint MCP configuré — exécution sans tool calls.');
+  }
+
+  // Narrow the tool list to the tools the agent's system prompt actually names, so the model is
+  // offered only what the author asked for. When no tool is named, none are sent (the agent runs
+  // without tool calls) — naming a tool is how an author opts it in.
+  if (mcpTools.length > 0) {
+    const selection = selectToolsForSystemPrompt(mcpTools, config.systemPrompt);
+    if (selection.matched < selection.total) {
+      mcpTools = selection.tools;
+      report?.({
+        type: 'mcp_tools',
+        message: selection.matched === 0
+          ? `No MCP tool named in the system prompt; running without tool calls (0/${selection.total})`
+          : `Filtered to ${selection.matched}/${selection.total} tool${selection.matched === 1 ? '' : 's'} named in the system prompt`,
+      });
+      debug?.sections.push(
+        selection.matched === 0
+          ? `### Tools MCP filtrés (0/${selection.total})\n\nAucun tool nommé dans le system prompt — exécution sans tool calls.`
+          : `### Tools MCP filtrés (${selection.matched}/${selection.total})\n\nConservés car nommés dans le system prompt : ${toolNamesList(mcpTools)}`,
+      );
+    }
   }
 
   const systemPrompt = config.toolsEnabled

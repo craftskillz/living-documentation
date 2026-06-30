@@ -225,7 +225,6 @@ test('generate_image saves AI images under images-ai instead of files', async ({
       size: number;
     }>(request, ld.baseURL, 'generate_image', {
       imageProviderId: 'provider-image',
-      documentId: encodeURIComponent('2026_01_01_10_00_[General]_intro'),
       prompt: 'Generate a concise architecture image.',
       filename: 'architecture-overview.png',
     });
@@ -239,6 +238,167 @@ test('generate_image saves AI images under images-ai instead of files', async ({
     expect(fs.existsSync(path.join(ld.docsAbs, 'files', result.filename))).toBe(false);
   } finally {
     await imageProvider.close();
+  }
+});
+
+test('run-agent-document only sends MCP tools named in the agent system prompt', async ({
+  request,
+  ld,
+}) => {
+  let capturedToolNames: string[] = [];
+  const llm = await startJsonServer((body) => {
+    const requestBody = body as { tools?: Array<{ function?: { name?: string } }> };
+    capturedToolNames = (requestBody.tools ?? [])
+      .map((tool) => tool?.function?.name ?? '')
+      .filter(Boolean);
+    return {
+      choices: [{
+        message: { role: 'assistant', content: 'Done reading the document.' },
+      }],
+    };
+  });
+
+  const mcp = await startJsonServer((body) => {
+    const requestBody = body as { id?: unknown; method?: string };
+    expect(requestBody.method).toBe('tools/list');
+    return {
+      jsonrpc: '2.0',
+      id: requestBody.id,
+      result: {
+        tools: [
+          { name: 'read_document', description: 'Read a document', inputSchema: { type: 'object', properties: {} } },
+          { name: 'update_document', description: 'Update a document', inputSchema: { type: 'object', properties: {} } },
+          { name: 'generate_image', description: 'Generate an image', inputSchema: { type: 'object', properties: {} } },
+        ],
+      },
+    };
+  });
+
+  try {
+    const workspace = {
+      version: 1,
+      updatedAt: new Date(0).toISOString(),
+      camera: { x: 0, y: 0, zoom: 1 },
+      entities: [
+        {
+          id: 'provider-chat',
+          label: 'Mock Chat Provider',
+          kind: 'llm',
+          parentId: null,
+          config: { endpoint: llm.url, model: 'mock-chat', providerType: 'chat', toolMode: 'tools' },
+        },
+        {
+          id: 'mcp-node',
+          label: 'MCP',
+          kind: 'mcp',
+          parentId: null,
+          config: { endpoint: `${mcp.url}/mcp` },
+        },
+        {
+          id: 'agent-reader',
+          label: 'Doc Reader',
+          kind: 'agent',
+          parentId: 'provider-chat',
+          // Names read_document only; update_document/generate_image must be filtered out.
+          // "research" must not pull in any tool via a substring match.
+          config: {
+            systemPrompt: 'Call read_document to research the topic, then answer briefly.',
+            workspaceFolder: 'AI/WORKSPACE/doc_reader',
+          },
+        },
+      ],
+    };
+
+    const saveWorkspace = await request.put(`${ld.baseURL}/api/workspace`, { data: workspace });
+    expect(saveWorkspace.ok()).toBe(true);
+
+    const run = await request.post(`${ld.baseURL}/api/workspace/run-agent-document`, {
+      data: { agentId: 'agent-reader', userInput: 'Summarize ADRS/example' },
+    });
+    expect(run.ok()).toBe(true);
+
+    expect(capturedToolNames).toEqual(['read_document']);
+  } finally {
+    await llm.close();
+    await mcp.close();
+  }
+});
+
+test('run-agent-document sends no MCP tools when the system prompt names none', async ({
+  request,
+  ld,
+}) => {
+  let toolsField: unknown = 'unset';
+  const llm = await startJsonServer((body) => {
+    toolsField = (body as { tools?: unknown }).tools;
+    return {
+      choices: [{
+        message: { role: 'assistant', content: 'Answered without any tool.' },
+      }],
+    };
+  });
+
+  const mcp = await startJsonServer((body) => {
+    const requestBody = body as { id?: unknown; method?: string };
+    expect(requestBody.method).toBe('tools/list');
+    return {
+      jsonrpc: '2.0',
+      id: requestBody.id,
+      result: {
+        tools: [
+          { name: 'read_document', description: 'Read a document', inputSchema: { type: 'object', properties: {} } },
+          { name: 'update_document', description: 'Update a document', inputSchema: { type: 'object', properties: {} } },
+        ],
+      },
+    };
+  });
+
+  try {
+    const workspace = {
+      version: 1,
+      updatedAt: new Date(0).toISOString(),
+      camera: { x: 0, y: 0, zoom: 1 },
+      entities: [
+        {
+          id: 'provider-chat',
+          label: 'Mock Chat Provider',
+          kind: 'llm',
+          parentId: null,
+          config: { endpoint: llm.url, model: 'mock-chat', providerType: 'chat', toolMode: 'tools' },
+        },
+        {
+          id: 'mcp-node',
+          label: 'MCP',
+          kind: 'mcp',
+          parentId: null,
+          config: { endpoint: `${mcp.url}/mcp` },
+        },
+        {
+          id: 'agent-no-tool',
+          label: 'Plain Answerer',
+          kind: 'agent',
+          parentId: 'provider-chat',
+          // Natural-language prompt that names no tool by its exact id → no tools must be sent.
+          config: {
+            systemPrompt: 'Read the documentation and answer the question concisely.',
+            workspaceFolder: 'AI/WORKSPACE/plain_answerer',
+          },
+        },
+      ],
+    };
+
+    const saveWorkspace = await request.put(`${ld.baseURL}/api/workspace`, { data: workspace });
+    expect(saveWorkspace.ok()).toBe(true);
+
+    const run = await request.post(`${ld.baseURL}/api/workspace/run-agent-document`, {
+      data: { agentId: 'agent-no-tool', userInput: 'What is this project?' },
+    });
+    expect(run.ok()).toBe(true);
+
+    expect(toolsField).toBeUndefined();
+  } finally {
+    await llm.close();
+    await mcp.close();
   }
 });
 

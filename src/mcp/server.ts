@@ -483,7 +483,7 @@ const TOOLS = [
         folder: {
           type: "string",
           description:
-            "Optional folder scope, e.g. \"ADRS\" or \"AI/WORKSPACE\". Only documents whose folder equals this value or sits beneath it are returned. Case-insensitive; path separators are normalised.",
+            'Optional folder scope, e.g. "ADRS" or "AI/WORKSPACE". Only documents whose folder equals this value or sits beneath it are returned. Case-insensitive; path separators are normalised.',
         },
       },
     },
@@ -521,7 +521,7 @@ const TOOLS = [
         folder: {
           type: "string",
           description:
-            "The agent workspace folder to write into (e.g. \"AI/WORKSPACE/your_agent\"). Use the value provided in the Run memory section of your system prompt. Must be under AI/WORKSPACE.",
+            'The agent workspace folder to write into (e.g. "AI/WORKSPACE/your_agent"). Use the value provided in the Run memory section of your system prompt. Must be under AI/WORKSPACE.',
         },
         content: {
           type: "string",
@@ -540,12 +540,9 @@ const TOOLS = [
       "Use this when a document needs an illustrative asset, cover image, visual explanation, or generated screenshot-like image. For Mermaid, C4, UML, or other editable diagrams, prefer text/diagram tools instead of generating pixels.",
       "",
       "Recommended workflow:",
-      "1. `read_document(documentId)` first when the image should be grounded in a document.",
-      "2. Compose a precise image prompt from the document facts.",
-      "3. Call `generate_image` with the copied `imageProviderId` from the Workspace image provider node.",
-      "4. Insert the returned `markdown` into the document with `update_document` if requested.",
+      "1. Call `generate_image` with the `imageProviderId` you received in the prompt instructions.",
       "",
-      "The generated file is saved under `images-ai/<document folder>/...` so AI-generated images stay separate from user attachments in `files/`.",
+      "The generated file is saved under `images-ai/<folder>/...`.",
       GUIDE_HINT,
     ].join("\n"),
     inputSchema: {
@@ -553,27 +550,32 @@ const TOOLS = [
       properties: {
         imageProviderId: {
           type: "string",
-          description: "Workspace LLM node id configured as Image generation. Copy it from the LLM node panel.",
+          description:
+            "Workspace LLM node id configured as Image generation. Copy it from the LLM node panel.",
         },
         prompt: {
           type: "string",
           description: "Detailed image prompt to send to the image model.",
         },
-        documentId: {
+        folder: {
           type: "string",
-          description: "Document id used to choose the images-ai/<document folder>/ save location.",
+          description:
+            "Optional folder used to choose the images-ai/<document folder>/ save location.",
         },
         filename: {
           type: "string",
-          description: "Optional human-readable output filename, e.g. architecture-overview.png.",
+          description:
+            "Optional human-readable output filename, e.g. architecture-overview.png.",
         },
         aspectRatio: {
           type: "string",
-          description: "Optional model/provider aspect ratio, e.g. 16:9, 4:3, or 1:1.",
+          description:
+            "Optional model/provider aspect ratio, e.g. 16:9, 4:3, or 1:1.",
         },
         size: {
           type: "string",
-          description: "Optional provider size/resolution, e.g. 1024x1024 or 2K when supported.",
+          description:
+            "Optional provider size/resolution, e.g. 1024x1024 or 2K when supported.",
         },
         quality: {
           type: "string",
@@ -581,10 +583,11 @@ const TOOLS = [
         },
         outputFormat: {
           type: "string",
-          description: "Optional output extension/format, e.g. png, jpg, webp, or svg.",
+          description:
+            "Optional output extension/format, e.g. png, jpg, webp, or svg.",
         },
       },
-      required: ["imageProviderId", "prompt", "documentId"],
+      required: ["imageProviderId", "prompt", "folder"],
     },
   },
   {
@@ -2237,18 +2240,27 @@ function createMcpServer(docsPath: string): Server {
         case "get_server_guide":
           return { content: [{ type: "text" as const, text: SERVER_GUIDE }] };
         case "list_documents":
-          return toolListDocuments(docsPath, args as { page?: number; pageSize?: number; folder?: string });
+          return toolListDocuments(
+            docsPath,
+            args as { page?: number; pageSize?: number; folder?: string },
+          );
         case "read_document":
-          return toolReadDocument(docsPath, args as { id: string; maxLines?: number; maxChars?: number });
+          return toolReadDocument(
+            docsPath,
+            args as { id: string; maxLines?: number; maxChars?: number },
+          );
         case "save_context":
-          return toolSaveContext(docsPath, args as { folder: string; content: string });
+          return toolSaveContext(
+            docsPath,
+            args as { folder: string; content: string },
+          );
         case "generate_image":
           return await toolGenerateImage(
             docsPath,
             args as {
               imageProviderId: string;
               prompt: string;
-              documentId: string;
+              folder?: string;
               filename?: string;
               aspectRatio?: string;
               size?: string;
