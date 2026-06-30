@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T14:11:32.001Z",
+  "updatedAt": "2026-06-30T14:11:34.308Z",
   "entities": [
     {
       "id": "root",
@@ -435,7 +435,7 @@
         "requiresUserInput": false,
         "userInputDescription": "",
         "expectedOutputMarker": "",
-        "description": "Opened prompt to create",
+        "description": "Opened prompt to create image",
         "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image"
       }
     }
