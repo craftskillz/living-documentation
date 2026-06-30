@@ -47,8 +47,7 @@ Chaque Element d'une table des matière correspond à un Header `# Element` pour
   <div>
 
 <!-- image-width: 2/3 -->
-![Barre laterale Home affichant les documents classes par categories](/images/readme-sidebar.png)
-
+![Table des matières interactive](/images/table_des_matieres_document.png)
   </div>
 
 </div>
