@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T14:22:27.344Z",
+  "updatedAt": "2026-06-30T14:22:34.326Z",
   "entities": [
     {
       "id": "root",
@@ -449,7 +449,7 @@
       "angle": 4.014257279586958,
       "config": {
         "endpoint": "https://openrouter.ai/api/v1",
-        "token": "",
+        "token": "env:OPENROUTER_API_KEY",
         "model": "cohere/north-mini-code:free",
         "providerType": "chat",
         "toolMode": "tools",
