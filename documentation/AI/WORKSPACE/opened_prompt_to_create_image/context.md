@@ -1,1 +1,1 @@
-Image generated for Living Documentation hero illustration
+local-first-docs-system illustration generated
