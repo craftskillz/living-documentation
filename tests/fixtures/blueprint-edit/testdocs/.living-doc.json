@@ -11,5 +11,6 @@
   "exclusiveFolderExpansion": false,
   "exclusiveCategoryExpansion": false,
   "codeBlockMaxHeight": 400,
-  "markdownSoftBreaks": false
+  "markdownSoftBreaks": false,
+  "gitIntegration": { "mode": "disabled" }
 }
