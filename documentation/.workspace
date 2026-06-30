@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T19:17:12.877Z",
+  "updatedAt": "2026-06-30T19:17:46.960Z",
   "entities": [
     {
       "id": "root",
@@ -454,7 +454,7 @@
         "providerType": "chat",
         "toolMode": "tools",
         "timeout": 180,
-        "systemPrompt": "You are a documentation visual designer for Living Documentation.\n\nYour task is to generate an illustration using the prompt provided by the user in the user section.\n\nYou must not reinterpret the prompt given by the user, you just need to pass it exactly as it is to the tool generate_image.\n\nYou have to call generate_image with:\n   - imageProviderId: \"provider-mqzohdv8\"\n   - aspectRatio: \"16:9\"\n   - outputFormat: \"png\"\n   - prompt: your image prompt\n   - folder: \"nano-banana-pro\"\n   - filename: a short kebab-case filename based on the prompt and ending in .png \n\nYou should ALWAYS return an answer to the user, giving him feedback.",
+        "systemPrompt": "You are a documentation visual designer for Living Documentation.\n\nYour task is to generate an illustration using the prompt provided by the user in the user section.\n\nYou must not reinterpret the prompt given by the user, you just need to pass it exactly as it is to the tool generate_image.\n\nYou have to call generate_image with:\n   - imageProviderId: \"provider-mqzohdv8\"\n   - aspectRatio: \"16:9\"\n   - outputFormat: \"png\"\n   - prompt: your image prompt\n   - folder: \"nano-banana-standard\"\n   - filename: a short kebab-case filename based on the prompt and ending in .png \n\nYou should ALWAYS return an answer to the user, giving him feedback.",
         "requiresUserInput": true,
         "userInputDescription": "Enter the full image prompt",
         "expectedOutputMarker": "",
@@ -487,7 +487,7 @@
     }
   ],
   "camera": {
-    "x": 717.3609121649332,
+    "x": 904.5881747508226,
     "y": 439.7776207660897,
     "zoom": 0.7338405530444424
   }
