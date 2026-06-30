@@ -3,6 +3,7 @@ import {
   saveWorkspaceState,
   testLlmConnection,
   listLlmModels,
+  listMcpInventory,
   runAgentPromptStream,
   type AgentRunStreamEvent,
   type PersistedWorkspaceDocument,
@@ -207,6 +208,9 @@ let fields!: {
   typeBadge: HTMLElement;
   llmFields: HTMLElement;
   mcpInventory: HTMLElement;
+  mcpInventoryStatus: HTMLElement;
+  mcpToolsList: HTMLElement;
+  mcpPromptsList: HTMLElement;
   agentSection: HTMLElement;
   systemPrompt: HTMLTextAreaElement;
   requiresUserInput: HTMLInputElement;
@@ -322,6 +326,11 @@ export function initWorkspace(): () => void {
     typeBadge: document.getElementById("nodeTypeBadge") as HTMLElement,
     llmFields: document.getElementById("llmFields") as HTMLElement,
     mcpInventory: document.getElementById("mcpInventory") as HTMLElement,
+    mcpInventoryStatus: document.getElementById(
+      "mcpInventoryStatus",
+    ) as HTMLElement,
+    mcpToolsList: document.getElementById("mcpToolsList") as HTMLElement,
+    mcpPromptsList: document.getElementById("mcpPromptsList") as HTMLElement,
     agentSection: document.getElementById("agentSection") as HTMLElement,
     systemPrompt: document.getElementById(
       "nodeSystemPrompt",
@@ -1313,6 +1322,71 @@ function performDelete(selectedId) {
   scheduleRender();
 }
 
+// Monotonic token guarding the async MCP inventory fetch: each selection bumps it, and a
+// resolving fetch renders only if its token is still current, so a slow response for a
+// previously selected node can never overwrite the panel of the node now selected.
+let mcpInventoryToken = 0;
+
+async function refreshMcpInventory(node: Entity) {
+  const token = ++mcpInventoryToken;
+  const endpoint = node.config.endpoint.trim();
+  const status = fields.mcpInventoryStatus;
+
+  fields.mcpToolsList.replaceChildren();
+  fields.mcpPromptsList.replaceChildren();
+
+  if (!endpoint) {
+    status.hidden = false;
+    status.textContent = "Set an endpoint to load the MCP tools and prompts.";
+    return;
+  }
+
+  status.hidden = false;
+  status.textContent = "Loading MCP tools and prompts…";
+
+  const result = await listMcpInventory({ endpoint });
+  // Drop a stale response: the user has selected another node since this fetch started.
+  if (token !== mcpInventoryToken) {
+    return;
+  }
+
+  if (!result.ok) {
+    status.hidden = false;
+    status.textContent = result.error
+      ? `Failed to load MCP inventory: ${result.error}`
+      : "Failed to load MCP inventory.";
+    return;
+  }
+
+  status.hidden = true;
+  fillInventoryList(fields.mcpToolsList, result.tools ?? [], "No tools exposed.");
+  fillInventoryList(
+    fields.mcpPromptsList,
+    result.prompts ?? [],
+    "No prompts exposed.",
+  );
+}
+
+function fillInventoryList(
+  list: HTMLElement,
+  names: string[],
+  emptyLabel: string,
+) {
+  list.replaceChildren();
+  if (names.length === 0) {
+    const empty = document.createElement("li");
+    empty.className = "inventory-empty";
+    empty.textContent = emptyLabel;
+    list.appendChild(empty);
+    return;
+  }
+  for (const name of names) {
+    const item = document.createElement("li");
+    item.textContent = name;
+    list.appendChild(item);
+  }
+}
+
 function syncPanelFromSelection() {
   const selected = selectedEntity();
   const hasSelection = Boolean(selected);
@@ -1347,6 +1421,12 @@ function syncPanelFromSelection() {
     selected.kind === "mcp" || selected.kind === "agent";
   syncLlmProviderTypeVisibility(selected);
   fields.mcpInventory.hidden = selected.kind !== "mcp";
+  if (selected.kind === "mcp") {
+    void refreshMcpInventory(selected);
+  } else {
+    // Invalidate any in-flight inventory fetch so its late response is ignored.
+    mcpInventoryToken += 1;
+  }
   fields.agentSection.hidden = selected.kind !== "agent";
   fields.systemPrompt.value = selected.config.systemPrompt;
   fields.requiresUserInput.checked = selected.config.requiresUserInput;

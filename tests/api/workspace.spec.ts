@@ -241,6 +241,47 @@ test('generate_image saves AI images under images-ai instead of files', async ({
   }
 });
 
+test('mcp-inventory returns live tool and prompt names from the MCP endpoint', async ({
+  request,
+  ld,
+}) => {
+  const mcp = await startJsonServer((body) => {
+    const requestBody = body as { id?: unknown; method?: string };
+    if (requestBody.method === 'tools/list') {
+      return {
+        jsonrpc: '2.0',
+        id: requestBody.id,
+        result: {
+          tools: [
+            { name: 'read_document', description: 'Read a document' },
+            { name: 'generate_image', description: 'Generate an image' },
+            { name: 'save_context', description: 'Persist run memory' },
+          ],
+        },
+      };
+    }
+    expect(requestBody.method).toBe('prompts/list');
+    return {
+      jsonrpc: '2.0',
+      id: requestBody.id,
+      result: { prompts: [{ name: 'feature-workflow' }, { name: 'audit-adrs-drift' }] },
+    };
+  });
+
+  try {
+    const inventory = await request.post(`${ld.baseURL}/api/workspace/mcp-inventory`, {
+      data: { endpoint: `${mcp.url}/mcp` },
+    });
+    expect(inventory.ok()).toBe(true);
+    const result = await inventory.json() as { ok: boolean; tools: string[]; prompts: string[] };
+    expect(result.ok).toBe(true);
+    expect(result.tools).toEqual(['read_document', 'generate_image', 'save_context']);
+    expect(result.prompts).toEqual(['feature-workflow', 'audit-adrs-drift']);
+  } finally {
+    await mcp.close();
+  }
+});
+
 test('run-agent-document only sends MCP tools named in the agent system prompt', async ({
   request,
   ld,

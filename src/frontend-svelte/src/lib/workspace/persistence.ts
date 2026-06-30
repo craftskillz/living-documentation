@@ -97,6 +97,35 @@ export async function listLlmModels(
   }
 }
 
+export interface McpInventoryResult {
+  ok: boolean;
+  tools?: string[];
+  prompts?: string[];
+  error?: string;
+}
+
+export async function listMcpInventory(input: {
+  endpoint: string;
+}): Promise<McpInventoryResult> {
+  try {
+    const response = await fetch(`${WORKSPACE_API_URL}/mcp-inventory`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(input),
+    });
+    return (await response.json()) as McpInventoryResult;
+  } catch (error) {
+    return {
+      ok: false,
+      error:
+        error instanceof Error ? error.message : "Failed to list MCP inventory",
+    };
+  }
+}
+
 export interface AgentRunInput {
   endpoint: string;
   token: string;

@@ -693,6 +693,28 @@ function toolNamesList(tools: unknown[]): string {
     .join(', ');
 }
 
+// List the `name`s exposed by an MCP server for a given listing method (tools/list or
+// prompts/list). Returns an error string instead of throwing so the caller can surface a
+// partial inventory (e.g. tools succeed while a server that lacks prompts fails).
+async function listMcpNames(
+  endpoint: string,
+  method: string,
+  key: 'tools' | 'prompts',
+): Promise<{ ok: boolean; names: string[]; error?: string }> {
+  try {
+    const result = await callMcp(endpoint, method, {});
+    const names =
+      isRecord(result) && Array.isArray(result[key])
+        ? (result[key] as unknown[])
+            .map((item) => (isRecord(item) && typeof item.name === 'string' ? item.name : ''))
+            .filter(Boolean)
+        : [];
+    return { ok: true, names };
+  } catch (error) {
+    return { ok: false, names: [], error: errorMessageWithCause(error, `Failed to list ${key}`) };
+  }
+}
+
 async function runAgent(
   config: AgentRunConfig,
   report?: AgentRunReporter,
@@ -1246,6 +1268,27 @@ export function workspaceRouter(docsPath: string): Router {
       }
     } catch (error) {
       const message = workspaceErrorMessage('list-models failed', error, 'Failed to list models');
+      res.status(400).json({ ok: false, error: message });
+    }
+  });
+
+  router.post('/mcp-inventory', async (req, res) => {
+    try {
+      const body = req.body as { endpoint?: unknown };
+      if (typeof body.endpoint !== 'string' || !body.endpoint.trim()) {
+        res.status(400).json({ ok: false, error: 'endpoint is required' });
+        return;
+      }
+      const endpoint = body.endpoint.trim();
+      const [tools, prompts] = await Promise.all([
+        listMcpNames(endpoint, 'tools/list', 'tools'),
+        listMcpNames(endpoint, 'prompts/list', 'prompts'),
+      ]);
+      // Tools are the meaningful surface; prompts are optional on many MCP servers, so a prompts
+      // failure must not fail the whole call. Only a tools failure becomes the top-level error.
+      res.json({ ok: tools.ok, tools: tools.names, prompts: prompts.names, error: tools.error });
+    } catch (error) {
+      const message = workspaceErrorMessage('mcp-inventory failed', error, 'Failed to list MCP inventory');
       res.status(400).json({ ok: false, error: message });
     }
   });

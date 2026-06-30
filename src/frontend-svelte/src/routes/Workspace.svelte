@@ -155,25 +155,15 @@
             <span>MCP consultation surface</span>
             <strong>Streamable HTTP</strong>
           </div>
+          <p id="mcpInventoryStatus" class="inventory-status" hidden></p>
           <div class="inventory-grid">
             <article>
               <h2>Tools</h2>
-              <ul>
-                <li>list_documents</li><li>read_document</li><li>create_document</li>
-                <li>update_document</li><li>list_diagrams</li><li>read_diagram</li>
-                <li>create_diagram</li><li>list_source_files</li><li>read_source_file</li>
-                <li>search_source</li><li>add_metadata</li><li>refresh_metadata</li>
-                <li>get_accuracy</li><li>review_adr_relevance</li><li>retrodocument_adrs_from_git</li>
-              </ul>
+              <ul id="mcpToolsList"></ul>
             </article>
             <article>
               <h2>Prompts</h2>
-              <ul>
-                <li>audit-adrs-drift</li><li>review-adr-relevance</li>
-                <li>retrodocument-adrs-from-git</li><li>erd</li>
-                <li>feature-workflow</li><li>create-context-diagram</li>
-                <li>create-container-diagram</li><li>document-source-decision</li>
-              </ul>
+              <ul id="mcpPromptsList"></ul>
             </article>
           </div>
         </section>
