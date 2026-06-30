@@ -248,9 +248,6 @@
 
 
   // ── Misc ─────────────────────────────────────────────────────────────────────
-  async function copyLink() {
-    try { await navigator.clipboard.writeText(location.href); } catch {}
-  }
 
   async function copyMcpId() {
     try {
@@ -372,7 +369,6 @@
           </button>
 
           <button onclick={exportPDF} title={t("doc.export_pdf")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">📄 {t("doc.export_pdf_btn")}</button>
-          <button onclick={copyLink} title={t("doc.copy_link")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-link"></i> {t("doc.copy_link_btn")}</button>
           <button onclick={() => (metadataOpen = true)} data-testid="metadata-btn" title={t("metadata.button_title")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-code-compare"></i> {t("metadata.button")}</button>
           {#if versionsAvailable}
             <button onclick={() => (versionsOpen = true)} data-testid="versions-btn" title={t("versions.button_title")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-code-branch"></i> {t("versions.button")}</button>
