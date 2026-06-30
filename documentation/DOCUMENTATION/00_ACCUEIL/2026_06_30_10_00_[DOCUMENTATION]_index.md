@@ -17,7 +17,7 @@ Pour commencer, choisissez le chemin qui vous intéresse
 <!-- table-color: info -->
 | Besoin                                          | Lire                                                                                                      |
 | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| Comprendre le produit en quelques minutes       | [Living Documentation en bref](?doc=DOCUMENTATION%252F00_ACCUEIL%252F01_living_documentation_en_bref)                                     |
+| Comprendre le produit en quelques minutes       | [Living Documentation en bref](?doc=DOCUMENTATION%252F00_ACCUEIL%252F2026_06_30_10_10_%255BDOCUMENTATION%255D_Living_Documentation_En_Bref)                                     |
 | Choisir le bon parcours selon votre role        | [Parcours recommandes](./02_parcours_recommandes.md)                                                      |
 | Creer votre premier espace documentaire         | [Creer un espace documentaire](../01_DEMARRAGE/01_creer_un_espace_documentaire.md)                        |
 | Creer et retrouver un document                  | [Creer, modifier et retrouver un document](../01_DEMARRAGE/02_creer_modifier_et_retrouver_un_document.md) |
