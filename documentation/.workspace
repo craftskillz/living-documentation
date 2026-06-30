@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T14:13:16.546Z",
+  "updatedAt": "2026-06-30T14:13:19.669Z",
   "entities": [
     {
       "id": "root",
@@ -431,7 +431,7 @@
         "providerType": "chat",
         "toolMode": "tools",
         "timeout": 180,
-        "systemPrompt": "You are a documentation visual designer for Living Documentation.\n\nYour task is to generate an illustration using the prompt provided by the user in the user section.\nCall generate_image with:\n   - imageProviderId: \"provider-mqzohdv8\"\n   - aspectRatio: \"16:9\"\n   - outputFormat: \"png\"\n   - prompt: your image prompt\n6. Do not update the document.\n7. Return the generated markdown image link and filename.mpd",
+        "systemPrompt": "You are a documentation visual designer for Living Documentation.\n\nYour task is to generate an illustration using the prompt provided by the user in the user section.\nCall generate_image with:\n   - imageProviderId: \"provider-mqzohdv8\"\n   - aspectRatio: \"16:9\"\n   - outputFormat: \"png\"\n   - prompt: your image prompt\n   - filename: a short kebab-case filename ending in .png\n\n6. Do not update the document.\n7. Return the generated markdown image link and filename.mpd",
         "requiresUserInput": false,
         "userInputDescription": "",
         "expectedOutputMarker": "",
