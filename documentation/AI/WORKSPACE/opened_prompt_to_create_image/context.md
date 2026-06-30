@@ -1,1 +1,1 @@
-mcp-documentation-workflow-illustration generated
+adr-lifecycle-illustration generated
