@@ -36,6 +36,15 @@ La documentation repose sur des fichiers presents dans votre espace local :
 - le versionning utilise Git pour enregistrer les modifications au fil de l'eau et permettre la restauration de tous vos documents
 - l'outil peut etre utilise seul, puis enrichi avec ses propres outils MCP et ses agents internes
 
+### Commençons la visite !
+
+Avant tout, je vous recommande de procéder à l'intégration de Git dans living documentation, vous pourrez ainsi bénéficier du versionning automatique de tous vos changements.
+
+Vous devez disposez de git installé sur votre ordinateur, puis depuis le terminal ouvrez le dossier contenant living-documentation et initialisez un repository git.
+
+```bash
+git init
+```
 
 Pour commencer, choisissez le chemin qui vous intéresse
 <!-- table-border: bordered -->
