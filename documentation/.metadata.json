@@ -1353,6 +1353,12 @@
       "hash": "46f9aa2f924c883283c601bb66915174f5cf35cd0d46aba882260ce992865a2d",
       "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
       "dirty": false
+    },
+    {
+      "path": "src/frontend-svelte/src/styles/app.css",
+      "hash": "f0fada89775681970a749e81a961858e91eb938d8d75ca3651d3455d699e4da4",
+      "commit": "019de294d1412d5511b045bc53d1fc5b0bc7010d",
+      "dirty": true
     }
   ],
   "ADRS/2026_06_29_20_25_[WORKSPACE]_workspace_llm_tool_mode_chat_only": [
