@@ -28,15 +28,8 @@ Un clic sur un document l'ouvre dans la partie principale de la page.
 
 ### Ce que vous voyez à droite
 
-Lorsque vous cliquez sur <i class="fa-solid fa-list-ul"></i> colonne de gauche affiche :
-
-- le nombre de documents disponibles
-- les dossiers de votre documentation
-- les catégories détectées dans les noms de fichiers
-- les documents Markdown
-- les badges utiles : annotations, fichiers joints, statuts
-
-Un clic sur un document l'ouvre dans la partie principale de la page.
+Lorsque vous cliquez sur le bouton Table des matières <kbd><i class="fa-solid fa-list-ul"></i></kbd>, une colonne apparaît à droite de l'écran et affiche une Table des matères dont les liens sont clickables.
+Chaque Element d'une table des matière correspond à un Header `# Element` pour H1, `## Element` pour H2, etc.
 
 ### Dossiers et catégories
 
