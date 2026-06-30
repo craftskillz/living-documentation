@@ -48,6 +48,8 @@ export interface GitDocumentVersions {
   relativePath: string | null;
   baseRef: string;
   baseContent: string | null;
+  headRef: "HEAD";
+  headContent: string | null;
   commits: GitDocumentCommit[];
   message: string;
 }
@@ -182,8 +184,15 @@ function normalizeHistoryDays(value: number | undefined): number {
   return Math.max(MIN_DOCUMENT_HISTORY_DAYS, Math.min(MAX_DOCUMENT_HISTORY_DAYS, Math.floor(value)));
 }
 
-function readHeadContent(repoRoot: string, relativePath: string): string | null {
-  const result = runGit(repoRoot, ["show", `HEAD:${relativePath}`]);
+function isSafeGitRef(value: string): boolean {
+  return /^[0-9a-f]{7,40}$/i.test(value) || value === "HEAD";
+}
+
+function readRefContent(repoRoot: string, ref: string, relativePath: string): string | null {
+  if (!isSafeGitRef(ref)) {
+    throw new Error("Invalid Git reference.");
+  }
+  const result = runGit(repoRoot, ["show", `${ref}:${relativePath}`]);
   if (!result.ok) return null;
   return result.stdout;
 }
@@ -299,6 +308,7 @@ export function gitDocumentVersions(
   docsPath: string,
   documentId: string,
   sinceDays?: number,
+  baseRef?: string,
 ): GitDocumentVersions {
   const config = readConfig(docsPath).gitIntegration;
   const base = {
@@ -308,6 +318,8 @@ export function gitDocumentVersions(
     relativePath: null,
     baseRef: "HEAD",
     baseContent: null,
+    headRef: "HEAD" as const,
+    headContent: null,
     commits: [],
   };
 
@@ -326,13 +338,18 @@ export function gitDocumentVersions(
     const repo = resolveRepoInfo(docsPath);
     const relativePath = resolveDocumentPathspec(docsPath, documentId, repo);
     const days = normalizeHistoryDays(sinceDays);
+    const commits = listDocumentCommits(repo.root, relativePath, days);
+    const selectedBaseRef = baseRef?.trim() || commits[1]?.hash || commits[0]?.hash || "HEAD";
+    const headContent = readRefContent(repo.root, "HEAD", relativePath);
     return {
       ...base,
       ok: true,
       repoRoot: repo.root,
       relativePath,
-      baseContent: readHeadContent(repo.root, relativePath),
-      commits: listDocumentCommits(repo.root, relativePath, days),
+      baseRef: selectedBaseRef,
+      baseContent: readRefContent(repo.root, selectedBaseRef, relativePath),
+      headContent,
+      commits,
       message: "Git document versions are available.",
     };
   } catch (error) {

@@ -1,16 +1,16 @@
 # Graph Report - living-documentation  (2026-06-30)
 
 ## Corpus Check
-- 525 files · ~1,292,819 words
+- 525 files · ~1,293,186 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4399 nodes · 5982 edges · 443 communities (375 shown, 68 thin omitted)
+- 4400 nodes · 5984 edges · 441 communities (373 shown, 68 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 162 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `f0e43e5c`
+- Built from commit: `17d4ae82`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -420,9 +420,7 @@
 - [[_COMMUNITY_Community 437|Community 437]]
 - [[_COMMUNITY_Community 438|Community 438]]
 - [[_COMMUNITY_Community 439|Community 439]]
-- [[_COMMUNITY_Community 440|Community 440]]
 - [[_COMMUNITY_Community 441|Community 441]]
-- [[_COMMUNITY_Community 442|Community 442]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `../lib/diagram/main` - 111 edges
@@ -490,11 +488,11 @@
 - **Navigation and Documentation Structure Model** — 4_reference_2026_04_12_14_07__fundamentals__dossiers_et_catgories_folders_vs_categories, 4_reference_2026_04_12_14_07__fundamentals__dossiers_et_catgories_sidebar_ordering, 4_reference_2026_04_09_02_00__reference__tokens_pattern_nommage_tokens, 2_guide_2026_04_09_09_00__navigation__recherche_plein_texte_deep_links [INFERRED 0.85]
 - **AI-assisted Documentation Reliability Cycle** — 5_talks_2026_04_28_09_48__conference__demo_living_documentation_mcp_en_conference_mcp_contract, 5_talks_2026_04_28_09_48__conference__demo_living_documentation_mcp_en_conference_create_adr_workflow, 5_talks_2026_04_28_09_48__conference__demo_living_documentation_mcp_en_conference_audit_drift_workflow, 5_talks_2026_04_28_09_48__conference__demo_living_documentation_mcp_en_conference_metadata_hash_binding, 5_talks_2026_04_28_09_48__conference__demo_living_documentation_mcp_en_conference_human_validation [EXTRACTED 1.00]
 
-## Communities (443 total, 68 thin omitted)
+## Communities (441 total, 68 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.18
-Nodes (15): boundaryPoint(), cross(), drawConnections(), drawEntity(), drawLeafEntity(), drawPolygonEntity(), drawSelectedDot(), drawTopology() (+7 more)
+Cohesion: 0.33
+Nodes (9): drawConnections(), drawEntity(), drawLeafEntity(), drawPolygonEntity(), drawSelectedDot(), drawTopology(), EntityCanvasStyle, roundedRect() (+1 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.11
@@ -513,12 +511,12 @@ Cohesion: 0.11
 Nodes (19): announce(), buildReadingScript(), DEFAULTS, HEADING_TAGS, isMermaid(), push(), ReadingScriptOptions, ReadingSegment (+11 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.09
-Nodes (22): htmlEscape(), renderCompareDiv(), renderMarkdownWithCompareBlocks(), DocumentSuperSeededError, parseDocStatus(), readDocStatus(), resolveDocFilePath(), collectMdFiles() (+14 more)
+Cohesion: 0.07
+Nodes (30): htmlEscape(), renderCompareDiv(), renderMarkdownWithCompareBlocks(), buildPatternsFromFormat(), dateStrToISO(), DocMetadata, formatDate(), parseFilename() (+22 more)
 
 ### Community 6 - "Community 6"
 Cohesion: 0.07
-Nodes (33): Bounds, ChildDistanceOptions, cloneEntities(), clusterBounds(), createEntity(), defaultDescription(), defaultEndpoint(), drawGrid() (+25 more)
+Nodes (37): boundaryPoint(), Bounds, ChildDistanceOptions, cloneEntities(), collisionRadius(), createEntity(), cross(), defaultDescription() (+29 more)
 
 ### Community 7 - "Community 7"
 Cohesion: 0.05
@@ -677,8 +675,8 @@ Cohesion: 0.10
 Nodes (19): Admin, Appliquer Diátaxis dans Living Documentation, Convention de nommage des fichiers, Diagrammes, Export PDF, Fonctionnalités, Lecture et navigation, Les deux axes (+11 more)
 
 ### Community 46 - "Community 46"
-Cohesion: 0.29
-Nodes (11): childrenOf(), descendantIds(), distanceForChildren(), distanceForRootChild(), layoutAllProviderChildren(), layoutProviderChildren(), layoutRootChildren(), openDeleteConfirmation() (+3 more)
+Cohesion: 0.22
+Nodes (14): childrenOf(), clusterBounds(), descendantIds(), distanceForChildren(), distanceForRootChild(), layoutAllProviderChildren(), layoutProviderChildren(), layoutRootChildren() (+6 more)
 
 ### Community 47 - "Community 47"
 Cohesion: 0.15
@@ -701,8 +699,8 @@ Cohesion: 0.29
 Nodes (15): addAgent(), addContextualNode(), addProvider(), entityById(), finiteNumber(), initializeWorkspace(), isProtectedEntity(), layoutGraph() (+7 more)
 
 ### Community 52 - "Community 52"
-Cohesion: 0.09
-Nodes (23): showPersistentLoadingToast(), appendAgentRunTimelineEvent(), executeAgentRunFromDialog(), showAgentRunFinalResult(), showAgentRunResult(), showLoadingToast(), startAgentRunTimeline(), testSelectedImageProvider() (+15 more)
+Cohesion: 0.10
+Nodes (19): appendAgentRunTimelineEvent(), executeAgentRunFromDialog(), showAgentRunFinalResult(), showAgentRunResult(), showLoadingToast(), startAgentRunTimeline(), AgentRunDocumentInfo, AgentRunInput (+11 more)
 
 ### Community 53 - "Community 53"
 Cohesion: 0.17
@@ -749,8 +747,8 @@ Cohesion: 0.25
 Nodes (7): treeAddItem(), TreeController, treeIndent(), treeInit(), TreeItem, treeRemoveItem(), treeRenderList()
 
 ### Community 64 - "Community 64"
-Cohesion: 0.27
-Nodes (13): cancelViewAnimation(), clamp(), drawConfigSurface(), graphBounds(), panelWidthForViewport(), resetView(), selectedEntity(), selectedPanelAvoidanceDelta() (+5 more)
+Cohesion: 0.18
+Nodes (16): cancelViewAnimation(), clamp(), drawConfigSurface(), drawGrid(), drawLine(), graphBounds(), panelWidthForViewport(), render() (+8 more)
 
 ### Community 65 - "Community 65"
 Cohesion: 0.25
@@ -774,7 +772,7 @@ Nodes (9): ALLOWED_ALIGNS, ALLOWED_WIDTHS, collectImageAttributesFromSource(), I
 
 ### Community 70 - "Community 70"
 Cohesion: 0.16
-Nodes (22): checkGitIntegrationToast(), GitSaveResult, GitStatus, isRecent(), buildToastElement(), clearToastTimer(), createToastId(), dismissPersistentToast() (+14 more)
+Nodes (23): checkGitIntegrationToast(), GitSaveResult, GitStatus, isRecent(), buildToastElement(), clearToastTimer(), createToastId(), dismissPersistentToast() (+15 more)
 
 ### Community 71 - "Community 71"
 Cohesion: 0.20
@@ -1057,8 +1055,8 @@ Cohesion: 0.15
 Nodes (15): KokoroModel, KokoroOptions, KokoroTtsEngine, nativeImport, SUPPORTED_REQUEST_LANGUAGES, createEngine(), getTtsEngine(), selectedEngineId() (+7 more)
 
 ### Community 164 - "Community 164"
-Cohesion: 0.10
-Nodes (23): BLUEPRINT_IGNORED_DIRS, BlueprintBoxListing, BlueprintDirectoryEntry, isBlueprintIgnoredDir(), listBlueprintBox(), normalizeBlueprintPath(), safeResolveBlueprintPath(), blueprintDocCategories() (+15 more)
+Cohesion: 0.11
+Nodes (21): BLUEPRINT_IGNORED_DIRS, BlueprintBoxListing, BlueprintDirectoryEntry, isBlueprintIgnoredDir(), listBlueprintBox(), normalizeBlueprintPath(), safeResolveBlueprintPath(), BlueprintFolder (+13 more)
 
 ### Community 165 - "Community 165"
 Cohesion: 0.14
@@ -1737,8 +1735,8 @@ Cohesion: 0.40
 Nodes (4): Execution, Response, Run - Agent 2, User input
 
 ### Community 405 - "Community 405"
-Cohesion: 0.16
-Nodes (15): copySelectedProviderId(), hydrateEntities(), labelForBadge(), labelForEntityBadge(), loadModelsForSelect(), openAgentRunDialog(), saveWorkspaceNow(), serializeWorkspace() (+7 more)
+Cohesion: 0.18
+Nodes (19): copySelectedProviderId(), hydrateEntities(), labelForBadge(), labelForEntityBadge(), loadModelsForSelect(), openAgentRunDialog(), saveWorkspaceNow(), selectedEntity() (+11 more)
 
 ### Community 406 - "Community 406"
 Cohesion: 0.40
@@ -1822,7 +1820,7 @@ Nodes (8): Debug, Execution, Response, Run - Traducteur Anglais vers Français, 
 
 ### Community 435 - "Community 435"
 Cohesion: 0.15
-Nodes (24): autoCommitAfterSave(), countDirty(), GitCommandResult, GitDocumentCommit, gitDocumentVersions, GitSaveResult, gitStatus, isInsidePathspec() (+16 more)
+Nodes (25): autoCommitAfterSave(), countDirty(), GitCommandResult, GitDocumentCommit, gitDocumentVersions, GitSaveResult, gitStatus, isInsidePathspec() (+17 more)
 
 ### Community 436 - "Community 436"
 Cohesion: 0.14
@@ -1840,17 +1838,9 @@ Nodes (10): Autocommit limite a docsFolder, Avantages, Consequences, Contexte, D
 Cohesion: 0.67
 Nodes (3): git(), initRepo(), QUICKSTART_ID
 
-### Community 440 - "Community 440"
-Cohesion: 0.39
-Nodes (6): buildPatternsFromFormat(), dateStrToISO(), DocMetadata, formatDate(), parseFilename(), titleCase()
-
 ### Community 441 - "Community 441"
 Cohesion: 0.14
 Nodes (12): ../lib/home/ExportModal.svelte, buildTocNode(), fLabel(), ../lib/home/NewDocModal.svelte, ../lib/home/NewFolderModal.svelte, ../lib/home/Sidebar.svelte, ../lib/home/api, ../lib/home/home.css (+4 more)
-
-### Community 442 - "Community 442"
-Cohesion: 0.40
-Nodes (5): collisionRadius(), entityBounds(), isEntityHit(), leafSize(), screenBoundsForEntity()
 
 ## Knowledge Gaps
 - **2049 isolated node(s):** `program`, `InitLanguage`, `InitInstructionFile`, `name`, `version` (+2044 more)

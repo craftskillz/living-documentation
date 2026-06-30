@@ -14,6 +14,8 @@
     relativePath: string | null;
     baseRef: string;
     baseContent: string | null;
+    headRef: "HEAD";
+    headContent: string | null;
     commits: GitDocumentCommit[];
     message: string;
   }
@@ -53,9 +55,11 @@
   let loading = $state(false);
   let error = $state("");
   let data = $state<GitDocumentVersions | null>(null);
+  let selectedBaseRef = $state("");
   let lastLoadKey = "";
 
-  const diffRows = $derived(buildDiffRows(data?.baseContent ?? "", content));
+  const rightContent = $derived(data?.headContent ?? content);
+  const diffRows = $derived(buildDiffRows(data?.baseContent ?? "", rightContent));
   const hasBaseContent = $derived(data?.baseContent !== null && data?.baseContent !== undefined);
 
   function clampHistoryDays(value: number): number {
@@ -181,18 +185,25 @@
     return date.toLocaleString();
   }
 
-  async function loadVersions() {
+  function isSelectedCommit(hash: string): boolean {
+    return selectedBaseRef === hash || data?.baseRef === hash;
+  }
+
+  async function loadVersions(baseRef = selectedBaseRef) {
     const days = clampHistoryDays(appliedSinceDays);
-    const key = `${docId}:${days}`;
+    const key = `${docId}:${days}:${baseRef || "default"}`;
     if (!open || loading || key === lastLoadKey) return;
     loading = true;
     error = "";
     try {
       const params = new URLSearchParams({ documentId: docId, sinceDays: String(days) });
+      if (baseRef) params.set("baseRef", baseRef);
       const res = await fetch(`/api/git/document-versions?${params.toString()}`);
       const body = await res.json();
       if (!res.ok || !body.ok) throw new Error(body.message || body.error || t("versions.load_failed"));
-      data = body as GitDocumentVersions;
+      const nextData = body as GitDocumentVersions;
+      data = nextData;
+      selectedBaseRef = nextData.baseRef;
       lastLoadKey = key;
     } catch (err: unknown) {
       error = err instanceof Error ? err.message : String(err);
@@ -206,13 +217,21 @@
   function refreshWithPeriod() {
     appliedSinceDays = clampHistoryDays(Number(sinceDaysInput));
     sinceDaysInput = appliedSinceDays;
+    selectedBaseRef = "";
     lastLoadKey = "";
-    void loadVersions();
+    void loadVersions("");
+  }
+
+  function selectCommit(hash: string) {
+    selectedBaseRef = hash;
+    lastLoadKey = "";
+    void loadVersions(hash);
   }
 
   $effect(() => {
     if (!open) {
       lastLoadKey = "";
+      selectedBaseRef = "";
       return;
     }
     void docId;
@@ -260,13 +279,18 @@
         {#if data?.commits?.length}
           <div class="mt-3 flex gap-2 overflow-x-auto pb-1">
             {#each data.commits as commit (commit.hash)}
-              <div class="min-w-64 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-xs dark:border-gray-700 dark:bg-gray-900">
+              <button
+                type="button"
+                onclick={() => selectCommit(commit.hash)}
+                title={t("versions.select_commit").replace("{hash}", commit.shortHash)}
+                class="min-w-64 rounded-lg border px-3 py-2 text-left text-xs transition-colors {isSelectedCommit(commit.hash) ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500/30 dark:border-blue-400 dark:bg-blue-950/40' : 'border-gray-200 bg-gray-50 hover:border-blue-300 hover:bg-blue-50/70 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-blue-700 dark:hover:bg-blue-950/30'}"
+              >
                 <div class="flex items-center gap-2 font-semibold text-gray-800 dark:text-gray-100">
                   <span class="font-mono text-blue-600 dark:text-blue-400">{commit.shortHash}</span>
                   <span class="truncate">{commit.subject}</span>
                 </div>
                 <div class="mt-1 text-gray-500 dark:text-gray-400">{formatDate(commit.date)} · {commit.author}</div>
-              </div>
+              </button>
             {/each}
           </div>
         {:else if data && !loading}
@@ -287,7 +311,7 @@
           {/if}
           <div class="h-full overflow-auto p-5">
             <div class="grid min-w-[900px] grid-cols-2 overflow-hidden rounded-lg border border-gray-200 text-xs dark:border-gray-800">
-              <div class="border-b border-r border-gray-200 bg-gray-100 px-3 py-2 font-semibold text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200">{t("versions.left_title")}</div>
+              <div class="border-b border-r border-gray-200 bg-gray-100 px-3 py-2 font-semibold text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200">{t("versions.left_title").replace("{ref}", data.baseRef)}</div>
               <div class="border-b border-gray-200 bg-gray-100 px-3 py-2 font-semibold text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200">{t("versions.right_title")}</div>
               {#each diffRows as row, index (index)}
                 <div class="grid grid-cols-[4rem_1fr] border-r border-gray-200 font-mono leading-5 dark:border-gray-800 {lineClass(row.left.kind)}">

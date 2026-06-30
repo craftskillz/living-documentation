@@ -23,7 +23,8 @@ export function gitRouter(docsPath: string): Router {
     const rawSinceDays = typeof req.query.sinceDays === "string"
       ? Number.parseInt(req.query.sinceDays, 10)
       : undefined;
-    const result = gitDocumentVersions(docsPath, documentId, rawSinceDays);
+    const baseRef = typeof req.query.baseRef === "string" ? req.query.baseRef : undefined;
+    const result = gitDocumentVersions(docsPath, documentId, rawSinceDays, baseRef);
     if (!result.ok) {
       return res.status(400).json(result);
     }

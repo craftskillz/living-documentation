@@ -79,11 +79,16 @@ test('enabled Git integration commits docsFolder changes inside a parent reposit
   expect(body.dirtyOutsideDocsCount).toBe(1);
 });
 
-test('GET /api/git/document-versions returns HEAD content and document commits', async ({
+test('GET /api/git/document-versions defaults to previous document commit versus HEAD', async ({
   request,
   ld,
 }) => {
   initRepo(ld.parent);
+
+  const quickstartPath = path.join(ld.docsAbs, '2026_01_02_10_00_[Guide]_quickstart.md');
+  fs.writeFileSync(quickstartPath, '# Committed HEAD version\n', 'utf-8');
+  git(ld.parent, ['add', 'testdocs/2026_01_02_10_00_[Guide]_quickstart.md']);
+  git(ld.parent, ['commit', '-m', 'update quickstart']);
 
   const config = await request.put(`${ld.baseURL}/api/config`, {
     data: {
@@ -97,9 +102,6 @@ test('GET /api/git/document-versions returns HEAD content and document commits',
   });
   expect(config.ok()).toBe(true);
 
-  const quickstartPath = path.join(ld.docsAbs, '2026_01_02_10_00_[Guide]_quickstart.md');
-  fs.writeFileSync(quickstartPath, '# Current working tree version\n', 'utf-8');
-
   const res = await request.get(
     `${ld.baseURL}/api/git/document-versions?documentId=${encodeURIComponent(QUICKSTART_ID)}&sinceDays=30`,
   );
@@ -109,12 +111,18 @@ test('GET /api/git/document-versions returns HEAD content and document commits',
     relativePath: string;
     baseRef: string;
     baseContent: string;
+    headRef: string;
+    headContent: string;
     commits: Array<{ shortHash: string; subject: string }>;
   };
   expect(body.ok).toBe(true);
   expect(body.relativePath).toBe('testdocs/2026_01_02_10_00_[Guide]_quickstart.md');
-  expect(body.baseRef).toBe('HEAD');
+  expect(body.baseRef).toBeTruthy();
+  expect(body.baseRef).not.toBe('HEAD');
   expect(body.baseContent).toContain('# Quickstart');
-  expect(body.baseContent).not.toContain('Current working tree version');
+  expect(body.baseContent).not.toContain('Committed HEAD version');
+  expect(body.headRef).toBe('HEAD');
+  expect(body.headContent).toContain('Committed HEAD version');
   expect(body.commits.some((commit) => commit.subject === 'initial docs')).toBe(true);
+  expect(body.commits.some((commit) => commit.subject === 'update quickstart')).toBe(true);
 });
