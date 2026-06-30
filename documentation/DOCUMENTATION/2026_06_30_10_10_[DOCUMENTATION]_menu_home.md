@@ -26,6 +26,18 @@ La colonne de gauche affiche :
 
 Un clic sur un document l'ouvre dans la partie principale de la page.
 
+### Ce que vous voyez à droite
+
+Lorsque vous cliquez sur  colonne de gauche affiche :
+
+- le nombre de documents disponibles
+- les dossiers de votre documentation
+- les catégories détectées dans les noms de fichiers
+- les documents Markdown
+- les badges utiles : annotations, fichiers joints, statuts
+
+Un clic sur un document l'ouvre dans la partie principale de la page.
+
 ### Dossiers et catégories
 
 Dans **Living Documentation**, les dossiers et les catégories ne sont pas la même chose.
