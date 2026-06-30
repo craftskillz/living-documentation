@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T14:10:57.351Z",
+  "updatedAt": "2026-06-30T14:11:18.548Z",
   "entities": [
     {
       "id": "root",
@@ -418,7 +418,7 @@
     },
     {
       "id": "agent-mr0q5fqy",
-      "label": "Agent 4",
+      "label": "Prompt to Create Image",
       "kind": "agent",
       "parentId": "provider-mqtqt25p",
       "x": -209.41237277051292,
@@ -427,7 +427,7 @@
       "config": {
         "endpoint": "",
         "token": "",
-        "model": "",
+        "model": "deepseek/deepseek-v4-pro",
         "providerType": "chat",
         "toolMode": "tools",
         "timeout": 180,
@@ -435,8 +435,8 @@
         "requiresUserInput": false,
         "userInputDescription": "",
         "expectedOutputMarker": "",
-        "description": "Runs focused automation against documentation, source, or quality signals.",
-        "workspaceFolder": "AI/WORKSPACE/agent_4"
+        "description": "Opened ",
+        "workspaceFolder": "AI/WORKSPACE/prompt_to_create_image"
       }
     }
   ],
