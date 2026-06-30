@@ -38,7 +38,7 @@ Les documents extra-files situes hors `docsFolder` ne sont pas eligibles a cette
 
 `VersionsModal.svelte` charge l'API a l'ouverture, affiche les commits du document sur la periode choisie, et highlighte la pastille du commit selectionne. Par defaut, la selection vient de l'API et correspond au commit `n-1` du document lorsque cet historique existe.
 
-Un clic sur une pastille relance l'API avec `baseRef=<hash du commit>`. Le diff ligne par ligne est calcule cote frontend entre `baseContent` (commit selectionne) et `headContent` (`HEAD` courant), ou entre `baseContent` et les changements locaux a enregistrer si l'utilisateur a deja restaure des blocs. Le rendu retenu est cote-a-cote : colonne gauche pour le commit selectionne, colonne droite pour `HEAD` ou les changements en attente.
+Un clic sur une pastille relance l'API avec `baseRef=<hash du commit>`. Le diff ligne par ligne est calcule cote frontend entre `baseContent` (commit selectionne) et `headContent` (`HEAD` courant), ou entre `baseContent` et les changements locaux a enregistrer si l'utilisateur a deja restaure des blocs. Le rendu retenu est cote-a-cote : colonne gauche pour `HEAD` ou les changements en attente, colonne droite pour le commit selectionne, afin que le bouton `<` exprime visuellement une restauration depuis la colonne historique vers la colonne courante.
 
 Le diff utilise une LCS bornee par `MAX_LCS_CELLS` pour conserver une correspondance lisible sur les documents normaux, avec fallback lineaire pour les documents trop grands.
 
@@ -46,7 +46,7 @@ Le diff utilise une LCS bornee par `MAX_LCS_CELLS` pour conserver une correspond
 
 Le calcul du diff produit aussi des hunks : chaque bloc modifie connait sa plage dans `baseContent`, sa plage dans `headContent`, les lignes du commit selectionne et les lignes courantes.
 
-La modale affiche un bouton `<` sur le premier rang de chaque hunk. Le clic ne fait aucune requete d'ecriture : il remplace seulement la plage correspondante dans un contenu local de la modale. La colonne de droite passe alors de `HEAD courant` a `Changements a enregistrer`, et un indicateur `Changements non enregistres` apparait.
+La modale affiche un bouton `<` sur le premier rang de chaque hunk. Le clic ne fait aucune requete d'ecriture : il remplace seulement la plage correspondante dans un contenu local de la modale. La colonne de gauche passe alors de `HEAD courant` a `Changements a enregistrer`, et un indicateur `Changements non enregistres` apparait.
 
 Un bouton `Enregistrer`, place au-dessus du diff, reste desactive tant qu'aucun bloc n'a ete applique. Lorsqu'il est clique, il appelle `onsave()` de `DocViewer.svelte` avec le contenu local. C'est donc uniquement ce bouton qui declenche la sauvegarde backend et, par consequence, l'autocommit Git si l'integration est active.
 
@@ -61,6 +61,7 @@ Avant d'appliquer un hunk, la modale compare la plage attendue avec le contenu l
 - La pastille selectionnee rend explicite le point de comparaison.
 - La restauration `<` permet de recuperer seulement un bloc du commit visite, sans revenir integralement au document ancien.
 - Plusieurs blocs peuvent etre prepares avant une seule sauvegarde, evitant un autocommit par bloc.
+- Le sens visuel du bouton `<` est coherent : la source historique est a droite et la cible courante est a gauche.
 - La feature respecte le bornage de l'integration Git : elle ne lit que les documents sous `docsFolder`.
 - Le bouton n'apparait pas si Git n'est pas effectivement utilisable, ce qui evite une action morte dans les projets non configures.
 
