@@ -1563,43 +1563,43 @@
     {
       "path": "src/lib/git-integration.ts",
       "hash": "d22e2f86218e8e4595df13981996a6db7bdbfaa86f9b96bdcc8b992dc3723651",
-      "commit": "ee5974f6cac091a90b13e7c80fa2e698f8888e10",
+      "commit": "16c074490831b1359a9dff64826325f10ce6ddd5",
       "dirty": true
     },
     {
       "path": "src/routes/git.ts",
       "hash": "bf4be80f5dba6f0919344d501d157bc56ef2a66579590179dbf2f048b6c29012",
-      "commit": "ab6cbc7aba2884c05fc84445a855ee5b641ce292",
+      "commit": "16c074490831b1359a9dff64826325f10ce6ddd5",
       "dirty": true
     },
     {
       "path": "src/frontend-svelte/src/lib/home/DocViewer.svelte",
       "hash": "c4d6527d6e174ff4f350b9eade9e690397ec25ff9e394f2ba9f675ebac528f9a",
-      "commit": "738989d7620b57cb42a7e8831dbc8abefba1f9c5",
+      "commit": "16c074490831b1359a9dff64826325f10ce6ddd5",
       "dirty": true
     },
     {
       "path": "src/frontend-svelte/src/lib/home/VersionsModal.svelte",
-      "hash": "dca603e3914572e7d348126cc99fb3b25a92431cb6cc90d0ae7081fa0a59e5c0",
-      "commit": "e5904821bd9cf1c7f54afb01ecf0745eca01246b",
+      "hash": "f1db2c86d60b1e0e49a8196c90678cefd5e9b683c1347f6e629395103b00be51",
+      "commit": "16c074490831b1359a9dff64826325f10ce6ddd5",
       "dirty": true
     },
     {
       "path": "src/frontend-svelte/public/i18n/fr.json",
       "hash": "77d39d0a9c08582f8ec437c90323acd513a5f618132d0d0950646ee2ed497dee",
-      "commit": "00b6d7373f86bec472b4fe74bbf2df402cd6f404",
+      "commit": "16c074490831b1359a9dff64826325f10ce6ddd5",
       "dirty": true
     },
     {
       "path": "src/frontend-svelte/public/i18n/en.json",
       "hash": "e1a8700c1fcca4d2750783de3c91bbf58bf8ae2e4cc465b9252f7dc0e8ba42c3",
-      "commit": "4336aa5077f06e26cf8c467121f96224068efa19",
+      "commit": "16c074490831b1359a9dff64826325f10ce6ddd5",
       "dirty": true
     },
     {
       "path": "tests/api/git.spec.ts",
       "hash": "2a4f60c1485da8dee947491329593ce0c1997901365396e75c49ac8dde87b395",
-      "commit": "22a51863a841797494906038e977c04fa38000a4",
+      "commit": "16c074490831b1359a9dff64826325f10ce6ddd5",
       "dirty": true
     }
   ]

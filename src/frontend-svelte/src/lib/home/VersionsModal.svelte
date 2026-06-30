@@ -31,17 +31,35 @@
   interface DiffRow {
     left: DiffLine;
     right: DiffLine;
+    hunkId: number | null;
+    showApply: boolean;
+  }
+
+  interface DiffHunk {
+    id: number;
+    oldStart: number;
+    oldDeleteCount: number;
+    newStart: number;
+    newDeleteCount: number;
+    oldLines: string[];
+    newLines: string[];
+  }
+
+  interface DiffView {
+    rows: DiffRow[];
+    hunks: DiffHunk[];
   }
 
   type DiffOp =
     | { kind: "context"; oldText: string; newText: string; oldLine: number; newLine: number }
-    | { kind: "removed"; text: string; oldLine: number }
-    | { kind: "added"; text: string; newLine: number };
+    | { kind: "removed"; text: string; oldLine: number; newIndex: number }
+    | { kind: "added"; text: string; newLine: number; oldIndex: number };
 
-  let { open, docId, content, onclose }: {
+  let { open, docId, content, onsave, onclose }: {
     open: boolean;
     docId: string;
     content: string;
+    onsave: (content: string) => Promise<void>;
     onclose: () => void;
   } = $props();
 
@@ -54,13 +72,25 @@
   let appliedSinceDays = $state(DEFAULT_HISTORY_DAYS);
   let loading = $state(false);
   let error = $state("");
+  let applyMessage = $state<{ text: string; cls: string } | null>(null);
+  let applyingHunkId = $state<number | null>(null);
   let data = $state<GitDocumentVersions | null>(null);
   let selectedBaseRef = $state("");
   let lastLoadKey = "";
+  let workingContent = $state("");
+  let savingDraft = $state(false);
 
-  const rightContent = $derived(data?.headContent ?? content);
-  const diffRows = $derived(buildDiffRows(data?.baseContent ?? "", rightContent));
+  const persistedContent = $derived(data?.headContent ?? content);
+  const rightContent = $derived(workingContent);
+  const hasDraftChanges = $derived(workingContent !== persistedContent);
+  const diffView = $derived(buildDiffView(data?.baseContent ?? "", rightContent));
+  const diffRows = $derived(diffView.rows);
   const hasBaseContent = $derived(data?.baseContent !== null && data?.baseContent !== undefined);
+
+  $effect(() => {
+    void docId;
+    workingContent = content;
+  });
 
   function clampHistoryDays(value: number): number {
     if (!Number.isFinite(value)) return DEFAULT_HISTORY_DAYS;
@@ -75,8 +105,9 @@
     return { text: "", lineNumber: null, kind: "empty" };
   }
 
-  function buildSimpleDiffRows(oldLines: string[], newLines: string[]): DiffRow[] {
+  function buildSimpleDiffView(oldLines: string[], newLines: string[]): DiffView {
     const rows: DiffRow[] = [];
+    const hunks: DiffHunk[] = [];
     const max = Math.max(oldLines.length, newLines.length);
     for (let index = 0; index < max; index += 1) {
       const oldText = oldLines[index];
@@ -85,20 +116,44 @@
         rows.push({
           left: { text: oldText ?? "", lineNumber: oldText === undefined ? null : index + 1, kind: oldText === undefined ? "empty" : "context" },
           right: { text: newText ?? "", lineNumber: newText === undefined ? null : index + 1, kind: newText === undefined ? "empty" : "context" },
+          hunkId: null,
+          showApply: false,
         });
       } else {
+        const hunk: DiffHunk = {
+          id: hunks.length,
+          oldStart: index,
+          oldDeleteCount: oldText === undefined ? 0 : 1,
+          newStart: index,
+          newDeleteCount: newText === undefined ? 0 : 1,
+          oldLines: oldText === undefined ? [] : [oldText],
+          newLines: newText === undefined ? [] : [newText],
+        };
+        hunks.push(hunk);
         rows.push({
           left: oldText === undefined ? emptyLine() : { text: oldText, lineNumber: index + 1, kind: "removed" },
           right: newText === undefined ? emptyLine() : { text: newText, lineNumber: index + 1, kind: "added" },
+          hunkId: hunk.id,
+          showApply: true,
         });
       }
     }
-    return rows;
+    return { rows, hunks };
   }
 
-  function appendChangedBlock(rows: DiffRow[], block: DiffOp[]) {
+  function appendChangedBlock(rows: DiffRow[], hunks: DiffHunk[], block: DiffOp[]) {
     const removed = block.filter((op): op is Extract<DiffOp, { kind: "removed" }> => op.kind === "removed");
     const added = block.filter((op): op is Extract<DiffOp, { kind: "added" }> => op.kind === "added");
+    const hunk: DiffHunk = {
+      id: hunks.length,
+      oldStart: removed[0] ? removed[0].oldLine - 1 : (added[0]?.oldIndex ?? 0),
+      oldDeleteCount: removed.length,
+      newStart: added[0] ? added[0].newLine - 1 : (removed[0]?.newIndex ?? 0),
+      newDeleteCount: added.length,
+      oldLines: removed.map((op) => op.text),
+      newLines: added.map((op) => op.text),
+    };
+    hunks.push(hunk);
     const max = Math.max(removed.length, added.length);
     for (let index = 0; index < max; index += 1) {
       const left = removed[index];
@@ -106,15 +161,17 @@
       rows.push({
         left: left ? { text: left.text, lineNumber: left.oldLine, kind: "removed" } : emptyLine(),
         right: right ? { text: right.text, lineNumber: right.newLine, kind: "added" } : emptyLine(),
+        hunkId: hunk.id,
+        showApply: index === 0,
       });
     }
   }
 
-  function buildDiffRows(baseContent: string, currentContent: string): DiffRow[] {
+  function buildDiffView(baseContent: string, currentContent: string): DiffView {
     const oldLines = splitLines(baseContent);
     const newLines = splitLines(currentContent);
     if (oldLines.length * newLines.length > MAX_LCS_CELLS) {
-      return buildSimpleDiffRows(oldLines, newLines);
+      return buildSimpleDiffView(oldLines, newLines);
     }
 
     const cols = newLines.length + 1;
@@ -137,32 +194,35 @@
         i += 1;
         j += 1;
       } else if (j < newLines.length && (i === oldLines.length || dp[i * cols + j + 1] >= dp[(i + 1) * cols + j])) {
-        ops.push({ kind: "added", text: newLines[j], newLine: j + 1 });
+        ops.push({ kind: "added", text: newLines[j], newLine: j + 1, oldIndex: i });
         j += 1;
       } else if (i < oldLines.length) {
-        ops.push({ kind: "removed", text: oldLines[i], oldLine: i + 1 });
+        ops.push({ kind: "removed", text: oldLines[i], oldLine: i + 1, newIndex: j });
         i += 1;
       }
     }
 
     const rows: DiffRow[] = [];
+    const hunks: DiffHunk[] = [];
     let block: DiffOp[] = [];
     for (const op of ops) {
       if (op.kind === "context") {
         if (block.length) {
-          appendChangedBlock(rows, block);
+          appendChangedBlock(rows, hunks, block);
           block = [];
         }
         rows.push({
           left: { text: op.oldText, lineNumber: op.oldLine, kind: "context" },
           right: { text: op.newText, lineNumber: op.newLine, kind: "context" },
+          hunkId: null,
+          showApply: false,
         });
       } else {
         block.push(op);
       }
     }
-    if (block.length) appendChangedBlock(rows, block);
-    return rows;
+    if (block.length) appendChangedBlock(rows, hunks, block);
+    return { rows, hunks };
   }
 
   function lineClass(kind: DiffKind): string {
@@ -189,12 +249,68 @@
     return selectedBaseRef === hash || data?.baseRef === hash;
   }
 
+  function getHunk(id: number | null): DiffHunk | null {
+    if (id === null) return null;
+    return diffView.hunks.find((hunk) => hunk.id === id) || null;
+  }
+
+  async function applyHunk(hunk: DiffHunk) {
+    if (applyingHunkId !== null) return;
+    const currentLines = splitLines(workingContent || content);
+    const currentSegment = currentLines.slice(hunk.newStart, hunk.newStart + hunk.newDeleteCount);
+    if (currentSegment.join("\n") !== hunk.newLines.join("\n")) {
+      applyMessage = { text: t("versions.apply_stale"), cls: "text-red-600 dark:text-red-400" };
+      return;
+    }
+
+    applyingHunkId = hunk.id;
+    applyMessage = null;
+    try {
+      const nextLines = [
+        ...currentLines.slice(0, hunk.newStart),
+        ...hunk.oldLines,
+        ...currentLines.slice(hunk.newStart + hunk.newDeleteCount),
+      ];
+      const nextContent = nextLines.join("\n");
+      workingContent = nextContent;
+      applyMessage = { text: t("versions.apply_success"), cls: "text-green-600 dark:text-green-400" };
+    } catch (err: unknown) {
+      applyMessage = {
+        text: t("versions.apply_failed") + (err instanceof Error ? err.message : String(err)),
+        cls: "text-red-600 dark:text-red-400",
+      };
+    } finally {
+      applyingHunkId = null;
+    }
+  }
+
+  async function saveDraft() {
+    if (!hasDraftChanges || savingDraft) return;
+    savingDraft = true;
+    applyMessage = null;
+    try {
+      await onsave(workingContent);
+      lastLoadKey = "";
+      await loadVersions(selectedBaseRef);
+      applyMessage = { text: t("versions.save_success"), cls: "text-green-600 dark:text-green-400" };
+    } catch (err: unknown) {
+      applyMessage = {
+        text: t("versions.save_failed") + (err instanceof Error ? err.message : String(err)),
+        cls: "text-red-600 dark:text-red-400",
+      };
+    } finally {
+      savingDraft = false;
+    }
+  }
+
   async function loadVersions(baseRef = selectedBaseRef) {
     const days = clampHistoryDays(appliedSinceDays);
     const key = `${docId}:${days}:${baseRef || "default"}`;
     if (!open || loading || key === lastLoadKey) return;
     loading = true;
     error = "";
+    const preserveDraft = hasDraftChanges;
+    if (!preserveDraft) applyMessage = null;
     try {
       const params = new URLSearchParams({ documentId: docId, sinceDays: String(days) });
       if (baseRef) params.set("baseRef", baseRef);
@@ -204,6 +320,7 @@
       const nextData = body as GitDocumentVersions;
       data = nextData;
       selectedBaseRef = nextData.baseRef;
+      if (!preserveDraft) workingContent = nextData.headContent ?? content;
       lastLoadKey = key;
     } catch (err: unknown) {
       error = err instanceof Error ? err.message : String(err);
@@ -271,9 +388,18 @@
           <button type="button" onclick={refreshWithPeriod} class="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50" disabled={loading}>
             <i class="fa-solid fa-arrows-rotate mr-1"></i>{t("versions.refresh")}
           </button>
+          <button type="button" onclick={saveDraft} class="rounded-lg bg-green-600 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50" disabled={!hasDraftChanges || savingDraft || loading}>
+            <i class="fa-solid fa-floppy-disk mr-1"></i>{savingDraft ? t("versions.saving") : t("common.save")}
+          </button>
           <div class="text-xs text-gray-500 dark:text-gray-400">
             {t("versions.base_ref").replace("{ref}", data?.baseRef || "HEAD")}
           </div>
+          {#if hasDraftChanges}
+            <div class="text-xs font-medium text-amber-700 dark:text-amber-300">{t("versions.unsaved_changes")}</div>
+          {/if}
+          {#if applyMessage}
+            <div class="text-xs font-medium {applyMessage.cls}">{applyMessage.text}</div>
+          {/if}
         </div>
 
         {#if data?.commits?.length}
@@ -310,17 +436,34 @@
             </div>
           {/if}
           <div class="h-full overflow-auto p-5">
-            <div class="grid min-w-[900px] grid-cols-2 overflow-hidden rounded-lg border border-gray-200 text-xs dark:border-gray-800">
-              <div class="border-b border-r border-gray-200 bg-gray-100 px-3 py-2 font-semibold text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200">{t("versions.left_title").replace("{ref}", data.baseRef)}</div>
-              <div class="border-b border-gray-200 bg-gray-100 px-3 py-2 font-semibold text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200">{t("versions.right_title")}</div>
+            <div class="grid min-w-[980px] grid-cols-[minmax(0,1fr)_3.25rem_minmax(0,1fr)] overflow-hidden rounded-lg border border-gray-200 text-xs dark:border-gray-800">
+              <div class="border-b border-r border-gray-200 bg-gray-100 px-3 py-2 font-semibold text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200">{t(hasDraftChanges ? "versions.right_title_draft" : "versions.right_title")}</div>
+              <div class="border-b border-r border-gray-200 bg-gray-100 px-2 py-2 text-center font-semibold text-gray-400 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-500"></div>
+              <div class="border-b border-gray-200 bg-gray-100 px-3 py-2 font-semibold text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200">{t("versions.left_title").replace("{ref}", data.baseRef)}</div>
               {#each diffRows as row, index (index)}
-                <div class="grid grid-cols-[4rem_1fr] border-r border-gray-200 font-mono leading-5 dark:border-gray-800 {lineClass(row.left.kind)}">
-                  <span class="select-none px-2 py-0.5 text-right {lineNumberClass(row.left.kind)}">{row.left.lineNumber ?? ""}</span>
-                  <pre class="m-0 whitespace-pre-wrap break-words px-2 py-0.5 font-mono">{row.left.text}</pre>
-                </div>
-                <div class="grid grid-cols-[4rem_1fr] font-mono leading-5 {lineClass(row.right.kind)}">
+                <div class="grid grid-cols-[4rem_1fr] border-r border-gray-200 font-mono leading-5 dark:border-gray-800 {lineClass(row.right.kind)}">
                   <span class="select-none px-2 py-0.5 text-right {lineNumberClass(row.right.kind)}">{row.right.lineNumber ?? ""}</span>
                   <pre class="m-0 whitespace-pre-wrap break-words px-2 py-0.5 font-mono">{row.right.text}</pre>
+                </div>
+                <div class="flex items-start justify-center border-r border-gray-200 bg-gray-50 px-1 py-0.5 dark:border-gray-800 dark:bg-gray-900/70">
+                  {#if row.showApply}
+                    {@const hunk = getHunk(row.hunkId)}
+                    {#if hunk}
+                      <button
+                        type="button"
+                        onclick={() => applyHunk(hunk)}
+                        disabled={applyingHunkId !== null}
+                        title={t("versions.apply_hunk")}
+                        class="mt-0.5 inline-flex h-7 w-8 items-center justify-center rounded-md border border-blue-200 bg-white font-mono text-sm font-bold text-blue-600 transition-colors hover:bg-blue-50 disabled:cursor-wait disabled:opacity-50 dark:border-blue-800 dark:bg-gray-950 dark:text-blue-300 dark:hover:bg-blue-950/40"
+                      >
+                        {applyingHunkId === hunk.id ? "..." : "<"}
+                      </button>
+                    {/if}
+                  {/if}
+                </div>
+                <div class="grid grid-cols-[4rem_1fr] font-mono leading-5 {lineClass(row.left.kind)}">
+                  <span class="select-none px-2 py-0.5 text-right {lineNumberClass(row.left.kind)}">{row.left.lineNumber ?? ""}</span>
+                  <pre class="m-0 whitespace-pre-wrap break-words px-2 py-0.5 font-mono">{row.left.text}</pre>
                 </div>
               {/each}
             </div>

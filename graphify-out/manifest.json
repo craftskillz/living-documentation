@@ -45,8 +45,8 @@
     "semantic_hash": ""
   },
   "documentation/.metadata.json": {
-    "mtime": 1782818537.6750834,
-    "ast_hash": "d82fb0aa3094612b8fc5d7659a24b2a2",
+    "mtime": 1782823129.4595778,
+    "ast_hash": "204028c7d2c27d80fa74c009b22405f1",
     "semantic_hash": ""
   },
   "documentation/.survival-kit.json": {
@@ -85,13 +85,13 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/public/i18n/en.json": {
-    "mtime": 1782818438.288304,
-    "ast_hash": "2bd7737f04bd8fae2493b0d87a791a69",
+    "mtime": 1782819182.1674478,
+    "ast_hash": "ec370d939d219dd8ced381ed54320032",
     "semantic_hash": ""
   },
   "src/frontend-svelte/public/i18n/fr.json": {
-    "mtime": 1782818431.6069794,
-    "ast_hash": "6d8aa5764955b95159d49551205bde4e",
+    "mtime": 1782819177.4079924,
+    "ast_hash": "aa08d15502ac1de8c0eb3e4f503e08e1",
     "semantic_hash": ""
   },
   "src/frontend-svelte/public/wordcloud2.js": {
@@ -325,8 +325,8 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/home/DocViewer.svelte": {
-    "mtime": 1782811601.6539896,
-    "ast_hash": "1d452164faccd7e8d8732fc2d09b8c16",
+    "mtime": 1782818840.3087866,
+    "ast_hash": "1745abcdc1d8b6be2a1c7bd38d23070e",
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/home/EditableMarkdown.svelte": {
@@ -1995,8 +1995,8 @@
     "semantic_hash": ""
   },
   "documentation/WORKLOG/current-task.md": {
-    "mtime": 1782818515.4479387,
-    "ast_hash": "23570d781c7bd8749f670f2b2eed6225",
+    "mtime": 1782823117.203372,
+    "ast_hash": "91844b8a464734bbad4da02c657df32c",
     "semantic_hash": ""
   },
   "memory/MEMORY.md": {
@@ -3105,13 +3105,13 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/home/VersionsModal.svelte": {
-    "mtime": 1782818445.315278,
-    "ast_hash": "c7e2329008a8110e8880bd697b12a441",
+    "mtime": 1782823013.096579,
+    "ast_hash": "3aae58577659dbe1fb5fbe3841795aab",
     "semantic_hash": ""
   },
   "documentation/ADRS/2026_06_30_11_21_[INTEGRATION]_versions_visuelles_des_documents_depuis_git_head.md": {
-    "mtime": 1782818494.9634373,
-    "ast_hash": "742c8dddb1ed90582cf5db83f12390cb",
+    "mtime": 1782823095.1914163,
+    "ast_hash": "023b6b253f67ab21ebd58ecddd6f9af9",
     "semantic_hash": ""
   }
 }

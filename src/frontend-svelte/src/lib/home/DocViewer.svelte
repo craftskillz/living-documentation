@@ -475,7 +475,7 @@
 <Annotations bind:this={annotations} {contentEl} docId={doc.id} />
 
 <MetadataModal open={metadataOpen} docId={doc.id} content={doc.content} onclose={() => (metadataOpen = false)} />
-<VersionsModal open={versionsOpen} docId={doc.id} content={doc.content} onclose={() => (versionsOpen = false)} />
+<VersionsModal open={versionsOpen} docId={doc.id} content={doc.content} {onsave} onclose={() => (versionsOpen = false)} />
 <ConfirmDialog bind:this={confirmDialog} />
 
 {#if ttsLanguagePromptOpen}
