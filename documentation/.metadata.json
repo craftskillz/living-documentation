@@ -1580,8 +1580,8 @@
     },
     {
       "path": "src/frontend-svelte/src/lib/home/VersionsModal.svelte",
-      "hash": "c7e4fbbb9b8c1c279ce7ec776158ac06321015d882507a6aeab62a625a917eb6",
-      "commit": "5f22b313c0e7da371e94fe64cc2baad9d6793dee",
+      "hash": "dca603e3914572e7d348126cc99fb3b25a92431cb6cc90d0ae7081fa0a59e5c0",
+      "commit": "e5904821bd9cf1c7f54afb01ecf0745eca01246b",
       "dirty": true
     },
     {
