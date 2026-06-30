@@ -5,17 +5,6 @@
 **tags:** presentation, produit, markdown, local-first, git, documentation, agents, mcp, workspace
 ---
 
-## Le modele local-first
-
-La documentation repose sur des fichiers presents dans votre espace local :
-
-- les documents sont des fichiers Markdown ;
-- les images et fichiers joints restent accessibles comme fichiers ;
-- Git peut enregistrer les modifications et permettre la restauration ;
-- l'outil peut etre utilise seul, puis enrichi avec MCP et des agents.
-
-Ce modele rend la documentation plus durable : elle reste lisible meme hors de l'interface, et elle peut etre suivie par Git comme n'importe quel artefact important du projet.
-
 ## Les fonctions principales
 
 | Fonction | Utilite |
