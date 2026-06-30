@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T14:11:18.548Z",
+  "updatedAt": "2026-06-30T14:11:32.001Z",
   "entities": [
     {
       "id": "root",
@@ -418,7 +418,7 @@
     },
     {
       "id": "agent-mr0q5fqy",
-      "label": "Prompt to Create Image",
+      "label": "Opened Prompt to Create Image",
       "kind": "agent",
       "parentId": "provider-mqtqt25p",
       "x": -209.41237277051292,
@@ -435,8 +435,8 @@
         "requiresUserInput": false,
         "userInputDescription": "",
         "expectedOutputMarker": "",
-        "description": "Opened ",
-        "workspaceFolder": "AI/WORKSPACE/prompt_to_create_image"
+        "description": "Opened prompt to create",
+        "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image"
       }
     }
   ],
