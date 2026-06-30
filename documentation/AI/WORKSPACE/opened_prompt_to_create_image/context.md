@@ -1,1 +1,1 @@
-local-first-docs-system illustration generated
+mcp-documentation-workflow-illustration generated
