@@ -1,1 +1,1 @@
-adr-lifecycle-illustration generated
+documentation-reliability-concept generated
