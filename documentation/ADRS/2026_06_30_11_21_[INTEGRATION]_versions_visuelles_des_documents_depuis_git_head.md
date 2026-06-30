@@ -1,8 +1,8 @@
 ---
 **date:** 2026-06-30
 **status:** To be validated
-**description:** Ajoute une API Git par document et une modale Home qui compare visuellement un commit selectionne avec HEAD, liste les commits du document et restaure des blocs dans le document courant.
-**tags:** git, versions, HEAD, visual-diff, document-versions, VersionsModal, restore-hunk, baseRef, DocViewer, /api/git/document-versions
+**description:** Ajoute une API Git par document et une modale Home qui compare visuellement un commit selectionne avec HEAD, liste les commits du document et prepare des restaurations de blocs avant sauvegarde explicite.
+**tags:** git, versions, HEAD, visual-diff, document-versions, VersionsModal, restore-hunk, save-draft, baseRef, /api/git/document-versions
 ---
 
 # Versions visuelles des documents depuis Git HEAD
@@ -11,7 +11,7 @@
 
 L'integration Git admin commit automatiquement les changements sous `docsFolder`. Une comparaison entre le fichier courant et `HEAD` devient donc souvent vide : apres chaque sauvegarde, le contenu du document ouvert correspond deja a la derniere version committee.
 
-Le besoin utile est attache au document courant : lorsque Git est active et correctement configure, l'utilisateur doit pouvoir ouvrir une vue `Versions` apres `Metadonnees`, selectionner un commit du document, comparer ce commit avec le `HEAD` courant, consulter les commits qui concernent ce document sur une periode configurable, et restaurer certains blocs du commit selectionne dans le document courant.
+Le besoin utile est attache au document courant : lorsque Git est active et correctement configure, l'utilisateur doit pouvoir ouvrir une vue `Versions` apres `Metadonnees`, selectionner un commit du document, comparer ce commit avec le `HEAD` courant, consulter les commits qui concernent ce document sur une periode configurable, preparer la restauration de certains blocs du commit selectionne, puis declencher une sauvegarde unique.
 
 ## Decision
 
@@ -38,17 +38,19 @@ Les documents extra-files situes hors `docsFolder` ne sont pas eligibles a cette
 
 `VersionsModal.svelte` charge l'API a l'ouverture, affiche les commits du document sur la periode choisie, et highlighte la pastille du commit selectionne. Par defaut, la selection vient de l'API et correspond au commit `n-1` du document lorsque cet historique existe.
 
-Un clic sur une pastille relance l'API avec `baseRef=<hash du commit>`. Le diff ligne par ligne est calcule cote frontend entre `baseContent` (commit selectionne) et `headContent` (`HEAD` courant). Le rendu retenu est cote-a-cote : colonne gauche pour le commit selectionne, colonne droite pour `HEAD`.
+Un clic sur une pastille relance l'API avec `baseRef=<hash du commit>`. Le diff ligne par ligne est calcule cote frontend entre `baseContent` (commit selectionne) et `headContent` (`HEAD` courant), ou entre `baseContent` et les changements locaux a enregistrer si l'utilisateur a deja restaure des blocs. Le rendu retenu est cote-a-cote : colonne gauche pour le commit selectionne, colonne droite pour `HEAD` ou les changements en attente.
 
 Le diff utilise une LCS bornee par `MAX_LCS_CELLS` pour conserver une correspondance lisible sur les documents normaux, avec fallback lineaire pour les documents trop grands.
 
-### Restauration de blocs
+### Restauration de blocs et sauvegarde explicite
 
 Le calcul du diff produit aussi des hunks : chaque bloc modifie connait sa plage dans `baseContent`, sa plage dans `headContent`, les lignes du commit selectionne et les lignes courantes.
 
-La modale affiche un bouton `<` sur le premier rang de chaque hunk. Le clic remplace dans le document courant la plage issue de `HEAD` par les lignes correspondantes du commit selectionne, puis appelle `onsave()` de `DocViewer.svelte`. La sauvegarde suit donc le workflow normal du viewer, y compris l'autocommit Git si l'integration est active.
+La modale affiche un bouton `<` sur le premier rang de chaque hunk. Le clic ne fait aucune requete d'ecriture : il remplace seulement la plage correspondante dans un contenu local de la modale. La colonne de droite passe alors de `HEAD courant` a `Changements a enregistrer`, et un indicateur `Changements non enregistres` apparait.
 
-Avant d'appliquer un hunk, la modale compare la plage attendue avec le contenu courant local. Si le document a change depuis le chargement du diff, l'application est bloquee et l'utilisateur doit rafraichir les versions. Apres une restauration reussie, la modale recharge le diff pour afficher le nouveau `HEAD`.
+Un bouton `Enregistrer`, place au-dessus du diff, reste desactive tant qu'aucun bloc n'a ete applique. Lorsqu'il est clique, il appelle `onsave()` de `DocViewer.svelte` avec le contenu local. C'est donc uniquement ce bouton qui declenche la sauvegarde backend et, par consequence, l'autocommit Git si l'integration est active.
+
+Avant d'appliquer un hunk, la modale compare la plage attendue avec le contenu local courant. Si ce contenu ne correspond plus au hunk affiche, l'application est bloquee et l'utilisateur doit rafraichir les versions. Apres une sauvegarde reussie, la modale recharge le diff pour afficher le nouveau `HEAD`.
 
 ## Consequences
 
@@ -58,6 +60,7 @@ Avant d'appliquer un hunk, la modale compare la plage attendue avec le contenu c
 - L'historique liste uniquement les commits qui touchent le document ouvert, avec une periode modifiable.
 - La pastille selectionnee rend explicite le point de comparaison.
 - La restauration `<` permet de recuperer seulement un bloc du commit visite, sans revenir integralement au document ancien.
+- Plusieurs blocs peuvent etre prepares avant une seule sauvegarde, evitant un autocommit par bloc.
 - La feature respecte le bornage de l'integration Git : elle ne lit que les documents sous `docsFolder`.
 - Le bouton n'apparait pas si Git n'est pas effectivement utilisable, ce qui evite une action morte dans les projets non configures.
 
