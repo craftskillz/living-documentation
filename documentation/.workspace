@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T19:15:39.698Z",
+  "updatedAt": "2026-06-30T19:16:04.794Z",
   "entities": [
     {
       "id": "root",
@@ -464,17 +464,17 @@
     },
     {
       "id": "provider-mr111aht",
-      "label": "LLM Provider 9",
+      "label": "Nano Banana Pro",
       "kind": "llm",
       "parentId": "root",
       "x": -276.75449262173726,
       "y": -380.9198800537318,
       "angle": 4.084070449666731,
       "config": {
-        "endpoint": "http://localhost:11434",
+        "endpoint": "https://openrouter.ai/api/v1",
         "token": "",
-        "model": "",
-        "providerType": "chat",
+        "model": "google/gemini-3-pro-image",
+        "providerType": "image",
         "toolMode": "tools",
         "timeout": 180,
         "systemPrompt": "",
