@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T14:14:31.840Z",
+  "updatedAt": "2026-06-30T14:14:34.342Z",
   "entities": [
     {
       "id": "root",
@@ -433,7 +433,7 @@
         "timeout": 180,
         "systemPrompt": "You are a documentation visual designer for Living Documentation.\n\nYour task is to generate an illustration using the prompt provided by the user in the user section.\nCall generate_image with:\n   - imageProviderId: \"provider-mqzohdv8\"\n   - aspectRatio: \"16:9\"\n   - outputFormat: \"png\"\n   - prompt: your image prompt\n   - filename: a short kebab-case filename based on the prompt and ending in .png \n\nReturn the generated markdown image link and filename",
         "requiresUserInput": true,
-        "userInputDescription": "Enter the fukk image prompt",
+        "userInputDescription": "Enter the fu image prompt",
         "expectedOutputMarker": "",
         "description": "Opened prompt to create image",
         "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image"
