@@ -58,7 +58,7 @@ Le frontend ajoute `gitToast.ts` :
 
 - au chargement, au changement de route et apres les requetes de sauvegarde, il interroge `/api/git/status` ;
 - en etat `unconfigured`, il affiche le toast `Veuillez configurer l'integration Git dans la page Admin.` avec un lien vers `/admin` ;
-- en etat `enabled`, il affiche les erreurs de configuration Git, de commit, de push, ou les changements hors `docsFolder` qui seront ignores.
+- en etat `enabled`, il affiche les erreurs de configuration Git, de commit, de push, ou les changements hors du chemin absolu de `docsFolder` qui seront ignores.
 
 Admin expose une section `Integration Git` avec les radios `Non configure`, `Desactive`, `Active`, puis les options de commit/push lorsque Git est active.
 
