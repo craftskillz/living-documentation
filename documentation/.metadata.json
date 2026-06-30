@@ -1524,8 +1524,8 @@
     },
     {
       "path": "src/frontend-svelte/src/styles/app.css",
-      "hash": "d47be6ab56e858a089fa39dde7c4a074e985297ce0f68f03a4094bae933743a5",
-      "commit": "f69b5c3f059c7c121b3b278102398781dbe9f804",
+      "hash": "f0fada89775681970a749e81a961858e91eb938d8d75ca3651d3455d699e4da4",
+      "commit": "770f21c9f73515a20f81ec77e574ea5a63e2ca8e",
       "dirty": true
     },
     {
