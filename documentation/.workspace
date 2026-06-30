@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T14:21:37.119Z",
+  "updatedAt": "2026-06-30T14:21:38.883Z",
   "entities": [
     {
       "id": "root",
@@ -441,7 +441,7 @@
     },
     {
       "id": "provider-mr0qj5ec",
-      "label": "LLM Provider 8",
+      "label": "Chat OpenRouter Cohere Mini Free",
       "kind": "llm",
       "parentId": "root",
       "x": -220.67171466370743,
@@ -450,7 +450,7 @@
       "config": {
         "endpoint": "http://localhost:11434",
         "token": "",
-        "model": "",
+        "model": "cohere/north-mini-code:free",
         "providerType": "chat",
         "toolMode": "tools",
         "timeout": 180,
