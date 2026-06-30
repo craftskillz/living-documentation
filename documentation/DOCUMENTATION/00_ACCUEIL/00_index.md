@@ -10,6 +10,7 @@
 <!-- image-width: 2/3 -->
 ![Atelier local Living Documentation reliant documents Markdown, notes, processus, diagrammes, Git et agents IA](/images/DOCUMENTATION/concept-01-hero-produit.png)
 
+### Ce n'est pas un outil de generation de code, mais un outil de generation, de maintenance, de versioning et d'automatisation de documentation
 
 Il sert a creer, organiser, maintenir, versionner et automatiser de la documentation :
 - documentation de code
@@ -21,7 +22,7 @@ Il sert a creer, organiser, maintenir, versionner et automatiser de la documenta
 - runs d'agents
 - et supports d'equipe.
 
-Ce n'est pas un outil de generation de code. C'est un outil de generation, de maintenance, de versioning et d'automatisation de documentation. Avec Workspace, MCP, les providers LLM et les tools internes, il devient aussi un laboratoire d'automatisation agentique appliquee a la documentation.
+. Avec Workspace, MCP, les providers LLM et les tools internes, il devient aussi un laboratoire d'automatisation agentique appliquee a la documentation.
 
 ## Pour commencer
 
