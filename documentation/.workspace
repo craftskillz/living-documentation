@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T14:15:28.431Z",
+  "updatedAt": "2026-06-30T14:15:34.026Z",
   "entities": [
     {
       "id": "root",
@@ -458,7 +458,7 @@
         "requiresUserInput": false,
         "userInputDescription": "",
         "expectedOutputMarker": "",
-        "description": "Runs focused automation against documentation, source, or quality signals.",
+        "description": "Opened prompt to create image",
         "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image_2"
       }
     }
