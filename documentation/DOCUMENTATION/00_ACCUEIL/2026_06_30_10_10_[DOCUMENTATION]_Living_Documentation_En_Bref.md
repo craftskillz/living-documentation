@@ -5,17 +5,6 @@
 **tags:** presentation, produit, markdown, local-first, git, documentation, agents, mcp, workspace
 ---
 
-# Living Documentation en bref
-
-
-
-
-## Ce que Living Documentation n'est pas
-
-Living Documentation n'est pas un CMS cloud, un wiki ferme, un outil de generation de code ou un simple editeur Markdown.
-
-L'objectif n'est pas de cacher les fichiers derriere une base proprietaire. L'objectif est de produire une documentation locale, exploitable, claire, versionnee et automatisable.
-
 ## Le modele local-first
 
 La documentation repose sur des fichiers presents dans votre espace local :
