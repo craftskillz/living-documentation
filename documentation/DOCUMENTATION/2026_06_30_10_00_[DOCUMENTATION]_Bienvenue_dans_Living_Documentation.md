@@ -46,7 +46,7 @@ git init
 ```
 Rendez vous alors sur la page d'admin et configurez l'intégration git.
 
-<!-- image-width: 2/3 -->
+<!-- image-width: 1/2 -->
 ![image](/images/DOCUMENTATION/admin_git_integration.png)
 
 
