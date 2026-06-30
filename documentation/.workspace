@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T19:16:14.479Z",
+  "updatedAt": "2026-06-30T19:16:24.112Z",
   "entities": [
     {
       "id": "root",
@@ -289,7 +289,7 @@
       "config": {
         "endpoint": "https://openrouter.ai/api/v1",
         "token": "env:OPENROUTER_API_KEY",
-        "model": "google/gemini-3-pro-image",
+        "model": "google/gemini-3.1-flash-image",
         "providerType": "image",
         "toolMode": "tools",
         "timeout": 180,
