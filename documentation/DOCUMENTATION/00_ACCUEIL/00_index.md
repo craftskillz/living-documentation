@@ -12,8 +12,6 @@
 
 #### Ce n'est pas un outil de generation de code, mais un outil de generation, de maintenance, de versioning et d'automatisation de documentation
 
-## Pour commencer
-
 <!-- quote-type: info -->
 <!-- quote-title: Pour commencer -->
 > Choisissez le chemin qui vous intéresse
