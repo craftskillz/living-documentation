@@ -24,6 +24,10 @@ La colonne de gauche affiche :
 - les documents Markdown
 - les badges utiles : annotations, fichiers joints, statuts
 
+| En-tête 1 | En-tête 2 |
+| --------- | --------- |
+|           |           |
+
 Un clic sur un document l'ouvre dans la partie principale de la page.
 
 </td>
