@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T14:21:42.675Z",
+  "updatedAt": "2026-06-30T14:21:43.611Z",
   "entities": [
     {
       "id": "root",
@@ -441,7 +441,7 @@
     },
     {
       "id": "provider-mr0qj5ec",
-      "label": "Chat OpenRouter Cohere Mini Freegen",
+      "label": "Chat OpenRouter Cohere Mini Free",
       "kind": "llm",
       "parentId": "root",
       "x": -220.67171466370743,
