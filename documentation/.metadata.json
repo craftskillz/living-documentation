@@ -1512,8 +1512,8 @@
     },
     {
       "path": "src/frontend-svelte/src/lib/gitToast.ts",
-      "hash": "b79b9b4dd6d0c8bc9d0d6884aad29c48365de25093ce89be276c2bcb88bda08d",
-      "commit": "f69b5c3f059c7c121b3b278102398781dbe9f804",
+      "hash": "cf437567f8dc476bf8e6de351ae4a68cc16370199123e28f817bd502df36837d",
+      "commit": "f651addfadca1db557d4da10c81dfdb04fd4ce2d",
       "dirty": true
     },
     {
