@@ -16,6 +16,7 @@ C'est ici que vous retrouvez vos dossiers, vos catégories, vos documents, et le
 
 <div>
 <span>
+
 ### Ce que vous voyez à gauche
 La colonne de gauche affiche :
 
