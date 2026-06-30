@@ -20,12 +20,9 @@ Create a professional conceptual illustration about documentation drift and know
 
 ## Response
 
-The illustration has been generated successfully. Here's the markdown image link and filename:
+The illustration has been generated successfully. Here's the image :
 
-**Markdown Image Link:**
-```
 ![20260630185305_ie4s_documentation-drift-knowledge-fragmentation.png](./images-ai/nano-banana-pro/20260630185305_ie4s_documentation-drift-knowledge-fragmentation.png)
-```
 
 **Filename:** 
 `20260630185305_ie4s_documentation-drift-knowledge-fragmentation.png`
