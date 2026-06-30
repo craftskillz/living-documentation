@@ -11,6 +11,7 @@
   import ShapeEditor from "./routes/ShapeEditor.svelte";
   import SurvivalKit from "./routes/SurvivalKit.svelte";
   import { initPersistentToast } from "./lib/persistentToast";
+  import { checkGitIntegrationToast, installGitToastFetchHook } from "./lib/gitToast";
 
   // Normalize the pathname so trailing slashes (e.g. "/diagram/") still match the
   // exact route keys below. Express tolerates the trailing slash and serves
@@ -46,6 +47,7 @@
     history.pushState(null, "", nextLocation);
     path = normalized;
     initPersistentToast();
+    void checkGitIntegrationToast();
 
     // Notify the active page that the location changed. Pages like Home only
     // react to the `?doc=` query on mount and on popstate; without this dispatch,
@@ -85,6 +87,8 @@
 
   onMount(() => {
     initPersistentToast();
+    installGitToastFetchHook();
+    void checkGitIntegrationToast();
     document.addEventListener("click", handleInternalLinkClick, true);
     return () => {
       document.removeEventListener("click", handleInternalLinkClick, true);
@@ -94,6 +98,7 @@
   window.addEventListener("popstate", () => {
     path = normalizePath(window.location.pathname);
     initPersistentToast();
+    void checkGitIntegrationToast();
   });
 
   $effect(() => {

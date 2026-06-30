@@ -5,6 +5,7 @@
   import Annotations from "./Annotations.svelte";
   import AccuracyGauge from "./AccuracyGauge.svelte";
   import MetadataModal from "./MetadataModal.svelte";
+  import VersionsModal from "./VersionsModal.svelte";
   import EditableMarkdown from "./EditableMarkdown.svelte";
   import ConfirmDialog from "../ConfirmDialog.svelte";
   import { metadata } from "./metadata.svelte";
@@ -29,6 +30,8 @@
   let annotations = $state<Annotations>(null!);
   let confirmDialog = $state<ConfirmDialog>(null!);
   let metadataOpen = $state(false);
+  let versionsOpen = $state(false);
+  let versionsAvailable = $state(false);
   let localSearchMount = $state<HTMLElement>(null!);
   let searchMatches = $state<SearchMatch[]>([]);
   let lastWiredId = "";
@@ -50,6 +53,21 @@
   let copiedId = $state(false);
   let ttsLanguagePromptOpen = $state(false);
   let ttsLanguageSaving = $state(false);
+
+  async function loadVersionsAvailability() {
+    try {
+      const res = await fetch("/api/git/status");
+      const status = await res.json() as { mode?: string; ok?: boolean };
+      versionsAvailable = status.mode === "enabled" && status.ok === true;
+    } catch {
+      versionsAvailable = false;
+    }
+  }
+
+  $effect(() => {
+    void doc.id;
+    void loadVersionsAvailability();
+  });
 
   function scrollToAnchor(anchorId: string) {
     const container = document.getElementById("home-content-area");
@@ -356,6 +374,9 @@
           <button onclick={exportPDF} title={t("doc.export_pdf")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">📄 {t("doc.export_pdf_btn")}</button>
           <button onclick={copyLink} title={t("doc.copy_link")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-link"></i> {t("doc.copy_link_btn")}</button>
           <button onclick={() => (metadataOpen = true)} data-testid="metadata-btn" title={t("metadata.button_title")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-code-compare"></i> {t("metadata.button")}</button>
+          {#if versionsAvailable}
+            <button onclick={() => (versionsOpen = true)} data-testid="versions-btn" title={t("versions.button_title")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-code-branch"></i> {t("versions.button")}</button>
+          {/if}
           <button onclick={() => editable.enterEdit()} title={t("doc.edit")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-file-pen"></i> {t("doc.edit_btn")}</button>
           <button onclick={() => (confirmingDelete = true)} title={t("doc.delete")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-700 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 transition-colors"><i class="fa-solid fa-trash"></i> {t("doc.delete_btn")}</button>
           <button onclick={toggleToc} title={t("doc.toc_toggle")} class="no-print text-sm px-3 py-1.5 rounded-lg border transition-colors {tocOpen ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}"><i class="fa-solid fa-list-ul"></i></button>
@@ -454,6 +475,7 @@
 <Annotations bind:this={annotations} {contentEl} docId={doc.id} />
 
 <MetadataModal open={metadataOpen} docId={doc.id} content={doc.content} onclose={() => (metadataOpen = false)} />
+<VersionsModal open={versionsOpen} docId={doc.id} content={doc.content} onclose={() => (versionsOpen = false)} />
 <ConfirmDialog bind:this={confirmDialog} />
 
 {#if ttsLanguagePromptOpen}

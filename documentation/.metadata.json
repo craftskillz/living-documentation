@@ -1558,5 +1558,43 @@
       "commit": "f69b5c3f059c7c121b3b278102398781dbe9f804",
       "dirty": true
     }
+  ],
+  "ADRS/2026_06_30_11_21_[INTEGRATION]_versions_visuelles_des_documents_depuis_git_head": [
+    {
+      "path": "src/lib/git-integration.ts",
+      "hash": "5f3f7fcdf38c0206424ce8ce01c76acbbb53b0b1b70711fea094593aace3d726",
+      "commit": "f03bf7372feaceab047e59bd942af31f40675e48",
+      "dirty": true
+    },
+    {
+      "path": "src/routes/git.ts",
+      "hash": "915c3248076638329042732c2e19d3e42101c6844496ecc32d36c861b5825e3e",
+      "commit": "2108bbcfd17c4bb5773755e13e46ccf8758ef698",
+      "dirty": true
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/DocViewer.svelte",
+      "hash": "2282c58d7a6df26ceb2db8d96b3751d4018345dfa921bf9fa499f6699e377495",
+      "commit": "09b25b5ebef46d0537ad53bc5f4747bebc0adeb2",
+      "dirty": true
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/VersionsModal.svelte",
+      "hash": "c45a2584517e87815cbbd220f0786187a173ef9ec02a7957e1ae013b45d7af04",
+      "commit": "27e91be0ab844588fee959f03754f2f5566b7da4",
+      "dirty": true
+    },
+    {
+      "path": "src/frontend-svelte/public/i18n/fr.json",
+      "hash": "fa758469ca3f5bbb7ae2161eac71fa9e8902724756d5d200a1f35a149c2ec654",
+      "commit": "dc3a2f31d9be1bc5ce7c2dfca6d7a278a41cb954",
+      "dirty": true
+    },
+    {
+      "path": "src/frontend-svelte/public/i18n/en.json",
+      "hash": "1cac150d0eb96f89b2479f658deb81d27e868f1ede086298daf02e361fd9a120",
+      "commit": "1c94dcef776478458315f36c523c6f6329c8ddee",
+      "dirty": true
+    }
   ]
 }

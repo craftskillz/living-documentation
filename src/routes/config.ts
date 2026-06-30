@@ -41,6 +41,7 @@ export function configRouter(docsPath: string): Router {
         'diagramDefaults',
         'llmModelsNoV1Hosts',
         'debugAgents',
+        'gitIntegration',
       ];
       const safe: Partial<StoredConfig> = {};
       for (const key of allowed) {
@@ -132,6 +133,34 @@ export function configRouter(docsPath: string): Router {
       // debugAgents: coerce to a strict boolean.
       if ('debugAgents' in patch) {
         safe.debugAgents = patch.debugAgents === true;
+      }
+      // gitIntegration: explicit tri-state plus conservative push settings.
+      if ('gitIntegration' in patch) {
+        const v = patch.gitIntegration;
+        if (v && typeof v === 'object' && !Array.isArray(v)) {
+          const raw = v as unknown as Record<string, unknown>;
+          const mode =
+            raw.mode === 'disabled' || raw.mode === 'enabled'
+              ? raw.mode
+              : 'unconfigured';
+          const pushMode = raw.pushMode === 'everyNCommits' ? 'everyNCommits' : 'never';
+          const every =
+            typeof raw.pushEveryCommits === 'number' && Number.isFinite(raw.pushEveryCommits)
+              ? raw.pushEveryCommits
+              : 1;
+          const commitMessage =
+            typeof raw.commitMessage === 'string' && raw.commitMessage.trim()
+              ? raw.commitMessage.trim().slice(0, 160)
+              : 'docs: update living documentation';
+          safe.gitIntegration = {
+            mode,
+            pushMode,
+            pushEveryCommits: Math.max(1, Math.min(1000, Math.round(every))),
+            commitMessage,
+          };
+        } else {
+          return res.status(400).json({ error: 'gitIntegration must be an object' });
+        }
       }
       // codeBlockMaxHeight: non-negative integer pixels (0 disables); clamped to [0, 5000]
       if ('codeBlockMaxHeight' in patch) {

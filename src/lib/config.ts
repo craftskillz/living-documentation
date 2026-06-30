@@ -25,6 +25,16 @@ export interface DiagramDefaults {
   };
 }
 
+export type GitIntegrationMode = "unconfigured" | "disabled" | "enabled";
+export type GitPushMode = "never" | "everyNCommits";
+
+export interface GitIntegrationConfig {
+  mode: GitIntegrationMode;
+  pushMode: GitPushMode;
+  pushEveryCommits: number;
+  commitMessage: string;
+}
+
 // Storage shape: what is actually persisted in .living-doc.json.
 // Paths are stored as POSIX-style paths RELATIVE to the docs folder, so the file
 // is portable across machines (checkable into git).
@@ -55,6 +65,9 @@ export interface StoredConfig {
   // LLM base URLs whose model-listing endpoint is `{base}/models` (not `{base}/v1/models`),
   // e.g. DeepSeek. Matched by origin (protocol + host). Chat completions are unaffected.
   llmModelsNoV1Hosts: string[];
+  // Optional Git automation for documentation saves. "unconfigured" keeps the
+  // reminder visible until the user explicitly enables or disables it.
+  gitIntegration: GitIntegrationConfig;
 }
 
 // Runtime shape: what consumers receive from readConfig.
@@ -149,6 +162,12 @@ const STORAGE_DEFAULTS: StoredConfig = {
   },
   llmModelsNoV1Hosts: ['https://api.deepseek.com'],
   debugAgents: false,
+  gitIntegration: {
+    mode: "unconfigured",
+    pushMode: "never",
+    pushEveryCommits: 1,
+    commitMessage: "docs: update living documentation",
+  },
 };
 
 export function getConfigPath(docsPath: string): string {
@@ -171,6 +190,32 @@ function toRelativeStorage(docsPath: string, abs: string): string | null {
 
 function resolveRelative(docsPath: string, rel: string): string {
   return path.resolve(docsPath, rel);
+}
+
+function normalizeGitIntegration(input: unknown): GitIntegrationConfig {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    return { ...STORAGE_DEFAULTS.gitIntegration };
+  }
+  const value = input as Record<string, unknown>;
+  const mode: GitIntegrationMode =
+    value.mode === "disabled" || value.mode === "enabled"
+      ? value.mode
+      : "unconfigured";
+  const pushMode: GitPushMode =
+    value.pushMode === "everyNCommits" ? "everyNCommits" : "never";
+  const rawEvery = typeof value.pushEveryCommits === "number" && Number.isFinite(value.pushEveryCommits)
+    ? value.pushEveryCommits
+    : STORAGE_DEFAULTS.gitIntegration.pushEveryCommits;
+  const commitMessage =
+    typeof value.commitMessage === "string" && value.commitMessage.trim()
+      ? value.commitMessage.trim().slice(0, 160)
+      : STORAGE_DEFAULTS.gitIntegration.commitMessage;
+  return {
+    mode,
+    pushMode,
+    pushEveryCommits: Math.max(1, Math.min(1000, Math.round(rawEvery))),
+    commitMessage,
+  };
 }
 
 // Reads raw JSON, migrates any legacy absolute paths and the removed docsFolder field
@@ -263,7 +308,11 @@ function readAndMigrate(docsPath: string): StoredConfig {
     }
   }
 
-  return { ...STORAGE_DEFAULTS, ...(raw as Partial<StoredConfig>) };
+  return {
+    ...STORAGE_DEFAULTS,
+    ...(raw as Partial<StoredConfig>),
+    gitIntegration: normalizeGitIntegration(raw.gitIntegration),
+  };
 }
 
 export function readConfig(docsPath: string): LivingDocConfig {

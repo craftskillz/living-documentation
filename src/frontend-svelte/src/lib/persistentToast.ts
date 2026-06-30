@@ -111,7 +111,7 @@ function clearToastTimer(id: string) {
   }
 }
 
-function removePersistentToast(id: string) {
+export function dismissPersistentToast(id: string) {
   clearToastTimer(id);
   const next = readToasts().filter((toast) => toast.id !== id);
   writeToasts(next);
@@ -161,7 +161,7 @@ function buildToastElement(toast: PersistedToast): HTMLElement {
   close.type = "button";
   close.setAttribute("aria-label", "Close notification");
   close.textContent = "×";
-  close.addEventListener("click", () => removePersistentToast(toast.id));
+  close.addEventListener("click", () => dismissPersistentToast(toast.id));
 
   root.append(icon, body, close);
   return root;
@@ -238,13 +238,13 @@ function scheduleExpiries(toasts: PersistedToast[]) {
 
     const delay = toast.expiresAt - Date.now();
     if (delay <= 0) {
-      removePersistentToast(toast.id);
+      dismissPersistentToast(toast.id);
       continue;
     }
 
     toastTimers.set(
       toast.id,
-      window.setTimeout(() => removePersistentToast(toast.id), delay),
+      window.setTimeout(() => dismissPersistentToast(toast.id), delay),
     );
   }
 }

@@ -19,8 +19,10 @@ import { workspaceRouter } from './routes/workspace';
 import { blueprintRouter } from './routes/blueprint';
 import { survivalKitRouter } from './routes/survival-kit';
 import { ttsRouter } from './routes/tts';
+import { gitRouter } from './routes/git';
 import { mcpRouter } from './mcp/server';
 import { writeConfig } from './lib/config';
+import { gitAutoCommitMiddleware } from './lib/git-integration';
 
 const activeServers = new Set<Server>();
 
@@ -42,7 +44,10 @@ export async function startServer({
   // Persist port to .living-doc.json; readAndMigrate runs here and strips any legacy absolute paths.
   writeConfig(docsPath, { port });
 
+  app.use(gitAutoCommitMiddleware(docsPath));
+
   // API
+  app.use('/api/git', gitRouter(docsPath));
   app.use('/api/documents', documentsRouter(docsPath));
   app.use('/api/config', configRouter(docsPath));
   app.use('/api/browse', browseRouter(docsPath));
