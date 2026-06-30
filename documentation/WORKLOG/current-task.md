@@ -1,8 +1,8 @@
 ---
 **date:** 2026-06-30
 **status:** Completed
-**description:** Ajout de la restauration de blocs depuis le commit selectionne dans la modale Versions.
-**tags:** worklog, git, versions, head, visual-diff, restore-hunk, document-versions, home, svelte
+**description:** Ajustement de la restauration de blocs dans Versions pour preparer des changements locaux et declencher la sauvegarde uniquement via le bouton Enregistrer.
+**tags:** worklog, git, versions, visual-diff, restore-hunk, save-draft, autocommit, home, svelte
 ---
 
 # Current task
@@ -13,7 +13,7 @@ Completed
 
 ## Tache realisee
 
-Ajout et ajustement de la fonctionnalite `Versions` sur les documents lorsque l'integration Git est active et correctement configuree.
+Ajustement de la fonctionnalite `Versions` sur les documents lorsque l'integration Git est active et correctement configuree.
 
 Le comportement retenu est :
 
@@ -22,11 +22,10 @@ Le comportement retenu est :
 - la modale compare cote-a-cote un commit selectionne avec le `HEAD` courant ;
 - la selection par defaut a l'ouverture est le commit precedent du document (`commits[1]`) quand il existe ;
 - les pastilles de commits sont cliquables et la pastille selectionnee est highlighted ;
-- la modale liste les commits Git relatifs au document sur une periode configurable, par defaut 30 jours ;
 - l'API `GET /api/git/document-versions?documentId=...&sinceDays=...&baseRef=...` retourne `baseContent`, `headContent`, `relativePath`, `baseRef` et les commits du document ;
-- les ids de documents deja encodes par l'UI sont decodes une fois par la route Git avant resolution du chemin ;
-- chaque hunk modifie affiche un bouton `<` qui restaure ce bloc depuis le commit selectionne dans le document courant ;
-- la restauration appelle `onsave()` du viewer, donc elle suit le workflow normal de sauvegarde et d'autocommit.
+- chaque hunk modifie affiche un bouton `<` qui restaure ce bloc dans un contenu local de la modale, sans appel backend ;
+- le bouton `Enregistrer`, place au-dessus du diff, est desactive tant qu'aucun hunk n'a ete applique ;
+- seul `Enregistrer` appelle `onsave()` du viewer, donc seul ce bouton declenche la sauvegarde backend et l'autocommit Git eventuel.
 
 ## Contenu modifie
 
@@ -52,7 +51,7 @@ Metadonnees ADR attachees aux fichiers source qui portent la feature. Note : les
 
 ## Verifications restantes
 
-- Verification manuelle recommandee dans Home avec Git active : ouvrir un document ayant au moins deux commits, cliquer `Versions`, verifier que le commit precedent est selectionne par defaut, puis cliquer `<` sur un bloc modifie.
+- Verification manuelle recommandee dans Home avec Git active : ouvrir un document ayant au moins deux commits, cliquer `Versions`, appliquer plusieurs blocs avec `<`, verifier que le bouton `Enregistrer` s'active puis qu'un seul commit est produit a l'enregistrement.
 - Apres commit des changements source, rafraichir les metadonnees de l'ADR si une tracabilite Git propre est souhaitee.
 
 ## Prochaine action recommandee
