@@ -13,8 +13,8 @@ C'est ici que vous retrouvez vos dossiers, vos catégories, vos documents, et le
 
 ### Ce que vous voyez à gauche
 
-<!-- image-width: 1/3 -->
-![Barre laterale Home affichant les documents classes par categories](/images/readme-sidebar.png)
+<div class="grid grid-cols-2 gap-4">
+  <div>
 
 La colonne de gauche affiche :
 
@@ -26,10 +26,31 @@ La colonne de gauche affiche :
 
 Un clic sur un document l'ouvre dans la partie principale de la page.
 
+  </div>
+  <div>
+
+<!-- image-width: 2/3 -->
+![Barre laterale Home affichant les documents classes par categories](/images/readme-sidebar.png)
+  </div>
+
+</div>
+
 ### Ce que vous voyez à droite
+
+<div class="grid grid-cols-2 gap-4">
+  <div>
+
+<!-- image-width: 2/3 -->
+![Barre laterale Home affichant les documents classes par categories](/images/readme-sidebar.png)
+  </div>
+
+  </div>
+  <div>
 
 Lorsque vous cliquez sur le bouton Table des matières <kbd><i class="fa-solid fa-list-ul"></i></kbd>, une colonne apparaît à droite de l'écran et affiche une Table des matères dont les liens sont clickables.
 Chaque Element d'une table des matière correspond à un Header `# Element` pour H1, `## Element` pour H2, etc.
+
+</div>
 
 ### Dossiers et catégories
 
