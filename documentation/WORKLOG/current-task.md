@@ -20,7 +20,7 @@ Le comportement retenu est :
 - par defaut, `gitIntegration.mode` vaut `unconfigured` et l'application affiche un toast demandant de configurer l'integration Git dans Admin ;
 - l'utilisateur peut choisir explicitement `disabled`, ce qui coupe tout commit/push automatique ;
 - en mode `enabled`, chaque sauvegarde Living Documentation declenche un autocommit limite au pathspec de `docsFolder`, meme lorsque le depot Git est situe plus haut dans l'arborescence ;
-- les changements hors `docsFolder` sont signales par `/api/git/status` et par toast, mais ne sont pas bloques ni stagés ;
+- les changements hors `docsFolder` sont signales par `/api/git/status` et par toast, avec le chemin absolu du dossier docs dans le message utilisateur, mais ne sont pas bloques ni stagés ;
 - le push est optionnel : jamais, ou tous les N commits locaux d'avance sur l'upstream.
 
 ## Contenu modifie
@@ -55,6 +55,7 @@ Metadonnees ADR attachees puis rafraichies pour les fichiers source qui portent 
 - `npx playwright test tests/e2e/admin.spec.ts` : OK, 4 passed.
 - `git diff --check` : OK.
 - `graphify update .` : OK.
+- Ajustement toast chemin docs : `npm run build` OK ; `npx playwright test tests/api/git.spec.ts` OK, 2 passed.
 
 ## Prochaine action recommandee
 
