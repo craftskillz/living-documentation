@@ -1,0 +1,1 @@
+Image generated for Living Documentation hero illustration
