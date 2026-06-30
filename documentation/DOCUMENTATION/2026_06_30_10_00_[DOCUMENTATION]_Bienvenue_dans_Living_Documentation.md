@@ -44,6 +44,10 @@ Vous devez disposez de git installé sur votre ordinateur, puis depuis le termin
 ```bash
 git init
 ```
+Rendez vous alors sur la page d'admin et configurez l'intégration git.
+
+![image](/images/DOCUMENTATION/admin_git_integration.png)
+
 
 Pour commencer, choisissez le chemin qui vous intéresse
 <!-- table-border: bordered -->
