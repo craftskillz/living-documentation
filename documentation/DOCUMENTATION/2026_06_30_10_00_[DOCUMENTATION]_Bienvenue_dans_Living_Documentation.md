@@ -39,7 +39,6 @@ La documentation repose sur des fichiers presents dans votre espace local :
 ### Commençons la visite !
 
 Avant tout, je vous recommande de procéder à l'intégration de Git dans living documentation, vous pourrez ainsi bénéficier du versionning automatique de tous vos changements.
-
 Vous devez disposez de git installé sur votre ordinateur, puis depuis le terminal ouvrez le dossier contenant living-documentation et initialisez un repository git.
 
 ```bash
