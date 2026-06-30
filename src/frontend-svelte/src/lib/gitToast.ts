@@ -28,6 +28,14 @@ function isRecent(timestamp: string): boolean {
   return Number.isFinite(time) && Date.now() - time < RECENT_SAVE_MS;
 }
 
+function gitSaveIssueLabel(issue: string): string {
+  const normalized = issue.toLowerCase();
+  if (normalized.includes("cannot lock ref 'head'") && normalized.includes("but expected")) {
+    return "un autre commit a modifié HEAD pendant l'autocommit. Réessayez l'enregistrement.";
+  }
+  return issue;
+}
+
 export async function checkGitIntegrationToast(): Promise<void> {
   if (checking) return;
   checking = true;
@@ -80,8 +88,9 @@ export async function checkGitIntegrationToast(): Promise<void> {
 
     const last = status.lastSave;
     if (last && isRecent(last.timestamp) && (last.error || last.warning)) {
+      const issue = gitSaveIssueLabel(last.error || last.warning || "");
       showPersistentToast(
-        `Git : ${last.error || last.warning}`,
+        `Git : ${issue}`,
         "error",
         10 * 60 * 1000,
         { id: GIT_SAVE_TOAST_ID, href: "/admin", linkLabel: "Admin" },

@@ -45,8 +45,8 @@
     "semantic_hash": ""
   },
   "documentation/.metadata.json": {
-    "mtime": 1782823129.4595778,
-    "ast_hash": "204028c7d2c27d80fa74c009b22405f1",
+    "mtime": 1782823756.6887088,
+    "ast_hash": "d3ba9283efa2478a8f4c9e4eb5cca7b9",
     "semantic_hash": ""
   },
   "documentation/.survival-kit.json": {
@@ -3080,8 +3080,8 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/gitToast.ts": {
-    "mtime": 1782809888.5389426,
-    "ast_hash": "80538f23cbc8645d58b1f25a481b025a",
+    "mtime": 1782823458.132009,
+    "ast_hash": "a0bb4e73bf1608b37b39bafcfb27d870",
     "semantic_hash": ""
   },
   "src/lib/git-integration.ts": {
@@ -3100,18 +3100,18 @@
     "semantic_hash": ""
   },
   "documentation/ADRS/2026_06_30_10_39_[INTEGRATION]_integration_git_admin_et_autocommit_du_dossier_docs.md": {
-    "mtime": 1782809939.1407838,
-    "ast_hash": "2ba7c451d5ef48e58cf91831062c9cf4",
+    "mtime": 1782823591.3240602,
+    "ast_hash": "6b88e2daaaeb94f5853f8d6aec3f40f2",
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/home/VersionsModal.svelte": {
-    "mtime": 1782823013.096579,
-    "ast_hash": "3aae58577659dbe1fb5fbe3841795aab",
+    "mtime": 1782823689.107612,
+    "ast_hash": "086e755b5b4402c5495a6d71b2a918e2",
     "semantic_hash": ""
   },
   "documentation/ADRS/2026_06_30_11_21_[INTEGRATION]_versions_visuelles_des_documents_depuis_git_head.md": {
-    "mtime": 1782823095.1914163,
-    "ast_hash": "023b6b253f67ab21ebd58ecddd6f9af9",
+    "mtime": 1782823747.1538305,
+    "ast_hash": "29fd2320dce3628a41f0cecbf2e9eb2b",
     "semantic_hash": ""
   }
 }

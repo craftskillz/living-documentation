@@ -303,6 +303,18 @@
     }
   }
 
+  function discardDraft() {
+    workingContent = content;
+    applyMessage = null;
+    applyingHunkId = null;
+    savingDraft = false;
+  }
+
+  function closeModal() {
+    discardDraft();
+    onclose();
+  }
+
   async function loadVersions(baseRef = selectedBaseRef) {
     const days = clampHistoryDays(appliedSinceDays);
     const key = `${docId}:${days}:${baseRef || "default"}`;
@@ -347,6 +359,7 @@
 
   $effect(() => {
     if (!open) {
+      discardDraft();
       lastLoadKey = "";
       selectedBaseRef = "";
       return;
@@ -359,7 +372,7 @@
 
 {#if open}
   <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-  <div data-testid="versions-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onclick={(e) => { if (e.target === e.currentTarget) onclose(); }}>
+  <div data-testid="versions-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onclick={(e) => { if (e.target === e.currentTarget) closeModal(); }}>
     <div class="flex h-[90vh] w-full max-w-7xl flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-950">
       <header class="flex shrink-0 items-start justify-between gap-4 border-b border-gray-200 px-5 py-4 dark:border-gray-800">
         <div>
@@ -368,7 +381,7 @@
             {data?.relativePath || t("versions.path_pending")}
           </p>
         </div>
-        <button type="button" onclick={onclose} title={t("common.close")} class="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800">
+        <button type="button" onclick={closeModal} title={t("common.close")} class="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </header>
