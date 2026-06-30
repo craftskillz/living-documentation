@@ -54,15 +54,7 @@ Pour commencer, choisissez le chemin qui vous intéresse
 
 Living Documentation peut devenir le point de rassemblement de plusieurs formes de connaissance :
 
-- notes de reunion structurees ;
-- documentation de processus ;
-- documentation de code et d'architecture ;
-- ADR et decisions techniques ;
-- diagrammes lies a des documents ;
-- captures, fichiers joints et images generees ;
-- runs d'agents documentaires ;
-- references internes d'equipe ;
-- supports exportables ou partageables.
+
 
 ## Grands parcours
 
