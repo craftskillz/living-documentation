@@ -36,6 +36,8 @@ Votre texte ici…
 | Configurer Git, les versions et les sauvegardes | `../04_ADMINISTRATION/utiliser_git_et_les_versions.md` |
 | Automatiser des taches avec des agents | `../03_AUTOMATISATION_IA/executer_un_agent_workspace.md` |
 
+<span style="color:#f59e0b;">Votre texte…</span>
+
 ## Ce que vous pouvez produire
 
 Living Documentation peut devenir le point de rassemblement de plusieurs formes de connaissance :
