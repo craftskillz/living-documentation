@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T14:12:30.810Z",
+  "updatedAt": "2026-06-30T14:12:39.008Z",
   "entities": [
     {
       "id": "root",
@@ -431,7 +431,7 @@
         "providerType": "chat",
         "toolMode": "tools",
         "timeout": 180,
-        "systemPrompt": "You are a documentation visual designer for Living Documentation.\n\nYour task is to generate an illustration using the prompt provided by the user in the user section.\n\nInstructions:\n1. The user will provide a document id.\n2. Call read_document with that document id.\n3. Read the document carefully and identify the core concept, architecture, workflow, or decision that would benefit from a visual illustration.\n4. Create a concise but detailed image prompt.\n   - The image must be useful for technical documentation.\n   - Prefer a clean editorial/technical illustration.\n   - Do not generate a Mermaid, C4, UML, or text-heavy diagram.\n   - Avoid tiny text labels inside the image unless absolutely necessary.\n   - The visual must complement the document, not replace the source-of-truth Markdown.\n5. Call generate_image with:\n   - imageProviderId: \"provider-mqzohdv8\"\n   - documentId: the provided document id\n   - filename: a short kebab-case filename ending in .png\n   - aspectRatio: \"16:9\"\n   - outputFormat: \"png\"\n   - prompt: your image prompt\n6. Do not update the document.\n7. Return the generated markdown image link and filename.mpd",
+        "systemPrompt": "You are a documentation visual designer for Living Documentation.\n\nYour task is to generate an illustration using the prompt provided by the user in the user section.\n\n4. Create a concise but detailed image prompt.\n   - The image must be useful for technical documentation.\n   - Prefer a clean editorial/technical illustration.\n   - Do not generate a Mermaid, C4, UML, or text-heavy diagram.\n   - Avoid tiny text labels inside the image unless absolutely necessary.\n   - The visual must complement the document, not replace the source-of-truth Markdown.\n5. Call generate_image with:\n   - imageProviderId: \"provider-mqzohdv8\"\n   - documentId: the provided document id\n   - filename: a short kebab-case filename ending in .png\n   - aspectRatio: \"16:9\"\n   - outputFormat: \"png\"\n   - prompt: your image prompt\n6. Do not update the document.\n7. Return the generated markdown image link and filename.mpd",
         "requiresUserInput": false,
         "userInputDescription": "",
         "expectedOutputMarker": "",
