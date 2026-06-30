@@ -12,18 +12,6 @@
 
 #### Ce n'est pas un outil de generation de code, mais un outil de generation, de maintenance, de versioning et d'automatisation de documentation
 
-Il sert a creer, organiser, maintenir, versionner et automatiser de la documentation :
-- documentation de code
-- notes de reunion
-- decisions
-- processus
-- schemas
-- plans de travail
-- runs d'agents
-- et supports d'equipe.
-
-. Avec Workspace, MCP, les providers LLM et les tools internes, il devient aussi un laboratoire d'automatisation agentique appliquee a la documentation.
-
 ## Pour commencer
 
 | Besoin | Lire |
