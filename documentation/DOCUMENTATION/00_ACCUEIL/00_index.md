@@ -13,7 +13,6 @@
 #### Ce n'est pas un outil de generation de code, mais un outil de generation, de maintenance, de versioning et d'automatisation de documentation
 
 Pour commencer, choisissez le chemin qui vous intéresse
-
 <!-- table-border: bordered -->
 <!-- table-color: info -->
 | Besoin                                          | Lire                                                                                                      |
