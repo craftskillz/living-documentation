@@ -1,8 +1,8 @@
 ---
 **date:** 2026-06-30
 **status:** Completed
-**description:** Ajustement de la modale Versions pour comparer HEAD au commit selectionne, avec selection par defaut du commit precedent.
-**tags:** worklog, git, versions, head, visual-diff, baseRef, document-versions, home, svelte
+**description:** Ajout de la restauration de blocs depuis le commit selectionne dans la modale Versions.
+**tags:** worklog, git, versions, head, visual-diff, restore-hunk, document-versions, home, svelte
 ---
 
 # Current task
@@ -13,7 +13,7 @@ Completed
 
 ## Tache realisee
 
-Ajustement de la fonctionnalite `Versions` sur les documents lorsque l'integration Git est active et correctement configuree.
+Ajout et ajustement de la fonctionnalite `Versions` sur les documents lorsque l'integration Git est active et correctement configuree.
 
 Le comportement retenu est :
 
@@ -24,7 +24,9 @@ Le comportement retenu est :
 - les pastilles de commits sont cliquables et la pastille selectionnee est highlighted ;
 - la modale liste les commits Git relatifs au document sur une periode configurable, par defaut 30 jours ;
 - l'API `GET /api/git/document-versions?documentId=...&sinceDays=...&baseRef=...` retourne `baseContent`, `headContent`, `relativePath`, `baseRef` et les commits du document ;
-- les ids de documents deja encodes par l'UI sont decodes une fois par la route Git avant resolution du chemin.
+- les ids de documents deja encodes par l'UI sont decodes une fois par la route Git avant resolution du chemin ;
+- chaque hunk modifie affiche un bouton `<` qui restaure ce bloc depuis le commit selectionne dans le document courant ;
+- la restauration appelle `onsave()` du viewer, donc elle suit le workflow normal de sauvegarde et d'autocommit.
 
 ## Contenu modifie
 
@@ -50,7 +52,7 @@ Metadonnees ADR attachees aux fichiers source qui portent la feature. Note : les
 
 ## Verifications restantes
 
-- Verification manuelle recommandee dans Home avec Git active : ouvrir un document ayant au moins deux commits, cliquer `Versions`, verifier que le commit precedent est selectionne par defaut, puis cliquer une autre pastille.
+- Verification manuelle recommandee dans Home avec Git active : ouvrir un document ayant au moins deux commits, cliquer `Versions`, verifier que le commit precedent est selectionne par defaut, puis cliquer `<` sur un bloc modifie.
 - Apres commit des changements source, rafraichir les metadonnees de l'ADR si une tracabilite Git propre est souhaitee.
 
 ## Prochaine action recommandee
