@@ -7,7 +7,7 @@
 
 # Living Documentation en bref
 
-<!-- image-width: 1/2 -->
+<!-- image-width: 2/3 -->
 ![Architecture local-first reliant un dossier Markdown, Git, une interface web, des diagrammes et des agents IA](/images/DOCUMENTATION/concept-03-local-first.png)
 
 Living Documentation est un atelier local pour produire et maintenir de la documentation vivante. Il utilise des fichiers Markdown, une interface web, des diagrammes, des fichiers joints, Git, MCP et des agents IA pour transformer la documentation en espace de travail actif.
