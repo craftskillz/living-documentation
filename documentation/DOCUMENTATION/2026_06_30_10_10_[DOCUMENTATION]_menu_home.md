@@ -6,7 +6,7 @@
 ---
 
 <span style="display:flex; border:solid 1px black; background-color:red; width:100%;">
-<span >a</span><span>b</span>
+<span>a</span><span>b</span>
 </span>
 ### Menu **Home**
 
