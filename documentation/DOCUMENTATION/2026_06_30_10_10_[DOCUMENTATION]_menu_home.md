@@ -5,9 +5,11 @@
 **tags:** home, menu, navigation, dossiers, categories, documents, recherche
 ---
 
-<div class="border flex flex-col bg-red-200">
-<div>a</div>
-<div>b</div>
+<div class="grid grid-cols-2 gap-4">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+  <div>Item 4</div>
 </div>
 
 ### Menu **Home**
