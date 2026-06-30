@@ -1,7 +1,7 @@
 ---
 **date:** 2026-06-30
 **status:** Completed
-**description:** Ajustement de la restauration de blocs dans Versions pour preparer des changements locaux et declencher la sauvegarde uniquement via le bouton Enregistrer.
+**description:** Ajustement de la restauration de blocs dans Versions pour preparer des changements locaux, afficher HEAD a gauche et declencher la sauvegarde uniquement via le bouton Enregistrer.
 **tags:** worklog, git, versions, visual-diff, restore-hunk, save-draft, autocommit, home, svelte
 ---
 
@@ -20,10 +20,11 @@ Le comportement retenu est :
 - `DocViewer.svelte` interroge `/api/git/status` et affiche le bouton `Versions` apres `Metadonnees` uniquement si Git est en mode `enabled` et `ok` ;
 - le clic ouvre une grande modale `VersionsModal.svelte` ;
 - la modale compare cote-a-cote un commit selectionne avec le `HEAD` courant ;
+- la colonne gauche affiche `HEAD courant` ou les `Changements a enregistrer`, et la colonne droite affiche le commit selectionne ;
 - la selection par defaut a l'ouverture est le commit precedent du document (`commits[1]`) quand il existe ;
 - les pastilles de commits sont cliquables et la pastille selectionnee est highlighted ;
 - l'API `GET /api/git/document-versions?documentId=...&sinceDays=...&baseRef=...` retourne `baseContent`, `headContent`, `relativePath`, `baseRef` et les commits du document ;
-- chaque hunk modifie affiche un bouton `<` qui restaure ce bloc dans un contenu local de la modale, sans appel backend ;
+- chaque hunk modifie affiche un bouton `<` qui restaure ce bloc depuis le commit selectionne vers un contenu local de la modale, sans appel backend ;
 - le bouton `Enregistrer`, place au-dessus du diff, est desactive tant qu'aucun hunk n'a ete applique ;
 - seul `Enregistrer` appelle `onsave()` du viewer, donc seul ce bouton declenche la sauvegarde backend et l'autocommit Git eventuel.
 
@@ -51,7 +52,7 @@ Metadonnees ADR attachees aux fichiers source qui portent la feature. Note : les
 
 ## Verifications restantes
 
-- Verification manuelle recommandee dans Home avec Git active : ouvrir un document ayant au moins deux commits, cliquer `Versions`, appliquer plusieurs blocs avec `<`, verifier que le bouton `Enregistrer` s'active puis qu'un seul commit est produit a l'enregistrement.
+- Verification manuelle recommandee dans Home avec Git active : ouvrir un document ayant au moins deux commits, cliquer `Versions`, verifier que `HEAD courant` est a gauche et que le commit selectionne est a droite, appliquer plusieurs blocs avec `<`, verifier que le bouton `Enregistrer` s'active puis qu'un seul commit est produit a l'enregistrement.
 - Apres commit des changements source, rafraichir les metadonnees de l'ADR si une tracabilite Git propre est souhaitee.
 
 ## Prochaine action recommandee
