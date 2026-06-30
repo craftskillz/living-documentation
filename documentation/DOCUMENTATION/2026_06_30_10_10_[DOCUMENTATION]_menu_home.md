@@ -28,7 +28,7 @@ Un clic sur un document l'ouvre dans la partie principale de la page.
 
 ### Ce que vous voyez à droite
 
-Lorsque vous cliquez sur  colonne de gauche affiche :
+Lorsque vous cliquez sur <i class="fa-solid fa-list-ul"></i> colonne de gauche affiche :
 
 - le nombre de documents disponibles
 - les dossiers de votre documentation
