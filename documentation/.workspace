@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T14:22:49.691Z",
+  "updatedAt": "2026-06-30T14:23:01.029Z",
   "entities": [
     {
       "id": "root",
@@ -464,7 +464,7 @@
     },
     {
       "id": "agent-mr0qkpe8",
-      "label": "Agent 1",
+      "label": "Opened Prompt to Create Image",
       "kind": "agent",
       "parentId": "provider-mr0qj5ec",
       "x": -511.2263211653532,
@@ -473,7 +473,7 @@
       "config": {
         "endpoint": "",
         "token": "",
-        "model": "",
+        "model": "cohere/north-mini-code:free",
         "providerType": "chat",
         "toolMode": "tools",
         "timeout": 180,
@@ -482,13 +482,13 @@
         "userInputDescription": "",
         "expectedOutputMarker": "",
         "description": "Runs focused automation against documentation, source, or quality signals.",
-        "workspaceFolder": "AI/WORKSPACE/agent_1_2"
+        "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image_2"
       }
     }
   ],
   "camera": {
-    "x": 593.8713751665919,
-    "y": 387.4588498522253,
+    "x": 946.2175231795494,
+    "y": 586.7079953600378,
     "zoom": 0.7516657738368119
   }
 }
