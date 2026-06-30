@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T14:15:18.025Z",
+  "updatedAt": "2026-06-30T14:15:23.860Z",
   "entities": [
     {
       "id": "root",
@@ -30,8 +30,8 @@
       "label": "MCP",
       "kind": "mcp",
       "parentId": "root",
-      "x": 1.9099941661438983e-14,
-      "y": -311.9257189050281,
+      "x": 2.2039093979392633e-14,
+      "y": -359.9257189050281,
       "angle": -1.5707963267948966,
       "config": {
         "endpoint": "http://localhost:4321/mcp",
@@ -375,8 +375,8 @@
       "label": "Chat OpenRouter Cohere Mini Free",
       "kind": "llm",
       "parentId": "root",
-      "x": -220.56479106423427,
-      "y": -220.56479106423419,
+      "x": -254.50591656118857,
+      "y": -254.50591656118849,
       "angle": 3.9269908169872414,
       "config": {
         "endpoint": "https://openrouter.ai/api/v1",
@@ -398,9 +398,9 @@
       "label": "Ask The LLM",
       "kind": "agent",
       "parentId": "provider-mqzqtzbv",
-      "x": -370.48749720974786,
-      "y": -370.48749720974786,
-      "angle": -2.356194490192345,
+      "x": -456.15151014612366,
+      "y": -188.9872915468673,
+      "angle": -3.4557519189487724,
       "config": {
         "endpoint": "",
         "token": "",
@@ -437,6 +437,29 @@
         "expectedOutputMarker": "",
         "description": "Opened prompt to create image",
         "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image"
+      }
+    },
+    {
+      "id": "agent-mr0qb5e3",
+      "label": "Agent 2",
+      "kind": "agent",
+      "parentId": "provider-mqzqtzbv",
+      "x": -188.98729154686737,
+      "y": -456.15151014612354,
+      "angle": -1.2566370614359172,
+      "config": {
+        "endpoint": "",
+        "token": "",
+        "model": "",
+        "providerType": "chat",
+        "toolMode": "tools",
+        "timeout": 180,
+        "systemPrompt": "",
+        "requiresUserInput": false,
+        "userInputDescription": "",
+        "expectedOutputMarker": "",
+        "description": "Runs focused automation against documentation, source, or quality signals.",
+        "workspaceFolder": "AI/WORKSPACE/agent_2"
       }
     }
   ],
