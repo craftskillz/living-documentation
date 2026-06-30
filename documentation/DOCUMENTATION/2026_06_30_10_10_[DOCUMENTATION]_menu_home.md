@@ -5,28 +5,6 @@
 **tags:** home, menu, navigation, dossiers, categories, documents, recherche
 ---
 
-<div class="grid grid-cols-2 gap-4">
-  <div>
-
-La colonne de gauche affiche :
-
-- le nombre de documents disponibles
-- les dossiers de votre documentation
-- les catégories détectées dans les noms de fichiers
-- les documents Markdown
-- les badges utiles : annotations, fichiers joints, statuts
-
-Un clic sur un document l'ouvre dans la partie principale de la page.
-
-  </div>
-  <div>
-
-<!-- image-width: 2/3 -->
-![Barre laterale Home affichant les documents classes par categories](/images/readme-sidebar.png)
-  </div>
-
-</div>
-
 ### Menu **Home**
 
 Le menu <kbd>Home</kbd> est la porte d'entrée de votre documentation.
