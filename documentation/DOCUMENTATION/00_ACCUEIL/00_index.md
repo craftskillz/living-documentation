@@ -14,6 +14,10 @@
 
 ## Pour commencer
 
+> Citation ici
+>
+> — Auteur
+
 | Besoin | Lire |
 | --- | --- |
 | Comprendre le produit en quelques minutes | [Living Documentation en bref](./01_living_documentation_en_bref.md) |
