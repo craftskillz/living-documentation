@@ -110,7 +110,7 @@
   "llmModelsNoV1Hosts": [
     "https://api.deepseek.com"
   ],
-  "debugAgents": false,
+  "debugAgents": true,
   "gitIntegration": {
     "mode": "enabled",
     "pushMode": "never",
