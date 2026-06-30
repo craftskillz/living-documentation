@@ -110,5 +110,5 @@
   "llmModelsNoV1Hosts": [
     "https://api.deepseek.com"
   ],
-  "debugAgents": true
+  "debugAgents": false
 }

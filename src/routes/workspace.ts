@@ -991,6 +991,13 @@ function agentSystemPromptWithMemory(docsPath: string, agent: WorkspaceEntity): 
   return `${base}\n\n${memory}`;
 }
 
+function agentSystemPromptForRun(docsPath: string, agent: WorkspaceEntity, toolsEnabled: boolean): string {
+  if (!toolsEnabled) {
+    return agent.config.systemPrompt.trim();
+  }
+  return agentSystemPromptWithMemory(docsPath, agent);
+}
+
 function createAgentRunDocument(
   docsPath: string,
   agent: WorkspaceEntity,
@@ -1196,6 +1203,7 @@ export function workspaceRouter(docsPath: string): Router {
       const userInput = typeof body.userInput === 'string' ? body.userInput.trim() : '';
       const debug: AgentDebugLog | undefined = readConfig(docsPath).debugAgents ? { sections: [] } : undefined;
       const artifacts: AgentRunArtifacts = { generatedImages: [] };
+      const toolsEnabled = provider.config.toolMode !== 'chat';
 
       try {
         const content = await runAgent(
@@ -1203,11 +1211,11 @@ export function workspaceRouter(docsPath: string): Router {
             endpoint: provider.config.endpoint,
             token: provider.config.token,
             model: agent.config.model || provider.config.model,
-            systemPrompt: agentSystemPromptWithMemory(docsPath, agent),
+            systemPrompt: agentSystemPromptForRun(docsPath, agent, toolsEnabled),
             userInput,
             timeout: agent.config.timeout || provider.config.timeout,
             mcpEndpoint: mcp?.config.endpoint ?? '',
-            toolsEnabled: provider.config.toolMode !== 'chat',
+            toolsEnabled,
             expectedOutputMarker: agent.config.expectedOutputMarker,
           },
           undefined,
@@ -1257,6 +1265,7 @@ export function workspaceRouter(docsPath: string): Router {
       const userInput = typeof body.userInput === 'string' ? body.userInput.trim() : '';
       const debug: AgentDebugLog | undefined = readConfig(docsPath).debugAgents ? { sections: [] } : undefined;
       const artifacts: AgentRunArtifacts = { generatedImages: [] };
+      const toolsEnabled = provider.config.toolMode !== 'chat';
 
       res.status(200);
       res.setHeader('Content-Type', 'application/x-ndjson; charset=utf-8');
@@ -1275,11 +1284,11 @@ export function workspaceRouter(docsPath: string): Router {
             endpoint: provider.config.endpoint,
             token: provider.config.token,
             model: agent.config.model || provider.config.model,
-            systemPrompt: agentSystemPromptWithMemory(docsPath, agent),
+            systemPrompt: agentSystemPromptForRun(docsPath, agent, toolsEnabled),
             userInput,
             timeout: agent.config.timeout || provider.config.timeout,
             mcpEndpoint: mcp?.config.endpoint ?? '',
-            toolsEnabled: provider.config.toolMode !== 'chat',
+            toolsEnabled,
             expectedOutputMarker: agent.config.expectedOutputMarker,
           },
           writeEvent,

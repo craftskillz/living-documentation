@@ -241,3 +241,87 @@ test('generate_image saves AI images under images-ai instead of files', async ({
     await imageProvider.close();
   }
 });
+
+test('chat-only agent prompt omits run memory instructions and keeps runtime constraint', async ({
+  request,
+  ld,
+}) => {
+  let capturedSystemPrompt = '';
+  const llm = await startJsonServer((body) => {
+    const requestBody = body as {
+      tools?: unknown;
+      messages?: Array<{ role?: string; content?: unknown }>;
+    };
+    expect(requestBody.tools).toBeUndefined();
+    capturedSystemPrompt = String(requestBody.messages?.[0]?.content ?? '');
+    return {
+      choices: [{
+        message: {
+          role: 'assistant',
+          content: 'Tools are disabled, so I can only answer directly.',
+        },
+      }],
+    };
+  });
+
+  try {
+    const workspace = {
+      version: 1,
+      updatedAt: new Date(0).toISOString(),
+      camera: { x: 0, y: 0, zoom: 1 },
+      entities: [
+        {
+          id: 'provider-chat-only',
+          label: 'Mock Chat Only Provider',
+          kind: 'llm',
+          parentId: null,
+          config: {
+            endpoint: llm.url,
+            model: 'mock-chat',
+            providerType: 'chat',
+            toolMode: 'chat',
+          },
+        },
+        {
+          id: 'mcp-node',
+          label: 'MCP',
+          kind: 'mcp',
+          parentId: null,
+          config: { endpoint: `${llm.url}/mcp` },
+        },
+        {
+          id: 'agent-chat-only',
+          label: 'Ask The LLM',
+          kind: 'agent',
+          parentId: 'provider-chat-only',
+          config: {
+            systemPrompt: 'Answer directly.',
+            workspaceFolder: 'AI/WORKSPACE/ask_the_llm',
+          },
+        },
+      ],
+    };
+
+    const saveWorkspace = await request.put(`${ld.baseURL}/api/workspace`, { data: workspace });
+    expect(saveWorkspace.ok()).toBe(true);
+    fs.writeFileSync(
+      path.join(ld.docsAbs, 'AI', 'WORKSPACE', 'ask_the_llm', 'context.md'),
+      'Persisted context that must not be injected in chat-only mode.',
+      'utf-8',
+    );
+
+    const run = await request.post(`${ld.baseURL}/api/workspace/run-agent-document`, {
+      data: { agentId: 'agent-chat-only', userInput: 'Hello' },
+    });
+    expect(run.ok()).toBe(true);
+
+    expect(capturedSystemPrompt).toContain('Answer directly.');
+    expect(capturedSystemPrompt).toContain('Runtime constraint: MCP tool calling is disabled for this run.');
+    expect(capturedSystemPrompt).not.toContain('## Run memory');
+    expect(capturedSystemPrompt).not.toContain('Your workspace folder is');
+    expect(capturedSystemPrompt).not.toContain('When you finish, call `save_context`');
+    expect(capturedSystemPrompt).not.toContain('Persisted context that must not be injected');
+  } finally {
+    await llm.close();
+  }
+});

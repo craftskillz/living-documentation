@@ -1572,7 +1572,7 @@
       "confidence": "EXTRACTED",
       "_origin": "ast",
       "id": "svelte",
-      "community": 92,
+      "community": 21,
       "norm_label": "svelte"
     },
     {
@@ -1593,7 +1593,7 @@
       "_origin": "ast",
       "source_location": "L1",
       "id": "routes_admin",
-      "community": 92,
+      "community": 21,
       "norm_label": "admin.svelte"
     },
     {
@@ -1604,7 +1604,7 @@
       "_origin": "ast",
       "source_location": "L1",
       "id": "src_frontend_svelte_src_routes_blueprint_svelte_routes_blueprint",
-      "community": 92,
+      "community": 435,
       "norm_label": "blueprint.svelte"
     },
     {
@@ -1659,7 +1659,7 @@
       "_origin": "ast",
       "source_location": "L1",
       "id": "routes_diagram",
-      "community": 92,
+      "community": 21,
       "norm_label": "diagram.svelte"
     },
     {
@@ -1691,7 +1691,7 @@
       "confidence": "EXTRACTED",
       "_origin": "ast",
       "id": "users_ymedaghri_documents_repositories_medaghri_alaoui_repositories_09_my_published_projects_living_documentation_src_frontend_svelte_src_lib_persistenttoast",
-      "community": 21,
+      "community": 436,
       "norm_label": "./persistenttoast"
     },
     {
@@ -1702,7 +1702,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "lib_agentsmenu",
-      "community": 21,
+      "community": 436,
       "norm_label": "./agentsmenu.svelte"
     },
     {
@@ -1712,7 +1712,7 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "lib_agentsmenu_destroy",
-      "community": 21,
+      "community": 436,
       "norm_label": "destroy()"
     },
     {
@@ -1722,7 +1722,7 @@
       "source_location": "L218",
       "_origin": "ast",
       "id": "lib_agentsmenu_showpersistenttoast",
-      "community": 21,
+      "community": 436,
       "norm_label": "showpersistenttoast()"
     },
     {
@@ -1742,7 +1742,7 @@
       "confidence": "EXTRACTED",
       "_origin": "ast",
       "id": "users_ymedaghri_documents_repositories_medaghri_alaoui_repositories_09_my_published_projects_living_documentation_src_frontend_svelte_src_lib_workspace_persistence",
-      "community": 21,
+      "community": 436,
       "norm_label": "./workspace/persistence"
     },
     {
@@ -1764,7 +1764,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "lib_configsection",
-      "community": 92,
+      "community": 21,
       "norm_label": "../lib/configsection.svelte"
     },
     {
@@ -1775,7 +1775,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "lib_confirmdialog",
-      "community": 18,
+      "community": 92,
       "norm_label": "../lib/confirmdialog.svelte"
     },
     {
@@ -1786,7 +1786,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "lib_diagrampalettes",
-      "community": 92,
+      "community": 21,
       "norm_label": "../lib/diagrampalettes.svelte"
     },
     {
@@ -1796,7 +1796,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "lib_diagrampalettes_hsltohex",
-      "community": 92,
+      "community": 21,
       "norm_label": "hsltohex()"
     },
     {
@@ -1807,7 +1807,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "lib_filebrowser",
-      "community": 92,
+      "community": 21,
       "norm_label": "../lib/filebrowser.svelte"
     },
     {
@@ -1861,7 +1861,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "blueprint_adrmodal",
-      "community": 60,
+      "community": 435,
       "norm_label": "../lib/blueprint/adrmodal.svelte"
     },
     {
@@ -1894,7 +1894,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "blueprint_blueprintcanvas",
-      "community": 92,
+      "community": 435,
       "norm_label": "../lib/blueprint/blueprintcanvas.svelte"
     },
     {
@@ -1904,7 +1904,7 @@
       "source_location": "L781",
       "_origin": "ast",
       "id": "blueprint_blueprintcanvas_for",
-      "community": 92,
+      "community": 435,
       "norm_label": "for()"
     },
     {
@@ -1914,7 +1914,7 @@
       "source_location": "L798",
       "_origin": "ast",
       "id": "blueprint_blueprintcanvas_if",
-      "community": 92,
+      "community": 435,
       "norm_label": "if()"
     },
     {
@@ -1925,7 +1925,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "blueprint_fileexplorer",
-      "community": 92,
+      "community": 435,
       "norm_label": "../lib/blueprint/fileexplorer.svelte"
     },
     {
@@ -2105,7 +2105,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_color_picker",
-      "community": 48,
+      "community": 120,
       "norm_label": "color-picker.js"
     },
     {
@@ -2115,7 +2115,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "diagram_color_picker_closeallcolorpickerpopups",
-      "community": 48,
+      "community": 120,
       "norm_label": "closeallcolorpickerpopups()"
     },
     {
@@ -2125,7 +2125,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "diagram_color_picker_opencolorpickerpopup",
-      "community": 48,
+      "community": 120,
       "norm_label": "opencolorpickerpopup()"
     },
     {
@@ -2205,7 +2205,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_custom_shapes",
-      "community": 120,
+      "community": 19,
       "norm_label": "custom-shapes.js"
     },
     {
@@ -2215,7 +2215,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "diagram_custom_shapes_default_custom_anchors",
-      "community": 120,
+      "community": 103,
       "norm_label": "default_custom_anchors"
     },
     {
@@ -2255,7 +2255,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "diagram_custom_shapes_getcustomshapedefaultsize",
-      "community": 120,
+      "community": 19,
       "norm_label": "getcustomshapedefaultsize()"
     },
     {
@@ -2285,7 +2285,7 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "diagram_custom_shapes_loadcustomshapelibraries",
-      "community": 120,
+      "community": 19,
       "norm_label": "loadcustomshapelibraries()"
     },
     {
@@ -2295,7 +2295,7 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "diagram_custom_shapes_rendercustomshapebar",
-      "community": 120,
+      "community": 19,
       "norm_label": "rendercustomshapebar()"
     },
     {
@@ -2305,7 +2305,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_debug",
-      "community": 432,
+      "community": 56,
       "norm_label": "debug.js"
     },
     {
@@ -2315,7 +2315,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "diagram_debug_toggledebug",
-      "community": 432,
+      "community": 56,
       "norm_label": "toggledebug()"
     },
     {
@@ -2325,7 +2325,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "diagram_debug_drawdebugoverlay",
-      "community": 432,
+      "community": 56,
       "norm_label": "drawdebugoverlay()"
     },
     {
@@ -2335,7 +2335,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_defaults_modal",
-      "community": 48,
+      "community": 120,
       "norm_label": "defaults-modal.js"
     },
     {
@@ -2345,7 +2345,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "diagram_defaults_modal_effectivenodecolor",
-      "community": 48,
+      "community": 120,
       "norm_label": "effectivenodecolor()"
     },
     {
@@ -2355,7 +2355,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "diagram_defaults_modal_shape_keys",
-      "community": 48,
+      "community": 120,
       "norm_label": "shape_keys"
     },
     {
@@ -2365,7 +2365,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "diagram_defaults_modal_shape_system_defaults",
-      "community": 48,
+      "community": 120,
       "norm_label": "shape_system_defaults"
     },
     {
@@ -2375,7 +2375,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "diagram_defaults_modal_arrow_system_defaults",
-      "community": 48,
+      "community": 120,
       "norm_label": "arrow_system_defaults"
     },
     {
@@ -2385,7 +2385,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "diagram_defaults_modal_initdiagramdefaults",
-      "community": 48,
+      "community": 120,
       "norm_label": "initdiagramdefaults()"
     },
     {
@@ -2395,7 +2395,7 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "diagram_defaults_modal_getdiagramdefaults",
-      "community": 48,
+      "community": 120,
       "norm_label": "getdiagramdefaults()"
     },
     {
@@ -2405,7 +2405,7 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "diagram_defaults_modal_getshapedefaults",
-      "community": 48,
+      "community": 120,
       "norm_label": "getshapedefaults()"
     },
     {
@@ -2415,7 +2415,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "diagram_defaults_modal_getarrowdefaults",
-      "community": 48,
+      "community": 120,
       "norm_label": "getarrowdefaults()"
     },
     {
@@ -2425,7 +2425,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "diagram_defaults_modal_buildnodecolorentries",
-      "community": 48,
+      "community": 120,
       "norm_label": "buildnodecolorentries()"
     },
     {
@@ -2435,7 +2435,7 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "diagram_defaults_modal_buildcolorswatch",
-      "community": 48,
+      "community": 120,
       "norm_label": "buildcolorswatch()"
     },
     {
@@ -2445,7 +2445,7 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "diagram_defaults_modal_rendermodal",
-      "community": 48,
+      "community": 120,
       "norm_label": "rendermodal()"
     },
     {
@@ -2455,7 +2455,7 @@
       "source_location": "L300",
       "_origin": "ast",
       "id": "diagram_defaults_modal_opendefaultsmodal",
-      "community": 48,
+      "community": 120,
       "norm_label": "opendefaultsmodal()"
     },
     {
@@ -2765,7 +2765,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "diagram_edge_panel_getlastfreearrowstyle",
-      "community": 48,
+      "community": 120,
       "norm_label": "getlastfreearrowstyle()"
     },
     {
@@ -2865,7 +2865,7 @@
       "source_location": "L233",
       "_origin": "ast",
       "id": "diagram_edge_panel_saveedgeasdefault",
-      "community": 48,
+      "community": 120,
       "norm_label": "saveedgeasdefault()"
     },
     {
@@ -2955,7 +2955,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_edge_rendering",
-      "community": 432,
+      "community": 426,
       "norm_label": "edge-rendering.js"
     },
     {
@@ -2965,7 +2965,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "diagram_edge_rendering_visedgeprops",
-      "community": 432,
+      "community": 426,
       "norm_label": "visedgeprops()"
     },
     {
@@ -3145,7 +3145,7 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "diagram_grid_ondragend",
-      "community": 57,
+      "community": 33,
       "norm_label": "ondragend()"
     },
     {
@@ -3155,7 +3155,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_groups",
-      "community": 432,
+      "community": 56,
       "norm_label": "groups.js"
     },
     {
@@ -3195,7 +3195,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "diagram_groups_nodebounds",
-      "community": 432,
+      "community": 56,
       "norm_label": "nodebounds()"
     },
     {
@@ -3205,7 +3205,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "diagram_groups_drawgroupoutlines",
-      "community": 432,
+      "community": 56,
       "norm_label": "drawgroupoutlines()"
     },
     {
@@ -3215,7 +3215,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_history",
-      "community": 432,
+      "community": 426,
       "norm_label": "history.js"
     },
     {
@@ -3225,7 +3225,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "diagram_history_undostack",
-      "community": 432,
+      "community": 426,
       "norm_label": "_undostack"
     },
     {
@@ -3235,7 +3235,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "diagram_history_redostack",
-      "community": 432,
+      "community": 426,
       "norm_label": "_redostack"
     },
     {
@@ -3245,7 +3245,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "diagram_history_capturestate",
-      "community": 432,
+      "community": 426,
       "norm_label": "capturestate()"
     },
     {
@@ -3275,7 +3275,7 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "diagram_history_undo",
-      "community": 432,
+      "community": 426,
       "norm_label": "undo()"
     },
     {
@@ -3285,7 +3285,7 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "diagram_history_redo",
-      "community": 432,
+      "community": 426,
       "norm_label": "redo()"
     },
     {
@@ -3295,7 +3295,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "diagram_history_restorestate",
-      "community": 432,
+      "community": 426,
       "norm_label": "_restorestate()"
     },
     {
@@ -3425,7 +3425,7 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "diagram_label_editor_hidelabelinput",
-      "community": 8,
+      "community": 33,
       "norm_label": "hidelabelinput()"
     },
     {
@@ -3515,7 +3515,7 @@
       "source_location": "L123",
       "_origin": "ast",
       "id": "diagram_link_panel_navigatenodelink",
-      "community": 426,
+      "community": 8,
       "norm_label": "navigatenodelink()"
     },
     {
@@ -3556,7 +3556,7 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "diagram_main_deleteselected",
-      "community": 8,
+      "community": 33,
       "norm_label": "deleteselected()"
     },
     {
@@ -3826,7 +3826,7 @@
       "source_location": "L1889",
       "_origin": "ast",
       "id": "diagram_network_onclicknode",
-      "community": 57,
+      "community": 8,
       "norm_label": "onclicknode()"
     },
     {
@@ -3876,7 +3876,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_node_panel",
-      "community": 48,
+      "community": 57,
       "norm_label": "node-panel.js"
     },
     {
@@ -3886,7 +3886,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "diagram_node_panel_geteffectivenodecolor",
-      "community": 48,
+      "community": 57,
       "norm_label": "geteffectivenodecolor()"
     },
     {
@@ -3896,7 +3896,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "diagram_node_panel_buildnodecolorentries",
-      "community": 48,
+      "community": 57,
       "norm_label": "buildnodecolorentries()"
     },
     {
@@ -3906,7 +3906,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "diagram_node_panel_syncnodecolorswatch",
-      "community": 48,
+      "community": 57,
       "norm_label": "syncnodecolorswatch()"
     },
     {
@@ -3916,7 +3916,7 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "diagram_node_panel_custom_label_placements",
-      "community": 48,
+      "community": 57,
       "norm_label": "custom_label_placements"
     },
     {
@@ -3936,7 +3936,7 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "diagram_node_panel_getlastnodestyle",
-      "community": 48,
+      "community": 8,
       "norm_label": "getlastnodestyle()"
     },
     {
@@ -3956,7 +3956,7 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "diagram_node_panel_isedgelocked",
-      "community": 48,
+      "community": 57,
       "norm_label": "isedgelocked()"
     },
     {
@@ -3966,7 +3966,7 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "diagram_node_panel_selectedlockstate",
-      "community": 48,
+      "community": 57,
       "norm_label": "selectedlockstate()"
     },
     {
@@ -3976,7 +3976,7 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "diagram_node_panel_syncnodelockbutton",
-      "community": 48,
+      "community": 57,
       "norm_label": "syncnodelockbutton()"
     },
     {
@@ -3986,7 +3986,7 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "diagram_node_panel_syncnodefontsizevalue",
-      "community": 48,
+      "community": 57,
       "norm_label": "syncnodefontsizevalue()"
     },
     {
@@ -3996,7 +3996,7 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "diagram_node_panel_selectedcustomshapeids",
-      "community": 48,
+      "community": 57,
       "norm_label": "selectedcustomshapeids()"
     },
     {
@@ -4016,7 +4016,7 @@
       "source_location": "L148",
       "_origin": "ast",
       "id": "diagram_node_panel_synccustomshapelabelplacementcontrols",
-      "community": 48,
+      "community": 57,
       "norm_label": "synccustomshapelabelplacementcontrols()"
     },
     {
@@ -4026,7 +4026,7 @@
       "source_location": "L165",
       "_origin": "ast",
       "id": "diagram_node_panel_setedgelocked",
-      "community": 48,
+      "community": 57,
       "norm_label": "setedgelocked()"
     },
     {
@@ -4056,7 +4056,7 @@
       "source_location": "L202",
       "_origin": "ast",
       "id": "diagram_node_panel_initnodecolorswatch",
-      "community": 48,
+      "community": 57,
       "norm_label": "initnodecolorswatch()"
     },
     {
@@ -4066,7 +4066,7 @@
       "source_location": "L214",
       "_origin": "ast",
       "id": "diagram_node_panel_saveshapeasdefault",
-      "community": 48,
+      "community": 120,
       "norm_label": "saveshapeasdefault()"
     },
     {
@@ -4076,7 +4076,7 @@
       "source_location": "L261",
       "_origin": "ast",
       "id": "diagram_node_panel_togglenodelock",
-      "community": 48,
+      "community": 57,
       "norm_label": "togglenodelock()"
     },
     {
@@ -4136,7 +4136,7 @@
       "source_location": "L356",
       "_origin": "ast",
       "id": "diagram_node_panel_setcustomshapelabelplacement",
-      "community": 48,
+      "community": 57,
       "norm_label": "setcustomshapelabelplacement()"
     },
     {
@@ -4146,7 +4146,7 @@
       "source_location": "L374",
       "_origin": "ast",
       "id": "diagram_node_panel_stamp_btns",
-      "community": 48,
+      "community": 57,
       "norm_label": "stamp_btns"
     },
     {
@@ -4156,7 +4156,7 @@
       "source_location": "L376",
       "_origin": "ast",
       "id": "diagram_node_panel_activatestamp",
-      "community": 48,
+      "community": 57,
       "norm_label": "activatestamp()"
     },
     {
@@ -4166,7 +4166,7 @@
       "source_location": "L386",
       "_origin": "ast",
       "id": "diagram_node_panel_cancelstamp",
-      "community": 48,
+      "community": 57,
       "norm_label": "cancelstamp()"
     },
     {
@@ -4176,7 +4176,7 @@
       "source_location": "L395",
       "_origin": "ast",
       "id": "diagram_node_panel_applystamp",
-      "community": 48,
+      "community": 57,
       "norm_label": "applystamp()"
     },
     {
@@ -4186,7 +4186,7 @@
       "source_location": "L420",
       "_origin": "ast",
       "id": "diagram_node_panel_getnodeatdompoint",
-      "community": 48,
+      "community": 57,
       "norm_label": "getnodeatdompoint()"
     },
     {
@@ -4506,7 +4506,7 @@
       "source_location": "L899",
       "_origin": "ast",
       "id": "diagram_node_rendering_shape_defaults",
-      "community": 121,
+      "community": 56,
       "norm_label": "shape_defaults"
     },
     {
@@ -4516,7 +4516,7 @@
       "source_location": "L914",
       "_origin": "ast",
       "id": "diagram_node_rendering_visnodeprops",
-      "community": 121,
+      "community": 14,
       "norm_label": "visnodeprops()"
     },
     {
@@ -4906,7 +4906,7 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "diagram_selection_overlay_hideselectionoverlay",
-      "community": 8,
+      "community": 33,
       "norm_label": "hideselectionoverlay()"
     },
     {
@@ -5016,7 +5016,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_shapeeditor",
-      "community": 120,
+      "community": 103,
       "norm_label": "shapeeditor.ts"
     },
     {
@@ -5026,7 +5026,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "diagram_shapeeditor_initshapeeditor",
-      "community": 120,
+      "community": 103,
       "norm_label": "initshapeeditor()"
     },
     {
@@ -5036,7 +5036,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_state",
-      "community": 432,
+      "community": 56,
       "norm_label": "state.js"
     },
     {
@@ -5046,7 +5046,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "diagram_state_st",
-      "community": 432,
+      "community": 56,
       "norm_label": "st"
     },
     {
@@ -5226,7 +5226,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diagram_zoom",
-      "community": 120,
+      "community": 56,
       "norm_label": "zoom.js"
     },
     {
@@ -5236,7 +5236,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "diagram_zoom_adjustzoom",
-      "community": 120,
+      "community": 56,
       "norm_label": "adjustzoom()"
     },
     {
@@ -5246,7 +5246,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "diagram_zoom_resetzoom",
-      "community": 120,
+      "community": 56,
       "norm_label": "resetzoom()"
     },
     {
@@ -5256,7 +5256,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "diagram_zoom_updatezoomdisplay",
-      "community": 120,
+      "community": 56,
       "norm_label": "updatezoomdisplay()"
     },
     {
@@ -5288,7 +5288,7 @@
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "id": "home_annotations",
-      "community": 92,
+      "community": 18,
       "norm_label": "./annotations.svelte"
     },
     {
@@ -5308,7 +5308,7 @@
       "confidence": "EXTRACTED",
       "_origin": "ast",
       "id": "users_ymedaghri_documents_repositories_medaghri_alaoui_repositories_09_my_published_projects_living_documentation_src_frontend_svelte_src_lib_home_annotationhighlight",
-      "community": 92,
+      "community": 18,
       "norm_label": "./annotationhighlight"
     },
     {
@@ -8646,7 +8646,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "lib_md_renderer",
-      "community": 60,
+      "community": 435,
       "norm_label": "md-renderer.ts"
     },
     {
@@ -8656,7 +8656,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "lib_md_renderer_window",
-      "community": 60,
+      "community": 435,
       "norm_label": "window"
     },
     {
@@ -8666,7 +8666,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "lib_md_renderer_rendermarkdownhtml",
-      "community": 60,
+      "community": 435,
       "norm_label": "rendermarkdownhtml()"
     },
     {
@@ -10520,7 +10520,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_main",
-      "community": 70,
+      "community": 21,
       "norm_label": "main.ts"
     },
     {
@@ -10530,7 +10530,7 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "routes_admin_if",
-      "community": 92,
+      "community": 21,
       "norm_label": "if()"
     },
     {
@@ -10540,7 +10540,7 @@
       "confidence": "EXTRACTED",
       "_origin": "ast",
       "id": "users_ymedaghri_documents_repositories_medaghri_alaoui_repositories_09_my_published_projects_living_documentation_src_frontend_svelte_src_lib_blueprint_styles_css",
-      "community": 92,
+      "community": 435,
       "norm_label": "../lib/blueprint/styles.css"
     },
     {
@@ -10550,7 +10550,7 @@
       "confidence": "EXTRACTED",
       "_origin": "ast",
       "id": "users_ymedaghri_documents_repositories_medaghri_alaoui_repositories_09_my_published_projects_living_documentation_src_frontend_svelte_src_lib_diagram_diagram_css",
-      "community": 92,
+      "community": 21,
       "norm_label": "../lib/diagram/diagram.css"
     },
     {
@@ -15014,10 +15014,20 @@
       "norm_label": "agentsystempromptwithmemory()"
     },
     {
-      "label": "createAgentRunDocument()",
+      "label": "agentSystemPromptForRun()",
       "file_type": "code",
       "source_file": "src/routes/workspace.ts",
       "source_location": "L994",
+      "_origin": "ast",
+      "id": "routes_workspace_agentsystempromptforrun",
+      "community": 9,
+      "norm_label": "agentsystempromptforrun()"
+    },
+    {
+      "label": "createAgentRunDocument()",
+      "file_type": "code",
+      "source_file": "src/routes/workspace.ts",
+      "source_location": "L1001",
       "_origin": "ast",
       "id": "routes_workspace_createagentrundocument",
       "community": 9,
@@ -15027,7 +15037,7 @@
       "label": "createAgentFailureDocumentFromRequest()",
       "file_type": "code",
       "source_file": "src/routes/workspace.ts",
-      "source_location": "L1036",
+      "source_location": "L1043",
       "_origin": "ast",
       "id": "routes_workspace_createagentfailuredocumentfromrequest",
       "community": 9,
@@ -15037,7 +15047,7 @@
       "label": "findWorkspaceAgentRunContext()",
       "file_type": "code",
       "source_file": "src/routes/workspace.ts",
-      "source_location": "L1067",
+      "source_location": "L1074",
       "_origin": "ast",
       "id": "routes_workspace_findworkspaceagentruncontext",
       "community": 9,
@@ -15047,7 +15057,7 @@
       "label": "buildWorkspaceFilenameForDocs()",
       "file_type": "code",
       "source_file": "src/routes/workspace.ts",
-      "source_location": "L1092",
+      "source_location": "L1099",
       "_origin": "ast",
       "id": "routes_workspace_buildworkspacefilenamefordocs",
       "community": 9,
@@ -15057,7 +15067,7 @@
       "label": "workspaceRouter()",
       "file_type": "code",
       "source_file": "src/routes/workspace.ts",
-      "source_location": "L1110",
+      "source_location": "L1117",
       "_origin": "ast",
       "id": "routes_workspace_workspacerouter",
       "community": 22,
@@ -29897,7 +29907,7 @@
       "label": "Decision",
       "file_type": "document",
       "source_file": "documentation/ADRS/2026_06_29_20_25_[WORKSPACE]_workspace_llm_tool_mode_chat_only.md",
-      "source_location": "L20",
+      "source_location": "L22",
       "_origin": "ast",
       "id": "adrs_2026_06_29_20_25_workspace_workspace_llm_tool_mode_chat_only_decision",
       "community": 418,
@@ -29907,7 +29917,7 @@
       "label": "Implementation",
       "file_type": "document",
       "source_file": "documentation/ADRS/2026_06_29_20_25_[WORKSPACE]_workspace_llm_tool_mode_chat_only.md",
-      "source_location": "L33",
+      "source_location": "L37",
       "_origin": "ast",
       "id": "adrs_2026_06_29_20_25_workspace_workspace_llm_tool_mode_chat_only_implementation",
       "community": 418,
@@ -29917,7 +29927,7 @@
       "label": "Frontend Workspace",
       "file_type": "document",
       "source_file": "documentation/ADRS/2026_06_29_20_25_[WORKSPACE]_workspace_llm_tool_mode_chat_only.md",
-      "source_location": "L35",
+      "source_location": "L39",
       "_origin": "ast",
       "id": "adrs_2026_06_29_20_25_workspace_workspace_llm_tool_mode_chat_only_frontend_workspace",
       "community": 418,
@@ -29927,7 +29937,7 @@
       "label": "Backend Workspace",
       "file_type": "document",
       "source_file": "documentation/ADRS/2026_06_29_20_25_[WORKSPACE]_workspace_llm_tool_mode_chat_only.md",
-      "source_location": "L46",
+      "source_location": "L50",
       "_origin": "ast",
       "id": "adrs_2026_06_29_20_25_workspace_workspace_llm_tool_mode_chat_only_backend_workspace",
       "community": 418,
@@ -29937,7 +29947,7 @@
       "label": "Consequences",
       "file_type": "document",
       "source_file": "documentation/ADRS/2026_06_29_20_25_[WORKSPACE]_workspace_llm_tool_mode_chat_only.md",
-      "source_location": "L59",
+      "source_location": "L65",
       "_origin": "ast",
       "id": "adrs_2026_06_29_20_25_workspace_workspace_llm_tool_mode_chat_only_consequences",
       "community": 418,
@@ -29947,7 +29957,7 @@
       "label": "PROS",
       "file_type": "document",
       "source_file": "documentation/ADRS/2026_06_29_20_25_[WORKSPACE]_workspace_llm_tool_mode_chat_only.md",
-      "source_location": "L61",
+      "source_location": "L67",
       "_origin": "ast",
       "id": "adrs_2026_06_29_20_25_workspace_workspace_llm_tool_mode_chat_only_pros",
       "community": 418,
@@ -29957,7 +29967,7 @@
       "label": "CONS",
       "file_type": "document",
       "source_file": "documentation/ADRS/2026_06_29_20_25_[WORKSPACE]_workspace_llm_tool_mode_chat_only.md",
-      "source_location": "L69",
+      "source_location": "L76",
       "_origin": "ast",
       "id": "adrs_2026_06_29_20_25_workspace_workspace_llm_tool_mode_chat_only_cons",
       "community": 418,
@@ -29967,7 +29977,7 @@
       "label": "Verification",
       "file_type": "document",
       "source_file": "documentation/ADRS/2026_06_29_20_25_[WORKSPACE]_workspace_llm_tool_mode_chat_only.md",
-      "source_location": "L74",
+      "source_location": "L82",
       "_origin": "ast",
       "id": "adrs_2026_06_29_20_25_workspace_workspace_llm_tool_mode_chat_only_verification",
       "community": 418,
@@ -31464,6 +31474,426 @@
       "norm_label": "response"
     },
     {
+      "label": "2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm",
+      "community": 48,
+      "norm_label": "2026_06_29_23_50_[agent]_run_ask_the_llm.md"
+    },
+    {
+      "label": "Run - Ask The LLM",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_run_ask_the_llm",
+      "community": 48,
+      "norm_label": "run - ask the llm"
+    },
+    {
+      "label": "Execution",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_execution",
+      "community": 48,
+      "norm_label": "execution"
+    },
+    {
+      "label": "User input",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L17",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_user_input",
+      "community": 48,
+      "norm_label": "user input"
+    },
+    {
+      "label": "Response",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_response",
+      "community": 48,
+      "norm_label": "response"
+    },
+    {
+      "label": "Routage du serveur Express dans l'\u00e9cosyst\u00e8me Node.js",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_routage_du_serveur_express_dans_l_\u00e9cosyst\u00e8me_node_js",
+      "community": 48,
+      "norm_label": "routage du serveur express dans l'ecosysteme node.js"
+    },
+    {
+      "label": "1. Concept de base du routage Express",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L25",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_1_concept_de_base_du_routage_express",
+      "community": 48,
+      "norm_label": "1. concept de base du routage express"
+    },
+    {
+      "label": "2. D\u00e9finition et m\u00e9thodes de routage",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L28",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_2_d\u00e9finition_et_m\u00e9thodes_de_routage",
+      "community": 48,
+      "norm_label": "2. definition et methodes de routage"
+    },
+    {
+      "label": "3. Route parameters",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L48",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_3_route_parameters",
+      "community": 48,
+      "norm_label": "3. route parameters"
+    },
+    {
+      "label": "4. Gestionnaires de middleware dans les routes",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L65",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_4_gestionnaires_de_middleware_dans_les_routes",
+      "community": 48,
+      "norm_label": "4. gestionnaires de middleware dans les routes"
+    },
+    {
+      "label": "5. Utilisation de Router : Object-oriented Routing",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L82",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_5_utilisation_de_router_object_oriented_routing",
+      "community": 48,
+      "norm_label": "5. utilisation de router : object-oriented routing"
+    },
+    {
+      "label": "6. Pr\u00e9fixe automatique du chemin de route",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L114",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_6_pr\u00e9fixe_automatique_du_chemin_de_route",
+      "community": 48,
+      "norm_label": "6. prefixe automatique du chemin de route"
+    },
+    {
+      "label": "7. Centricit\u00e9 sur les param\u00e8tres (Middleware) par rapport aux chemins de route",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L130",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_7_centricit\u00e9_sur_les_param\u00e8tres_middleware_par_rapport_aux_chemins_de_route",
+      "community": 48,
+      "norm_label": "7. centricite sur les parametres (middleware) par rapport aux chemins de route"
+    },
+    {
+      "label": "8. Routage bas\u00e9 sur Express-Router",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L150",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_8_routage_bas\u00e9_sur_express_router",
+      "community": 48,
+      "norm_label": "8. routage base sur express-router"
+    },
+    {
+      "label": "9. Convention de nommage des routes",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L182",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_9_convention_de_nommage_des_routes",
+      "community": 48,
+      "norm_label": "9. convention de nommage des routes"
+    },
+    {
+      "label": "10. Exemple d'architecture compl\u00e8te",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L191",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_10_exemple_d_architecture_compl\u00e8te",
+      "community": 48,
+      "norm_label": "10. exemple d'architecture complete"
+    },
+    {
+      "label": "11. Meilleures pratiques",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L233",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_11_meilleures_pratiques",
+      "community": 48,
+      "norm_label": "11. meilleures pratiques"
+    },
+    {
+      "label": "12. Routage et composition d'applications",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L241",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_12_routage_et_composition_d_applications",
+      "community": 48,
+      "norm_label": "12. routage et composition d'applications"
+    },
+    {
+      "label": "Debug",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L246",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_debug",
+      "community": 48,
+      "norm_label": "debug"
+    },
+    {
+      "label": "Tools MCP",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L248",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_tools_mcp",
+      "community": 48,
+      "norm_label": "tools mcp"
+    },
+    {
+      "label": "Tour 1 \u2014 Prompt envoy\u00e9",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L252",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_tour_1_prompt_envoy\u00e9",
+      "community": 48,
+      "norm_label": "tour 1 \u2014 prompt envoye"
+    },
+    {
+      "label": "Tour 1 \u2014 R\u00e9ponse re\u00e7ue",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L272",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_tour_1_r\u00e9ponse_re\u00e7ue",
+      "community": 48,
+      "norm_label": "tour 1 \u2014 reponse recue"
+    },
+    {
+      "label": "2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm",
+      "community": 432,
+      "norm_label": "2026_06_30_07_26_[agent]_run_ask_the_llm.md"
+    },
+    {
+      "label": "Run - Ask The LLM",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_run_ask_the_llm",
+      "community": 432,
+      "norm_label": "run - ask the llm"
+    },
+    {
+      "label": "Execution",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_execution",
+      "community": 432,
+      "norm_label": "execution"
+    },
+    {
+      "label": "User input",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L17",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_user_input",
+      "community": 432,
+      "norm_label": "user input"
+    },
+    {
+      "label": "Response",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_response",
+      "community": 432,
+      "norm_label": "response"
+    },
+    {
+      "label": "Basic Graph Display",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L25",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_basic_graph_display",
+      "community": 432,
+      "norm_label": "basic graph display"
+    },
+    {
+      "label": "Enhanced Graph Options",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L36",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_enhanced_graph_options",
+      "community": 432,
+      "norm_label": "enhanced graph options"
+    },
+    {
+      "label": "Show all branches and merges",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L38",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_show_all_branches_and_merges",
+      "community": 432,
+      "norm_label": "show all branches and merges"
+    },
+    {
+      "label": "Show full commit messages with graph",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L43",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_show_full_commit_messages_with_graph",
+      "community": 432,
+      "norm_label": "show full commit messages with graph"
+    },
+    {
+      "label": "Show detailed commit information",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L48",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_show_detailed_commit_information",
+      "community": 432,
+      "norm_label": "show detailed commit information"
+    },
+    {
+      "label": "Show left/right indicators for merges (excellent for understanding structure)",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L53",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_show_left_right_indicators_for_merges_excellent_for_understanding_structure",
+      "community": 432,
+      "norm_label": "show left/right indicators for merges (excellent for understanding structure)"
+    },
+    {
+      "label": "Combined Commands for Different Use Cases",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L58",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_combined_commands_for_different_use_cases",
+      "community": 432,
+      "norm_label": "combined commands for different use cases"
+    },
+    {
+      "label": "Visual branch structure",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L60",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_visual_branch_structure",
+      "community": 432,
+      "norm_label": "visual branch structure"
+    },
+    {
+      "label": "Only merge commits",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L65",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_only_merge_commits",
+      "community": 432,
+      "norm_label": "only merge commits"
+    },
+    {
+      "label": "Limit to specific number of commits",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L70",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_limit_to_specific_number_of_commits",
+      "community": 432,
+      "norm_label": "limit to specific number of commits"
+    },
+    {
+      "label": "Tips for Best Results",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L75",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_tips_for_best_results",
+      "community": 432,
+      "norm_label": "tips for best results"
+    },
+    {
+      "label": "Debug",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L92",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_debug",
+      "community": 432,
+      "norm_label": "debug"
+    },
+    {
+      "label": "Tools MCP",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L94",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_tools_mcp",
+      "community": 432,
+      "norm_label": "tools mcp"
+    },
+    {
+      "label": "Tour 1 \u2014 Prompt envoy\u00e9",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L98",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_tour_1_prompt_envoy\u00e9",
+      "community": 432,
+      "norm_label": "tour 1 \u2014 prompt envoye"
+    },
+    {
+      "label": "Tour 1 \u2014 R\u00e9ponse re\u00e7ue",
+      "file_type": "document",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L118",
+      "_origin": "ast",
+      "id": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_tour_1_r\u00e9ponse_re\u00e7ue",
+      "community": 432,
+      "norm_label": "tour 1 \u2014 reponse recue"
+    },
+    {
       "label": "2026_06_25_20_48_[AGENT]_run_agent_2.md",
       "file_type": "document",
       "source_file": "documentation/AI/WORKSPACE/calculate_mathematical_operation/2026_06_25_20_48_[AGENT]_run_agent_2.md",
@@ -31562,16 +31992,6 @@
       "id": "calculate_mathematical_operation_2026_06_25_21_20_agent_run_agent_2_response",
       "community": 406,
       "norm_label": "response"
-    },
-    {
-      "label": "context.md",
-      "file_type": "document",
-      "source_file": "documentation/AI/WORKSPACE/document_image_summary/context.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "document_image_summary_context",
-      "community": 435,
-      "norm_label": "context.md"
     },
     {
       "label": "2026_06_26_22_05_[AGENT]_run_find_written_english_documents.md",
@@ -33687,7 +34107,7 @@
       "label": "Contenu modifie",
       "file_type": "document",
       "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L30",
+      "source_location": "L34",
       "_origin": "ast",
       "id": "worklog_current_task_contenu_modifie",
       "community": 234,
@@ -33697,7 +34117,7 @@
       "label": "Documentation",
       "file_type": "document",
       "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L43",
+      "source_location": "L42",
       "_origin": "ast",
       "id": "worklog_current_task_documentation",
       "community": 234,
@@ -33707,7 +34127,7 @@
       "label": "Verifications realisees",
       "file_type": "document",
       "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L49",
+      "source_location": "L48",
       "_origin": "ast",
       "id": "worklog_current_task_verifications_realisees",
       "community": 234,
@@ -33717,7 +34137,7 @@
       "label": "Prochaine action recommandee",
       "file_type": "document",
       "source_file": "documentation/WORKLOG/current-task.md",
-      "source_location": "L55",
+      "source_location": "L53",
       "_origin": "ast",
       "id": "worklog_current_task_prochaine_action_recommandee",
       "community": 234,
@@ -76559,9 +76979,9 @@
       "source_file": "src/routes/export.ts",
       "source_location": "L42",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_export",
-      "target": "routes_export_addexportimageasset",
-      "confidence_score": 1.0
+      "target": "routes_export_addexportimageasset"
     },
     {
       "relation": "contains",
@@ -76589,9 +77009,9 @@
       "source_file": "src/routes/export.ts",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_export",
-      "target": "routes_export_exportimageasset",
-      "confidence_score": 1.0
+      "target": "routes_export_exportimageasset"
     },
     {
       "relation": "contains",
@@ -76639,9 +77059,9 @@
       "source_file": "src/routes/export.ts",
       "source_location": "L34",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_export",
-      "target": "routes_export_safeassetrelativepath",
-      "confidence_score": 1.0
+      "target": "routes_export_safeassetrelativepath"
     },
     {
       "relation": "contains",
@@ -76692,9 +77112,9 @@
       "source_file": "src/routes/export.ts",
       "source_location": "L48",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "routes_export_addexportimageasset",
-      "target": "routes_export_safeassetrelativepath",
-      "confidence_score": 1.0
+      "target": "routes_export_safeassetrelativepath"
     },
     {
       "relation": "calls",
@@ -77609,6 +78029,16 @@
       "confidence_score": 1.0,
       "source": "src_routes_workspace_ts_routes_workspace",
       "target": "routes_workspace_agentrunreporter"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/routes/workspace.ts",
+      "source_location": "L994",
+      "weight": 1.0,
+      "source": "src_routes_workspace_ts_routes_workspace",
+      "target": "routes_workspace_agentsystempromptforrun",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -78826,6 +79256,17 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/routes/workspace.ts",
+      "source_location": "L998",
+      "weight": 1.0,
+      "source": "routes_workspace_agentsystempromptforrun",
+      "target": "routes_workspace_agentsystempromptwithmemory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/routes/workspace.ts",
       "source_location": "L806",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -79632,9 +80073,9 @@
       "source_file": "tests/api/workspace.spec.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "api_workspace_spec",
-      "target": "helpers_mcp",
-      "confidence_score": 1.0
+      "target": "helpers_mcp"
     },
     {
       "relation": "imports",
@@ -79643,9 +80084,9 @@
       "source_file": "tests/api/workspace.spec.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "api_workspace_spec",
-      "target": "helpers_mcp_calltool",
-      "confidence_score": 1.0
+      "target": "helpers_mcp_calltool"
     },
     {
       "relation": "imports_from",
@@ -93191,9 +93632,9 @@
       "source_file": "documentation/ADRS/2026_06_29_22_36_[WORKSPACE]_workspace_image_providers_and_generate_image_tool.md",
       "source_location": "L78",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adrs_2026_06_29_22_36_workspace_workspace_image_providers_and_generate_image_tool_implementation",
-      "target": "adrs_2026_06_29_22_36_workspace_workspace_image_providers_and_generate_image_tool_export",
-      "confidence_score": 1.0
+      "target": "adrs_2026_06_29_22_36_workspace_workspace_image_providers_and_generate_image_tool_export"
     },
     {
       "relation": "contains",
@@ -94434,6 +94875,406 @@
       "confidence_score": 1.0,
       "source": "agent_de_listage_des_adrs_driftes_2026_06_02_17_15_agent_run_agent_de_listage_des_adrs_driftes_run_agent_de_listage_des_adrs_drift\u00e9s",
       "target": "agent_de_listage_des_adrs_driftes_2026_06_02_17_15_agent_run_agent_de_listage_des_adrs_driftes_user_input"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_run_ask_the_llm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L246",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_run_ask_the_llm",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_debug",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_run_ask_the_llm",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_execution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_run_ask_the_llm",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_response",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_run_ask_the_llm",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_routage_du_serveur_express_dans_l_\u00e9cosyst\u00e8me_node_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_run_ask_the_llm",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_user_input",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L191",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_routage_du_serveur_express_dans_l_\u00e9cosyst\u00e8me_node_js",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_10_exemple_d_architecture_compl\u00e8te",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L233",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_routage_du_serveur_express_dans_l_\u00e9cosyst\u00e8me_node_js",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_11_meilleures_pratiques",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L241",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_routage_du_serveur_express_dans_l_\u00e9cosyst\u00e8me_node_js",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_12_routage_et_composition_d_applications",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_routage_du_serveur_express_dans_l_\u00e9cosyst\u00e8me_node_js",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_1_concept_de_base_du_routage_express",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_routage_du_serveur_express_dans_l_\u00e9cosyst\u00e8me_node_js",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_2_d\u00e9finition_et_m\u00e9thodes_de_routage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L48",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_routage_du_serveur_express_dans_l_\u00e9cosyst\u00e8me_node_js",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_3_route_parameters",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L65",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_routage_du_serveur_express_dans_l_\u00e9cosyst\u00e8me_node_js",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_4_gestionnaires_de_middleware_dans_les_routes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L82",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_routage_du_serveur_express_dans_l_\u00e9cosyst\u00e8me_node_js",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_5_utilisation_de_router_object_oriented_routing",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L114",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_routage_du_serveur_express_dans_l_\u00e9cosyst\u00e8me_node_js",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_6_pr\u00e9fixe_automatique_du_chemin_de_route",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L130",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_routage_du_serveur_express_dans_l_\u00e9cosyst\u00e8me_node_js",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_7_centricit\u00e9_sur_les_param\u00e8tres_middleware_par_rapport_aux_chemins_de_route",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L150",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_routage_du_serveur_express_dans_l_\u00e9cosyst\u00e8me_node_js",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_8_routage_bas\u00e9_sur_express_router",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L182",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_routage_du_serveur_express_dans_l_\u00e9cosyst\u00e8me_node_js",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_9_convention_de_nommage_des_routes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L248",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_debug",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_tools_mcp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L252",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_debug",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_tour_1_prompt_envoy\u00e9",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L272",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_debug",
+      "target": "ask_the_llm_2_2026_06_29_23_50_agent_run_ask_the_llm_tour_1_r\u00e9ponse_re\u00e7ue",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_run_ask_the_llm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_run_ask_the_llm",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_basic_graph_display",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_run_ask_the_llm",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_combined_commands_for_different_use_cases",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L92",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_run_ask_the_llm",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_debug",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_run_ask_the_llm",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_enhanced_graph_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_run_ask_the_llm",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_execution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_run_ask_the_llm",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_response",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L75",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_run_ask_the_llm",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_tips_for_best_results",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_run_ask_the_llm",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_user_input",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_enhanced_graph_options",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_show_all_branches_and_merges",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L48",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_enhanced_graph_options",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_show_detailed_commit_information",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_enhanced_graph_options",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_show_full_commit_messages_with_graph",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L53",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_enhanced_graph_options",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_show_left_right_indicators_for_merges_excellent_for_understanding_structure",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L70",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_combined_commands_for_different_use_cases",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_limit_to_specific_number_of_commits",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L65",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_combined_commands_for_different_use_cases",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_only_merge_commits",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L60",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_combined_commands_for_different_use_cases",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_visual_branch_structure",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L94",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_debug",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_tools_mcp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L98",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_debug",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_tour_1_prompt_envoy\u00e9",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md",
+      "source_location": "L118",
+      "weight": 1.0,
+      "source": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_debug",
+      "target": "ask_the_llm_2_2026_06_30_07_26_agent_run_ask_the_llm_tour_1_r\u00e9ponse_re\u00e7ue",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -106311,5 +107152,5 @@
       "source_file": "usermanual-documentation/5_talks/2026_04_28_09_48_[CONFERENCE]_demo_living_documentation_mcp_en_conference.md"
     }
   ],
-  "built_at_commit": "3362039c76fefc64713f1c72000047358b412e4b"
+  "built_at_commit": "3ae2c739844bf84627189959aadb3383e6e8a8e8"
 }

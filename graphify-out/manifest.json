@@ -40,13 +40,13 @@
     "semantic_hash": ""
   },
   "documentation/.living-doc.json": {
-    "mtime": 1782767671.725891,
-    "ast_hash": "b97b9fd032a8d1b947304db588f89e16",
+    "mtime": 1782797897.955577,
+    "ast_hash": "7ef3423db9929e154ccec04f54980d30",
     "semantic_hash": ""
   },
   "documentation/.metadata.json": {
-    "mtime": 1782767818.1160405,
-    "ast_hash": "937739c95291a1e2ec16df4645d580c5",
+    "mtime": 1782798011.6736782,
+    "ast_hash": "a736734c66a168899c07631f3f4f063e",
     "semantic_hash": ""
   },
   "documentation/.survival-kit.json": {
@@ -55,8 +55,8 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1782755292.5703716,
-    "ast_hash": "a301149192321673a27a51526c2ca001",
+    "mtime": 1782768180.6232958,
+    "ast_hash": "c9556a6c3e0774b8aadd19bba13b4869",
     "semantic_hash": ""
   },
   "playwright.config.ts": {
@@ -580,8 +580,8 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/routes/Workspace.svelte": {
-    "mtime": 1782765070.1934574,
-    "ast_hash": "00ec85acce976e36c6e8cb83d4930309",
+    "mtime": 1782797107.6869211,
+    "ast_hash": "a0bca0d30e8c999996042781508309f7",
     "semantic_hash": ""
   },
   "src/frontend-svelte/vite.config.ts": {
@@ -730,8 +730,8 @@
     "semantic_hash": ""
   },
   "src/routes/workspace.ts": {
-    "mtime": 1782767337.22549,
-    "ast_hash": "ad38d0a9fc3071b2eeba49c872f6170c",
+    "mtime": 1782797896.5131087,
+    "ast_hash": "17ec580ab0e2c9c279719e6a334af3df",
     "semantic_hash": ""
   },
   "src/server.ts": {
@@ -1995,8 +1995,8 @@
     "semantic_hash": ""
   },
   "documentation/WORKLOG/current-task.md": {
-    "mtime": 1782767835.9718654,
-    "ast_hash": "ad65d4e3b24fb275a71f4fa1d562000e",
+    "mtime": 1782798030.3112342,
+    "ast_hash": "7b62cd8e2c8aa0b8ae3a784213b32bb3",
     "semantic_hash": ""
   },
   "memory/MEMORY.md": {
@@ -3035,8 +3035,8 @@
     "semantic_hash": ""
   },
   "documentation/ADRS/2026_06_29_20_25_[WORKSPACE]_workspace_llm_tool_mode_chat_only.md": {
-    "mtime": 1782763948.2994664,
-    "ast_hash": "0e6d11f49fc0fb069e9d2a3a510de8ee",
+    "mtime": 1782797992.6643777,
+    "ast_hash": "0213e253aaabd4dc05085e4ae6b6815d",
     "semantic_hash": ""
   },
   "documentation/AI/WORKSPACE/traducteur_anglais_vers_francais/2026_06_29_20_27_[AGENT]_run_traducteur_anglais_vers_francais.md": {
@@ -3065,13 +3065,18 @@
     "semantic_hash": ""
   },
   "tests/api/workspace.spec.ts": {
-    "mtime": 1782767691.3867254,
-    "ast_hash": "4a889944f887b0ceeeb2a0d92ea0eab0",
+    "mtime": 1782797937.155531,
+    "ast_hash": "52db7df4cfb22bcb169be43eccf73121",
     "semantic_hash": ""
   },
-  "documentation/AI/WORKSPACE/document_image_summary/context.md": {
-    "mtime": 1782766461.1818304,
-    "ast_hash": "3bd32abdda7baeb25f2fe918cbdeb3fb",
+  "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_29_23_50_[AGENT]_run_ask_the_llm.md": {
+    "mtime": 1782769829.7071736,
+    "ast_hash": "b0cdab6a906833296dea996a3f6d9148",
+    "semantic_hash": ""
+  },
+  "documentation/AI/WORKSPACE/ask_the_llm_2/2026_06_30_07_26_[AGENT]_run_ask_the_llm.md": {
+    "mtime": 1782797194.776791,
+    "ast_hash": "3810d5fdbf78a8c32c9dbc5da3be1626",
     "semantic_hash": ""
   }
 }

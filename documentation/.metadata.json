@@ -1358,32 +1358,38 @@
   "ADRS/2026_06_29_20_25_[WORKSPACE]_workspace_llm_tool_mode_chat_only": [
     {
       "path": "src/routes/workspace.ts",
-      "hash": "87cfab9504029e6903fbdc2b76c64d868a2eaf424dc153754120dc77bdd5f1d4",
-      "commit": "3362039c76fefc64713f1c72000047358b412e4b",
+      "hash": "870feaafa4aba602208a1e359464afe600c11f6501c07099658fa1c6e14cad49",
+      "commit": "3ae2c739844bf84627189959aadb3383e6e8a8e8",
       "dirty": true
     },
     {
       "path": "src/frontend-svelte/src/lib/workspace/app.ts",
-      "hash": "6b507ccf51421f97febd19367d5ee51aacee15574a747ea0821d140c1d6bcb66",
-      "commit": "3362039c76fefc64713f1c72000047358b412e4b",
+      "hash": "9990874c2155f9117f6c3963fa3b1b12166c3b3524a7dc44e067020402093e58",
+      "commit": "3ae2c739844bf84627189959aadb3383e6e8a8e8",
       "dirty": true
     },
     {
       "path": "src/frontend-svelte/src/lib/workspace/persistence.ts",
-      "hash": "3f284ea6669b73216f89e3f01a2f7a7743f44175fc54b707d1ce57588d87a285",
-      "commit": "3362039c76fefc64713f1c72000047358b412e4b",
+      "hash": "6150f16149fd4a028c3ec861495acaba4316e018a567a087eec585e992df0c0b",
+      "commit": "3ae2c739844bf84627189959aadb3383e6e8a8e8",
       "dirty": true
     },
     {
       "path": "src/frontend-svelte/src/routes/Workspace.svelte",
-      "hash": "8ccd38065b8088a0b77c6527d584c7a76e71d280317dce6c405f43f5bc7c2437",
-      "commit": "3362039c76fefc64713f1c72000047358b412e4b",
+      "hash": "1fdf8f14dc64962b695da3543d7621e1f4debc10fb5854be2dfdd4341dc792c3",
+      "commit": "3ae2c739844bf84627189959aadb3383e6e8a8e8",
       "dirty": true
     },
     {
       "path": "src/frontend-svelte/src/styles/app.css",
-      "hash": "bbdaf6c1df1e199434533439ff7f81b9e5c9d22cf3aeb2da6767298e16256799",
-      "commit": "3362039c76fefc64713f1c72000047358b412e4b",
+      "hash": "6d13c0c5baad0153257094fc61346cdcbeb5c4f8283ecf1b49e320ec1f50be98",
+      "commit": "3ae2c739844bf84627189959aadb3383e6e8a8e8",
+      "dirty": true
+    },
+    {
+      "path": "tests/api/workspace.spec.ts",
+      "hash": "12b16f9612c3f0d15bcaea9f62e1e277ce1d33c97ce9de1264b54f663ff41858",
+      "commit": "3ae2c739844bf84627189959aadb3383e6e8a8e8",
       "dirty": true
     }
   ],

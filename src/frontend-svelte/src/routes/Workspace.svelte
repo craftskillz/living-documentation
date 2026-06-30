@@ -61,7 +61,7 @@
                 <input id="nodeProviderId" name="nodeProviderId" type="text" readonly />
                 <button id="copyProviderIdButton" class="icon-button" type="button" title="Copy provider ID">⧉</button>
               </div>
-              <small class="field-note">Use this id as <code>imageProviderId</code> when an agent calls <code>generate_image</code>.</small>
+              <small class="field-note">Technical node id. Use it when a tool or agent workflow needs to reference this provider, for example as <code>imageProviderId</code> with <code>generate_image</code>.</small>
             </div>
             <label class="field wide">
               <span>Endpoint</span>

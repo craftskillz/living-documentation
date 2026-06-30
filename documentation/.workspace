@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-29T20:53:43.709Z",
+  "updatedAt": "2026-06-29T21:49:22.257Z",
   "entities": [
     {
       "id": "root",
@@ -30,8 +30,8 @@
       "label": "MCP",
       "kind": "mcp",
       "parentId": "root",
-      "x": 1.567547902908612e-14,
-      "y": -256,
+      "x": 1.9099941661438983e-14,
+      "y": -311.9257189050281,
       "angle": -1.5707963267948966,
       "config": {
         "endpoint": "http://localhost:4321/mcp",
@@ -50,12 +50,12 @@
     },
     {
       "id": "provider-mpsmymtb",
-      "label": "DEVSTRAL SMALL 2",
+      "label": "LOCAL OLLAMA QWEN 3.6",
       "kind": "llm",
       "parentId": "root",
-      "x": 263.27172275046934,
-      "y": -152,
-      "angle": -0.5235987755982989,
+      "x": 254.5059165611885,
+      "y": -254.50591656118849,
+      "angle": -0.7853981633974483,
       "config": {
         "endpoint": "http://localhost:11434",
         "token": "",
@@ -76,9 +76,9 @@
       "label": "Agent de listage des ADRS driftés",
       "kind": "agent",
       "parentId": "provider-mpsmymtb",
-      "x": 252.1753107269714,
-      "y": -363.73215456371486,
-      "angle": -1.6231562043547265,
+      "x": 188.9872915468673,
+      "y": -456.1515101461236,
+      "angle": -1.8849555921538759,
       "config": {
         "endpoint": "",
         "token": "",
@@ -99,9 +99,9 @@
       "label": "Générer Diagramme Mermaid",
       "kind": "agent",
       "parentId": "provider-mpsmymtb",
-      "x": 441.0889413889107,
-      "y": -36.52414801493431,
-      "angle": 0.5759586531581287,
+      "x": 456.1515101461236,
+      "y": -188.9872915468673,
+      "angle": 0.3141592653589793,
       "config": {
         "endpoint": "",
         "token": "",
@@ -119,12 +119,12 @@
     },
     {
       "id": "provider-mpsyqgb7",
-      "label": "Gemma 4",
+      "label": "LOCAL OLLAMA Gemma 4",
       "kind": "llm",
       "parentId": "root",
-      "x": 263.2717227504694,
-      "y": 151.99999999999994,
-      "angle": 0.5235987755982987,
+      "x": 359.9257189050281,
+      "y": 0,
+      "angle": 0,
       "config": {
         "endpoint": "http://localhost:11434",
         "token": "",
@@ -145,9 +145,9 @@
       "label": "Traducteur Anglais Français",
       "kind": "agent",
       "parentId": "provider-mpsyqgb7",
-      "x": 446.88878820733555,
-      "y": 258.01136216933065,
-      "angle": 0.5235987755982986,
+      "x": 571.9484432436896,
+      "y": 0,
+      "angle": 0,
       "config": {
         "endpoint": "",
         "token": "",
@@ -168,9 +168,9 @@
       "label": "Qwen 3.6",
       "kind": "llm",
       "parentId": "root",
-      "x": 2.1553783664993418e-14,
-      "y": 352,
-      "angle": 1.5707963267948966,
+      "x": 424.21154404595995,
+      "y": 424.2115440459599,
+      "angle": 0.7853981633974483,
       "config": {
         "endpoint": "http://localhost:11434",
         "token": "",
@@ -191,9 +191,9 @@
       "label": "Agent 1",
       "kind": "agent",
       "parentId": "provider-mpwryxsk",
-      "x": 3.453643120038559e-14,
-      "y": 564.0227243386615,
-      "angle": 1.5707963267948966,
+      "x": 574.1342501914736,
+      "y": 574.1342501914735,
+      "angle": 0.7853981633974483,
       "config": {
         "endpoint": "",
         "token": "",
@@ -211,12 +211,12 @@
     },
     {
       "id": "provider-mqtqt25p",
-      "label": "OpenRouter DeekSeek V4 Pro",
+      "label": "Agent OpenRouter DeekSeek V4 Pro",
       "kind": "llm",
       "parentId": "root",
-      "x": -387.97938089542845,
-      "y": 224.00000000000014,
-      "angle": 2.617993877991494,
+      "x": 4.2613160205068166e-14,
+      "y": 695.9257189050281,
+      "angle": 1.5707963267948966,
       "config": {
         "endpoint": "https://openrouter.ai/api/v1",
         "token": "env:OPENROUTER_API_KEY",
@@ -237,9 +237,9 @@
       "label": "Traducteur Anglais vers Français",
       "kind": "agent",
       "parentId": "provider-mqtqt25p",
-      "x": -254.54915710317,
-      "y": 388.7726039568955,
-      "angle": 0.8901179185171075,
+      "x": 209.41237277051295,
+      "y": 662.7580574467372,
+      "angle": -0.15707963267948988,
       "config": {
         "endpoint": "",
         "token": "",
@@ -260,9 +260,9 @@
       "label": "Find Written English Documents",
       "kind": "agent",
       "parentId": "provider-mqtqt25p",
-      "x": -571.5964463522945,
-      "y": 330.011362169331,
-      "angle": 2.617993877991494,
+      "x": 5.559580774046034e-14,
+      "y": 907.9484432436897,
+      "angle": 1.5707963267948966,
       "config": {
         "endpoint": "",
         "token": "",
@@ -283,9 +283,9 @@
       "label": "Nano Banana 2 Standard",
       "kind": "llm",
       "parentId": "root",
-      "x": -304.8409421321224,
-      "y": -176.00000000000003,
-      "angle": 3.6651914291880923,
+      "x": -322.388167555097,
+      "y": 322.3881675550971,
+      "angle": 2.356194490192345,
       "config": {
         "endpoint": "https://openrouter.ai/api/v1",
         "token": "env:OPENROUTER_API_KEY",
@@ -306,9 +306,9 @@
       "label": "Document Image Summary",
       "kind": "agent",
       "parentId": "provider-mqtqt25p",
-      "x": -463.9615298736831,
-      "y": 26.059734584813896,
-      "angle": 4.34586983746588,
+      "x": -209.41237277051292,
+      "y": 662.7580574467373,
+      "angle": 3.2986722862692828,
       "config": {
         "endpoint": "",
         "token": "",
@@ -323,11 +323,103 @@
         "description": "Runs focused automation against documentation, source, or quality signals.",
         "workspaceFolder": "AI/WORKSPACE/document_image_summary"
       }
+    },
+    {
+      "id": "provider-mqzqd7z0",
+      "label": "ChatOnly OpenRouter Deepseek V4 Pro",
+      "kind": "llm",
+      "parentId": "root",
+      "x": -359.9257189050281,
+      "y": 4.4078187958785266e-14,
+      "angle": 3.141592653589793,
+      "config": {
+        "endpoint": "https://openrouter.ai/api/v1",
+        "token": "env:OPENROUTER_API_KEY",
+        "model": "deepseek/deepseek-v4-pro",
+        "providerType": "chat",
+        "toolMode": "chat",
+        "timeout": 180,
+        "systemPrompt": "",
+        "requiresUserInput": false,
+        "userInputDescription": "",
+        "expectedOutputMarker": "",
+        "description": "Simply Chat with the model, witout using tools",
+        "workspaceFolder": ""
+      }
+    },
+    {
+      "id": "agent-mqzqh40p",
+      "label": "Ask The LLM",
+      "kind": "agent",
+      "parentId": "provider-mqzqd7z0",
+      "x": -571.9484432436896,
+      "y": 7.004348302956962e-14,
+      "angle": 3.141592653589793,
+      "config": {
+        "endpoint": "",
+        "token": "",
+        "model": "deepseek/deepseek-v4-pro",
+        "providerType": "chat",
+        "toolMode": "tools",
+        "timeout": 180,
+        "systemPrompt": "The user message is the prompt",
+        "requiresUserInput": true,
+        "userInputDescription": "Describe your entire prompt here",
+        "expectedOutputMarker": "",
+        "description": "Simply ask an LLM on one subject using one prompt.",
+        "workspaceFolder": "AI/WORKSPACE/ask_the_llm"
+      }
+    },
+    {
+      "id": "provider-mqzqtzbv",
+      "label": "Chat OpenRouter Cohere Mini Free",
+      "kind": "llm",
+      "parentId": "root",
+      "x": -220.56479106423427,
+      "y": -220.56479106423419,
+      "angle": 3.9269908169872414,
+      "config": {
+        "endpoint": "https://openrouter.ai/api/v1",
+        "token": "env:OPENROUTER_API_KEY",
+        "model": "cohere/north-mini-code:free",
+        "providerType": "chat",
+        "toolMode": "chat",
+        "timeout": 180,
+        "systemPrompt": "",
+        "requiresUserInput": false,
+        "userInputDescription": "",
+        "expectedOutputMarker": "",
+        "description": "Routes model calls and hosts the agents assigned to this provider.",
+        "workspaceFolder": ""
+      }
+    },
+    {
+      "id": "agent-mqzqx64n",
+      "label": "Ask The LLM",
+      "kind": "agent",
+      "parentId": "provider-mqzqtzbv",
+      "x": -370.48749720974786,
+      "y": -370.48749720974786,
+      "angle": -2.356194490192345,
+      "config": {
+        "endpoint": "",
+        "token": "",
+        "model": "cohere/north-mini-code:free",
+        "providerType": "chat",
+        "toolMode": "tools",
+        "timeout": 180,
+        "systemPrompt": "The user message is the prompt",
+        "requiresUserInput": true,
+        "userInputDescription": "Describe your entire prompt here",
+        "expectedOutputMarker": "",
+        "description": "Simply ask an LLM on one subject using one prompt.",
+        "workspaceFolder": "AI/WORKSPACE/ask_the_llm_2"
+      }
     }
   ],
   "camera": {
-    "x": 861.8203308712361,
-    "y": 314.3465108761552,
-    "zoom": 0.7233816680532921
+    "x": 530.1429370331936,
+    "y": 377.83324463003186,
+    "zoom": 0.4630971994231249
   }
 }
