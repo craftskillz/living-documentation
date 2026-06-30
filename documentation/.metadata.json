@@ -1574,8 +1574,8 @@
     },
     {
       "path": "src/frontend-svelte/src/lib/home/DocViewer.svelte",
-      "hash": "2282c58d7a6df26ceb2db8d96b3751d4018345dfa921bf9fa499f6699e377495",
-      "commit": "09b25b5ebef46d0537ad53bc5f4747bebc0adeb2",
+      "hash": "c4d6527d6e174ff4f350b9eade9e690397ec25ff9e394f2ba9f675ebac528f9a",
+      "commit": "738989d7620b57cb42a7e8831dbc8abefba1f9c5",
       "dirty": true
     },
     {
