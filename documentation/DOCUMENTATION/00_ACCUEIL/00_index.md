@@ -23,7 +23,6 @@
 
 <!-- table-style: striped -->
 <!-- table-border: bordered -->
-<!-- table-color: info -->
 | Besoin                                          | Lire                                                                                                      |
 | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | Comprendre le produit en quelques minutes       | [Living Documentation en bref](./01_living_documentation_en_bref.md)                                      |
