@@ -21,14 +21,17 @@
 
 <div style="background:#fffbeb;border-left:4px solid #f59e0b;color:#451a03;padding:1rem 1.25rem;border-radius:0.375rem;margin:1rem 0;">
 
-| Besoin | Lire |
-| --- | --- |
-| Comprendre le produit en quelques minutes | [Living Documentation en bref](./01_living_documentation_en_bref.md) |
-| Choisir le bon parcours selon votre role | [Parcours recommandes](./02_parcours_recommandes.md) |
-| Creer votre premier espace documentaire | [Creer un espace documentaire](../01_DEMARRAGE/01_creer_un_espace_documentaire.md) |
-| Creer et retrouver un document | [Creer, modifier et retrouver un document](../01_DEMARRAGE/02_creer_modifier_et_retrouver_un_document.md) |
-| Configurer Git, les versions et les sauvegardes | `../04_ADMINISTRATION/utiliser_git_et_les_versions.md` |
-| Automatiser des taches avec des agents | `../03_AUTOMATISATION_IA/executer_un_agent_workspace.md` |
+<!-- table-style: striped -->
+<!-- table-border: bordered -->
+<!-- table-color: info -->
+| Besoin                                          | Lire                                                                                                      |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Comprendre le produit en quelques minutes       | [Living Documentation en bref](./01_living_documentation_en_bref.md)                                      |
+| Choisir le bon parcours selon votre role        | [Parcours recommandes](./02_parcours_recommandes.md)                                                      |
+| Creer votre premier espace documentaire         | [Creer un espace documentaire](../01_DEMARRAGE/01_creer_un_espace_documentaire.md)                        |
+| Creer et retrouver un document                  | [Creer, modifier et retrouver un document](../01_DEMARRAGE/02_creer_modifier_et_retrouver_un_document.md) |
+| Configurer Git, les versions et les sauvegardes | `../04_ADMINISTRATION/utiliser_git_et_les_versions.md`                                                    |
+| Automatiser des taches avec des agents          | `../03_AUTOMATISATION_IA/executer_un_agent_workspace.md`                                                  |
 
 
 </div>
