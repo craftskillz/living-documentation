@@ -7,13 +7,15 @@
 
 # Parcours recommandes
 
+![Organisation documentaire flexible autour de parcours, processus, references et connaissances techniques](../90_ASSETS/images/concept-09-organisation-documentaire.png)
+
 Cette page aide a choisir les documents a lire en premier. Living Documentation peut etre utilise simplement comme atelier Markdown local, ou plus largement comme environnement documentaire avec Git, diagrammes, agents et MCP.
 
 ## Si vous avez dix minutes
 
 1. Lire [Living Documentation en bref](./01_living_documentation_en_bref.md).
-2. Creer un espace documentaire avec `../01_DEMARRAGE/01_creer_un_espace_documentaire.md`.
-3. Creer et modifier un document avec `../01_DEMARRAGE/02_creer_modifier_et_retrouver_un_document.md`.
+2. Creer un espace documentaire avec [Creer un espace documentaire](../01_DEMARRAGE/01_creer_un_espace_documentaire.md).
+3. Creer et modifier un document avec [Creer, modifier et retrouver un document](../01_DEMARRAGE/02_creer_modifier_et_retrouver_un_document.md).
 4. Revenir ensuite a cette page pour choisir un parcours plus complet.
 
 ## Parcours par profil
@@ -31,7 +33,7 @@ Cette page aide a choisir les documents a lire en premier. Living Documentation 
 
 | Objectif | Lire en premier |
 | --- | --- |
-| Creer une documentation projet | `../01_DEMARRAGE/01_creer_un_espace_documentaire.md` puis `../02_USAGE_QUOTIDIEN/organiser_une_documentation_projet.md` |
+| Creer une documentation projet | [Creer un espace documentaire](../01_DEMARRAGE/01_creer_un_espace_documentaire.md) puis `../02_USAGE_QUOTIDIEN/organiser_une_documentation_projet.md` |
 | Prendre des notes de reunion | `../02_USAGE_QUOTIDIEN/prendre_des_notes_de_reunion.md` |
 | Documenter un processus | `../02_USAGE_QUOTIDIEN/documenter_un_processus.md` |
 | Ajouter images et fichiers | `../02_USAGE_QUOTIDIEN/utiliser_les_snippets_les_images_et_les_fichiers.md` |
@@ -56,6 +58,8 @@ Cette progression evite de construire une automatisation sur une base documentai
 
 ## Parcours pour l'automatisation agentique
 
+![Laboratoire d'automatisation agentique reliant documentation locale, agents IA, MCP, Git et generation d'images](../90_ASSETS/images/concept-12-laboratoire-agentique.png)
+
 Pour utiliser Living Documentation comme laboratoire d'automatisation documentaire :
 
 1. Configurer un ou plusieurs providers LLM dans Workspace.
@@ -69,4 +73,3 @@ Pour utiliser Living Documentation comme laboratoire d'automatisation documentai
 ## A retenir
 
 Living Documentation ne vous impose pas une methode documentaire unique. Vous pouvez organiser vos contenus par produit, equipe, processus, decision, parcours utilisateur ou modele inspire de Diataxis. L'important est que la structure reste lisible, maintenable et utile aux personnes qui vont la consulter.
-

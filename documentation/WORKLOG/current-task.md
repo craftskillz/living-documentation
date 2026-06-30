@@ -32,7 +32,10 @@ Le travail a couvert :
 - creation des pages d'accueil utilisateur dans `documentation/DOCUMENTATION/00_ACCUEIL/` ;
 - creation des fichiers d'assets dans `documentation/DOCUMENTATION/90_ASSETS/` ;
 - extraction des prompts Nano Banana Pro dans un fichier dedie ;
-- creation d'un backlog de captures d'ecran a produire.
+- creation d'un backlog de captures d'ecran a produire ;
+- integration des images conceptuelles generees dans les pages d'accueil ;
+- creation d'un index des assets visuels ;
+- creation des trois guides de demarrage de Phase 2.
 
 ## Contenu modifie
 
@@ -41,8 +44,13 @@ Le travail a couvert :
 - `documentation/DOCUMENTATION/00_ACCUEIL/01_living_documentation_en_bref.md`
 - `documentation/DOCUMENTATION/00_ACCUEIL/02_parcours_recommandes.md`
 - `documentation/DOCUMENTATION/90_ASSETS/charte_visuelle.md`
+- `documentation/DOCUMENTATION/90_ASSETS/index.md`
 - `documentation/DOCUMENTATION/90_ASSETS/screenshots_a_capturer.md`
 - `documentation/DOCUMENTATION/90_ASSETS/prompts_images.md`
+- `documentation/DOCUMENTATION/90_ASSETS/images/*`
+- `documentation/DOCUMENTATION/01_DEMARRAGE/01_creer_un_espace_documentaire.md`
+- `documentation/DOCUMENTATION/01_DEMARRAGE/02_creer_modifier_et_retrouver_un_document.md`
+- `documentation/DOCUMENTATION/01_DEMARRAGE/03_structurer_dossiers_categories_et_documents.md`
 - `documentation/WORKLOG/current-task.md`
 
 ## Documentation
@@ -53,14 +61,16 @@ Le document `Plan.md` est un document de pilotage documentaire utilisateur, pas 
 
 - Creation du plan cible demandee par l'utilisateur.
 - Creation des premiers livrables de Phase 1.
+- Integration des 12 images conceptuelles deposees par l'utilisateur.
+- Creation des livrables de Phase 2.
 - `git diff --check` execute avec succes.
 
 ## Verifications restantes
 
-- Relire les fichiers de Phase 1.
-- Generer les premiers visuels conceptuels avec Nano Banana Pro.
-- Produire ensuite les tutoriels essentiels de `01_DEMARRAGE/`.
+- Relire les fichiers de Phase 1 et Phase 2.
+- Produire ensuite les guides d'usage quotidien et d'administration prioritaires.
+- Capturer les premiers ecrans reels de l'application quand l'interface de demo est prete.
 
 ## Prochaine action recommandee
 
-Faire generer les premiers visuels conceptuels depuis `90_ASSETS/prompts_images.md`, puis produire les tutoriels essentiels de demarrage.
+Produire les guides prioritaires de Phase 3 : Admin, Git et Versions, puis notes de reunion et processus.

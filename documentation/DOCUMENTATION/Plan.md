@@ -349,9 +349,9 @@ Create a high-end technical illustration showing the journey from raw work to li
 
 ### Phase 2 - Demarrage
 
-- [ ] Creer un espace documentaire.
-- [ ] Creer, modifier et retrouver un document.
-- [ ] Structurer dossiers et categories.
+- [x] Creer un espace documentaire.
+- [x] Creer, modifier et retrouver un document.
+- [x] Structurer dossiers et categories.
 
 ### Phase 3 - Usage quotidien et administration
 
