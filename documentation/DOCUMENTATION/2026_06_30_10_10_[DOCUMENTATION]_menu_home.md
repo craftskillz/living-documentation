@@ -11,7 +11,7 @@ Le menu <kbd>Home</kbd> est la porte d'entrée de votre documentation.
 
 C'est ici que vous retrouvez vos dossiers, vos catégories, vos documents, et les principales actions de création.
 
-<div>
+<div class="border:1px solid black">
 <span>
 
 ### Ce que vous voyez à gauche
