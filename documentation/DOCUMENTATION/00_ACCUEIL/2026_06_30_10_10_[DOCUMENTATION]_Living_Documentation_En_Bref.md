@@ -8,18 +8,7 @@
 # Living Documentation en bref
 
 
-## A quoi sert Living Documentation
 
-Living Documentation sert a garder la connaissance utile au meme endroit, dans un format lisible et versionnable :
-
-- documents Markdown classes par dossiers et categories ;
-- notes de reunion et comptes rendus ;
-- procedures, processus et checklists ;
-- documentation de code, d'architecture et d'ADR ;
-- diagrammes lies a des documents ;
-- images, fichiers joints et visuels generes ;
-- runs d'agents et traces d'automatisation ;
-- historique Git et comparaison de versions.
 
 ## Ce que Living Documentation n'est pas
 
