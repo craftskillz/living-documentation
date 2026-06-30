@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T16:41:38.299Z",
+  "updatedAt": "2026-06-30T16:43:16.338Z",
   "entities": [
     {
       "id": "root",
@@ -494,7 +494,7 @@
       "y": -342.08706432373435,
       "angle": 4.084070449666731,
       "config": {
-        "endpoint": "http://localhost:11434",
+        "endpoint": "http://localhost:11434/typing-test-no-save",
         "token": "",
         "model": "",
         "providerType": "chat",
