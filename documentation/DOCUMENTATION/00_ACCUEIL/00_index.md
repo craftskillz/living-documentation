@@ -14,6 +14,9 @@
 
 ## Pour commencer
 
+<!-- quote-type: info -->
+<!-- quote-title: Info -->
+<!-- quote-icon -->
 > Citation ici
 >
 > — Auteur
