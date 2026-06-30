@@ -15,8 +15,8 @@
 ## Pour commencer
 
 <!-- quote-type: info -->
-<!-- quote-title: Info -->
-> Pour commencer, choisissez le chemin qui vous intéresse
+<!-- quote-title: Pour commencer -->
+> Choisissez le chemin qui vous intéresse
 >
 
 <!-- table-border: bordered -->
