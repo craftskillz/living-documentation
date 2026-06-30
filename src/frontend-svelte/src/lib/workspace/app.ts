@@ -105,6 +105,7 @@ interface WorkspaceState {
   pendingDeleteId: string | null;
   panelShiftX: number;
   saveTimerId: number | null;
+  panelDirty: boolean;
   isHydrated: boolean;
 }
 
@@ -373,6 +374,7 @@ export function initWorkspace(): () => void {
     pendingDeleteId: null,
     panelShiftX: 0,
     saveTimerId: null,
+    panelDirty: false,
     isHydrated: false,
   };
 
@@ -511,14 +513,14 @@ export function initWorkspace(): () => void {
     scheduleRender();
   });
 
-  form.addEventListener("input", (event) => {
+  form.addEventListener("input", () => {
+    // Keep in-memory state in sync with the field, but do NOT persist on every keystroke:
+    // a background save round-trips the entities and re-renders the panel, which would steal
+    // focus / reset the caret mid-typing. The edits are flushed when the panel closes
+    // (close button, selecting another node, or leaving the workspace) instead.
     syncSelectedFromForm();
     layoutGraph();
-    const isAgentNameEdit =
-      event.target === fields.name && selectedEntity()?.kind === "agent";
-    if (!isAgentNameEdit) {
-      scheduleWorkspaceSave();
-    }
+    state.panelDirty = true;
     scheduleRender();
   });
 
@@ -638,6 +640,7 @@ export function initWorkspace(): () => void {
   void initializeWorkspace();
 
   return () => {
+    flushPanelEdits();
     resizeObserver.disconnect();
     if (state?.saveTimerId) clearTimeout(state.saveTimerId);
   };
@@ -788,10 +791,20 @@ function scheduleWorkspaceSave() {
   }, SAVE_DEBOUNCE_MS);
 }
 
+// Persist pending panel edits, if any. Called when the config panel closes (close button,
+// selecting another node, or leaving the workspace) — the single save point for field edits.
+function flushPanelEdits() {
+  if (state.panelDirty) {
+    void saveWorkspaceNow(false);
+  }
+}
+
 async function saveWorkspaceNow(notify = false) {
   if (!state.isHydrated) {
     return;
   }
+  // This save persists the whole serialized workspace, so any pending field edits are now flushed.
+  state.panelDirty = false;
   if (state.saveTimerId) {
     clearTimeout(state.saveTimerId);
     state.saveTimerId = null;
@@ -819,7 +832,9 @@ async function saveWorkspaceNow(notify = false) {
       }
     }
     state.lastSaveAt = new Date(saved.updatedAt);
-    if (selectedEntity()) {
+    // Re-render the panel from the freshly hydrated state, but never while the user is editing a
+    // field in it: overwriting a focused input would steal focus and reset the caret mid-typing.
+    if (selectedEntity() && !form.contains(document.activeElement)) {
       syncPanelFromSelection();
     }
     if (tokenDraft && state.selectedId === tokenDraft.entityId) {
@@ -1269,6 +1284,11 @@ function collisionRadius(entity) {
 }
 
 function selectEntity(id) {
+  // Persist any pending panel edits before leaving the current node — this is the only moment
+  // workspace edits are saved now that typing no longer triggers a background save.
+  if (id !== state.selectedId) {
+    flushPanelEdits();
+  }
   const hadSelection = Boolean(state.selectedId);
   state.selectedId = id;
   const entity = id ? entityById(id) : null;

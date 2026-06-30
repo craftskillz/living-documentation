@@ -10,6 +10,9 @@ const MAX_TEXT_FIELD_LENGTH = 4000;
 const MAX_WORKSPACE_FILE_BYTES = 1024 * 1024;
 const WORKSPACE_PROVIDER_ROOT = path.join('AI', 'WORKSPACE');
 const DEFAULT_LLM_TEST_TIMEOUT_MS = 5000;
+// Max model round-trips per agent run. The last one is always offered without tools so a model
+// that keeps calling tools is forced to emit a final text answer instead of exhausting the budget.
+const MAX_AGENT_TURNS = 5;
 
 type WorkspaceNodeKind = 'system' | 'llm' | 'agent' | 'mcp';
 type WorkspaceProviderType = 'chat' | 'image';
@@ -681,6 +684,21 @@ function selectToolsForSystemPrompt(
   return { tools: matched, matched: matched.length, total };
 }
 
+// Deterministic serialization (object keys sorted recursively) used to detect when the model
+// re-requests a tool call identical to one that already succeeded this run.
+function stableStringify(value: unknown): string {
+  if (Array.isArray(value)) {
+    return `[${value.map(stableStringify).join(',')}]`;
+  }
+  if (isRecord(value)) {
+    return `{${Object.keys(value)
+      .sort()
+      .map((key) => `${JSON.stringify(key)}:${stableStringify(value[key])}`)
+      .join(',')}}`;
+  }
+  return JSON.stringify(value) ?? 'null';
+}
+
 function toolNamesList(tools: unknown[]): string {
   return tools
     .map((tool) =>
@@ -816,16 +834,31 @@ async function runAgent(
   const timer = setTimeout(() => controller.abort(), timeoutSeconds * 1000);
 
   let toolsSupported = mcpTools.length > 0;
+  // Signatures (name + canonical args) of tool calls already executed successfully this run, so a
+  // model that re-issues the same call is answered with a "do not repeat" note instead of running
+  // it again (avoids duplicate side effects and wasted credits, e.g. regenerating the same image).
+  const executedToolSignatures = new Set<string>();
 
   try {
-    for (let turn = 0; turn < 5; turn += 1) {
+    for (let turn = 0; turn < MAX_AGENT_TURNS; turn += 1) {
+      // The final turn is offered WITHOUT tools: a model that keeps calling tools is then forced
+      // to produce a text answer from what it already gathered, rather than failing on the cap.
+      const isFinalTurn = turn === MAX_AGENT_TURNS - 1;
+      const offerTools = toolsSupported && mcpTools.length > 0 && !isFinalTurn;
+      if (isFinalTurn && toolsSupported && mcpTools.length > 0) {
+        messages.push({
+          role: 'user',
+          content:
+            'Do not call any tool now. Using the tool results already gathered above, write your final answer as plain text.',
+        });
+      }
       report?.({
         type: 'model_call',
         turn: turn + 1,
-        message: `Calling model ${config.model.trim()}${toolsSupported && mcpTools.length > 0 ? ' with tools' : ''}`,
+        message: `Calling model ${config.model.trim()}${offerTools ? ' with tools' : ''}`,
       });
       const llmBody: Record<string, unknown> = { model: config.model.trim(), messages };
-      if (toolsSupported && mcpTools.length > 0) llmBody.tools = mcpTools;
+      if (offerTools) llmBody.tools = mcpTools;
 
       debug?.sections.push(
         `### Tour ${turn + 1} — Prompt envoyé\n\nPOST \`${chatUrl.toString()}\`\n\n${debugBlock(llmBody)}`,
@@ -888,6 +921,26 @@ async function runAgent(
           const fnArgs = typeof toolCall.function.arguments === 'string'
             ? JSON.parse(toolCall.function.arguments) as unknown
             : (toolCall.function.arguments ?? {});
+
+          // Already executed with identical arguments this run — refuse to repeat it and nudge the
+          // model to finalize, instead of running the side effect again.
+          const signature = `${fnName}:${stableStringify(fnArgs)}`;
+          if (executedToolSignatures.has(signature)) {
+            const note = `Tool ${fnName} was already called with identical arguments and succeeded earlier in this run; its result is unchanged. Do not call it again — use the earlier result and write your final answer now.`;
+            report?.({
+              type: 'tool_result',
+              turn: turn + 1,
+              toolName: fnName,
+              detail: 'duplicate call skipped',
+              message: `Tool ${fnName} skipped (duplicate call)`,
+            });
+            debug?.sections.push(
+              `### Tour ${turn + 1} — Tool call ignoré (doublon) : \`${fnName}\`\n\n${note}`,
+            );
+            messages.push({ role: 'tool', tool_call_id: toolCall.id ?? '', content: note });
+            continue;
+          }
+
           report?.({
             type: 'tool_call',
             turn: turn + 1,
@@ -909,6 +962,7 @@ async function runAgent(
             } else {
               toolResult = JSON.stringify(mcpResult);
             }
+            executedToolSignatures.add(signature);
             report?.({
               type: 'tool_result',
               turn: turn + 1,

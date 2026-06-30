@@ -443,6 +443,116 @@ test('run-agent-document sends no MCP tools when the system prompt names none', 
   }
 });
 
+test('agent run forces a tools-less final turn and skips duplicate tool calls', async ({
+  request,
+  ld,
+}) => {
+  let modelCalls = 0;
+  const toolsOfferedPerCall: boolean[] = [];
+  const llm = await startJsonServer((body) => {
+    modelCalls += 1;
+    const hasTools = Array.isArray((body as { tools?: unknown[] }).tools)
+      && ((body as { tools: unknown[] }).tools.length > 0);
+    toolsOfferedPerCall.push(hasTools);
+    // While tools are offered, keep re-issuing the SAME tool call (a weak-model loop).
+    if (hasTools) {
+      return {
+        choices: [{
+          message: {
+            role: 'assistant',
+            content: null,
+            tool_calls: [{
+              id: 'call_read',
+              type: 'function',
+              function: { name: 'read_document', arguments: JSON.stringify({ id: 'ADRS/example' }) },
+            }],
+          },
+        }],
+      };
+    }
+    // Final turn: no tools offered → the model must answer with text.
+    return {
+      choices: [{ message: { role: 'assistant', content: 'FINAL ANSWER from the tools-less turn.' } }],
+    };
+  });
+
+  let toolCallCount = 0;
+  const mcp = await startJsonServer((body) => {
+    const requestBody = body as { id?: unknown; method?: string };
+    if (requestBody.method === 'tools/list') {
+      return {
+        jsonrpc: '2.0',
+        id: requestBody.id,
+        result: {
+          tools: [{ name: 'read_document', description: 'Read a document', inputSchema: { type: 'object', properties: {} } }],
+        },
+      };
+    }
+    expect(requestBody.method).toBe('tools/call');
+    toolCallCount += 1;
+    return {
+      jsonrpc: '2.0',
+      id: requestBody.id,
+      result: { content: [{ type: 'text', text: 'document body' }] },
+    };
+  });
+
+  try {
+    const workspace = {
+      version: 1,
+      updatedAt: new Date(0).toISOString(),
+      camera: { x: 0, y: 0, zoom: 1 },
+      entities: [
+        {
+          id: 'provider-chat',
+          label: 'Mock Chat Provider',
+          kind: 'llm',
+          parentId: null,
+          config: { endpoint: llm.url, model: 'mock-chat', providerType: 'chat', toolMode: 'tools' },
+        },
+        {
+          id: 'mcp-node',
+          label: 'MCP',
+          kind: 'mcp',
+          parentId: null,
+          config: { endpoint: `${mcp.url}/mcp` },
+        },
+        {
+          id: 'agent-looper',
+          label: 'Looping Reader',
+          kind: 'agent',
+          parentId: 'provider-chat',
+          config: {
+            systemPrompt: 'Call read_document, then answer.',
+            workspaceFolder: 'AI/WORKSPACE/looping_reader',
+          },
+        },
+      ],
+    };
+
+    const saveWorkspace = await request.put(`${ld.baseURL}/api/workspace`, { data: workspace });
+    expect(saveWorkspace.ok()).toBe(true);
+
+    const run = await request.post(`${ld.baseURL}/api/workspace/run-agent-document`, {
+      data: { agentId: 'agent-looper', userInput: 'Summarize ADRS/example' },
+    });
+    expect(run.ok()).toBe(true);
+    const result = await run.json() as { ok: boolean; content: string };
+
+    // A: the run completes with the text produced once tools were withheld.
+    expect(result.ok).toBe(true);
+    expect(result.content).toContain('FINAL ANSWER from the tools-less turn.');
+    // A: exactly 5 model calls, tools offered on the first 4, withheld on the final one.
+    expect(modelCalls).toBe(5);
+    expect(toolsOfferedPerCall).toEqual([true, true, true, true, false]);
+    // B: the identical read_document call ran only once; the repeats were skipped.
+    expect(toolCallCount).toBe(1);
+  } finally {
+    await llm.close();
+    await mcp.close();
+  }
+});
+
 test('chat-only agent prompt omits run memory instructions and keeps runtime constraint', async ({
   request,
   ld,
