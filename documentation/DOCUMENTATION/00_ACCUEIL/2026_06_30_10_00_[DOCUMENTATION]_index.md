@@ -5,7 +5,9 @@
 **tags:** accueil, documentation-utilisateur, living-documentation, markdown, git, agents, workspace, mcp
 ---
 
-### Bienvenue dans Living Documentation, votre atelier local de production documentaire en Markdown
+### Bienvenue dans Living Documentation !
+
+Votre atelier local de production documentaire en Markdown.
 
 <!-- image-width: 2/3 -->
 ![Atelier local Living Documentation reliant documents Markdown, notes, processus, diagrammes, Git et agents IA](/images/DOCUMENTATION/concept-01-hero-produit.png)
