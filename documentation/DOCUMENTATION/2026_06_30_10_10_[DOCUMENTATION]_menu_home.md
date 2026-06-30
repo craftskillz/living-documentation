@@ -5,6 +5,9 @@
 **tags:** home, menu, navigation, dossiers, categories, documents, recherche
 ---
 
+<span style="border:solid 1px black">
+<span >a</span><span>b</span>
+</span>
 ### Menu **Home**
 
 Le menu <kbd>Home</kbd> est la porte d'entrée de votre documentation.
