@@ -19,7 +19,7 @@
 > Pour commencer, choisissez le chemin qui vous intéresse
 >
 
-<div style="background:#eff6ff;border-left:4px solid #3b82f6;color:#1e3a5f;padding:1rem 1.25rem;border-radius:0.375rem;margin:1rem 0;">
+<div style="background:#f9fafb;border-left:4px solid #6b7280;color:#111827;padding:1rem 1.25rem;border-radius:0.375rem;margin:1rem 0;">
 
 <!-- table-style: striped -->
 <!-- table-border: bordered -->
