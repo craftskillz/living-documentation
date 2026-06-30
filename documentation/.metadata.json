@@ -1562,8 +1562,8 @@
   "ADRS/2026_06_30_11_21_[INTEGRATION]_versions_visuelles_des_documents_depuis_git_head": [
     {
       "path": "src/lib/git-integration.ts",
-      "hash": "5f3f7fcdf38c0206424ce8ce01c76acbbb53b0b1b70711fea094593aace3d726",
-      "commit": "f03bf7372feaceab047e59bd942af31f40675e48",
+      "hash": "d22e2f86218e8e4595df13981996a6db7bdbfaa86f9b96bdcc8b992dc3723651",
+      "commit": "ee5974f6cac091a90b13e7c80fa2e698f8888e10",
       "dirty": true
     },
     {
