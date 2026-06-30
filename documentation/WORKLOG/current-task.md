@@ -1,8 +1,8 @@
 ---
 **date:** 2026-06-30
 **status:** Completed
-**description:** Les runs agents chat-only n'injectent plus la memoire de run ni l'instruction save_context dans le prompt systeme.
-**tags:** worklog, workspace, chat-only, toolMode, run-agent-document, Run memory, save_context, CHAT_ONLY_TOOL_NOTICE, prompt
+**description:** Ajout d'une integration Git configurable dans Admin avec autocommit limite a docsFolder et toast de configuration.
+**tags:** worklog, git, admin, docsFolder, autocommit, gitIntegration, gitAutoCommitMiddleware, /api/git/status, persistentToast, push
 ---
 
 # Current task
@@ -13,43 +13,49 @@ Completed
 
 ## Tache realisee
 
-Correction du prompt envoye aux LLM providers en mode `Chat only`.
+Ajout d'une integration Git configurable depuis la page Admin.
 
-Avant correction, les runs agents persistants construisaient toujours le prompt via `agentSystemPromptWithMemory()`, puis `runAgent()` ajoutait la contrainte runtime chat-only. Le prompt contenait donc a la fois :
+Le comportement retenu est :
 
-- `## Run memory` ;
-- le contexte sauvegarde dans `context.md` ;
-- l'instruction `When you finish, call save_context...` ;
-- puis `Runtime constraint: MCP tool calling is disabled...`.
-
-Cette combinaison etait incoherente : `save_context` est un tool MCP, donc il ne doit pas etre demande dans un run chat-only.
-
-Le backend utilise maintenant `agentSystemPromptForRun(docsPath, agent, toolsEnabled)` :
-
-- si les tools sont actifs, le comportement historique reste conserve et la memoire de run est injectee ;
-- si le provider parent est en `toolMode: "chat"`, le prompt agent brut est transmis a `runAgent()`, puis seule la contrainte `CHAT_ONLY_TOOL_NOTICE` est ajoutee.
-
-La contrainte runtime continue de mentionner que `save_context` est indisponible, ce qui est volontaire : elle explique au modele quels tools ne peuvent pas etre appeles.
+- par defaut, `gitIntegration.mode` vaut `unconfigured` et l'application affiche un toast demandant de configurer l'integration Git dans Admin ;
+- l'utilisateur peut choisir explicitement `disabled`, ce qui coupe tout commit/push automatique ;
+- en mode `enabled`, chaque sauvegarde Living Documentation declenche un autocommit limite au pathspec de `docsFolder`, meme lorsque le depot Git est situe plus haut dans l'arborescence ;
+- les changements hors `docsFolder` sont signales par `/api/git/status` et par toast, mais ne sont pas bloques ni stagés ;
+- le push est optionnel : jamais, ou tous les N commits locaux d'avance sur l'upstream.
 
 ## Contenu modifie
 
-- `src/routes/workspace.ts`
-- `tests/api/workspace.spec.ts`
-- `documentation/ADRS/2026_06_29_20_25_[WORKSPACE]_workspace_llm_tool_mode_chat_only.md`
-- `documentation/.metadata.json`
-- `documentation/WORKLOG/current-task.md`
+- `src/lib/config.ts`
+- `src/lib/git-integration.ts`
+- `src/routes/git.ts`
+- `src/routes/config.ts`
+- `src/server.ts`
+- `src/frontend-svelte/src/App.svelte`
+- `src/frontend-svelte/src/lib/gitToast.ts`
+- `src/frontend-svelte/src/lib/persistentToast.ts`
+- `src/frontend-svelte/src/routes/Admin.svelte`
+- `src/frontend-svelte/src/styles/app.css`
+- `src/frontend-svelte/public/i18n/fr.json`
+- `src/frontend-svelte/public/i18n/en.json`
+- `tests/api/git.spec.ts`
 
 ## Documentation
 
-ADR mis a jour : `documentation/ADRS/2026_06_29_20_25_[WORKSPACE]_workspace_llm_tool_mode_chat_only.md`.
+ADR cree : `documentation/ADRS/2026_06_30_10_39_[INTEGRATION]_integration_git_admin_et_autocommit_du_dossier_docs.md`.
 
-Metadonnees ADR rafraichies pour les fichiers source et tests portant la feature. Note : les metadonnees ont ete rafraichies sur un working tree dirty.
+Metadonnees ADR attachees puis rafraichies pour les fichiers source qui portent la feature. Note : les metadonnees indiquent un working tree dirty au moment du rafraichissement.
 
 ## Verifications realisees
 
 - `npm run build` : OK.
-- `npx playwright test tests/api/workspace.spec.ts` : OK, 3 passed.
+- `npx playwright test tests/api/git.spec.ts` : OK, 2 passed.
+- `npx playwright test tests/api/config.spec.ts tests/api/config-validation.spec.ts` : OK, 13 passed.
+- `npx playwright test tests/api/documents.spec.ts tests/api/files.spec.ts tests/api/images.spec.ts` : OK, 33 passed.
+- `npx playwright test tests/api/workspace.spec.ts tests/api/mcp.spec.ts tests/api/git.spec.ts` : OK, 43 passed.
+- `npx playwright test tests/e2e/admin.spec.ts` : OK, 4 passed.
+- `git diff --check` : OK.
+- `graphify update .` : OK.
 
 ## Prochaine action recommandee
 
-Tester manuellement un agent persistant rattache a un provider `Chat only` : le prompt debug doit contenir le prompt agent et `Runtime constraint`, mais ne doit plus contenir `## Run memory`, le contenu de `context.md`, ni `When you finish, call save_context...`.
+Tester manuellement dans un projet reel avec un depot Git parent de `docsFolder` : activer Git dans Admin, modifier un document, verifier qu'un commit `docs: update living documentation` ne contient que les chemins sous `docsFolder`, puis tester le mode push avec une branche upstream configuree.
