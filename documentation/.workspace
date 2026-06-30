@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T14:20:42.483Z",
+  "updatedAt": "2026-06-30T14:21:04.475Z",
   "entities": [
     {
       "id": "root",
@@ -260,9 +260,9 @@
       "label": "Find Written English Documents",
       "kind": "agent",
       "parentId": "provider-mqtqt25p",
-      "x": 115.47585198506577,
-      "y": 873.7429375434695,
-      "angle": 0.9948376736367677,
+      "x": 5.559580774046034e-14,
+      "y": 907.9484432436897,
+      "angle": 1.5707963267948966,
       "config": {
         "endpoint": "",
         "token": "",
@@ -306,9 +306,9 @@
       "label": "Document Image Summary",
       "kind": "agent",
       "parentId": "provider-mqtqt25p",
-      "x": -115.4758519850656,
-      "y": 873.7429375434696,
-      "angle": 2.146754979953025,
+      "x": -209.41237277051292,
+      "y": 662.7580574467373,
+      "angle": 3.2986722862692828,
       "config": {
         "endpoint": "",
         "token": "",
@@ -438,33 +438,10 @@
         "description": "Opened prompt to create image",
         "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image"
       }
-    },
-    {
-      "id": "agent-mr0qhz8n",
-      "label": "Agent 4",
-      "kind": "agent",
-      "parentId": "provider-mqtqt25p",
-      "x": -209.41237277051292,
-      "y": 662.7580574467373,
-      "angle": 3.2986722862692828,
-      "config": {
-        "endpoint": "",
-        "token": "",
-        "model": "",
-        "providerType": "chat",
-        "toolMode": "tools",
-        "timeout": 180,
-        "systemPrompt": "",
-        "requiresUserInput": false,
-        "userInputDescription": "",
-        "expectedOutputMarker": "",
-        "description": "Runs focused automation against documentation, source, or quality signals.",
-        "workspaceFolder": "AI/WORKSPACE/agent_4"
-      }
     }
   ],
   "camera": {
-    "x": 526.9297160784205,
+    "x": 523.5358873684758,
     "y": 500.2895728830992,
     "zoom": 0.37537786413506397
   }
