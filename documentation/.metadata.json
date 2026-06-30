@@ -1586,8 +1586,8 @@
     },
     {
       "path": "src/frontend-svelte/public/i18n/fr.json",
-      "hash": "77badc8633c14ac3096951ff79c19e9c508426c6a4f9c1e5a1ceff4945e1f385",
-      "commit": "ed6db90cd2f6ae0d8f4baea42e750574f7caf786",
+      "hash": "77d39d0a9c08582f8ec437c90323acd513a5f618132d0d0950646ee2ed497dee",
+      "commit": "00b6d7373f86bec472b4fe74bbf2df402cd6f404",
       "dirty": true
     },
     {
