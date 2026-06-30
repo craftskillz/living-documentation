@@ -5,7 +5,7 @@
 **tags:** home, menu, navigation, dossiers, categories, documents, recherche
 ---
 
-<span style="border:solid 1px black; width:100%">
+<span style="border:solid 1px black; bgcolor:red">
 <span >a</span><span>b</span>
 </span>
 ### Menu **Home**
