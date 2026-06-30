@@ -69,13 +69,28 @@
     void loadVersionsAvailability();
   });
 
-  function scrollToAnchor(anchorId: string) {
+  // Scroll the content area so `target` lands just below the sticky header. The header element is
+  // #home-doc-header (an earlier selector here matched nothing, so the header offset was silently
+  // dropped). Smooth scrolling now lands correctly on the first click because TOC navigation is
+  // JS-driven via a <button> (not <a href="#id">), so the browser's native anchor scroll — which
+  // ignored the sticky header and re-jumped right after our scroll — no longer competes.
+  const SCROLL_TARGET_GAP = 16;
+  function alignScrollToTarget(target: HTMLElement, smooth: boolean) {
     const container = document.getElementById("home-content-area");
+    if (!container) return;
+    const header = document.getElementById("home-doc-header");
+    const headerH = header ? header.getBoundingClientRect().height : 0;
+    const offset =
+      target.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop;
+    container.scrollTo({
+      top: Math.max(0, offset - headerH - SCROLL_TARGET_GAP),
+      behavior: smooth ? "smooth" : "auto",
+    });
+  }
+
+  function scrollToAnchor(anchorId: string) {
     const target = document.getElementById(anchorId);
-    if (!container || !target) return;
-    const header = document.querySelector("#home-doc-view header");
-    const headerHeight = header ? header.getBoundingClientRect().height : 0;
-    container.scrollTop += target.getBoundingClientRect().top - container.getBoundingClientRect().top - headerHeight - 8;
+    if (target) alignScrollToTarget(target, false);
   }
 
   // Called by EditableMarkdown after each (re)wire of the rendered content. The
@@ -231,7 +246,6 @@
   function scrollToHeading(id: string) {
     const target = document.getElementById(id);
     const scrollContainer = document.getElementById("home-content-area");
-    const header = document.getElementById("home-doc-header") as HTMLElement | null;
     if (!target || !scrollContainer) return;
 
     // Open any ancestor <details> so the target is visible before measuring position
@@ -241,9 +255,7 @@
       el = el.parentElement;
     }
 
-    const headerH = header ? header.getBoundingClientRect().height : 0;
-    const targetTop = target.getBoundingClientRect().top - scrollContainer.getBoundingClientRect().top + scrollContainer.scrollTop;
-    scrollContainer.scrollTo({ top: targetTop - headerH - 16, behavior: "smooth" });
+    alignScrollToTarget(target, true);
   }
 
 
@@ -311,7 +323,7 @@
 <header id="home-doc-header" bind:this={headerEl} class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-950 px-6 pt-8 pb-6 border-b border-gray-300 dark:border-gray-800">
     <div class="flex items-start gap-4 flex-wrap">
       <div class="shrink min-w-0">
-        <div class="flex items-center gap-2 mb-2 flex-wrap">
+        <div class="flex items-center gap-2 flex-wrap">
           <span class="flex items-center gap-2 flex-wrap">
             {#each doc.folder || [] as seg}
               <span title={seg} class="inline-block text-xs font-semibold px-2.5 py-0.5 rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300">{folderLabel(seg)}</span>
@@ -321,10 +333,8 @@
           {#if doc.formattedDate}
             <span class="text-xs text-gray-400 dark:text-gray-500">{doc.formattedDate}</span>
           {/if}
-        </div>
-        <div class="flex items-center gap-2">
-          <h1 data-testid="doc-title" class="min-w-0 text-2xl font-bold text-gray-900 dark:text-gray-50 leading-tight">{doc.title}</h1>
-          <button type="button" data-testid="copy-doc-id-btn" onclick={copyMcpId} title={t("doc.copy_mcp_id")} class="no-print inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-gray-200 text-gray-500 transition-colors hover:bg-gray-50 hover:text-blue-600 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-blue-400 {copiedId ? 'text-green-600 dark:text-green-400' : ''}">
+          <h1 data-testid="doc-title" class="min-w-0 text-xs font-normal text-gray-900 dark:text-gray-50 leading-tight">{doc.title}</h1>
+          <button type="button" data-testid="copy-doc-id-btn" onclick={copyMcpId} title={t("doc.copy_mcp_id")} class="no-print inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-gray-200 text-xs text-gray-500 transition-colors hover:bg-gray-50 hover:text-blue-600 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-blue-400 {copiedId ? 'text-green-600 dark:text-green-400' : ''}">
             <i class="fa-{copiedId ? 'solid fa-check' : 'regular fa-copy'}" aria-hidden="true"></i>
           </button>
         </div>
@@ -446,20 +456,23 @@
   <aside
     bind:this={tocEl}
     class="no-print shrink-0 sticky self-start overflow-y-auto py-8 pr-4 pl-3 ld-toc-aside"
-    style="width: {TOC_DEFAULT}px; top: {headerH}px; max-height: calc(100vh - {headerH}px)"
+    style="width: {TOC_DEFAULT}px; top: {headerH}px; min-height: calc(100vh - {headerH}px); max-height: calc(100vh - {headerH}px)"
   >
     <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-3">{t("doc.toc_title")}</p>
     <nav>
       <ul class="space-y-1 list-none m-0 p-0">
         {#each tocEntries as entry}
           <li class="m-0 p-0" style="padding-left: {(entry.level - 1) * 0.75}rem">
-            <a
-              href="#{entry.id}"
-              onmousedown={(e) => e.preventDefault()}
-              onclick={(e) => { e.preventDefault(); scrollToHeading(entry.id); }}
-              class="block text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline py-0.5 leading-snug transition-colors truncate"
+            <!-- A <button>, not <a href="#id">, on purpose: the anchor's native hash navigation
+                 fired after our handler on the first click and re-scrolled the heading to the very
+                 top, ignoring the sticky header (the second click was a same-hash no-op, hence it
+                 looked aligned). Driving the scroll purely from JS removes that competing scroll. -->
+            <button
+              type="button"
+              onclick={() => scrollToHeading(entry.id)}
+              class="block w-full text-left bg-transparent border-0 cursor-pointer text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline py-0.5 leading-snug transition-colors truncate"
               title={entry.text}
-            >{entry.text}</a>
+            >{entry.text}</button>
           </li>
         {/each}
       </ul>
