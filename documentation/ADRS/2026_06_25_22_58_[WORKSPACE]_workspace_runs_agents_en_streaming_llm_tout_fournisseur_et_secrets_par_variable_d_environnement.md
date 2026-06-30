@@ -45,6 +45,7 @@ Mecanisme compatible avec un lancement `npx` : les variables d'environnement son
 - Restaure au bootstrap (`main.ts`) avant le montage des routes, re-rendu a chaque changement de route. Toast de fin de run conserve 10 min avec lien cliquable vers le Markdown genere dans `AI/WORKSPACE`.
 - `Agents.svelte` rebranche sur le toast global (ancien toast local supprime, evite les doublons).
 - `Topbar.svelte` + `App.svelte` interceptent les clics sur liens internes (capture sur `document`) et utilisent `history.pushState` — le stream et les toasts survivent a la navigation.
+- Les toasts globaux utilisent une enveloppe plus large (`540px`, pile `600px`) et une hauteur maximale scrollable (`240px`) au lieu d'un clamp a deux lignes. Les toasts locaux de l'editeur de diagrammes (`.ld-toast`) reprennent les memes dimensions afin que les messages longs, dont les erreurs Git ou export, restent lisibles sans agrandir indefiniment l'interface.
 
 ### 6. Erreurs robustes
 Les exceptions de `runAgent` sont ecrites dans le Markdown d'execution (phase/nom/message/stack). Nouvelle route `POST /api/workspace/run-agent-document-failure` pour generer un Markdown d'echec meme sur exception client. Lecture robuste des reponses non-JSON cote `/agents`.
@@ -60,3 +61,4 @@ Les exceptions de `runAgent` sont ecrites dans le Markdown d'execution (phase/no
 - `npm run build` (tsc + vite) : OK.
 - Listing modeles teste OK via OpenRouter (`https://openrouter.ai/api/v1`) ; routing DeepSeek `/models` confirme cote reseau (401 = token, pas routing).
 - Resolution `resolveSecret` / `sanitizeTokenRef` verifiee : `env:VAR` -> secret, litteral -> bloque/non persiste.
+- Ajustement global des toasts : `npm run build` OK ; `npx playwright test tests/api/diagrams.spec.ts tests/e2e/admin.spec.ts` OK.
