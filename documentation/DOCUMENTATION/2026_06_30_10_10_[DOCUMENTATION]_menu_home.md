@@ -6,8 +6,8 @@
 ---
 
 <div>
-<div>a</div>
-<div>b</div>
+<span>a</span>
+<span>b</span>
 <div>
 ### Menu **Home**
 
