@@ -21,7 +21,7 @@ Un clic sur un document l'ouvre dans la partie principale de la page.
   </div>
   <div>
 
-<!-- image-width: 1/2 -->
+<!-- image-width: 2/3 -->
 ![Barre laterale Home affichant les documents classes par categories](/images/readme-sidebar.png)
   </div>
 
