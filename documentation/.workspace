@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T14:15:52.671Z",
+  "updatedAt": "2026-06-30T14:16:04.353Z",
   "entities": [
     {
       "id": "root",
@@ -260,9 +260,9 @@
       "label": "Find Written English Documents",
       "kind": "agent",
       "parentId": "provider-mqtqt25p",
-      "x": 115.47585198506577,
-      "y": 873.7429375434695,
-      "angle": 0.9948376736367677,
+      "x": 5.559580774046034e-14,
+      "y": 907.9484432436897,
+      "angle": 1.5707963267948966,
       "config": {
         "endpoint": "",
         "token": "",
@@ -306,9 +306,9 @@
       "label": "Document Image Summary",
       "kind": "agent",
       "parentId": "provider-mqtqt25p",
-      "x": -115.4758519850656,
-      "y": 873.7429375434696,
-      "angle": 2.146754979953025,
+      "x": -209.41237277051292,
+      "y": 662.7580574467373,
+      "angle": 3.2986722862692828,
       "config": {
         "endpoint": "",
         "token": "",
@@ -417,29 +417,6 @@
       }
     },
     {
-      "id": "agent-mr0q5fqy",
-      "label": "Opened Prompt to Create Image",
-      "kind": "agent",
-      "parentId": "provider-mqtqt25p",
-      "x": -209.41237277051292,
-      "y": 662.7580574467373,
-      "angle": 3.2986722862692828,
-      "config": {
-        "endpoint": "",
-        "token": "",
-        "model": "deepseek/deepseek-v4-pro",
-        "providerType": "chat",
-        "toolMode": "tools",
-        "timeout": 180,
-        "systemPrompt": "You are a documentation visual designer for Living Documentation.\n\nYour task is to generate an illustration using the prompt provided by the user in the user section.\nCall generate_image with:\n   - imageProviderId: \"provider-mqzohdv8\"\n   - aspectRatio: \"16:9\"\n   - outputFormat: \"png\"\n   - prompt: your image prompt\n   - filename: a short kebab-case filename based on the prompt and ending in .png \n\nReturn the generated markdown image link and filename.",
-        "requiresUserInput": true,
-        "userInputDescription": "Enter the full image prompt",
-        "expectedOutputMarker": "",
-        "description": "Opened prompt to create image",
-        "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image"
-      }
-    },
-    {
       "id": "agent-mr0qb5e3",
       "label": "Opened Prompt to Create Image",
       "kind": "agent",
@@ -459,7 +436,7 @@
         "userInputDescription": "Enter the full image prompt",
         "expectedOutputMarker": "",
         "description": "Opened prompt to create image",
-        "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image_2"
+        "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image"
       }
     }
   ],
