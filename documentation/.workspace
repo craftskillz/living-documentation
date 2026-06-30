@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T14:22:34.326Z",
+  "updatedAt": "2026-06-30T14:22:49.691Z",
   "entities": [
     {
       "id": "root",
@@ -375,8 +375,8 @@
       "label": "Chat OpenRouter Cohere Mini Free",
       "kind": "llm",
       "parentId": "root",
-      "x": -479.90099797709746,
-      "y": -84.6194940122806,
+      "x": -716.2548587000275,
+      "y": -126.2950566523438,
       "angle": 3.316125578789226,
       "config": {
         "endpoint": "https://openrouter.ai/api/v1",
@@ -398,9 +398,9 @@
       "label": "Ask The LLM",
       "kind": "agent",
       "parentId": "provider-mqzqtzbv",
-      "x": -607.4994587337294,
-      "y": 84.70938258154291,
-      "angle": -4.066617157146788,
+      "x": -843.8533194566593,
+      "y": 43.03381994147985,
+      "angle": -4.066617157146789,
       "config": {
         "endpoint": "",
         "token": "",
@@ -421,9 +421,9 @@
       "label": "Opened Prompt to Create Image",
       "kind": "agent",
       "parentId": "provider-mqzqtzbv",
-      "x": -541.8904433319508,
-      "y": -287.3778336695823,
-      "angle": -1.8675022996339328,
+      "x": -778.2443040548811,
+      "y": -329.0533963096454,
+      "angle": -1.8675022996339337,
       "config": {
         "endpoint": "",
         "token": "",
@@ -444,8 +444,8 @@
       "label": "Agent OpenRouter Cohere Mini Free",
       "kind": "llm",
       "parentId": "root",
-      "x": -220.67171466370743,
-      "y": -262.98630873439765,
+      "x": -374.94074098847693,
+      "y": -446.8369750829524,
       "angle": 4.014257279586958,
       "config": {
         "endpoint": "https://openrouter.ai/api/v1",
@@ -460,6 +460,29 @@
         "expectedOutputMarker": "",
         "description": "Routes model calls and hosts the agents assigned to this provider.",
         "workspaceFolder": ""
+      }
+    },
+    {
+      "id": "agent-mr0qkpe8",
+      "label": "Agent 1",
+      "kind": "agent",
+      "parentId": "provider-mr0qj5ec",
+      "x": -511.2263211653532,
+      "y": -609.255804877531,
+      "angle": -2.2689280275926285,
+      "config": {
+        "endpoint": "",
+        "token": "",
+        "model": "",
+        "providerType": "chat",
+        "toolMode": "tools",
+        "timeout": 180,
+        "systemPrompt": "",
+        "requiresUserInput": false,
+        "userInputDescription": "",
+        "expectedOutputMarker": "",
+        "description": "Runs focused automation against documentation, source, or quality signals.",
+        "workspaceFolder": "AI/WORKSPACE/agent_1_2"
       }
     }
   ],
