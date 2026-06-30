@@ -14,9 +14,6 @@ Votre atelier local de production documentaire en Markdown.
 
 Ce n'est pas un outil de generation de code, mais un outil de generation, de maintenance, de versioning et d'automatisation de documentation
 
-<!-- image-width: 2/3 -->
-![Architecture local-first reliant un dossier Markdown, Git, une interface web, des diagrammes et des agents IA](/images/DOCUMENTATION/concept-03-local-first.png)
-
 Living Documentation sert a garder la connaissance utile au meme endroit, dans un format lisible et versionnable :
 
 - documents Markdown classés par dossiers et catégories
@@ -26,7 +23,18 @@ Living Documentation sert a garder la connaissance utile au meme endroit, dans u
 - diagrammes lies a des documents
 - images, fichiers joints et visuels generes
 - runs d'agents et traces d'automatisation
-- historique Git et comparaison de versions.
+- historique Git et comparaison de versions
+
+### Un modèle local-first
+
+<!-- image-width: 2/3 -->
+![Architecture local-first reliant un dossier Markdown, Git, une interface web, des diagrammes et des agents IA](/images/DOCUMENTATION/concept-03-local-first.png)
+
+La documentation repose sur des fichiers presents dans votre espace local :
+
+- les documents sont des fichiers Markdown pouvant être consultés par vous ou par vos LLMs
+- le versionning utilise Git pour enregistrer les modifications au fil de l'eau et permettre la restauration de tous vos documents
+- l'outil peut etre utilise seul, puis enrichi avec ses propres outils MCP et ses agents internes
 
 
 Pour commencer, choisissez le chemin qui vous intéresse
