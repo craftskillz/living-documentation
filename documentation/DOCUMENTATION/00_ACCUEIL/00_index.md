@@ -14,8 +14,8 @@
 
 ## Pour commencer
 
-<!-- quote-type: info -->
-<!-- quote-title: Info -->
+<!-- quote-type: success -->
+<!-- quote-title: Succès -->
 <!-- quote-icon -->
 > Citation ici
 >
