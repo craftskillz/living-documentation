@@ -11,11 +11,12 @@ Le menu <kbd>Home</kbd> est la porte d'entrée de votre documentation.
 
 C'est ici que vous retrouvez vos dossiers, vos catégories, vos documents, et les principales actions de création.
 
-<table>
-<tr>
-<td>
 
 ### Ce que vous voyez à gauche
+
+<!-- image-width: 1/3 -->
+![Barre laterale Home affichant les documents classes par categories](/images/readme-sidebar.png)
+
 La colonne de gauche affiche :
 
 - le nombre de documents disponibles
@@ -24,23 +25,7 @@ La colonne de gauche affiche :
 - les documents Markdown
 - les badges utiles : annotations, fichiers joints, statuts
 
-| En-tête 1 | En-tête 2 |
-| --------- | --------- |
-|           |           |
-
 Un clic sur un document l'ouvre dans la partie principale de la page.
-
-</td>
-<td>
-
-<!-- image-width: 1/3 -->
-![Barre laterale Home affichant les documents classes par categories](/images/readme-sidebar.png)
-
-</td>
-</tr>
-</table>
-
-
 
 ### Ce que vous voyez à droite
 
