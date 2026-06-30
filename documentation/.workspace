@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30T14:09:37.750Z",
+  "updatedAt": "2026-06-30T14:09:51.638Z",
   "entities": [
     {
       "id": "root",
@@ -289,7 +289,7 @@
       "config": {
         "endpoint": "https://openrouter.ai/api/v1",
         "token": "env:OPENROUTER_API_KEY",
-        "model": "google/gemini-3.1-flash-image",
+        "model": "google/gemini-3-pro-image",
         "providerType": "image",
         "toolMode": "tools",
         "timeout": 180,
@@ -418,7 +418,7 @@
     }
   ],
   "camera": {
-    "x": 798.5513887842213,
+    "x": 749.6833410967631,
     "y": 310.36040688860044,
     "zoom": 0.9978137334763891
   }
