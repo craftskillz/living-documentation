@@ -1,8 +1,8 @@
 ---
 **date:** 2026-06-30
 **status:** Completed
-**description:** Ajustement de la restauration de blocs dans Versions pour preparer des changements locaux, afficher HEAD a gauche et declencher la sauvegarde uniquement via le bouton Enregistrer.
-**tags:** worklog, git, versions, visual-diff, restore-hunk, save-draft, autocommit, home, svelte
+**description:** Creation du plan directeur de documentation utilisateur professionnelle dans documentation/DOCUMENTATION/Plan.md.
+**tags:** worklog, documentation, user-manual, diataxis, plan, nano-banana-pro, markdown
 ---
 
 # Current task
@@ -13,48 +13,40 @@ Completed
 
 ## Tache realisee
 
-Ajustement de la fonctionnalite `Versions` sur les documents lorsque l'integration Git est active et correctement configuree.
+Creation d'un plan documentaire utilisateur professionnel pour Living Documentation.
 
-Le comportement retenu est :
+Le travail a couvert :
 
-- `DocViewer.svelte` interroge `/api/git/status` et affiche le bouton `Versions` apres `Metadonnees` uniquement si Git est en mode `enabled` et `ok` ;
-- le clic ouvre une grande modale `VersionsModal.svelte` ;
-- la modale compare cote-a-cote un commit selectionne avec le `HEAD` courant ;
-- la colonne gauche affiche `HEAD courant` ou les `Changements a enregistrer`, et la colonne droite affiche le commit selectionne ;
-- la selection par defaut a l'ouverture est le commit precedent du document (`commits[1]`) quand il existe ;
-- les pastilles de commits sont cliquables et la pastille selectionnee est highlighted ;
-- l'API `GET /api/git/document-versions?documentId=...&sinceDays=...&baseRef=...` retourne `baseContent`, `headContent`, `relativePath`, `baseRef` et les commits du document ;
-- chaque hunk modifie affiche un bouton `<` qui restaure ce bloc depuis le commit selectionne vers un contenu local de la modale, sans appel backend ;
-- le bouton `Enregistrer`, place au-dessus du diff, est desactive tant qu'aucun hunk n'a ete applique ;
-- seul `Enregistrer` appelle `onsave()` du viewer, donc seul ce bouton declenche la sauvegarde backend et l'autocommit Git eventuel.
+- lecture des instructions projet, de la stack, des commandes utiles, de la memoire, des regles IA et du worklog courant ;
+- inspection de `usermanual-documentation/` pour identifier les contenus reutilisables ;
+- inspection du README public, des routes frontend et des ADR recentes afin d'inclure les surfaces produit actuelles ;
+- creation de `documentation/DOCUMENTATION/Plan.md` ;
+- definition d'une architecture documentaire cible fondee sur Diataxis ;
+- definition des standards de redaction par type de document ;
+- definition d'une strategie visuelle ;
+- ajout de prompts exacts Nano Banana Pro pour les visuels conceptuels ;
+- definition d'un backlog de production par phases.
 
 ## Contenu modifie
 
-- `src/lib/git-integration.ts`
-- `src/routes/git.ts`
-- `src/frontend-svelte/src/lib/home/DocViewer.svelte`
-- `src/frontend-svelte/src/lib/home/VersionsModal.svelte`
-- `src/frontend-svelte/public/i18n/fr.json`
-- `src/frontend-svelte/public/i18n/en.json`
-- `tests/api/git.spec.ts`
+- `documentation/DOCUMENTATION/Plan.md`
+- `documentation/WORKLOG/current-task.md`
 
 ## Documentation
 
-ADR mise a jour : `documentation/ADRS/2026_06_30_11_21_[INTEGRATION]_versions_visuelles_des_documents_depuis_git_head.md`.
-
-Metadonnees ADR attachees aux fichiers source qui portent la feature. Note : les metadonnees ont ete capturees avec un working tree source dirty, car les fichiers de code de la feature n'etaient pas encore committes.
+Le document `Plan.md` est un document de pilotage documentaire utilisateur, pas un ADR technique. Il ne decrit pas une decision de code durable et n'a pas besoin de metadonnees source.
 
 ## Verifications realisees
 
-- `npm run build` : OK.
-- `npx playwright test tests/api/git.spec.ts` : OK, 3 passed.
-- `git diff --check` : OK.
+- Creation du fichier cible demandee par l'utilisateur.
+- `git diff --check` a lancer apres cette mise a jour.
 
 ## Verifications restantes
 
-- Verification manuelle recommandee dans Home avec Git active : ouvrir un document ayant au moins deux commits, cliquer `Versions`, verifier que `HEAD courant` est a gauche et que le commit selectionne est a droite, appliquer plusieurs blocs avec `<`, verifier que le bouton `Enregistrer` s'active puis qu'un seul commit est produit a l'enregistrement.
-- Apres commit des changements source, rafraichir les metadonnees de l'ADR si une tracabilite Git propre est souhaitee.
+- Relire le plan avec l'utilisateur et valider l'ordre de production.
+- Creer ensuite les premiers livrables dans `documentation/DOCUMENTATION/00_ACCUEIL/` et `documentation/DOCUMENTATION/90_ASSETS/`.
+- Generer ou capturer les visuels seulement apres validation de la charte et des prompts.
 
 ## Prochaine action recommandee
 
-Tester sur un projet reel avec un depot Git parent de `docsFolder`, puis decider si une prochaine iteration doit supporter les renommages de fichiers dans l'historique avec une resolution de chemin par commit.
+Commencer par la Phase 1 du plan : `00_ACCUEIL/*` et `90_ASSETS/*`, puis produire les tutoriels essentiels.
