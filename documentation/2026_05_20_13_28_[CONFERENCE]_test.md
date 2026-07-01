@@ -164,3 +164,12 @@ pie title CYCLE DOCUMENTAIRE
          "Relecture collective" : 30
          "Publication des mises à jour" : 20
 ```
+
+```mermaid
+timeline
+    title FEUILLE DE ROUTE DOCUMENTAIRE
+    2023 : Premières notes vivantes
+    2024 : Workflow de relecture partagé : Catalogue de diagrammes visuels
+    2025 : Documentation assistée par agents
+    2026 : Automatisation Workspace
+```
