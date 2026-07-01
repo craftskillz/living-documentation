@@ -158,3 +158,9 @@ flowchart TD
 <!-- image-align: center -->
 ![image](/images/top_arbres.png)
 
+```mermaid
+pie title CYCLE DOCUMENTAIRE
+         "Rédaction initiale" : 50
+         "Relecture collective" : 30
+         "Publication des mises à jour" : 20
+```
