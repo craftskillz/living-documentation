@@ -163,4 +163,5 @@ Quand ils sont fiables, ajoutez progressivement des agents plus spécialisés.
 <!-- image-width: 1/2 -->
 ![image](/images/feedback_execution_agent.png)
 
+<!-- image-width: 1/2 -->
 ![image](/images/summary_agent_execution.png)
