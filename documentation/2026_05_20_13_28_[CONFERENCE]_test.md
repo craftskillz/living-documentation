@@ -163,5 +163,4 @@ pie title NETFLIX
          "Time spent looking for movie" : 65
          "Time spent watching it" : 20
          "Time spent sleeping" : 10
-         "jok" : 5
 ```
