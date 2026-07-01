@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-01T13:35:46.109Z",
+  "updatedAt": "2026-07-01T13:35:55.681Z",
   "entities": [
     {
       "id": "root",
@@ -184,29 +184,6 @@
         "expectedOutputMarker": "",
         "description": "Routes model calls and hosts the agents assigned to this provider.",
         "workspaceFolder": ""
-      }
-    },
-    {
-      "id": "agent-mpwsdylm",
-      "label": "Agent 1",
-      "kind": "agent",
-      "parentId": "provider-mpwryxsk",
-      "x": 603.7930564039705,
-      "y": 196.18425647431616,
-      "angle": 0.3141592653589793,
-      "config": {
-        "endpoint": "",
-        "token": "",
-        "model": "qwen3.6:latest",
-        "providerType": "chat",
-        "toolMode": "tools",
-        "timeout": 180,
-        "systemPrompt": "calculate the expression",
-        "requiresUserInput": true,
-        "userInputDescription": "Type a calculation, for instance\n2 + 3",
-        "expectedOutputMarker": "",
-        "description": "Runs focused automation against documentation, source, or quality signals.",
-        "workspaceFolder": "AI/WORKSPACE/agent_1"
       }
     },
     {
