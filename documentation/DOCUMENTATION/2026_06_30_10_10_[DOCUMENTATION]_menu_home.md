@@ -25,7 +25,6 @@ La colonne de gauche affiche :
 - les badges utiles : annotations, fichiers joints, statuts
 
 Un clic sur un document l'ouvre dans la partie principale de la page.
-
   </div>
   <div>
 
