@@ -83,7 +83,7 @@ Il affiche deux colonnes :
 Sa syntaxe est :
 
 ```text
-:::compare
+::: compare
 Votre Markdown ici
 :::
 ```
