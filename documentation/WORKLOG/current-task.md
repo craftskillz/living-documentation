@@ -43,6 +43,8 @@ Le travail a couvert :
 - ajustement de l'ouverture par defaut de Home pour privilegier la categorie `DOCUMENTATION` avant `General`.
 - ajout d'une ancre Admin `#git-integration` et redirection des toasts Git vers cette section.
 - remplacement de `docsFolder` par le chemin reel du dossier documentaire configure dans les messages Git destines aux utilisateurs.
+- refonte de `README.fr.md` pour mettre en avant les usages les plus attractifs : documentation local-first, Git/Versions, Workspace, Agents, MCP, diagrammes et automatisation agentique.
+- copie d'assets visuels de documentation dans `images/DOCUMENTATION/` pour le README public.
 
 ## Contenu modifie
 
@@ -70,6 +72,8 @@ Le travail a couvert :
 - `src/frontend-svelte/public/i18n/en.json`
 - `src/frontend-svelte/public/i18n/fr.json`
 - `tests/api/git.spec.ts`
+- `README.fr.md`
+- `images/DOCUMENTATION/*`
 - `documentation/WORKLOG/current-task.md`
 
 ## Documentation
@@ -91,6 +95,8 @@ Le document `Plan.md` est un document de pilotage documentaire utilisateur, pas 
 - Les toasts Git qui pointent vers Admin utilisent maintenant `/admin#git-integration`; Admin scrolle vers cette ancre au montage et aux changements de hash.
 - Les messages Git n'exposent plus `docsFolder` comme terme technique lorsque le chemin reel est disponible.
 - Test API ajoute pour verifier le message Git lorsque le dossier documentaire configure n'est pas dans un repository Git.
+- README francais restructure avec une entree produit plus concise et plus commerciale, puis une suite technique compacte.
+- Liens images du README francais verifies localement.
 - `git diff --check` execute avec succes.
 - `npm run build` execute avec succes et recopie les starters dans `dist/`.
 
