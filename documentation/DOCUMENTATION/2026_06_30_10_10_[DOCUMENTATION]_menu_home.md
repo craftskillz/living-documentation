@@ -134,15 +134,11 @@ Commencez avec peu de dossiers.
 
 Ajoutez de nouvelles sections seulement quand votre documentation devient difficile à parcourir.
 Une structure simple est souvent plus utile qu'une arborescence trop détaillée.
-<!-- layout-columns: text-align: right -->
-
+<!-- layout-columns -->
 <!-- col -->
-
 <!-- image-width: 2/3 -->
 ![Barre laterale Home affichant les documents classes par categories](/images/readme-sidebar.png)
-
 <!-- col -->
-
 La colonne de gauche affiche :
 
 - le nombre de documents disponibles
@@ -152,5 +148,4 @@ La colonne de gauche affiche :
 - les badges utiles : annotations, fichiers joints, statuts
 
 Un clic sur un document l'ouvre dans la partie principale de la page.
-
 <!-- /layout-columns -->
