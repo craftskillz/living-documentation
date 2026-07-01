@@ -18,12 +18,7 @@ Un texte peut contenir du **gras**, de l'_italique_ et une liste :
 - troisième idée
 :::
 
-<!-- code-width: 1/3 -->
-```text
-:::compare
-Votre Markdown ici
-:::
-```
+
 
 :::compare
 <!-- image-width: 1/3 -->
