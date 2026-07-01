@@ -14,7 +14,7 @@ C'est ici que vous retrouvez vos dossiers, vos catégories, vos documents, et le
 ### Ce que vous voyez à gauche
 
 <div class="grid grid-cols-2 gap-4 border bg-amber-500 rounded-lg p-4">
-  <div class="border border-black-500">
+  <div class="border">
 
 La colonne de gauche affiche :
 
@@ -27,7 +27,7 @@ La colonne de gauche affiche :
 Un clic sur un document l'ouvre dans la partie principale de la page.
 
   </div>
-  <div>
+    <div class="border">
 
 <!-- image-width: 2/3 -->
 ![Barre laterale Home affichant les documents classes par categories](/images/readme-sidebar.png)
