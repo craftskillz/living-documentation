@@ -20,6 +20,7 @@ Il sert à transformer une explication en vue visuelle :
 
 <!-- image-width: 2/3 -->
 ![Exemple de diagramme de contexte Living Documentation](/images/living_documentation_context_demo_conf.png)
+
 <!-- image-width: 2/3 -->
 ![image](/images/exemple_diagramme_documentation.png)
 ---
