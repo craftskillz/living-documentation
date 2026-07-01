@@ -15,6 +15,12 @@ C'est ici que vous retrouvez vos dossiers, vos catégories, vos documents, et le
 
 <div class="grid grid-cols-2 gap-4 items-center">
 <div>
+
+<!-- image-width: 2/3 -->
+![Barre laterale Home affichant les documents classes par categories](/images/readme-sidebar.png)
+</div>
+<div>
+
 La colonne de gauche affiche :
 
 - le nombre de documents disponibles
@@ -24,11 +30,6 @@ La colonne de gauche affiche :
 - les badges utiles : annotations, fichiers joints, statuts
 
 Un clic sur un document l'ouvre dans la partie principale de la page.
-</div>
-<div>
-
-<!-- image-width: 2/3 -->
-![Barre laterale Home affichant les documents classes par categories](/images/readme-sidebar.png)
 </div>
 </div>
 
