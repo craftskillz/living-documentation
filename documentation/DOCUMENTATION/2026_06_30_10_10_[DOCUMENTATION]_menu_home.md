@@ -77,7 +77,7 @@ Ici :
 - `GUIDE` est la catégorie
 - `preparer_une_reunion` est le titre du document
 
-### Créer un dossier
+#### Créer un dossier
 
 Le bouton <kbd>New Folder</kbd> permet d'ajouter une nouvelle section dans votre documentation.
 
@@ -100,7 +100,7 @@ devient :
 204_PROJET_HERMES
 ```
 
-### Créer un document
+#### Créer un document
 
 Le bouton <kbd>New Document</kbd> permet d'ajouter un document Markdown.
 
