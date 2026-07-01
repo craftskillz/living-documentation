@@ -1,7 +1,3 @@
----
-**language:** fr
----
-
 # Living Documentation
 
 [🇬🇧 Read in English](./README.md)
@@ -90,7 +86,7 @@ Avec Workspace, MCP, les providers LLM et les tools internes, Living Documentati
 Nécessite **Node.js 20.19 ou plus récent**.
 
 ```bash
-# Assistant interactif : crée un starter EN ou FR
+# Détecter un projet proche ou créer un starter EN/FR
 npx living-ai-documentation@latest
 
 # Ou servir un dossier existant
@@ -106,7 +102,9 @@ Puis ouvrez :
 - admin : [http://localhost:4321/admin](http://localhost:4321/admin)
 - MCP : [http://localhost:4321/mcp](http://localhost:4321/mcp)
 
-Le premier lancement peut créer un starter documentaire complet, en français ou en anglais, avec des guides intégrés pour comprendre Home, Markdown, Workspace, Agents et Diagram.
+Sans dossier en argument, le CLI cherche d'abord `.living-doc.json` dans le dossier courant, puis un niveau en dessous. S'il trouve un projet Living Documentation existant, il propose de le lancer ; sinon il crée un starter documentaire complet, en français ou en anglais, avec des guides intégrés pour comprendre Home, Markdown, Workspace, Agents et Diagram.
+
+Quand un dossier est fourni en argument mais qu'il ne contient pas encore `.living-doc.json`, le CLI initialise ce dossier au lieu de le servir comme projet non configuré.
 
 > Le dossier passé au CLI doit être un chemin relatif (`./docs`, `../documentation`). Les chemins absolus et `~` sont rejetés pour garder `.living-doc.json` portable.
 

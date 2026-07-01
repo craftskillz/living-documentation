@@ -41,6 +41,11 @@ function expectRegularFile(pathToFile: string) {
   expect(stat.isSymbolicLink()).toBe(false);
 }
 
+function writeExistingDocsProject(docsPath: string, title: string) {
+  fs.copyFileSync(path.resolve(__dirname, '../../starter-doc/.living-doc.json'), path.join(docsPath, '.living-doc.json'));
+  fs.writeFileSync(path.join(docsPath, `2026_01_01_10_00_[General]_${title}.md`), `# ${title}\n`);
+}
+
 test('CLI rejects an absolute docs folder argument', () => {
   const result = runCli(['/tmp/abs-path']);
   expect(result.status).not.toBe(0);
@@ -51,14 +56,6 @@ test('CLI rejects a tilde-prefixed docs folder argument', () => {
   const result = runCli(['~/foo']);
   expect(result.status).not.toBe(0);
   expect(result.stderr).toMatch(/must be a relative path/i);
-});
-
-test('CLI exits 1 when the folder does not exist', () => {
-  const tmp = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ld-cli-')));
-  const result = runCli(['./does-not-exist-anywhere'], tmp);
-  expect(result.status).toBe(1);
-  expect(result.stderr).toMatch(/Folder not found/i);
-  fs.rmSync(tmp, { recursive: true, force: true });
 });
 
 test('CLI exits 1 when the given path is a file, not a directory', () => {
@@ -123,7 +120,7 @@ test('CLI with an existing docs folder keeps the server process alive', async ({
   const parent = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ld-cli-existing-')));
   const dirAbs = path.join(parent, 'documentation');
   fs.mkdirSync(dirAbs);
-  fs.writeFileSync(path.join(dirAbs, '2026_01_01_10_00_[General]_intro.md'), '# Intro\n');
+  writeExistingDocsProject(dirAbs, 'Intro');
   const port = await pickFreePort();
   const proc = await spawnLD({
     cwd: parent,
@@ -135,6 +132,69 @@ test('CLI with an existing docs folder keeps the server process alive', async ({
     expect(res.ok()).toBe(true);
     await new Promise((resolve) => setTimeout(resolve, 250));
     expect(proc.exitCode).toBeNull();
+  } finally {
+    await killLD(proc);
+    fs.rmSync(parent, { recursive: true, force: true });
+  }
+});
+
+test('CLI with an explicit folder without config initializes that folder', async ({ request }) => {
+  const parent = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ld-cli-explicit-init-')));
+  const dirAbs = path.join(parent, 'doc');
+  const port = await pickFreePort();
+  const proc = await spawnLD({
+    cwd: parent,
+    docsArg: './doc',
+    port,
+    extraArgs: ['--starter-language', 'fr'],
+  });
+  try {
+    const configPath = path.join(dirAbs, '.living-doc.json');
+    expect(fs.existsSync(configPath)).toBe(true);
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+    expect(config.language).toBe('fr');
+    const res = await request.get(`http://localhost:${port}/api/documents`);
+    expect(res.ok()).toBe(true);
+  } finally {
+    await killLD(proc);
+    fs.rmSync(parent, { recursive: true, force: true });
+  }
+});
+
+test('CLI without folder can launch existing docs from the current folder after confirmation', async ({ request }) => {
+  const docsRoot = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ld-cli-current-')));
+  writeExistingDocsProject(docsRoot, 'Current Docs');
+  const port = await pickFreePort();
+  const proc = await spawnLD({
+    cwd: docsRoot,
+    port,
+    stdin: 'y\n',
+  });
+  try {
+    const res = await request.get(`http://localhost:${port}/api/documents`);
+    expect(res.ok()).toBe(true);
+    expect(JSON.stringify(await res.json())).toContain('Current Docs');
+  } finally {
+    await killLD(proc);
+    fs.rmSync(docsRoot, { recursive: true, force: true });
+  }
+});
+
+test('CLI without folder can launch existing docs from a direct child folder after confirmation', async ({ request }) => {
+  const parent = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'ld-cli-child-')));
+  const docsRoot = path.join(parent, 'docs');
+  fs.mkdirSync(docsRoot);
+  writeExistingDocsProject(docsRoot, 'Child Docs');
+  const port = await pickFreePort();
+  const proc = await spawnLD({
+    cwd: parent,
+    port,
+    stdin: 'y\n',
+  });
+  try {
+    const res = await request.get(`http://localhost:${port}/api/documents`);
+    expect(res.ok()).toBe(true);
+    expect(JSON.stringify(await res.json())).toContain('Child Docs');
   } finally {
     await killLD(proc);
     fs.rmSync(parent, { recursive: true, force: true });

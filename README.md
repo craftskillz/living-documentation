@@ -1,7 +1,3 @@
----
-**language:** en
----
-
 # Living Documentation
 
 [🇫🇷 Lire en français](./README.fr.md)
@@ -90,7 +86,7 @@ With Workspace, MCP, LLM providers, and internal tools, Living Documentation bec
 Requires **Node.js 20.19 or newer**.
 
 ```bash
-# Interactive wizard: creates an EN or FR starter
+# Detect an existing project nearby or create an EN/FR starter
 npx living-ai-documentation@latest
 
 # Or serve an existing folder
@@ -106,7 +102,9 @@ Then open:
 - admin: [http://localhost:4321/admin](http://localhost:4321/admin)
 - MCP: [http://localhost:4321/mcp](http://localhost:4321/mcp)
 
-The first launch can create a complete documentation starter, in French or English, with built-in guides for Home, Markdown, Workspace, Agents, and Diagram.
+Without a folder argument, the CLI first looks for `.living-doc.json` in the current folder, then one level below it. If it finds an existing Living Documentation project, it offers to launch it; otherwise it creates a complete documentation starter, in French or English, with built-in guides for Home, Markdown, Workspace, Agents, and Diagram.
+
+When a folder argument is provided but that folder has no `.living-doc.json` yet, the CLI initializes that folder instead of serving it as an unconfigured project.
 
 > The folder passed to the CLI must be a relative path (`./docs`, `../documentation`). Absolute paths and `~` are rejected to keep `.living-doc.json` portable.
 

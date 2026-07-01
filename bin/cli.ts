@@ -12,6 +12,7 @@ import { startServer } from "../src/server";
 process.once("SIGTERM", () => process.exit(0));
 
 const program = new Command();
+const CONFIG_FILENAME = ".living-doc.json";
 type InitLanguage = "en" | "fr";
 type InitInstructionFile = {
   sourcePath: string;
@@ -168,13 +169,66 @@ function removeStarterDefaults(docsPath: string): void {
   fs.rmSync(path.join(docsPath, "AI", "default"), { recursive: true, force: true });
 }
 
-async function runInitWizard(options: { starterLanguage?: string; port: string; open: boolean }): Promise<void> {
+function hasLivingDocConfig(folderPath: string): boolean {
+  return fs.existsSync(path.join(folderPath, CONFIG_FILENAME));
+}
+
+function findOneLevelDocumentationFolders(cwd: string): string[] {
+  return fs
+    .readdirSync(cwd, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .filter((name) => hasLivingDocConfig(path.join(cwd, name)))
+    .sort((a, b) => a.localeCompare(b));
+}
+
+async function confirmExistingDocumentation(message: string): Promise<boolean> {
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   try {
-    const folderAnswer = await rl.question(
-      "Documentation folder to create / Dossier de documentation à créer: ",
+    const answer = await rl.question(message);
+    const normalized = answer.trim().toLowerCase();
+    return ["y", "yes", "o", "oui"].includes(normalized);
+  } finally {
+    rl.close();
+  }
+}
+
+async function findExistingDocumentationFolder(): Promise<string | null> {
+  const cwd = process.cwd();
+  if (hasLivingDocConfig(cwd)) {
+    const shouldLaunch = await confirmExistingDocumentation(
+      "An existing version of Living Documentation was found in the current folder. Do you want to launch it? (y/n) ",
     );
-    const folder = folderAnswer.trim();
+    if (shouldLaunch) {
+      return ".";
+    }
+  }
+
+  for (const folder of findOneLevelDocumentationFolders(cwd)) {
+    const shouldLaunch = await confirmExistingDocumentation(
+      `An existing version of Living Documentation was found in ./${folder}. Do you want to launch it? (y/n) `,
+    );
+    if (shouldLaunch) {
+      return `./${folder}`;
+    }
+  }
+
+  return null;
+}
+
+async function runInitWizard(
+  options: { starterLanguage?: string; port: string; open: boolean },
+  presetFolder?: string,
+): Promise<void> {
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  try {
+    const folder = presetFolder
+      ? presetFolder.trim()
+      : (
+          await rl.question(
+            "Documentation folder to create / Dossier de documentation à créer: ",
+          )
+        ).trim();
     if (!folder) {
       console.error("\nError: Documentation folder is required.\n");
       process.exit(1);
@@ -256,14 +310,17 @@ program
     "after",
     `
 Examples:
-  $ npx living-ai-documentation                         Create a new documentation project interactively
+  $ npx living-ai-documentation                         Detect an existing project nearby or create one interactively
   $ npx living-ai-documentation ./mydocs                Serve existing docs at http://localhost:4321
   $ npx living-ai-documentation ./mydocs -p 5000 -o     Serve on port 5000 and open the browser
 
 Notes:
   - The folder argument must be a relative path. Absolute paths (/abs/...) and ~-expansion are rejected
     so .living-doc.json can be checked into git and shared across machines.
-  - When no folder is provided, the initializer asks for the target folder and starter language.
+  - When no folder is provided, the CLI first offers to launch a project found in the current folder
+    or one level below it, then falls back to the initializer.
+  - When a folder is provided but has no .living-doc.json yet, the initializer uses that folder
+    as the target project.
   - The initializer copies AGENTS.md, CLAUDE.md and memory/MEMORY.md to the parent
     of the documentation folder, then exposes them in <folder>/AI/ through symbolic links.
     If one already exists with content, initialization stops instead of overwriting it.
@@ -271,13 +328,23 @@ Notes:
 `,
   )
   .action(async (folder: string | undefined, options: { starterLanguage?: string; port: string; open: boolean }) => {
-    if (!folder) {
-      await runInitWizard(options);
-      return;
+    let folderToServe = folder;
+    if (!folderToServe) {
+      folderToServe = (await findExistingDocumentationFolder()) ?? undefined;
+      if (!folderToServe) {
+        await runInitWizard(options);
+        return;
+      }
     }
 
-    validateRelativeFolder(folder);
-    const docsPath = path.resolve(process.cwd(), folder);
+    validateRelativeFolder(folderToServe);
+    const docsPath = path.resolve(process.cwd(), folderToServe);
+
+    if (!hasLivingDocConfig(docsPath)) {
+      console.log(`\nNo .living-doc.json found in ${folderToServe}. Starting initialization wizard.\n`);
+      await runInitWizard(options, folderToServe);
+      return;
+    }
 
     if (!fs.existsSync(docsPath)) {
       console.error(`\nError: Folder not found: ${docsPath}\n`);

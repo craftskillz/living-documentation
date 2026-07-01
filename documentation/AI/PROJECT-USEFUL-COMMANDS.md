@@ -113,8 +113,8 @@ Le CLI public attend un dossier de documentation relatif. Les chemins absolus et
 
 | Commande                                                | Effet                                                    | Notes                                                                     |
 | ------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `npx living-ai-documentation`                           | Lance le wizard interactif si aucun dossier n'est fourni | Demande le dossier docs et la langue starter EN/FR.                       |
-| `npx living-ai-documentation ./docs`                    | Sert un dossier docs existant ou initialisé              | Ouvre par défaut sur `http://localhost:4321` si le port n'est pas changé. |
+| `npx living-ai-documentation`                           | Détecte un projet existant proche, sinon lance le wizard | Cherche `.living-doc.json` dans le dossier courant puis un niveau en dessous avant de demander le dossier docs et la langue starter EN/FR. |
+| `npx living-ai-documentation ./docs`                    | Sert un dossier configure ou initialise ce dossier       | Si `./docs/.living-doc.json` existe, le dossier est servi ; sinon le wizard initialise `./docs`. |
 | `npx living-ai-documentation ./docs --port 4000 --open` | Sert sur un port explicite et ouvre le navigateur        | Le port est persisté dans `.living-doc.json` comme information.           |
 
 ## Coverage et stratégie de test

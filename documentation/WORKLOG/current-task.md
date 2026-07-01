@@ -47,6 +47,9 @@ Le travail a couvert :
 - copie d'assets visuels de documentation dans `images/DOCUMENTATION/` pour le README public.
 - traduction anglaise de `README.fr.md` vers `README.md` avec la meme structure produit.
 - correction du lien image Agents dans `README.fr.md` vers `./images/DOCUMENTATION/execution_d_agents.png`.
+- ajout d'une detection CLI sans argument des projets Living Documentation existants via `.living-doc.json` dans le dossier courant puis dans les sous-dossiers directs.
+- ajout de confirmations terminal pour lancer un projet detecte avant de retomber sur le wizard d'initialisation.
+- ajout de l'initialisation automatique du dossier explicite lorsqu'il ne contient pas encore `.living-doc.json`.
 
 ## Contenu modifie
 
@@ -76,6 +79,8 @@ Le travail a couvert :
 - `tests/api/git.spec.ts`
 - `README.fr.md`
 - `README.md`
+- `bin/cli.ts`
+- `tests/api/cli.spec.ts`
 - `images/DOCUMENTATION/*`
 - `documentation/WORKLOG/current-task.md`
 
@@ -104,6 +109,13 @@ Le document `Plan.md` est un document de pilotage documentaire utilisateur, pas 
 - Contrat bilingue README verifie avec `./scripts/check-readme-sync.sh HEAD`.
 - `git diff --check` execute avec succes.
 - `npm run build` execute avec succes et recopie les starters dans `dist/`.
+- Tests CLI ajoutes pour le lancement sans argument depuis un dossier courant deja configure et depuis un sous-dossier direct deja configure.
+- Test CLI ajoute pour `npx living-ai-documentation ./doc -p <port>` lorsque `./doc/.living-doc.json` n'existe pas encore.
+- `npm run build` reexecute avec succes apres ajout de la detection CLI `.living-doc.json`.
+- `npx playwright test tests/api/cli.spec.ts --project=chromium` execute avec succes : 17 tests passes.
+- `./scripts/check-readme-sync.sh HEAD` reexecute avec succes apres mise a jour des README.
+- `git diff --check -- bin/cli.ts tests/api/cli.spec.ts README.md README.fr.md documentation/AI/PROJECT-USEFUL-COMMANDS.md documentation/WORKLOG/current-task.md` execute avec succes.
+- `graphify update .` execute avec succes apres modification du code.
 
 ## Verifications restantes
 
