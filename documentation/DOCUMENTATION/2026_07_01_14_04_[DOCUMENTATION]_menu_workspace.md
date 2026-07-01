@@ -109,11 +109,11 @@ Exemple d'agent simple :
 
 <!-- code-width: 2/3 -->
 ```text
-Tu es un assistant de documentation.
-Lis le document a partir du DocumentId fourni par l'utilisateur.
-Améliore la clarté du texte sans changer le sens.
-Conserve le Markdown.
-Mets à jour le document quand tu as terminé.
+You are a documentation assistant.
+Read the document using read_document with the DocumentId provided by the user.
+Improve the clarity of the text without changing the meaning.
+Preserve the Markdown.
+Update the document using update_document when you are done.
 ```
 
 Vous pouvez ensuite lancer cet agent en lui donnant l'id d'un document.
