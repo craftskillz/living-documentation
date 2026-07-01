@@ -55,6 +55,7 @@ Le travail a couvert :
 - tache ponctuelle : ajout du snippet `Mermaid` dans `Code & diagrammes`, avec un builder `PIE CHART` permettant de definir un titre et des elements ponderes, puis de generer un bloc Markdown `mermaid` compatible avec le rendu existant.
 - tache ponctuelle : ajout de la regle de builder `PIE CHART` imposant que le total des elements ponderes ne depasse jamais 100, appliquee dans l'UI et dans le builder Markdown.
 - tache ponctuelle : remplacement de l'exemple Mermaid inspire de la documentation par un exemple original localise (`DOC WORKFLOW` en anglais, `CYCLE DOCUMENTAIRE` en francais), avec consigne de creer de nouveaux exemples originaux a partir des exemples fournis.
+- tache ponctuelle : ajout du type `TIMELINE` dans le builder Mermaid, avec edition dynamique d'un titre et d'evenements periodises, generation du bloc Markdown `timeline`, et exemple original de roadmap documentaire.
 
 ## Contenu modifie
 
@@ -105,6 +106,8 @@ Le snippet Mermaid ajoute un comportement utilisateur durable. Un ADR devra etre
 
 Les exemples Mermaid par defaut du builder ne reprennent pas textuellement les exemples fournis par l'utilisateur ou par la documentation Mermaid ; ils sont transformes en exemples originaux et localises.
 
+Le type `TIMELINE` reprend uniquement la forme syntaxique de l'exemple Mermaid fourni ; l'exemple integre au produit porte sur une roadmap documentaire originale.
+
 ## Verifications realisees
 
 - Creation du plan cible demandee par l'utilisateur.
@@ -153,6 +156,11 @@ Les exemples Mermaid par defaut du builder ne reprennent pas textuellement les e
 - `rg -n "NETFLIX|Time spent looking|Time spent watching|Time spent sleeping" src/frontend-svelte dist tests -g '!node_modules'` ne retourne aucune occurrence.
 - `git diff --check -- src/frontend-svelte/src/lib/home/SnippetsModal.svelte src/frontend-svelte/src/lib/home/snippets/builders.ts src/frontend-svelte/src/lib/home/snippets/pickerData.ts src/frontend-svelte/public/i18n/fr.json src/frontend-svelte/public/i18n/en.json tests/e2e/inline-snippet-edit.spec.ts` execute avec succes apres remplacement de l'exemple.
 - `graphify update .` execute avec succes apres remplacement de l'exemple Mermaid.
+- `npm run build` execute avec succes apres ajout du type Mermaid `TIMELINE`.
+- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "Mermaid picker builds and inserts" --project=chromium` execute avec succes apres ajout de `TIMELINE` : 2 tests passes.
+- `rg -n "History of Social Media Platform|LinkedIn|Facebook|YouTube|Twitter|Google" src/frontend-svelte tests dist -g '!node_modules'` ne retourne aucune occurrence de l'exemple Mermaid fourni ; seules les chaines admin LinkedIn existantes restent presentes.
+- `git diff --check -- src/frontend-svelte/src/lib/home/SnippetsModal.svelte src/frontend-svelte/src/lib/home/snippets/builders.ts src/frontend-svelte/public/i18n/fr.json src/frontend-svelte/public/i18n/en.json tests/e2e/inline-snippet-edit.spec.ts` execute avec succes apres ajout de `TIMELINE`.
+- `graphify update .` execute avec succes apres ajout de `TIMELINE`.
 
 ## Verifications restantes
 
