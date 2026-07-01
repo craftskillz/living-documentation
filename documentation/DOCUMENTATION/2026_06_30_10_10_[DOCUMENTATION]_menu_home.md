@@ -127,3 +127,13 @@ Commencez avec peu de dossiers.
 
 Ajoutez de nouvelles sections seulement quand votre documentation devient difficile à parcourir.
 Une structure simple est souvent plus utile qu'une arborescence trop détaillée.
+
+:::compare
+### Titre de section
+
+Un texte peut contenir du **gras**, de l'_italique_ et une liste :
+
+- première idée
+- deuxième idée
+- troisième idée
+:::
