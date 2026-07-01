@@ -30,8 +30,14 @@ L'idée est simple : au lieu de réécrire le même prompt à chaque fois, vous 
 
 Dans le Workspace, chaque élément est représenté par un nœud.
 
+<!-- layout-columns -->
+
+<!-- col -->
+
 <!-- image-width: 1/2 -->
 ![image](/images/workspace_configuration.png)
+
+<!-- col -->
 
 | Nœud | Rôle |
 | --- | --- |
@@ -39,6 +45,12 @@ Dans le Workspace, chaque élément est représenté par un nœud.
 | **LLM provider** | Le modèle utilisé par les agents. |
 | **Agent** | Une tâche documentaire précise. |
 | **MCP** | Les outils internes accessibles aux agents. |
+
+<!-- /layout-columns -->
+
+
+
+
 
 Un agent est attaché à un provider LLM.
 
