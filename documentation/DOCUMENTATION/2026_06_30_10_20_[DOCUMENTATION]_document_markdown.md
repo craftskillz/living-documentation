@@ -29,6 +29,10 @@ Un texte peut contenir du **gras**, de l'_italique_ et une liste :
 
 Les snippets sont des blocs Markdown prêts à l'emploi.
 
+<!-- layout-columns -->
+
+<!-- col -->
+
 Ils évitent de retenir toutes les syntaxes et permettent d'insérer rapidement :
 
 - des titres
@@ -44,10 +48,12 @@ Ils évitent de retenir toutes les syntaxes et permettent d'insérer rapidement 
 - des colonnes
 - des diagrammes
 
+<!-- col -->
 
 <!-- image-width: 2/3 -->
 ![Panneau Snippets affichant les blocs Markdown disponibles](/images/snippets.png)
 
+<!-- /layout-columns -->
 
 Pour les utiliser :
 
