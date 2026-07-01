@@ -110,7 +110,7 @@ Exemple d'agent simple :
 <!-- code-width: 2/3 -->
 ```text
 Tu es un assistant de documentation.
-Lis le document fourni par l'utilisateur.
+Lis le document a partir du DocumentId fourni par l'utilisateur.
 Améliore la clarté du texte sans changer le sens.
 Conserve le Markdown.
 Mets à jour le document quand tu as terminé.
