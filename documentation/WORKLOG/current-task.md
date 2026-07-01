@@ -51,7 +51,7 @@ Le travail a couvert :
 - ajout de confirmations terminal pour lancer un projet detecte avant de retomber sur le wizard d'initialisation.
 - ajout de l'initialisation automatique du dossier explicite lorsqu'il ne contient pas encore `.living-doc.json`.
 - correction des workflows CodeQL pour utiliser la meme version `github/codeql-action` entre `init` et `analyze`.
-- tache ponctuelle : reorganisation de la popup snippets avec renommage de `Colonnes` en `Disposition`, deplacement des listes et du tableau dans `Structure`, et renommage de la categorie `Listes, code & donnees` en `Code & diagrammes`.
+- tache ponctuelle : reorganisation de la popup snippets avec renommage de `Colonnes` en `Disposition`, deplacement des listes et du tableau dans `Structure`, deplacement de `Comparaison` dans `Code & diagrammes`, et renommage de la categorie `Listes, code & donnees` en `Code & diagrammes`.
 
 ## Contenu modifie
 
@@ -128,6 +128,9 @@ La reorganisation de la popup snippets demandee ici est un ajustement UX de libe
 - `npm run build` execute avec succes apres reorganisation de la popup snippets.
 - `git diff --check -- src/frontend-svelte/src/lib/home/snippets/pickerData.ts src/frontend-svelte/src/lib/home/SnippetsModal.svelte src/frontend-svelte/public/i18n/fr.json src/frontend-svelte/public/i18n/en.json` execute avec succes.
 - `graphify update .` execute avec succes apres reorganisation de la popup snippets.
+- `npm run build` execute avec succes apres deplacement de `Comparaison` vers `Code & diagrammes`.
+- `git diff --check -- src/frontend-svelte/src/lib/home/snippets/pickerData.ts src/frontend-svelte/src/lib/home/SnippetsModal.svelte src/frontend-svelte/public/i18n/fr.json src/frontend-svelte/public/i18n/en.json` execute avec succes apres deplacement de `Comparaison`.
+- `graphify update .` execute avec succes apres deplacement de `Comparaison`.
 
 ## Verifications restantes
 
