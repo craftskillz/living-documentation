@@ -13,8 +13,8 @@ C'est ici que vous retrouvez vos dossiers, vos catégories, vos documents, et le
 
 ### Ce que vous voyez à gauche
 
-<div class="grid grid-cols-2 gap-4 border bg-amber-500 rounded-lg p-4">
-  <div class="border">
+<div class="grid grid-cols-2 gap-4">
+  <div>
 La colonne de gauche affiche :
 
 - le nombre de documents disponibles
@@ -25,7 +25,7 @@ La colonne de gauche affiche :
 
 Un clic sur un document l'ouvre dans la partie principale de la page.
 </div>
-    <div class="border">
+    <div>
 
 <!-- image-width: 2/3 -->
 ![Barre laterale Home affichant les documents classes par categories](/images/readme-sidebar.png)
@@ -34,7 +34,7 @@ Un clic sur un document l'ouvre dans la partie principale de la page.
 
 ### Ce que vous voyez à droite
 
-<div class="grid grid-cols-2 gap-4">
+<div class="grid grid-cols-2 gap-4 border bg-amber-500 rounded-lg p-4">
   <div>
 
 Lorsque vous cliquez sur le bouton Table des matières <kbd><i class="fa-solid fa-list-ul"></i></kbd>, une colonne apparaît à droite de l'écran et affiche une Table des matères dont les liens sont clickables.
