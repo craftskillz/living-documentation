@@ -7,3 +7,14 @@
 
 <!-- image-width: 2/3 -->
 ![image](/images/snippets.png)
+
+
+:::compare
+# Header
+:::
+
+:::compare
+```
+const message = 'Hello, World!"
+```
+:::
