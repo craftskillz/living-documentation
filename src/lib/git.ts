@@ -1,5 +1,12 @@
 import { execFileSync } from "child_process";
 
+export interface GitStatusEntry {
+  path: string; // relative to cwd, POSIX-separated
+  indexStatus: string; // staged status char, e.g. "M", "A", "D", " "
+  worktreeStatus: string; // unstaged status char
+  renamedFrom?: string; // set for R/C entries
+}
+
 export interface SourceCommit {
   commit: string; // full HEAD SHA1
   dirty: boolean; // true when the working tree has uncommitted changes
@@ -50,6 +57,74 @@ export function currentSourceCommit(
       { cwd, encoding: "utf-8", stdio: ["ignore", "pipe", "pipe"] },
     );
     return { commit, dirty: status.trim().length > 0 };
+  } catch {
+    return null;
+  }
+}
+
+// Working-tree change list (staged + unstaged + untracked), parsed from
+// `git status --porcelain=v1 -z`. The `-z` / null-terminated form avoids
+// having to unescape quoted paths and keeps rename records (which emit
+// `to\0from\0`) unambiguous. `pathspecs`, when given, scopes the listing
+// (e.g. to a sourceRoot subdirectory of the repo). Returns null when `cwd`
+// is not inside a git working tree, so callers can degrade gracefully
+// instead of throwing.
+//
+// IMPORTANT: git always reports `path` relative to the repository root, not
+// to `cwd` — even when `cwd` is a subdirectory. Callers whose `cwd` isn't the
+// repo root must re-resolve `path` themselves (see `gitDiff` below, which has
+// the same property and expects repo-root-relative pathspecs back).
+export function gitStatusPorcelain(cwd: string, pathspecs: string[] = []): GitStatusEntry[] | null {
+  try {
+    const raw = execFileSync("git", ["status", "--porcelain=v1", "-z", ...(pathspecs.length ? ["--", ...pathspecs] : [])], {
+      cwd,
+      encoding: "utf-8",
+      stdio: ["ignore", "pipe", "pipe"],
+      maxBuffer: 32 * 1024 * 1024,
+    });
+    const records = raw.split("\0").filter((r) => r.length > 0);
+    const entries: GitStatusEntry[] = [];
+    for (let i = 0; i < records.length; i++) {
+      const record = records[i];
+      const indexStatus = record.charAt(0);
+      const worktreeStatus = record.charAt(1);
+      const filePath = record.slice(3);
+      const entry: GitStatusEntry = { path: filePath, indexStatus, worktreeStatus };
+      // Renames/copies emit the destination record followed by a bare `from` record.
+      if (indexStatus === "R" || indexStatus === "C" || worktreeStatus === "R" || worktreeStatus === "C") {
+        const from = records[i + 1];
+        if (from !== undefined) {
+          entry.renamedFrom = from;
+          i++;
+        }
+      }
+      entries.push(entry);
+    }
+    return entries;
+  } catch {
+    return null;
+  }
+}
+
+// Unified diff for the given paths against `base` (default HEAD), covering
+// both staged and unstaged changes to tracked files in one call. `paths` are
+// resolved as git pathspecs relative to `cwd` — pass repo-root-relative paths
+// (as returned by `gitStatusPorcelain`) with `cwd` set to the repo root to
+// avoid mismatches when `cwd` is a subdirectory. Returns null on failure
+// (e.g. no commits yet, or `base` doesn't resolve) instead of throwing, so
+// `build_context` can degrade a single section rather than fail the whole call.
+export function gitDiff(
+  cwd: string,
+  paths: string[],
+  base: string = "HEAD",
+): string | null {
+  if (paths.length === 0) return "";
+  try {
+    return execFileSync(
+      "git",
+      ["diff", base, "--", ...paths],
+      { cwd, encoding: "utf-8", stdio: ["ignore", "pipe", "pipe"], maxBuffer: 32 * 1024 * 1024 },
+    );
   } catch {
     return null;
   }

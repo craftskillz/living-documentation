@@ -35,6 +35,7 @@ import {
   toolListAdrsBelowAccuracy,
 } from "./tools/metadata";
 import { toolRetrodocumentAdrsFromGit } from "./tools/git";
+import { toolBuildContext } from "./tools/context";
 import { toolGenerateImage } from "./tools/images";
 
 // ── Server guide ──────────────────────────────────────────────────────────────
@@ -279,6 +280,15 @@ Three tools expose read-only access to the project source under \`sourceRoot\`
    diagram, stop and update the documentation first.
 3. Common ignored folders (\`node_modules\`, \`dist\`, \`.git\`, \`build\`,
    \`target\`, …) are skipped automatically.
+
+## One-shot workspace context
+\`build_context(task, options?)\` aggregates the current working-tree state in
+a single call instead of chaining \`git status\` / \`read_source_file\` /
+\`search_source\` / \`read_document\` by hand: git branch/HEAD/dirty flag,
+per-file diff and full content for changed files, and any docs/ADRs already
+bound (via \`add_metadata\`) to those files with their accuracy. Skips pulling
+source content when every changed file is a \`.md\` doc. Does not resolve a
+dependency graph or discover tests — read the changed files' content for that.
 
 ## Guardrails (enforced server-side in create_diagram)
 - \`diagramType\` is required.
@@ -1225,6 +1235,57 @@ const TOOLS = [
             "Optional git --since expression (e.g. `2024-01-01`, `6 months ago`). Passed straight to git log.",
         },
       },
+    },
+  },
+  {
+    name: "build_context",
+    description: [
+      "Aggregate the working-tree state of `sourceRoot` into one JSON context blob, instead of the LLM making many small tool calls (git status, read file, search docs, read ADR, ...).",
+      "",
+      "Returns: `workspace` (sourceRoot/docsFolder/gitRoot), `git` (branch, HEAD commit, dirty — `null` when `sourceRoot` isn't a git working tree), `changes` (working-tree status entries with a per-file unified diff against `base`), `source` (full content of the changed files, size-capped), and `documentation` (docs/ADRs already bound via `add_metadata` to any of the changed files, with their accuracy).",
+      "",
+      "Deterministic selection: when every changed file is a `.md` file under `docsFolder`, `source.files` is skipped (`source.skipped: \"docs-only change\"`) since architectural source context isn't needed for a docs-only change.",
+      "",
+      "Scope: this reflects only what's already tracked by this server (git + the metadata-binding system). It does NOT resolve an import/dependency graph, does NOT find callers of a changed symbol, and does NOT discover test files for changed code — those aren't implemented yet.",
+      "",
+      "This is a factual aggregation tool: it never ranks, judges, or recommends. Reasoning belongs to the LLM.",
+    ].join("\n"),
+    inputSchema: {
+      type: "object",
+      properties: {
+        task: {
+          type: "string",
+          description:
+            "Free-text label for what the context is being built for (e.g. `code-review`, `generate-tests`, `refactoring`, `documentation`). Not used to rank or filter results — informational only in this version.",
+        },
+        options: {
+          type: "object",
+          description: "Optional tuning knobs.",
+          properties: {
+            base: {
+              type: "string",
+              description: "Git ref to diff against (default `HEAD`).",
+            },
+            maxFiles: {
+              type: "number",
+              description: "Max number of changed files to include (default 50, hard cap 200).",
+            },
+            maxFileBytes: {
+              type: "number",
+              description: "Max size in bytes of a single file's full content (default and hard cap 512 KB).",
+            },
+            maxDiffChars: {
+              type: "number",
+              description: "Max characters of unified diff per file before truncation (default 20000).",
+            },
+            includeDocumentation: {
+              type: "boolean",
+              description: "Set to false to skip the `documentation` section entirely (default true).",
+            },
+          },
+        },
+      },
+      required: ["task"],
     },
   },
 ] as const;
@@ -2351,6 +2412,20 @@ function createMcpServer(docsPath: string): Server {
           return toolRetrodocumentAdrsFromGit(
             docsPath,
             args as { limit?: number; since?: string },
+          );
+        case "build_context":
+          return toolBuildContext(
+            docsPath,
+            args as {
+              task: string;
+              options?: {
+                base?: string;
+                maxFiles?: number;
+                maxFileBytes?: number;
+                maxDiffChars?: number;
+                includeDocumentation?: boolean;
+              };
+            },
           );
         default:
           throw new Error(`Unknown tool: ${name}`);

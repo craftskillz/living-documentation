@@ -46,6 +46,8 @@ test('tools/list exposes the expected tool set', async ({ request, ld }) => {
       'list_adrs_below_accuracy',
       'add_metadata',
       'refresh_metadata',
+      'retrodocument_adrs_from_git',
+      'build_context',
     ]),
   );
 });
