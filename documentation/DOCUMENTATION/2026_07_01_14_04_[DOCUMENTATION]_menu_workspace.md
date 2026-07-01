@@ -56,6 +56,10 @@ Les LLM et leurs agents ont des code couleurs indiquant leur capacités
 
 ### Créer un provider LLM
 
+<!-- layout-columns -->
+
+<!-- col -->
+
 Un provider LLM contient les informations nécessaires pour appeler un modèle :
 
 - l'endpoint
@@ -71,6 +75,13 @@ env:LLM_API_KEY
 ```
 
 Cela évite d'écrire votre clé API directement dans la configuration.
+<!-- col -->
+
+![image](/images/llm_provider_creation.png)
+
+<!-- /layout-columns -->
+
+--- 
 
 ### Tools ou Chat only ?
 
