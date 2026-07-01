@@ -16,6 +16,7 @@ C'est ici que vous retrouvez vos dossiers, vos catégories, vos documents, et le
 <div class="grid grid-cols-2 gap-4 border bg-amber-500 rounded-lg p-4">
   <div class="border">a</div>
     <div class="border">
+
 <!-- image-width: 2/3 -->
 ![Barre laterale Home affichant les documents classes par categories](/images/readme-sidebar.png)
 </div>
