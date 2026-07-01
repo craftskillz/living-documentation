@@ -159,3 +159,7 @@ Par exemple :
 - un agent de génération d'image documentaire
 
 Quand ils sont fiables, ajoutez progressivement des agents plus spécialisés.
+
+![image](/images/feedback_execution_agent.png)
+
+![image](/images/summary_agent_execution.png)
