@@ -5,4 +5,4 @@
 **tags:** home, menu, navigation, dossiers, categories, documents, recherche
 ---
 
-#q
+![image](/images/snippets.png)
