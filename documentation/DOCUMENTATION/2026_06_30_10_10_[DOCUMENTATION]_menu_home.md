@@ -138,10 +138,19 @@ Une structure simple est souvent plus utile qu'une arborescence trop détaillée
 
 <!-- col -->
 
-Colonne 1
+<!-- image-width: 2/3 -->
+![Barre laterale Home affichant les documents classes par categories](/images/readme-sidebar.png)
 
 <!-- col -->
 
-Colonne 2
+La colonne de gauche affiche :
+
+- le nombre de documents disponibles
+- les dossiers de votre documentation
+- les catégories détectées dans les noms de fichiers
+- les documents Markdown
+- les badges utiles : annotations, fichiers joints, statuts
+
+Un clic sur un document l'ouvre dans la partie principale de la page.
 
 <!-- /layout-columns -->
