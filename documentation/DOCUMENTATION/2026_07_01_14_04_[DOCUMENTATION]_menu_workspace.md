@@ -46,9 +46,9 @@ Dans le Workspace, chaque élément est représenté par un nœud.
 | **MCP** | Les outils internes accessibles aux agents. |
 
 Les LLM et leurs agents ont des code couleurs indiquant leur capacités 
-- <kbd style="background-color:black;"><span style="color:yellow;">Jaune</span></kbd> : LLM Spécialisés dans la génération d'image
-- <kbd><span style="color:orange">Orange</span></kbd> : LLM Agentic capable d'executer des appels tools chain
-- <kbd><span style="color:pink">Rose</span></kbd> : LLM ChatOnly ans capacités agentiques permettant uniquement de répondre à un prompt
+- <kbd style="background-color:yellow;">Jaune</kbd> : LLM Spécialisés dans la génération d'image
+- <kbd style="background-color:orange;">Orange</kbd> : LLM Agentic capable d'executer des appels tools chain
+- <kbd style="background-color:pink;">Rose</kbd> : LLM ChatOnly ans capacités agentiques permettant uniquement de répondre à un prompt
 
 <!-- /layout-columns -->
 
