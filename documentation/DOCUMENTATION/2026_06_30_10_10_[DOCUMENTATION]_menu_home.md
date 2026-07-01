@@ -42,11 +42,10 @@ Chaque élement d'une table des matières correspond à un Header
 - `# Element` pour H1
 - `## Element` pour H2
 - `### Element` pour H3, etc.
-<!-- col -->
 
+<!-- col -->
 <!-- image-width: 2/3 -->
 ![Table des matières interactive](/images/table_des_matieres_document.png)
-
 <!-- /layout-columns -->
 
 ---
