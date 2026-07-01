@@ -122,6 +122,18 @@ Vous n'avez pas besoin de rester bloqué sur la popup : l'exécution produit un 
 
 ### Le document de résultat
 
+<!-- layout-columns -->
+
+<!-- col -->
+
+Colonne 1
+
+<!-- col -->
+
+Colonne 2
+
+<!-- /layout-columns -->
+
 Chaque exécution crée un document de run auquel on peut accéder via un lien direct depuis le toast d'execution.
 
 <!-- image-width: 1/2 -->
