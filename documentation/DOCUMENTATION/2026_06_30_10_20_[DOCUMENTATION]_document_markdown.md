@@ -5,4 +5,5 @@
 **tags:** home, menu, navigation, dossiers, categories, documents, recherche
 ---
 
+<!-- image-width: 2/3 -->
 ![image](/images/snippets.png)
