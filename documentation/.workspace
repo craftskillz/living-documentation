@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-01T13:36:17.976Z",
+  "updatedAt": "2026-07-01T13:36:38.088Z",
   "entities": [
     {
       "id": "root",
@@ -441,7 +441,7 @@
     },
     {
       "id": "provider-mr24cpyk",
-      "label": "LLM Provider 9",
+      "label": "Agent Sonnet Open Router",
       "kind": "llm",
       "parentId": "root",
       "x": -248.5408005116985,
@@ -450,7 +450,7 @@
       "config": {
         "endpoint": "http://localhost:11434",
         "token": "",
-        "model": "",
+        "model": "qwen3.6:latest",
         "providerType": "chat",
         "toolMode": "tools",
         "timeout": 180,
