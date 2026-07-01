@@ -32,7 +32,7 @@ jobs:
         # Pinned to a full commit SHA per zizmor's own quickstart; the trailing
         # comment tracks the human-readable version. Action lives at
         # github.com/zizmorcore/zizmor-action (not `zizmors`, which 404s).
-        uses: zizmorcore/zizmor-action@5f14fd08f7cf1cb1609c1e344975f152c7ee938d # v0.5.6
+        uses: zizmorcore/zizmor-action@192e21d79ab29983730a13d1382995c2307fbcaa # v0.5.7
         with:
           # SARIF results land in Security → Code scanning, same place as CodeQL.
           advanced-security: true
