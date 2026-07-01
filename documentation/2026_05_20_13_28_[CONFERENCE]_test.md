@@ -158,9 +158,3 @@ flowchart TD
 <!-- image-align: center -->
 ![image](/images/top_arbres.png)
 
-```mermaid
-pie title NETFLIX
-         "Time spent looking for movie" : 65
-         "Time spent watching it" : 20
-         "Time spent sleeping" : 10
-```
