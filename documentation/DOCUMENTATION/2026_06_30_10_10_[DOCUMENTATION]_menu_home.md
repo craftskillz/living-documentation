@@ -14,7 +14,7 @@ C'est ici que vous retrouvez vos dossiers, vos catégories, vos documents, et le
 ### Ce que vous voyez à gauche
 
 <div class="grid grid-cols-2 gap-4 border bg-amber-500 rounded-lg p-4">
-  <div class="">
+  <div class="border border-black">
 
 La colonne de gauche affiche :
 
@@ -25,6 +25,7 @@ La colonne de gauche affiche :
 - les badges utiles : annotations, fichiers joints, statuts
 
 Un clic sur un document l'ouvre dans la partie principale de la page.
+
   </div>
   <div>
 
