@@ -122,10 +122,10 @@ Vous n'avez pas besoin de rester bloqué sur la popup : l'exécution produit un 
 
 ### Le document de résultat
 
+Chaque exécution crée un document de run auquel on peut accéder via un lien direct depuis le toast d'execution.
+
 <!-- image-width: 2/3 -->
 ![Toast de succès contenant le lien vers le document généré par l'agent](/images/summary_agent_execution.png)
-
-Chaque exécution crée un document de run auquel on peut accéder via un lien direct depuis le toast d'execution.
 
 <!-- layout-columns: 1/2 -->
 
