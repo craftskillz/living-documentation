@@ -146,7 +146,7 @@ Ce document contient généralement :
 
 <!-- /layout-columns -->
 
-Si l'option <kbd>Debug agents</kbd> est activée dans <kbd>Admin</kbd>, le document contient aussi les détails techniques de l'exécution.
+Si l'option <kbd>Debug agents</kbd> est activée dans <kbd>Admin</kbd>, le document contient aussi les détails techniques de l'exécution **en particulier les différentes conversations réalisées entre les tools et l'agent au cours des itérations agentiques**.
 
 ---
 
