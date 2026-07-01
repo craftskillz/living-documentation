@@ -30,46 +30,22 @@ La colonne de gauche affiche :
 Un clic sur un document l'ouvre dans la partie principale de la page.
 <!-- /layout-columns -->
 
-<div class="grid grid-cols-2 gap-4 items-center">
-<div>
-
-<!-- image-width: 2/3 -->
-![Barre laterale Home affichant les documents classes par categories](/images/readme-sidebar.png)
-</div>
-<div>
-
-La colonne de gauche affiche :
-
-- le nombre de documents disponibles
-- les dossiers de votre documentation
-- les catégories détectées dans les noms de fichiers
-- les documents Markdown
-- les badges utiles : annotations, fichiers joints, statuts
-
-Un clic sur un document l'ouvre dans la partie principale de la page.
-</div>
-</div>
-
 ---
 
 ### Ce que vous voyez à droite
 
-<div class="grid grid-cols-2 gap-4 items-center">
-<div>
-
+<!-- layout-columns -->
+<!-- col -->
 Lorsque vous cliquez sur le bouton Table des matières <kbd><i class="fa-solid fa-list-ul"></i></kbd> une colonne apparaît à droite de l'écran et affiche une Table des matères dont les liens sont clickables.
 
 Chaque élement d'une table des matières correspond à un Header
 - `# Element` pour H1
 - `## Element` pour H2
 - `### Element` pour H3, etc.
-</div>
-<div>
-
+<!-- col -->
 <!-- image-width: 2/3 -->
 ![Table des matières interactive](/images/table_des_matieres_document.png)
-</div>
-</div>
+<!-- /layout-columns -->
 
 ---
 
