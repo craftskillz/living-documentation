@@ -895,7 +895,9 @@
 
       .ld-compare {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        /* minmax(0, …) so the no-wrap <pre> in the source column can't blow out its track and
+           squeeze the render column — both stay a true 50%, and long lines scroll inside the pre. */
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         border: 1px solid rgb(229 231 235);
         border-radius: 0.5rem;
         overflow: hidden;
@@ -903,7 +905,7 @@
         font-size: 0.92em;
       }
       .dark .ld-compare {
-        border-color: rgb(55 65 81);
+        border-color: rgb(51 65 85);
       }
 
       .ld-compare-source,
@@ -930,8 +932,8 @@
         border-right: 1px solid rgb(229 231 235);
       }
       .dark .ld-compare-source {
-        background-color: rgb(17 24 39);
-        border-right-color: rgb(55 65 81);
+        background-color: rgb(2 6 23); /* darker "gutter" so the code card pops */
+        border-right-color: rgb(51 65 85);
       }
 
       .ld-compare-render {
@@ -953,7 +955,8 @@
         background-color: #ffffff !important;   /* white code box */
       }
       .dark .ld-compare-source > pre {
-        background-color: rgb(17 24 39) !important;
+        background-color: rgb(30 41 59) !important; /* lighter, raised code card */
+        border: 1px solid rgb(51 65 85);
       }
 
 
