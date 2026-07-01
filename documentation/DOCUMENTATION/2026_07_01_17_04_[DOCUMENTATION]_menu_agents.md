@@ -96,7 +96,7 @@ Dans cet exemple, l'agent attend un prompt complet pour générer une image.
 
 ### Pendant l'exécution
 
-Pendant que l'agent travaille, **Living Documentation** affiche des toasts de progression.
+Pendant que l'agent travaille, **Living Documentation** affiche des toasts de progression, vous pouvez donc continuer à naviguer dans **Living Documentation** pendant que l'agent travaille.
 
 <!-- layout-columns -->
 
@@ -120,45 +120,16 @@ Vous n'avez pas besoin de rester bloqué sur la popup : l'exécution produit un 
 
 ---
 
-### Feedback en temps réel
+### Le document de résultat
 
-Les agents s'exécutent de manière asynchrone.
-
-Vous pouvez donc continuer à naviguer dans **Living Documentation** pendant que l'agent travaille.
-
-<!-- layout-columns: 1/2 | gap: sm -->
-
-<!-- col -->
-
-Pendant l'exécution, un toast affiche l'étape en cours.
-
-Par exemple : interrogation du modèle, appel d'un tool, nouvel essai ou attente de résultat.
-
-
-<!-- col -->
-
-Quand l'exécution se termine, un toast indique le résultat.
-
-En cas de succès, il contient un lien direct vers le document de run généré.
+Chaque exécution crée un document de run auquel on peut accéder via un lien direct depuis le toast d'execution.
 
 <!-- image-width: full -->
 ![Toast de succès contenant le lien vers le document généré par l'agent](/images/summary_agent_execution.png)
 
-<!-- /layout-columns -->
+<!-- layout-columns -->
 
-<!-- quote-type: info -->
-<!-- quote-title: Info -->
-<!-- quote-icon -->
-> Les erreurs sont également affichées dans un toast. Quand un document de run d'erreur est créé, vous pouvez l'ouvrir pour comprendre ce qui s'est passé.
-
----
-
-### Le document de résultat
-
-Chaque exécution crée un document de run.
-
-<!-- image-width: 2/3 -->
-![Document de run créé après l'exécution d'un agent](/images/run_agent_execution.png)
+<!-- col -->
 
 Ce document contient généralement :
 
@@ -168,6 +139,13 @@ Ce document contient généralement :
 - le statut de l'exécution
 - l'input utilisateur
 - la réponse de l'agent
+
+<!-- col -->
+
+<!-- image-width: 2/3 -->
+![Document de run créé après l'exécution d'un agent](/images/run_agent_execution.png)
+
+<!-- /layout-columns -->
 
 Si l'option <kbd>Debug agents</kbd> est activée dans <kbd>Admin</kbd>, le document contient aussi les détails techniques de l'exécution.
 
