@@ -126,18 +126,14 @@ Vous n'avez pas besoin de rester bloqué sur la popup : l'exécution produit un 
 
 <!-- col -->
 
-Colonne 1
+<!-- image-width: 1/2 -->
+![Toast de succès contenant le lien vers le document généré par l'agent](/images/summary_agent_execution.png)
 
 <!-- col -->
 
-Colonne 2
-
-<!-- /layout-columns -->
-
 Chaque exécution crée un document de run auquel on peut accéder via un lien direct depuis le toast d'execution.
 
-<!-- image-width: 1/2 -->
-![Toast de succès contenant le lien vers le document généré par l'agent](/images/summary_agent_execution.png)
+<!-- /layout-columns -->
 
 <!-- layout-columns: 1/2 -->
 
