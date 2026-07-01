@@ -45,6 +45,8 @@ Le travail a couvert :
 - remplacement de `docsFolder` par le chemin reel du dossier documentaire configure dans les messages Git destines aux utilisateurs.
 - refonte de `README.fr.md` pour mettre en avant les usages les plus attractifs : documentation local-first, Git/Versions, Workspace, Agents, MCP, diagrammes et automatisation agentique.
 - copie d'assets visuels de documentation dans `images/DOCUMENTATION/` pour le README public.
+- traduction anglaise de `README.fr.md` vers `README.md` avec la meme structure produit.
+- correction du lien image Agents dans `README.fr.md` vers `./images/DOCUMENTATION/execution_d_agents.png`.
 
 ## Contenu modifie
 
@@ -73,6 +75,7 @@ Le travail a couvert :
 - `src/frontend-svelte/public/i18n/fr.json`
 - `tests/api/git.spec.ts`
 - `README.fr.md`
+- `README.md`
 - `images/DOCUMENTATION/*`
 - `documentation/WORKLOG/current-task.md`
 
@@ -97,6 +100,8 @@ Le document `Plan.md` est un document de pilotage documentaire utilisateur, pas 
 - Test API ajoute pour verifier le message Git lorsque le dossier documentaire configure n'est pas dans un repository Git.
 - README francais restructure avec une entree produit plus concise et plus commerciale, puis une suite technique compacte.
 - Liens images du README francais verifies localement.
+- README anglais synchronise avec le README francais.
+- Contrat bilingue README verifie avec `./scripts/check-readme-sync.sh HEAD`.
 - `git diff --check` execute avec succes.
 - `npm run build` execute avec succes et recopie les starters dans `dist/`.
 

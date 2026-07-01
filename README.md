@@ -6,82 +6,203 @@
 
 [🇫🇷 Lire en français](./README.fr.md)
 
-> **Local Markdown documentation hub with a built-in MCP server , coding agents create ADRs, draw diagrams, and detect drift while you code.**
+> **A local workshop to generate, maintain, version, and automate your documentation.**
 
-Markdown on disk, no cloud, no database, no build step. Point it at a folder, open `http://localhost:4321`. Plug any MCP-aware AI agent into it (Claude Code, Claude Desktop, Cursor…) and your documentation maintains itself as your code evolves.
+**Living Documentation** is not a code generation tool. It is a documentation production tool: local Markdown, notes, processes, ADRs, diagrams, Git, AI agents, LLM providers, generated images, MCP, and automations.
+
+Everything stays in your files. You start the tool, open the browser, and document. Then you can connect Git, your agents, your LLMs, and your workflows.
 
 ![npm](https://img.shields.io/npm/v/living-ai-documentation) ![Node.js](https://img.shields.io/badge/Node.js-20.19%2B-green) ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue) ![License](https://img.shields.io/badge/License-AGPL--3.0-blue) ![MCP](https://img.shields.io/badge/MCP-Streamable_HTTP-purple)
 
 ```bash
-npx living-ai-documentation@latest                # interactive wizard (EN/FR)
-npx living-ai-documentation@latest ./docs         # serve an existing folder
+npx living-ai-documentation@latest
 ```
 
-![Living Documentation viewer](/images/living_documentation.jpg)
+![Living Documentation workshop](./images/DOCUMENTATION/concept-01-hero-produit.png)
 
 ---
 
-## Two ways to use it
+## Why use it?
 
-### 1. With an AI coding agent , the killer feature
+Documentation often ends up scattered: README files, notes, tickets, screenshots, ADRs, prompts, exports, diagrams, AI conversations, and attachments. **Living Documentation** brings all of that back into one local space that is readable, versionable, and usable by agents.
 
-Living Documentation ships an **MCP server** on `POST /mcp`. Any MCP-aware agent can read, create and audit your project's documentation autonomously.
+| Need | What Living Documentation provides |
+| --- | --- |
+| Write fast | Markdown editor, snippets, tables, images, attachments, annotations. |
+| Structure | Folders, categories, naming conventions, full-text search. |
+| Version | Git integration, automatic commits, visual comparison, block-level restore. |
+| Visualize | Diagram editor, images, exports, clickable links inside documents. |
+| Automate | Workspace, LLM providers, reusable agents, internal MCP tools. |
+| Stay in control | Local files, no imposed cloud, no proprietary database. |
 
-| You say…                                                   | The agent triggers…           | What happens                                                                                                                            |
-| ---------------------------------------------------------- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| _"feature done"_ / _"feature terminée"_                    | `create-adr`                  | Searches existing ADRs, supersedes the obsolete one if any, writes a new ADR at `To be validated`, binds the source files via metadata. |
-| _"audit the ADRs"_ / _"vérifie la fiabilité des ADR"_      | `audit-adrs-drift`            | Lists every ADR below 80% reliability and brings each back in sync , re-baseline or supersede after your confirmation.                  |
-| _"review this ADR"_ / _"vérifie la pertinence de cet ADR"_ | `review-adr-relevance`        | Reviews a single ADR against the bound source files; refreshes hashes or proposes supersession.                                         |
-| _"backfill ADRs from git"_ / _"retrodocumente depuis git"_ | `retrodocument-adrs-from-git` | Walks git history oldest-first and creates ADRs for the durable decisions that were never documented.                                   |
-| _"give me the big picture"_                                | `generate-context-diagram`    | Creates a C4 context diagram **derived from the docs**, never invented.                                                                 |
+---
 
-**All new ADRs land at `To be validated`.** _You_ promote them. The agent never promotes on your behalf.
+## Features that change the workflow
 
-### 2. Solo, no AI
+### Local-first documentation
 
-A personal docs hub: ADRs, meeting notes, dev journals, feature plans, architecture sketches , all kept as Markdown on disk, git-friendly, zero vendor lock-in. Inline editor, snippets, image paste, file attachments, diagram editor, full-text search, PDF/HTML/Notion/Confluence export.
+Your documents are simple Markdown files in a folder.
 
-The two modes mix freely: jot notes solo all week, then let your agent record the ADR when the feature actually lands.
+- readable in any editor
+- versionable with Git
+- usable by your LLMs
+- portable from one project to another
+- easy to back up
+
+![Local-first model](./images/DOCUMENTATION/concept-03-local-first.png)
+
+### Built-in Git, versions, and restore
+
+When Git integration is enabled, Living Documentation can create a commit after each documentation save. You can then open a document history, compare HEAD with an older commit, and restore precise blocks into the current document.
+
+![Git, versions, and restore](./images/DOCUMENTATION/concept-08-git-versions-restore.png)
+
+### Workspace, LLMs, and agents
+
+The <kbd>Workspace</kbd> lets you configure LLM providers and create documentation agents: translation, correction, summary, image generation, Markdown improvement, draft production, document audit.
+
+Agents can work in **Chat only** mode or with Living Documentation **MCP tools** when the provider supports them.
+
+![Workspace providers agents](./images/DOCUMENTATION/concept-07-workspace-providers-agents.png)
+
+### Agents available from the whole app
+
+Once created, agents are available from the <kbd>Agents</kbd> menu, no matter which page is open. Each execution produces a run document with status, input, response, and optional debug details.
+
+![Agents menu](./images/DOCUMENTATION/execution_d_agents.png)
+
+### Diagrams and sketches
+
+Living Documentation includes a built-in diagram editor. You can draw manually, link diagrams to Markdown documents, export them, or let an agent propose a first version from a document.
+
+![Diagram example](./images/DOCUMENTATION/exemple_diagramme_documentation.png)
+
+### Agentic automation lab
+
+With Workspace, MCP, LLM providers, and internal tools, Living Documentation becomes an automation lab applied to documentation. You can create agents that read a document, transform it, generate an image, write meeting notes, or enrich your documentation base.
+
+![Agentic lab](./images/DOCUMENTATION/concept-12-laboratoire-agentique.png)
 
 ---
 
 ## Quick start
 
+Requires **Node.js 20.19 or newer**.
+
 ```bash
-# Interactive wizard , creates a starter doc folder (EN or FR), scaffolds
-# AGENTS.md / CLAUDE.md / memory/MEMORY.md at the project root and symlinks
-# them into <docs>/AI/ so AI agents can find them.
+# Interactive wizard: creates an EN or FR starter
 npx living-ai-documentation@latest
 
 # Or serve an existing folder
 npx living-ai-documentation@latest ./docs
+
+# Explicit port
 npx living-ai-documentation@latest ./docs --port 4000 --open
 ```
 
-Then open [http://localhost:4321](http://localhost:4321) (viewer) and [http://localhost:4321/admin](http://localhost:4321/admin) (config).
+Then open:
 
-> The folder argument must be a **relative path** (`./docs`, `../shared/docs`…). Absolute paths and `~` are rejected so the generated `.living-doc.json` stays portable and can be committed.
+- application: [http://localhost:4321](http://localhost:4321)
+- admin: [http://localhost:4321/admin](http://localhost:4321/admin)
+- MCP: [http://localhost:4321/mcp](http://localhost:4321/mcp)
 
-### Install
+The first launch can create a complete documentation starter, in French or English, with built-in guides for Home, Markdown, Workspace, Agents, and Diagram.
 
-Requires **Node.js 20.19 or newer** (Vite 8 and Commander 14 no longer support Node.js 18).
-
-```bash
-npx living-ai-documentation@latest                 # zero-install
-npm install -g living-ai-documentation      # global
-```
+> The folder passed to the CLI must be a relative path (`./docs`, `../documentation`). Absolute paths and `~` are rejected to keep `.living-doc.json` portable.
 
 ---
 
-## Connect your AI agent
+## What the app contains
 
-### Claude Code
+| Surface | Usage |
+| --- | --- |
+| <kbd>Home</kbd> | Read, create, edit, search, and organize Markdown documents. |
+| <kbd>Workspace</kbd> | Configure LLM providers, MCP, agents, and image providers. |
+| <kbd>Agents</kbd> | Run agents from any page. |
+| <kbd>Diagram</kbd> | Create and edit diagrams linked to documents. |
+| <kbd>Files</kbd> | Browse attachments and documentation assets. |
+| <kbd>AI Context</kbd> | Inspect AI context, rules, memory, and the MCP explorer. |
+| <kbd>Admin</kbd> | Configure theme, language, Git, patterns, file security, agent debug. |
+
+---
+
+## Writing in Living Documentation
+
+The Home viewer is also a Markdown editor.
+
+Useful features:
+
+- inline editing with disk save
+- Markdown snippets
+- assisted tables
+- ASCII trees
+- collapsible blocks
+- callouts
+- images pasted from the clipboard
+- attachments
+- annotations
+- automatic table of contents
+- full-text search
+
+Files are organized by real folders and by categories extracted from the file name:
+
+```text
+PROCESS/2026_06_30_10_00_[GUIDE]_prepare_a_meeting.md
+```
+
+Here:
+
+- `PROCESS` is the folder
+- `GUIDE` is the category
+- `prepare_a_meeting` is the title
+
+---
+
+## Git and versions
+
+Git integration is optional, but strongly recommended.
+
+It enables:
+
+- automatic commits after saves
+- push disabled or push every N commits
+- warning when Git is not configured
+- detection of changes outside the documentation folder
+- <kbd>Versions</kbd> button on documents
+- visual diff between HEAD and a selected commit
+- block-level restore from an older version
+
+Living Documentation only commits the configured documentation folder. Changes outside this folder are ignored and reported.
+
+---
+
+## Agents and MCP
+
+Living Documentation exposes a local MCP server at:
+
+```text
+http://localhost:4321/mcp
+```
+
+MCP-compatible agents can use the internal tools to:
+
+- list and read documents
+- create or update a document
+- manage metadata
+- generate diagrams
+- generate images through a configured image provider
+- read the sourceRoot when necessary
+- save an execution context
+
+The `GET /mcp` endpoint returns the live schemas of available tools and prompts. This README intentionally does not duplicate that list: it evolves with the product.
+
+### Claude Code example
 
 ```bash
 claude mcp add --transport http living-ai-documentation http://localhost:4321/mcp
 ```
 
-Or manually in `.claude/settings.json`:
+### Claude Desktop example
 
 ```json
 {
@@ -94,277 +215,107 @@ Or manually in `.claude/settings.json`:
 }
 ```
 
-### Claude Desktop
-
-In `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS), then restart:
-
-```json
-{
-  "mcpServers": {
-    "living-ai-documentation": {
-      "type": "http",
-      "url": "http://localhost:4321/mcp"
-    }
-  }
-}
-```
-
-### Cursor, Continue, any MCP client
-
-Use the same HTTP endpoint: `http://localhost:4321/mcp` (Streamable HTTP transport, stateless).
-
-> The Living Documentation server must be running first (`npx living-ai-documentation@latest ./docs`) before the agent connects.
+Use the same endpoint for Cursor, Continue, or any MCP client compatible with Streamable HTTP.
 
 ---
 
-## Core concepts
+## Configuration
 
-- **Markdown on disk** , each document is a `.md` file. Configuration lives in `.living-doc.json` next to it. Both are git-friendly.
-- **Filename pattern** , default `YYYY_MM_DD_HH_mm_[Category]_title.md`. The pattern is configurable; date, category and title are parsed from it. Files that don't match still appear under **General**.
-- **Folders → categories → docs** in the sidebar. Folder names become the labels; numeric prefixes (`1_TUTORIAL`, `2_REFERENCE`) control order without showing in the UI.
-- **ADRs** are the canonical decision record. The MCP server enforces a normalized frontmatter (`**date:**`, `**status:**`, `**description:**`, `**tags:**`) and a `To be validated` initial status that only a human can promote.
-- **`sourceRoot`** points to the project's code. The MCP source tools (`list_source_files`, `read_source_file`, `search_source`) and the metadata binding rely on it. Defaults to the parent of the docs folder.
-- **Source-file metadata + reliability gauge** , bind a doc to the source files it describes. Each binding stores a SHA-256. The gauge in the doc header (`🔴 → 🟡 → 🟢`) reflects `unchanged / total`. As soon as one bound file is modified or deleted, drift is visible. **God files** (`package.json`, lock files, manifests, barrels) are excluded by convention.
-- **Diagrams are derived views** , they cite the documents they're built from (`evidence`). They cannot introduce concepts absent from the docs.
+Configuration is stored in `.living-doc.json`, inside the documentation folder.
 
----
-
-## MCP reference
-
-### Tools (19)
-
-| Group                  | Tool                          | Description                                                                                                                            |
-| ---------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Onboarding             | `get_server_guide`            | Returns the server guide: workflow, conventions, diagram rules.                                                                        |
-| Documents              | `list_documents`              | Inventory: `id`, `title`, `category`, `folder`, `linkHref`.                                                                            |
-|                        | `read_document`               | Raw Markdown content of a document.                                                                                                    |
-|                        | `create_document`             | Create a new `.md` file (filename from configured pattern, optional `date` override for retrodoc).                                     |
-|                        | `update_document`             | Overwrite an existing doc (drift correction, supersede).                                                                               |
-| Diagrams               | `list_diagrams`               | List saved diagrams.                                                                                                                   |
-|                        | `read_diagram`                | Read nodes + edges of one diagram.                                                                                                     |
-|                        | `create_diagram`              | Create / overwrite a diagram (server-side guardrails enforce C4 progression and edge labels).                                          |
-| Source code (fallback) | `list_source_files`           | List files under `sourceRoot` (ignored: `node_modules`, `dist`, `.git`…).                                                              |
-|                        | `read_source_file`            | Read a file under `sourceRoot`.                                                                                                        |
-|                        | `search_source`               | Grep-like text search under `sourceRoot`.                                                                                              |
-| Metadata               | `list_metadata`               | Source-file bindings of a doc.                                                                                                         |
-|                        | `get_accuracy`                | Per-entry status (`unchanged` / `modified` / `missing`) + weighted accuracy ∈ [0, 1].                                                  |
-|                        | `add_metadata`                | Bind a source file (path under `sourceRoot`), records SHA-256. **Skips god files.**                                                    |
-|                        | `remove_metadata`             | Detach a binding (idempotent , for renames/deletes).                                                                                   |
-|                        | `refresh_metadata`            | Re-hash every binding (re-baseline after an update).                                                                                   |
-| ADR audit              | `list_adrs_below_accuracy`    | Up to 10 ADRs whose accuracy < 80%, sorted most-degraded first. Excludes `SuperSeeded` and non-ADRs.                                   |
-|                        | `review_adr_relevance`        | Factual report on one ADR + drifted files to re-read. Returns a `state` to drive the LLM decision tree.                                |
-| Retrodocumentation     | `retrodocument_adrs_from_git` | Up to 200 git commits (oldest first) classified `candidate` / `trivial` / `merge`, with god-file flags. Used to backfill missing ADRs. |
-
-### Prompts (10)
-
-| Group         | Prompt                        | When                                                                                                      |
-| ------------- | ----------------------------- | --------------------------------------------------------------------------------------------------------- |
-| ADR lifecycle | `create-adr`                  | A feature has just been implemented or modified. Records the decision, supersedes a prior ADR if any.     |
-|               | `audit-adrs-drift`            | Batch audit: bring every drifting ADR back to a clear state (re-baseline or user-confirmed supersession). |
-|               | `review-adr-relevance`        | Single ADR review against its bound source files.                                                         |
-|               | `retrodocument-adrs-from-git` | Backfill ADRs from git history when the project lacks them.                                               |
-| Diagrams      | `generate-context-diagram`    | DEFAULT. C4 context diagram, gated server-side.                                                           |
-|               | `generate-container-diagram`  | Explicit-only. C4 container diagram of one system.                                                        |
-|               | `generate-uml-diagram`        | Explicit-only. UML class/sequence/state/activity/use-case.                                                |
-|               | `generate-screen-guide`       | Explicit-only. Annotated screenshot with post-it callouts.                                                |
-|               | `update-diagram-from-docs`    | Re-read source documents to update existing diagrams.                                                     |
-|               | `flow`, `erd`                 | Linear flow / entity-relationship diagrams.                                                               |
-
-A `GET http://localhost:4321/mcp` returns the live tool + prompt schemas for inspection.
-
----
-
-## Authoring features
-
-- **Inline editor** , edit any doc in the browser, saves to disk instantly.
-- **Snippets panel** (`🧩 Snippets`) , pre-built Markdown constructs at the cursor: collapsible blocks, links (in-doc, cross-doc, anchor), lists, code blocks, blockquotes, separators, images. Plus a **table editor** (dynamic grid → aligned Markdown table) and a **tree editor** (indentation → ASCII tree with `├──` / `└──`). Selecting an existing snippet **detects its type** and pre-fills the form for editing.
-- **Image paste** , paste from clipboard while editing, auto-uploaded to `<docs>/images/`, inserted as Markdown.
-- **File attachments** , drag, drop, paste or pick any non-image file (PDF, archive, office doc). Uploaded under `<docs>/files/`, inserted as a paperclip pill. Blocked extensions and size limits configurable in Admin.
-- **Full-text search** , instant filename filter + server-side content search; for each file lists every occurrence, highlights and jumps to them.
-- **`metadata://<filename>` search prefix** , reverse-lookup: which documents reference this attachment?
-- **Annotations** , persistent highlight markers per document (yellow / pink / green / blue).
-- **Anchor navigation** , `[label](#heading-slug)` scrolls correctly after async render; IDs auto-generated.
-- **Dark mode** , follows system preference, manually toggleable. Syntax highlighting always dark.
-
-![Sidebar grouped by folder → category](/images/readme-sidebar.png)
-
-![Full-text search](/images/readme-intelligent-search-demo.jpg)
-
----
-
-## Diagram editor
-
-Built-in canvas diagram editor (vis-network), accessible at `/diagram?id=...`.
-
-- **C4 progression enforced** , context first (default), container/component only on explicit request. UML on explicit request.
-- **Architectural `kind` vs visual `renderAs`** , separate the concept (`software_system`, `database`, `queue`, `api`, `cloud_service`…) from the shape (`box`, `ellipse`, `database`, `actor`, `post-it`…). The MCP picks sensible defaults for each `kind`.
-- **Evidence provenance** , every architectural node/edge can cite the document and section that justifies it. The editor surfaces missing-evidence warnings.
-- **Custom shape libraries** at `/shape-editor` , define your own shapes (SVG icons, ports, default colors) and reuse them across diagrams.
-- **Ports** for anchored edges, **alignment guides**, **undo/redo**, **snap-to-grid**, **paste images**, **PNG export**, **deep-link** to a diagram by id.
-
----
-
-## File organization
-
-```
-docs/
-├── 2024_01_15_09_30_[DevOps]_deploy.md          → category: DevOps
-├── 1_tutorial/                                   → folder: Tutorial (prefix hidden in UI)
-│   └── 2024_03_01_10_00_[Onboarding]_setup.md   → folder: Tutorial / category: Onboarding
-├── adrs/
-│   └── 2024_04_01_10_15_[Architecture]_event_sourcing.md
-└── 2_reference/
-    └── api.md                                    → folder: Reference / category: General
-```
-
-- The `[Category]` tag is parsed from the filename regardless of the folder.
-- Files without a `[Category]` fall under **General**. **General** is always rendered first.
-- Folders are sorted alphabetically , prefix with `1_`, `2_`… to force an order; the prefix is hidden in the UI but visible on hover.
-- Subdirectory nesting is supported recursively.
-
-![Filename pattern](/images/readme-filename-pattern.png)
-
----
-
-## Configuration (`.living-doc.json`)
-
-Created automatically in your docs folder on first run. Edit in the Admin panel or by hand.
+Example:
 
 ```json
 {
   "filenamePattern": "YYYY_MM_DD_HH_mm_[Category]_title",
   "title": "Living Documentation",
   "theme": "system",
+  "language": "en",
   "port": 4321,
-  "extraFiles": ["../README.md", "../CLAUDE.md"],
-  "sourceRoot": "../src",
-  "blockedFileExtensions": [".exe", ".bin"]
+  "sourceRoot": "..",
+  "extraFiles": [],
+  "gitIntegration": {
+    "mode": "enabled",
+    "pushMode": "never",
+    "pushEveryCommits": 1,
+    "commitMessage": "docs: update living documentation"
+  }
 }
 ```
 
-| Field                   | Role                                                                                                        |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `filenamePattern`       | Filename convention used to parse date / category / title. `[Category]` token mandatory, exactly once.      |
-| `extraFiles`            | Ordered Markdown files **outside** the docs folder (e.g. `README.md`, `CLAUDE.md`). Shown in General first. |
-| `sourceRoot`            | Where your code lives (relative to docs folder). Defaults to `..`. Used by MCP source + metadata tools.     |
-| `blockedFileExtensions` | File-attachment safety list, editable from Admin.                                                           |
+Important points:
 
-**All paths are relative POSIX** so `.living-doc.json` stays portable. Legacy absolute paths are silently migrated on first read.
-
-![Extra files](/images/readme-extra-files.png)
+- paths are stored relatively when possible
+- `sourceRoot` is used by source tools and agents
+- `[Category]` is used to classify documents
+- Git can remain unconfigured, disabled, or explicitly enabled
+- attachment extensions can be blocked in Admin
 
 ---
 
-## Export
+## Exports
 
-| Format                 | Endpoint                    | Notes                                              |
-| ---------------------- | --------------------------- | -------------------------------------------------- |
-| PDF (per doc)          | `POST /api/export/html`     | Browser print dialog from the rendered HTML.       |
-| HTML , Notion mode     | `POST /api/export/html`     | Single HTML bundle suitable for Notion import.     |
-| HTML , Confluence mode | `POST /api/export/html`     | Zipped HTML bundle suitable for Confluence import. |
-| Markdown bundle        | `POST /api/export/markdown` | Zip of every document with normalized links.       |
+Living Documentation can export:
 
----
-
-## UI surfaces
-
-| URL             | Page                                                                                         |
-| --------------- | -------------------------------------------------------------------------------------------- |
-| `/`             | Viewer , sidebar, document rendering, inline edit, snippets, search, attachments.            |
-| `/admin`        | Config , title, theme, filename pattern, extra files, source root, file safety list.         |
-| `/diagram?id=`  | Diagram editor (vis-network) with C4 conventions, ports, alignment guides, undo/redo.        |
-| `/shape-editor` | Custom shape library editor , SVG icons, default colors, ports.                              |
-| `/context`      | AI context page , instructions, rules, memory, **MCP explorer** (try tools live in-browser). |
+- a document as printable HTML / browser PDF
+- an HTML bundle for Notion or Confluence
+- a complete Markdown bundle
+- diagrams as images or `.drawio` depending on the case
 
 ---
 
-## REST API
-
-<details>
-<summary>Full HTTP API (click to expand)</summary>
-
-| Method   | Endpoint                       | Description                                                                                                  |
-| -------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------ |
-| `GET`    | `/api/documents`               | List documents with metadata (includes extra files).                                                         |
-| `GET`    | `/api/documents/:id`           | Document content + rendered HTML.                                                                            |
-| `POST`   | `/api/documents`               | Create from `{ title, category, folder?, content?, date? }`.                                                 |
-| `PUT`    | `/api/documents/:id`           | Save content to disk.                                                                                        |
-| `DELETE` | `/api/documents/:id`           | Delete a document.                                                                                           |
-| `GET`    | `/api/documents/search?q=`     | Full-text search.                                                                                            |
-| `GET`    | `/api/config`                  | Read config.                                                                                                 |
-| `PUT`    | `/api/config`                  | Update config (`title`, `theme`, `filenamePattern`, `extraFiles`, `sourceRoot`, `blockedFileExtensions`, …). |
-| `GET`    | `/api/browse?path=`            | List directories and `.md` files at a path.                                                                  |
-| `POST`   | `/api/browse/mkdir`            | Create a folder under the docs root.                                                                         |
-| `POST`   | `/api/images/upload`           | Upload a base64 image → `<docs>/images/`.                                                                    |
-| `POST`   | `/api/files/upload`            | Upload a base64 attachment → `<docs>/files/`.                                                                |
-| `GET`    | `/api/files`                   | List every attachment (chronological).                                                                       |
-| `PUT`    | `/api/files/:filename`         | Replace an attachment.                                                                                       |
-| `DELETE` | `/api/files/:filename`         | Delete an attachment.                                                                                        |
-| `GET`    | `/api/metadata/:docId`         | Reliability report for one doc.                                                                              |
-| `POST`   | `/api/metadata/:docId`         | Add or replace a binding.                                                                                    |
-| `DELETE` | `/api/metadata/:docId`         | Remove a binding.                                                                                            |
-| `POST`   | `/api/metadata/:docId/refresh` | Re-baseline hashes.                                                                                          |
-| `GET`    | `/api/browse-source?path=`     | Navigate the source tree rooted at `sourceRoot`.                                                             |
-| `GET`    | `/api/diagrams`                | List saved diagrams.                                                                                         |
-| `GET`    | `/api/diagrams/:id`            | Read a single diagram (nodes + edges).                                                                       |
-| `PUT`    | `/api/diagrams/:id`            | Create or update a diagram.                                                                                  |
-| `DELETE` | `/api/diagrams/:id`            | Delete a diagram.                                                                                            |
-| `GET`    | `/api/shape-libraries`         | List custom shape libraries.                                                                                 |
-| `PUT`    | `/api/shape-libraries/:id`     | Save a shape library.                                                                                        |
-| `GET`    | `/api/annotations[/:docId]`    | List annotations (all docs / one doc).                                                                       |
-| `POST`   | `/api/annotations/:docId`      | Add an annotation.                                                                                           |
-| `DELETE` | `/api/annotations/:docId/:id`  | Delete one annotation.                                                                                       |
-| `POST`   | `/api/export/html`             | HTML export , Notion / Confluence modes.                                                                     |
-| `POST`   | `/api/export/markdown`         | Markdown bundle export.                                                                                      |
-| `GET`    | `/api/wordcloud?path=&ext=`    | Recursively concatenate matching source files as raw text.                                                   |
-| `POST`   | `/mcp`                         | Model Context Protocol endpoint (Streamable HTTP).                                                           |
-| `GET`    | `/mcp`                         | Live tool + prompt schema summary.                                                                           |
-
-</details>
-
----
-
-## Build & test
+## Local development
 
 ```bash
 git clone https://github.com/craftskillz/living-documentation.git
 cd living-documentation
 npm install
-npm run setup-hooks                      # one-time: enable .githooks/ as core.hooksPath
-npm run dev -- ./documentation          # Vite (UI on :5174, HMR) + Express backend (:4321)
-npm run build                            # tsc (server) + vite build (UI → dist/frontend-svelte)
-npm run test:e2e                         # Playwright end-to-end (~3 s, ~30 MCP specs)
-npm run test:coverage                    # c8 V8-native coverage
+npm run dev -- ./documentation
 ```
 
-In **dev**, open the UI on **http://localhost:5174** (Vite serves the Svelte app with HMR and proxies `/api`, `/mcp`, `/images`, `/files` to the Express backend on `:4321`).
+In development:
 
-End-to-end tests use **Playwright**. Each test spawns a real CLI child process against a fresh fixture on a random port , no leaking state, runs in parallel. Server-side coverage via **c8** (V8 native, ~72% baseline overall, 83% on `src/routes` and `src/lib`).
+- Vite UI: [http://localhost:5174](http://localhost:5174)
+- Express backend: [http://localhost:4321](http://localhost:4321)
+- Vite proxy: `/api`, `/mcp`, `/images`, `/files`
 
-### Test the published package locally
-
-No need to publish a version. The CLI starts a **single Express server** that serves the pre-built Svelte UI **and** the API/MCP on one port , Vite (`:5174`) is dev-only and does not exist for end users.
+Useful commands:
 
 ```bash
-# Run the exact production artifact, then open http://localhost:4321
+npm run build
+npm run test:e2e
+npm run test:coverage
+npm run setup-hooks
+```
+
+To test the package as it will be published:
+
+```bash
 npm run build
 node dist/bin/cli.js ./documentation
 
-# Most faithful: build the tarball npm would publish (respects "files"), then run it
-npm pack                                 # → living-ai-documentation-<version>.tgz
+npm pack
 npx ./living-ai-documentation-*.tgz ./documentation
-
-npm pack --dry-run                       # inspect exactly which files would be published
 ```
 
-> In production there is no `:5174`. The MCP endpoint clients connect to is **`http://localhost:4321/mcp`** (Express, default port).
+> In production, there is no Vite server on `:5174`. The CLI serves the UI, API, and MCP from Express, on the configured port.
 
-### Contributing
+---
 
-This repository ships with a `pre-commit` hook (under `.githooks/`) that enforces the bilingual README contract: if you touch `README.md` you must also touch `README.fr.md`, and vice-versa. Run `npm run setup-hooks` once after cloning to activate it. The same check runs in CI on every PR (see `.github/workflows/readme-sync.yml`), so the rule is enforced even if a contributor forgets the local setup.
+## Contributing
+
+The repository enforces a bilingual README contract: if you modify `README.md`, you must also update `README.fr.md`, and vice versa.
+
+Enable local hooks after cloning:
+
+```bash
+npm run setup-hooks
+```
+
+The same check runs in CI through `.github/workflows/readme-sync.yml`.
 
 ---
 
 ## License
 
-[AGPL-3.0](./LICENSE) , © Youssef MEDAGHRI-ALAOUI.
+[AGPL-3.0](./LICENSE), © Youssef MEDAGHRI-ALAOUI.
