@@ -44,6 +44,11 @@ Ils évitent de retenir toutes les syntaxes et permettent d'insérer rapidement 
 - des colonnes
 - des diagrammes
 
+
+<!-- image-width: 2/3 -->
+![Panneau Snippets affichant les blocs Markdown disponibles](/images/snippets.png)
+
+
 Pour les utiliser :
 
 1. ouvrez un document
