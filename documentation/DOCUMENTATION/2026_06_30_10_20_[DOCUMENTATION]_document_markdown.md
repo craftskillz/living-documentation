@@ -58,7 +58,7 @@ Pour les utiliser :
 1. ouvrez un document
 2. passez en mode édition
 3. placez le curseur à l'endroit souhaité
-4. cliquez sur <kbd>Snippets</kbd>
+4. cliquez sur <kbd>🧩 Snippets</kbd>
 5. choisissez le bloc à insérer
 
 Le snippet insère du Markdown dans votre document. Vous pouvez ensuite le modifier comme n'importe quel texte.
