@@ -34,7 +34,6 @@ Dans le Workspace, chaque élément est représenté par un nœud.
 
 <!-- col -->
 
-<!-- image-width: 1/2 -->
 ![image](/images/workspace_configuration.png)
 
 <!-- col -->
