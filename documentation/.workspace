@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-01T13:36:50.467Z",
+  "updatedAt": "2026-07-01T13:38:27.033Z",
   "entities": [
     {
       "id": "root",
@@ -448,9 +448,9 @@
       "y": -342.08706432373435,
       "angle": 4.084070449666731,
       "config": {
-        "endpoint": "http://localhost:11434",
+        "endpoint": "https://openrouter.ai/api/v1",
         "token": "env:OPENROUTER_API_KEY",
-        "model": "qwen3.6:latest",
+        "model": "anthropic/claude-sonnet-5",
         "providerType": "chat",
         "toolMode": "tools",
         "timeout": 180,
