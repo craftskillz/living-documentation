@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-01T13:36:38.088Z",
+  "updatedAt": "2026-07-01T13:36:50.467Z",
   "entities": [
     {
       "id": "root",
@@ -449,7 +449,7 @@
       "angle": 4.084070449666731,
       "config": {
         "endpoint": "http://localhost:11434",
-        "token": "",
+        "token": "env:OPENROUTER_API_KEY",
         "model": "qwen3.6:latest",
         "providerType": "chat",
         "toolMode": "tools",
