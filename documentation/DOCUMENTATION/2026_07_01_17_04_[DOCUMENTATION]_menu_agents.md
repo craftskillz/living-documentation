@@ -127,7 +127,7 @@ Chaque exécution crée un document de run auquel on peut accéder via un lien d
 <!-- image-width: 1/2 -->
 ![Toast de succès contenant le lien vers le document généré par l'agent](/images/summary_agent_execution.png)
 
-<!-- layout-columns -->
+<!-- layout-columns: 1/2 -->
 
 <!-- col -->
 
