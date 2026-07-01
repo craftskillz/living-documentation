@@ -14,6 +14,8 @@ Le principe est simple :
 - <kbd>Workspace</kbd> sert à créer et configurer les agents
 - <kbd>Agents</kbd> sert à les exécuter
 
+Le menu <kbd>Agents</kbd> est disponible depuis n'importe quelle page de **Living Documentation** : Home, Workspace, Admin, Files, Diagrammes, etc.
+
 <!-- image-width: 1/3 -->
 ![Menu Agents listant les agents disponibles par provider LLM](/images/execution_d_agents.png)
 
@@ -85,7 +87,7 @@ Dans cet exemple, l'agent attend un prompt complet pour générer une image.
 
 <!-- col -->
 
-<!-- image-width: full -->
+<!-- image-width: 2/3 -->
 ![Popup demandant l'input nécessaire avant d'exécuter un agent](/images/popup_execution_agent.png)
 
 <!-- /layout-columns -->
@@ -104,6 +106,41 @@ Selon la configuration, vous pouvez voir :
 - un nouvel essai sans tools si le modèle ne les accepte pas
 
 Vous n'avez pas besoin de rester bloqué sur la popup : l'exécution produit un document de résultat.
+
+---
+
+### Feedback en temps réel
+
+Les agents s'exécutent de manière asynchrone.
+
+Vous pouvez donc continuer à naviguer dans **Living Documentation** pendant que l'agent travaille.
+
+<!-- layout-columns: 1/2 | gap: sm -->
+
+<!-- col -->
+
+Pendant l'exécution, un toast affiche l'étape en cours.
+
+Par exemple : interrogation du modèle, appel d'un tool, nouvel essai ou attente de résultat.
+
+<!-- image-width: full -->
+![Toast affichant la progression temps réel d'une exécution agent](/images/feedback_execution_agent.png)
+
+<!-- col -->
+
+Quand l'exécution se termine, un toast indique le résultat.
+
+En cas de succès, il contient un lien direct vers le document de run généré.
+
+<!-- image-width: full -->
+![Toast de succès contenant le lien vers le document généré par l'agent](/images/summary_agent_execution.png)
+
+<!-- /layout-columns -->
+
+<!-- quote-type: info -->
+<!-- quote-title: Info -->
+<!-- quote-icon -->
+> Les erreurs sont également affichées dans un toast. Quand un document de run d'erreur est créé, vous pouvez l'ouvrir pour comprendre ce qui s'est passé.
 
 ---
 
@@ -159,9 +196,3 @@ Par exemple :
 - un agent de génération d'image documentaire
 
 Quand ils sont fiables, ajoutez progressivement des agents plus spécialisés.
-
-<!-- image-width: 1/2 -->
-![image](/images/feedback_execution_agent.png)
-
-<!-- image-width: 1/2 -->
-![image](/images/summary_agent_execution.png)
