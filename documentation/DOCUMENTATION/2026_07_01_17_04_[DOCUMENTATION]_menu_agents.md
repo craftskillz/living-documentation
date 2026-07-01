@@ -142,7 +142,6 @@ Ce document contient généralement :
 
 <!-- col -->
 
-<!-- image-width: 2/3 -->
 ![Document de run créé après l'exécution d'un agent](/images/run_agent_execution.png)
 
 <!-- /layout-columns -->
