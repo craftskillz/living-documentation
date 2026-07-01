@@ -158,3 +158,9 @@ flowchart TD
 <!-- image-align: center -->
 ![image](/images/top_arbres.png)
 
+```mermaid
+pie title DOC WORKFLOW
+         "Drafting the first version" : 50
+         "Reviewing with stakeholders" : 31
+         "Publishing updates" : 19
+```
