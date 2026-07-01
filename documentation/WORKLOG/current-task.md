@@ -53,6 +53,7 @@ Le travail a couvert :
 - correction des workflows CodeQL pour utiliser la meme version `github/codeql-action` entre `init` et `analyze`.
 - tache ponctuelle : reorganisation de la popup snippets avec renommage de `Colonnes` en `Disposition`, deplacement des listes et du tableau dans `Structure`, deplacement de `Comparaison` dans `Code & diagrammes`, et renommage de la categorie `Listes, code & donnees` en `Code & diagrammes`.
 - tache ponctuelle : ajout du snippet `Mermaid` dans `Code & diagrammes`, avec un builder `PIE CHART` permettant de definir un titre et des elements ponderes, puis de generer un bloc Markdown `mermaid` compatible avec le rendu existant.
+- tache ponctuelle : ajout de la regle de builder `PIE CHART` imposant que le total des elements ponderes ne depasse jamais 100, appliquee dans l'UI et dans le builder Markdown.
 
 ## Contenu modifie
 
@@ -140,6 +141,10 @@ Le snippet Mermaid ajoute un comportement utilisateur durable. Un ADR devra etre
 - `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "Mermaid picker builds and inserts a pie chart snippet" --project=chromium` execute avec succes : 1 test passe.
 - `git diff --check -- src/frontend-svelte/src/lib/home/snippets/pickerData.ts src/frontend-svelte/src/lib/home/snippets/builders.ts src/frontend-svelte/src/lib/home/SnippetsModal.svelte src/frontend-svelte/public/i18n/fr.json src/frontend-svelte/public/i18n/en.json tests/e2e/inline-snippet-edit.spec.ts` execute avec succes.
 - `graphify update .` execute avec succes apres ajout du builder Mermaid.
+- `npm run build` execute avec succes apres ajout de la limite totale 100 du pie chart Mermaid.
+- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "Mermaid picker builds and inserts a pie chart snippet" --project=chromium` execute avec succes apres ajout de la limite : 1 test passe.
+- `git diff --check -- src/frontend-svelte/src/lib/home/SnippetsModal.svelte src/frontend-svelte/src/lib/home/snippets/builders.ts tests/e2e/inline-snippet-edit.spec.ts` execute avec succes.
+- `graphify update .` execute avec succes apres ajout de la limite totale 100 du pie chart Mermaid.
 
 ## Verifications restantes
 
