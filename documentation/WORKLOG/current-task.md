@@ -51,6 +51,7 @@ Le travail a couvert :
 - ajout de confirmations terminal pour lancer un projet detecte avant de retomber sur le wizard d'initialisation.
 - ajout de l'initialisation automatique du dossier explicite lorsqu'il ne contient pas encore `.living-doc.json`.
 - correction des workflows CodeQL pour utiliser la meme version `github/codeql-action` entre `init` et `analyze`.
+- tache ponctuelle : reorganisation de la popup snippets avec renommage de `Colonnes` en `Disposition`, deplacement des listes et du tableau dans `Structure`, et renommage de la categorie `Listes, code & donnees` en `Code & diagrammes`.
 
 ## Contenu modifie
 
@@ -74,6 +75,8 @@ Le travail a couvert :
 - `src/frontend-svelte/src/routes/Admin.svelte`
 - `src/frontend-svelte/src/lib/gitToast.ts`
 - `src/frontend-svelte/src/styles/app.css`
+- `src/frontend-svelte/src/lib/home/SnippetsModal.svelte`
+- `src/frontend-svelte/src/lib/home/snippets/pickerData.ts`
 - `src/lib/git-integration.ts`
 - `src/frontend-svelte/public/i18n/en.json`
 - `src/frontend-svelte/public/i18n/fr.json`
@@ -90,6 +93,8 @@ Le travail a couvert :
 ## Documentation
 
 Le document `Plan.md` est un document de pilotage documentaire utilisateur, pas un ADR technique. Il ne decrit pas une decision de code durable et n'a pas besoin de metadonnees source.
+
+La reorganisation de la popup snippets demandee ici est un ajustement UX de libelles et de categorie, sans changement de contrat Markdown ni decision d'architecture durable ; aucun nouvel ADR n'a ete cree.
 
 ## Verifications realisees
 
@@ -120,6 +125,9 @@ Le document `Plan.md` est un document de pilotage documentaire utilisateur, pas 
 - `git diff --check -- bin/cli.ts tests/api/cli.spec.ts README.md README.fr.md documentation/AI/PROJECT-USEFUL-COMMANDS.md documentation/WORKLOG/current-task.md` execute avec succes.
 - `graphify update .` execute avec succes apres modification du code.
 - Workflows CodeQL corriges pour eviter le mismatch `init v4.36.2` / `analyze v4.36.1` dans la pipeline.
+- `npm run build` execute avec succes apres reorganisation de la popup snippets.
+- `git diff --check -- src/frontend-svelte/src/lib/home/snippets/pickerData.ts src/frontend-svelte/src/lib/home/SnippetsModal.svelte src/frontend-svelte/public/i18n/fr.json src/frontend-svelte/public/i18n/en.json` execute avec succes.
+- `graphify update .` execute avec succes apres reorganisation de la popup snippets.
 
 ## Verifications restantes
 
