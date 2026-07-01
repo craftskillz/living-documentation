@@ -133,6 +133,6 @@ N'essayez pas d'apprendre tout le Markdown d'un coup, **Living Documentation** v
 Commencez par écrire normalement, puis utilisez les snippets quand vous avez besoin d'un tableau, d'un lien, d'une image, d'un bloc de code ou d'une mise en page plus riche.
 
 <!-- quote-type: success -->
-<!-- quote-title: Succès -->
+<!-- quote-title: Quick Win -->
 <!-- quote-icon -->
 > Vous pouvez même demander à vos **AGENTS** dans **Living Documentation** de les écrire pour vous.
