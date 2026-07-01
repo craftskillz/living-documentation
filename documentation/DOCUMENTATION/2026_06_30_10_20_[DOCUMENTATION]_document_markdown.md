@@ -70,26 +70,6 @@ Le snippet insère du Markdown dans votre document. Vous pouvez ensuite le modif
 
 ---
 
-### Le widget de comparaison
-
-Le snippet <kbd>Comparaison</kbd> est très pratique pour apprendre le Markdown.
-
-Il affiche deux colonnes :
-
-- à gauche : le Markdown écrit
-- à droite : le rendu final
-
-Sa syntaxe est :
-
-<!-- code-width: 1/3 -->
-​```text
-::: compare
-Votre Markdown ici
-:::
-```
-
----
-
 ### Exemple : une note simple
 
 :::compare
