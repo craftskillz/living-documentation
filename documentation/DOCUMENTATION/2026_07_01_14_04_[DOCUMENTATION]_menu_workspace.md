@@ -92,9 +92,12 @@ Un provider peut fonctionner dans deux modes.
 | **Allow MCP tools** | L'agent peut utiliser les outils Living Documentation. |
 | **Chat only** | L'agent répond sans appeler d'outil. |
 
-Si votre agent doit lire ou modifier un document, il lui faut généralement le mode **Allow MCP tools**.
-
-Si le modèle refuse les tools, utilisez **Chat only** et demandez-lui seulement une réponse textuelle.
+<!-- quote-type: info -->
+<!-- quote-title: Conseil -->
+<!-- quote-icon -->
+> Si votre agent doit lire ou modifier un document, il lui faut généralement le mode **Allow MCP tools**.
+>
+> Si le modèle refuse les tools, utilisez **Chat only** et demandez-lui seulement une réponse textuelle.
 
 ---
 
