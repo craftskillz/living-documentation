@@ -14,6 +14,22 @@ C'est ici que vous retrouvez vos dossiers, vos catégories, vos documents, et le
 
 ### Ce que vous voyez à gauche
 
+<!-- layout-columns -->
+<!-- col -->
+<!-- image-width: 2/3 -->
+![Barre laterale Home affichant les documents classes par categories](/images/readme-sidebar.png)
+<!-- col -->
+La colonne de gauche affiche :
+
+- le nombre de documents disponibles
+- les dossiers de votre documentation
+- les catégories détectées dans les noms de fichiers
+- les documents Markdown
+- les badges utiles : annotations, fichiers joints, statuts
+
+Un clic sur un document l'ouvre dans la partie principale de la page.
+<!-- /layout-columns -->
+
 <div class="grid grid-cols-2 gap-4 items-center">
 <div>
 
@@ -134,18 +150,3 @@ Commencez avec peu de dossiers.
 
 Ajoutez de nouvelles sections seulement quand votre documentation devient difficile à parcourir.
 Une structure simple est souvent plus utile qu'une arborescence trop détaillée.
-<!-- layout-columns -->
-<!-- col -->
-<!-- image-width: 2/3 -->
-![Barre laterale Home affichant les documents classes par categories](/images/readme-sidebar.png)
-<!-- col -->
-La colonne de gauche affiche :
-
-- le nombre de documents disponibles
-- les dossiers de votre documentation
-- les catégories détectées dans les noms de fichiers
-- les documents Markdown
-- les badges utiles : annotations, fichiers joints, statuts
-
-Un clic sur un document l'ouvre dans la partie principale de la page.
-<!-- /layout-columns -->
