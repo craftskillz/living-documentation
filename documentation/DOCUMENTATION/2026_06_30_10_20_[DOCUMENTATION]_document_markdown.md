@@ -128,6 +128,6 @@ Les images sont aussi du Markdown.
 
 ### Conseil simple
 
-N'essayez pas d'apprendre tout le Markdown d'un coup, **Living Documentation** vous permet même de ne plus en écrire en passant par les Snippets `en mode AJOUT et en mode EDITION**.`
+N'essayez pas d'apprendre tout le Markdown d'un coup, **Living Documentation** vous permet même de ne plus en écrire en passant par les Snippets `en mode AJOUT et en mode EDITION`.
 
 Commencez par écrire normalement, puis utilisez les snippets quand vous avez besoin d'un tableau, d'un lien, d'une image, d'un bloc de code ou d'une mise en page plus riche.
