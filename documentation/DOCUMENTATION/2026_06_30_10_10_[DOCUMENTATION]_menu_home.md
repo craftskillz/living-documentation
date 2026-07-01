@@ -38,7 +38,7 @@ Un clic sur un document l'ouvre dans la partie principale de la page.
 <div class="grid grid-cols-2 gap-4 items-center">
 <div>
 
-Lorsque vous cliquez sur le bouton Table des matières <kbd><i class="fa-solid fa-list-ul"></i></kbd>, une colonne apparaît à droite de l'écran et affiche une Table des matères dont les liens sont clickables.
+Lorsque vous cliquez sur le bouton Table des matières <kbd><i class="fa-solid fa-list-ul"></i></kbd> une colonne apparaît à droite de l'écran et affiche une Table des matères dont les liens sont clickables.
 
 Chaque élement d'une table des matières correspond à un Header
 - `# Element` pour H1
