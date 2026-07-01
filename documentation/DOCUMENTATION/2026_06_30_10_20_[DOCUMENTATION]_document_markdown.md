@@ -14,7 +14,7 @@
 :::
 
 :::compare
-```
+```typescript
 const message = 'Hello, World!"
 ```
 :::
