@@ -29,7 +29,7 @@ Un texte peut contenir du **gras**, de l'_italique_ et une liste :
 
 Les snippets sont des blocs Markdown prêts à l'emploi.
 
-<!-- layout-columns -->
+<!-- layout-columns: 1/2 | gap: sm -->
 
 <!-- col -->
 
