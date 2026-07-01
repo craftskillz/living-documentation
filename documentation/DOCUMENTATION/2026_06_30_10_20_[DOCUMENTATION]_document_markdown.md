@@ -126,21 +126,8 @@ Les images sont aussi du Markdown.
 
 ---
 
-### Quelques syntaxes utiles
-
-| Besoin | Markdown |
-| --- | --- |
-| Titre | `### Mon titre` |
-| Gras | `**important**` |
-| Italique | `_nuance_` |
-| Liste | `- élément` |
-| Citation | `> remarque` |
-| Lien | `[texte](https://exemple.com)` |
-| Image | `![description](/images/mon-image.png)` |
-| Code inline | `` `ma_variable` `` |
-
 ### Conseil simple
 
-N'essayez pas d'apprendre tout le Markdown d'un coup.
+N'essayez pas d'apprendre tout le Markdown d'un coup, **Living Documentation** vous permet même de ne plus en écrire en passant par les Snippets **En mode AJOUT et en mode EDITION**.
 
 Commencez par écrire normalement, puis utilisez les snippets quand vous avez besoin d'un tableau, d'un lien, d'une image, d'un bloc de code ou d'une mise en page plus riche.
