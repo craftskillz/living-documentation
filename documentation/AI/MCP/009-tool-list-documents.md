@@ -38,74 +38,74 @@ List all documents with their id, title, category, folder, and `linkHref` (the r
     "linkHref": "?doc=%252FUsers%252Fymedaghri%252FDocuments%252FRepositories%252FMedaghri-Alaoui-Repositories%252F09_My_Published_Projects%252Fliving-documentation%252FREADME"
   },
   {
-    "id": "000_BLUEPRINT%2F2026_06_01_17_40_%5BSCRIPTS%5D_scripts",
+    "id": "001_BLUEPRINT%2F2026_06_01_17_40_%5BSCRIPTS%5D_scripts",
     "title": "Scripts",
     "category": "SCRIPTS",
-    "folder": "000_BLUEPRINT",
-    "linkHref": "?doc=000_BLUEPRINT%252F2026_06_01_17_40_%255BSCRIPTS%255D_scripts"
+    "folder": "001_BLUEPRINT",
+    "linkHref": "?doc=001_BLUEPRINT%252F2026_06_01_17_40_%255BSCRIPTS%255D_scripts"
   },
   {
-    "id": "000_BLUEPRINT%2F2026_06_24_19_32_%5BBIN%5D_bin",
+    "id": "001_BLUEPRINT%2F2026_06_24_19_32_%5BBIN%5D_bin",
     "title": "Bin",
     "category": "BIN",
-    "folder": "000_BLUEPRINT",
-    "linkHref": "?doc=000_BLUEPRINT%252F2026_06_24_19_32_%255BBIN%255D_bin"
+    "folder": "001_BLUEPRINT",
+    "linkHref": "?doc=001_BLUEPRINT%252F2026_06_24_19_32_%255BBIN%255D_bin"
   },
   {
-    "id": "000_BLUEPRINT%2F2026_06_24_20_34_%5BDOCUMENTATION%5D_documentation",
+    "id": "001_BLUEPRINT%2F2026_06_24_20_34_%5BDOCUMENTATION%5D_documentation",
     "title": "Documentation",
     "category": "DOCUMENTATION",
-    "folder": "000_BLUEPRINT",
-    "linkHref": "?doc=000_BLUEPRINT%252F2026_06_24_20_34_%255BDOCUMENTATION%255D_documentation"
+    "folder": "001_BLUEPRINT",
+    "linkHref": "?doc=001_BLUEPRINT%252F2026_06_24_20_34_%255BDOCUMENTATION%255D_documentation"
   },
   {
-    "id": "000_BLUEPRINT%2F2026_06_24_20_37_%5BSTARTER_DOC_FR%5D_starterdocfr",
+    "id": "001_BLUEPRINT%2F2026_06_24_20_37_%5BSTARTER_DOC_FR%5D_starterdocfr",
     "title": "Starterdocfr",
     "category": "STARTER_DOC_FR",
-    "folder": "000_BLUEPRINT",
-    "linkHref": "?doc=000_BLUEPRINT%252F2026_06_24_20_37_%255BSTARTER_DOC_FR%255D_starterdocfr"
+    "folder": "001_BLUEPRINT",
+    "linkHref": "?doc=001_BLUEPRINT%252F2026_06_24_20_37_%255BSTARTER_DOC_FR%255D_starterdocfr"
   },
   {
-    "id": "000_BLUEPRINT%2F2026_06_24_20_38_%5BSTARTER_DOC%5D_starterdoc",
+    "id": "001_BLUEPRINT%2F2026_06_24_20_38_%5BSTARTER_DOC%5D_starterdoc",
     "title": "Starterdoc",
     "category": "STARTER_DOC",
-    "folder": "000_BLUEPRINT",
-    "linkHref": "?doc=000_BLUEPRINT%252F2026_06_24_20_38_%255BSTARTER_DOC%255D_starterdoc"
+    "folder": "001_BLUEPRINT",
+    "linkHref": "?doc=001_BLUEPRINT%252F2026_06_24_20_38_%255BSTARTER_DOC%255D_starterdoc"
   },
   {
-    "id": "000_BLUEPRINT%2F2026_06_24_20_52_%5BTESTS%5D_tests",
+    "id": "001_BLUEPRINT%2F2026_06_24_20_52_%5BTESTS%5D_tests",
     "title": "Tests",
     "category": "TESTS",
-    "folder": "000_BLUEPRINT",
-    "linkHref": "?doc=000_BLUEPRINT%252F2026_06_24_20_52_%255BTESTS%255D_tests"
+    "folder": "001_BLUEPRINT",
+    "linkHref": "?doc=001_BLUEPRINT%252F2026_06_24_20_52_%255BTESTS%255D_tests"
   },
   {
-    "id": "000_BLUEPRINT%2F2026_06_24_20_54_%5BTEST_RESULTS%5D_testresults",
+    "id": "001_BLUEPRINT%2F2026_06_24_20_54_%5BTEST_RESULTS%5D_testresults",
     "title": "Testresults",
     "category": "TEST_RESULTS",
-    "folder": "000_BLUEPRINT",
-    "linkHref": "?doc=000_BLUEPRINT%252F2026_06_24_20_54_%255BTEST_RESULTS%255D_testresults"
+    "folder": "001_BLUEPRINT",
+    "linkHref": "?doc=001_BLUEPRINT%252F2026_06_24_20_54_%255BTEST_RESULTS%255D_testresults"
   },
   {
-    "id": "000_BLUEPRINT%2F2026_06_24_20_55_%5BPLAYWRIGHT_REPORT%5D_playwrightreport",
+    "id": "001_BLUEPRINT%2F2026_06_24_20_55_%5BPLAYWRIGHT_REPORT%5D_playwrightreport",
     "title": "Playwrightreport",
     "category": "PLAYWRIGHT_REPORT",
-    "folder": "000_BLUEPRINT",
-    "linkHref": "?doc=000_BLUEPRINT%252F2026_06_24_20_55_%255BPLAYWRIGHT_REPORT%255D_playwrightreport"
+    "folder": "001_BLUEPRINT",
+    "linkHref": "?doc=001_BLUEPRINT%252F2026_06_24_20_55_%255BPLAYWRIGHT_REPORT%255D_playwrightreport"
   },
   {
-    "id": "000_BLUEPRINT%2F2026_06_24_20_56_%5BGRAPHIFY_OUT%5D_graphifyout",
+    "id": "001_BLUEPRINT%2F2026_06_24_20_56_%5BGRAPHIFY_OUT%5D_graphifyout",
     "title": "Graphifyout",
     "category": "GRAPHIFY_OUT",
-    "folder": "000_BLUEPRINT",
-    "linkHref": "?doc=000_BLUEPRINT%252F2026_06_24_20_56_%255BGRAPHIFY_OUT%255D_graphifyout"
+    "folder": "001_BLUEPRINT",
+    "linkHref": "?doc=001_BLUEPRINT%252F2026_06_24_20_56_%255BGRAPHIFY_OUT%255D_graphifyout"
   },
   {
-    "id": "000_BLUEPRINT%2F2026_06_24_20_57_%5BSRC%5D_src",
+    "id": "001_BLUEPRINT%2F2026_06_24_20_57_%5BSRC%5D_src",
     "title": "Src",
     "category": "SRC",
-    "folder": "000_BLUEPRINT",
-    "linkHref": "?doc=000_BLUEPRINT%252F2026_06_24_20_57_%255BSRC%255D_src"
+    "folder": "001_BLUEPRINT",
+    "linkHref": "?doc=001_BLUEPRINT%252F2026_06_24_20_57_%255BSRC%255D_src"
   },
   {
     "id": "1_tutorial%2F2026_04_11_13_25_%5BGeneral%5D_crer_vos_dossiers",

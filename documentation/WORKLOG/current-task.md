@@ -36,6 +36,13 @@ Le travail a couvert :
 - integration des images conceptuelles generees dans les pages d'accueil ;
 - creation d'un index des assets visuels ;
 - creation des trois guides de demarrage de Phase 2.
+- ajout des documents utilisateur finalises dans le starter francais `starter-doc-fr/000_DOCUMENTATION/` ;
+- ajout dans `starter-doc-fr/images/DOCUMENTATION/` des images referencees par ces documents pour conserver l'affichage apres initialisation via `npx living-ai-documentation`.
+- creation de la version anglaise du starter dans `starter-doc/000_DOCUMENTATION/` avec noms de fichiers traduits ;
+- copie des images du starter francais vers `starter-doc/images/DOCUMENTATION/`.
+- ajustement de l'ouverture par defaut de Home pour privilegier la categorie `DOCUMENTATION` avant `General`.
+- ajout d'une ancre Admin `#git-integration` et redirection des toasts Git vers cette section.
+- remplacement de `docsFolder` par le chemin reel du dossier documentaire configure dans les messages Git destines aux utilisateurs.
 
 ## Contenu modifie
 
@@ -51,6 +58,18 @@ Le travail a couvert :
 - `documentation/DOCUMENTATION/01_DEMARRAGE/01_creer_un_espace_documentaire.md`
 - `documentation/DOCUMENTATION/01_DEMARRAGE/02_creer_modifier_et_retrouver_un_document.md`
 - `documentation/DOCUMENTATION/01_DEMARRAGE/03_structurer_dossiers_categories_et_documents.md`
+- `starter-doc-fr/000_DOCUMENTATION/*`
+- `starter-doc-fr/images/DOCUMENTATION/*`
+- `starter-doc/000_DOCUMENTATION/*`
+- `starter-doc/images/DOCUMENTATION/*`
+- `src/frontend-svelte/src/routes/Home.svelte`
+- `src/frontend-svelte/src/routes/Admin.svelte`
+- `src/frontend-svelte/src/lib/gitToast.ts`
+- `src/frontend-svelte/src/styles/app.css`
+- `src/lib/git-integration.ts`
+- `src/frontend-svelte/public/i18n/en.json`
+- `src/frontend-svelte/public/i18n/fr.json`
+- `tests/api/git.spec.ts`
 - `documentation/WORKLOG/current-task.md`
 
 ## Documentation
@@ -63,13 +82,24 @@ Le document `Plan.md` est un document de pilotage documentaire utilisateur, pas 
 - Creation des premiers livrables de Phase 1.
 - Integration des 12 images conceptuelles deposees par l'utilisateur.
 - Creation des livrables de Phase 2.
+- Copie des documents utilisateur finalises dans `starter-doc-fr/000_DOCUMENTATION/`.
+- Copie et regroupement des images referencees dans `starter-doc-fr/images/DOCUMENTATION/`.
+- Correction des liens Markdown du starter francais vers `/images/DOCUMENTATION/...`.
+- Copie des images du starter francais vers le starter anglais.
+- Traduction anglaise des documents du starter francais avec noms de fichiers anglais.
+- Home ouvre maintenant par defaut le premier document de categorie `DOCUMENTATION`, puis retombe sur `General` ou le premier document disponible.
+- Les toasts Git qui pointent vers Admin utilisent maintenant `/admin#git-integration`; Admin scrolle vers cette ancre au montage et aux changements de hash.
+- Les messages Git n'exposent plus `docsFolder` comme terme technique lorsque le chemin reel est disponible.
+- Test API ajoute pour verifier le message Git lorsque le dossier documentaire configure n'est pas dans un repository Git.
 - `git diff --check` execute avec succes.
+- `npm run build` execute avec succes et recopie les starters dans `dist/`.
 
 ## Verifications restantes
 
 - Relire les fichiers de Phase 1 et Phase 2.
 - Produire ensuite les guides d'usage quotidien et d'administration prioritaires.
 - Capturer les premiers ecrans reels de l'application quand l'interface de demo est prete.
+- Verifier le contenu source de `2026_06_30_10_20_[DOCUMENTATION]_document_markdown.md`, qui porte un nom Markdown mais contient actuellement le guide Workspace.
 
 ## Prochaine action recommandee
 

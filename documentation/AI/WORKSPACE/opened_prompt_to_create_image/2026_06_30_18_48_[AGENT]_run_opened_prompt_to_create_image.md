@@ -20,7 +20,7 @@ Create a professional editorial hero illustration for a local-first documentatio
 
 ## Response
 
-![20260630184818_3tfo_living-documentation-hero-illustration.png](./images/DOCUMENTATION/concept-01-hero-produit.png)
+![20260630184818_3tfo_living-documentation-hero-illustration.png](./images/DOCUMENTATION/concept-01-hero-produit.jpg)
 
 Professional editorial hero illustration generated for "Living Documentation" - a calm workstation featuring connected documentation elements including Markdown documents, meeting notes, process cards, diagrams, Git timeline, and AI agent nodes in a cohesive, high-end technical style with the requested restrained palette.
 
@@ -148,7 +148,7 @@ Endpoint MCP : `http://localhost:4321/mcp`
           },
           "size": {
             "type": "string",
-            "description": "Optional provider size/resolution, e.g. 1024x1024 or 
+            "description": "Optional provider size/resolution, e.g. 1024x1024 or
 … [truncated 42686 chars]
 ```
 
@@ -191,10 +191,7 @@ POST `https://openrouter.ai/api/v1/chat/completions`
               "description": "Short Markdown/text memory to persist for the next run. Store only what is needed to resume."
             }
           },
-          "required": [
-            "folder",
-            "content"
-          ]
+          "required": ["folder", "content"]
         }
       }
     },
@@ -239,11 +236,7 @@ POST `https://openrouter.ai/api/v1/chat/completions`
               "description": "Optional output extension/format, e.g. png, jpg, webp, or svg."
             }
           },
-          "required": [
-            "imageProviderId",
-            "prompt",
-            "folder"
-          ]
+          "required": ["imageProviderId", "prompt", "folder"]
         }
       }
     }

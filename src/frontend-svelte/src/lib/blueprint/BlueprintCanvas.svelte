@@ -55,7 +55,7 @@
 
   // ── Constants ─────────────────────────────────────────────────────────────────
 
-  const BLUEPRINT_FOLDER = "000_BLUEPRINT";
+  const BLUEPRINT_FOLDER = "001_BLUEPRINT";
   const BOX_W = 200;
   const BOX_H = 110;
   const GAP_X = 40;

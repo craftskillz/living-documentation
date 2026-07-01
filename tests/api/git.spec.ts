@@ -26,6 +26,32 @@ test('GET /api/git/status reports the default unconfigured state', async ({ requ
   expect(body.message).toContain('not configured');
 });
 
+test('GET /api/git/status reports configured documentation folder when enabled outside Git', async ({
+  request,
+  ld,
+}) => {
+  const config = await request.put(`${ld.baseURL}/api/config`, {
+    data: {
+      gitIntegration: {
+        mode: 'enabled',
+        pushMode: 'never',
+        pushEveryCommits: 1,
+        commitMessage: 'docs: update living documentation',
+      },
+    },
+  });
+  expect(config.ok()).toBe(true);
+
+  const res = await request.get(`${ld.baseURL}/api/git/status`);
+  expect(res.ok()).toBe(true);
+  const body = await res.json() as { mode: string; ok: boolean; docsFolder: string; message: string };
+  expect(body.mode).toBe('enabled');
+  expect(body.ok).toBe(false);
+  expect(body.docsFolder).toBe(ld.docsAbs);
+  expect(body.message).toContain(`configured documentation folder is not inside a Git repository (${ld.docsAbs})`);
+  expect(body.message).not.toContain('docsFolder is not inside');
+});
+
 test('enabled Git integration commits docsFolder changes inside a parent repository only', async ({
   request,
   ld,

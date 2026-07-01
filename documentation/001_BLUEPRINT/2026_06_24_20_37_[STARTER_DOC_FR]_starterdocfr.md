@@ -11,7 +11,7 @@ Il sert à livrer une base immédiatement exploitable : une page d'explication, 
 
 L'objectif est simple : permettre à un projet fraîchement créé d'être compréhensible dès le premier lancement, sans partir d'un dossier vide.
 
-Vue d'ensemble : `AI/` prépare le contexte des agents, `ADRS/` donne un modèle de décision, `WORKLOG/` organise la reprise de travail, et `000_BLUEPRINT/` accueille la cartographie des dossiers importants.
+Vue d'ensemble : `AI/` prépare le contexte des agents, `ADRS/` donne un modèle de décision, `WORKLOG/` organise la reprise de travail, et `001_BLUEPRINT/` accueille la cartographie des dossiers importants.
 
 Fonctionnellement, ce dossier couvre quatre usages importants :
 

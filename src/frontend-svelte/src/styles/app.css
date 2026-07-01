@@ -1148,6 +1148,10 @@ h1 {
   padding-bottom: 40px;
 }
 
+.admin-anchor {
+  scroll-margin-top: 88px;
+}
+
 .config-section {
   border: 1px solid var(--line);
   border-radius: 12px;

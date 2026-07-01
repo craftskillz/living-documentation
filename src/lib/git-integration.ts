@@ -115,13 +115,13 @@ function resolveRepoInfo(docsPath: string): RepoInfo {
   const topLevel = runGit(docsFolder, ["rev-parse", "--show-toplevel"]);
   if (!topLevel.ok) {
     const detail = (topLevel.stderr || topLevel.error || "not a Git repository").trim();
-    throw new Error(`Git integration is enabled but docsFolder is not inside a Git repository: ${detail}`);
+    throw new Error(`Git integration is enabled but the configured documentation folder is not inside a Git repository (${docsFolder}): ${detail}`);
   }
 
   const root = realPath(topLevel.stdout.trim());
   const rel = path.relative(root, docsFolder);
   if (rel.startsWith("..") || path.isAbsolute(rel)) {
-    throw new Error("Git integration is enabled but docsFolder is outside the detected Git repository.");
+    throw new Error(`Git integration is enabled but the configured documentation folder (${docsFolder}) is outside the detected Git repository.`);
   }
 
   return {
@@ -166,7 +166,7 @@ function resolveDocumentPathspec(docsPath: string, documentId: string, repo: Rep
   const documentPath = path.resolve(docsPath, filename);
   const docsFolder = realPath(docsPath);
   if (!documentPath.startsWith(`${docsFolder}${path.sep}`) && documentPath !== docsFolder) {
-    throw new Error("Document path escapes docsFolder.");
+    throw new Error(`Document path escapes ${docsFolder}.`);
   }
 
   const relToDocs = path.relative(docsFolder, documentPath);
@@ -174,7 +174,7 @@ function resolveDocumentPathspec(docsPath: string, documentId: string, repo: Rep
     ? toPosix(relToDocs)
     : `${repo.docsPathspec}/${toPosix(relToDocs)}`;
   if (!isInsidePathspec(relativePath, repo.docsPathspec)) {
-    throw new Error("Document path is outside docsFolder.");
+    throw new Error(`Document path is outside ${docsFolder}.`);
   }
   return relativePath;
 }
@@ -292,7 +292,7 @@ export function gitStatus(docsPath: string): GitStatus {
       aheadOfUpstream: upstreamAhead(repo.root),
       message:
         dirty.outside > 0
-          ? `Git repository has ${dirty.outside} change(s) outside docsFolder; Living Documentation will only commit docsFolder.`
+          ? `Git repository has ${dirty.outside} change(s) outside ${base.docsFolder}; Living Documentation will only commit ${base.docsFolder}.`
           : "Git integration is ready.",
     };
   } catch (error) {

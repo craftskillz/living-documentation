@@ -627,7 +627,7 @@
   "admin.git.mode_disabled": "Désactivé",
   "admin.git.mode_disabled_hint": "Aucun commit ni push automatique ne sera lancé.",
   "admin.git.mode_enabled": "Activé",
-  "admin.git.mode_enabled_hint": "Après chaque sauvegarde, Living Documentation commit uniquement docsFolder.",
+  "admin.git.mode_enabled_hint": "Après chaque sauvegarde, Living Documentation commit uniquement le dossier de documentation configuré.",
   "admin.git.commit_message_label": "Message de commit",
   "admin.git.commit_message_hint": "Message générique utilisé pour les commits automatiques.",
   "admin.git.push_label": "Push",

@@ -1,0 +1,194 @@
+---
+**date:** 2026-07-01
+**status:** Draft
+**description:** Short presentation of the Workspace menu for configuring LLM providers and documentation agents.
+**tags:** workspace, agents, llm, mcp, providers, automation, documentation
+---
+
+### **Workspace** Menu
+
+The <kbd>Workspace</kbd> menu lets you create your own documentation agents.
+
+These agents can help you write, translate, summarize, improve, or transform your **Markdown** documents.
+
+<!-- image-width: 2/3 -->
+
+![Workspace connecting Living Documentation, LLM providers, agents, MCP, and an image provider](/images/DOCUMENTATION/concept-07-workspace-providers-agents.jpg)
+
+### What is the Workspace for?
+
+The Workspace connects three elements:
+
+- an **LLM provider**: the AI model being used
+- an **agent**: a reusable business instruction
+- the **Living Documentation tools**: read a document, update it, generate an image, and so on
+
+The idea is simple: instead of rewriting the same prompt every time, you create an agent once, then run it again whenever you need it.
+
+---
+
+### Main nodes
+
+In the Workspace, each element is represented by a node.
+
+<!-- layout-columns -->
+
+<!-- col -->
+
+![image](/images/DOCUMENTATION/workspace_configuration.jpg)
+
+<!-- col -->
+
+| Node                     | Role                                |
+| ------------------------ | ----------------------------------- |
+| **Living Documentation** | The center of the Workspace.        |
+| **LLM provider**         | The model used by agents.           |
+| **Agent**                | A specific documentation task.      |
+| **MCP**                  | Internal tools available to agents. |
+
+LLMs and their agents use color codes to indicate their capabilities:
+
+- <kbd style="background-color:yellow;">Yellow</kbd>: LLMs specialized in image generation
+- <kbd style="background-color:orange;">Orange</kbd>: agentic LLMs capable of running tool-chain calls
+- <kbd style="background-color:pink;">Pink</kbd>: Chat-only LLMs with no agentic capabilities, used only to answer a prompt
+
+<!-- /layout-columns -->
+
+---
+
+### Create an LLM provider
+
+<!-- layout-columns -->
+
+<!-- col -->
+
+An LLM provider contains the information required to call a model:
+
+- the endpoint
+- the API token
+- the model
+- the tool usage mode
+
+For the token, prefer using an environment variable:
+
+<!-- code-width: 1/3 -->
+
+```text
+env:LLM_API_KEY
+```
+
+This avoids writing your API key directly in the configuration.
+
+<!-- col -->
+
+![image](/images/DOCUMENTATION/llm_provider_creation.png)
+
+<!-- /layout-columns -->
+
+---
+
+### Tools or Chat only?
+
+A provider can work in two modes.
+
+| Mode                | Usage                                         |
+| ------------------- | --------------------------------------------- |
+| **Allow MCP tools** | The agent can use Living Documentation tools. |
+| **Chat only**       | The agent replies without calling any tool.   |
+
+<!-- quote-type: info -->
+<!-- quote-title: Advice -->
+<!-- quote-icon -->
+
+> If your agent must read or modify a document, it generally needs **Allow MCP tools** mode.
+>
+> If the model refuses tools, use **Chat only** and ask it only for a text response.
+
+---
+
+### Create an agent
+
+An agent is a reusable instruction.
+
+Example of a simple agent:
+
+<!-- code-width: 2/3 -->
+
+```text
+You are a documentation assistant.
+Read the document using read_document with the DocumentId provided by the user.
+Improve the clarity of the text without changing the meaning.
+Preserve the Markdown.
+Update the document using update_document when you are done.
+```
+
+You can then run this agent by giving it a document id.
+
+### Example uses
+
+An agent can be used to:
+
+- rephrase a rough document
+- fix mistakes
+- translate a document
+- create a summary
+- prepare meeting notes
+- generate an image to illustrate a document
+- transform text into a table
+- improve a Markdown document with snippets
+
+---
+
+### Run documents
+
+When you run an agent, **Living Documentation** creates a result document.
+
+This document contains:
+
+- the agent that was used
+- the provider that was used
+- the user input
+- the model response
+- debug information if enabled
+
+These documents are useful for keeping a trace of what the agent did.
+
+They are saved in the agent workspace, for example:
+
+<!-- code-width: 1/2 -->
+
+```text
+AI/WORKSPACE/my_agent/
+```
+
+<!-- quote-type: warning -->
+<!-- quote-title: Important -->
+<!-- quote-icon -->
+
+> In the <kbd>Admin</kbd> area, you can enable the _Debug agents_ checkbox in the _Developer_ section.
+>
+> This captures the exchanges with the LLM and can help you understand whether anything needs to be adjusted in your prompt.
+
+---
+
+### Image providers
+
+Some LLM providers can be configured in **Image generation** mode.
+
+They are used to generate images from an agent, for example to illustrate a document.
+
+In that case, the provider has a technical id that the agent can use as `imageProviderId`.
+
+<!-- quote-type: info -->
+<!-- quote-title: Info -->
+<!-- quote-icon -->
+
+> Images generated by agents are stored separately from regular attachments.
+
+---
+
+### Simple advice
+
+Start with one LLM provider and one agent.
+
+When this first agent works well, create more specialized agents: translation, summary, correction, illustration, procedure generation, Markdown improvement.

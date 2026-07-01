@@ -18,6 +18,7 @@ interface GitStatus {
 const GIT_CONFIG_TOAST_ID = "git-integration-config";
 const GIT_STATUS_TOAST_ID = "git-integration-status";
 const GIT_SAVE_TOAST_ID = "git-integration-save";
+const ADMIN_GIT_HREF = "/admin#git-integration";
 const RECENT_SAVE_MS = 2 * 60 * 1000;
 
 let checking = false;
@@ -49,7 +50,7 @@ export async function checkGitIntegrationToast(): Promise<void> {
         "Veuillez configurer l'intégration Git dans la page Admin.",
         "error",
         10 * 60 * 1000,
-        { id: GIT_CONFIG_TOAST_ID, href: "/admin", linkLabel: "Admin" },
+        { id: GIT_CONFIG_TOAST_ID, href: ADMIN_GIT_HREF, linkLabel: "Admin" },
       );
       dismissPersistentToast(GIT_STATUS_TOAST_ID);
       dismissPersistentToast(GIT_SAVE_TOAST_ID);
@@ -69,7 +70,7 @@ export async function checkGitIntegrationToast(): Promise<void> {
         `Intégration Git : ${status.message}`,
         "error",
         10 * 60 * 1000,
-        { id: GIT_STATUS_TOAST_ID, href: "/admin", linkLabel: "Admin" },
+        { id: GIT_STATUS_TOAST_ID, href: ADMIN_GIT_HREF, linkLabel: "Admin" },
       );
       return;
     }
@@ -93,7 +94,7 @@ export async function checkGitIntegrationToast(): Promise<void> {
         `Git : ${issue}`,
         "error",
         10 * 60 * 1000,
-        { id: GIT_SAVE_TOAST_ID, href: "/admin", linkLabel: "Admin" },
+        { id: GIT_SAVE_TOAST_ID, href: ADMIN_GIT_HREF, linkLabel: "Admin" },
       );
     } else {
       dismissPersistentToast(GIT_SAVE_TOAST_ID);

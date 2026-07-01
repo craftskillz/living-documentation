@@ -17,6 +17,7 @@ Le principe est simple :
 Le menu <kbd>Agents</kbd> est disponible depuis n'importe quelle page de **Living Documentation** : Home, Workspace, Admin, Files, Diagrammes, etc.
 
 <!-- image-width: 1/3 -->
+
 ![Menu Agents listant les agents disponibles par provider LLM](/images/execution_d_agents.png)
 
 ---
@@ -35,18 +36,19 @@ Quand vous ouvrez un groupe, vous voyez les agents disponibles pour ce provider.
 
 <!-- col -->
 
-| Élément | Signification |
-| --- | --- |
-| Provider LLM | Modèle utilisé pour exécuter l'agent |
-| Agent | Tâche documentaire disponible |
-| Input requis | L'agent attend une information avant de démarrer |
-| Configuration incomplète | L'agent ne peut pas encore être lancé |
+| Élément                  | Signification                                    |
+| ------------------------ | ------------------------------------------------ |
+| Provider LLM             | Modèle utilisé pour exécuter l'agent             |
+| Agent                    | Tâche documentaire disponible                    |
+| Input requis             | L'agent attend une information avant de démarrer |
+| Configuration incomplète | L'agent ne peut pas encore être lancé            |
 
 <!-- /layout-columns -->
 
 <!-- quote-type: info -->
 <!-- quote-title: Info -->
 <!-- quote-icon -->
+
 > Si un agent n'apparaît pas dans ce menu, vérifiez qu'il est bien créé dans le <kbd>Workspace</kbd> et rattaché à un provider LLM.
 
 ---
@@ -88,6 +90,7 @@ Dans cet exemple, l'agent attend un prompt complet pour générer une image.
 <!-- col -->
 
 <!-- image-width: 2/3 -->
+
 ![Popup demandant l'input nécessaire avant d'exécuter un agent](/images/popup_execution_agent.png)
 
 <!-- /layout-columns -->
@@ -114,6 +117,7 @@ Vous n'avez pas besoin de rester bloqué sur la popup : l'exécution produit un 
 <!-- col -->
 
 <!-- image-width: full -->
+
 ![Toast affichant la progression temps réel d'une exécution agent](/images/feedback_execution_agent.png)
 
 <!-- /layout-columns -->
@@ -125,6 +129,7 @@ Vous n'avez pas besoin de rester bloqué sur la popup : l'exécution produit un 
 Chaque exécution crée un document de run auquel on peut accéder via un lien direct depuis le toast d'execution.
 
 <!-- image-width: 2/3 -->
+
 ![Toast de succès contenant le lien vers le document généré par l'agent](/images/summary_agent_execution.png)
 
 <!-- layout-columns: 1/3 -->
@@ -142,7 +147,7 @@ Ce document contient généralement :
 
 <!-- col -->
 
-![Document de run créé après l'exécution d'un agent](/images/run_agent_execution.png)
+![Document de run créé après l'exécution d'un agent](/images/run_agent_execution.jpg)
 
 <!-- /layout-columns -->
 
@@ -167,6 +172,7 @@ Exemples :
 <!-- quote-type: success -->
 <!-- quote-title: Quick Win -->
 <!-- quote-icon -->
+
 > Un bon agent fait une seule chose, mais la fait souvent et proprement.
 
 ---

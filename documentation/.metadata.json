@@ -633,7 +633,7 @@
       "hash": "153c59df7bcaf3c43ec4256ecf6b9fba117f175854eb5cccd440efa7406bc840"
     }
   ],
-  "000_BLUEPRINT/2026_06_01_17_40_[SCRIPTS]_scripts": [
+  "001_BLUEPRINT/2026_06_01_17_40_[SCRIPTS]_scripts": [
     {
       "path": "scripts/copy-assets.ts",
       "hash": "9c9ea3b5045e7fcf70f1515fd6888024a38405015b7a0845bbf08311c58a4f60"
@@ -1071,7 +1071,7 @@
       "dirty": false
     }
   ],
-  "000_BLUEPRINT/2026_06_24_19_32_[BIN]_bin": [
+  "001_BLUEPRINT/2026_06_24_19_32_[BIN]_bin": [
     {
       "path": "bin/cli.ts",
       "hash": "06b43a235e04d41540bffc236498418f260f0d353dedc5bc96b1479698953d6d",
@@ -1079,7 +1079,7 @@
       "dirty": false
     }
   ],
-  "000_BLUEPRINT/2026_06_24_20_34_[DOCUMENTATION]_documentation": [
+  "001_BLUEPRINT/2026_06_24_20_34_[DOCUMENTATION]_documentation": [
     {
       "path": "documentation/AI/PROJECT-INSTRUCTIONS.md",
       "hash": "def0b3461126e8ba63798713337c038055a98dcc7b629cc502627e575760d61e",
@@ -1099,7 +1099,7 @@
       "dirty": true
     }
   ],
-  "000_BLUEPRINT/2026_06_24_20_37_[STARTER_DOC_FR]_starterdocfr": [
+  "001_BLUEPRINT/2026_06_24_20_37_[STARTER_DOC_FR]_starterdocfr": [
     {
       "path": "starter-doc-fr/AI/2026_01_01_how_to.md",
       "hash": "ae0f0d15b4f019215d08bd088e53314f20f0290df9863e40bec66c51100a4572",
@@ -1125,7 +1125,7 @@
       "dirty": true
     }
   ],
-  "000_BLUEPRINT/2026_06_24_20_38_[STARTER_DOC]_starterdoc": [
+  "001_BLUEPRINT/2026_06_24_20_38_[STARTER_DOC]_starterdoc": [
     {
       "path": "starter-doc/AI/2026_01_01_how_to.md",
       "hash": "bea067b0b1994776ceb05f170842ce32251ec7167d37d8d05eafc55e931b1235",
@@ -1151,7 +1151,7 @@
       "dirty": true
     }
   ],
-  "000_BLUEPRINT/2026_06_24_20_52_[TESTS]_tests": [
+  "001_BLUEPRINT/2026_06_24_20_52_[TESTS]_tests": [
     {
       "path": "playwright.config.ts",
       "hash": "bd5ec053a7955be0aff01d803d5b8ccf76f5caf3975d14d01add39131305dfa0",
@@ -1195,7 +1195,7 @@
       "dirty": true
     }
   ],
-  "000_BLUEPRINT/2026_06_24_20_54_[TEST_RESULTS]_testresults": [
+  "001_BLUEPRINT/2026_06_24_20_54_[TEST_RESULTS]_testresults": [
     {
       "path": "playwright.config.ts",
       "hash": "bd5ec053a7955be0aff01d803d5b8ccf76f5caf3975d14d01add39131305dfa0",
@@ -1215,7 +1215,7 @@
       "dirty": true
     }
   ],
-  "000_BLUEPRINT/2026_06_24_20_55_[PLAYWRIGHT_REPORT]_playwrightreport": [
+  "001_BLUEPRINT/2026_06_24_20_55_[PLAYWRIGHT_REPORT]_playwrightreport": [
     {
       "path": "playwright.config.ts",
       "hash": "bd5ec053a7955be0aff01d803d5b8ccf76f5caf3975d14d01add39131305dfa0",
@@ -1235,7 +1235,7 @@
       "dirty": true
     }
   ],
-  "000_BLUEPRINT/2026_06_24_20_56_[GRAPHIFY_OUT]_graphifyout": [
+  "001_BLUEPRINT/2026_06_24_20_56_[GRAPHIFY_OUT]_graphifyout": [
     {
       "path": "graphify-out/GRAPH_REPORT.md",
       "hash": "f86e570b6f1180eb34a3672da5cacf11dcf3485ea4c011aa1049d20b0d095dcc",
@@ -1255,7 +1255,7 @@
       "dirty": true
     }
   ],
-  "000_BLUEPRINT/2026_06_24_20_57_[SRC]_src": [
+  "001_BLUEPRINT/2026_06_24_20_57_[SRC]_src": [
     {
       "path": "documentation/AI/PROJECT-STACK.md",
       "hash": "ac4e9e8a0afc2e2ee4de64e5e90b2410471787ac2ea381640c99393fac7bd37b",
