@@ -81,7 +81,8 @@ Il affiche deux colonnes :
 
 Sa syntaxe est :
 
-```text
+<!-- code-width: 1/3 -->
+​```text
 ::: compare
 Votre Markdown ici
 :::
