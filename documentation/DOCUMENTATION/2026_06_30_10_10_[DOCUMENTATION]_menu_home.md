@@ -14,7 +14,17 @@ C'est ici que vous retrouvez vos dossiers, vos catégories, vos documents, et le
 ### Ce que vous voyez à gauche
 
 <div class="grid grid-cols-2 gap-4 border bg-amber-500 rounded-lg p-4">
-  <div class="border">a</div>
+  <div class="border">
+La colonne de gauche affiche :
+
+- le nombre de documents disponibles
+- les dossiers de votre documentation
+- les catégories détectées dans les noms de fichiers
+- les documents Markdown
+- les badges utiles : annotations, fichiers joints, statuts
+
+Un clic sur un document l'ouvre dans la partie principale de la page.
+</div>
     <div class="border">
 
 <!-- image-width: 2/3 -->
