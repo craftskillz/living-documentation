@@ -52,6 +52,7 @@ Le travail a couvert :
 - ajout de l'initialisation automatique du dossier explicite lorsqu'il ne contient pas encore `.living-doc.json`.
 - correction des workflows CodeQL pour utiliser la meme version `github/codeql-action` entre `init` et `analyze`.
 - tache ponctuelle : reorganisation de la popup snippets avec renommage de `Colonnes` en `Disposition`, deplacement des listes et du tableau dans `Structure`, deplacement de `Comparaison` dans `Code & diagrammes`, et renommage de la categorie `Listes, code & donnees` en `Code & diagrammes`.
+- tache ponctuelle : ajout du snippet `Mermaid` dans `Code & diagrammes`, avec un builder `PIE CHART` permettant de definir un titre et des elements ponderes, puis de generer un bloc Markdown `mermaid` compatible avec le rendu existant.
 
 ## Contenu modifie
 
@@ -77,10 +78,12 @@ Le travail a couvert :
 - `src/frontend-svelte/src/styles/app.css`
 - `src/frontend-svelte/src/lib/home/SnippetsModal.svelte`
 - `src/frontend-svelte/src/lib/home/snippets/pickerData.ts`
+- `src/frontend-svelte/src/lib/home/snippets/builders.ts`
 - `src/lib/git-integration.ts`
 - `src/frontend-svelte/public/i18n/en.json`
 - `src/frontend-svelte/public/i18n/fr.json`
 - `tests/api/git.spec.ts`
+- `tests/e2e/inline-snippet-edit.spec.ts`
 - `README.fr.md`
 - `README.md`
 - `bin/cli.ts`
@@ -95,6 +98,8 @@ Le travail a couvert :
 Le document `Plan.md` est un document de pilotage documentaire utilisateur, pas un ADR technique. Il ne decrit pas une decision de code durable et n'a pas besoin de metadonnees source.
 
 La reorganisation de la popup snippets demandee ici est un ajustement UX de libelles et de categorie, sans changement de contrat Markdown ni decision d'architecture durable ; aucun nouvel ADR n'a ete cree.
+
+Le snippet Mermaid ajoute un comportement utilisateur durable. Un ADR devra etre cree et attache aux fichiers source concernes quand l'arbre Git sera propre, conformement a la regle projet sur les metadonnees Living Documentation.
 
 ## Verifications realisees
 
@@ -131,6 +136,10 @@ La reorganisation de la popup snippets demandee ici est un ajustement UX de libe
 - `npm run build` execute avec succes apres deplacement de `Comparaison` vers `Code & diagrammes`.
 - `git diff --check -- src/frontend-svelte/src/lib/home/snippets/pickerData.ts src/frontend-svelte/src/lib/home/SnippetsModal.svelte src/frontend-svelte/public/i18n/fr.json src/frontend-svelte/public/i18n/en.json` execute avec succes apres deplacement de `Comparaison`.
 - `graphify update .` execute avec succes apres deplacement de `Comparaison`.
+- `npm run build` execute avec succes apres ajout du builder Mermaid.
+- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "Mermaid picker builds and inserts a pie chart snippet" --project=chromium` execute avec succes : 1 test passe.
+- `git diff --check -- src/frontend-svelte/src/lib/home/snippets/pickerData.ts src/frontend-svelte/src/lib/home/snippets/builders.ts src/frontend-svelte/src/lib/home/SnippetsModal.svelte src/frontend-svelte/public/i18n/fr.json src/frontend-svelte/public/i18n/en.json tests/e2e/inline-snippet-edit.spec.ts` execute avec succes.
+- `graphify update .` execute avec succes apres ajout du builder Mermaid.
 
 ## Verifications restantes
 
@@ -138,6 +147,7 @@ La reorganisation de la popup snippets demandee ici est un ajustement UX de libe
 - Produire ensuite les guides d'usage quotidien et d'administration prioritaires.
 - Capturer les premiers ecrans reels de l'application quand l'interface de demo est prete.
 - Verifier le contenu source de `2026_06_30_10_20_[DOCUMENTATION]_document_markdown.md`, qui porte un nom Markdown mais contient actuellement le guide Workspace.
+- Creer l'ADR du snippet Mermaid et attacher les fichiers source concernes apres retour a un arbre Git propre.
 
 ## Prochaine action recommandee
 
