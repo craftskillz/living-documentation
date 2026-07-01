@@ -134,3 +134,14 @@ Commencez avec peu de dossiers.
 
 Ajoutez de nouvelles sections seulement quand votre documentation devient difficile à parcourir.
 Une structure simple est souvent plus utile qu'une arborescence trop détaillée.
+<!-- layout-columns: text-align: right -->
+
+<!-- col -->
+
+Colonne 1
+
+<!-- col -->
+
+Colonne 2
+
+<!-- /layout-columns -->
