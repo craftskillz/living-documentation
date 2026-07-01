@@ -1602,5 +1602,13 @@
       "commit": "08f342de7cc5a83298eae9869dccb2db38bfe44b",
       "dirty": true
     }
+  ],
+  "ADRS/2026_07_01_15_11_[MCP]_build_context_mcp_tool_aggregates_git_source_and_documentation": [
+    {
+      "path": "src/mcp/tools/context.ts",
+      "hash": "86651221bab74cfc8466a277dd96ad0f6be2296b88a1a27f61f1501a40482717",
+      "commit": "d49e8e311e831d555c76fae658c97a976be52fe9",
+      "dirty": true
+    }
   ]
 }
