@@ -40,7 +40,7 @@
     "semantic_hash": ""
   },
   "documentation/.living-doc.json": {
-    "mtime": 1782935516.312634,
+    "mtime": 1782941236.9100714,
     "ast_hash": "782e5660f564bf567533f05f76ae0f09",
     "semantic_hash": ""
   },
@@ -50,13 +50,13 @@
     "semantic_hash": ""
   },
   "documentation/.survival-kit.json": {
-    "mtime": 1781843923.2486036,
-    "ast_hash": "eeb060f6675c0a0c554142e9ec707078",
+    "mtime": 1782941435.075451,
+    "ast_hash": "1a3363f8281db3c5bf51146421b23573",
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1782927769.0558195,
-    "ast_hash": "91b497eb53d1ac2d393732d99da30126",
+    "mtime": 1782936868.3869483,
+    "ast_hash": "95d7711d6edee3bbc0336b42f7538554",
     "semantic_hash": ""
   },
   "playwright.config.ts": {
@@ -85,13 +85,13 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/public/i18n/en.json": {
-    "mtime": 1782927431.0474932,
-    "ast_hash": "7b7f1ea3f9cc3a9503badcf58019b05b",
+    "mtime": 1782944124.0617776,
+    "ast_hash": "5e580d67210fe0642c9c4676f7bf1912",
     "semantic_hash": ""
   },
   "src/frontend-svelte/public/i18n/fr.json": {
-    "mtime": 1782927431.0480123,
-    "ast_hash": "4d2bb3660f2a455adfa61d47eab7e23b",
+    "mtime": 1782944142.9047093,
+    "ast_hash": "90e713922b77fcf0654ff61943b5af1f",
     "semantic_hash": ""
   },
   "src/frontend-svelte/public/wordcloud2.js": {
@@ -360,8 +360,8 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/home/SnippetsModal.svelte": {
-    "mtime": 1782901541.6060486,
-    "ast_hash": "e3a0d23b11e4f82eec4ff69cc090a7b1",
+    "mtime": 1782944065.4780343,
+    "ast_hash": "2693714c9b8aaade8aa10a3dfcf80364",
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/home/TreeNode.svelte": {
@@ -425,8 +425,8 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/home/snippets/builders.ts": {
-    "mtime": 1782901399.249347,
-    "ast_hash": "54eb445b939771e5265a4fe9569fdce8",
+    "mtime": 1782944092.5099227,
+    "ast_hash": "275e64b71f6e1ade9157ccd6708fbd44",
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/home/snippets/detect.ts": {
@@ -445,8 +445,8 @@
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/home/snippets/pickerData.ts": {
-    "mtime": 1782901432.964568,
-    "ast_hash": "67b6e3c8878dfb5d11f85f47d733ff88",
+    "mtime": 1782942566.8019447,
+    "ast_hash": "91ee1674d5490313a83096ed59a8da70",
     "semantic_hash": ""
   },
   "src/frontend-svelte/src/lib/home/snippets/table.ts": {
@@ -865,8 +865,8 @@
     "semantic_hash": ""
   },
   "tests/e2e/inline-snippet-edit.spec.ts": {
-    "mtime": 1781817971.9964528,
-    "ast_hash": "e92b977a0b1e4d140d85babb3b560506",
+    "mtime": 1782944175.1969588,
+    "ast_hash": "388315f0f0d76a0ec7fc0307aa42074c",
     "semantic_hash": ""
   },
   "tests/e2e/metadata.spec.ts": {
@@ -1110,18 +1110,18 @@
     "semantic_hash": ""
   },
   ".github/workflows/codeql.yml": {
-    "mtime": 1782927429.7804794,
-    "ast_hash": "a6f6725c499da647a3551a7a42e41bc8",
+    "mtime": 1782936687.1573868,
+    "ast_hash": "4fff2325e9c7aa2a601b9fbb5955fcb5",
     "semantic_hash": ""
   },
   ".github/workflows/e2e.yml": {
-    "mtime": 1782927429.7809675,
-    "ast_hash": "b3c7ccfadaeb392cb1241ed01dd59b22",
+    "mtime": 1782936570.4515605,
+    "ast_hash": "1b02cb2ad1c8c878b3f7ffe824203fb6",
     "semantic_hash": ""
   },
   ".github/workflows/publish.yml": {
-    "mtime": 1782927429.7814236,
-    "ast_hash": "601670c0b047e6ae9518f23eff310557",
+    "mtime": 1782936691.6739976,
+    "ast_hash": "0c1c05b7fb271dded39ed208615cc135",
     "semantic_hash": ""
   },
   ".github/workflows/readme-sync.yml": {
@@ -1200,8 +1200,8 @@
     "semantic_hash": ""
   },
   "documentation/2026_05_20_13_28_[CONFERENCE]_test.md": {
-    "mtime": 1781843504.9546206,
-    "ast_hash": "3e6e04d73a684030ad6c3b0d5a50c07d",
+    "mtime": 1782943657.3099945,
+    "ast_hash": "e0205e900928f83500cbaa20b7681004",
     "semantic_hash": ""
   },
   "documentation/2026_06_03_23_19_[TESTING]_stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions.md": {
@@ -1995,8 +1995,8 @@
     "semantic_hash": ""
   },
   "documentation/WORKLOG/current-task.md": {
-    "mtime": 1782935538.5663984,
-    "ast_hash": "4838f5c52da42aca1bb39d35491dcb53",
+    "mtime": 1782943950.381635,
+    "ast_hash": "89c0766d77e3fdbddcc165ffd538cb32",
     "semantic_hash": ""
   },
   "memory/MEMORY.md": {
@@ -2845,7 +2845,7 @@
     "semantic_hash": ""
   },
   "documentation/.blueprint-clusters.json": {
-    "mtime": 1782553007.2410133,
+    "mtime": 1782941403.2524931,
     "ast_hash": "9be60b960d2598f7b7afeea34adc9bfb",
     "semantic_hash": ""
   },
