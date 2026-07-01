@@ -115,6 +115,8 @@ Vous choisissez :
 
 Le nom du fichier est ensuite généré automatiquement selon le pattern configuré dans <kbd>Admin</kbd>.
 
+---
+
 ### Retrouver rapidement un contenu
 
 Le menu Home sert aussi à retrouver vite un document.
