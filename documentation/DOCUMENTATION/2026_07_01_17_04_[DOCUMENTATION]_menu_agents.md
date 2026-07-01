@@ -4,3 +4,6 @@
 
 <!-- image-width: 1/3 -->
 ![image](/images/popup_execution_agent.png)
+
+<!-- image-width: 1/3 -->
+![image](/images/run_agent_execution.png)
