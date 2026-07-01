@@ -42,7 +42,6 @@ Chaque élement d'une table des matières correspond à un Header
 - `# Element` pour H1
 - `## Element` pour H2
 - `### Element` pour H3, etc.
-
 <!-- col -->
 
 <!-- image-width: 2/3 -->
