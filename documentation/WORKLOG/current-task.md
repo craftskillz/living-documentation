@@ -56,6 +56,8 @@ Le travail a couvert :
 - tache ponctuelle : ajout de la regle de builder `PIE CHART` imposant que le total des elements ponderes ne depasse jamais 100, appliquee dans l'UI et dans le builder Markdown.
 - tache ponctuelle : remplacement de l'exemple Mermaid inspire de la documentation par un exemple original localise (`DOC WORKFLOW` en anglais, `CYCLE DOCUMENTAIRE` en francais), avec consigne de creer de nouveaux exemples originaux a partir des exemples fournis.
 - tache ponctuelle : ajout du type `TIMELINE` dans le builder Mermaid, avec edition dynamique d'un titre et d'evenements periodises, generation du bloc Markdown `timeline`, et exemple original de roadmap documentaire.
+- tache ponctuelle : ajout du type `TREE VIEW` dans le builder Mermaid, avec edition dynamique des niveaux, noeuds, decorateurs et notes, generation du bloc Markdown `treeView-beta`, et exemple original d'espace documentaire.
+- tache ponctuelle : ajout du type `SEQUENCE DIAGRAM` dans le builder Mermaid, avec edition dynamique des messages, fleches, participants et notes, generation du bloc Markdown `sequenceDiagram`, et exemple original de workflow documentaire.
 
 ## Contenu modifie
 
@@ -107,6 +109,10 @@ Le snippet Mermaid ajoute un comportement utilisateur durable. Un ADR devra etre
 Les exemples Mermaid par defaut du builder ne reprennent pas textuellement les exemples fournis par l'utilisateur ou par la documentation Mermaid ; ils sont transformes en exemples originaux et localises.
 
 Le type `TIMELINE` reprend uniquement la forme syntaxique de l'exemple Mermaid fourni ; l'exemple integre au produit porte sur une roadmap documentaire originale.
+
+Le type `TREE VIEW` reprend uniquement la forme syntaxique de l'exemple Mermaid fourni ; l'exemple integre au produit porte sur une arborescence documentaire originale.
+
+Le type `SEQUENCE DIAGRAM` reprend uniquement la forme syntaxique de l'exemple Mermaid fourni ; l'exemple integre au produit porte sur un workflow documentaire original.
 
 ## Verifications realisees
 
@@ -161,6 +167,16 @@ Le type `TIMELINE` reprend uniquement la forme syntaxique de l'exemple Mermaid f
 - `rg -n "History of Social Media Platform|LinkedIn|Facebook|YouTube|Twitter|Google" src/frontend-svelte tests dist -g '!node_modules'` ne retourne aucune occurrence de l'exemple Mermaid fourni ; seules les chaines admin LinkedIn existantes restent presentes.
 - `git diff --check -- src/frontend-svelte/src/lib/home/SnippetsModal.svelte src/frontend-svelte/src/lib/home/snippets/builders.ts src/frontend-svelte/public/i18n/fr.json src/frontend-svelte/public/i18n/en.json tests/e2e/inline-snippet-edit.spec.ts` execute avec succes apres ajout de `TIMELINE`.
 - `graphify update .` execute avec succes apres ajout de `TIMELINE`.
+- `npm run build` execute avec succes apres ajout du type Mermaid `TREE VIEW`.
+- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "Mermaid picker builds and inserts" --project=chromium` execute avec succes apres ajout de `TREE VIEW` : 3 tests passes.
+- `rg -n "my-project|App\\.tsx|index\\.js|environment variables|Dockerfile|package\\.json|main component|entry point" src/frontend-svelte tests dist -g '!node_modules'` ne retourne aucune occurrence de l'exemple Mermaid fourni dans les sources frontend ou les tests ; seules des chaines existantes de documentation/dist restent presentes.
+- `git diff --check -- src/frontend-svelte/src/lib/home/SnippetsModal.svelte src/frontend-svelte/src/lib/home/snippets/builders.ts src/frontend-svelte/public/i18n/fr.json src/frontend-svelte/public/i18n/en.json tests/e2e/inline-snippet-edit.spec.ts` execute avec succes apres ajout de `TREE VIEW`.
+- `graphify update .` execute avec succes apres ajout de `TREE VIEW`.
+- `npm run build` execute avec succes apres ajout du type Mermaid `SEQUENCE DIAGRAM`.
+- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "Mermaid picker builds and inserts" --project=chromium` execute avec succes apres ajout de `SEQUENCE DIAGRAM` : 4 tests passes.
+- `rg -n "Alice|Bob|John|Hello Bob|How about you John|I am good thanks|Checking with John" src/frontend-svelte tests dist -g '!node_modules'` ne retourne aucune occurrence de l'exemple Mermaid fourni.
+- `git diff --check -- src/frontend-svelte/src/lib/home/SnippetsModal.svelte src/frontend-svelte/src/lib/home/snippets/builders.ts src/frontend-svelte/public/i18n/fr.json src/frontend-svelte/public/i18n/en.json tests/e2e/inline-snippet-edit.spec.ts documentation/WORKLOG/current-task.md` execute avec succes apres ajout de `SEQUENCE DIAGRAM`.
+- `graphify update .` execute avec succes apres ajout de `SEQUENCE DIAGRAM`.
 
 ## Verifications restantes
 

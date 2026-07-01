@@ -173,3 +173,13 @@ timeline
     2025 : Documentation assistée par agents
     2026 : Automatisation Workspace
 ```
+
+```mermaid
+treeView-beta
+    espace-documentaire/
+        documents/ ## guides sources
+            demarrage.md :::highlight ## premier parcours lecteur
+            operations.md ## workflow quotidien
+        diagrammes/ ## modeles visuels
+        automatisation.json ## canvas agentique
+```
