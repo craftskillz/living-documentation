@@ -20,7 +20,7 @@ Le Workspace sert à relier trois éléments :
 
 - un **provider LLM** : le modèle d'IA utilisé
 - un **agent** : une consigne métier réutilisable
-- les **outils Living Documentation** 'exposés via MCP) : lire un document, le mettre à jour, générer une image, etc.
+- les **outils Living Documentation** (exposés via MCP) : lire un document, le mettre à jour, générer une image, etc.
 
 L'idée est simple : au lieu de réécrire le même prompt à chaque fois, vous créez un agent une fois, puis vous le relancez quand vous en avez besoin.
 
