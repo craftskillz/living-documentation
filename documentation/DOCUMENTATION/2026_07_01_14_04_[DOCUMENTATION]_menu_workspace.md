@@ -52,19 +52,6 @@ Les LLM et leurs agents ont des code couleurs indiquant leur capacités
 
 <!-- /layout-columns -->
 
-
-
-
-
-Un agent est attaché à un provider LLM.
-
-Par exemple :
-
-```text
-OpenRouter DeepSeek V4 Pro
-└── Agent "Corriger un document Markdown"
-```
-
 ---
 
 ### Créer un provider LLM
