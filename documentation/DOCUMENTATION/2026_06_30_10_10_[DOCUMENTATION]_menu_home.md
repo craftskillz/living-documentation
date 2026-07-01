@@ -34,6 +34,8 @@ Un clic sur un document l'ouvre dans la partie principale de la page.
 </div>
 </div>
 
+---
+
 ### Ce que vous voyez à droite
 
 <div class="grid grid-cols-2 gap-4 items-center">
@@ -52,6 +54,8 @@ Chaque élement d'une table des matières correspond à un Header
 ![Table des matières interactive](/images/table_des_matieres_document.png)
 </div>
 </div>
+
+---
 
 ### Dossiers et catégories
 
