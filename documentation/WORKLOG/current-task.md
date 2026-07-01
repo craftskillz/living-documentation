@@ -54,6 +54,7 @@ Le travail a couvert :
 - tache ponctuelle : reorganisation de la popup snippets avec renommage de `Colonnes` en `Disposition`, deplacement des listes et du tableau dans `Structure`, deplacement de `Comparaison` dans `Code & diagrammes`, et renommage de la categorie `Listes, code & donnees` en `Code & diagrammes`.
 - tache ponctuelle : ajout du snippet `Mermaid` dans `Code & diagrammes`, avec un builder `PIE CHART` permettant de definir un titre et des elements ponderes, puis de generer un bloc Markdown `mermaid` compatible avec le rendu existant.
 - tache ponctuelle : ajout de la regle de builder `PIE CHART` imposant que le total des elements ponderes ne depasse jamais 100, appliquee dans l'UI et dans le builder Markdown.
+- tache ponctuelle : remplacement de l'exemple Mermaid inspire de la documentation par un exemple original localise (`DOC WORKFLOW` en anglais, `CYCLE DOCUMENTAIRE` en francais), avec consigne de creer de nouveaux exemples originaux a partir des exemples fournis.
 
 ## Contenu modifie
 
@@ -102,6 +103,8 @@ La reorganisation de la popup snippets demandee ici est un ajustement UX de libe
 
 Le snippet Mermaid ajoute un comportement utilisateur durable. Un ADR devra etre cree et attache aux fichiers source concernes quand l'arbre Git sera propre, conformement a la regle projet sur les metadonnees Living Documentation.
 
+Les exemples Mermaid par defaut du builder ne reprennent pas textuellement les exemples fournis par l'utilisateur ou par la documentation Mermaid ; ils sont transformes en exemples originaux et localises.
+
 ## Verifications realisees
 
 - Creation du plan cible demandee par l'utilisateur.
@@ -145,6 +148,11 @@ Le snippet Mermaid ajoute un comportement utilisateur durable. Un ADR devra etre
 - `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "Mermaid picker builds and inserts a pie chart snippet" --project=chromium` execute avec succes apres ajout de la limite : 1 test passe.
 - `git diff --check -- src/frontend-svelte/src/lib/home/SnippetsModal.svelte src/frontend-svelte/src/lib/home/snippets/builders.ts tests/e2e/inline-snippet-edit.spec.ts` execute avec succes.
 - `graphify update .` execute avec succes apres ajout de la limite totale 100 du pie chart Mermaid.
+- `npm run build` execute avec succes apres remplacement de l'exemple Mermaid par defaut.
+- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "Mermaid picker builds and inserts a pie chart snippet" --project=chromium` execute avec succes apres remplacement de l'exemple : 1 test passe.
+- `rg -n "NETFLIX|Time spent looking|Time spent watching|Time spent sleeping" src/frontend-svelte dist tests -g '!node_modules'` ne retourne aucune occurrence.
+- `git diff --check -- src/frontend-svelte/src/lib/home/SnippetsModal.svelte src/frontend-svelte/src/lib/home/snippets/builders.ts src/frontend-svelte/src/lib/home/snippets/pickerData.ts src/frontend-svelte/public/i18n/fr.json src/frontend-svelte/public/i18n/en.json tests/e2e/inline-snippet-edit.spec.ts` execute avec succes apres remplacement de l'exemple.
+- `graphify update .` execute avec succes apres remplacement de l'exemple Mermaid.
 
 ## Verifications restantes
 
