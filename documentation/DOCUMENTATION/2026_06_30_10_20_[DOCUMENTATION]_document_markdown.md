@@ -28,12 +28,11 @@ Un texte peut contenir du **gras**, de l'_italique_ et une liste :
 ### Pourquoi utiliser les snippets ?
 
 Les snippets sont des blocs Markdown prêts à l'emploi.
+Ils évitent de retenir toutes les syntaxes et permettent d'insérer rapidement les éléments suivants :
 
 <!-- layout-columns: 1/2 | gap: sm -->
 
 <!-- col -->
-
-Ils évitent de retenir toutes les syntaxes et permettent d'insérer rapidement :
 
 - des titres
 - des listes
