@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-01T13:38:27.033Z",
+  "updatedAt": "2026-07-01T13:38:42.937Z",
   "entities": [
     {
       "id": "root",
@@ -460,6 +460,29 @@
         "expectedOutputMarker": "",
         "description": "Routes model calls and hosts the agents assigned to this provider.",
         "workspaceFolder": ""
+      }
+    },
+    {
+      "id": "agent-mr24ftt8",
+      "label": "Agent 1",
+      "kind": "agent",
+      "parentId": "provider-mr24cpyk",
+      "x": -373.16463102883614,
+      "y": -513.6170515073863,
+      "angle": -2.199114857512855,
+      "config": {
+        "endpoint": "",
+        "token": "",
+        "model": "",
+        "providerType": "chat",
+        "toolMode": "tools",
+        "timeout": 180,
+        "systemPrompt": "",
+        "requiresUserInput": false,
+        "userInputDescription": "",
+        "expectedOutputMarker": "",
+        "description": "Runs focused automation against documentation, source, or quality signals.",
+        "workspaceFolder": "AI/WORKSPACE/agent_1"
       }
     }
   ],
