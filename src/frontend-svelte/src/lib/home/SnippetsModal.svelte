@@ -70,6 +70,55 @@
   let confirmDialog = $state<ConfirmDialog>(null!);
   let colorSectionSwatch = "info";
   let colorTextSwatch = "info";
+  let mermaidKind = $state("pie");
+  let mermaidPieNextId = 1;
+  let mermaidPieItems = $state<Array<{ id: number; label: string; value: string }>>([]);
+  let mermaidTimelineNextId = 1;
+  let mermaidTimelineItems = $state<Array<{ id: number; period: string; event: string }>>([]);
+  let mermaidTreeNextId = 1;
+  let mermaidTreeItems = $state<Array<{ id: number; level: string; label: string; decorator: string; note: string }>>([]);
+  let mermaidSequenceNextId = 1;
+  let mermaidSequenceItems = $state<Array<{
+    id: number;
+    type: string;
+    from: string;
+    arrow: string;
+    to: string;
+    message: string;
+    notePosition: string;
+  }>>([]);
+
+  const MERMAID_PIE_MAX_TOTAL = 100;
+  const MERMAID_TREE_MAX_LEVEL = 6;
+  const MERMAID_PIE_DEFAULT_ITEMS = [
+    { labelKey: "snippet.mermaid_pie_default_item_1", value: "50" },
+    { labelKey: "snippet.mermaid_pie_default_item_2", value: "30" },
+    { labelKey: "snippet.mermaid_pie_default_item_3", value: "20" },
+  ];
+  const MERMAID_TIMELINE_DEFAULT_ITEMS = [
+    { period: "2023", eventKey: "snippet.mermaid_timeline_default_event_1" },
+    { period: "2024", eventKey: "snippet.mermaid_timeline_default_event_2" },
+    { period: "2024", eventKey: "snippet.mermaid_timeline_default_event_3" },
+    { period: "2025", eventKey: "snippet.mermaid_timeline_default_event_4" },
+    { period: "2026", eventKey: "snippet.mermaid_timeline_default_event_5" },
+  ];
+  const MERMAID_TREE_DEFAULT_ITEMS = [
+    { level: "0", labelKey: "snippet.mermaid_tree_default_label_1", decorator: "", noteKey: "" },
+    { level: "1", labelKey: "snippet.mermaid_tree_default_label_2", decorator: "", noteKey: "snippet.mermaid_tree_default_note_2" },
+    { level: "2", labelKey: "snippet.mermaid_tree_default_label_3", decorator: ":::highlight", noteKey: "snippet.mermaid_tree_default_note_3" },
+    { level: "2", labelKey: "snippet.mermaid_tree_default_label_4", decorator: "", noteKey: "snippet.mermaid_tree_default_note_4" },
+    { level: "1", labelKey: "snippet.mermaid_tree_default_label_5", decorator: "", noteKey: "snippet.mermaid_tree_default_note_5" },
+    { level: "1", labelKey: "snippet.mermaid_tree_default_label_6", decorator: "", noteKey: "snippet.mermaid_tree_default_note_6" },
+  ];
+  const MERMAID_SEQUENCE_DEFAULT_ITEMS = [
+    { type: "message", fromKey: "snippet.mermaid_sequence_default_actor_1", arrow: "->>", toKey: "snippet.mermaid_sequence_default_actor_2", messageKey: "snippet.mermaid_sequence_default_message_1", notePosition: "right of" },
+    { type: "message", fromKey: "snippet.mermaid_sequence_default_actor_2", arrow: "-->>", toKey: "snippet.mermaid_sequence_default_actor_3", messageKey: "snippet.mermaid_sequence_default_message_2", notePosition: "right of" },
+    { type: "message", fromKey: "snippet.mermaid_sequence_default_actor_3", arrow: "--x", toKey: "snippet.mermaid_sequence_default_actor_1", messageKey: "snippet.mermaid_sequence_default_message_3", notePosition: "right of" },
+    { type: "message", fromKey: "snippet.mermaid_sequence_default_actor_2", arrow: "-x", toKey: "snippet.mermaid_sequence_default_actor_3", messageKey: "snippet.mermaid_sequence_default_message_4", notePosition: "right of" },
+    { type: "note", fromKey: "", arrow: "->>", toKey: "snippet.mermaid_sequence_default_actor_3", messageKey: "snippet.mermaid_sequence_default_note_1", notePosition: "right of" },
+    { type: "message", fromKey: "snippet.mermaid_sequence_default_actor_3", arrow: "-->", toKey: "snippet.mermaid_sequence_default_actor_1", messageKey: "snippet.mermaid_sequence_default_message_5", notePosition: "right of" },
+    { type: "message", fromKey: "snippet.mermaid_sequence_default_actor_1", arrow: "->", toKey: "snippet.mermaid_sequence_default_actor_2", messageKey: "snippet.mermaid_sequence_default_message_6", notePosition: "right of" },
+  ];
 
   const tableCtrl = createTableController(() => snippetUpdatePreview());
   const treeCtrl = createTreeController(() => snippetUpdatePreview());
@@ -119,8 +168,8 @@
       section.appendChild(h3);
 
       const grid = document.createElement("div");
-      // 6 columns max: every picker category holds exactly 6 items, so capping at 6 fills each
-      // row edge-to-edge instead of leaving empty trailing columns on wide screens.
+      // 6 columns max keeps the picker aligned with the modal width while allowing
+      // larger categories to wrap into a second row.
       grid.className =
         "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2";
 
@@ -460,6 +509,7 @@
 
     if (type === "table") tableInit(tableCtrl);
     else if (type === "tree") treeInit(treeCtrl);
+    else if (type === "mermaid") mermaidInit();
     else if (type === "diagram") snippetDiagInit();
     else if (type === "emojis") emojiInit();
     else if (type === "attachment") {
@@ -529,6 +579,176 @@
       .replace(/^_|_$/g, "");
     const imgNameEl = byId<HTMLInputElement>("snip-diag-img-name");
     if (imgNameEl) imgNameEl.value = slug ? slug + ".png" : "diagram.png";
+  }
+
+  // ── Mermaid builder panel ──────────────────────────────────────────────
+  function mermaidPieDefaultTitle(): string {
+    return t("snippet.mermaid_pie_default_title") || "DOC WORKFLOW";
+  }
+
+  function mermaidTimelineDefaultTitle(): string {
+    return t("snippet.mermaid_timeline_default_title") || "DOCUMENTATION ROADMAP";
+  }
+
+  function mermaidResetBuilder(): void {
+    mermaidKind = "pie";
+    mermaidPieNextId = 1;
+    mermaidPieItems = MERMAID_PIE_DEFAULT_ITEMS.map((item) => ({
+      id: mermaidPieNextId++,
+      label: t(item.labelKey),
+      value: item.value,
+    }));
+    mermaidTimelineNextId = 1;
+    mermaidTimelineItems = MERMAID_TIMELINE_DEFAULT_ITEMS.map((item) => ({
+      id: mermaidTimelineNextId++,
+      period: item.period,
+      event: t(item.eventKey),
+    }));
+    mermaidTreeNextId = 1;
+    mermaidTreeItems = MERMAID_TREE_DEFAULT_ITEMS.map((item) => ({
+      id: mermaidTreeNextId++,
+      level: item.level,
+      label: t(item.labelKey),
+      decorator: item.decorator,
+      note: item.noteKey ? t(item.noteKey) : "",
+    }));
+    mermaidSequenceNextId = 1;
+    mermaidSequenceItems = MERMAID_SEQUENCE_DEFAULT_ITEMS.map((item) => ({
+      id: mermaidSequenceNextId++,
+      type: item.type,
+      from: item.fromKey ? t(item.fromKey) : "",
+      arrow: item.arrow,
+      to: t(item.toKey),
+      message: t(item.messageKey),
+      notePosition: item.notePosition,
+    }));
+  }
+
+  function mermaidInit(): void {
+    const typeSelect = byId<HTMLSelectElement>("snip-mermaid-type");
+    if (typeSelect) typeSelect.value = mermaidKind;
+    const pieTitleInput = byId<HTMLInputElement>("snip-mermaid-pie-title");
+    if (pieTitleInput && !pieTitleInput.value.trim()) pieTitleInput.value = mermaidPieDefaultTitle();
+    const timelineTitleInput = byId<HTMLInputElement>("snip-mermaid-timeline-title");
+    if (timelineTitleInput && !timelineTitleInput.value.trim()) {
+      timelineTitleInput.value = mermaidTimelineDefaultTitle();
+    }
+    snippetUpdatePreview();
+  }
+
+  function mermaidTypeChanged(): void {
+    mermaidKind = val("snip-mermaid-type") || "pie";
+    snippetUpdatePreview();
+  }
+
+  function mermaidAddPieItem(): void {
+    mermaidPieItems = [
+      ...mermaidPieItems,
+      { id: mermaidPieNextId++, label: "", value: "0" },
+    ];
+    snippetUpdatePreview();
+  }
+
+  function mermaidPieValueChanged(id: number, input: HTMLInputElement): void {
+    const otherTotal = mermaidPieItems.reduce((total, item) => {
+      if (item.id === id) return total;
+      const value = Number(item.value);
+      return total + (Number.isFinite(value) ? Math.max(0, value) : 0);
+    }, 0);
+    const maxValue = Math.max(0, MERMAID_PIE_MAX_TOTAL - otherTotal);
+    const numericValue = Number(input.value);
+    const nextValue = Number.isFinite(numericValue)
+      ? Math.min(maxValue, Math.max(0, numericValue))
+      : 0;
+    mermaidPieItems = mermaidPieItems.map((item) =>
+      item.id === id ? { ...item, value: String(nextValue) } : item,
+    );
+    input.value = String(nextValue);
+    snippetUpdatePreview();
+  }
+
+  function mermaidRemovePieItem(id: number): void {
+    if (mermaidPieItems.length <= 1) return;
+    mermaidPieItems = mermaidPieItems.filter((item) => item.id !== id);
+    snippetUpdatePreview();
+  }
+
+  function mermaidAddTimelineItem(): void {
+    mermaidTimelineItems = [
+      ...mermaidTimelineItems,
+      { id: mermaidTimelineNextId++, period: "", event: "" },
+    ];
+    snippetUpdatePreview();
+  }
+
+  function mermaidRemoveTimelineItem(id: number): void {
+    if (mermaidTimelineItems.length <= 1) return;
+    mermaidTimelineItems = mermaidTimelineItems.filter((item) => item.id !== id);
+    snippetUpdatePreview();
+  }
+
+  function mermaidAddTreeItem(): void {
+    mermaidTreeItems = [
+      ...mermaidTreeItems,
+      { id: mermaidTreeNextId++, level: "1", label: "", decorator: "", note: "" },
+    ];
+    snippetUpdatePreview();
+  }
+
+  function mermaidTreeLevelChanged(id: number, input: HTMLInputElement): void {
+    const numericValue = Number(input.value);
+    const nextValue = Number.isFinite(numericValue)
+      ? Math.min(MERMAID_TREE_MAX_LEVEL, Math.max(0, numericValue))
+      : 0;
+    mermaidTreeItems = mermaidTreeItems.map((item) =>
+      item.id === id ? { ...item, level: String(nextValue) } : item,
+    );
+    input.value = String(nextValue);
+    snippetUpdatePreview();
+  }
+
+  function mermaidRemoveTreeItem(id: number): void {
+    if (mermaidTreeItems.length <= 1) return;
+    mermaidTreeItems = mermaidTreeItems.filter((item) => item.id !== id);
+    snippetUpdatePreview();
+  }
+
+  function mermaidAddSequenceMessage(): void {
+    mermaidSequenceItems = [
+      ...mermaidSequenceItems,
+      {
+        id: mermaidSequenceNextId++,
+        type: "message",
+        from: "",
+        arrow: "->>",
+        to: "",
+        message: "",
+        notePosition: "right of",
+      },
+    ];
+    snippetUpdatePreview();
+  }
+
+  function mermaidAddSequenceNote(): void {
+    mermaidSequenceItems = [
+      ...mermaidSequenceItems,
+      {
+        id: mermaidSequenceNextId++,
+        type: "note",
+        from: "",
+        arrow: "->>",
+        to: "",
+        message: "",
+        notePosition: "right of",
+      },
+    ];
+    snippetUpdatePreview();
+  }
+
+  function mermaidRemoveSequenceItem(id: number): void {
+    if (mermaidSequenceItems.length <= 1) return;
+    mermaidSequenceItems = mermaidSequenceItems.filter((item) => item.id !== id);
+    snippetUpdatePreview();
   }
 
   // ── Build data / preview ───────────────────────────────────────────────
@@ -637,6 +857,24 @@
         const sel = byId<HTMLSelectElement>("snip-diag-select")!;
         return { id: sel.value, label: snippetSelectedText(sel, "Diagram"), imageName: imgName };
       }
+      case "mermaid":
+        return {
+          kind: val("snip-mermaid-type"),
+          pieTitle: val("snip-mermaid-pie-title"),
+          pieTitleFallback: mermaidPieDefaultTitle(),
+          pieItems: mermaidPieItems,
+          pieItemLabelFallback: t("snippet.mermaid_pie_item_fallback"),
+          timelineTitle: val("snip-mermaid-timeline-title"),
+          timelineTitleFallback: mermaidTimelineDefaultTitle(),
+          timelineItems: mermaidTimelineItems,
+          timelinePeriodFallback: t("snippet.mermaid_timeline_period_fallback"),
+          timelineEventFallback: t("snippet.mermaid_timeline_event_fallback"),
+          treeItems: mermaidTreeItems,
+          treeLabelFallback: t("snippet.mermaid_tree_label_fallback"),
+          sequenceItems: mermaidSequenceItems,
+          sequenceActorFallback: t("snippet.mermaid_sequence_actor_fallback"),
+          sequenceMessageFallback: t("snippet.mermaid_sequence_message_fallback"),
+        };
       case "colored-text":
         return {
           color: snippetSwatch(colorTextSwatch),
@@ -1130,6 +1368,7 @@
       }
       colorSectionSwatch = "info";
       colorTextSwatch = "info";
+      mermaidResetBuilder();
       // Defer until the modal markup is in the DOM.
       queueMicrotask(() => {
         applyModalMode();
@@ -1232,6 +1471,7 @@
           <option value="ordered-list">{t("snippet.numbered_list")}</option>
           <option value="unordered-list">{t("snippet.bullet_list")}</option>
           <option value="code-block">{t("snippet.code_block")}</option>
+          <option value="mermaid">{t("snippet.mermaid")}</option>
           <option value="blockquote">{t("snippet.blockquote")}</option>
           <option value="separator">{t("snippet.separator")}</option>
           <option value="image">{t("snippet.image")}</option>
@@ -1380,6 +1620,276 @@
         <div class="space-y-1.5">
           <label for="snip-code-content" class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("snippet.code_content_label")}</label>
           <textarea id="snip-code-content" rows="12" placeholder={t("snippet.code_content_placeholder")} oninput={snippetUpdatePreview} class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y font-mono leading-relaxed"></textarea>
+        </div>
+      </div>
+
+      <!-- Panel: Mermaid builder -->
+      <div id="snip-panel-mermaid" class="hidden space-y-4">
+        <div class="space-y-1.5">
+          <label for="snip-mermaid-type" class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("snippet.mermaid_builder_type_label")}</label>
+          <select id="snip-mermaid-type" bind:value={mermaidKind} onchange={mermaidTypeChanged} class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="pie">{t("snippet.mermaid_type_pie")}</option>
+            <option value="timeline">{t("snippet.mermaid_type_timeline")}</option>
+            <option value="tree-view">{t("snippet.mermaid_type_tree_view")}</option>
+            <option value="sequence">{t("snippet.mermaid_type_sequence")}</option>
+          </select>
+        </div>
+
+        <div id="snip-mermaid-pie-builder" class:hidden={mermaidKind !== "pie"} class="space-y-3">
+          <div class="space-y-1.5">
+            <label for="snip-mermaid-pie-title" class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("snippet.mermaid_pie_title_label")}</label>
+            <input id="snip-mermaid-pie-title" type="text" value={mermaidPieDefaultTitle()} oninput={snippetUpdatePreview} placeholder={t("snippet.mermaid_pie_title_placeholder")} class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+
+          <div class="space-y-2">
+            <div class="flex items-center justify-between gap-3">
+              <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("snippet.mermaid_pie_items_label")}</label>
+              <button type="button" onclick={mermaidAddPieItem} class="text-xs px-3 py-1.5 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                <i class="fa-solid fa-plus mr-1" aria-hidden="true"></i>
+                {t("snippet.mermaid_pie_add_item")}
+              </button>
+            </div>
+
+            <div class="space-y-2">
+              {#each mermaidPieItems as item, index (item.id)}
+                <div class="grid grid-cols-[minmax(0,1fr)_7rem_auto] gap-2 items-center">
+                  <input
+                    type="text"
+                    bind:value={item.label}
+                    oninput={snippetUpdatePreview}
+                    aria-label={`${t("snippet.mermaid_pie_item_label")} ${index + 1}`}
+                    placeholder={t("snippet.mermaid_pie_item_label_placeholder")}
+                    class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={item.value}
+                    oninput={(e) => mermaidPieValueChanged(item.id, e.currentTarget)}
+                    aria-label={`${t("snippet.mermaid_pie_item_value")} ${index + 1}`}
+                    placeholder="0"
+                    class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button
+                    type="button"
+                    onclick={() => mermaidRemovePieItem(item.id)}
+                    title={t("snippet.mermaid_pie_remove_item")}
+                    aria-label={t("snippet.mermaid_pie_remove_item")}
+                    class="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                    disabled={mermaidPieItems.length <= 1}
+                  >
+                    <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                  </button>
+                </div>
+              {/each}
+            </div>
+          </div>
+        </div>
+
+        <div id="snip-mermaid-timeline-builder" class:hidden={mermaidKind !== "timeline"} class="space-y-3">
+          <div class="space-y-1.5">
+            <label for="snip-mermaid-timeline-title" class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("snippet.mermaid_timeline_title_label")}</label>
+            <input id="snip-mermaid-timeline-title" type="text" value={mermaidTimelineDefaultTitle()} oninput={snippetUpdatePreview} placeholder={t("snippet.mermaid_timeline_title_placeholder")} class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+
+          <div class="space-y-2">
+            <div class="flex items-center justify-between gap-3">
+              <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("snippet.mermaid_timeline_items_label")}</label>
+              <button type="button" onclick={mermaidAddTimelineItem} class="text-xs px-3 py-1.5 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                <i class="fa-solid fa-plus mr-1" aria-hidden="true"></i>
+                {t("snippet.mermaid_timeline_add_item")}
+              </button>
+            </div>
+
+            <div class="space-y-2">
+              {#each mermaidTimelineItems as item, index (item.id)}
+                <div class="grid grid-cols-[8rem_minmax(0,1fr)_auto] gap-2 items-center">
+                  <input
+                    type="text"
+                    bind:value={item.period}
+                    oninput={snippetUpdatePreview}
+                    aria-label={`${t("snippet.mermaid_timeline_period_label")} ${index + 1}`}
+                    placeholder={t("snippet.mermaid_timeline_period_placeholder")}
+                    class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <input
+                    type="text"
+                    bind:value={item.event}
+                    oninput={snippetUpdatePreview}
+                    aria-label={`${t("snippet.mermaid_timeline_event_label")} ${index + 1}`}
+                    placeholder={t("snippet.mermaid_timeline_event_placeholder")}
+                    class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button
+                    type="button"
+                    onclick={() => mermaidRemoveTimelineItem(item.id)}
+                    title={t("snippet.mermaid_timeline_remove_item")}
+                    aria-label={t("snippet.mermaid_timeline_remove_item")}
+                    class="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                    disabled={mermaidTimelineItems.length <= 1}
+                  >
+                    <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                  </button>
+                </div>
+              {/each}
+            </div>
+          </div>
+        </div>
+
+        <div id="snip-mermaid-tree-builder" class:hidden={mermaidKind !== "tree-view"} class="space-y-3">
+          <div class="flex items-center justify-between gap-3">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("snippet.mermaid_tree_items_label")}</label>
+            <button type="button" onclick={mermaidAddTreeItem} class="text-xs px-3 py-1.5 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+              <i class="fa-solid fa-plus mr-1" aria-hidden="true"></i>
+              {t("snippet.mermaid_tree_add_item")}
+            </button>
+          </div>
+
+          <div class="space-y-2">
+            {#each mermaidTreeItems as item, index (item.id)}
+              <div class="grid grid-cols-[5rem_minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_auto] gap-2 items-center">
+                <input
+                  type="number"
+                  min="0"
+                  max={MERMAID_TREE_MAX_LEVEL}
+                  step="1"
+                  value={item.level}
+                  oninput={(e) => mermaidTreeLevelChanged(item.id, e.currentTarget)}
+                  aria-label={`${t("snippet.mermaid_tree_level_label")} ${index + 1}`}
+                  placeholder="0"
+                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  type="text"
+                  bind:value={item.label}
+                  oninput={snippetUpdatePreview}
+                  aria-label={`${t("snippet.mermaid_tree_label_label")} ${index + 1}`}
+                  placeholder={t("snippet.mermaid_tree_label_placeholder")}
+                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  type="text"
+                  bind:value={item.decorator}
+                  oninput={snippetUpdatePreview}
+                  aria-label={`${t("snippet.mermaid_tree_decorator_label")} ${index + 1}`}
+                  placeholder={t("snippet.mermaid_tree_decorator_placeholder")}
+                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  type="text"
+                  bind:value={item.note}
+                  oninput={snippetUpdatePreview}
+                  aria-label={`${t("snippet.mermaid_tree_note_label")} ${index + 1}`}
+                  placeholder={t("snippet.mermaid_tree_note_placeholder")}
+                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  type="button"
+                  onclick={() => mermaidRemoveTreeItem(item.id)}
+                  title={t("snippet.mermaid_tree_remove_item")}
+                  aria-label={t("snippet.mermaid_tree_remove_item")}
+                  class="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                  disabled={mermaidTreeItems.length <= 1}
+                >
+                  <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                </button>
+              </div>
+            {/each}
+          </div>
+        </div>
+
+        <div id="snip-mermaid-sequence-builder" class:hidden={mermaidKind !== "sequence"} class="space-y-3">
+          <div class="flex items-center justify-between gap-3">
+            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("snippet.mermaid_sequence_items_label")}</label>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick={mermaidAddSequenceMessage} class="text-xs px-3 py-1.5 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                <i class="fa-solid fa-plus mr-1" aria-hidden="true"></i>
+                {t("snippet.mermaid_sequence_add_message")}
+              </button>
+              <button type="button" onclick={mermaidAddSequenceNote} class="text-xs px-3 py-1.5 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                <i class="fa-solid fa-note-sticky mr-1" aria-hidden="true"></i>
+                {t("snippet.mermaid_sequence_add_note")}
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            {#each mermaidSequenceItems as item, index (item.id)}
+              <div class="grid grid-cols-[7rem_minmax(0,1fr)_7rem_minmax(0,1fr)_minmax(0,1.4fr)_auto] gap-2 items-center">
+                <select
+                  bind:value={item.type}
+                  onchange={snippetUpdatePreview}
+                  aria-label={`${t("snippet.mermaid_sequence_type_label")} ${index + 1}`}
+                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="message">{t("snippet.mermaid_sequence_type_message")}</option>
+                  <option value="note">{t("snippet.mermaid_sequence_type_note")}</option>
+                </select>
+                {#if item.type === "note"}
+                  <select
+                    bind:value={item.notePosition}
+                    onchange={snippetUpdatePreview}
+                    aria-label={`${t("snippet.mermaid_sequence_note_position_label")} ${index + 1}`}
+                    class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="left of">{t("snippet.mermaid_sequence_note_left")}</option>
+                    <option value="right of">{t("snippet.mermaid_sequence_note_right")}</option>
+                    <option value="over">{t("snippet.mermaid_sequence_note_over")}</option>
+                  </select>
+                {:else}
+                  <input
+                    type="text"
+                    bind:value={item.from}
+                    oninput={snippetUpdatePreview}
+                    aria-label={`${t("snippet.mermaid_sequence_from_label")} ${index + 1}`}
+                    placeholder={t("snippet.mermaid_sequence_from_placeholder")}
+                    class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                {/if}
+                <select
+                  bind:value={item.arrow}
+                  onchange={snippetUpdatePreview}
+                  aria-label={`${t("snippet.mermaid_sequence_arrow_label")} ${index + 1}`}
+                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-40"
+                  disabled={item.type === "note"}
+                >
+                  <option value="->>">-&gt;&gt;</option>
+                  <option value="-->>">--&gt;&gt;</option>
+                  <option value="--x">--x</option>
+                  <option value="-x">-x</option>
+                  <option value="-->">--&gt;</option>
+                  <option value="->">-&gt;</option>
+                </select>
+                <input
+                  type="text"
+                  bind:value={item.to}
+                  oninput={snippetUpdatePreview}
+                  aria-label={`${t("snippet.mermaid_sequence_to_label")} ${index + 1}`}
+                  placeholder={t("snippet.mermaid_sequence_to_placeholder")}
+                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  type="text"
+                  bind:value={item.message}
+                  oninput={snippetUpdatePreview}
+                  aria-label={`${t("snippet.mermaid_sequence_message_label")} ${index + 1}`}
+                  placeholder={t("snippet.mermaid_sequence_message_placeholder")}
+                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  type="button"
+                  onclick={() => mermaidRemoveSequenceItem(item.id)}
+                  title={t("snippet.mermaid_sequence_remove_item")}
+                  aria-label={t("snippet.mermaid_sequence_remove_item")}
+                  class="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                  disabled={mermaidSequenceItems.length <= 1}
+                >
+                  <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                </button>
+              </div>
+            {/each}
+          </div>
         </div>
       </div>
 

@@ -997,6 +997,181 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(page.locator('#snippet-submit-btn')).toBeVisible();
   });
 
+  test('Mermaid picker builds and inserts a pie chart snippet', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await expect(page.locator('#doc-content')).toBeVisible();
+    await page.evaluate(() => {
+      (window as any).openSnippetsModalForInlineInsert(0);
+    });
+
+    await page.locator('#snippet-picker [data-snippet-type="mermaid"]').click();
+    await expect(page.locator('#snippet-type')).toHaveValue('mermaid');
+    await expect(page.locator('#snip-mermaid-type')).toHaveValue('pie');
+    await expect(page.locator('#snip-mermaid-type')).toContainText('PIE CHART');
+    await expect(page.locator('#snip-mermaid-pie-title')).toHaveValue('DOC WORKFLOW');
+    await expect(page.locator('#snip-panel-mermaid input[aria-label^="Label"]')).toHaveCount(3);
+
+    await page.locator('#snip-mermaid-pie-title').fill('DOC TIME');
+    await page.locator('#snip-panel-mermaid input[aria-label="Label 1"]').fill('Writing');
+    await page.locator('#snip-panel-mermaid input[aria-label="Weight 1"]').fill('80');
+    await expect(page.locator('#snip-panel-mermaid input[aria-label="Weight 1"]')).toHaveValue('50');
+    await page.locator('#snip-panel-mermaid input[aria-label="Weight 3"]').fill('0');
+    await page.locator('#snip-panel-mermaid input[aria-label="Weight 2"]').fill('10');
+    await page.locator('#snip-panel-mermaid input[aria-label="Weight 1"]').fill('80');
+    await page.getByRole('button', { name: /Add item/ }).click();
+    await page.locator('#snip-panel-mermaid input[aria-label="Label 4"]').fill('Reviewing');
+    await page.locator('#snip-panel-mermaid input[aria-label="Weight 4"]').fill('20');
+    await expect(page.locator('#snip-panel-mermaid input[aria-label="Weight 4"]')).toHaveValue('10');
+
+    await expect(page.locator('#snippet-preview')).toContainText('pie title DOC TIME');
+    await expect(page.locator('#snippet-preview')).toContainText('"Reviewing" : 10');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content .mermaid').first()).toBeVisible();
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain('```mermaid\npie title DOC TIME');
+    expect(onDisk).toContain('         "Writing" : 80');
+    expect(onDisk).toContain('         "Reviewing" : 10');
+  });
+
+  test('Mermaid picker builds and inserts a timeline snippet', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await expect(page.locator('#doc-content')).toBeVisible();
+    await page.evaluate(() => {
+      (window as any).openSnippetsModalForInlineInsert(0);
+    });
+
+    await page.locator('#snippet-picker [data-snippet-type="mermaid"]').click();
+    await page.locator('#snip-mermaid-type').selectOption('timeline');
+    await expect(page.locator('#snip-mermaid-type')).toHaveValue('timeline');
+    await expect(page.locator('#snip-mermaid-type')).toContainText('TIMELINE');
+    await expect(page.locator('#snip-mermaid-timeline-title')).toHaveValue(
+      'DOCUMENTATION ROADMAP',
+    );
+    await expect(page.locator('#snip-panel-mermaid input[aria-label^="Period"]')).toHaveCount(
+      5,
+    );
+
+    await page.locator('#snip-mermaid-timeline-title').fill('PROJECT MILESTONES');
+    await page.locator('#snip-panel-mermaid input[aria-label="Period 1"]').fill('2022');
+    await page.locator('#snip-panel-mermaid input[aria-label="Event 1"]').fill('Research notes');
+    await page.getByRole('button', { name: /Add event/ }).click();
+    await page.locator('#snip-panel-mermaid input[aria-label="Period 6"]').fill('2027');
+    await page.locator('#snip-panel-mermaid input[aria-label="Event 6"]').fill('Template gallery');
+
+    await expect(page.locator('#snippet-preview')).toContainText('timeline');
+    await expect(page.locator('#snippet-preview')).toContainText('title PROJECT MILESTONES');
+    await expect(page.locator('#snippet-preview')).toContainText('2027 : Template gallery');
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content .mermaid').first()).toBeVisible();
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain('```mermaid\ntimeline\n    title PROJECT MILESTONES');
+    expect(onDisk).toContain('    2022 : Research notes');
+    expect(onDisk).toContain('    2027 : Template gallery');
+  });
+
+  test('Mermaid picker builds and inserts a tree view snippet', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await expect(page.locator('#doc-content')).toBeVisible();
+    await page.evaluate(() => {
+      (window as any).openSnippetsModalForInlineInsert(0);
+    });
+
+    await page.locator('#snippet-picker [data-snippet-type="mermaid"]').click();
+    await page.locator('#snip-mermaid-type').selectOption('tree-view');
+    await expect(page.locator('#snip-mermaid-type')).toHaveValue('tree-view');
+    await expect(page.locator('#snip-mermaid-type')).toContainText('TREE VIEW');
+    await expect(page.locator('#snip-panel-mermaid input[aria-label^="Node"]')).toHaveCount(6);
+
+    await page.locator('#snip-panel-mermaid input[aria-label="Node 1"]').fill('project-hub/');
+    await page.locator('#snip-panel-mermaid input[aria-label="Level 2"]').fill('1');
+    await page.locator('#snip-panel-mermaid input[aria-label="Node 2"]').fill('playbooks/');
+    await page.locator('#snip-panel-mermaid input[aria-label="Decorator 3"]').fill(
+      ':::highlight icon(logos:markdown)',
+    );
+    await page.locator('#snip-panel-mermaid input[aria-label="Note 3"]').fill('reader guide');
+    await page.getByRole('button', { name: /Add node/ }).click();
+    await page.locator('#snip-panel-mermaid input[aria-label="Level 7"]').fill('2');
+    await page.locator('#snip-panel-mermaid input[aria-label="Node 7"]').fill('release-plan.md');
+    await page.locator('#snip-panel-mermaid input[aria-label="Note 7"]').fill('publication plan');
+
+    await expect(page.locator('#snippet-preview')).toContainText('treeView-beta');
+    await expect(page.locator('#snippet-preview')).toContainText('project-hub/');
+    await expect(page.locator('#snippet-preview')).toContainText(
+      'getting-started.md :::highlight icon(logos:markdown) ## reader guide',
+    );
+    await expect(page.locator('#snippet-preview')).toContainText(
+      'release-plan.md ## publication plan',
+    );
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content .mermaid').first()).toBeVisible();
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain('```mermaid\ntreeView-beta\n    project-hub/');
+    expect(onDisk).toContain(
+      '            getting-started.md :::highlight icon(logos:markdown) ## reader guide',
+    );
+    expect(onDisk).toContain('            release-plan.md ## publication plan');
+  });
+
+  test('Mermaid picker builds and inserts a sequence diagram snippet', async ({ page, ld }) => {
+    const docPath = path.join(ld.docsAbs, `${docId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    await expect(page.locator('#doc-content')).toBeVisible();
+    await page.evaluate(() => {
+      (window as any).openSnippetsModalForInlineInsert(0);
+    });
+
+    await page.locator('#snippet-picker [data-snippet-type="mermaid"]').click();
+    await page.locator('#snip-mermaid-type').selectOption('sequence');
+    await expect(page.locator('#snip-mermaid-type')).toHaveValue('sequence');
+    await expect(page.locator('#snip-mermaid-type')).toContainText('SEQUENCE DIAGRAM');
+    await expect(page.locator('#snip-panel-mermaid select[aria-label^="Type"]')).toHaveCount(7);
+
+    await page.locator('#snip-panel-mermaid input[aria-label="From 1"]').fill('Coordinator');
+    await page.locator('#snip-panel-mermaid input[aria-label="To 1"]').fill('Reviewer');
+    await page.locator('#snip-panel-mermaid input[aria-label="Message 1"]').fill('Ready for review');
+    await page.locator('#snip-panel-mermaid input[aria-label="To 5"]').fill('Publisher');
+    await page
+      .locator('#snip-panel-mermaid input[aria-label="Message 5"]')
+      .fill('Review takes time<br/>before release');
+    await page.getByRole('button', { name: /Add message/ }).click();
+    await page.locator('#snip-panel-mermaid input[aria-label="From 8"]').fill('Reviewer');
+    await page.locator('#snip-panel-mermaid select[aria-label="Arrow 8"]').selectOption('-->>');
+    await page.locator('#snip-panel-mermaid input[aria-label="To 8"]').fill('Coordinator');
+    await page.locator('#snip-panel-mermaid input[aria-label="Message 8"]').fill('Approved');
+
+    await expect(page.locator('#snippet-preview')).toContainText('sequenceDiagram');
+    await expect(page.locator('#snippet-preview')).toContainText(
+      'Coordinator ->> Reviewer: Ready for review',
+    );
+    await expect(page.locator('#snippet-preview')).toContainText(
+      'Note right of Publisher: Review takes time<br/>before release',
+    );
+    await expect(page.locator('#snippet-preview')).toContainText(
+      'Reviewer -->> Coordinator: Approved',
+    );
+    await page.locator('#snippet-submit-btn').click();
+
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content .mermaid').first()).toBeVisible();
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    expect(onDisk).toContain('```mermaid\nsequenceDiagram\n    Coordinator ->> Reviewer: Ready for review');
+    expect(onDisk).toContain('    Note right of Publisher: Review takes time<br/>before release');
+    expect(onDisk).toContain('    Reviewer -->> Coordinator: Approved');
+  });
+
   test('inline insert picker pre-fills unordered and ordered list editors', async ({ page, ld }) => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await expect(page.locator('#doc-content')).toBeVisible();

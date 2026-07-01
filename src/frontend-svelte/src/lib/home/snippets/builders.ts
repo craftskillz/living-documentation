@@ -12,6 +12,14 @@ function ldSnippetValueOr(value: string | undefined, fallback: string): string {
   return value || fallback;
 }
 
+function cleanMermaidLine(value: string): string {
+  return value.replace(/\s+/g, " ").trim();
+}
+
+const MERMAID_PIE_MAX_TOTAL = 100;
+const MERMAID_TREE_MAX_LEVEL = 6;
+const MERMAID_TREE_INDENT_WIDTH = 4;
+
 export function ldBuildCollapsibleSnippetMarkdown(data: {
   summary?: string;
   summaryFallback: string;
@@ -150,6 +158,110 @@ export function ldBuildDiagramSnippetMarkdown(data: {
   return `[![${data.label}](./images/${data.imageName})](/diagram?id=${data.id})`;
 }
 
+export function ldBuildMermaidSnippetMarkdown(data: {
+  kind?: string;
+  title?: string;
+  titleFallback?: string;
+  items?: Array<{ label?: string; value?: string | number }>;
+  itemLabelFallback?: string;
+  pieTitle?: string;
+  pieTitleFallback?: string;
+  pieItems?: Array<{ label?: string; value?: string | number }>;
+  pieItemLabelFallback?: string;
+  timelineTitle?: string;
+  timelineTitleFallback?: string;
+  timelineItems?: Array<{ period?: string; event?: string }>;
+  timelinePeriodFallback?: string;
+  timelineEventFallback?: string;
+  treeItems?: Array<{ level?: string | number; label?: string; decorator?: string; note?: string }>;
+  treeLabelFallback?: string;
+  sequenceItems?: Array<{
+    type?: string;
+    from?: string;
+    arrow?: string;
+    to?: string;
+    message?: string;
+    notePosition?: string;
+  }>;
+  sequenceActorFallback?: string;
+  sequenceMessageFallback?: string;
+}): string {
+  const kind = data.kind || "pie";
+  if (kind === "timeline") {
+    const title = cleanMermaidLine(
+      data.timelineTitle || data.timelineTitleFallback || "DOCUMENTATION ROADMAP",
+    );
+    const grouped = new Map<string, string[]>();
+    (data.timelineItems || []).forEach((item, index) => {
+      const period = cleanMermaidLine(
+        item.period || `${data.timelinePeriodFallback || "Period"} ${index + 1}`,
+      );
+      const event = cleanMermaidLine(
+        item.event || `${data.timelineEventFallback || "Event"} ${index + 1}`,
+      );
+      grouped.set(period, [...(grouped.get(period) || []), event]);
+    });
+    const items = [...grouped.entries()].map(
+      ([period, events]) => `    ${period} : ${events.join(" : ")}`,
+    );
+    return `\`\`\`mermaid\ntimeline\n    title ${title}\n${items.join("\n")}\n\`\`\``;
+  }
+  if (kind === "tree-view") {
+    const items = (data.treeItems || []).map((item, index) => {
+      const rawLevel = Number(item.level);
+      const level = Number.isFinite(rawLevel)
+        ? Math.min(MERMAID_TREE_MAX_LEVEL, Math.max(0, rawLevel))
+        : 0;
+      const indent = " ".repeat((level + 1) * MERMAID_TREE_INDENT_WIDTH);
+      const label = cleanMermaidLine(
+        item.label || `${data.treeLabelFallback || "Node"} ${index + 1}`,
+      );
+      const decorator = cleanMermaidLine(item.decorator || "");
+      const note = cleanMermaidLine(item.note || "");
+      const decoratorPart = decorator ? ` ${decorator}` : "";
+      const notePart = note ? ` ## ${note}` : "";
+      return `${indent}${label}${decoratorPart}${notePart}`;
+    });
+    return `\`\`\`mermaid\ntreeView-beta\n${items.join("\n")}\n\`\`\``;
+  }
+  if (kind === "sequence") {
+    const items = (data.sequenceItems || []).map((item, index) => {
+      const to = cleanMermaidLine(
+        item.to || `${data.sequenceActorFallback || "Participant"} ${index + 1}`,
+      );
+      const message = cleanMermaidLine(
+        item.message || `${data.sequenceMessageFallback || "Message"} ${index + 1}`,
+      );
+      if (item.type === "note") {
+        const notePosition = cleanMermaidLine(item.notePosition || "right of");
+        return `    Note ${notePosition} ${to}: ${message}`;
+      }
+      const from = cleanMermaidLine(
+        item.from || `${data.sequenceActorFallback || "Participant"} ${index + 1}`,
+      );
+      const arrow = cleanMermaidLine(item.arrow || "->>");
+      return `    ${from} ${arrow} ${to}: ${message}`;
+    });
+    return `\`\`\`mermaid\nsequenceDiagram\n${items.join("\n")}\n\`\`\``;
+  }
+  if (kind !== "pie") return "```mermaid\n```\n";
+
+  const title = cleanMermaidLine(
+    data.pieTitle || data.title || data.pieTitleFallback || data.titleFallback || "DOC WORKFLOW",
+  );
+  let remaining = MERMAID_PIE_MAX_TOTAL;
+  const items = (data.pieItems || data.items || []).map((item, index) => {
+    const rawLabel = (item.label || `${data.pieItemLabelFallback || data.itemLabelFallback || "Item"} ${index + 1}`).trim();
+    const label = rawLabel.replace(/"/g, '\\"');
+    const rawValue = Number(item.value);
+    const positiveValue = Number.isFinite(rawValue) ? Math.max(0, rawValue) : 0;
+    const value = Math.min(remaining, positiveValue);
+    remaining -= value;
+    return `         "${label}" : ${value}`;
+  });
+  return `\`\`\`mermaid\npie title ${title}\n${items.join("\n")}\n\`\`\``;
+}
+
 export interface SwatchColor {
   bg: string;
   border: string;
@@ -232,6 +344,8 @@ export function ldBuildSnippetMarkdown(type: string, data: any): string {
       return data.markdown;
     case "diagram":
       return ldBuildDiagramSnippetMarkdown(data);
+    case "mermaid":
+      return ldBuildMermaidSnippetMarkdown(data);
     case "colored-text":
       return ldBuildColoredTextSnippetMarkdown(data);
     case "colored-section":
