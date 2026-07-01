@@ -154,6 +154,13 @@ Ils sont enregistrés dans l'espace de travail de l'agent, par exemple :
 AI/WORKSPACE/mon_agent/
 ```
 
+<!-- quote-type: warning -->
+<!-- quote-title: Important -->
+<!-- quote-icon -->
+> Vous pouvez cocher dans la partie <kbd>Admin</kbd> la case à cocher *Debug agents* de la partie *Développeur*
+>
+> En faisant cela, les différents échanges avec le LLM sont capturées et peuvent vous aider à comprendre si il y a des éléments à ajuster dans votre prompt.
+
 ---
 
 ### Providers image
