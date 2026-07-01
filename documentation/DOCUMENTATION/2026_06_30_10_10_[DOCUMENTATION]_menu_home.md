@@ -13,7 +13,7 @@ C'est ici que vous retrouvez vos dossiers, vos catégories, vos documents, et le
 
 ### Ce que vous voyez à gauche
 
-<div class="grid grid-cols-2 gap-4 border bg-blue-300">
+<div class="grid grid-cols-2 gap-4 border background-blue-300">
   <div>
 
 La colonne de gauche affiche :
