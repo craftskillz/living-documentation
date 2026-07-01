@@ -98,6 +98,10 @@ Dans cet exemple, l'agent attend un prompt complet pour générer une image.
 
 Pendant que l'agent travaille, **Living Documentation** affiche des toasts de progression.
 
+<!-- layout-columns -->
+
+<!-- col -->
+
 Selon la configuration, vous pouvez voir :
 
 - l'appel au modèle
@@ -106,6 +110,13 @@ Selon la configuration, vous pouvez voir :
 - un nouvel essai sans tools si le modèle ne les accepte pas
 
 Vous n'avez pas besoin de rester bloqué sur la popup : l'exécution produit un document de résultat.
+
+<!-- col -->
+
+<!-- image-width: full -->
+![Toast affichant la progression temps réel d'une exécution agent](/images/feedback_execution_agent.png)
+
+<!-- /layout-columns -->
 
 ---
 
@@ -123,8 +134,6 @@ Pendant l'exécution, un toast affiche l'étape en cours.
 
 Par exemple : interrogation du modèle, appel d'un tool, nouvel essai ou attente de résultat.
 
-<!-- image-width: full -->
-![Toast affichant la progression temps réel d'une exécution agent](/images/feedback_execution_agent.png)
 
 <!-- col -->
 
