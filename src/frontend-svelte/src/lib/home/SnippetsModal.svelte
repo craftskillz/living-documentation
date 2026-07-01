@@ -651,6 +651,15 @@
         return { value: val("snip-emoji-string") };
       case "compare":
         return { content: val("snip-compare-content") };
+      case "columns":
+        return {
+          columns: Number(val("snip-columns-count")) || 2,
+          ratio: val("snip-columns-ratio"),
+          verticalAlign: val("snip-columns-valign"),
+          textAlign: val("snip-columns-text"),
+          gap: val("snip-columns-gap"),
+          bodyFallback: t("snippet.columns_body_fallback"),
+        };
       default:
         return {};
     }
@@ -1234,6 +1243,7 @@
           <option value="attachment">{t("snippet.attachment")}</option>
           <option value="local-search">{t("snippet.local_search")}</option>
           <option value="compare">{t("snippet.compare")}</option>
+          <option value="columns">{t("snippet.columns")}</option>
         </select>
       </div>
 
@@ -1434,6 +1444,52 @@
           <label for="snip-image-url" class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("snippet.image_url_label")}</label>
           <input id="snip-image-url" type="text" placeholder={t("snippet.image_src_placeholder")} oninput={snippetUpdatePreview} class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
+      </div>
+
+      <!-- Panel: columns layout -->
+      <div id="snip-panel-columns" class="hidden space-y-3">
+        <div class="flex items-center gap-5 flex-wrap">
+          <div class="flex items-center gap-2">
+            <label for="snip-columns-count" class="text-xs text-gray-500 dark:text-gray-400">{t("snippet.columns_count_label")}</label>
+            <select id="snip-columns-count" onchange={snippetUpdatePreview} class="text-xs rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2 py-1">
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <label for="snip-columns-valign" class="text-xs text-gray-500 dark:text-gray-400">{t("snippet.columns_valign_label")}</label>
+            <select id="snip-columns-valign" onchange={snippetUpdatePreview} class="text-xs rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2 py-1">
+              <option value="center">{t("snippet.columns_valign_center")}</option>
+              <option value="top">{t("snippet.columns_valign_top")}</option>
+              <option value="bottom">{t("snippet.columns_valign_bottom")}</option>
+              <option value="stretch">{t("snippet.columns_valign_stretch")}</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <label for="snip-columns-text" class="text-xs text-gray-500 dark:text-gray-400">{t("snippet.columns_text_label")}</label>
+            <select id="snip-columns-text" onchange={snippetUpdatePreview} class="text-xs rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2 py-1">
+              <option value="">{t("snippet.columns_text_default")}</option>
+              <option value="left">{t("snippet.columns_text_left")}</option>
+              <option value="center">{t("snippet.columns_text_center")}</option>
+              <option value="right">{t("snippet.columns_text_right")}</option>
+              <option value="justify">{t("snippet.columns_text_justify")}</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <label for="snip-columns-gap" class="text-xs text-gray-500 dark:text-gray-400">{t("snippet.columns_gap_label")}</label>
+            <select id="snip-columns-gap" onchange={snippetUpdatePreview} class="text-xs rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2 py-1">
+              <option value="sm">{t("snippet.columns_gap_sm")}</option>
+              <option value="md" selected>{t("snippet.columns_gap_md")}</option>
+              <option value="lg">{t("snippet.columns_gap_lg")}</option>
+            </select>
+          </div>
+        </div>
+        <div class="space-y-1.5">
+          <label for="snip-columns-ratio" class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("snippet.columns_ratio_label")}</label>
+          <input id="snip-columns-ratio" type="text" placeholder={t("snippet.columns_ratio_placeholder")} oninput={snippetUpdatePreview} class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <p class="text-xs text-gray-400 dark:text-gray-500">{t("snippet.columns_hint")}</p>
       </div>
 
       <!-- Panel: table -->

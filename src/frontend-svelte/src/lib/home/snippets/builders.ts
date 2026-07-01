@@ -170,6 +170,33 @@ export function ldBuildColoredSectionSnippetMarkdown(data: {
   return `<div style="background:${data.color.bg};border-left:4px solid ${data.color.border};color:${data.color.text};padding:1rem 1.25rem;border-radius:0.375rem;margin:1rem 0;">\n\n${data.content}\n\n</div>`;
 }
 
+export function ldBuildColumnsSnippetMarkdown(data: {
+  columns?: number;
+  ratio?: string;
+  verticalAlign?: string;
+  textAlign?: string;
+  gap?: string;
+  bodyFallback: string;
+}): string {
+  const count = Math.max(2, Math.min(6, Math.round(Number(data.columns)) || 2));
+  // Only emit options that differ from the defaults (vertical-align: center, gap: md, no
+  // text-align) so the directive stays minimal. The ratio is positional, right after the colon.
+  const opts: string[] = [];
+  if (data.ratio && data.ratio.trim()) opts.push(data.ratio.trim());
+  if (data.verticalAlign && data.verticalAlign !== "center") {
+    opts.push(`vertical-align: ${data.verticalAlign}`);
+  }
+  if (data.textAlign) opts.push(`text-align: ${data.textAlign}`);
+  if (data.gap && data.gap !== "md") opts.push(`gap: ${data.gap}`);
+  const header = opts.length ? `<!-- layout-columns: ${opts.join(" | ")} -->` : `<!-- layout-columns -->`;
+  const columns: string[] = [];
+  for (let i = 1; i <= count; i += 1) {
+    columns.push(`<!-- col -->\n\n${data.bodyFallback} ${i}`);
+  }
+  // Blank lines around every marker are required so marked parses them as standalone blocks.
+  return `${header}\n\n${columns.join("\n\n")}\n\n<!-- /layout-columns -->`;
+}
+
 export function ldBuildSnippetMarkdown(type: string, data: any): string {
   switch (type) {
     case "collapsible":
@@ -215,6 +242,8 @@ export function ldBuildSnippetMarkdown(type: string, data: any): string {
       return `<div data-ld-local-search></div>`;
     case "compare":
       return `:::compare\n${data.content || ""}\n:::`;
+    case "columns":
+      return ldBuildColumnsSnippetMarkdown(data);
     default:
       return "";
   }

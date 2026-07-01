@@ -40,6 +40,7 @@ export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireO
   applyBlockquoteStyles(contentEl, opts.content);
   applyImageStyles(contentEl, opts.content);
   applyCompareBlockStyles(contentEl);
+  applyColumnLayouts(contentEl);
   const codeBlockAttrs = collectCodeBlockAttributesFromSource(opts.content);
   let codeBlockIndex = 0;
 
@@ -161,6 +162,140 @@ function applyImageStyles(contentEl: HTMLElement, content: string) {
       image.dataset.imageAlign = a.align;
     }
   });
+}
+
+// ── Column layouts ────────────────────────────────────────────────────────────
+// Source directive (comments kept in the Markdown, so it round-trips):
+//   <!-- layout-columns: 2/1 | vertical-align: center | text-align: left | gap: lg -->
+//   <!-- col -->
+//   … markdown …
+//   <!-- col -->
+//   … markdown …
+//   <!-- /layout-columns -->
+// marked keeps these as top-level comment nodes (markers must be blank-line separated), so we
+// restructure post-render: wrap the blocks of each column into .ld-columns / .ld-column divs.
+interface ColumnLayoutOpts {
+  ratio: string | null;
+  valign: string | null;
+  textAlign: string | null;
+  gap: string | null;
+}
+
+const LAYOUT_OPEN_RE = /^\s*layout-columns\b/i;
+const LAYOUT_COL_RE = /^\s*col\s*$/i;
+const LAYOUT_CLOSE_RE = /^\s*\/layout-columns\s*$/i;
+const VALIGN_VALUES = new Set(["top", "center", "bottom", "stretch"]);
+const TEXT_ALIGN_VALUES = new Set(["left", "center", "right", "justify"]);
+const GAP_VALUES = new Set(["sm", "md", "lg"]);
+
+function parseColumnLayoutOpts(data: string): ColumnLayoutOpts {
+  const rest = data.trim().replace(/^layout-columns\s*:?\s*/i, "");
+  const opts: ColumnLayoutOpts = { ratio: null, valign: null, textAlign: null, gap: null };
+  for (const partRaw of rest.split("|")) {
+    const part = partRaw.trim();
+    if (!part) continue;
+    const kv = part.match(/^([\w-]+)\s*:\s*(.+)$/);
+    if (kv) {
+      const key = kv[1].toLowerCase();
+      const value = kv[2].trim().toLowerCase();
+      if (key === "vertical-align" && VALIGN_VALUES.has(value)) opts.valign = value;
+      else if (key === "text-align" && TEXT_ALIGN_VALUES.has(value)) opts.textAlign = value;
+      else if (key === "gap" && GAP_VALUES.has(value)) opts.gap = value;
+      else if (key === "ratio") opts.ratio = value.replace(/\s+/g, "");
+    } else if (/^\d+(\s*\/\s*\d+)*$/.test(part)) {
+      opts.ratio = part.replace(/\s+/g, "");
+    }
+  }
+  return opts;
+}
+
+function gridTemplateFromRatio(ratio: string | null, columnCount: number): string {
+  const equal = `repeat(${columnCount}, minmax(0, 1fr))`;
+  if (!ratio) return equal;
+  if (ratio.includes("/")) {
+    const fractions = ratio.split("/").map((n) => parseInt(n, 10));
+    // Only honor the ratio when it matches the number of columns, else fall back to equal.
+    if (fractions.length === columnCount && fractions.every((n) => Number.isFinite(n) && n > 0)) {
+      return fractions.map((n) => `${n}fr`).join(" ");
+    }
+    return equal;
+  }
+  const n = parseInt(ratio, 10);
+  return Number.isFinite(n) && n > 0 ? `repeat(${n}, minmax(0, 1fr))` : equal;
+}
+
+function applyColumnLayouts(contentEl: HTMLElement) {
+  const openings: Comment[] = [];
+  contentEl.childNodes.forEach((n) => {
+    if (n.nodeType === Node.COMMENT_NODE && LAYOUT_OPEN_RE.test((n as Comment).data)) {
+      openings.push(n as Comment);
+    }
+  });
+
+  for (const open of openings) {
+    const opts = parseColumnLayoutOpts(open.data);
+
+    // Gather nodes between the opening and the matching closing comment.
+    const between: Node[] = [];
+    let close: Comment | null = null;
+    for (let n = open.nextSibling; n; n = n.nextSibling) {
+      if (n.nodeType === Node.COMMENT_NODE && LAYOUT_CLOSE_RE.test((n as Comment).data)) {
+        close = n as Comment;
+        break;
+      }
+      between.push(n);
+    }
+    if (!close) continue; // no closer → leave the source untouched (safe)
+
+    // Split the range into column groups at each <!-- col --> marker.
+    const groups: Node[][] = [];
+    let current: Node[] | null = null;
+    for (const node of between) {
+      if (node.nodeType === Node.COMMENT_NODE && LAYOUT_COL_RE.test((node as Comment).data)) {
+        current = [];
+        groups.push(current);
+        continue;
+      }
+      if (!current) {
+        if (node.nodeType === Node.TEXT_NODE && !(node.textContent || "").trim()) continue;
+        current = [];
+        groups.push(current);
+      }
+      current.push(node);
+    }
+    if (groups.length === 0) continue; // malformed → leave untouched
+
+    const container = document.createElement("div");
+    container.className = "ld-columns";
+    if (opts.valign) container.classList.add(`ld-valign-${opts.valign}`);
+    if (opts.textAlign) container.classList.add(`ld-text-${opts.textAlign}`);
+    if (opts.gap) container.classList.add(`ld-gap-${opts.gap}`);
+    container.style.gridTemplateColumns = gridTemplateFromRatio(opts.ratio, groups.length);
+
+    for (const group of groups) {
+      const col = document.createElement("div");
+      col.className = "ld-column";
+      for (const node of group) col.appendChild(node); // moves the node into the column
+      container.appendChild(col);
+    }
+
+    contentEl.insertBefore(container, open);
+    open.remove();
+    close.remove();
+    // Remove leftover markers / whitespace text nodes that were not moved into a column.
+    for (const node of between) {
+      if (node.parentNode === contentEl) node.remove();
+    }
+  }
+}
+
+// Apply the column-layout transform to an HTML string (used by the PDF export, which embeds
+// server-rendered HTML without running the live wireDocContent decoration pass).
+export function renderColumnLayoutsInHtml(html: string): string {
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+  applyColumnLayouts(tmp);
+  return tmp.innerHTML;
 }
 
 function decorateCodeCopy(contentEl: HTMLElement, t: (k: string) => string) {

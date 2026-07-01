@@ -42,6 +42,56 @@
         margin-right: 0 !important;
       }
 
+      /* Column layouts — triggered by <!-- layout-columns --> comments. */
+      .prose .ld-columns {
+        display: grid;
+        gap: 1rem;
+        align-items: center; /* default vertical-align: center */
+        margin: 1rem 0;
+      }
+      .prose .ld-columns.ld-valign-top {
+        align-items: start;
+      }
+      .prose .ld-columns.ld-valign-bottom {
+        align-items: end;
+      }
+      .prose .ld-columns.ld-valign-stretch {
+        align-items: stretch;
+      }
+      .prose .ld-columns.ld-gap-sm {
+        gap: 0.5rem;
+      }
+      .prose .ld-columns.ld-gap-lg {
+        gap: 2rem;
+      }
+      .prose .ld-columns.ld-text-left .ld-column {
+        text-align: left;
+      }
+      .prose .ld-columns.ld-text-center .ld-column {
+        text-align: center;
+      }
+      .prose .ld-columns.ld-text-right .ld-column {
+        text-align: right;
+      }
+      .prose .ld-columns.ld-text-justify .ld-column {
+        text-align: justify;
+      }
+      .prose .ld-column {
+        min-width: 0; /* let content shrink instead of overflowing the track */
+      }
+      .prose .ld-column > :first-child {
+        margin-top: 0;
+      }
+      .prose .ld-column > :last-child {
+        margin-bottom: 0;
+      }
+      /* Collapse to a single column on narrow screens. */
+      @media (max-width: 640px) {
+        .prose .ld-columns {
+          grid-template-columns: 1fr !important;
+        }
+      }
+
       /* Code and Mermaid presets — triggered by layout comments. */
       .prose pre[class*="ld-code-width-"],
       .prose .mermaid[class*="ld-mermaid-width-"] {

@@ -2,6 +2,7 @@
   import { t } from "../i18n.svelte";
   import { home } from "./state.svelte";
   import type { DocSummary } from "./types";
+  import { renderColumnLayoutsInHtml } from "./wireContent";
 
   let { open, onclose }: {
     open: boolean;
@@ -250,7 +251,7 @@
         .map((doc, idx) => {
           const full = htmlById[doc.id];
           if (!full) return "";
-          const html = rewriteDocLinks(full.html);
+          const html = rewriteDocLinks(renderColumnLayoutsInHtml(full.html));
           const folderPath = Array.isArray(doc.folder)
             ? doc.folder.map((f) => esc(fLabel(f))).join(" › ") + " › "
             : "";
@@ -282,6 +283,17 @@
     body { font-family: system-ui,sans-serif; max-width: 860px; margin: 0 auto; padding: 2rem; color: #111827; background: #fff; }
     .prose pre { border-radius: 0.5rem; }
     .prose img { max-width: 100%; }
+    .prose .ld-columns { display: grid; gap: 1rem; align-items: center; margin: 1rem 0; }
+    .prose .ld-columns.ld-valign-top { align-items: start; }
+    .prose .ld-columns.ld-valign-bottom { align-items: end; }
+    .prose .ld-columns.ld-valign-stretch { align-items: stretch; }
+    .prose .ld-columns.ld-gap-sm { gap: 0.5rem; }
+    .prose .ld-columns.ld-gap-lg { gap: 2rem; }
+    .prose .ld-columns.ld-text-left .ld-column { text-align: left; }
+    .prose .ld-columns.ld-text-center .ld-column { text-align: center; }
+    .prose .ld-columns.ld-text-right .ld-column { text-align: right; }
+    .prose .ld-columns.ld-text-justify .ld-column { text-align: justify; }
+    .prose .ld-column { min-width: 0; }
     @media print {
       body { padding: 0; }
       a { color: #1d4ed8; text-decoration: underline; }
