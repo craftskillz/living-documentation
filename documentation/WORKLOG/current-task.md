@@ -50,6 +50,7 @@ Le travail a couvert :
 - ajout d'une detection CLI sans argument des projets Living Documentation existants via `.living-doc.json` dans le dossier courant puis dans les sous-dossiers directs.
 - ajout de confirmations terminal pour lancer un projet detecte avant de retomber sur le wizard d'initialisation.
 - ajout de l'initialisation automatique du dossier explicite lorsqu'il ne contient pas encore `.living-doc.json`.
+- correction des workflows CodeQL pour utiliser la meme version `github/codeql-action` entre `init` et `analyze`.
 
 ## Contenu modifie
 
@@ -81,6 +82,8 @@ Le travail a couvert :
 - `README.md`
 - `bin/cli.ts`
 - `tests/api/cli.spec.ts`
+- `.github/workflows/codeql.yml`
+- `.github/workflows/publish.yml`
 - `images/DOCUMENTATION/*`
 - `documentation/WORKLOG/current-task.md`
 
@@ -116,6 +119,7 @@ Le document `Plan.md` est un document de pilotage documentaire utilisateur, pas 
 - `./scripts/check-readme-sync.sh HEAD` reexecute avec succes apres mise a jour des README.
 - `git diff --check -- bin/cli.ts tests/api/cli.spec.ts README.md README.fr.md documentation/AI/PROJECT-USEFUL-COMMANDS.md documentation/WORKLOG/current-task.md` execute avec succes.
 - `graphify update .` execute avec succes apres modification du code.
+- Workflows CodeQL corriges pour eviter le mismatch `init v4.36.2` / `analyze v4.36.1` dans la pipeline.
 
 ## Verifications restantes
 
