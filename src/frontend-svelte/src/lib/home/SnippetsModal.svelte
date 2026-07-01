@@ -119,8 +119,10 @@
       section.appendChild(h3);
 
       const grid = document.createElement("div");
+      // 6 columns max: every picker category holds exactly 6 items, so capping at 6 fills each
+      // row edge-to-edge instead of leaving empty trailing columns on wide screens.
       grid.className =
-        "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-2";
+        "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2";
 
       for (const type of cat.types) {
         const paletteName = SNIPPET_PICKER_TYPE_PALETTE[type] || "indigo";
