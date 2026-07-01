@@ -174,11 +174,3 @@ timeline
     2026 : Automatisation Workspace
 ```
 
-```mermaid
-treeView-beta
-    my-project/
-        src/
-            index.js
-        package.json
-        README.md
-```
