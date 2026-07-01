@@ -2122,6 +2122,18 @@ function entityCanvasStyle(entity: Entity): EntityCanvasStyle {
       connection: "#ca8a04",
     };
   }
+  if (entity.kind === "llm" && entity.config.toolMode === "chat") {
+    return {
+      fill: "#f472b6",
+      stroke: "#db2777",
+      selectedFill: "#ec4899",
+      selectedStroke: "#be185d",
+      text: "#500724",
+      selectedText: "#500724",
+      shadow: "rgb(244 114 182 / 20%)",
+      connection: "#db2777",
+    };
+  }
   if (entity.kind === "llm") {
     return {
       fill: "#f97316",
@@ -2147,6 +2159,19 @@ function entityCanvasStyle(entity: Entity): EntityCanvasStyle {
     };
   }
   if (entity.kind === "agent") {
+    const parent = entityById(entity.parentId);
+    if (parent?.kind === "llm" && parent.config.toolMode === "chat") {
+      return {
+        fill: "#f9a8d4",
+        stroke: "#f472b6",
+        selectedFill: "#ec4899",
+        selectedStroke: "#db2777",
+        text: "#111827",
+        selectedText: "#111827",
+        shadow: "rgb(244 114 182 / 18%)",
+        connection: "#f472b6",
+      };
+    }
     return {
       fill: "#fdba74",
       stroke: "#f97316",
