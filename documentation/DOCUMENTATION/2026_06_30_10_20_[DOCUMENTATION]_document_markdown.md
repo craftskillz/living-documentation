@@ -63,6 +63,11 @@ Pour les utiliser :
 
 Le snippet insère du Markdown dans votre document. Vous pouvez ensuite le modifier comme n'importe quel texte.
 
+<!-- quote-type: info -->
+<!-- quote-title: Info -->
+<!-- quote-icon -->
+> Même sans être en mode édition, un **clic droit** sur le document vous permet, **d'insérer ou d'éditer** un snippet.
+
 ---
 
 ### Le widget de comparaison
