@@ -229,7 +229,7 @@
     if (home.codeBlockMaxHeight > 0) {
       document.documentElement.style.setProperty("--ld-code-max-h", home.codeBlockMaxHeight + "px");
     }
-    if (home.expandedCategories.size === 0) home.expandedCategories = new Set(["General"]);
+    if (home.expandedCategories.size === 0) home.expandedCategories = new Set(["DOCUMENTATION", "General"]);
 
     await loadDocuments();
 
@@ -238,7 +238,10 @@
     if (docId) {
       openDoc(docId, true, false, location.hash ? location.hash.slice(1) : null);
     } else {
-      const first = home.allDocs.find(d => d.category === "General") ?? home.allDocs[0];
+      const first =
+        home.allDocs.find(d => d.category === "DOCUMENTATION") ??
+        home.allDocs.find(d => d.category === "General") ??
+        home.allDocs[0];
       if (first) openDoc(first.id, true);
     }
 

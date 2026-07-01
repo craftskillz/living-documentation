@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import { test, expect } from '../helpers/ld-fixture';
+import fs from "fs";
+import path from "path";
+import { test, expect } from "../helpers/ld-fixture";
 
 // The blueprint "D" badge is drawn on a <canvas>, so there is no DOM node to
 // click. We locate the green (already-documented) badge by scanning the canvas
@@ -100,106 +100,128 @@ const OPEN_PURPLE_DOC = `async () => {
   return { ok: true };
 }`;
 
-test.describe('blueprint document editing reuses the Home editor', () => {
-  test.use({ fixtureName: 'blueprint-edit' });
+test.describe("blueprint document editing reuses the Home editor", () => {
+  test.use({ fixtureName: "blueprint-edit" });
 
-  const DOC_REL = '000_BLUEPRINT/2026_01_01_10_00_[ALPHA]_alpha.md';
+  const DOC_REL = "001_BLUEPRINT/2026_01_01_10_00_[ALPHA]_alpha.md";
 
-  test('opens the alpha block doc and supports inline + full edit', async ({ page, ld }) => {
+  test("opens the alpha block doc and supports inline + full edit", async ({
+    page,
+    ld,
+  }) => {
     await page.goto(`${ld.baseURL}/blueprint`);
     await page.waitForFunction(() => {
-      const c = document.querySelector('canvas');
+      const c = document.querySelector("canvas");
       return !!c && c.width > 300 && window.innerWidth > 300;
     });
 
     // Open the alpha block's document (green "D"). OPEN_ALPHA_DOC is a function
     // source string; wrap as an IIFE so page.evaluate runs it (a bare string is
     // evaluated as an expression and never invoked).
-    const opened = (await page.evaluate(`(${OPEN_ALPHA_DOC})()`)) as { ok: boolean };
+    const opened = (await page.evaluate(`(${OPEN_ALPHA_DOC})()`)) as {
+      ok: boolean;
+    };
     expect(opened.ok).toBe(true);
 
     // The modal renders the shared EditableMarkdown body, not a raw textarea.
-    const content = page.locator('.bpadr-read #doc-content');
+    const content = page.locator(".bpadr-read #doc-content");
     await expect(content).toBeVisible();
-    await expect(content).toContainText('Alpha block');
-    await expect(page.getByTestId('bp-copy-doc-id')).toHaveAttribute('title', 'Copy MCP document id');
+    await expect(content).toContainText("Alpha block");
+    await expect(page.getByTestId("bp-copy-doc-id")).toHaveAttribute(
+      "title",
+      "Copy MCP document id",
+    );
 
     // Inline snippet editing: right-click a rendered block opens the popup, and
     // it must layer above the modal overlay.
-    await content.locator('p').first().click({ button: 'right' });
-    const popup = page.locator('#inline-snippet-popup');
+    await content.locator("p").first().click({ button: "right" });
+    const popup = page.locator("#inline-snippet-popup");
     await expect(popup).toBeVisible();
     const [popupZ, overlayZ] = await page.evaluate(() => [
-      getComputedStyle(document.getElementById('inline-snippet-popup')).zIndex,
-      getComputedStyle(document.querySelector('.bpadr-overlay')).zIndex,
+      getComputedStyle(document.getElementById("inline-snippet-popup")).zIndex,
+      getComputedStyle(document.querySelector(".bpadr-overlay")).zIndex,
     ]);
     expect(Number(popupZ)).toBeGreaterThan(Number(overlayZ));
 
     // Dismiss the inline popup with a neutral click, then enter full edit mode:
     // the Edit button swaps the body for the textarea editor.
-    await page.locator('.bpadr-title').click();
+    await page.locator(".bpadr-title").click();
     await expect(popup).toBeHidden();
-    await page.getByTestId('bp-edit').click();
-    const editor = page.locator('.bpadr-read #doc-editor');
+    await page.getByTestId("bp-edit").click();
+    const editor = page.locator(".bpadr-read #doc-editor");
     await expect(editor).toBeVisible();
     await expect(editor).toHaveValue(/Alpha block/);
 
     // Save persists the edited markdown to disk.
-    const marker = '\n\nEdited from the blueprint modal.\n';
+    const marker = "\n\nEdited from the blueprint modal.\n";
     await editor.focus();
     await editor.evaluate((el, m) => {
       const ta = el as HTMLTextAreaElement;
       ta.value = ta.value + m;
-      ta.dispatchEvent(new Event('input', { bubbles: true }));
+      ta.dispatchEvent(new Event("input", { bubbles: true }));
     }, marker);
-    await page.getByTestId('bp-save').click();
+    await page.getByTestId("bp-save").click();
 
     const docPath = path.join(ld.docsAbs, DOC_REL);
-    await expect.poll(() => fs.readFileSync(docPath, 'utf-8')).toContain('Edited from the blueprint modal.');
+    await expect
+      .poll(() => fs.readFileSync(docPath, "utf-8"))
+      .toContain("Edited from the blueprint modal.");
 
     // Delete (read mode): the trash button asks for confirmation, then removes
     // the document from disk and closes the modal.
-    await expect(page.getByTestId('bp-delete')).toBeVisible();
-    await page.getByTestId('bp-delete').click();
-    await page.getByTestId('bp-delete-confirm').click();
-    await expect(page.locator('.bpadr-overlay')).toBeHidden();
+    await expect(page.getByTestId("bp-delete")).toBeVisible();
+    await page.getByTestId("bp-delete").click();
+    await page.getByTestId("bp-delete-confirm").click();
+    await expect(page.locator(".bpadr-overlay")).toBeHidden();
     await expect.poll(() => fs.existsSync(docPath)).toBe(false);
   });
 
-  test('creation form (block without a doc yet) exposes the snippets button', async ({ page, ld }) => {
+  test("creation form (block without a doc yet) exposes the snippets button", async ({
+    page,
+    ld,
+  }) => {
     await page.goto(`${ld.baseURL}/blueprint`);
     await page.waitForFunction(() => {
-      const c = document.querySelector('canvas');
+      const c = document.querySelector("canvas");
       return !!c && c.width > 300 && window.innerWidth > 300;
     });
 
     // Open the "beta" block (purple "D+", no document yet) → the creation form.
-    const opened = (await page.evaluate(`(${OPEN_PURPLE_DOC})()`)) as { ok: boolean };
+    const opened = (await page.evaluate(`(${OPEN_PURPLE_DOC})()`)) as {
+      ok: boolean;
+    };
     expect(opened.ok).toBe(true);
 
-    await expect(page.locator('.bpadr-form')).toBeVisible();
-    await expect(page.locator('.bpadr-title')).toContainText('Folder');
-    await expect(page.locator('.bpadr-title code')).toHaveText('/beta');
-    await expect(page.getByTestId('bp-copy-doc-id')).toBeHidden();
+    await expect(page.locator(".bpadr-form")).toBeVisible();
+    await expect(page.locator(".bpadr-title")).toContainText("Folder");
+    await expect(page.locator(".bpadr-title code")).toHaveText("/beta");
+    await expect(page.getByTestId("bp-copy-doc-id")).toBeHidden();
 
     // Parity with Home: the creation form offers the snippets inserter.
-    await page.getByTestId('bp-form-snippets').click();
-    await expect(page.locator('div.fixed.inset-0').first()).toBeVisible();
+    await page.getByTestId("bp-form-snippets").click();
+    await expect(page.locator("div.fixed.inset-0").first()).toBeVisible();
   });
 
-  test('file explorer section copy buttons copy folder and file names', async ({ page, ld }) => {
-    const sourceRoot = path.resolve(ld.docsAbs, '../src');
-    fs.mkdirSync(path.join(sourceRoot, 'alpha/api'), { recursive: true });
-    fs.mkdirSync(path.join(sourceRoot, 'alpha/e2e'), { recursive: true });
-    fs.writeFileSync(path.join(sourceRoot, 'alpha/tsconfig.json'), '{}\n', 'utf-8');
+  test("file explorer section copy buttons copy folder and file names", async ({
+    page,
+    ld,
+  }) => {
+    const sourceRoot = path.resolve(ld.docsAbs, "../src");
+    fs.mkdirSync(path.join(sourceRoot, "alpha/api"), { recursive: true });
+    fs.mkdirSync(path.join(sourceRoot, "alpha/e2e"), { recursive: true });
+    fs.writeFileSync(
+      path.join(sourceRoot, "alpha/tsconfig.json"),
+      "{}\n",
+      "utf-8",
+    );
 
     await page.goto(`${ld.baseURL}/blueprint`);
     await page.waitForFunction(() => {
-      const c = document.querySelector('canvas');
+      const c = document.querySelector("canvas");
       return !!c && c.width > 300 && window.innerWidth > 300;
     });
     await page.evaluate(() => {
-      Object.defineProperty(navigator, 'clipboard', {
+      Object.defineProperty(navigator, "clipboard", {
         configurable: true,
         value: {
           writeText: async (text: string) => {
@@ -209,49 +231,79 @@ test.describe('blueprint document editing reuses the Home editor', () => {
       });
     });
 
-    const opened = (await page.evaluate(`(${OPEN_ALPHA_EXPLORER})()`)) as { ok: boolean };
+    const opened = (await page.evaluate(`(${OPEN_ALPHA_EXPLORER})()`)) as {
+      ok: boolean;
+    };
     expect(opened.ok).toBe(true);
 
-    await expect(page.locator('.file-explorer')).toBeVisible();
-    await expect(page.getByTestId('copy-blueprint-folders')).toHaveAttribute('title', 'Copy folder names');
-    await page.getByTestId('copy-blueprint-folders').click();
-    await expect.poll(() => page.evaluate(() => (window as unknown as { __copiedText?: string }).__copiedText)).toBe('api\ne2e');
+    await expect(page.locator(".file-explorer")).toBeVisible();
+    await expect(page.getByTestId("copy-blueprint-folders")).toHaveAttribute(
+      "title",
+      "Copy folder names",
+    );
+    await page.getByTestId("copy-blueprint-folders").click();
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () => (window as unknown as { __copiedText?: string }).__copiedText,
+        ),
+      )
+      .toBe("api\ne2e");
 
-    await expect(page.getByTestId('copy-blueprint-files')).toHaveAttribute('title', 'Copy file names');
-    await page.getByTestId('copy-blueprint-files').click();
-    await expect.poll(() => page.evaluate(() => (window as unknown as { __copiedText?: string }).__copiedText)).toBe('index.ts\ntsconfig.json');
+    await expect(page.getByTestId("copy-blueprint-files")).toHaveAttribute(
+      "title",
+      "Copy file names",
+    );
+    await page.getByTestId("copy-blueprint-files").click();
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () => (window as unknown as { __copiedText?: string }).__copiedText,
+        ),
+      )
+      .toBe("index.ts\ntsconfig.json");
   });
 
-  test('creating a blueprint doc keeps the folder title in the popup header only', async ({
+  test("creating a blueprint doc keeps the folder title in the popup header only", async ({
     page,
     ld,
   }) => {
     await page.goto(`${ld.baseURL}/blueprint`);
     await page.waitForFunction(() => {
-      const c = document.querySelector('canvas');
+      const c = document.querySelector("canvas");
       return !!c && c.width > 300 && window.innerWidth > 300;
     });
 
-    const opened = (await page.evaluate(`(${OPEN_PURPLE_DOC})()`)) as { ok: boolean };
+    const opened = (await page.evaluate(`(${OPEN_PURPLE_DOC})()`)) as {
+      ok: boolean;
+    };
     expect(opened.ok).toBe(true);
 
-    await expect(page.locator('.bpadr-form')).toBeVisible();
-    await expect(page.locator('#adr-title')).toHaveValue('beta');
-    await expect(page.locator('#adr-content')).toHaveValue('');
-    await expect(page.locator('.bpadr-title code')).toHaveText('/beta');
+    await expect(page.locator(".bpadr-form")).toBeVisible();
+    await expect(page.locator("#adr-title")).toHaveValue("beta");
+    await expect(page.locator("#adr-content")).toHaveValue("");
+    await expect(page.locator(".bpadr-title code")).toHaveText("/beta");
     await page.locator('.bpadr-form button[type="submit"]').click();
 
-    await expect(page.locator('.bpadr-title')).toContainText('Folder');
-    await expect(page.locator('.bpadr-title code')).toHaveText('/beta');
-    await expect(page.getByTestId('bp-copy-doc-id')).toHaveAttribute('title', 'Copy MCP document id');
-    await expect(page.locator('.bpadr-read #doc-content')).toContainText('beta');
+    await expect(page.locator(".bpadr-title")).toContainText("Folder");
+    await expect(page.locator(".bpadr-title code")).toHaveText("/beta");
+    await expect(page.getByTestId("bp-copy-doc-id")).toHaveAttribute(
+      "title",
+      "Copy MCP document id",
+    );
+    await expect(page.locator(".bpadr-read #doc-content")).toContainText(
+      "beta",
+    );
 
     const created = fs
-      .readdirSync(path.join(ld.docsAbs, '000_BLUEPRINT'))
-      .find((f) => f.includes('[BETA]_beta') && f.endsWith('.md'));
+      .readdirSync(path.join(ld.docsAbs, "001_BLUEPRINT"))
+      .find((f) => f.includes("[BETA]_beta") && f.endsWith(".md"));
     expect(created).toBeDefined();
-    expect(fs.readFileSync(path.join(ld.docsAbs, '000_BLUEPRINT', created!), 'utf-8')).toBe(
-      '# beta\n',
-    );
+    expect(
+      fs.readFileSync(
+        path.join(ld.docsAbs, "001_BLUEPRINT", created!),
+        "utf-8",
+      ),
+    ).toBe("# beta\n");
   });
 });

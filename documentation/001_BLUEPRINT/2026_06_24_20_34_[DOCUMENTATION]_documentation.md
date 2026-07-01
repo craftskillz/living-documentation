@@ -13,7 +13,7 @@ L'objectif est simple : faire vivre la connaissance du projet avec le code, dans
 
 ### Vue d'ensemble
 
-Les dossiers numérotés structurent le parcours lecteur, tandis que `ADRS/`, `AI/`, `WORKLOG/` et `000_BLUEPRINT/` portent les décisions, le contexte agent, le suivi courant et la cartographie des dossiers source.
+Les dossiers numérotés structurent le parcours lecteur, tandis que `ADRS/`, `AI/`, `WORKLOG/` et `001_BLUEPRINT/` portent les décisions, le contexte agent, le suivi courant et la cartographie des dossiers source.
 
 Fonctionnellement, ce dossier couvre cinq usages importants :
 

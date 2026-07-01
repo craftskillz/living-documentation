@@ -12,7 +12,8 @@ Le menu <kbd>Workspace</kbd> permet de créer vos propres agents documentaires.
 Ces agents peuvent vous aider à rédiger, traduire, résumer, améliorer ou transformer vos documents **Markdown**.
 
 <!-- image-width: 2/3 -->
-![Workspace reliant Living Documentation, providers LLM, agents, MCP et provider image](/images/DOCUMENTATION/concept-07-workspace-providers-agents.png)
+
+![Workspace reliant Living Documentation, providers LLM, agents, MCP et provider image](/images/DOCUMENTATION/concept-07-workspace-providers-agents.jpg)
 
 ### A quoi sert le Workspace ?
 
@@ -34,18 +35,19 @@ Dans le Workspace, chaque élément est représenté par un nœud.
 
 <!-- col -->
 
-![image](/images/workspace_configuration.png)
+![image](/images/workspace_configuration.jpg)
 
 <!-- col -->
 
-| Nœud | Rôle |
-| --- | --- |
-| **Living Documentation** | Le centre du Workspace. |
-| **LLM provider** | Le modèle utilisé par les agents. |
-| **Agent** | Une tâche documentaire précise. |
-| **MCP** | Les outils internes accessibles aux agents. |
+| Nœud                     | Rôle                                        |
+| ------------------------ | ------------------------------------------- |
+| **Living Documentation** | Le centre du Workspace.                     |
+| **LLM provider**         | Le modèle utilisé par les agents.           |
+| **Agent**                | Une tâche documentaire précise.             |
+| **MCP**                  | Les outils internes accessibles aux agents. |
 
-Les LLM et leurs agents ont des code couleurs indiquant leur capacités 
+Les LLM et leurs agents ont des code couleurs indiquant leur capacités
+
 - <kbd style="background-color:yellow;">Jaune</kbd> : LLM Spécialisés dans la génération d'image
 - <kbd style="background-color:orange;">Orange</kbd> : LLM Agentic capable d'executer des appels tools chain
 - <kbd style="background-color:pink;">Rose</kbd> : LLM ChatOnly ans capacités agentiques permettant uniquement de répondre à un prompt
@@ -70,31 +72,34 @@ Un provider LLM contient les informations nécessaires pour appeler un modèle :
 Pour le token, utilisez de préférence une variable d'environnement :
 
 <!-- code-width: 1/3 -->
+
 ```text
 env:LLM_API_KEY
 ```
 
 Cela évite d'écrire votre clé API directement dans la configuration.
+
 <!-- col -->
 
 ![image](/images/llm_provider_creation.png)
 
 <!-- /layout-columns -->
 
---- 
+---
 
 ### Tools ou Chat only ?
 
 Un provider peut fonctionner dans deux modes.
 
-| Mode | Usage |
-| --- | --- |
+| Mode                | Usage                                                  |
+| ------------------- | ------------------------------------------------------ |
 | **Allow MCP tools** | L'agent peut utiliser les outils Living Documentation. |
-| **Chat only** | L'agent répond sans appeler d'outil. |
+| **Chat only**       | L'agent répond sans appeler d'outil.                   |
 
 <!-- quote-type: info -->
 <!-- quote-title: Conseil -->
 <!-- quote-icon -->
+
 > Si votre agent doit lire ou modifier un document, il lui faut généralement le mode **Allow MCP tools**.
 >
 > Si le modèle refuse les tools, utilisez **Chat only** et demandez-lui seulement une réponse textuelle.
@@ -108,6 +113,7 @@ Un agent est une consigne réutilisable.
 Exemple d'agent simple :
 
 <!-- code-width: 2/3 -->
+
 ```text
 You are a documentation assistant.
 Read the document using read_document with the DocumentId provided by the user.
@@ -150,6 +156,7 @@ Ces documents sont utiles pour garder une trace de ce que l'agent a fait.
 Ils sont enregistrés dans l'espace de travail de l'agent, par exemple :
 
 <!-- code-width: 1/2 -->
+
 ```text
 AI/WORKSPACE/mon_agent/
 ```
@@ -157,7 +164,8 @@ AI/WORKSPACE/mon_agent/
 <!-- quote-type: warning -->
 <!-- quote-title: Important -->
 <!-- quote-icon -->
-> Vous pouvez cocher dans la partie <kbd>Admin</kbd> la case à cocher *Debug agents* de la partie *Développeur*
+
+> Vous pouvez cocher dans la partie <kbd>Admin</kbd> la case à cocher _Debug agents_ de la partie _Développeur_
 >
 > En faisant cela, les différents échanges avec le LLM sont capturées et peuvent vous aider à comprendre si il y a des éléments à ajuster dans votre prompt.
 
@@ -174,6 +182,7 @@ Dans ce cas, le provider possède un identifiant technique que l'agent peut util
 <!-- quote-type: info -->
 <!-- quote-title: Info -->
 <!-- quote-icon -->
+
 > Les images générées par agent sont stockées séparément des fichiers joints classiques.
 
 ---

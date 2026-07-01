@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, tick } from "svelte";
   import ConfigSection from "../lib/ConfigSection.svelte";
   import FileBrowser from "../lib/FileBrowser.svelte";
   import DiagramPalettes from "../lib/DiagramPalettes.svelte";
@@ -236,7 +236,22 @@
     if (type === "ok") saveMsgTimer = window.setTimeout(() => { saveMsg = null; }, 3000);
   }
 
-  onMount(() => { loadConfig(); });
+  async function scrollToHashTarget() {
+    const id = window.location.hash.slice(1);
+    if (!id) return;
+    await tick();
+    requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  onMount(() => {
+    loadConfig();
+    void scrollToHashTarget();
+    const onLocationChanged = () => { void scrollToHashTarget(); };
+    window.addEventListener("popstate", onLocationChanged);
+    return () => window.removeEventListener("popstate", onLocationChanged);
+  });
 </script>
 
 <div class="app-shell">
@@ -450,66 +465,68 @@
         </ConfigSection>
 
         <!-- Git integration -->
-        <ConfigSection icon="⑂" title={t("admin.section.git.title")} description={t("admin.section.git.desc")}>
-          <fieldset class="git-mode-field">
-            <legend>{t("admin.git.mode_label")}</legend>
-            <label class="radio-card">
-              <input type="radio" name="gitMode" value="unconfigured" bind:group={gitMode} />
-              <span>
-                <strong>{t("admin.git.mode_unconfigured")}</strong>
-                <small>{t("admin.git.mode_unconfigured_hint")}</small>
-              </span>
-            </label>
-            <label class="radio-card">
-              <input type="radio" name="gitMode" value="disabled" bind:group={gitMode} />
-              <span>
-                <strong>{t("admin.git.mode_disabled")}</strong>
-                <small>{t("admin.git.mode_disabled_hint")}</small>
-              </span>
-            </label>
-            <label class="radio-card">
-              <input type="radio" name="gitMode" value="enabled" bind:group={gitMode} />
-              <span>
-                <strong>{t("admin.git.mode_enabled")}</strong>
-                <small>{t("admin.git.mode_enabled_hint")}</small>
-              </span>
-            </label>
-          </fieldset>
-
-          {#if gitMode === "enabled"}
-            <div class="field-group">
-              <label class="field-label" for="field-git-commit-message">{t("admin.git.commit_message_label")}</label>
-              <input id="field-git-commit-message" type="text" class="field-input field-input--mono" bind:value={gitCommitMessage} placeholder="docs: update living documentation" />
-              <p class="field-hint">{t("admin.git.commit_message_hint")}</p>
-            </div>
-
-            <fieldset class="git-push-field">
-              <legend>{t("admin.git.push_label")}</legend>
+        <div id="git-integration" class="admin-anchor">
+          <ConfigSection icon="⑂" title={t("admin.section.git.title")} description={t("admin.section.git.desc")}>
+            <fieldset class="git-mode-field">
+              <legend>{t("admin.git.mode_label")}</legend>
               <label class="radio-card">
-                <input type="radio" name="gitPushMode" value="never" bind:group={gitPushMode} />
+                <input type="radio" name="gitMode" value="unconfigured" bind:group={gitMode} />
                 <span>
-                  <strong>{t("admin.git.push_never")}</strong>
-                  <small>{t("admin.git.push_never_hint")}</small>
+                  <strong>{t("admin.git.mode_unconfigured")}</strong>
+                  <small>{t("admin.git.mode_unconfigured_hint")}</small>
                 </span>
               </label>
               <label class="radio-card">
-                <input type="radio" name="gitPushMode" value="everyNCommits" bind:group={gitPushMode} />
+                <input type="radio" name="gitMode" value="disabled" bind:group={gitMode} />
                 <span>
-                  <strong>{t("admin.git.push_every")}</strong>
-                  <small>{t("admin.git.push_every_hint")}</small>
+                  <strong>{t("admin.git.mode_disabled")}</strong>
+                  <small>{t("admin.git.mode_disabled_hint")}</small>
+                </span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="gitMode" value="enabled" bind:group={gitMode} />
+                <span>
+                  <strong>{t("admin.git.mode_enabled")}</strong>
+                  <small>{t("admin.git.mode_enabled_hint")}</small>
                 </span>
               </label>
             </fieldset>
 
-            {#if gitPushMode === "everyNCommits"}
+            {#if gitMode === "enabled"}
               <div class="field-group">
-                <label class="field-label" for="field-git-push-every">{t("admin.git.push_every_commits_label")}</label>
-                <input id="field-git-push-every" type="number" min="1" max="1000" step="1" class="field-input" bind:value={gitPushEveryCommits} />
-                <p class="field-hint">{t("admin.git.push_every_commits_hint")}</p>
+                <label class="field-label" for="field-git-commit-message">{t("admin.git.commit_message_label")}</label>
+                <input id="field-git-commit-message" type="text" class="field-input field-input--mono" bind:value={gitCommitMessage} placeholder="docs: update living documentation" />
+                <p class="field-hint">{t("admin.git.commit_message_hint")}</p>
               </div>
+
+              <fieldset class="git-push-field">
+                <legend>{t("admin.git.push_label")}</legend>
+                <label class="radio-card">
+                  <input type="radio" name="gitPushMode" value="never" bind:group={gitPushMode} />
+                  <span>
+                    <strong>{t("admin.git.push_never")}</strong>
+                    <small>{t("admin.git.push_never_hint")}</small>
+                  </span>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="gitPushMode" value="everyNCommits" bind:group={gitPushMode} />
+                  <span>
+                    <strong>{t("admin.git.push_every")}</strong>
+                    <small>{t("admin.git.push_every_hint")}</small>
+                  </span>
+                </label>
+              </fieldset>
+
+              {#if gitPushMode === "everyNCommits"}
+                <div class="field-group">
+                  <label class="field-label" for="field-git-push-every">{t("admin.git.push_every_commits_label")}</label>
+                  <input id="field-git-push-every" type="number" min="1" max="1000" step="1" class="field-input" bind:value={gitPushEveryCommits} />
+                  <p class="field-hint">{t("admin.git.push_every_commits_hint")}</p>
+                </div>
+              {/if}
             {/if}
-          {/if}
-        </ConfigSection>
+          </ConfigSection>
+        </div>
 
         <!-- Developer -->
         <ConfigSection icon="🛠️" title={t("admin.section.developer.title")} description={t("admin.section.developer.desc")}>

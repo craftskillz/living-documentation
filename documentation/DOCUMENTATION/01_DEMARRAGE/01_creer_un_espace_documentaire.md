@@ -7,7 +7,7 @@
 
 # Creer un espace documentaire
 
-![Architecture local-first reliant un dossier Markdown, Git, une interface web, des diagrammes et des agents IA](../90_ASSETS/images/concept-03-local-first.png)
+![Architecture local-first reliant un dossier Markdown, Git, une interface web, des diagrammes et des agents IA](../90_ASSETS/images/concept-03-local-first.jpg)
 
 Ce guide vous aide a lancer Living Documentation sur un dossier local. A la fin, vous disposez d'un espace documentaire ouvert dans le navigateur, pret a recevoir vos premiers documents Markdown.
 
@@ -78,23 +78,22 @@ Elle permet de configurer le titre, le theme, le pattern de nommage, les fichier
 
 ## Bonnes pratiques au depart
 
-| Situation | Recommandation |
-| --- | --- |
-| Decouverte personnelle | Creer un dossier de test separe. |
-| Projet existant | Utiliser un dossier documentaire dedie dans le projet. |
-| Equipe | Stabiliser le nom du dossier avant de partager les liens. |
+| Situation                | Recommandation                                                     |
+| ------------------------ | ------------------------------------------------------------------ |
+| Decouverte personnelle   | Creer un dossier de test separe.                                   |
+| Projet existant          | Utiliser un dossier documentaire dedie dans le projet.             |
+| Equipe                   | Stabiliser le nom du dossier avant de partager les liens.          |
 | Documentation versionnee | Initialiser ou verifier Git avant de produire beaucoup de contenu. |
 
 ## Erreurs courantes
 
-| Symptome | Cause probable | Correction |
-| --- | --- | --- |
-| La commande ne demarre pas | Version Node trop ancienne | Installer Node.js 20.19 ou plus recent. |
-| Le navigateur ne s'ouvre pas | Option `--open` absente ou bloquee | Ouvrir manuellement `http://localhost:4321`. |
-| Le port est deja utilise | Une autre instance tourne deja | Utiliser `--port 4000` ou arreter l'autre serveur. |
-| Les documents ne s'affichent pas | Mauvais dossier passe a la commande | Relancer avec le chemin relatif du bon dossier. |
+| Symptome                         | Cause probable                      | Correction                                         |
+| -------------------------------- | ----------------------------------- | -------------------------------------------------- |
+| La commande ne demarre pas       | Version Node trop ancienne          | Installer Node.js 20.19 ou plus recent.            |
+| Le navigateur ne s'ouvre pas     | Option `--open` absente ou bloquee  | Ouvrir manuellement `http://localhost:4321`.       |
+| Le port est deja utilise         | Une autre instance tourne deja      | Utiliser `--port 4000` ou arreter l'autre serveur. |
+| Les documents ne s'affichent pas | Mauvais dossier passe a la commande | Relancer avec le chemin relatif du bon dossier.    |
 
 ## Suite recommandee
 
 Continuez avec [Creer, modifier et retrouver un document](./02_creer_modifier_et_retrouver_un_document.md).
-
