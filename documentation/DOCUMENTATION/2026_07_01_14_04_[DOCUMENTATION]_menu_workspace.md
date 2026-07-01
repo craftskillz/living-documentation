@@ -30,7 +30,7 @@ L'idée est simple : au lieu de réécrire le même prompt à chaque fois, vous 
 
 Dans le Workspace, chaque élément est représenté par un nœud.
 
-<!-- image-width: 2/3 -->
+<!-- image-width: 1/2 -->
 ![image](/images/workspace_configuration.png)
 
 | Nœud | Rôle |
