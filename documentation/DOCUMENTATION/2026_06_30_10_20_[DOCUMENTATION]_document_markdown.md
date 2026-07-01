@@ -50,7 +50,6 @@ Ils évitent de retenir toutes les syntaxes et permettent d'insérer rapidement 
 
 <!-- col -->
 
-<!-- image-width: 2/3 -->
 ![Panneau Snippets affichant les blocs Markdown disponibles](/images/snippets.png)
 
 <!-- /layout-columns -->
