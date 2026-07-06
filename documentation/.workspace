@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-06T19:44:02.547Z",
+  "updatedAt": "2026-07-06T19:44:11.834Z",
   "entities": [
     {
       "id": "root",
@@ -525,7 +525,7 @@
         "timeout": 180,
         "systemPrompt": "The user message is the prompt",
         "requiresUserInput": true,
-        "userInputDescription": "",
+        "userInputDescription": "Describe your entire prompt here",
         "expectedOutputMarker": "",
         "description": "Simply ask an LLM on one subject using one prompt.",
         "workspaceFolder": "AI/WORKSPACE/ask_the_llm_3"
