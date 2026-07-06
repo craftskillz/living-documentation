@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-06T19:43:36.822Z",
+  "updatedAt": "2026-07-06T19:43:57.174Z",
   "entities": [
     {
       "id": "root",
@@ -510,7 +510,7 @@
     },
     {
       "id": "agent-mr9mo89z",
-      "label": "Agent 1",
+      "label": "Ask the LLM",
       "kind": "agent",
       "parentId": "provider-mr9mly1h",
       "x": -464.15027510295795,
@@ -528,7 +528,7 @@
         "userInputDescription": "",
         "expectedOutputMarker": "",
         "description": "Simply ask an LLM on one subject using one prompt.",
-        "workspaceFolder": "AI/WORKSPACE/agent_1"
+        "workspaceFolder": "AI/WORKSPACE/ask_the_llm_3"
       }
     }
   ],
