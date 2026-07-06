@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-06T19:42:49.535Z",
+  "updatedAt": "2026-07-06T19:43:31.253Z",
   "entities": [
     {
       "id": "root",
@@ -444,8 +444,8 @@
       "label": "Agent Sonnet Open Router",
       "kind": "llm",
       "parentId": "root",
-      "x": -457.0864562581266,
-      "y": -208.74439019204945,
+      "x": -631.735799366194,
+      "y": -288.5040726884117,
       "angle": 3.5699916518065837,
       "config": {
         "endpoint": "https://openrouter.ai/api/v1",
@@ -467,9 +467,9 @@
       "label": "Code Review Specialist",
       "kind": "agent",
       "parentId": "provider-mr24cpyk",
-      "x": -649.9491100588043,
-      "y": -296.82181297988996,
-      "angle": -2.713193655373003,
+      "x": -824.5984531668716,
+      "y": -376.5814954762523,
+      "angle": -2.7131936553730025,
       "config": {
         "endpoint": "",
         "token": "",
@@ -490,8 +490,8 @@
       "label": "Nemotron 3 Free",
       "kind": "llm",
       "parentId": "root",
-      "x": -245.71909914586612,
-      "y": -382.34638149113096,
+      "x": -349.522136097341,
+      "y": -543.8670597947176,
       "angle": 4.141190316095636,
       "config": {
         "endpoint": "https://openrouter.ai/api/v1",
@@ -507,10 +507,33 @@
         "description": "Routes model calls and hosts the agents assigned to this provider.",
         "workspaceFolder": ""
       }
+    },
+    {
+      "id": "agent-mr9mo89z",
+      "label": "Agent 1",
+      "kind": "agent",
+      "parentId": "provider-mr9mly1h",
+      "x": -464.15027510295795,
+      "y": -722.2319256851082,
+      "angle": -2.141994991083951,
+      "config": {
+        "endpoint": "",
+        "token": "",
+        "model": "",
+        "providerType": "chat",
+        "toolMode": "tools",
+        "timeout": 180,
+        "systemPrompt": "",
+        "requiresUserInput": false,
+        "userInputDescription": "",
+        "expectedOutputMarker": "",
+        "description": "Runs focused automation against documentation, source, or quality signals.",
+        "workspaceFolder": "AI/WORKSPACE/agent_1"
+      }
     }
   ],
   "camera": {
-    "x": 489.8009947872397,
+    "x": 465.61527815086816,
     "y": 435.3668802154624,
     "zoom": 0.5445282652115352
   }
