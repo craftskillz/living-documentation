@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-06T19:42:02.257Z",
+  "updatedAt": "2026-07-06T19:42:49.535Z",
   "entities": [
     {
       "id": "root",
@@ -487,7 +487,7 @@
     },
     {
       "id": "provider-mr9mly1h",
-      "label": "NO",
+      "label": "Nemotron 3 Free",
       "kind": "llm",
       "parentId": "root",
       "x": -245.71909914586612,
@@ -495,8 +495,8 @@
       "angle": 4.141190316095636,
       "config": {
         "endpoint": "https://openrouter.ai/api/v1",
-        "token": "",
-        "model": "anthropic/claude-sonnet-5",
+        "token": "env:OPENROUTER_API_KEY",
+        "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
         "providerType": "chat",
         "toolMode": "tools",
         "timeout": 180,
