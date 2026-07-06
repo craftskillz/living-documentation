@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-06T19:43:57.174Z",
+  "updatedAt": "2026-07-06T19:44:02.547Z",
   "entities": [
     {
       "id": "root",
@@ -523,8 +523,8 @@
         "providerType": "chat",
         "toolMode": "tools",
         "timeout": 180,
-        "systemPrompt": "",
-        "requiresUserInput": false,
+        "systemPrompt": "The user message is the prompt",
+        "requiresUserInput": true,
         "userInputDescription": "",
         "expectedOutputMarker": "",
         "description": "Simply ask an LLM on one subject using one prompt.",
