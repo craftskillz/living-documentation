@@ -8,6 +8,11 @@
 | Youssef | 42  |
 | Youssef | 34  |
 
+<!-- quote-title: Merme -->
+> Citation ici
+>
+> — Auteur
+
 <!-- code-width: 1/2 -->
 <!-- code-align: center -->
 ```
