@@ -1,6 +1,6 @@
 
 
-<!-- table-style: compact -->
+<!-- table-style: striped -->
 <!-- table-color: info -->
 | Table   | Age |
 | ------- | --- |
