@@ -59,6 +59,7 @@ Le travail a couvert :
 - tache ponctuelle : ajout du type `TREE VIEW` dans le builder Mermaid, avec edition dynamique des niveaux, noeuds, decorateurs et notes, generation du bloc Markdown `treeView-beta`, et exemple original d'espace documentaire.
 - tache ponctuelle : ajout du type `SEQUENCE DIAGRAM` dans le builder Mermaid, avec edition dynamique des messages, fleches, participants et notes, generation du bloc Markdown `sequenceDiagram`, et exemple original de workflow documentaire.
 - tache ponctuelle : diagnostic et correction du chargement lent du snippet `Kanban`, cause par un reload global des documents, counts et statuts apres la creation paresseuse des dossiers de colonnes ; le board utilise maintenant l'etat `home.allDocs` deja charge et met a jour localement les documents apres creation/deplacement de cartes.
+- tache ponctuelle : simplification de l'entete des documents `Kanban` pour masquer les actions documentaires ordinaires (`Ecouter`, `Marqueur`, `Exporter PDF`, `Metadonnees`, `Versions`, `Modifier`, `TOC`, copie d'id et jauge metadata) et ne garder que `Supprimer`.
 
 ## Contenu modifie
 
@@ -86,6 +87,7 @@ Le travail a couvert :
 - `src/frontend-svelte/src/lib/home/snippets/pickerData.ts`
 - `src/frontend-svelte/src/lib/home/snippets/builders.ts`
 - `src/frontend-svelte/src/lib/home/kanban.ts`
+- `src/frontend-svelte/src/lib/home/DocViewer.svelte`
 - `src/frontend-svelte/src/lib/home/wireContent.ts`
 - `src/frontend-svelte/src/lib/home/EditableMarkdown.svelte`
 - `src/frontend-svelte/src/lib/home/state.svelte.ts`
@@ -122,6 +124,8 @@ Le type `TREE VIEW` reprend uniquement la forme syntaxique de l'exemple Mermaid 
 Le type `SEQUENCE DIAGRAM` reprend uniquement la forme syntaxique de l'exemple Mermaid fourni ; l'exemple integre au produit porte sur un workflow documentaire original.
 
 Le snippet `Kanban` ajoute un comportement utilisateur durable : un marqueur de document transforme le rendu complet en board, les colonnes correspondent a des dossiers, et les deplacements de cartes deplacent les documents Markdown entre dossiers. Un ADR devra etre cree et attache aux fichiers source concernes quand l'arbre Git sera propre, conformement a la regle projet sur les metadonnees Living Documentation.
+
+Les documents `Kanban` ne se comportent pas comme des documents Markdown ordinaires dans le viewer : leur entete masque les actions de lecture, annotation, export, metadonnees, versions, edition globale et TOC. L'edition des colonnes reste une action propre au board, exposee dans le rendu Kanban, tandis que l'action de suppression du document conteneur reste disponible.
 
 ## Verifications realisees
 
@@ -191,6 +195,11 @@ Le snippet `Kanban` ajoute un comportement utilisateur durable : un marqueur de 
 - Test E2E ajoute pour verifier que le rendu initial Kanban ne relance pas les agregats globaux `/api/documents/file-counts` et `/api/documents/statuses`.
 - `git diff --check -- src/frontend-svelte/src/lib/home/kanban.ts src/frontend-svelte/src/lib/home/wireContent.ts src/frontend-svelte/src/lib/home/EditableMarkdown.svelte src/frontend-svelte/src/lib/home/state.svelte.ts src/frontend-svelte/src/routes/Home.svelte tests/e2e/kanban.spec.ts` execute avec succes.
 - `graphify update .` execute avec succes apres correction Kanban.
+- `npm run build` execute avec succes apres masquage des actions d'entete pour les documents Kanban.
+- `npx playwright test tests/api/documents-move.spec.ts tests/e2e/kanban.spec.ts --project=chromium` execute avec succes apres simplification de l'entete Kanban : 15 tests passes.
+- Test E2E ajoute pour verifier que l'entete d'un document Kanban ne garde que `Supprimer`, et que les documents de cartes ouverts ensuite gardent leurs actions normales.
+- `git diff --check -- src/frontend-svelte/src/lib/home/DocViewer.svelte tests/e2e/kanban.spec.ts` execute avec succes.
+- `graphify update .` execute avec succes apres simplification de l'entete Kanban.
 
 ## Verifications restantes
 
