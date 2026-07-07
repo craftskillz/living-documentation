@@ -1,1 +1,1 @@
-<div data-ld-kanban data-columns="À faire|En cours|Terminé"></div>
+<div data-ld-kanban data-columns="En cours|Terminé"></div>
