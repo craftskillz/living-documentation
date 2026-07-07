@@ -1,7 +1,8 @@
 
 
 <!-- table-style: full -->
-<!-- table-color: success -->
+<!-- table-border: bordered -->
+<!-- table-color: info -->
 | Table   | Age |
 | ------- | --- |
 | Youssef | 10  |
