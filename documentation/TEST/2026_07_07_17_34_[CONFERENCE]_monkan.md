@@ -1,1 +1,1 @@
-<div data-ld-kanban data-columns="En cours|Terminé|Colonne 3|Colonne 4|Colonne 5" data-colors="sky|amber|emerald|rose|violet"></div>
+<div data-ld-kanban data-columns="En cours|Terminé|Colonne 3|Colonne 4" data-colors="sky|amber|emerald|rose"></div>
