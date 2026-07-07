@@ -64,6 +64,8 @@ Le travail a couvert :
 - tache ponctuelle : ajout de couleurs configurables pour les colonnes Kanban, avec correction de l'edition du snippet pour ne plus afficher `[object Object]` dans la definition ni dans l'apercu Markdown.
 - tache ponctuelle : deplacement de l'action `Modifier les colonnes` dans l'entete des documents Kanban, juste avant `Supprimer`, et correction des bordures de drag/drop tronquees via des highlights internes.
 - tache ponctuelle : alignement vertical des colonnes Kanban sur une hauteur commune, couvrant au minimum la hauteur visible restante de la page.
+- tache ponctuelle : adaptation horizontale des colonnes Kanban a la largeur disponible et limitation stricte a six colonnes maximum.
+- tache ponctuelle : suppression de l'espace perdu en haut des colonnes Kanban en neutralisant les marges typographiques heritees du rendu Markdown `prose`.
 
 ## Contenu modifie
 
@@ -139,6 +141,10 @@ Les colonnes Kanban conservent leurs libelles dans `data-columns` et leurs coule
 L'action `Modifier les colonnes` est une action d'entete reservee aux documents Kanban, placee a gauche de `Supprimer`. Le rendu interne du board ne contient plus ce bouton. Les etats visuels de drag/drop utilisent des `box-shadow` internes afin que les bordures bleues ne soient pas coupees par le conteneur scrollable des colonnes.
 
 Les colonnes Kanban sont synchronisees sur une hauteur commune. Cette hauteur est calculee a partir du haut reel des colonnes jusqu'au bas du viewport, avec un minimum fixe, et reste ajustee au resize. Si une colonne contient plus de cartes que la hauteur visible, la hauteur commune suit le contenu le plus haut.
+
+Les colonnes Kanban se repartissent maintenant toute la largeur disponible du board, sans plafond fixe de largeur. Elles conservent une largeur minimale pour declencher un scroll horizontal sur les petits ecrans. Le builder, le parser et la modal limitent le board a six colonnes maximum ; le bouton d'ajout est desactive lorsque cette limite est atteinte.
+
+Le board Kanban neutralise explicitement les marges des titres, textes vides, titres de cartes, descriptions et dates afin de ne pas heriter des marges `prose` reservees au Markdown classique. Les titres de colonnes demarrent donc pres du haut de la colonne, selon le padding du board.
 
 ## Verifications realisees
 
@@ -227,6 +233,12 @@ Les colonnes Kanban sont synchronisees sur une hauteur commune. Cette hauteur es
 - `npm run build` execute avec succes apres synchronisation de hauteur des colonnes Kanban.
 - `npx playwright test tests/e2e/kanban.spec.ts --project=chromium` execute avec succes apres synchronisation de hauteur des colonnes Kanban : 10 tests passes.
 - Test E2E ajoute pour verifier que toutes les colonnes Kanban ont la meme hauteur et couvrent au moins la zone visible restante.
+- `npm run build` execute avec succes apres adaptation horizontale et limitation a six colonnes du board Kanban.
+- `npx playwright test tests/e2e/kanban.spec.ts --project=chromium` execute avec succes apres adaptation horizontale et limitation a six colonnes : 12 tests passes.
+- Tests E2E ajoutes pour verifier que les colonnes remplissent la largeur disponible et que la modal ne permet pas de depasser six colonnes.
+- `npm run build` execute avec succes apres suppression des marges `prose` internes au board Kanban.
+- `npx playwright test tests/e2e/kanban.spec.ts --project=chromium` execute avec succes apres suppression de l'espace haut des colonnes : 13 tests passes.
+- Test E2E ajoute pour verifier que les titres de colonnes demarrent pres du haut de chaque colonne.
 
 ## Verifications restantes
 

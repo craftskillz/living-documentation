@@ -22,6 +22,7 @@ export const SNIPPET_PANELS = [
   "attachment",
   "compare",
   "columns",
+  "kanban",
 ];
 
 const SNIPPET_TYPE_TO_PANEL: Record<string, string> = {
@@ -62,6 +63,7 @@ export const SNIPPET_PICKER_ICONS: Record<string, string> = {
   "local-search": "fa-solid fa-magnifying-glass",
   "compare": "fa-solid fa-table-columns",
   columns: "fa-solid fa-table-columns",
+  kanban: "fa-solid fa-table-columns",
 };
 
 export const SNIPPET_PICKER_CATEGORIES = [
@@ -79,6 +81,7 @@ export const SNIPPET_PICKER_CATEGORIES = [
       "unordered-list",
       "ordered-list",
       "table",
+      "kanban",
     ],
   },
   {
@@ -147,6 +150,7 @@ export const SNIPPET_PICKER_TYPE_PALETTE: Record<string, string> = {
   "local-search": "cyan",
   "compare": "teal",
   columns: "teal",
+  kanban: "violet",
 };
 
 export const SNIPPET_TYPE_I18N_KEY: Record<string, string> = {
@@ -176,6 +180,7 @@ export const SNIPPET_TYPE_I18N_KEY: Record<string, string> = {
   "local-search": "snippet.local_search",
   "compare": "snippet.compare",
   columns: "snippet.columns",
+  kanban: "snippet.kanban",
 };
 
 export const COLOR_SWATCHES: Record<string, { bg: string; border: string; text: string }> = {

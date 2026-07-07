@@ -12,6 +12,8 @@ import {
   codeBlockWidthClass,
   type CodeBlockAttrs,
 } from "./codeBlockAttributes";
+import { initKanbanBoard } from "./kanban";
+import type { DocSummary } from "./types";
 
 declare global {
   interface Window {
@@ -26,6 +28,13 @@ interface WireOptions {
   t: (key: string) => string;
   onDocLink: (id: string, anchor: string | null) => void;
   onAnchor: (anchorId: string) => void;
+  // Kanban takeover: id of the rendered doc plus board state inputs.
+  docId?: string;
+  docs?: DocSummary[];
+  docsFolder?: string;
+  folderPaths?: string[];
+  onKanbanDocsChange?: (docs: DocSummary[]) => void;
+  onKanbanFolderPathsChange?: (folderPaths: string[]) => void;
 }
 
 const COPY_SVG =
@@ -33,8 +42,27 @@ const COPY_SVG =
 const CHECK_SVG =
   '<svg viewBox="0 0 16 16" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"/></svg>';
 
-export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireOptions) {
+export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireOptions): boolean {
   contentEl.innerHTML = html;
+
+  // Kanban whole-document takeover: when the marker is present, the board
+  // replaces the entire render and every other decoration is skipped.
+  if (
+    initKanbanBoard(contentEl, {
+      docId: opts.docId || "",
+      content: opts.content,
+      docs: opts.docs,
+      docsFolder: opts.docsFolder,
+      folderPaths: opts.folderPaths,
+      t: opts.t,
+      onDocLink: opts.onDocLink,
+      onDocsChange: opts.onKanbanDocsChange,
+      onFolderPathsChange: opts.onKanbanFolderPathsChange,
+    })
+  ) {
+    return true;
+  }
+
   applyTableStyles(contentEl, opts.content);
   fillEmptyTableCells(contentEl);
   applyBlockquoteStyles(contentEl, opts.content);
@@ -111,6 +139,8 @@ export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireO
     t.parentNode?.insertBefore(wrapper, t);
     wrapper.appendChild(t);
   });
+
+  return false;
 }
 
 function applyCodeBlockLayout(element: HTMLElement, attrs: CodeBlockAttrs) {

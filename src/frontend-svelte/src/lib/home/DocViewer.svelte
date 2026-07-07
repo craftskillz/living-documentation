@@ -16,6 +16,8 @@
   import { highlightMatches, scrollToMatch, type SearchMatch } from "./searchNotice";
   import type { DocDetail } from "./types";
 
+  const KANBAN_MARKER_RE = /<div\s+data-ld-kanban\b/i;
+
   let { doc, onopen, onsave, ondelete, navHistory = [], ongoback }: {
     doc: DocDetail;
     onopen: (id: string, anchor: string | null) => void;
@@ -45,6 +47,7 @@
   );
 
   const docStatus = $derived(getDocStatus(doc.content));
+  const isKanbanDocument = $derived(KANBAN_MARKER_RE.test(doc.content));
   const showValidate = $derived((docStatus || "").toUpperCase() === "TO BE VALIDATED");
   let editing = $state(false);
   let saveMsg = $state<{ text: string; cls: string } | null>(null);
@@ -66,7 +69,19 @@
 
   $effect(() => {
     void doc.id;
+    void isKanbanDocument;
+    if (isKanbanDocument) {
+      versionsAvailable = false;
+      return;
+    }
     void loadVersionsAvailability();
+  });
+
+  $effect(() => {
+    if (isKanbanDocument && editing) {
+      editing = false;
+      saveMsg = null;
+    }
   });
 
   // Scroll the content area so `target` lands just below the sticky header. The header element is
@@ -100,6 +115,13 @@
     contentEl = el;
     const id = doc.id;
     const q = home.searchQuery;
+
+    if (isKanbanDocument) {
+      searchMatches = [];
+      tocEntries = [];
+      lastWiredId = id;
+      return;
+    }
 
     // Global-search in-doc highlight + notice (skip metadata:// queries)
     const isMeta = typeof q === "string" && q.toLowerCase().startsWith("metadata://");
@@ -182,7 +204,7 @@
   type TocEntry = { id: string; text: string; level: number };
   let tocOpen = $state(false);
   let tocEntries = $state<TocEntry[]>([]);
-  const showToc = $derived(tocOpen && tocEntries.length > 0);
+  const showToc = $derived(!isKanbanDocument && tocOpen && tocEntries.length > 0);
 
   // Resizable TOC panel
   const TOC_KEY = "ld-toc-w";
@@ -334,9 +356,11 @@
             <span class="text-xs text-gray-400 dark:text-gray-500">{doc.formattedDate}</span>
           {/if}
           <h1 data-testid="doc-title" class="min-w-0 text-xs font-normal text-gray-900 dark:text-gray-50 leading-tight">{doc.title}</h1>
-          <button type="button" data-testid="copy-doc-id-btn" onclick={copyMcpId} title={t("doc.copy_mcp_id")} class="no-print inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-gray-200 text-xs text-gray-500 transition-colors hover:bg-gray-50 hover:text-blue-600 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-blue-400 {copiedId ? 'text-green-600 dark:text-green-400' : ''}">
-            <i class="fa-{copiedId ? 'solid fa-check' : 'regular fa-copy'}" aria-hidden="true"></i>
-          </button>
+          {#if !isKanbanDocument}
+            <button type="button" data-testid="copy-doc-id-btn" onclick={copyMcpId} title={t("doc.copy_mcp_id")} class="no-print inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-gray-200 text-xs text-gray-500 transition-colors hover:bg-gray-50 hover:text-blue-600 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-blue-400 {copiedId ? 'text-green-600 dark:text-green-400' : ''}">
+              <i class="fa-{copiedId ? 'solid fa-check' : 'regular fa-copy'}" aria-hidden="true"></i>
+            </button>
+          {/if}
         </div>
       </div>
 
@@ -353,44 +377,51 @@
           {@const capFill = home.markerActive ? "#fef08a" : "#93c5fd"}
           {@const nibFill = home.markerActive ? "#fde047" : "#93c5fd"}
           <div data-testid="view-actions" class="flex items-center gap-2">
-          {#if showValidate}
+          {#if showValidate && !isKanbanDocument}
             <button onclick={validate} data-testid="validate-btn" title={t("doc.validate_mode")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-green-700 bg-green-600 text-white font-semibold hover:bg-green-700 transition-colors"><i class="fa-solid fa-check" style="margin-right:4px"></i>{t("doc.validate_btn")}</button>
           {/if}
-          {#if ttsPlayer.active}
-            <button onclick={() => ttsPlayer.toggle()} data-testid="tts-toggle" title={ttsPlayer.status === "playing" ? t("tts.pause") : t("tts.resume")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"><i class="fa-solid {ttsPlayer.status === 'playing' ? 'fa-pause' : 'fa-play'}"></i></button>
-            <button onclick={() => ttsPlayer.stop()} data-testid="tts-stop" title={t("tts.stop")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-stop"></i></button>
-          {:else}
-            <button onclick={startReading} data-testid="tts-play" title={t("tts.play")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-headphones" style="margin-right:4px"></i>{t("tts.play_btn")}</button>
-          {/if}
-          <button onclick={() => home.toggleMarker()} title={t("doc.marker_mode")} class="no-print text-sm px-3 py-1.5 rounded-lg border transition-colors {home.markerActive ? 'border-yellow-400 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}">
-            <svg width="18" height="18" viewBox="0 0 100 100" fill="none" style="display:inline-block;vertical-align:middle;margin-right:4px">
-              <rect x="28" y="10" width="44" height="52" rx="6" transform="rotate(40 50 50)" fill={bodyFill} stroke="currentColor" stroke-width="6" />
-              <rect x="52" y="8" width="22" height="30" rx="6" transform="rotate(40 50 50)" fill={capFill} stroke="currentColor" stroke-width="6" />
-              <polygon points="28,60 10,80 30,80 38,72" fill={nibFill} stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
-              <polygon points="28,48 19,70 36,75 55,70" fill={nibFill} stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
-              <line x1="10" y1="90" x2="72" y2="90" stroke="currentColor" stroke-width="6" stroke-linecap="round" />
-              {#if home.markerHidden}
-                <g>
-                  <line x1="8" y1="8" x2="92" y2="92" stroke="currentColor" stroke-width="8" stroke-linecap="round" />
-                  <line x1="92" y1="8" x2="8" y2="92" stroke="currentColor" stroke-width="8" stroke-linecap="round" />
-                </g>
-              {/if}
-            </svg>{t("doc.marker_btn")}
-          </button>
+          {#if !isKanbanDocument}
+            {#if ttsPlayer.active}
+              <button onclick={() => ttsPlayer.toggle()} data-testid="tts-toggle" title={ttsPlayer.status === "playing" ? t("tts.pause") : t("tts.resume")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"><i class="fa-solid {ttsPlayer.status === 'playing' ? 'fa-pause' : 'fa-play'}"></i></button>
+              <button onclick={() => ttsPlayer.stop()} data-testid="tts-stop" title={t("tts.stop")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-stop"></i></button>
+            {:else}
+              <button onclick={startReading} data-testid="tts-play" title={t("tts.play")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-headphones" style="margin-right:4px"></i>{t("tts.play_btn")}</button>
+            {/if}
+            <button onclick={() => home.toggleMarker()} data-testid="marker-doc-btn" title={t("doc.marker_mode")} class="no-print text-sm px-3 py-1.5 rounded-lg border transition-colors {home.markerActive ? 'border-yellow-400 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}">
+              <svg width="18" height="18" viewBox="0 0 100 100" fill="none" style="display:inline-block;vertical-align:middle;margin-right:4px">
+                <rect x="28" y="10" width="44" height="52" rx="6" transform="rotate(40 50 50)" fill={bodyFill} stroke="currentColor" stroke-width="6" />
+                <rect x="52" y="8" width="22" height="30" rx="6" transform="rotate(40 50 50)" fill={capFill} stroke="currentColor" stroke-width="6" />
+                <polygon points="28,60 10,80 30,80 38,72" fill={nibFill} stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                <polygon points="28,48 19,70 36,75 55,70" fill={nibFill} stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                <line x1="10" y1="90" x2="72" y2="90" stroke="currentColor" stroke-width="6" stroke-linecap="round" />
+                {#if home.markerHidden}
+                  <g>
+                    <line x1="8" y1="8" x2="92" y2="92" stroke="currentColor" stroke-width="8" stroke-linecap="round" />
+                    <line x1="92" y1="8" x2="8" y2="92" stroke="currentColor" stroke-width="8" stroke-linecap="round" />
+                  </g>
+                {/if}
+              </svg>{t("doc.marker_btn")}
+            </button>
 
-          <button onclick={exportPDF} title={t("doc.export_pdf")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">📄 {t("doc.export_pdf_btn")}</button>
-          <button onclick={() => (metadataOpen = true)} data-testid="metadata-btn" title={t("metadata.button_title")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-code-compare"></i> {t("metadata.button")}</button>
-          {#if versionsAvailable}
-            <button onclick={() => (versionsOpen = true)} data-testid="versions-btn" title={t("versions.button_title")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-code-branch"></i> {t("versions.button")}</button>
+            <button onclick={exportPDF} data-testid="export-pdf-btn" title={t("doc.export_pdf")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">📄 {t("doc.export_pdf_btn")}</button>
+            <button onclick={() => (metadataOpen = true)} data-testid="metadata-btn" title={t("metadata.button_title")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-code-compare"></i> {t("metadata.button")}</button>
+            {#if versionsAvailable}
+              <button onclick={() => (versionsOpen = true)} data-testid="versions-btn" title={t("versions.button_title")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-code-branch"></i> {t("versions.button")}</button>
+            {/if}
+            <button onclick={() => editable.enterEdit()} data-testid="edit-doc-btn" title={t("doc.edit")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-file-pen"></i> {t("doc.edit_btn")}</button>
           {/if}
-          <button onclick={() => editable.enterEdit()} title={t("doc.edit")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-file-pen"></i> {t("doc.edit_btn")}</button>
-          <button onclick={() => (confirmingDelete = true)} title={t("doc.delete")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-700 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 transition-colors"><i class="fa-solid fa-trash"></i> {t("doc.delete_btn")}</button>
-          <button onclick={toggleToc} title={t("doc.toc_toggle")} class="no-print text-sm px-3 py-1.5 rounded-lg border transition-colors {tocOpen ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}"><i class="fa-solid fa-list-ul"></i></button>
+          {#if isKanbanDocument}
+            <button onclick={() => editable.openKanbanColumnsEditor()} data-testid="kanban-edit-columns" title={t("kanban.edit_columns")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-gear"></i> {t("kanban.edit_columns")}</button>
+          {/if}
+          <button onclick={() => (confirmingDelete = true)} data-testid="delete-doc-btn" title={t("doc.delete")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-700 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 transition-colors"><i class="fa-solid fa-trash"></i> {t("doc.delete_btn")}</button>
+          {#if !isKanbanDocument}
+            <button onclick={toggleToc} data-testid="toc-toggle-btn" title={t("doc.toc_toggle")} class="no-print text-sm px-3 py-1.5 rounded-lg border transition-colors {tocOpen ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}"><i class="fa-solid fa-list-ul"></i></button>
+          {/if}
           </div>
         {/if}
       </div>
     </div>
-    {#if !editing}
+    {#if !editing && !isKanbanDocument}
       <AccuracyGauge onopen={() => (metadataOpen = true)} />
     {/if}
 
@@ -403,7 +434,7 @@
       </div>
     {/if}
 
-    {#if !editing && searchMatches.length && home.searchQuery}
+    {#if !editing && !isKanbanDocument && searchMatches.length && home.searchQuery}
       <div class="mt-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-sm text-yellow-800 dark:text-yellow-300 overflow-hidden">
         <div class="px-3 py-2 font-medium border-b border-yellow-200 dark:border-yellow-800">{noticeTitle}</div>
         <ol class="max-h-40 overflow-y-auto divide-y divide-yellow-100 dark:divide-yellow-900/40 list-none m-0 p-0">
@@ -418,14 +449,16 @@
       </div>
     {/if}
 
-    {#if !editing && ttsPlayer.error}
+    {#if !editing && !isKanbanDocument && ttsPlayer.error}
       <div data-testid="tts-error" class="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300">
         {ttsPlayer.error}
       </div>
     {/if}
 
     <!-- Local in-document search widget mount (populated imperatively) -->
-    <div bind:this={localSearchMount} class="hidden no-print"></div>
+    {#if !isKanbanDocument}
+      <div bind:this={localSearchMount} class="hidden no-print"></div>
+    {/if}
 </header>
 
 <div class="flex min-h-full items-start">
@@ -481,7 +514,9 @@
 {/if}
 </div>
 
-<Annotations bind:this={annotations} {contentEl} docId={doc.id} />
+{#if !isKanbanDocument}
+  <Annotations bind:this={annotations} {contentEl} docId={doc.id} />
+{/if}
 
 <MetadataModal open={metadataOpen} docId={doc.id} content={doc.content} onclose={() => (metadataOpen = false)} />
 <VersionsModal open={versionsOpen} docId={doc.id} content={doc.content} {onsave} onclose={() => (versionsOpen = false)} />

@@ -3,7 +3,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { parseFilename, type DocMetadata } from "../lib/parser";
 import { readConfig } from "../lib/config";
-import { readMetadataStore } from "../lib/metadata";
+import { readMetadataStore, writeMetadataStore } from "../lib/metadata";
+import { normalizeFolderPath } from "../lib/folderName";
 import { parseDocStatus } from "../lib/status";
 import { renderMarkdownWithCompareBlocks } from "../lib/compareBlock";
 
@@ -444,10 +445,115 @@ export function documentsRouter(docsPath: string): Router {
     }
   });
 
+  // POST /api/documents/:id/move — move a document to another folder.
+  // The doc id encodes the relative path, so moving CHANGES the id; the
+  // response returns the new identity and the doc-keyed stores
+  // (.metadata.json, .annotations.json) have their keys migrated.
+  router.post("/:id/move", (req: Request, res: Response) => {
+    const id = decodeURIComponent(req.params.id as string);
+    const { folder } = req.body as { folder?: string };
+
+    if (path.isAbsolute(id)) {
+      // Extra files live outside the docs tree — they cannot be moved into it.
+      return res.status(403).json({ error: "Access denied" });
+    }
+    if (typeof folder !== "string" || !folder.trim()) {
+      return res.status(400).json({ error: "folder is required" });
+    }
+
+    const sourcePath = safeFilePath(docsPath, `${id}.md`);
+    if (!sourcePath) return res.status(403).json({ error: "Access denied" });
+    if (!fs.existsSync(sourcePath)) {
+      return res.status(404).json({ error: "Document not found" });
+    }
+
+    // Same folder guards as POST create: traversal + reserved names.
+    const requestedFolder = folder.trim().replace(/^\/+/, "");
+    const resolvedDir = path.resolve(docsPath, requestedFolder);
+    if (
+      !resolvedDir.startsWith(path.resolve(docsPath) + path.sep) &&
+      resolvedDir !== path.resolve(docsPath)
+    ) {
+      return res.status(403).json({ error: "Access denied" });
+    }
+    const firstSegment = requestedFolder.split("/")[0];
+    if (RESERVED_DOCS_SUBFOLDERS.has(firstSegment)) {
+      return res.status(400).json({
+        error: `"${firstSegment}" is a reserved folder name at the docs root`,
+      });
+    }
+
+    const normalizedFolder = normalizeFolderPath(requestedFolder);
+    if (!normalizedFolder) {
+      return res.status(400).json({ error: "Invalid folder name" });
+    }
+    const targetDir = path.resolve(docsPath, normalizedFolder);
+    const filename = path.basename(sourcePath);
+    const targetPath = path.join(targetDir, filename);
+
+    if (path.resolve(targetPath) === path.resolve(sourcePath)) {
+      // No-op move: return the current identity unchanged.
+      const relPath = toPosixPath(path.relative(docsPath, sourcePath));
+      const meta = parseFilename(filename, readConfig(docsPath).filenamePattern);
+      const subdir = path.posix.dirname(relPath);
+      return res.json({
+        ...meta,
+        id: encodeURIComponent(relPath.slice(0, -3)),
+        filename: relPath,
+        folder: subdir !== "." ? subdir.split("/") : null,
+      });
+    }
+    if (fs.existsSync(targetPath)) {
+      return res
+        .status(409)
+        .json({ error: "A document with this name already exists" });
+    }
+
+    try {
+      fs.mkdirSync(targetDir, { recursive: true });
+      fs.renameSync(sourcePath, targetPath);
+    } catch {
+      return res.status(500).json({ error: "Failed to move document" });
+    }
+
+    const relPath = toPosixPath(path.relative(docsPath, targetPath));
+    const newId = relPath.slice(0, -3);
+
+    // Migrate doc-keyed store entries from the old id to the new one.
+    const metadataStore = readMetadataStore(docsPath);
+    if (metadataStore[id]) {
+      metadataStore[newId] = metadataStore[id];
+      delete metadataStore[id];
+      writeMetadataStore(docsPath, metadataStore);
+    }
+    const annPath = path.join(docsPath, ".annotations.json");
+    if (fs.existsSync(annPath)) {
+      try {
+        const store = JSON.parse(fs.readFileSync(annPath, "utf-8"));
+        if (store && typeof store === "object" && store[id]) {
+          store[newId] = store[id];
+          delete store[id];
+          fs.writeFileSync(annPath, JSON.stringify(store, null, 2), "utf-8");
+        }
+      } catch {
+        /* non-fatal */
+      }
+    }
+
+    const meta = parseFilename(filename, readConfig(docsPath).filenamePattern);
+    const subdir = path.posix.dirname(relPath);
+    return res.json({
+      ...meta,
+      id: encodeURIComponent(newId),
+      filename: relPath,
+      folder: subdir !== "." ? subdir.split("/") : null,
+    });
+  });
+
   // POST /api/documents — create a new document
   router.post('/', (req: Request, res: Response) => {
-    const { title, category = 'General', folder = '' } = req.body as {
-      title?: string; category?: string; folder?: string;
+    const { title, category = 'General', folder = '', content } = req.body as {
+      title?: string; category?: string; folder?: string; content?: string;
     };
 
     if (!title?.trim()) {
@@ -494,9 +600,12 @@ export function documentsRouter(docsPath: string): Router {
       return res.status(409).json({ error: 'A document with this name already exists' });
     }
 
-    const content = `# ${title.trim()}\n`;
+    const initialContent =
+      typeof content === 'string'
+        ? content.trimEnd() + '\n'
+        : `# ${title.trim()}\n`;
     try {
-      fs.writeFileSync(filePath, content, 'utf-8');
+      fs.writeFileSync(filePath, initialContent, 'utf-8');
     } catch {
       return res.status(500).json({ error: 'Failed to create document' });
     }

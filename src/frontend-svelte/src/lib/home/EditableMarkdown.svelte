@@ -5,6 +5,7 @@
   import { wireDocContent } from "./wireContent";
   import SnippetsModal from "./SnippetsModal.svelte";
   import { initInlineSnippetEditing, type InlineSnippetRange } from "./inlineSnippetEdit";
+  import { findKanbanRange } from "./kanban";
 
   // Reusable editable-markdown body: rendered view + inline snippet editing
   // (right-click), full-text textarea edit mode, the snippets modal (insert /
@@ -97,25 +98,39 @@
     disposeInline = null;
     if (editing || !contentEl) return;
 
-    wireDocContent(contentEl, html, {
+    const kanbanTakeover = wireDocContent(contentEl, html, {
       content,
       codeBlockMaxHeight: home.codeBlockMaxHeight,
       t,
       onDocLink: (linkId, anchor) => onopen(linkId, anchor),
       onAnchor: onanchor,
-    });
-
-    disposeInline = initInlineSnippetEditing(contentEl, content, {
-      onEdit: (range) => { snippetMode = "inline-edit"; snippetRange = range; snippetsOpen = true; },
-      onInsert: (pos) => { snippetMode = "inline-insert"; snippetInsertPos = pos; snippetsOpen = true; },
-      onDelete: async (range) => {
-        const ok = onconfirmdelete
-          ? await onconfirmdelete()
-          : confirm(t("snippet.inline_delete_message"));
-        if (!ok) return;
-        await onsave(content.slice(0, range.start) + content.slice(range.end));
+      docId,
+      docs: home.allDocs,
+      docsFolder: home.docsFolder,
+      folderPaths: home.allFolderPaths,
+      onKanbanDocsChange: (docs) => {
+        home.allDocs = docs;
+      },
+      onKanbanFolderPathsChange: (folderPaths) => {
+        home.allFolderPaths = folderPaths;
       },
     });
+
+    // A kanban board handles its own interactions (drag & drop, add, edit via
+    // the gear button) — the inline right-click editing would be misleading.
+    if (!kanbanTakeover) {
+      disposeInline = initInlineSnippetEditing(contentEl, content, {
+        onEdit: (range) => { snippetMode = "inline-edit"; snippetRange = range; snippetsOpen = true; },
+        onInsert: (pos) => { snippetMode = "inline-insert"; snippetInsertPos = pos; snippetsOpen = true; },
+        onDelete: async (range) => {
+          const ok = onconfirmdelete
+            ? await onconfirmdelete()
+            : confirm(t("snippet.inline_delete_message"));
+          if (!ok) return;
+          await onsave(content.slice(0, range.start) + content.slice(range.end));
+        },
+      });
+    }
 
     oncontentwired?.(contentEl);
 
@@ -147,6 +162,13 @@
   }
 
   export function openSnippets() { snippetMode = "insert"; snippetsOpen = true; }
+  export function openKanbanColumnsEditor() {
+    const range = findKanbanRange(content);
+    if (!range) return;
+    snippetMode = "inline-edit";
+    snippetRange = range;
+    snippetsOpen = true;
+  }
   export function isEditing(): boolean { return editing; }
 
   // ── Image paste / file attach in editor ──────────────────────────────────────

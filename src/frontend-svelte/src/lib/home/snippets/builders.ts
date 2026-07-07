@@ -166,6 +166,90 @@ export function ldBuildDiagramSnippetMarkdown(data: {
   return `[![${data.label}](./images/${data.imageName})](/diagram?id=${data.id})`;
 }
 
+export const KANBAN_COLUMN_DEFAULT_COLORS = [
+  "sky",
+  "amber",
+  "emerald",
+  "rose",
+  "violet",
+  "slate",
+];
+
+export const KANBAN_MAX_COLUMNS = 6;
+
+export const KANBAN_COLUMN_COLORS = new Set(KANBAN_COLUMN_DEFAULT_COLORS);
+
+export interface KanbanColumnSnippetConfig {
+  label: string;
+  color?: string;
+}
+
+export function ldNormalizeKanbanColumnColor(
+  color: string | undefined,
+  index: number,
+): string {
+  const normalized = (color || "").trim().toLowerCase();
+  if (KANBAN_COLUMN_COLORS.has(normalized)) return normalized;
+  return KANBAN_COLUMN_DEFAULT_COLORS[index % KANBAN_COLUMN_DEFAULT_COLORS.length];
+}
+
+function normalizeKanbanColumnEntry(
+  column: string | KanbanColumnSnippetConfig,
+  index: number,
+  colors?: string[],
+): KanbanColumnSnippetConfig {
+  if (typeof column === "string") {
+    return {
+      label: column,
+      color: ldNormalizeKanbanColumnColor(colors?.[index], index),
+    };
+  }
+  return {
+    label: column.label,
+    color: ldNormalizeKanbanColumnColor(column.color || colors?.[index], index),
+  };
+}
+
+function escapeKanbanAttributeValue(value: string): string {
+  return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+}
+
+// Kanban board marker — a single-line raw-HTML div that survives marked as-is
+// (same precedent as data-ld-local-search). Column labels and colors are
+// pipe-separated in parallel attributes. Older snippets without data-colors are
+// still valid; the parser applies the same default palette by index.
+export function ldBuildKanbanSnippetMarkdown(data: {
+  columns?: Array<string | KanbanColumnSnippetConfig>;
+  colors?: string[];
+  columnsFallback?: string[];
+}): string {
+  const configured = (data.columns || [])
+    .slice(0, KANBAN_MAX_COLUMNS)
+    .map((column, index) => normalizeKanbanColumnEntry(column, index, data.colors))
+    .map((column) => ({
+      ...column,
+      label: (column.label || "").replace(/\|/g, " ").trim(),
+    }))
+    .filter((column) => Boolean(column.label));
+  const columns = configured.length
+    ? configured
+    : (data.columnsFallback || ["Todo", "Doing", "Done"])
+        .slice(0, KANBAN_MAX_COLUMNS)
+        .map((label, index) => ({
+          label,
+          color: ldNormalizeKanbanColumnColor(undefined, index),
+        }));
+  const escapedColumns = columns
+    .map((column) => escapeKanbanAttributeValue(column.label))
+    .join("|");
+  const escapedColors = columns
+    .map((column, index) =>
+      escapeKanbanAttributeValue(ldNormalizeKanbanColumnColor(column.color, index)),
+    )
+    .join("|");
+  return `<div data-ld-kanban data-columns="${escapedColumns}" data-colors="${escapedColors}"></div>`;
+}
+
 export function ldBuildMermaidSnippetMarkdown(data: {
   kind?: string;
   title?: string;
@@ -362,6 +446,8 @@ export function ldBuildSnippetMarkdown(type: string, data: any): string {
       return data.value;
     case "local-search":
       return `<div data-ld-local-search></div>`;
+    case "kanban":
+      return ldBuildKanbanSnippetMarkdown(data);
     case "compare":
       return `:::compare\n${data.content || ""}\n:::`;
     case "columns":

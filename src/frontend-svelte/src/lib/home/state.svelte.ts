@@ -14,6 +14,7 @@ function readHighlight(): number {
 class HomeState {
   allDocs = $state<DocSummary[]>([]);
   allFolderPaths = $state<string[]>([]);
+  docsFolder = $state("");
   annotationCounts = $state<Record<string, number>>({});
   fileAttachmentCounts = $state<Record<string, number>>({});
   docStatuses = $state<Record<string, string>>({});

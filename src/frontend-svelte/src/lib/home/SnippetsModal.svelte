@@ -13,7 +13,12 @@
     EMOJI_CATEGORIES,
     type EmojiItem,
   } from "./snippets/pickerData";
-  import { ldBuildSnippetMarkdown } from "./snippets/builders";
+  import {
+    KANBAN_MAX_COLUMNS,
+    ldBuildSnippetMarkdown,
+    ldNormalizeKanbanColumnColor,
+    type KanbanColumnSnippetConfig,
+  } from "./snippets/builders";
   import { ldParseSnippetMarkdown } from "./snippets/parsers";
   import { detectSnippetType } from "./snippets/detect";
   import ConfirmDialog from "../ConfirmDialog.svelte";
@@ -87,6 +92,12 @@
     message: string;
     notePosition: string;
   }>>([]);
+  let kanbanColumnNextId = 1;
+  let kanbanColumns = $state<Array<{
+    id: number;
+    label: string;
+    color: string;
+  }>>([]);
 
   const MERMAID_PIE_MAX_TOTAL = 100;
   const MERMAID_TREE_MAX_LEVEL = 6;
@@ -118,6 +129,14 @@
     { type: "note", fromKey: "", arrow: "->>", toKey: "snippet.mermaid_sequence_default_actor_3", messageKey: "snippet.mermaid_sequence_default_note_1", notePosition: "right of" },
     { type: "message", fromKey: "snippet.mermaid_sequence_default_actor_3", arrow: "-->", toKey: "snippet.mermaid_sequence_default_actor_1", messageKey: "snippet.mermaid_sequence_default_message_5", notePosition: "right of" },
     { type: "message", fromKey: "snippet.mermaid_sequence_default_actor_1", arrow: "->", toKey: "snippet.mermaid_sequence_default_actor_2", messageKey: "snippet.mermaid_sequence_default_message_6", notePosition: "right of" },
+  ];
+  const KANBAN_COLUMN_COLOR_OPTIONS = [
+    { value: "sky", labelKey: "snippet.kanban_color_sky" },
+    { value: "amber", labelKey: "snippet.kanban_color_amber" },
+    { value: "emerald", labelKey: "snippet.kanban_color_emerald" },
+    { value: "rose", labelKey: "snippet.kanban_color_rose" },
+    { value: "violet", labelKey: "snippet.kanban_color_violet" },
+    { value: "slate", labelKey: "snippet.kanban_color_slate" },
   ];
 
   const tableCtrl = createTableController(() => snippetUpdatePreview());
@@ -751,6 +770,72 @@
     snippetUpdatePreview();
   }
 
+  function kanbanDefaultColumns(): Array<{ id: number; label: string; color: string }> {
+    const labels = [
+      t("snippet.kanban_col_todo"),
+      t("snippet.kanban_col_doing"),
+      t("snippet.kanban_col_done"),
+    ];
+    return labels.map((label, index) => ({
+      id: kanbanColumnNextId++,
+      label,
+      color: ldNormalizeKanbanColumnColor(undefined, index),
+    }));
+  }
+
+  function kanbanResetBuilder(): void {
+    kanbanColumnNextId = 1;
+    kanbanColumns = kanbanDefaultColumns();
+  }
+
+  function kanbanNormalizeColumns(
+    columns: KanbanColumnSnippetConfig[],
+  ): Array<{ id: number; label: string; color: string }> {
+    const source = columns.length
+      ? columns
+      : kanbanDefaultColumns().map(({ label, color }) => ({ label, color }));
+    return source.slice(0, KANBAN_MAX_COLUMNS).map((column, index) => ({
+      id: kanbanColumnNextId++,
+      label: column.label || "",
+      color: ldNormalizeKanbanColumnColor(column.color, index),
+    }));
+  }
+
+  function kanbanAddColumn(): void {
+    if (kanbanColumns.length >= KANBAN_MAX_COLUMNS) return;
+    kanbanColumns = [
+      ...kanbanColumns,
+      {
+        id: kanbanColumnNextId++,
+        label: "",
+        color: ldNormalizeKanbanColumnColor(undefined, kanbanColumns.length),
+      },
+    ];
+    snippetUpdatePreview();
+  }
+
+  function kanbanRemoveColumn(id: number): void {
+    if (kanbanColumns.length <= 1) return;
+    kanbanColumns = kanbanColumns.filter((column) => column.id !== id);
+    snippetUpdatePreview();
+  }
+
+  function kanbanUpdateColumnLabel(id: number, value: string): void {
+    kanbanColumns = kanbanColumns.map((column) =>
+      column.id === id ? { ...column, label: value } : column,
+    );
+    snippetUpdatePreview();
+  }
+
+  function kanbanUpdateColumnColor(id: number, value: string): void {
+    kanbanColumns = kanbanColumns.map((column, index) =>
+      column.id === id
+        ? { ...column, color: ldNormalizeKanbanColumnColor(value, index) }
+        : column,
+    );
+    snippetUpdatePreview();
+  }
+
   // ── Build data / preview ───────────────────────────────────────────────
   function snippetSelectedText(selectEl: HTMLSelectElement, fallback: string): string {
     return selectEl.options[selectEl.selectedIndex]?.text || fallback;
@@ -898,6 +983,21 @@
           textAlign: val("snip-columns-text"),
           gap: val("snip-columns-gap"),
           bodyFallback: t("snippet.columns_body_fallback"),
+        };
+      case "kanban":
+        return {
+          columns: kanbanColumns
+            .slice(0, KANBAN_MAX_COLUMNS)
+            .map((column, index) => ({
+              label: column.label.trim(),
+              color: ldNormalizeKanbanColumnColor(column.color, index),
+            }))
+            .filter((column) => Boolean(column.label)),
+          columnsFallback: [
+            t("snippet.kanban_col_todo"),
+            t("snippet.kanban_col_doing"),
+            t("snippet.kanban_col_done"),
+          ],
         };
       default:
         return {};
@@ -1300,6 +1400,9 @@
       case "compare":
         val2("snip-compare-content", parsed.content || "");
         break;
+      case "kanban":
+        kanbanColumns = kanbanNormalizeColumns(parsed.columns || []);
+        break;
     }
     snippetUpdatePreview();
   }
@@ -1370,6 +1473,7 @@
       colorSectionSwatch = "info";
       colorTextSwatch = "info";
       mermaidResetBuilder();
+      kanbanResetBuilder();
       // Defer until the modal markup is in the DOM.
       queueMicrotask(() => {
         applyModalMode();
@@ -1485,6 +1589,7 @@
           <option value="local-search">{t("snippet.local_search")}</option>
           <option value="compare">{t("snippet.compare")}</option>
           <option value="columns">{t("snippet.columns")}</option>
+          <option value="kanban">{t("snippet.kanban")}</option>
         </select>
       </div>
 
@@ -2139,6 +2244,53 @@
         <div class="space-y-1.5">
           <label for="snip-compare-content" class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("snippet.compare_content_label")}</label>
           <textarea id="snip-compare-content" rows="6" oninput={snippetUpdatePreview} placeholder={t("snippet.compare_content_placeholder")} class="w-full px-3 py-2 text-sm font-mono rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        </div>
+      </div>
+
+      <!-- Panel: kanban -->
+      <div id="snip-panel-kanban" class="hidden space-y-3">
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between gap-3">
+            <span class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("snippet.kanban_columns_label")}</span>
+            <button type="button" onclick={kanbanAddColumn} disabled={kanbanColumns.length >= KANBAN_MAX_COLUMNS} class="text-xs px-2.5 py-1 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed">
+              {t("snippet.kanban_add_column")}
+            </button>
+          </div>
+          <div class="space-y-2">
+            {#each kanbanColumns as column, index (column.id)}
+              <div class="grid grid-cols-[minmax(0,1fr)_9rem_auto] gap-2 items-center" data-testid="snip-kanban-column-row">
+                <input
+                  type="text"
+                  value={column.label}
+                  aria-label={t("snippet.kanban_column_name_label")}
+                  placeholder={t("snippet.kanban_column_name_placeholder")}
+                  oninput={(event) => kanbanUpdateColumnLabel(column.id, event.currentTarget.value)}
+                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <select
+                  value={column.color}
+                  aria-label={t("snippet.kanban_column_color_label")}
+                  onchange={(event) => kanbanUpdateColumnColor(column.id, event.currentTarget.value)}
+                  class="w-full px-2 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {#each KANBAN_COLUMN_COLOR_OPTIONS as option}
+                    <option value={option.value}>{t(option.labelKey)}</option>
+                  {/each}
+                </select>
+                <button
+                  type="button"
+                  aria-label={t("snippet.kanban_remove_column")}
+                  title={t("snippet.kanban_remove_column")}
+                  onclick={() => kanbanRemoveColumn(column.id)}
+                  disabled={kanbanColumns.length <= 1}
+                  class="w-9 h-9 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                </button>
+              </div>
+            {/each}
+          </div>
+          <p class="text-xs text-gray-400 dark:text-gray-500">{t("snippet.kanban_columns_hint")}</p>
         </div>
       </div>
 

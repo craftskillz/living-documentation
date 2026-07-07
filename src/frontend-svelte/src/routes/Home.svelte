@@ -202,6 +202,7 @@
   async function loadDocuments() {
     const [docs, cfg] = await Promise.all([api.fetchDocuments(), api.fetchConfig()]);
     home.allDocs = docs;
+    home.docsFolder = typeof cfg.docsFolder === "string" ? cfg.docsFolder : "";
     if (cfg.docsFolder) {
       try { home.allFolderPaths = await api.fetchAllDirs(cfg.docsFolder as string); } catch { home.allFolderPaths = []; }
     }

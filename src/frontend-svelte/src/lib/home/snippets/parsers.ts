@@ -8,6 +8,11 @@ import {
   parseCodeBlockAttributesFromMarkdown,
   stripCodeBlockAttributesPrefix,
 } from "../codeBlockAttributes";
+import {
+  KANBAN_MAX_COLUMNS,
+  ldNormalizeKanbanColumnColor,
+  type KanbanColumnSnippetConfig,
+} from "./builders";
 
 export function ldParseCollapsibleSnippetMarkdown(markdown: string): {
   summary?: string;
@@ -153,6 +158,31 @@ export function ldParseColoredSectionSnippetMarkdown(markdown: string): {
   };
 }
 
+function parsePipeAttribute(text: string, name: string): string[] {
+  const m = (text || "").match(new RegExp(`${name}\\s*=\\s*"([^"]*)"`, "i"));
+  if (!m) return [];
+  return m[1]
+    .split("|")
+    .map((value) =>
+      value.replace(/&quot;/g, '"').replace(/&amp;/g, "&").trim(),
+    );
+}
+
+// Extract the pipe-separated column labels from a kanban marker. Works on the
+// markdown source and on the rendered outerHTML alike.
+export function ldParseKanbanColumns(text: string): string[] {
+  return parsePipeAttribute(text, "data-columns").filter(Boolean);
+}
+
+export function ldParseKanbanColumnConfigs(text: string): KanbanColumnSnippetConfig[] {
+  const labels = ldParseKanbanColumns(text).slice(0, KANBAN_MAX_COLUMNS);
+  const colors = parsePipeAttribute(text, "data-colors");
+  return labels.map((label, index) => ({
+    label,
+    color: ldNormalizeKanbanColumnColor(colors[index], index),
+  }));
+}
+
 export function ldParseSnippetMarkdown(
   type: string,
   markdown: string,
@@ -196,6 +226,8 @@ export function ldParseSnippetMarkdown(
       const m = text.match(/^:::compare[ \t]*\n([\s\S]*?)\n?:::[ \t]*$/);
       return { content: m ? m[1] : "" };
     }
+    case "kanban":
+      return { columns: ldParseKanbanColumnConfigs(text) };
     default:
       return {};
   }

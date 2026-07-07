@@ -51,6 +51,7 @@ const _INLINE_SNIPPET_TYPES = new Set<string>([
   "heading-3",
   "heading-4",
   "compare",
+  "kanban",
 ]);
 
 const _INLINE_EDIT_AFFORDANCE_BY_TYPE: Record<
@@ -77,6 +78,7 @@ const _INLINE_EDIT_AFFORDANCE_BY_TYPE: Record<
   "heading-3": { labelKey: "snippet.inline_edit_btn_heading_3", iconClass: "fa-solid fa-heading" },
   "heading-4": { labelKey: "snippet.inline_edit_btn_heading_4", iconClass: "fa-solid fa-heading" },
   "compare": { labelKey: "snippet.inline_edit_btn_compare", iconClass: "fa-solid fa-table-columns" },
+  kanban: { labelKey: "snippet.inline_edit_btn_kanban", iconClass: "fa-solid fa-table-columns" },
 };
 
 function _inlineEditAffordance(type: string) {
@@ -106,6 +108,7 @@ const _INLINE_DELETE_LABEL_KEY_BY_TYPE: Record<string, string> = {
   "heading-3": "snippet.inline_delete_btn_heading_3",
   "heading-4": "snippet.inline_delete_btn_heading_4",
   "compare": "snippet.inline_delete_btn_compare",
+  kanban: "snippet.inline_delete_btn_kanban",
 };
 
 function _inlineDeleteAffordance(type: string) {
@@ -131,6 +134,7 @@ const _INLINE_TYPE_SELECTORS: { types: string[]; selector: string }[] = [
   { types: ["heading-4"], selector: "h4" },
   { types: ["image"], selector: "img" },
   { types: ["compare"], selector: ".ld-compare" },
+  { types: ["kanban"], selector: "[data-ld-kanban-root]" },
   {
     types: ["anchor-doc-link", "doc-link", "anchor-link", "link"],
     selector: "a[href]",
@@ -271,6 +275,12 @@ function _inlineCollectSnippetRanges(content: string): InlineSnippetRange[] {
   // Compare blocks before code blocks: the guard rejects any inner ```code``` fence
   // that falls inside a compare range, so compare must be registered first.
   _inlineAddCompareBlockRanges(ranges, content);
+  // Kanban marker (single-line div) — registered early so nothing shadows it.
+  _inlineAddRegexRanges(
+    ranges,
+    content,
+    /^<div\s+data-ld-kanban\b[^\n]*<\/div>[ \t]*$/gim,
+  );
   _inlineAddCodeBlockRanges(ranges, content);
   _inlineAddRegexRanges(ranges, content, /(?:^|\n\n)(#{1,4} [^\n]+)/g, 1);
   _inlineAddRegexRanges(
