@@ -61,6 +61,7 @@ Le travail a couvert :
 - tache ponctuelle : diagnostic et correction du chargement lent du snippet `Kanban`, cause par un reload global des documents, counts et statuts apres la creation paresseuse des dossiers de colonnes ; le board utilise maintenant l'etat `home.allDocs` deja charge et met a jour localement les documents apres creation/deplacement de cartes.
 - tache ponctuelle : simplification de l'entete des documents `Kanban` pour masquer les actions documentaires ordinaires (`Ecouter`, `Marqueur`, `Exporter PDF`, `Metadonnees`, `Versions`, `Modifier`, `TOC`, copie d'id et jauge metadata) et ne garder que `Supprimer`.
 - tache ponctuelle : definition du format de creation des items Kanban (`# Title`, description courte, section `## Content`) et affichage de la description tronquee sur les cartes du board.
+- tache ponctuelle : ajout de couleurs configurables pour les colonnes Kanban, avec correction de l'edition du snippet pour ne plus afficher `[object Object]` dans la definition ni dans l'apercu Markdown.
 
 ## Contenu modifie
 
@@ -130,6 +131,8 @@ Le snippet `Kanban` ajoute un comportement utilisateur durable : un marqueur de 
 Les documents `Kanban` ne se comportent pas comme des documents Markdown ordinaires dans le viewer : leur entete masque les actions de lecture, annotation, export, metadonnees, versions, edition globale et TOC. L'edition des colonnes reste une action propre au board, exposee dans le rendu Kanban, tandis que l'action de suppression du document conteneur reste disponible.
 
 Les items crees depuis une colonne Kanban sont des documents Markdown initialises avec un titre H1, une description courte, puis une section `## Content`. Le board lit la description situee entre le H1 et `## Content`, la normalise sur une ligne et la tronque sur la carte si elle est trop longue.
+
+Les colonnes Kanban conservent leurs libelles dans `data-columns` et leurs couleurs dans l'attribut parallele `data-colors`. Les anciens snippets sans `data-colors` restent valides : le parser applique une palette par defaut par index (`sky`, `amber`, `emerald`, puis `rose`, `violet`, `slate`). La modal d'edition expose des lignes structurees label + couleur afin d'eviter toute serialisation implicite d'objets JavaScript dans le Markdown.
 
 ## Verifications realisees
 
@@ -209,6 +212,10 @@ Les items crees depuis une colonne Kanban sont des documents Markdown initialise
 - Test E2E ajoute pour verifier qu'une carte existante affiche sa description et qu'un item cree depuis le board ecrit le squelette Markdown attendu.
 - `git diff --check -- src/frontend-svelte/src/lib/home/kanban.ts src/routes/documents.ts tests/e2e/kanban.spec.ts tests/fixtures/with-kanban/testdocs/3_projets/Doing/2026_01_07_10_00_[Task]_task_two.md` execute avec succes.
 - `graphify update .` execute avec succes apres ajout des descriptions Kanban.
+- `npm run build` execute avec succes apres correction de l'edition des couleurs de colonnes Kanban.
+- `npx playwright test tests/e2e/kanban.spec.ts --project=chromium` execute avec succes apres correction de l'edition Kanban : 8 tests passes.
+- Tests E2E ajoutes pour verifier que la modal Kanban affiche les libelles et couleurs, ne contient pas `[object Object]`, sauvegarde `data-colors`, et que la creation depuis le picker utilise les libelles/couleurs par defaut.
+- `git diff --check` execute avec succes apres correction de l'edition Kanban.
 
 ## Verifications restantes
 
