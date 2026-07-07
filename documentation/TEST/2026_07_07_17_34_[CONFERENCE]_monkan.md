@@ -1,1 +1,1 @@
-# monKan
+<div data-ld-kanban data-columns="snippet.kanban_col_todo|snippet.kanban_col_doing|snippet.kanban_col_done"></div>
