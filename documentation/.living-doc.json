@@ -2,6 +2,7 @@
   "filenamePattern": "YYYY_MM_DD_HH_mm_[Category]_title",
   "title": "Projet Living Documentation",
   "theme": "system",
+  "siteTheme": "tau",
   "language": "fr",
   "port": 4321,
   "extraFiles": [
