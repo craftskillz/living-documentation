@@ -187,7 +187,7 @@ sequenceDiagram
     Auteur -> Relecteur: Peux-tu approuver le guide ?
 ```
 
-<!-- quote-type: info -->
+<!-- quote-type: success -->
 <!-- quote-title: Hello -->
 <!-- quote-icon -->
 > <!-- table-border: bordered -->
