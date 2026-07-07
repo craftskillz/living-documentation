@@ -196,6 +196,7 @@ sequenceDiagram
 > | Faris   | 42  |
 > | Miya    | 34  |
 
+<!-- quote-title: Classique -->
 > Citation ici
 >
 > — Auteur
