@@ -191,5 +191,5 @@ sequenceDiagram
 > | Table   | Age |
 > | ------- | --- |
 > | Youssef | 10  |
-> | Youssef | 42  |
-> | Youssef | 34  |
+> | Faris   | 42  |
+> | Miya    | 34  |
