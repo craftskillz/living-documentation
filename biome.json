@@ -1,0 +1,37 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.2/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "includes": [
+      "bin/**/*.{ts,js}",
+      "scripts/**/*.{ts,js}",
+      "tests/**/*.ts",
+      "src/**/*.ts",
+      "!**/*.d.ts",
+      "!**/*.svelte",
+      "!src/frontend-svelte/src/lib/diagram/**",
+      "!src/frontend-svelte/public/**"
+    ]
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "noExplicitAny": "warn",
+        "noAssignInExpressions": "warn",
+        "useIterableCallbackReturn": "warn"
+      }
+    }
+  },
+  "formatter": {
+    "enabled": false
+  },
+  "assist": {
+    "enabled": false
+  }
+}

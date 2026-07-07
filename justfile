@@ -65,6 +65,21 @@ test-video-watch *args: (test-video args)
 test-show-trace trace:
     npx playwright show-trace {{trace}}
 
+# ── Quality (the CI gates, runnable locally) ────────────────────────────────
+# Scope + rules live in biome.json; warnings/infos show, only errors fail (like CI).
+# Lint the authored TypeScript with Biome
+lint:
+    npm run lint
+
+# Apply Biome's safe autofixes (node: import protocol, import type, …)
+lint-fix:
+    npm run lint:fix
+
+# Rebuilds first (the CLI is exercised from dist/), then checks .c8rc.json thresholds.
+# Run the full suite with V8 coverage and enforce the coverage gate
+coverage:
+    npm run test:coverage
+
 # ── Security ────────────────────────────────────────────────────────────────
 # Audit GitHub Actions workflows for security issues (supply-chain, injections…)
 # Exit codes: 0 = clean, 13 = only suppressed/ignored, 14 = active findings.

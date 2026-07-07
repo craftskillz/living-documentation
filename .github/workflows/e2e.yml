@@ -39,6 +39,11 @@ jobs:
         # published (catches yanked-and-republished packages).
         run: npm audit signatures
 
+      - name: Lint (Biome)
+        # Fails only on error-level diagnostics (see biome.json scope). Warnings
+        # and infos stay advisory so pre-existing style debt doesn't block CI.
+        run: npm run lint:ci
+
       - name: Build project
         run: npm run build
 
@@ -51,8 +56,20 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Run Playwright tests
-        run: npx playwright test
+      - name: Run Playwright tests with coverage
+        # COVERAGE=1 makes the harness spawn the built server as a subprocess so
+        # its V8 coverage is captured; NODE_V8_COVERAGE is inherited by that child.
+        run: |
+          mkdir -p coverage/tmp
+          npx playwright test
+        env:
+          COVERAGE: "1"
+          NODE_V8_COVERAGE: coverage/tmp
+
+      - name: Coverage gate
+        # Thresholds live in .c8rc.json (check-coverage). Fails the build if
+        # backend coverage regresses below the configured floor.
+        run: npx c8 report
 
       - name: Upload Playwright report on failure
         if: ${{ failure() }}

@@ -23,6 +23,9 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:video": "npm run build && RECORD_VIDEO=1 playwright test",
     "test:coverage": "rm -rf coverage && npm run build && mkdir -p coverage/tmp && COVERAGE=1 NODE_V8_COVERAGE=coverage/tmp playwright test && c8 report",
+    "lint": "biome lint",
+    "lint:fix": "biome lint --write",
+    "lint:ci": "biome ci",
     "setup-hooks": "git config core.hooksPath .githooks && echo '✓ Git hooks active (.githooks/pre-commit)'",
     "check:readme-sync": "./scripts/check-readme-sync.sh",
     "prepublishOnly": "npm run build"
@@ -66,6 +69,7 @@
     "glob": "^13.0.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.5.2",
     "@playwright/test": "^1.59.1",
     "@sveltejs/vite-plugin-svelte": "^7.1.2",
     "@tailwindcss/typography": "^0.5.20",

@@ -9,5 +9,10 @@
   ],
   "reporter": ["text", "html", "lcov"],
   "reports-dir": "coverage",
-  "temp-directory": "coverage/tmp"
+  "temp-directory": "coverage/tmp",
+  "check-coverage": true,
+  "lines": 77,
+  "statements": 77,
+  "functions": 83,
+  "branches": 63
 }
