@@ -196,6 +196,10 @@ sequenceDiagram
 > | Faris   | 42  |
 > | Miya    | 34  |
 
+> Citation ici
+>
+> — Auteur
+
 <!-- quote-type: info -->
 <!-- quote-title: Info -->
 <!-- quote-icon -->
