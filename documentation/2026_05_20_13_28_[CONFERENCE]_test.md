@@ -1,5 +1,6 @@
 
 
+<!-- table-style: compact -->
 <!-- table-color: info -->
 | Table   | Age |
 | ------- | --- |
