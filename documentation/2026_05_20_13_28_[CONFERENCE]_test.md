@@ -189,6 +189,7 @@ sequenceDiagram
 ```
 
 <!-- quote-title: Hello -->
+> <!-- table-border: bordered -->
 > <!-- table-color: info -->
 > | Table   | Age |
 > | ------- | --- |
