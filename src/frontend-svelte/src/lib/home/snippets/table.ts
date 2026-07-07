@@ -81,7 +81,7 @@ export function focusTableCell(row: number, col: number, selectContents = false)
 function addTableColumn(ctrl: TableController, focusRow: number): void {
   ensureRectangularTable(ctrl);
   const cols = ctrl.data[0]?.length ?? MIN_TABLE_COLS;
-  ctrl.data.forEach((currentRow) => currentRow.push(""));
+  ctrl.data.forEach((currentRow) => { currentRow.push(""); });
   tableRenderGrid(ctrl);
   focusTableCell(focusRow, cols);
 }
@@ -116,7 +116,7 @@ function removeTableColumn(ctrl: TableController, col: number): void {
   ensureRectangularTable(ctrl);
   const cols = ctrl.data[0]?.length ?? MIN_TABLE_COLS;
   if (cols <= MIN_TABLE_COLS) return;
-  ctrl.data.forEach((row) => row.splice(col, 1));
+  ctrl.data.forEach((row) => { row.splice(col, 1); });
   tableRenderGrid(ctrl);
   focusTableCell(0, Math.max(0, Math.min(col, cols - 2)));
 }
@@ -316,8 +316,11 @@ export function parseTableSnippetMarkdown(markdown: string): {
   attrs: ReturnType<typeof parseTableAttributesFromMarkdown>;
   rows: string[][];
 } {
-  const attrs = parseTableAttributesFromMarkdown(markdown);
-  const allLines = markdown
+  // Strip blockquote markers so a table nested inside a quote (every line
+  // prefixed with `> `) parses like a top-level one. No-op for plain tables.
+  const unquoted = markdown.replace(/^\s{0,3}(?:> ?)+/gm, "");
+  const attrs = parseTableAttributesFromMarkdown(unquoted);
+  const allLines = unquoted
     .split("\n")
     .filter((line) => /^\|.*\|$/.test(line.trim()));
   const dataLines = allLines.filter((line) => !isMarkdownTableSeparatorLine(line));

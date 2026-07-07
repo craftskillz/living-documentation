@@ -141,13 +141,21 @@ export function ldBuildTableSnippetMarkdown(data: {
   bordered?: boolean;
   color?: string;
   markdown: string;
+  inlineIndent?: string;
 }): string {
   const prefix = buildTableAttributesPrefix({
     style: data.style || "",
     border: data.bordered ? "bordered" : "",
     color: data.color || "",
   });
-  return (prefix ? `${prefix}\n` : "") + data.markdown;
+  const block = (prefix ? `${prefix}\n` : "") + data.markdown;
+  // Re-apply a blockquote (or indent) prefix so a table edited inside a quote
+  // stays inside it. Same mechanism as ldBuildCodeBlockSnippetMarkdown.
+  if (!data.inlineIndent) return block;
+  return block
+    .split("\n")
+    .map((line) => data.inlineIndent + line)
+    .join("\n");
 }
 
 export function ldBuildDiagramSnippetMarkdown(data: {

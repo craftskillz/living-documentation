@@ -17,7 +17,8 @@ export function applyHighlights(
 ) {
   // Remove existing marks (unwrap, keep text)
   contentEl.querySelectorAll("mark[data-annotation-id]").forEach((mark) => {
-    const parent = mark.parentNode!;
+    const parent = mark.parentNode;
+    if (!parent) return;
     parent.replaceChild(document.createTextNode(mark.textContent || ""), mark);
     parent.normalize();
   });

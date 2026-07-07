@@ -171,12 +171,10 @@ function _inlineAddRegexRanges(
   regex: RegExp,
   groupIndex = 0,
 ): void {
-  let match: RegExpExecArray | null;
-  while ((match = regex.exec(content))) {
+  for (const match of content.matchAll(regex)) {
     const raw = match[groupIndex];
     const start = match.index + (groupIndex > 0 ? match[0].indexOf(raw) : 0);
     _inlineAddRange(ranges, start, raw);
-    if (match[0].length === 0) regex.lastIndex += 1;
   }
 }
 
@@ -219,6 +217,46 @@ function _inlineAddCodeBlockRanges(ranges: InlineSnippetRange[], content: string
   }
 }
 
+// A pipe table nested inside a blockquote carries a `> ` marker on every line,
+// so tableBlockSource() (anchored on `|`) never sees it. Detect it here with its
+// original offsets and record the blockquote prefix as `indent`, so the editor can
+// strip it on load and re-apply it on save (same mechanism as code-block indent).
+function _inlineAddBlockquoteTableRanges(
+  ranges: InlineSnippetRange[],
+  content: string,
+): void {
+  const bq = "(?:>[ \\t]?)+";
+  const comment = "<!--\\s*table-(?:style|border|color):[^\\n]*-->";
+  const regex = new RegExp(
+    `(?:^${bq}${comment}\\n)*^${bq}\\|[^\\n]*\\|\\n${bq}\\|[ \\t:|-]*-[ \\t:|-]*\\|(?:\\n${bq}\\|[^\\n]*\\|)*`,
+    "gm",
+  );
+  for (const match of content.matchAll(regex)) {
+    const raw = match[0];
+    const indent = raw.match(/^(?:>[ \t]?)+/)?.[0] ?? "> ";
+    const start = match.index;
+    const end = start + raw.length;
+    const candidate: InlineSnippetRange = { start, end, type: "table", indent };
+    if (
+      ranges.some((existing) => {
+        if (_inlineRangesOverlap(existing, candidate)) return true;
+        // Skip tables that live inside a fenced-code or compare block (literal text).
+        if (
+          (existing.type === "code-block" || existing.type === "compare") &&
+          start >= existing.start &&
+          end <= existing.end
+        ) {
+          return true;
+        }
+        return false;
+      })
+    ) {
+      continue;
+    }
+    ranges.push(candidate);
+  }
+}
+
 function _inlineCollectSnippetRanges(content: string): InlineSnippetRange[] {
   const ranges: InlineSnippetRange[] = [];
 
@@ -246,6 +284,7 @@ function _inlineCollectSnippetRanges(content: string): InlineSnippetRange[] {
     new RegExp(`(?:^|\\n)((${tableBlockSource()}))`, "g"),
     1,
   );
+  _inlineAddBlockquoteTableRanges(ranges, content);
   _inlineAddRegexRanges(
     ranges,
     content,

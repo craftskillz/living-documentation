@@ -840,6 +840,7 @@
           style: val("snip-table-style"),
           bordered: Boolean(borderedEl && borderedEl.checked),
           color: val("snip-table-color"),
+          inlineIndent,
         };
       }
       case "tree":

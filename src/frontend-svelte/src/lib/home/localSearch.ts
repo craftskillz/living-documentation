@@ -87,7 +87,7 @@ export function initLocalSearch(contentEl: HTMLElement, mount: HTMLElement, t: T
 
   const placeholders = contentEl.querySelectorAll("[data-ld-local-search]");
   if (!placeholders.length) return;
-  placeholders.forEach(el => el.remove());
+  placeholders.forEach((el) => { el.remove(); });
 
   const wordIndex = (() => {
     const set = new Set<string>();

@@ -20,8 +20,7 @@ function parsePrefix(prefix: string): ImageAttrs {
   let width: ImageWidth | null = null;
   let align: ImageAlign | null = null;
   const re = /<!--\s*image-(width|align):\s*([^\s]+)\s*-->/g;
-  let match: RegExpExecArray | null;
-  while ((match = re.exec(prefix || ""))) {
+  for (const match of (prefix || "").matchAll(re)) {
     const [, kind, value] = match;
     if (kind === "width" && ALLOWED_WIDTHS.has(value as ImageWidth)) {
       width = value as ImageWidth;
@@ -74,8 +73,7 @@ export function collectImageAttributesFromSource(source: string): ImageAttrs[] {
   const stripped = stripNonRenderedBlocks(source);
   const attrs: ImageAttrs[] = [];
   const re = new RegExp(`(${PREFIX})(${IMAGE})`, "g");
-  let match: RegExpExecArray | null;
-  while ((match = re.exec(stripped))) {
+  for (const match of stripped.matchAll(re)) {
     attrs.push(parsePrefix(match[1] || ""));
   }
   return attrs;

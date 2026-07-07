@@ -1313,4 +1313,44 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(page.locator('#snippet-submit-btn')).toBeVisible();
     await expect(page.locator('#snippet-type')).toHaveValue('table');
   });
+
+  test('a table nested in a blockquote is styled, editable as a table, and round-trips inside the quote', async ({ page, ld }) => {
+    const bqDocId = '2026_01_03_10_00_[General]_blockquote_table';
+    const docPath = path.join(ld.docsAbs, `${bqDocId}.md`);
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(bqDocId)}`);
+
+    // Render: the blockquote-nested table still receives its style classes even
+    // though every source line carries a `> ` blockquote marker.
+    const table = page.locator('#doc-content blockquote table');
+    await expect(table).toHaveAttribute('data-table-border', 'bordered');
+    await expect(table).toHaveAttribute('data-table-color', 'info');
+    await expect(table).toHaveClass(/table-border-bordered/);
+    await expect(table).toHaveClass(/table-color-info/);
+
+    // Edit: right-clicking a cell resolves to the table, not the surrounding quote.
+    await table.locator('tbody td').first().click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup')).toHaveAttribute('data-snippet-type', 'table');
+    await expect(page.locator('#inline-snippet-popup button[data-action="edit"]')).toContainText('Edit table');
+    await page.locator('#inline-snippet-popup button[data-action="edit"]').click();
+
+    await expect(page.locator('#snippets-modal')).toBeVisible();
+    await expect(page.locator('#snippet-type')).toHaveValue('table');
+    await expect(page.locator('#snip-table-bordered')).toBeChecked();
+    await expect(page.locator('#snip-table-color')).toHaveValue('info');
+    await expect(page.locator('#snip-table-grid input[data-tr="1"][data-tc="1"]')).toHaveValue('10');
+
+    await page.locator('#snip-table-grid input[data-tr="1"][data-tc="1"]').fill('99');
+    await page.locator('#snippet-submit-btn').click();
+    await expect(page.locator('#snippets-modal')).toBeHidden();
+    await expect(page.locator('#doc-content blockquote table')).toContainText('99');
+
+    const onDisk = fs.readFileSync(docPath, 'utf-8');
+    // Quote title untouched; attribute comments + table stay inside the blockquote.
+    expect(onDisk).toContain('<!-- quote-title: Hello -->');
+    expect(onDisk).toMatch(/^> <!-- table-border: bordered -->$/m);
+    expect(onDisk).toMatch(/^> <!-- table-color: info -->$/m);
+    expect(onDisk).toMatch(/^> \| Youssef \| 99\s/m);
+    expect(onDisk).not.toMatch(/\| Youssef \| 10 /);
+  });
 });

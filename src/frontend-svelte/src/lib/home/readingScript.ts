@@ -67,21 +67,15 @@ function isMermaid(el: Element): boolean {
 export function splitSentences(text: string): ReadingSentence[] {
   const out: ReadingSentence[] = [];
   const re = /[^.!?…\n]*(?:[.!?…]+|\n+|$)/g;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(text)) !== null) {
-    if (m[0].length === 0) {
-      if (re.lastIndex >= text.length) break;
-      re.lastIndex++;
-      continue;
-    }
+  for (const m of text.matchAll(re)) {
     const raw = m[0];
+    if (raw.length === 0) continue;
     const trimmedStart = raw.length - raw.trimStart().length;
     const trimmedText = raw.trim();
     if (trimmedText) {
       const start = m.index + trimmedStart;
       out.push({ text: trimmedText, start, end: start + trimmedText.length });
     }
-    if (re.lastIndex >= text.length) break;
   }
   return out;
 }

@@ -65,7 +65,7 @@ export function scrollToMatch(id: string) {
     ancestor = ancestor.parentElement;
   }
 
-  document.querySelectorAll("mark.match-active").forEach(m => m.classList.remove("match-active"));
+  document.querySelectorAll("mark.match-active").forEach((m) => { m.classList.remove("match-active"); });
   mark.classList.add("match-active");
 
   const stickyHeader = document.querySelector("#home-doc-view header");

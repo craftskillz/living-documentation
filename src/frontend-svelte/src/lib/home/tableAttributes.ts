@@ -23,8 +23,7 @@ const ALLOWED_COLORS = new Set(["info", "success", "warning", "danger", "note"])
 function parsePrefix(prefix: string): TableAttrs {
   let style: string | null = null, border: string | null = null, color: string | null = null;
   const re = /<!--\s*table-(style|border|color):\s*([a-z][a-z0-9_-]*)\s*-->/g;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(prefix || ""))) {
+  for (const m of (prefix || "").matchAll(re)) {
     const [, kind, value] = m;
     if (kind === "style" && ALLOWED_STYLES.has(value)) style = value;
     if (kind === "style" && LEGACY_BORDER_STYLES.has(value)) border = value;
@@ -108,13 +107,23 @@ function stripFencedCodeBlocks(source: string): string {
   return result;
 }
 
+/**
+ * Remove leading blockquote markers (`> `, including nested `> > `) from every
+ * line so a table nested inside a blockquote — and its `<!-- table-* -->` prefix
+ * comments, which are also `> `-prefixed — is detected the same as at top level.
+ * Line order is preserved, so the Nth detected table still maps to the Nth
+ * rendered <table> (querySelectorAll finds nested tables too).
+ */
+function stripBlockquoteMarkers(source: string): string {
+  return source.replace(/^\s{0,3}(?:> ?)+/gm, "");
+}
+
 export function collectTableAttributesFromSource(source: string): TableAttrs[] {
   if (typeof source !== "string") return [];
-  const stripped = stripFencedCodeBlocks(source);
+  const stripped = stripFencedCodeBlocks(stripBlockquoteMarkers(source));
   const attrs: TableAttrs[] = [];
   const re = new RegExp(`(${PREFIX})(${TABLE_START})`, "g");
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(stripped))) {
+  for (const m of stripped.matchAll(re)) {
     attrs.push(parsePrefix(m[1] || ""));
   }
   return attrs;

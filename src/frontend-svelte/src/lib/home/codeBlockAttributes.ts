@@ -48,8 +48,7 @@ export function parseCodeBlockAttributesFromMarkdown(markdown: string): CodeBloc
   let width: CodeBlockWidth | null = null;
   let align: CodeBlockAlign | null = null;
   const re = /<!--\s*(code|mermaid)-(width|align):\s*([^\s]+)\s*-->/g;
-  let match: RegExpExecArray | null;
-  while ((match = re.exec(normalized))) {
+  for (const match of normalized.matchAll(re)) {
     const [, commentKind, attribute, value] = match;
     if (commentKind !== kind) continue;
     if (attribute === "width" && ALLOWED_WIDTHS.has(value as CodeBlockWidth)) {
@@ -91,11 +90,9 @@ export function collectCodeBlockAttributesFromSource(source: string): CodeBlockA
   if (typeof source !== "string") return [];
   const attrs: CodeBlockAttrs[] = [];
   const re = new RegExp(`^${codeBlockSource()}`, "gm");
-  let match: RegExpExecArray | null;
   const stripped = stripCompareBlocks(source);
-  while ((match = re.exec(stripped))) {
+  for (const match of stripped.matchAll(re)) {
     attrs.push(parseCodeBlockAttributesFromMarkdown(match[0]));
-    if (match[0].length === 0) re.lastIndex += 1;
   }
   return attrs;
 }
