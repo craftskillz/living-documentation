@@ -128,6 +128,11 @@
         </div>
 
         <section id="agentSection" class="agent-section" hidden>
+          <label id="agentProviderField" class="field wide">
+            <span>LLM provider</span>
+            <select id="nodeAgentProvider" name="nodeAgentProvider"></select>
+            <small class="field-note">Move this agent to another LLM provider. It inherits the target provider's model and timeout.</small>
+          </label>
           <label id="agentWorkspaceField" class="field wide">
             <span>Workspace folder</span>
             <input id="nodeWorkspaceFolder" name="nodeWorkspaceFolder" type="text" readonly />

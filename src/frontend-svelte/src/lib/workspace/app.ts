@@ -213,6 +213,7 @@ let fields!: {
   mcpToolsList: HTMLElement;
   mcpPromptsList: HTMLElement;
   agentSection: HTMLElement;
+  agentProvider: HTMLSelectElement;
   systemPrompt: HTMLTextAreaElement;
   requiresUserInput: HTMLInputElement;
   userInputDescriptionField: HTMLElement;
@@ -333,6 +334,9 @@ export function initWorkspace(): () => void {
     mcpToolsList: document.getElementById("mcpToolsList") as HTMLElement,
     mcpPromptsList: document.getElementById("mcpPromptsList") as HTMLElement,
     agentSection: document.getElementById("agentSection") as HTMLElement,
+    agentProvider: document.getElementById(
+      "nodeAgentProvider",
+    ) as HTMLSelectElement,
     systemPrompt: document.getElementById(
       "nodeSystemPrompt",
     ) as HTMLTextAreaElement,
@@ -621,6 +625,10 @@ export function initWorkspace(): () => void {
     if (selected) {
       selected.config.model = fields.model.value;
     }
+  });
+
+  fields.agentProvider.addEventListener("change", () => {
+    reparentSelectedAgent(fields.agentProvider.value);
   });
 
   cancelAgentRunButton.addEventListener("click", () => {
@@ -1448,6 +1456,9 @@ function syncPanelFromSelection() {
     mcpInventoryToken += 1;
   }
   fields.agentSection.hidden = selected.kind !== "agent";
+  if (selected.kind === "agent") {
+    populateAgentProviderOptions(selected);
+  }
   fields.systemPrompt.value = selected.config.systemPrompt;
   fields.requiresUserInput.checked = selected.config.requiresUserInput;
   syncUserInputDescriptionVisibility();
@@ -1502,6 +1513,47 @@ function syncSelectedFromForm() {
       }
     }
   }
+}
+
+// Fill the agent's "LLM provider" dropdown with every chat LLM node so the agent
+// can be detached from its current provider and re-attached to another one.
+function populateAgentProviderOptions(selected: Entity) {
+  const select = fields.agentProvider;
+  select.innerHTML = "";
+  const providers = state.entities.filter(
+    (entity) => entity.kind === "llm" && entity.config.providerType !== "image",
+  );
+  for (const provider of providers) {
+    const option = document.createElement("option");
+    option.value = provider.id;
+    option.textContent = provider.label;
+    select.appendChild(option);
+  }
+  select.value = selected.parentId ?? "";
+}
+
+// Move the selected agent to another LLM provider. The agent inherits the target
+// provider's model and timeout, mirroring the propagation done in syncSelectedFromForm.
+function reparentSelectedAgent(newParentId: string) {
+  const selected = selectedEntity();
+  if (!selected || selected.kind !== "agent") {
+    return;
+  }
+  const newParent = entityById(newParentId);
+  if (!newParent || newParent.kind !== "llm") {
+    return;
+  }
+  if (selected.parentId === newParentId) {
+    return;
+  }
+
+  selected.parentId = newParentId;
+  selected.config.model = newParent.config.model;
+  selected.config.timeout = newParent.config.timeout;
+
+  layoutGraph();
+  scheduleWorkspaceSave();
+  scheduleRender();
 }
 
 function syncUserInputDescriptionVisibility() {
