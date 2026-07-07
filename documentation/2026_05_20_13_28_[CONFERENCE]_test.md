@@ -187,9 +187,7 @@ sequenceDiagram
     Auteur -> Relecteur: Peux-tu approuver le guide ?
 ```
 
-<!-- quote-type: success -->
 <!-- quote-title: Hello -->
-<!-- quote-icon -->
 > <!-- table-border: bordered -->
 > <!-- table-color: info -->
 > | Table   | Age |
