@@ -1,6 +1,6 @@
 {
   "name": "living-ai-documentation",
-  "version": "3.42.0",
+  "version": "3.43.0",
   "packageManager": "npm@10.8.2",
   "description": "Local Markdown documentation hub with a built-in MCP server — coding agents create ADRs, draw diagrams and detect drift while you code.",
   "main": "dist/src/server.js",
