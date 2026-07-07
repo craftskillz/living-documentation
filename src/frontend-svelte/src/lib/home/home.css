@@ -250,8 +250,44 @@
       .ld-table-editor table.ld-table-edit-table.table-style-striped tr:not(:first-child):nth-child(odd) td {
         background: var(--tbl-accent-stripe);
       }
-      .ld-table-editor table.ld-table-edit-table.table-border-bordered,
-      .ld-table-editor table.ld-table-edit-table.table-border-bordered td {
+      /* Full: mirrors the rendered "Full" — separate borders so the rounded outer
+         frame (table border) is never clipped; one line color (soft, or an
+         intermediate shade when bordered) drives the whole grid. Editor vars are
+         defined per light/dark mode already, so no dark-specific rules needed. */
+      .ld-table-editor table.ld-table-edit-table.table-style-full {
+        --tbl-full-line: var(--tbl-accent-soft);
+        border-collapse: separate;
+        border-spacing: 0;
+        border: 1px solid var(--tbl-full-line);
+        border-radius: 0.5rem;
+        overflow: hidden;
+      }
+      .ld-table-editor table.ld-table-edit-table.table-style-full.table-border-bordered {
+        --tbl-full-line: color-mix(in srgb, var(--tbl-accent) 45%, var(--tbl-accent-soft));
+        border-color: var(--tbl-full-line);
+      }
+      .ld-table-editor table.ld-table-edit-table.table-style-full td {
+        border: none;
+        border-right: 1px solid var(--tbl-full-line);
+        border-bottom: 1px solid var(--tbl-full-line);
+        background: var(--tbl-accent-stripe);
+      }
+      /* Header (first row) matches the body — overrides the editor's strong accent
+         separator and accent-soft header fill so the grid stays uniform. */
+      .ld-table-editor table.ld-table-edit-table.table-style-full tr:first-child td {
+        border-bottom-color: var(--tbl-full-line);
+        background: var(--tbl-accent-stripe);
+      }
+      /* Edge cells drop the redundant line — the table border is the frame. */
+      .ld-table-editor table.ld-table-edit-table.table-style-full tr > *:last-child {
+        border-right: none;
+      }
+      .ld-table-editor table.ld-table-edit-table.table-style-full tr:last-child > * {
+        border-bottom: none;
+      }
+      /* "Full" owns its bordered look; exclude it from the generic bordered rule. */
+      .ld-table-editor table.ld-table-edit-table.table-border-bordered:not(.table-style-full),
+      .ld-table-editor table.ld-table-edit-table.table-border-bordered:not(.table-style-full) td {
         border: 1px solid var(--tbl-accent);
       }
 
@@ -434,18 +470,74 @@
         background-color: var(--tbl-accent-stripe, rgb(55 65 81));
       }
 
-      /* Border checkbox: visible borders tinted with the accent (neutral fallback otherwise). */
-      .prose table.table-border-bordered {
+      /* Full: filled cells on a uniform grid with rounded outer corners (tau
+         "What you can learn" look). border-collapse: separate keeps the rounded
+         outer border — drawn on the table element — from being clipped by
+         overflow (collapse + overflow hid it); inner lines come from each cell's
+         right/bottom border. A single line color drives the whole grid so it is
+         always uniform: soft by default, an intermediate shade when "bordered". */
+      .prose table.table-style-full {
+        --tbl-full-line: var(--tbl-accent-soft, rgb(226 232 240));
+        border-collapse: separate;
+        border-spacing: 0;
+        border: 1px solid var(--tbl-full-line);
+        border-radius: 0.5rem;
+        overflow: hidden;
+      }
+      .dark .prose table.table-style-full {
+        --tbl-full-line: var(--tbl-accent-soft, rgb(51 65 85));
+      }
+      /* "Bordered" accentuates the grid to a mid shade between soft and accent
+         (the full accent read too strong). */
+      .prose table.table-style-full.table-border-bordered {
+        --tbl-full-line: color-mix(in srgb, var(--tbl-accent, rgb(148 163 184)) 45%, var(--tbl-accent-soft, rgb(226 232 240)));
+        border-color: var(--tbl-full-line);
+      }
+      .dark .prose table.table-style-full.table-border-bordered {
+        --tbl-full-line: color-mix(in srgb, var(--tbl-accent, rgb(100 116 139)) 45%, var(--tbl-accent-soft, rgb(51 65 85)));
+      }
+      .prose table.table-style-full th,
+      .prose table.table-style-full td {
+        border: none;
+        border-right: 1px solid var(--tbl-full-line);
+        border-bottom: 1px solid var(--tbl-full-line);
+        background-color: var(--tbl-accent-stripe, rgb(248 250 252));
+      }
+      .dark .prose table.table-style-full th,
+      .dark .prose table.table-style-full td {
+        background-color: var(--tbl-accent-stripe, rgb(30 41 59));
+      }
+      /* Header shares the body fill and line color (only its text may stay
+         colored) — overrides table-color's tinted-header/accent-separator rules. */
+      .prose table.table-style-full thead th {
+        border-bottom-color: var(--tbl-full-line);
+        background-color: var(--tbl-accent-stripe, rgb(248 250 252));
+      }
+      .dark .prose table.table-style-full thead th {
+        background-color: var(--tbl-accent-stripe, rgb(30 41 59));
+      }
+      /* Edge cells drop the redundant line — the table border is the frame. */
+      .prose table.table-style-full tr > *:last-child {
+        border-right: none;
+      }
+      .prose table.table-style-full tbody tr:last-child > * {
+        border-bottom: none;
+      }
+
+      /* Border checkbox: visible borders tinted with the accent (neutral fallback
+         otherwise). "Full" owns its own bordered look (via --tbl-full-line), so
+         it is excluded here to avoid double/uneven borders. */
+      .prose table.table-border-bordered:not(.table-style-full) {
         border-collapse: collapse;
       }
-      .prose table.table-border-bordered,
-      .prose table.table-border-bordered th,
-      .prose table.table-border-bordered td {
+      .prose table.table-border-bordered:not(.table-style-full),
+      .prose table.table-border-bordered:not(.table-style-full) th,
+      .prose table.table-border-bordered:not(.table-style-full) td {
         border: 1px solid var(--tbl-accent, rgb(209 213 219));
       }
-      .dark .prose table.table-border-bordered,
-      .dark .prose table.table-border-bordered th,
-      .dark .prose table.table-border-bordered td {
+      .dark .prose table.table-border-bordered:not(.table-style-full),
+      .dark .prose table.table-border-bordered:not(.table-style-full) th,
+      .dark .prose table.table-border-bordered:not(.table-style-full) td {
         border-color: var(--tbl-accent, rgb(75 85 99));
       }
 
@@ -589,6 +681,13 @@
         color: inherit;
         margin-left: 0;
         margin-right: 0;
+      }
+      /* Classic (untyped) callout in light mode: a hairline border so the box
+         stays visible even though its fill (#f9fafb) matches the gray-50 content
+         background. Typed callouts keep their own tint and need no border. */
+      html:not(.dark) .prose blockquote.ld-callout:not([class*="ld-callout-"]) {
+        border: 1px solid #e5e7eb;
+        border-left: 4px solid var(--callout-accent);
       }
       .prose blockquote.ld-callout p {
         color: inherit;

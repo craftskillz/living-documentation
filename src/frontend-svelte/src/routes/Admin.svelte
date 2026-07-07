@@ -5,6 +5,7 @@
   import DiagramPalettes from "../lib/DiagramPalettes.svelte";
   import Topbar from "../lib/Topbar.svelte";
   import { t, loadI18n } from "../lib/i18n.svelte";
+  import { applySiteTheme } from "../lib/siteTheme";
 
   let { navigate }: { navigate: (to: string) => void } = $props();
 
@@ -14,6 +15,7 @@
   let port = $state("");
   let title = $state("");
   let theme = $state("system");
+  let siteTheme = $state<"base" | "tau">("base");
   let language = $state("en");
   let filenamePattern = $state("");
   let sourceRoot = $state("");
@@ -154,6 +156,7 @@
       port = cfg.port || "";
       title = cfg.title || "";
       theme = cfg.theme || "system";
+      siteTheme = cfg.siteTheme === "tau" ? "tau" : "base";
       language = cfg.language || "en";
       await loadI18n(language);
       filenamePattern = cfg.filenamePattern || "";
@@ -204,7 +207,7 @@
     }
     const blocked = blockedFileExtensions.split(/[\s,]+/).map(e => e.trim().replace(/^\.+/, "").toLowerCase()).filter(e => /^[a-z0-9]+$/.test(e));
     const payload = {
-      title, theme, language, filenamePattern: pattern,
+      title, theme, siteTheme, language, filenamePattern: pattern,
       exclusiveFolderExpansion, exclusiveCategoryExpansion,
       codeBlockMaxHeight: Math.max(0, Math.min(5000, codeBlockMaxHeight || 0)),
       markdownSoftBreaks, imageRoundedCorners, imageCentered, imageBorder, codeBlockLightTheme,
@@ -303,6 +306,14 @@
               <option value="dark">{t("admin.appearance.theme_dark")}</option>
             </select>
             <p class="field-hint">{t("admin.appearance.theme_hint")}</p>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="field-site-theme">{t("admin.appearance.site_theme_label")}</label>
+            <select id="field-site-theme" class="field-input" bind:value={siteTheme} onchange={() => applySiteTheme(siteTheme)}>
+              <option value="base">{t("admin.appearance.site_theme_base")}</option>
+              <option value="tau">{t("admin.appearance.site_theme_tau")}</option>
+            </select>
+            <p class="field-hint">{t("admin.appearance.site_theme_hint")}</p>
           </div>
           <div class="field-group">
             <label class="field-label" for="field-language">{t("admin.appearance.language_label")}</label>

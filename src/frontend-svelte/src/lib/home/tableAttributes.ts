@@ -15,7 +15,7 @@ export function tableBlockSource(): string {
   return TABLE_BLOCK;
 }
 
-const ALLOWED_STYLES = new Set(["compact", "striped"]);
+const ALLOWED_STYLES = new Set(["compact", "striped", "full"]);
 const ALLOWED_BORDERS = new Set(["bordered", "borderless"]);
 const LEGACY_BORDER_STYLES = new Set(["bordered", "borderless"]);
 const ALLOWED_COLORS = new Set(["info", "success", "warning", "danger", "note"]);

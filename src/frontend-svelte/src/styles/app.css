@@ -1,3 +1,5 @@
+@import "./tau-fonts.css";
+
 :root {
   color-scheme: light;
   --bg: #f6f7f9;
@@ -1395,3 +1397,74 @@ h1 {
 .license-btn:hover { opacity: 0.85; }
 .license-btn--linkedin { background: #0A66C2; }
 .license-btn--npm { background: #CB3837; }
+
+/* ── tau site theme ──────────────────────────────────────────────────────────
+   A notebook-paper skin adapted from huggingface/tau (MIT). Light-only for now.
+   Palette + UI font (Space Grotesk) flow through the :root variables that the
+   hand-written chrome classes already consume; the graph-paper grid, red margin
+   line and Spectral serif are scoped to the document reading area only. */
+
+[data-site-theme="tau"] {
+  --bg: #eef2fa;
+  --ink: #13213c;
+  --muted: #54607a;
+  --line: #dce4f2;
+  --line-strong: #c9d6ee;
+  --panel: #ffffff;
+  --panel-soft: #f6f9fd;
+  --accent: #1b3fa0;
+  --accent-strong: #142e75;
+  --accent-soft: #e5eaf7;
+  --green: #1f8a5f;
+  --green-soft: #e1f5ee;
+  --red: #d6435b;
+  --red-soft: #fbe9ec;
+  --shadow: 0 18px 60px rgb(19 33 60 / 12%);
+  font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Home shell + doc header pick up the paper palette (they use Tailwind grays,
+   not the :root variables, so they need explicit overrides). */
+[data-site-theme="tau"] .app-shell {
+  background-color: #eef2fa;
+}
+[data-site-theme="tau"] #home-doc-header {
+  background-color: rgb(255 255 255 / 85%);
+  border-bottom-color: #dce4f2;
+}
+
+/* The document reading area becomes notebook paper: a graph-paper grid.
+   `background-attachment: local` makes the grid scroll with the content instead
+   of staying pinned to the viewport. `!important` is needed to beat the
+   `background` shorthand that the light code-block theme sets on this same
+   element (home.css `body.ld-code-light`). */
+[data-site-theme="tau"] #home-content-area {
+  background-color: #ffffff;
+  background-image:
+    linear-gradient(#dce4f2 1px, transparent 1px),
+    linear-gradient(90deg, #dce4f2 1px, transparent 1px) !important;
+  background-size: 28px 28px, 28px 28px !important;
+  background-repeat: repeat, repeat !important;
+  background-attachment: local, local !important;
+}
+
+/* Prose in Spectral serif with tau ink; code stays JetBrains Mono. */
+[data-site-theme="tau"] #home-content-area .prose {
+  font-family: "Spectral", Georgia, serif;
+  color: #13213c;
+}
+[data-site-theme="tau"] #home-content-area .prose :is(h1, h2, h3, h4, h5, h6) {
+  font-family: "Spectral", Georgia, serif;
+  color: #13213c;
+}
+[data-site-theme="tau"] #home-content-area .prose :is(code, pre, kbd, samp) {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+[data-site-theme="tau"] #home-content-area .prose :is(a) {
+  color: #1b3fa0;
+}
+/* Callouts: let the notebook grid show through their fill (accent bar stays
+   solid). color-mix keeps each callout type's own tint, just at lower opacity. */
+[data-site-theme="tau"] #home-content-area .prose blockquote.ld-callout {
+  background: color-mix(in srgb, var(--callout-bg) 45%, transparent);
+}

@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import "../lib/home/home.css";
   import { home } from "../lib/home/state.svelte";
+  import { isTauActive } from "../lib/siteTheme";
   import { t, loadI18n } from "../lib/i18n.svelte";
   import * as api from "../lib/home/api";
   import Topbar from "../lib/Topbar.svelte";
@@ -22,6 +23,8 @@
   let loadingDoc = $state(false);
   let docError = $state("");
   let dark = $state(false);
+  // tau is light-only for now, so the dark toggle is hidden while it's active.
+  let siteThemeTau = $state(false);
   let appTitle = $state("Living AI Documentation");
   let welcomePattern = $state("YYYY_MM_DD_HH_mm_[Category]_title.md");
 
@@ -36,6 +39,8 @@
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   }
   function applyDark(v: boolean) {
+    // The tau site theme is light-only for now; never apply dark under it.
+    if (isTauActive()) v = false;
     dark = v;
     document.documentElement.classList.toggle("dark", v);
   }
@@ -215,6 +220,7 @@
   }
 
   onMount(async () => {
+    siteThemeTau = isTauActive();
     applyDark(loadDarkPref());
     const cfg = await api.fetchConfig();
     await loadI18n((cfg.language as string) || "en");
@@ -280,7 +286,9 @@
     </div>
     {#snippet actions()}
       <button onclick={() => (wordCloudOpen = true)} title={t("nav.word_cloud")} class="ghost-button" aria-label={t("nav.word_cloud")}><i class="fa-solid fa-cloud"></i></button>
-      <button onclick={toggleDark} title="Toggle dark mode" class="ghost-button" aria-label="Toggle dark mode">{dark ? "☀" : "☾"}</button>
+      {#if !siteThemeTau}
+        <button onclick={toggleDark} title="Toggle dark mode" class="ghost-button" aria-label="Toggle dark mode">{dark ? "☀" : "☾"}</button>
+      {/if}
     {/snippet}
   </Topbar>
 

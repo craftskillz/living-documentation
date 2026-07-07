@@ -2117,6 +2117,7 @@
               <option value="">{t("snippet.table_style_default")}</option>
               <option value="compact">{t("snippet.table_style_compact")}</option>
               <option value="striped">{t("snippet.table_style_striped")}</option>
+              <option value="full">{t("snippet.table_style_full")}</option>
             </select>
           </div>
           <label class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">

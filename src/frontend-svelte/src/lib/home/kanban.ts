@@ -402,7 +402,63 @@ function parseKanbanItemDescription(content: string): string {
   const description = contentSection >= 0
     ? withoutTitle.slice(0, contentSection)
     : withoutTitle;
-  return description.replace(/\s+/g, " ").trim();
+  return markdownToPreviewText(description);
+}
+
+// Strip inline markdown so the card preview shows plain, readable text instead
+// of raw syntax (`**`, backticks, `[label](url)` …).
+function stripInlineMarkdown(text: string): string {
+  return text
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g, "$1") // image → alt text
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1") // link → label
+    .replace(/(\*\*|__|~~|\*|_)/g, "") // bold / italic / strikethrough
+    .replace(/`+/g, "") // inline code
+    .trim();
+}
+
+// Turns a markdown description into a compact single-line preview: tables lose
+// their pipes/separators and become "cell · cell", list items become "• item"
+// (nesting flattened), headings/quotes keep only their text. This keeps kanban
+// cards short and uniform instead of dumping raw markdown on one line.
+function markdownToPreviewText(markdown: string): string {
+  const segments: string[] = [];
+  for (const rawLine of markdown.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line) continue;
+
+    // Table separator / horizontal rule (| --- | :--: |, ---, ***): drop it.
+    if (/^\|?[\s:|-]+\|?$/.test(line) && line.includes("-")) continue;
+
+    // Table row: | a | b | → "a · b".
+    if (line.startsWith("|")) {
+      const cells = line
+        .split("|")
+        .map((cell) => stripInlineMarkdown(cell.trim()))
+        .filter(Boolean);
+      if (cells.length) segments.push(cells.join(" · "));
+      continue;
+    }
+
+    // List item (-, *, +, or "1.") → "• item", indentation flattened.
+    const listMatch = line.match(/^(?:[-*+]|\d+[.)])\s+(.*)$/);
+    if (listMatch) {
+      const text = stripInlineMarkdown(listMatch[1]);
+      if (text) segments.push(`• ${text}`);
+      continue;
+    }
+
+    // Heading or blockquote: keep the text only.
+    const headingOrQuote = line.match(/^(?:#{1,6}\s+|>\s?)(.*)$/);
+    if (headingOrQuote) {
+      const text = stripInlineMarkdown(headingOrQuote[1]);
+      if (text) segments.push(text);
+      continue;
+    }
+
+    const prose = stripInlineMarkdown(line);
+    if (prose) segments.push(prose);
+  }
+  return segments.join(" ").replace(/\s+/g, " ").trim();
 }
 
 function truncateDescription(description: string): string {

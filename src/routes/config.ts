@@ -23,6 +23,7 @@ export function configRouter(docsPath: string): Router {
         'title',
         'filenamePattern',
         'theme',
+        'siteTheme',
         'language',
         'showDiagramDebug',
         'diagramNodePalette',
@@ -62,6 +63,10 @@ export function configRouter(docsPath: string): Router {
       // language: only 'en' or 'fr'
       if ('language' in safe && !['en', 'fr'].includes(safe.language as string)) {
         delete (safe as Record<string, unknown>).language;
+      }
+      // siteTheme: only 'base' or 'tau'
+      if ('siteTheme' in safe && !['base', 'tau'].includes(safe.siteTheme as string)) {
+        delete (safe as Record<string, unknown>).siteTheme;
       }
       // diagramNodePalette / diagramEdgePalette: null or array of strings.
       // Must drop invalid values explicitly — the initial allowed-key loop copied the raw

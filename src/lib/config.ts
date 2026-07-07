@@ -42,6 +42,9 @@ export interface StoredConfig {
   filenamePattern: string;
   title: string;
   theme: "light" | "dark" | "system";
+  // Visual skin, independent of the light/dark `theme`. "tau" is a notebook-paper
+  // look (serif prose on a graph-paper grid) adapted from huggingface/tau (MIT).
+  siteTheme: "base" | "tau";
   language: "en" | "fr";
   port: number;
   extraFiles: string[]; // relative to docsFolder (posix slashes)
@@ -128,6 +131,7 @@ const STORAGE_DEFAULTS: StoredConfig = {
   filenamePattern: "YYYY_MM_DD_HH_mm_[Category]_title",
   title: "Living Documentation",
   theme: "system",
+  siteTheme: "base",
   language: "en",
   port: 4321,
   extraFiles: [],
