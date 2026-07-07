@@ -63,6 +63,7 @@ Le travail a couvert :
 - tache ponctuelle : definition du format de creation des items Kanban (`# Title`, description courte, section `## Content`) et affichage de la description tronquee sur les cartes du board.
 - tache ponctuelle : ajout de couleurs configurables pour les colonnes Kanban, avec correction de l'edition du snippet pour ne plus afficher `[object Object]` dans la definition ni dans l'apercu Markdown.
 - tache ponctuelle : deplacement de l'action `Modifier les colonnes` dans l'entete des documents Kanban, juste avant `Supprimer`, et correction des bordures de drag/drop tronquees via des highlights internes.
+- tache ponctuelle : alignement vertical des colonnes Kanban sur une hauteur commune, couvrant au minimum la hauteur visible restante de la page.
 
 ## Contenu modifie
 
@@ -136,6 +137,8 @@ Les items crees depuis une colonne Kanban sont des documents Markdown initialise
 Les colonnes Kanban conservent leurs libelles dans `data-columns` et leurs couleurs dans l'attribut parallele `data-colors`. Les anciens snippets sans `data-colors` restent valides : le parser applique une palette par defaut par index (`sky`, `amber`, `emerald`, puis `rose`, `violet`, `slate`). La modal d'edition expose des lignes structurees label + couleur afin d'eviter toute serialisation implicite d'objets JavaScript dans le Markdown.
 
 L'action `Modifier les colonnes` est une action d'entete reservee aux documents Kanban, placee a gauche de `Supprimer`. Le rendu interne du board ne contient plus ce bouton. Les etats visuels de drag/drop utilisent des `box-shadow` internes afin que les bordures bleues ne soient pas coupees par le conteneur scrollable des colonnes.
+
+Les colonnes Kanban sont synchronisees sur une hauteur commune. Cette hauteur est calculee a partir du haut reel des colonnes jusqu'au bas du viewport, avec un minimum fixe, et reste ajustee au resize. Si une colonne contient plus de cartes que la hauteur visible, la hauteur commune suit le contenu le plus haut.
 
 ## Verifications realisees
 
@@ -221,6 +224,9 @@ L'action `Modifier les colonnes` est une action d'entete reservee aux documents 
 - `git diff --check` execute avec succes apres correction de l'edition Kanban.
 - `npm run build` execute avec succes apres deplacement de l'action `Modifier les colonnes` et correction du highlight drag/drop Kanban.
 - `npx playwright test tests/e2e/kanban.spec.ts --project=chromium` execute avec succes apres correction du bouton d'entete et des bordures drag/drop : 9 tests passes.
+- `npm run build` execute avec succes apres synchronisation de hauteur des colonnes Kanban.
+- `npx playwright test tests/e2e/kanban.spec.ts --project=chromium` execute avec succes apres synchronisation de hauteur des colonnes Kanban : 10 tests passes.
+- Test E2E ajoute pour verifier que toutes les colonnes Kanban ont la meme hauteur et couvrent au moins la zone visible restante.
 
 ## Verifications restantes
 
