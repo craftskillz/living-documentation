@@ -16,8 +16,8 @@ test.describe('parser fallback branches via /api/documents', () => {
     const docs = (await res.json()) as Array<{ title: string; category: string; date: string | null }>;
     const noCat = docs.find((d) => d.title === 'No Category');
     expect(noCat).toBeDefined();
-    expect(noCat!.category).toBe('General'); // fallback category
-    expect(noCat!.date).toBe('2026-01-15T09:30');
+    expect(noCat?.category).toBe('General'); // fallback category
+    expect(noCat?.date).toBe('2026-01-15T09:30');
   });
 
   test('a filename that matches no pattern falls back to the raw-title branch', async ({
@@ -28,8 +28,8 @@ test.describe('parser fallback branches via /api/documents', () => {
     const docs = (await res.json()) as Array<{ title: string; category: string; date: string | null }>;
     const random = docs.find((d) => d.title === 'Random file');
     expect(random).toBeDefined();
-    expect(random!.category).toBe('General');
-    expect(random!.date).toBeNull();
+    expect(random?.category).toBe('General');
+    expect(random?.date).toBeNull();
   });
 });
 

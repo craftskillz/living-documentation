@@ -57,12 +57,12 @@ export function buildOrderedListMarkdown(markdown: string): string {
   const countersByIndent = new Map<number, number>();
   return nonEmptyMarkdownLines(content)
     .map((line) => {
-      const indent = line.match(/^\s*/)![0];
+      const indent = line.match(/^\s*/)?.[0];
       const trimmed = line.trim();
       if (/^[-*+]\s+/.test(trimmed)) {
         return `${indent}${trimmed}`;
       }
-      const indentLength = indent.length;
+      const indentLength = indent?.length || 0;
       for (const knownIndent of Array.from(countersByIndent.keys())) {
         if (knownIndent > indentLength) countersByIndent.delete(knownIndent);
       }
@@ -81,7 +81,7 @@ export function buildUnorderedListMarkdown(markdown: string): string {
 
   return nonEmptyMarkdownLines(content)
     .map((line) => {
-      const indent = line.match(/^\s*/)![0];
+      const indent = line.match(/^\s*/)?.[0];
       return `${indent}- ${line.trim()}`;
     })
     .join("\n");

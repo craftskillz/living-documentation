@@ -1,6 +1,6 @@
-import { Router, Request, Response } from 'express';
-import fs from 'fs';
-import path from 'path';
+import { Router, type Request, type Response } from 'express';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const SKIP_DIRS = new Set([
   'node_modules', '.git', '.idea', '.vscode', '__pycache__',

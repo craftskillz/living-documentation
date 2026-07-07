@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { test, expect } from '../helpers/ld-fixture';
 
 test.describe('diagrams CRUD on the with-diagrams fixture', () => {

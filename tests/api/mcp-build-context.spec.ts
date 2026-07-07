@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import { execFileSync } from 'child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { test, expect } from '../helpers/ld-fixture';
 import { callTool } from '../helpers/mcp';
 
@@ -43,7 +43,7 @@ test.describe('build_context MCP tool on the with-metadata fixture', () => {
     const body = await callTool<BuildContextResult>(request, ld.baseURL, 'build_context', { task: 'code-review' });
 
     expect(body.git).not.toBeNull();
-    expect(body.git!.dirty).toBe(true);
+    expect(body.git?.dirty).toBe(true);
     expect(body.changes.files).toHaveLength(1);
     expect(body.changes.files[0].path).toBe('sample.ts');
     expect(body.changes.files[0].status).toBe('M');
@@ -63,8 +63,8 @@ test.describe('build_context MCP tool on the with-metadata fixture', () => {
 
     const doc = body.documentation.relatedDocuments.find((d) => decodeURIComponent(d.id) === DOC_ID);
     expect(doc).toBeDefined();
-    expect(doc!.matchedPaths).toContain('sample.ts');
-    expect(doc!.accuracy).toBe(0);
+    expect(doc?.matchedPaths).toContain('sample.ts');
+    expect(doc?.accuracy).toBe(0);
   });
 
   test('reports an untracked new source file without a diff', async ({ request, ld }) => {
@@ -75,8 +75,8 @@ test.describe('build_context MCP tool on the with-metadata fixture', () => {
 
     const file = body.changes.files.find((f) => f.path === 'second.ts');
     expect(file).toBeDefined();
-    expect(file!.untracked).toBe(true);
-    expect(file!.diff).toBeNull();
+    expect(file?.untracked).toBe(true);
+    expect(file?.diff).toBeNull();
     expect(body.source.files.map((f) => f.path)).toContain('second.ts');
   });
 

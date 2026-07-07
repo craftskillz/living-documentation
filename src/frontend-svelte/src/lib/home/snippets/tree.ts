@@ -115,14 +115,14 @@ export function buildTreeMarkdown(ctrl: TreeController): string {
     }
     lines.push(prefix + (isLast ? "└── " : "├── ") + name);
   }
-  return "```text\n" + lines.join("\n") + "\n```";
+  return `\`\`\`text\n${lines.join("\n")}\n\`\`\``;
 }
 
 export function parseTreeSnippetMarkdown(markdown: string): { items: TreeItem[] } {
   const inner = markdown.replace(/^```text\n/, "").replace(/\n```$/, "");
   return {
     items: inner.split("\n").map((line) => {
-      const match = line.match(/^((?:│   |    )*)(?:├── |└── )([\s\S]+)$/);
+      const match = line.match(/^((?:│ {3}| {4})*)(?:├── |└── )([\s\S]+)$/);
       if (match) return { name: match[2], depth: match[1].length / 4 + 1 };
       return { name: line, depth: 0 };
     }),

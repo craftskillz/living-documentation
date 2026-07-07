@@ -54,7 +54,7 @@ function damerauLevenshtein(a: string, b: string, max: number): number {
       const cost = a.charCodeAt(i - 1) === b.charCodeAt(j - 1) ? 0 : 1;
       let v = Math.min(prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + cost);
       if (i > 1 && j > 1 && a.charCodeAt(i - 1) === b.charCodeAt(j - 2) && a.charCodeAt(i - 2) === b.charCodeAt(j - 1)) {
-        v = Math.min(v, prev2![j - 2] + 1);
+        v = Math.min(v, prev2?.[j - 2] + 1);
       }
       curr[j] = v;
       if (v < rowMin) rowMin = v;
@@ -176,15 +176,15 @@ export function initLocalSearch(contentEl: HTMLElement, mount: HTMLElement, t: T
     tokenVariants.forEach((vs, i) => {
       vs.forEach(v => {
         const isToken = v === tokens[i];
-        allVariants.add(isToken ? v : "\\b" + regexEscape(v) + "\\b");
+        allVariants.add(isToken ? v : `\\b${regexEscape(v)}\\b`);
       });
     });
     const parts = Array.from(allVariants).sort((a, b) => b.length - a.length);
-    const re = new RegExp("(" + parts.map(p => (p.startsWith("\\b") ? p : regexEscape(p))).join("|") + ")", "g");
+    const re = new RegExp(`(${parts.map(p => (p.startsWith("\\b") ? p : regexEscape(p))).join("|")})`, "g");
 
     const walker = document.createTreeWalker(contentEl, NodeFilter.SHOW_TEXT, {
       acceptNode(n) {
-        if (n.parentElement && n.parentElement.closest("mark")) return NodeFilter.FILTER_REJECT;
+        if (n.parentElement?.closest("mark")) return NodeFilter.FILTER_REJECT;
         return NodeFilter.FILTER_ACCEPT;
       },
     });
@@ -224,7 +224,7 @@ export function initLocalSearch(contentEl: HTMLElement, mount: HTMLElement, t: T
       out += esc(original.slice(cursor));
       const span = document.createElement("span");
       span.innerHTML = out;
-      node.parentNode!.replaceChild(span, node);
+      node.parentNode?.replaceChild(span, node);
     });
 
     const totalTokens = tokens.length;

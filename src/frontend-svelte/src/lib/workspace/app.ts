@@ -398,7 +398,7 @@ export function initWorkspace(): () => void {
 
   resizeObserver = new ResizeObserver(([entry]) => {
     const box =
-      entry.devicePixelContentBoxSize && entry.devicePixelContentBoxSize[0];
+      entry.devicePixelContentBoxSize?.[0];
     const cssWidth = entry.contentRect.width;
     const cssHeight = entry.contentRect.height;
 
@@ -578,7 +578,7 @@ export function initWorkspace(): () => void {
 
   fields.name.addEventListener("blur", () => {
     const selected = selectedEntity();
-    if (!selected || selected.kind !== "agent") return;
+    if (selected?.kind !== "agent") return;
     const newName = fields.name.value.trim();
     if (
       !newName ||
@@ -964,7 +964,7 @@ function cloneEntities(entities) {
   }));
 }
 
-function defaultEndpoint(id, kind) {
+function defaultEndpoint(_id, kind) {
   if (kind === "llm") {
     return "http://localhost:11434";
   }
@@ -1536,11 +1536,11 @@ function populateAgentProviderOptions(selected: Entity) {
 // provider's model and timeout, mirroring the propagation done in syncSelectedFromForm.
 function reparentSelectedAgent(newParentId: string) {
   const selected = selectedEntity();
-  if (!selected || selected.kind !== "agent") {
+  if (selected?.kind !== "agent") {
     return;
   }
   const newParent = entityById(newParentId);
-  if (!newParent || newParent.kind !== "llm") {
+  if (newParent?.kind !== "llm") {
     return;
   }
   if (selected.parentId === newParentId) {
@@ -1590,12 +1590,12 @@ function restoreModelSelect(savedModel: string) {
 
 function openAgentRunDialog() {
   const selected = selectedEntity();
-  if (!selected || selected.kind !== "agent") return;
+  if (selected?.kind !== "agent") return;
 
   syncSelectedFromForm();
 
   const llm = entityById(selected.parentId ?? "");
-  if (!llm || llm.kind !== "llm") {
+  if (llm?.kind !== "llm") {
     showSaveToast("No parent LLM found for this agent.", "error");
     return;
   }
@@ -1647,13 +1647,13 @@ async function executeAgentRunFromDialog() {
   }
 
   const selected = agentRunTargetId ? entityById(agentRunTargetId) : null;
-  if (!selected || selected.kind !== "agent") {
+  if (selected?.kind !== "agent") {
     showAgentRunResult("error", "The selected agent is no longer available.");
     return;
   }
 
   const llm = entityById(selected.parentId ?? "");
-  if (!llm || llm.kind !== "llm") {
+  if (llm?.kind !== "llm") {
     showAgentRunResult("error", "No parent LLM found for this agent.");
     return;
   }
@@ -1818,7 +1818,7 @@ const TOKEN_REF_HINT =
 
 async function loadModelsForSelect() {
   const selected = selectedEntity();
-  if (!selected || selected.kind !== "llm") return;
+  if (selected?.kind !== "llm") return;
 
   syncSelectedFromForm();
   const endpoint = selected.config.endpoint;
@@ -1871,7 +1871,7 @@ async function loadModelsForSelect() {
 
 async function testSelectedLlmConnection() {
   const selected = selectedEntity();
-  if (!selected || selected.kind !== "llm") {
+  if (selected?.kind !== "llm") {
     return;
   }
 
@@ -1930,7 +1930,7 @@ async function testSelectedImageProvider(selected: Entity) {
 
 async function copySelectedProviderId() {
   const selected = selectedEntity();
-  if (!selected || selected.kind !== "llm") {
+  if (selected?.kind !== "llm") {
     return;
   }
   try {
@@ -2283,7 +2283,7 @@ function drawConfigSurface(width, height) {
       panelHeight,
     );
     configSurface.style.transform = transform.toString();
-  } catch (error) {
+  } catch (_error) {
     apiStatus.textContent = "Waiting for HTML snapshot";
   }
 }
@@ -2403,7 +2403,7 @@ function startViewAnimation(targetX, targetY, targetZoom) {
 
   function tick(now) {
     const progress = Math.min(1, (now - startedAt) / VIEW_TRANSITION_MS);
-    const eased = 1 - Math.pow(1 - progress, 3);
+    const eased = 1 - (1 - progress) ** 3;
     state.cameraX = startX + (targetX - startX) * eased;
     state.cameraY = startY + (targetY - startY) * eased;
     state.zoom = startZoom + (targetZoom - startZoom) * eased;

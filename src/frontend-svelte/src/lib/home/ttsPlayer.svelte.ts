@@ -184,7 +184,7 @@ class TtsPlayer {
       throw new Error(msg);
     }
     const bytes = await res.arrayBuffer();
-    return this.ctx!.decodeAudioData(bytes);
+    return this.ctx?.decodeAudioData(bytes);
   }
 
   pause(): void {

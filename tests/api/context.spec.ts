@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { expect, test } from '../helpers/ld-fixture';
 
 test('GET /api/context/orientation returns user-added instructions and rules', async ({

@@ -1,8 +1,8 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { readConfig } from "./config";
 import { sha256File } from "./hash";
-import { currentSourceCommit, SourceCommit } from "./git";
+import { currentSourceCommit, type SourceCommit } from "./git";
 
 export interface MetadataEntry {
   path: string; // relative to sourceRoot

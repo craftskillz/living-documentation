@@ -1,5 +1,5 @@
-import path from "path";
-import fs from "fs";
+import path from "node:path";
+import fs from "node:fs";
 import {
   getDocEntries,
   setDocEntries,
@@ -8,10 +8,10 @@ import {
   buildReport,
   getFrontmatterField,
   sourceCommitForMetadata,
-  MetadataEntry,
+  type MetadataEntry,
 } from "../../lib/metadata";
 import { sha256File } from "../../lib/hash";
-import { SourceCommit } from "../../lib/git";
+import type { SourceCommit } from "../../lib/git";
 import { assertNotSuperSeeded } from "../../lib/status";
 import { listAllDocuments, resolveDocFilePath } from "./documents";
 

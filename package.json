@@ -25,6 +25,7 @@
     "test:coverage": "rm -rf coverage && npm run build && mkdir -p coverage/tmp && COVERAGE=1 NODE_V8_COVERAGE=coverage/tmp playwright test && c8 report",
     "lint": "biome lint",
     "lint:fix": "biome lint --write",
+    "lint:fix:unsafe": "biome lint --write --unsafe",
     "lint:ci": "biome ci",
     "setup-hooks": "git config core.hooksPath .githooks && echo '✓ Git hooks active (.githooks/pre-commit)'",
     "check:readme-sync": "./scripts/check-readme-sync.sh",

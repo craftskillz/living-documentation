@@ -37,7 +37,7 @@ export function highlightMatches(el: HTMLElement, q: string): SearchMatch[] {
 
     const span = document.createElement("span");
     span.innerHTML = html;
-    node.parentNode!.replaceChild(span, node);
+    node.parentNode?.replaceChild(span, node);
   });
 
   const matches: SearchMatch[] = [];

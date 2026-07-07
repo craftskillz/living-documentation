@@ -6,7 +6,7 @@ import {
   ListPromptsRequestSchema,
   GetPromptRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { Router, Request, Response } from "express";
+import { Router, type Request, type Response } from "express";
 import {
   toolListDocuments,
   toolReadDocument,

@@ -1,7 +1,7 @@
-import { Router, Request, Response } from "express";
-import fs from "fs";
-import path from "path";
-import { parseFilename, DocMetadata } from "../lib/parser";
+import { Router, type Request, type Response } from "express";
+import fs from "node:fs";
+import path from "node:path";
+import { parseFilename, type DocMetadata } from "../lib/parser";
 import { readConfig } from "../lib/config";
 import { readMetadataStore } from "../lib/metadata";
 import { parseDocStatus } from "../lib/status";
@@ -83,14 +83,14 @@ function buildFilename(filenamePattern: string, title: string, category: string,
     .replace(/_+/g, '_')
     .replace(/^_|_$/g, '') || 'document';
 
-  return (filenamePattern || 'YYYY_MM_DD_HH_mm_[Category]_title')
+  return `${(filenamePattern || 'YYYY_MM_DD_HH_mm_[Category]_title')
     .replace('YYYY', year)
     .replace('MM', month)
     .replace('DD', day)
     .replace('HH', hours)
     .replace('mm', minutes)
     .replace(/\[Category\]/i, `[${category}]`)
-    .replace(/(?<![a-z0-9])(?:title_words|title)(?![a-z0-9])/i, titleSlug) + '.md';
+    .replace(/(?<![a-z0-9])(?:title_words|title)(?![a-z0-9])/i, titleSlug)}.md`;
 }
 
 export function safeFilePath(docsPath: string, filename: string): string | null {
@@ -106,7 +106,7 @@ function resolveDocPath(
 ): string | null {
   const id = decodeURIComponent(doc.id);
   if (path.isAbsolute(id)) {
-    const filePath = id + ".md";
+    const filePath = `${id}.md`;
     return extraFiles.includes(filePath) ? filePath : null;
   }
   return safeFilePath(docsPath, doc.filename);
@@ -302,7 +302,7 @@ export function documentsRouter(docsPath: string): Router {
 
     // Extra file: id is an absolute path without .md
     if (path.isAbsolute(id)) {
-      const filePath = id + ".md";
+      const filePath = `${id}.md`;
       if (!extraFiles.includes(filePath)) {
         return res.status(403).json({ error: "Access denied" });
       }
@@ -327,7 +327,7 @@ export function documentsRouter(docsPath: string): Router {
     }
 
     // Normal file inside docsPath
-    const filename = id + ".md";
+    const filename = `${id}.md`;
     const filePath = safeFilePath(docsPath, filename);
 
     if (!filePath) {
@@ -366,7 +366,7 @@ export function documentsRouter(docsPath: string): Router {
 
     // Extra file: id is an absolute path without .md
     if (path.isAbsolute(id)) {
-      const filePath = id + ".md";
+      const filePath = `${id}.md`;
       if (!extraFiles.includes(filePath)) {
         return res.status(403).json({ error: "Access denied" });
       }
@@ -379,7 +379,7 @@ export function documentsRouter(docsPath: string): Router {
     }
 
     // Normal file inside docsPath
-    const filename = id + ".md";
+    const filename = `${id}.md`;
     const filePath = safeFilePath(docsPath, filename);
 
     if (!filePath) {
@@ -400,7 +400,7 @@ export function documentsRouter(docsPath: string): Router {
     const { extraFiles = [] } = readConfig(docsPath);
 
     if (path.isAbsolute(id)) {
-      const filePath = id + ".md";
+      const filePath = `${id}.md`;
       if (!extraFiles.includes(filePath)) {
         return res.status(403).json({ error: "Access denied" });
       }
@@ -415,7 +415,7 @@ export function documentsRouter(docsPath: string): Router {
       }
     }
 
-    const filename = id + ".md";
+    const filename = `${id}.md`;
     const filePath = safeFilePath(docsPath, filename);
     if (!filePath) return res.status(403).json({ error: "Access denied" });
     if (!fs.existsSync(filePath)) {
@@ -450,7 +450,7 @@ export function documentsRouter(docsPath: string): Router {
       title?: string; category?: string; folder?: string;
     };
 
-    if (!title || !title.trim()) {
+    if (!title?.trim()) {
       return res.status(400).json({ error: 'title is required' });
     }
 
@@ -471,7 +471,7 @@ export function documentsRouter(docsPath: string): Router {
 
     // Resolve target directory, constrained to docsPath
     let targetDir = path.resolve(docsPath);
-    if (folder && folder.trim()) {
+    if (folder?.trim()) {
       const resolved = path.resolve(docsPath, folder.trim());
       if (!resolved.startsWith(path.resolve(docsPath) + path.sep) && resolved !== path.resolve(docsPath)) {
         return res.status(403).json({ error: 'Access denied' });

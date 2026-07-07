@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { spawnSync } from 'child_process';
-import { createServer } from 'net';
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
+import { spawnSync } from 'node:child_process';
+import { createServer } from 'node:net';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { coverageEnv } from '../helpers/coverage';
 import { pickFreePort, spawnLD, killLD } from '../helpers/server';
 

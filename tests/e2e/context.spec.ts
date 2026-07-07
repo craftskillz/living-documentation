@@ -1,7 +1,7 @@
 import { test, expect } from '../helpers/ld-fixture';
 import type { Page, Locator } from '@playwright/test';
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 async function expectNoHorizontalOverflow(page: Page) {
   const metrics = await page.evaluate(() => ({

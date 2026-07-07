@@ -1,4 +1,4 @@
-import { execFileSync } from "child_process";
+import { execFileSync } from "node:child_process";
 
 export interface GitStatusEntry {
   path: string; // relative to cwd, POSIX-separated

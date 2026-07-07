@@ -147,7 +147,7 @@ function _inlineRangesOverlap(a: InlineSnippetRange, b: InlineSnippetRange): boo
 }
 
 function _inlineAddRange(ranges: InlineSnippetRange[], start: number, raw: string): void {
-  if (!raw || !raw.trim()) return;
+  if (!raw?.trim()) return;
   const type = detectSnippetType(raw);
   if (!type || !_INLINE_SNIPPET_TYPES.has(type)) return;
   const end = start + raw.length;
@@ -243,13 +243,13 @@ function _inlineCollectSnippetRanges(content: string): InlineSnippetRange[] {
   _inlineAddRegexRanges(
     ranges,
     content,
-    new RegExp("(?:^|\\n)((" + tableBlockSource() + "))", "g"),
+    new RegExp(`(?:^|\\n)((${tableBlockSource()}))`, "g"),
     1,
   );
   _inlineAddRegexRanges(
     ranges,
     content,
-    new RegExp("(?:^|\\n)((" + blockquoteBlockSource() + "))", "g"),
+    new RegExp(`(?:^|\\n)((${blockquoteBlockSource()}))`, "g"),
     1,
   );
   _inlineAddRegexRanges(ranges, content, orderedListBlockRegex());
@@ -257,7 +257,7 @@ function _inlineCollectSnippetRanges(content: string): InlineSnippetRange[] {
   _inlineAddRegexRanges(
     ranges,
     content,
-    new RegExp("(?:^|\\n)((" + imageBlockSource() + "))", "g"),
+    new RegExp(`(?:^|\\n)((${imageBlockSource()}))`, "g"),
     1,
   );
   _inlineAddRegexRanges(ranges, content, /\[[^\]\n]+\]\([^)]+\)/g);
@@ -274,7 +274,7 @@ function _inlineCollectSnippetRanges(content: string): InlineSnippetRange[] {
 
 function _inlineTopLevelListElements(contentEl: HTMLElement, selector: string): Element[] {
   return Array.from(contentEl.querySelectorAll(selector)).filter(
-    (el) => !el.parentElement!.closest("ol, ul"),
+    (el) => !el.parentElement?.closest("ol, ul"),
   );
 }
 
@@ -384,7 +384,7 @@ function _inlineShowPopup(
 
 function _inlineTopLevelBlock(contentEl: HTMLElement, target: EventTarget | null): Element | null {
   let block: Element | null = target instanceof Element ? target : null;
-  while (block && block.parentElement && block.parentElement !== contentEl) {
+  while (block?.parentElement && block.parentElement !== contentEl) {
     block = block.parentElement;
   }
   if (!block || block === contentEl || block.parentElement !== contentEl) {
@@ -587,7 +587,7 @@ export function initInlineSnippetEditing(
     );
     if (!target || !contentEl.contains(target)) return;
     const range = candidates[Number((target as HTMLElement).dataset.inlineSnippetIndex)];
-    if (!range || range.type !== "table") return;
+    if (range?.type !== "table") return;
     event.preventDefault();
     event.stopPropagation();
     _inlineClosePopup();

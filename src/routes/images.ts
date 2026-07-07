@@ -1,6 +1,6 @@
-import { Router, Request, Response } from 'express';
-import fs from 'fs';
-import path from 'path';
+import { Router, type Request, type Response } from 'express';
+import fs from 'node:fs';
+import path from 'node:path';
 
 export function imagesRouter(docsPath: string): Router {
   const router = Router();
@@ -25,7 +25,7 @@ export function imagesRouter(docsPath: string): Router {
 
     let baseName: string;
     if (typeof name === 'string' && name.trim()) {
-      baseName = name.trim().replace(/[^a-z0-9_\-]/gi, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
+      baseName = name.trim().replace(/[^a-z0-9_-]/gi, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
     } else {
       const now = new Date();
       const pad = (n: number) => String(n).padStart(2, '0');

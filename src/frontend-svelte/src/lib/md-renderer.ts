@@ -23,8 +23,7 @@ export function renderMarkdownHtml(html: string, el: HTMLElement): void {
   // Heading anchors
   el.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((h) => {
     if (!h.id) {
-      h.id = h.textContent!
-        .toLowerCase()
+      h.id = h.textContent?.toLowerCase()
         .replace(/[^\w\s-]/g, '')
         .trim()
         .replace(/\s+/g, '-');
@@ -37,7 +36,7 @@ export function renderMarkdownHtml(html: string, el: HTMLElement): void {
     const wrapper = document.createElement('div');
     wrapper.className = 'mermaid';
     wrapper.textContent = source;
-    block.closest('pre')!.replaceWith(wrapper);
+    block.closest('pre')?.replaceWith(wrapper);
   });
   if (window.mermaid) {
     const nodes = el.querySelectorAll('.mermaid');
@@ -47,7 +46,7 @@ export function renderMarkdownHtml(html: string, el: HTMLElement): void {
   // Syntax highlighting
   if (window.hljs) {
     el.querySelectorAll('pre code').forEach((block) => {
-      window.hljs!.highlightElement(block);
+      window.hljs?.highlightElement(block);
     });
   }
 
@@ -56,7 +55,7 @@ export function renderMarkdownHtml(html: string, el: HTMLElement): void {
     if (t.parentElement?.classList.contains('overflow-x-auto')) return;
     const wrapper = document.createElement('div');
     wrapper.className = 'overflow-x-auto';
-    t.parentNode!.insertBefore(wrapper, t);
+    t.parentNode?.insertBefore(wrapper, t);
     wrapper.appendChild(t);
   });
 }

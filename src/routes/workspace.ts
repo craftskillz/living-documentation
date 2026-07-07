@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { readConfig } from '../lib/config';
 
 const WORKSPACE_VERSION = 1;
@@ -649,7 +649,7 @@ async function callMcp(endpoint: string, method: string, params: unknown): Promi
       const parsed = JSON.parse(trimmed) as unknown;
       if (isRecord(parsed) && isRecord(parsed.result)) return parsed.result;
       if (isRecord(parsed) && parsed.error) throw new Error(String((parsed.error as Record<string,unknown>).message ?? parsed.error));
-    } catch { continue; }
+    } catch { }
   }
   throw new Error('No valid MCP response');
 }
@@ -1079,7 +1079,7 @@ function agentRunMarkdown(args: {
   const status = args.ok ? 'Success' : 'Failed';
   const userInput = args.userInput.trim() || '_No user input._';
   const responseContent = contentWithGeneratedImages(args.content, args.artifacts);
-  const debugSection = args.debug && args.debug.trim() ? `\n## Debug\n\n${args.debug.trim()}\n` : '';
+  const debugSection = args.debug?.trim() ? `\n## Debug\n\n${args.debug.trim()}\n` : '';
   return `---\n**date:** ${new Date().toISOString()}\n**status:** ${status}\n**description:** Resultat d'execution de l'agent ${args.agent.label} via ${args.provider.label}.\n**tags:** agent, run-agent, workspace, llm, ${slugify(args.agent.label)}\n---\n\n# ${args.title}\n\n## Execution\n\n- Agent: ${args.agent.label}\n- Provider: ${args.provider.label}\n- Model: ${args.provider.config.model}\n- Status: ${status}\n\n## User input\n\n${userInput}\n\n## Response\n\n${responseContent}\n${debugSection}`;
 }
 
@@ -1243,14 +1243,14 @@ function buildWorkspaceFilenameForDocs(docsPath: string, title: string, category
   const dd = String(now.getDate()).padStart(2, '0');
   const hh = String(now.getHours()).padStart(2, '0');
   const min = String(now.getMinutes()).padStart(2, '0');
-  return (filenamePattern || 'YYYY_MM_DD_HH_mm_[Category]_title')
+  return `${(filenamePattern || 'YYYY_MM_DD_HH_mm_[Category]_title')
     .replace('YYYY', yyyy)
     .replace('MM', mm)
     .replace('DD', dd)
     .replace('HH', hh)
     .replace('mm', min)
     .replace(/\[Category\]/i, `[${category}]`)
-    .replace(/(?<![a-z0-9])(?:title_words|title)(?![a-z0-9])/i, slugify(title)) + '.md';
+    .replace(/(?<![a-z0-9])(?:title_words|title)(?![a-z0-9])/i, slugify(title))}.md`;
 }
 
 export function workspaceRouter(docsPath: string): Router {

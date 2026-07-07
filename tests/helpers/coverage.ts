@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 // When COVERAGE=1, each spawned Node process writes its V8 coverage JSON into coverage/tmp/
 // via the NODE_V8_COVERAGE env var (a Node.js native feature). c8 then aggregates all JSONs.

@@ -1,6 +1,5 @@
-import fs from "fs";
-import path from "path";
-import { resolveDocFilePath } from "./documents";
+import fs from "node:fs";
+import path from "node:path";
 
 const MAX_GENERATED_IMAGE_BYTES = 19 * 1024 * 1024;
 const IMAGE_GENERATION_TIMEOUT_MS = 10 * 60 * 1000;
@@ -66,7 +65,7 @@ function slugify(name: string): string {
   return name
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-zA-Z0-9_\-]+/g, "_")
+    .replace(/[^a-zA-Z0-9_-]+/g, "_")
     .replace(/_+/g, "_")
     .replace(/^_|_$/g, "")
     .slice(0, 80);
@@ -82,7 +81,7 @@ function isSafeFilename(filename: string): boolean {
   );
 }
 
-function isSafeRelativePath(value: string): boolean {
+function _isSafeRelativePath(value: string): boolean {
   if (typeof value !== "string") return false;
   if (!value || value.startsWith("/") || value.startsWith("\\")) return false;
   const segments = value.split(/[\\/]+/).filter(Boolean);

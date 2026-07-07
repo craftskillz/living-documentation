@@ -84,10 +84,10 @@ export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireO
   // In-doc links (?doc=id)
   contentEl.querySelectorAll("a[href]").forEach(a => {
     const href = a.getAttribute("href");
-    const m = href && href.match(/[?&]doc=([^&#]+)/);
+    const m = href?.match(/[?&]doc=([^&#]+)/);
     if (!m) return;
-    const hashIdx = href!.indexOf("#");
-    const anchorTarget = hashIdx !== -1 ? href!.slice(hashIdx + 1) : null;
+    const hashIdx = href?.indexOf("#");
+    const anchorTarget = hashIdx !== -1 ? href?.slice(hashIdx + 1) : null;
     a.addEventListener("click", e => {
       e.preventDefault();
       opts.onDocLink(decodeURIComponent(m[1]), anchorTarget);

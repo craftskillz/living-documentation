@@ -1,7 +1,7 @@
-import { Router, Request, Response } from "express";
-import fs from "fs";
-import path from "path";
-import crypto from "crypto";
+import { Router, type Request, type Response } from "express";
+import fs from "node:fs";
+import path from "node:path";
+import crypto from "node:crypto";
 
 interface Annotation {
   id: string;

@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import type { APIRequestContext } from '@playwright/test';
 import { test, expect } from '../helpers/ld-fixture';
 import { callTool, getPrompt, listTools, listPrompts } from '../helpers/mcp';
@@ -115,7 +115,7 @@ test('read_document returns raw markdown content for a specific doc', async ({ r
   expect(intro).toBeDefined();
   // read_document returns the raw markdown as a text-content response, not JSON.
   const content = await callTool<string>(request, ld.baseURL, 'read_document', {
-    id: intro!.id,
+    id: intro?.id,
   });
   expect(content).toContain('# Introduction');
 });
@@ -147,20 +147,20 @@ test('update_document overwrites an existing document with multiline markdown', 
     request,
     ld.baseURL,
     'update_document',
-    { id: intro!.id, content: updatedContent },
+    { id: intro?.id, content: updatedContent },
   );
 
   expect(result).toEqual({
     success: true,
-    id: intro!.id,
+    id: intro?.id,
     bytes: Buffer.byteLength(updatedContent, 'utf-8'),
   });
 
   const reread = await callTool<string>(request, ld.baseURL, 'read_document', {
-    id: intro!.id,
+    id: intro?.id,
   });
   expect(reread).toBe(updatedContent);
-  expect(fs.readFileSync(path.join(ld.docsAbs, decodeURIComponent(intro!.id) + '.md'), 'utf-8')).toBe(updatedContent);
+  expect(fs.readFileSync(path.join(ld.docsAbs, `${decodeURIComponent(intro?.id)}.md`), 'utf-8')).toBe(updatedContent);
 });
 
 test('create_document writes a new .md file through the MCP server', async ({

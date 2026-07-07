@@ -75,6 +75,11 @@ lint:
 lint-fix:
     npm run lint:fix
 
+# Also apply Biome's UNSAFE autofixes (optional chaining, Number.isNaN, …) — may
+# change behavior, so review the diff before committing.
+lint-fix-unsafe:
+    npm run lint:fix:unsafe
+
 # Rebuilds first (the CLI is exercised from dist/), then checks .c8rc.json thresholds.
 # Run the full suite with V8 coverage and enforce the coverage gate
 coverage:

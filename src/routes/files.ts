@@ -1,6 +1,6 @@
-import { Router, Request, Response } from 'express';
-import fs from 'fs';
-import path from 'path';
+import { Router, type Request, type Response } from 'express';
+import fs from 'node:fs';
+import path from 'node:path';
 import { readConfig } from '../lib/config';
 
 const MAX_FILE_BYTES = 19 * 1024 * 1024; // keep below Express 20mb body limit
@@ -9,7 +9,7 @@ function slugify(name: string): string {
   return name
     .normalize('NFKD')
     .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-zA-Z0-9_\-]+/g, '_')
+    .replace(/[^a-zA-Z0-9_-]+/g, '_')
     .replace(/_+/g, '_')
     .replace(/^_|_$/g, '')
     .slice(0, 80);
@@ -18,7 +18,7 @@ function slugify(name: string): string {
 function isSafeFilename(filename: string): boolean {
   return typeof filename === 'string'
     && filename.length > 0
-    && !/[\\\/]/.test(filename)
+    && !/[\\/]/.test(filename)
     && !filename.startsWith('.')
     && filename !== '..';
 }
@@ -98,7 +98,7 @@ function parseUploadedAt(filename: string): { uploadedAt: string | null; display
     parseInt(ts.slice(12, 14), 10),
   );
   return {
-    uploadedAt: isNaN(d.getTime()) ? null : d.toISOString(),
+    uploadedAt: Number.isNaN(d.getTime()) ? null : d.toISOString(),
     displayName: match[2],
   };
 }

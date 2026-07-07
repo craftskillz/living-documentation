@@ -1,6 +1,6 @@
 import { test, expect } from '../helpers/ld-fixture';
-import fs from 'fs/promises';
-import path from 'path';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 test('sidebar lists all documents from the minimal fixture', async ({ page, ld }) => {
   await page.goto(ld.baseURL);

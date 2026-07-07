@@ -1,6 +1,6 @@
-import { spawn, ChildProcess } from 'child_process';
-import { createServer } from 'net';
-import path from 'path';
+import { spawn, type ChildProcess } from 'node:child_process';
+import { createServer } from 'node:net';
+import path from 'node:path';
 import { coverageEnv } from './coverage';
 
 export async function pickFreePort(): Promise<number> {
@@ -41,11 +41,11 @@ export async function spawnLD(opts: SpawnOptions): Promise<ChildProcess> {
     env: coverageEnv({ NODE_ENV: 'test' }),
   });
   if (opts.stdin !== undefined) {
-    proc.stdin!.end(opts.stdin);
+    proc.stdin?.end(opts.stdin);
   }
 
   let stderr = '';
-  proc.stderr!.on('data', (chunk) => {
+  proc.stderr?.on('data', (chunk) => {
     stderr += chunk.toString();
   });
 
@@ -58,7 +58,7 @@ export async function spawnLD(opts: SpawnOptions): Promise<ChildProcess> {
 
     const needle = `Local:   http://localhost:${opts.port}`;
     let stdout = '';
-    proc.stdout!.on('data', (chunk) => {
+    proc.stdout?.on('data', (chunk) => {
       stdout += chunk.toString();
       if (stdout.includes(needle)) {
         clearTimeout(timer);

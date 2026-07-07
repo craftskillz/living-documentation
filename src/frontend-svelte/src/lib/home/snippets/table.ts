@@ -307,8 +307,8 @@ export function buildTableMarkdown(ctrl: TableController): string {
     });
   });
   const fmtRow = (row: string[]) =>
-    "| " + row.map((cell, c) => cell.padEnd(widths[c])).join(" | ") + " |";
-  const sep = "| " + widths.map((w) => "-".repeat(w)).join(" | ") + " |";
+    `| ${row.map((cell, c) => cell.padEnd(widths[c])).join(" | ")} |`;
+  const sep = `| ${widths.map((w) => "-".repeat(w)).join(" | ")} |`;
   return [fmtRow(data[0]), sep, ...data.slice(1).map(fmtRow)].join("\n");
 }
 

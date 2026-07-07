@@ -1,6 +1,6 @@
-import { Router, Request, Response } from "express";
-import path from "path";
-import fs from "fs";
+import { Router, type Request, type Response } from "express";
+import path from "node:path";
+import fs from "node:fs";
 import {
   getDocEntries,
   setDocEntries,
@@ -8,10 +8,10 @@ import {
   assertUnderSourceRoot,
   buildReport,
   sourceCommitForMetadata,
-  MetadataEntry,
+  type MetadataEntry,
 } from "../lib/metadata";
 import { sha256File } from "../lib/hash";
-import { SourceCommit } from "../lib/git";
+import type { SourceCommit } from "../lib/git";
 import { assertNotSuperSeeded, DocumentSuperSeededError } from "../lib/status";
 
 // Builds a fresh entry, attaching the source commit (and dirty flag) when known.

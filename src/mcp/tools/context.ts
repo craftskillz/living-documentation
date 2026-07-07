@@ -1,12 +1,12 @@
-import fs from 'fs';
-import path from 'path';
-import { execFileSync } from 'child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import {
   resolveSourceRoot,
   getDocEntries,
   buildReport,
 } from '../../lib/metadata';
-import { currentSourceCommit, gitStatusPorcelain, gitDiff, GitStatusEntry } from '../../lib/git';
+import { currentSourceCommit, gitStatusPorcelain, gitDiff, type GitStatusEntry } from '../../lib/git';
 import { listAllDocuments } from './documents';
 
 const DEFAULT_MAX_FILES = 50;
@@ -131,7 +131,7 @@ export function toolBuildContext(docsPath: string, args: {
     sourceSection = { skipped: null, files };
   }
 
-  let relatedDocuments: Array<{
+  const relatedDocuments: Array<{
     id: string; title: string; category: string; folder: string | null;
     matchedPaths: string[]; accuracy: number;
   }> = [];

@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { test, expect } from '../helpers/ld-fixture';
 
 test.describe('inline snippet editing from viewer', () => {
@@ -154,7 +154,7 @@ test.describe('inline snippet editing from viewer', () => {
 
     const dimensions = await image.evaluate((el) => {
       const imageRect = el.getBoundingClientRect();
-      const parentRect = el.parentElement!.getBoundingClientRect();
+      const parentRect = el.parentElement?.getBoundingClientRect();
       const style = getComputedStyle(el);
       return {
         ratio: imageRect.width / parentRect.width,
@@ -269,7 +269,7 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(mermaid).toHaveClass(/ld-mermaid-align-center/);
     const mermaidLayout = await mermaid.evaluate((el) => {
       const rect = el.getBoundingClientRect();
-      const parentRect = el.parentElement!.getBoundingClientRect();
+      const parentRect = el.parentElement?.getBoundingClientRect();
       return {
         ratio: rect.width / parentRect.width,
         leftGap: rect.left - parentRect.left,
@@ -542,7 +542,7 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(codeBlock).toHaveClass(/ld-code-align-right/);
     const codeLayout = await codeBlock.evaluate((el) => {
       const rect = el.getBoundingClientRect();
-      const parentRect = el.parentElement!.getBoundingClientRect();
+      const parentRect = el.parentElement?.getBoundingClientRect();
       return {
         ratio: rect.width / parentRect.width,
         rightGap: parentRect.right - rect.right,

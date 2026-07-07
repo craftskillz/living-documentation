@@ -1,6 +1,6 @@
-import { execFileSync } from 'child_process';
-import fs from 'fs';
-import path from 'path';
+import { execFileSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
 import { test, expect } from '../helpers/ld-fixture';
 
 const QUICKSTART_ID = encodeURIComponent('2026_01_02_10_00_[Guide]_quickstart');

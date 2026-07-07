@@ -1,10 +1,10 @@
 import type { TableAttrs } from "./types";
 
 const VALUE = "[a-z][a-z0-9_-]*";
-const COMMENT = "<!--\\s*table-(?:style|border|color):\\s*" + VALUE + "\\s*-->";
+const COMMENT = `<!--\\s*table-(?:style|border|color):\\s*${VALUE}\\s*-->`;
 // Allow one or more newlines after each comment so a blank line may separate the
 // `<!-- table-* -->` comment block from the table itself (lenient authoring).
-const PREFIX = "(?:" + COMMENT + "\\n+){0,3}";
+const PREFIX = `(?:${COMMENT}\\n+){0,3}`;
 const TABLE_START = "\\|[^\\n]*\\|\\n\\|[ \\t:|-]*-[ \\t:|-]*\\|";
 
 const TABLE_BLOCK =
@@ -36,7 +36,7 @@ function parsePrefix(prefix: string): TableAttrs {
 
 export function parseTableAttributesFromMarkdown(markdown: string): TableAttrs {
   const text = typeof markdown === "string" ? markdown.trim() : "";
-  const prefixRe = new RegExp("^" + PREFIX);
+  const prefixRe = new RegExp(`^${PREFIX}`);
   const prefix = text.match(prefixRe)?.[0] || "";
   return parsePrefix(prefix);
 }
@@ -79,7 +79,7 @@ export function isMarkdownTableSeparatorLine(line: string): boolean {
 
 export function looksLikeTableSnippet(markdown: string): boolean {
   const text = typeof markdown === "string" ? markdown.trim() : "";
-  const body = text.replace(new RegExp("^" + PREFIX), "");
+  const body = text.replace(new RegExp(`^${PREFIX}`), "");
   const lines = body.split("\n").filter((line) => /^\|.*\|$/.test(line.trim()));
   return (
     lines.length >= 2 &&
@@ -112,7 +112,7 @@ export function collectTableAttributesFromSource(source: string): TableAttrs[] {
   if (typeof source !== "string") return [];
   const stripped = stripFencedCodeBlocks(source);
   const attrs: TableAttrs[] = [];
-  const re = new RegExp("(" + PREFIX + ")(" + TABLE_START + ")", "g");
+  const re = new RegExp(`(${PREFIX})(${TABLE_START})`, "g");
   let m: RegExpExecArray | null;
   while ((m = re.exec(stripped))) {
     attrs.push(parsePrefix(m[1] || ""));

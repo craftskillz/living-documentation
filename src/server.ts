@@ -1,7 +1,7 @@
 import express from 'express';
-import type { Server } from 'http';
-import path from 'path';
-import { exec } from 'child_process';
+import type { Server } from 'node:http';
+import path from 'node:path';
+import { exec } from 'node:child_process';
 import { documentsRouter } from './routes/documents';
 import { configRouter } from './routes/config';
 import { browseRouter } from './routes/browse';

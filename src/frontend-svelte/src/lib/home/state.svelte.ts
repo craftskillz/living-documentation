@@ -104,7 +104,7 @@ class HomeState {
     if (next.has(pathKey)) {
       next.delete(pathKey);
       // collapse descendants
-      const prefix = pathKey + "|";
+      const prefix = `${pathKey}|`;
       for (const k of [...next]) if (k.startsWith(prefix)) next.delete(k);
       const cats = new Set(this.expandedCategories);
       for (const k of [...cats]) if (k.startsWith(prefix)) cats.delete(k);
@@ -115,7 +115,7 @@ class HomeState {
         for (const other of [...next]) {
           if (other.split("|").slice(0, -1).join("|") === parent) {
             next.delete(other);
-            const op = other + "|";
+            const op = `${other}|`;
             for (const k of [...next]) if (k.startsWith(op)) next.delete(k);
           }
         }

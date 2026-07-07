@@ -2,8 +2,8 @@
 // Post-build asset copy. The frontend is built by Vite (→ dist/frontend-svelte);
 // this script only copies the bundled starter docs into dist/.
 
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 
 function copyDir(src: string, dest: string): void {
   fs.mkdirSync(dest, { recursive: true });

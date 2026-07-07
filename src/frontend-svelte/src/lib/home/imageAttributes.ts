@@ -9,7 +9,7 @@ export interface ImageAttrs {
 const ALLOWED_WIDTHS = new Set<ImageWidth>(["full", "3/4", "2/3", "1/2", "1/3", "1/4"]);
 const ALLOWED_ALIGNS = new Set<ImageAlign>(["left", "center", "right"]);
 const COMMENT = "<!--\\s*image-(?:width|align):\\s*[^\\n]+?\\s*-->";
-const PREFIX = "(?:" + COMMENT + "\\n+){0,2}";
+const PREFIX = `(?:${COMMENT}\\n+){0,2}`;
 const IMAGE = "!\\[[^\\]\\n]*\\]\\([^\\n)]+\\)";
 
 export function imageBlockSource(): string {
@@ -35,7 +35,7 @@ function parsePrefix(prefix: string): ImageAttrs {
 
 export function parseImageAttributesFromMarkdown(markdown: string): ImageAttrs {
   const text = typeof markdown === "string" ? markdown.trim() : "";
-  const prefix = text.match(new RegExp("^" + PREFIX))?.[0] || "";
+  const prefix = text.match(new RegExp(`^${PREFIX}`))?.[0] || "";
   return parsePrefix(prefix);
 }
 
@@ -73,7 +73,7 @@ export function collectImageAttributesFromSource(source: string): ImageAttrs[] {
   if (typeof source !== "string") return [];
   const stripped = stripNonRenderedBlocks(source);
   const attrs: ImageAttrs[] = [];
-  const re = new RegExp("(" + PREFIX + ")(" + IMAGE + ")", "g");
+  const re = new RegExp(`(${PREFIX})(${IMAGE})`, "g");
   let match: RegExpExecArray | null;
   while ((match = re.exec(stripped))) {
     attrs.push(parsePrefix(match[1] || ""));

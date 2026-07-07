@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import { execFileSync } from 'child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { readConfig } from '../../lib/config';
 
 const DEFAULT_LIMIT = 100;
@@ -187,7 +187,7 @@ function parseGitLog(raw: string, sourceRoot: string, gitRoot: string): CommitEn
       authorDate: aDate,
       author,
       subject,
-      body: body.length > MAX_BODY_CHARS ? body.slice(0, MAX_BODY_CHARS) + '\n…[truncated]' : body,
+      body: body.length > MAX_BODY_CHARS ? `${body.slice(0, MAX_BODY_CHARS)}\n…[truncated]` : body,
       parents: parentCount,
       state,
       filesChanged,

@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { test, expect } from '../helpers/ld-fixture';
 
 test('GET /api/shape-libraries returns an empty store when none exists', async ({ request, ld }) => {

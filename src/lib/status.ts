@@ -5,8 +5,8 @@
 // a SuperSeeded ADR). The `assertNotSuperSeeded` guard is consumed both by the
 // HTTP routes and by the MCP tools — they share the same source of truth.
 
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { readConfig } from "./config";
 
 const STATUS_LINE_RE = /^\s*(?:\*\*status:\*\*|status:)\s*(.+?)\s*$/im;
@@ -29,10 +29,10 @@ function resolveDocFilePath(
   extraFiles: string[],
 ): string | null {
   if (path.isAbsolute(decodedDocId)) {
-    const candidate = decodedDocId + ".md";
+    const candidate = `${decodedDocId}.md`;
     return extraFiles.includes(candidate) ? candidate : null;
   }
-  const resolved = path.resolve(docsPath, decodedDocId + ".md");
+  const resolved = path.resolve(docsPath, `${decodedDocId}.md`);
   if (!resolved.startsWith(path.resolve(docsPath) + path.sep)) return null;
   return resolved;
 }

@@ -13,8 +13,8 @@
       "src/**/*.ts",
       "!**/*.d.ts",
       "!**/*.svelte",
-      "!src/frontend-svelte/src/lib/diagram/**",
-      "!src/frontend-svelte/public/**"
+      "!src/frontend-svelte/src/lib/diagram",
+      "!src/frontend-svelte/public"
     ]
   },
   "linter": {

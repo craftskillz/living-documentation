@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import { execFileSync } from 'child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { test, expect } from '../helpers/ld-fixture';
 
 test.describe('metadata routes on the with-metadata fixture', () => {

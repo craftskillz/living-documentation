@@ -1,6 +1,6 @@
-import { Router, Request, Response } from 'express';
-import path from 'path';
-import { readConfig, writeConfig, StoredConfig } from '../lib/config';
+import { Router, type Request, type Response } from 'express';
+import path from 'node:path';
+import { readConfig, writeConfig, type StoredConfig } from '../lib/config';
 
 export function configRouter(docsPath: string): Router {
   const router = Router();

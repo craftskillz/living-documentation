@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
-import path from "path";
-import fs from "fs";
-import { createInterface } from "readline/promises";
+import path from "node:path";
+import fs from "node:fs";
+import { createInterface } from "node:readline/promises";
 import { startServer } from "../src/server";
 
 // Handle SIGTERM gracefully so V8 flushes NODE_V8_COVERAGE (used by c8 in tests).
@@ -284,7 +284,7 @@ async function runInitWizard(
     removeStarterDefaults(docsPath);
 
     const port = parseInt(options.port, 10);
-    if (isNaN(port) || port < 1 || port > 65535) {
+    if (Number.isNaN(port) || port < 1 || port > 65535) {
       console.error("\nError: Invalid port number\n");
       process.exit(1);
     }
@@ -358,7 +358,7 @@ Notes:
     }
 
     const port = parseInt(options.port, 10);
-    if (isNaN(port) || port < 1 || port > 65535) {
+    if (Number.isNaN(port) || port < 1 || port > 65535) {
       console.error("\nError: Invalid port number\n");
       process.exit(1);
     }

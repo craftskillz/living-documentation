@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { readConfig } from '../../lib/config';
 
 // Hardcoded ignore list for directories we never want to crawl.

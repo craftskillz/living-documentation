@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { test, expect } from "../helpers/ld-fixture";
 
 // Small text file encoded as base64 — used as the default upload payload.
@@ -72,7 +72,7 @@ test("GET /api/files lists uploaded files with display name + timestamp", async 
   expect(body.files.length).toBeGreaterThan(0);
   const entry = body.files.find((f) => f.displayName === "readme.md");
   expect(entry).toBeDefined();
-  expect(entry!.uploadedAt).not.toBeNull();
+  expect(entry?.uploadedAt).not.toBeNull();
 });
 
 test.describe("nested attachment folders", () => {

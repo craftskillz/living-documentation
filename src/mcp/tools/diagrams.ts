@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 interface StoredNode {
   id: string;
@@ -401,7 +401,7 @@ function copyExistingFields(
   keys: readonly string[],
 ): Record<string, unknown> {
   for (const key of keys) {
-    if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
+    if (Object.hasOwn(source, key)) target[key] = source[key];
   }
   return target;
 }
@@ -476,7 +476,7 @@ function buildNodeLabel(n: DiagramNodeInput, kind: string | null): string {
   if (!kind || n.name.includes('\n')) return n.name;
 
   const lines = [n.name, `[${KIND_DEFAULTS[kind].labelType}]`];
-  if (n.description && n.description.trim()) lines.push(n.description.trim());
+  if (n.description?.trim()) lines.push(n.description.trim());
   return lines.join('\n');
 }
 
@@ -692,7 +692,7 @@ export function toolCreateDiagram(docsPath: string, args: {
 
   const warnings: string[] = [];
   if (diagramType !== 'screen-guide') {
-    const unlabeledEdges = args.edges.filter(e => !e.label || !e.label.trim()).length;
+    const unlabeledEdges = args.edges.filter(e => !e.label?.trim()).length;
     if (unlabeledEdges > 0) {
       warnings.push(
         `${unlabeledEdges} edge(s) have no label. Every edge should describe the interaction as a verb phrase ` +

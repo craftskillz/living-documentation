@@ -1,5 +1,5 @@
-import fs from "fs";
-import crypto from "crypto";
+import fs from "node:fs";
+import crypto from "node:crypto";
 
 export function sha256File(absPath: string): string | null {
   try {

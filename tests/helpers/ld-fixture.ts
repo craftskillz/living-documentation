@@ -1,6 +1,6 @@
 import { test as base, expect } from '@playwright/test';
-import type { ChildProcess } from 'child_process';
-import { setupFixture, teardownFixture, FixtureContext } from './fixture';
+import type { ChildProcess } from 'node:child_process';
+import { setupFixture, teardownFixture, type FixtureContext } from './fixture';
 import { pickFreePort, spawnLD, killLD } from './server';
 
 export interface LDContext {

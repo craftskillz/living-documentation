@@ -15,7 +15,6 @@ export type TtsEngineId = "kokoro";
 
 function createEngine(id: TtsEngineId): TtsEngine {
   switch (id) {
-    case "kokoro":
     default:
       return new KokoroTtsEngine();
   }

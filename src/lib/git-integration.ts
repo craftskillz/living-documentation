@@ -1,7 +1,7 @@
-import { spawnSync } from "child_process";
+import { spawnSync } from "node:child_process";
 import type { Request, Response, NextFunction } from "express";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { readConfig } from "./config";
 
 export interface GitSaveResult {

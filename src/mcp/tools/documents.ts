@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { readConfig } from '../../lib/config';
 import { parseFilename } from '../../lib/parser';
 
@@ -20,14 +20,14 @@ function buildFilename(filenamePattern: string, title: string, category: string,
     .replace(/_+/g, '_')
     .replace(/^_|_$/g, '') || 'document';
 
-  return (filenamePattern || 'YYYY_MM_DD_HH_mm_[Category]_title')
+  return `${(filenamePattern || 'YYYY_MM_DD_HH_mm_[Category]_title')
     .replace('YYYY', year)
     .replace('MM', month)
     .replace('DD', day)
     .replace('HH', hours)
     .replace('mm', minutes)
     .replace(/\[Category\]/i, `[${category}]`)
-    .replace(/(?<![a-z0-9])(?:title_words|title)(?![a-z0-9])/i, titleSlug) + '.md';
+    .replace(/(?<![a-z0-9])(?:title_words|title)(?![a-z0-9])/i, titleSlug)}.md`;
 }
 
 function safeResolve(docsPath: string, rel: string): string | null {
@@ -80,10 +80,10 @@ export function resolveDocFilePath(docsPath: string, doc: DocSummary): string | 
   const { extraFiles = [] } = readConfig(docsPath);
   const decoded = decodeURIComponent(doc.id);
   if (path.isAbsolute(decoded)) {
-    const fp = decoded + '.md';
+    const fp = `${decoded}.md`;
     return extraFiles.includes(fp) && fs.existsSync(fp) ? fp : null;
   }
-  const resolved = safeResolve(docsPath, decoded + '.md');
+  const resolved = safeResolve(docsPath, `${decoded}.md`);
   return resolved && fs.existsSync(resolved) ? resolved : null;
 }
 
@@ -144,11 +144,11 @@ export function toolReadDocument(
   let filePath: string;
 
   if (path.isAbsolute(decoded)) {
-    const fp = decoded + '.md';
+    const fp = `${decoded}.md`;
     if (!extraFiles.includes(fp)) throw new Error('Access denied: not an allowed extra file');
     filePath = fp;
   } else {
-    const resolved = safeResolve(docsPath, decoded + '.md');
+    const resolved = safeResolve(docsPath, `${decoded}.md`);
     if (!resolved) throw new Error('Access denied: path traversal attempt');
     filePath = resolved;
   }
@@ -254,11 +254,11 @@ export function toolUpdateDocument(docsPath: string, args: { id: string; content
 
   let filePath: string;
   if (path.isAbsolute(decoded)) {
-    const fp = decoded + '.md';
+    const fp = `${decoded}.md`;
     if (!extraFiles.includes(fp)) throw new Error('Access denied: not an allowed extra file');
     filePath = fp;
   } else {
-    const resolved = safeResolve(docsPath, decoded + '.md');
+    const resolved = safeResolve(docsPath, `${decoded}.md`);
     if (!resolved) throw new Error('Access denied: path traversal attempt');
     filePath = resolved;
   }
@@ -289,7 +289,7 @@ export function toolCreateDocument(docsPath: string, args: {
   const filename = buildFilename(filenamePattern, args.title, args.category || 'General', args.date);
 
   let targetDir = path.resolve(docsPath);
-  if (args.folder && args.folder.trim()) {
+  if (args.folder?.trim()) {
     const resolved = path.resolve(docsPath, args.folder.trim());
     if (!resolved.startsWith(path.resolve(docsPath))) throw new Error('Access denied: path traversal attempt');
     targetDir = resolved;

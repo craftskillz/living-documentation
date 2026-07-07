@@ -1,6 +1,6 @@
-import { Router, Request, Response } from 'express';
-import fs from 'fs';
-import path from 'path';
+import { Router, type Request, type Response } from 'express';
+import fs from 'node:fs';
+import path from 'node:path';
 import archiver from 'archiver';
 import { readConfig } from '../lib/config';
 import { listDocs, safeFilePath, stripFrontmatter } from './documents';
@@ -21,7 +21,7 @@ function escapeHtml(s: string): string {
 function sanitizeFilename(name: string): string {
   return name
     .replace(/\s+/g, '-')
-    .replace(/[^\w\-\.]/g, '')
+    .replace(/[^\w\-.]/g, '')
     .replace(/-+/g, '-')
     .replace(/^[-_]+|[-_]+$/g, '') || 'document';
 }
@@ -179,7 +179,7 @@ function rewriteDocLinks(md: string, currentGroup: string): string {
         const slashIdx = docId.indexOf('/');
         const targetGroup = slashIdx === -1 ? 'General' : docId.slice(0, slashIdx);
         const rawName     = slashIdx === -1 ? docId : docId.slice(slashIdx + 1);
-        const sanitized   = sanitizeFilename(path.basename(rawName)) + '.md';
+        const sanitized   = `${sanitizeFilename(path.basename(rawName))}.md`;
         const rel = targetGroup === currentGroup
           ? `./${sanitized}`
           : `../${targetGroup}/${sanitized}`;
@@ -314,7 +314,7 @@ export function exportRouter(docsPath: string): Router {
       let filePath: string | null;
       const id = decodeURIComponent(doc.id);
       if (path.isAbsolute(id)) {
-        const abs = id + '.md';
+        const abs = `${id}.md`;
         filePath = extraFiles.includes(abs) ? abs : null;
       } else {
         filePath = safeFilePath(docsPath, doc.filename);
@@ -327,7 +327,7 @@ export function exportRouter(docsPath: string): Router {
         .replace(/<div\s+data-ld-local-search(?:="[^"]*")?\s*>\s*<\/div>/gi, '');
 
       const baseName    = sanitizeFilename(path.basename(doc.filename, '.md'));
-      const htmlFilename = baseName + '.html';
+      const htmlFilename = `${baseName}.html`;
 
       // Notion:     group/page.html  +  group/image.png       (images at same level as HTML)
       // Confluence: group/page.html  +  group/page/image.png  (images in subfolder named after page)
@@ -359,7 +359,7 @@ export function exportRouter(docsPath: string): Router {
    * ZIP structure: group/page.md  +  group/image.png  (images at same level as MD files)
    * Internal ?doc= links are rewritten to relative .md paths.
    */
-  router.post('/markdown', async (req: Request, res: Response) => {
+  router.post('/markdown', async (_req: Request, res: Response) => {
     const { extraFiles = [], filenamePattern } = readConfig(docsPath);
     const docs = listDocs(docsPath, extraFiles, filenamePattern);
     if (!docs.length) {
@@ -383,7 +383,7 @@ export function exportRouter(docsPath: string): Router {
       let filePath: string | null;
       const id = decodeURIComponent(doc.id);
       if (path.isAbsolute(id)) {
-        const abs = id + '.md';
+        const abs = `${id}.md`;
         filePath = extraFiles.includes(abs) ? abs : null;
       } else {
         filePath = safeFilePath(docsPath, doc.filename);

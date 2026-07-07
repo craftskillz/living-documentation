@@ -111,7 +111,7 @@ export function ldBuildBlockquoteSnippetMarkdown(data: {
   if (data.type)  prefixLines.push(`<!-- quote-type: ${data.type} -->`);
   if (data.title) prefixLines.push(`<!-- quote-title: ${data.title} -->`);
   if (data.icon)  prefixLines.push(`<!-- quote-icon -->`);
-  return prefixLines.length > 0 ? prefixLines.join("\n") + "\n" + bq : bq;
+  return prefixLines.length > 0 ? `${prefixLines.join("\n")}\n${bq}` : bq;
 }
 
 export function ldBuildHeadingSnippetMarkdown(
@@ -119,7 +119,7 @@ export function ldBuildHeadingSnippetMarkdown(
   data: { text?: string; fallback: string },
 ): string {
   const level = Number(type.slice(-1));
-  const text = ldSnippetValueOr(data.text && data.text.trim(), data.fallback);
+  const text = ldSnippetValueOr(data.text?.trim(), data.fallback);
   return `${"#".repeat(level)} ${text}`;
 }
 
@@ -147,7 +147,7 @@ export function ldBuildTableSnippetMarkdown(data: {
     border: data.bordered ? "bordered" : "",
     color: data.color || "",
   });
-  return (prefix ? prefix + "\n" : "") + data.markdown;
+  return (prefix ? `${prefix}\n` : "") + data.markdown;
 }
 
 export function ldBuildDiagramSnippetMarkdown(data: {
@@ -294,7 +294,7 @@ export function ldBuildColumnsSnippetMarkdown(data: {
   // Only emit options that differ from the defaults (vertical-align: center, gap: md, no
   // text-align) so the directive stays minimal. The ratio is positional, right after the colon.
   const opts: string[] = [];
-  if (data.ratio && data.ratio.trim()) opts.push(data.ratio.trim());
+  if (data.ratio?.trim()) opts.push(data.ratio.trim());
   if (data.verticalAlign && data.verticalAlign !== "center") {
     opts.push(`vertical-align: ${data.verticalAlign}`);
   }
