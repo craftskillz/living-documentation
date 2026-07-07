@@ -58,6 +58,7 @@ Le travail a couvert :
 - tache ponctuelle : ajout du type `TIMELINE` dans le builder Mermaid, avec edition dynamique d'un titre et d'evenements periodises, generation du bloc Markdown `timeline`, et exemple original de roadmap documentaire.
 - tache ponctuelle : ajout du type `TREE VIEW` dans le builder Mermaid, avec edition dynamique des niveaux, noeuds, decorateurs et notes, generation du bloc Markdown `treeView-beta`, et exemple original d'espace documentaire.
 - tache ponctuelle : ajout du type `SEQUENCE DIAGRAM` dans le builder Mermaid, avec edition dynamique des messages, fleches, participants et notes, generation du bloc Markdown `sequenceDiagram`, et exemple original de workflow documentaire.
+- tache ponctuelle : diagnostic et correction du chargement lent du snippet `Kanban`, cause par un reload global des documents, counts et statuts apres la creation paresseuse des dossiers de colonnes ; le board utilise maintenant l'etat `home.allDocs` deja charge et met a jour localement les documents apres creation/deplacement de cartes.
 
 ## Contenu modifie
 
@@ -84,11 +85,17 @@ Le travail a couvert :
 - `src/frontend-svelte/src/lib/home/SnippetsModal.svelte`
 - `src/frontend-svelte/src/lib/home/snippets/pickerData.ts`
 - `src/frontend-svelte/src/lib/home/snippets/builders.ts`
+- `src/frontend-svelte/src/lib/home/kanban.ts`
+- `src/frontend-svelte/src/lib/home/wireContent.ts`
+- `src/frontend-svelte/src/lib/home/EditableMarkdown.svelte`
+- `src/frontend-svelte/src/lib/home/state.svelte.ts`
 - `src/lib/git-integration.ts`
 - `src/frontend-svelte/public/i18n/en.json`
 - `src/frontend-svelte/public/i18n/fr.json`
 - `tests/api/git.spec.ts`
 - `tests/e2e/inline-snippet-edit.spec.ts`
+- `tests/api/documents-move.spec.ts`
+- `tests/e2e/kanban.spec.ts`
 - `README.fr.md`
 - `README.md`
 - `bin/cli.ts`
@@ -113,6 +120,8 @@ Le type `TIMELINE` reprend uniquement la forme syntaxique de l'exemple Mermaid f
 Le type `TREE VIEW` reprend uniquement la forme syntaxique de l'exemple Mermaid fourni ; l'exemple integre au produit porte sur une arborescence documentaire originale.
 
 Le type `SEQUENCE DIAGRAM` reprend uniquement la forme syntaxique de l'exemple Mermaid fourni ; l'exemple integre au produit porte sur un workflow documentaire original.
+
+Le snippet `Kanban` ajoute un comportement utilisateur durable : un marqueur de document transforme le rendu complet en board, les colonnes correspondent a des dossiers, et les deplacements de cartes deplacent les documents Markdown entre dossiers. Un ADR devra etre cree et attache aux fichiers source concernes quand l'arbre Git sera propre, conformement a la regle projet sur les metadonnees Living Documentation.
 
 ## Verifications realisees
 
@@ -177,6 +186,11 @@ Le type `SEQUENCE DIAGRAM` reprend uniquement la forme syntaxique de l'exemple M
 - `rg -n "Alice|Bob|John|Hello Bob|How about you John|I am good thanks|Checking with John" src/frontend-svelte tests dist -g '!node_modules'` ne retourne aucune occurrence de l'exemple Mermaid fourni.
 - `git diff --check -- src/frontend-svelte/src/lib/home/SnippetsModal.svelte src/frontend-svelte/src/lib/home/snippets/builders.ts src/frontend-svelte/public/i18n/fr.json src/frontend-svelte/public/i18n/en.json tests/e2e/inline-snippet-edit.spec.ts documentation/WORKLOG/current-task.md` execute avec succes apres ajout de `SEQUENCE DIAGRAM`.
 - `graphify update .` execute avec succes apres ajout de `SEQUENCE DIAGRAM`.
+- `npm run build` execute avec succes apres correction du chargement initial du board Kanban.
+- `npx playwright test tests/api/documents-move.spec.ts tests/e2e/kanban.spec.ts --project=chromium` execute avec succes apres correction Kanban : 14 tests passes.
+- Test E2E ajoute pour verifier que le rendu initial Kanban ne relance pas les agregats globaux `/api/documents/file-counts` et `/api/documents/statuses`.
+- `git diff --check -- src/frontend-svelte/src/lib/home/kanban.ts src/frontend-svelte/src/lib/home/wireContent.ts src/frontend-svelte/src/lib/home/EditableMarkdown.svelte src/frontend-svelte/src/lib/home/state.svelte.ts src/frontend-svelte/src/routes/Home.svelte tests/e2e/kanban.spec.ts` execute avec succes.
+- `graphify update .` execute avec succes apres correction Kanban.
 
 ## Verifications restantes
 
@@ -185,6 +199,7 @@ Le type `SEQUENCE DIAGRAM` reprend uniquement la forme syntaxique de l'exemple M
 - Capturer les premiers ecrans reels de l'application quand l'interface de demo est prete.
 - Verifier le contenu source de `2026_06_30_10_20_[DOCUMENTATION]_document_markdown.md`, qui porte un nom Markdown mais contient actuellement le guide Workspace.
 - Creer l'ADR du snippet Mermaid et attacher les fichiers source concernes apres retour a un arbre Git propre.
+- Creer l'ADR du snippet Kanban et attacher les fichiers source concernes apres retour a un arbre Git propre.
 
 ## Prochaine action recommandee
 
