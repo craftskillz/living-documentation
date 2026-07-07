@@ -9,9 +9,16 @@
 | Youssef | 34  |
 
 <!-- quote-title: Merme -->
-> Citation ici
->
-> — Auteur
+> ```mermaid
+> sequenceDiagram
+>    Auteur ->> Relecteur: Le brouillon est prêt pour relecture
+>    Relecteur -->> Éditeur: Peux-tu valider les notes de publication ?
+>    Éditeur --x Auteur: Il manque encore un point de checklist
+>    Relecteur -x Éditeur: Je vais mettre à jour la checklist
+>    Note right of Éditeur: L'équipe garde des commentaires courts<br/>et actionnables<br/>avant publication.
+>    Éditeur --> Auteur: La checklist est maintenant alignée
+>    Auteur -> Relecteur: Peux-tu approuver le guide ?
+> ```
 
 <!-- code-width: 1/2 -->
 <!-- code-align: center -->
