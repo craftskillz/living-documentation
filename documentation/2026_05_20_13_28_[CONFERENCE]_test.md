@@ -195,3 +195,10 @@ sequenceDiagram
 > | Youssef | 10  |
 > | Faris   | 42  |
 > | Miya    | 34  |
+
+<!-- quote-type: info -->
+<!-- quote-title: Info -->
+<!-- quote-icon -->
+> Citation ici
+>
+> — Auteur
