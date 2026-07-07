@@ -56,7 +56,7 @@
   "imageRoundedCorners": true,
   "imageCentered": true,
   "imageBorder": true,
-  "codeBlockLightTheme": true,
+  "codeBlockLightTheme": false,
   "diagramDefaults": {
     "arrows": {
       "arrowDir": "to",
