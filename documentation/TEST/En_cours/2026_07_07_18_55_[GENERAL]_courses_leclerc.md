@@ -1,6 +1,6 @@
 # Courses Leclerc
 
-Here is the description
+Acheter tasses, liquide vaisselle machine, blocs de glace bleus.
 
 ## Content
 

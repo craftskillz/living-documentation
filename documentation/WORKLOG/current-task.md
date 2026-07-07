@@ -60,6 +60,7 @@ Le travail a couvert :
 - tache ponctuelle : ajout du type `SEQUENCE DIAGRAM` dans le builder Mermaid, avec edition dynamique des messages, fleches, participants et notes, generation du bloc Markdown `sequenceDiagram`, et exemple original de workflow documentaire.
 - tache ponctuelle : diagnostic et correction du chargement lent du snippet `Kanban`, cause par un reload global des documents, counts et statuts apres la creation paresseuse des dossiers de colonnes ; le board utilise maintenant l'etat `home.allDocs` deja charge et met a jour localement les documents apres creation/deplacement de cartes.
 - tache ponctuelle : simplification de l'entete des documents `Kanban` pour masquer les actions documentaires ordinaires (`Ecouter`, `Marqueur`, `Exporter PDF`, `Metadonnees`, `Versions`, `Modifier`, `TOC`, copie d'id et jauge metadata) et ne garder que `Supprimer`.
+- tache ponctuelle : definition du format de creation des items Kanban (`# Title`, description courte, section `## Content`) et affichage de la description tronquee sur les cartes du board.
 
 ## Contenu modifie
 
@@ -98,6 +99,7 @@ Le travail a couvert :
 - `tests/e2e/inline-snippet-edit.spec.ts`
 - `tests/api/documents-move.spec.ts`
 - `tests/e2e/kanban.spec.ts`
+- `tests/fixtures/with-kanban/testdocs/3_projets/Doing/2026_01_07_10_00_[Task]_task_two.md`
 - `README.fr.md`
 - `README.md`
 - `bin/cli.ts`
@@ -126,6 +128,8 @@ Le type `SEQUENCE DIAGRAM` reprend uniquement la forme syntaxique de l'exemple M
 Le snippet `Kanban` ajoute un comportement utilisateur durable : un marqueur de document transforme le rendu complet en board, les colonnes correspondent a des dossiers, et les deplacements de cartes deplacent les documents Markdown entre dossiers. Un ADR devra etre cree et attache aux fichiers source concernes quand l'arbre Git sera propre, conformement a la regle projet sur les metadonnees Living Documentation.
 
 Les documents `Kanban` ne se comportent pas comme des documents Markdown ordinaires dans le viewer : leur entete masque les actions de lecture, annotation, export, metadonnees, versions, edition globale et TOC. L'edition des colonnes reste une action propre au board, exposee dans le rendu Kanban, tandis que l'action de suppression du document conteneur reste disponible.
+
+Les items crees depuis une colonne Kanban sont des documents Markdown initialises avec un titre H1, une description courte, puis une section `## Content`. Le board lit la description situee entre le H1 et `## Content`, la normalise sur une ligne et la tronque sur la carte si elle est trop longue.
 
 ## Verifications realisees
 
@@ -200,6 +204,11 @@ Les documents `Kanban` ne se comportent pas comme des documents Markdown ordinai
 - Test E2E ajoute pour verifier que l'entete d'un document Kanban ne garde que `Supprimer`, et que les documents de cartes ouverts ensuite gardent leurs actions normales.
 - `git diff --check -- src/frontend-svelte/src/lib/home/DocViewer.svelte tests/e2e/kanban.spec.ts` execute avec succes.
 - `graphify update .` execute avec succes apres simplification de l'entete Kanban.
+- `npm run build` execute avec succes apres ajout du format Markdown par defaut des items Kanban et de l'affichage des descriptions.
+- `npx playwright test tests/api/documents.spec.ts tests/api/documents-move.spec.ts tests/e2e/kanban.spec.ts --project=chromium` execute avec succes apres ajout des descriptions Kanban : 34 tests passes.
+- Test E2E ajoute pour verifier qu'une carte existante affiche sa description et qu'un item cree depuis le board ecrit le squelette Markdown attendu.
+- `git diff --check -- src/frontend-svelte/src/lib/home/kanban.ts src/routes/documents.ts tests/e2e/kanban.spec.ts tests/fixtures/with-kanban/testdocs/3_projets/Doing/2026_01_07_10_00_[Task]_task_two.md` execute avec succes.
+- `graphify update .` execute avec succes apres ajout des descriptions Kanban.
 
 ## Verifications restantes
 
