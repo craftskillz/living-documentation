@@ -62,6 +62,7 @@ Le travail a couvert :
 - tache ponctuelle : simplification de l'entete des documents `Kanban` pour masquer les actions documentaires ordinaires (`Ecouter`, `Marqueur`, `Exporter PDF`, `Metadonnees`, `Versions`, `Modifier`, `TOC`, copie d'id et jauge metadata) et ne garder que `Supprimer`.
 - tache ponctuelle : definition du format de creation des items Kanban (`# Title`, description courte, section `## Content`) et affichage de la description tronquee sur les cartes du board.
 - tache ponctuelle : ajout de couleurs configurables pour les colonnes Kanban, avec correction de l'edition du snippet pour ne plus afficher `[object Object]` dans la definition ni dans l'apercu Markdown.
+- tache ponctuelle : deplacement de l'action `Modifier les colonnes` dans l'entete des documents Kanban, juste avant `Supprimer`, et correction des bordures de drag/drop tronquees via des highlights internes.
 
 ## Contenu modifie
 
@@ -133,6 +134,8 @@ Les documents `Kanban` ne se comportent pas comme des documents Markdown ordinai
 Les items crees depuis une colonne Kanban sont des documents Markdown initialises avec un titre H1, une description courte, puis une section `## Content`. Le board lit la description situee entre le H1 et `## Content`, la normalise sur une ligne et la tronque sur la carte si elle est trop longue.
 
 Les colonnes Kanban conservent leurs libelles dans `data-columns` et leurs couleurs dans l'attribut parallele `data-colors`. Les anciens snippets sans `data-colors` restent valides : le parser applique une palette par defaut par index (`sky`, `amber`, `emerald`, puis `rose`, `violet`, `slate`). La modal d'edition expose des lignes structurees label + couleur afin d'eviter toute serialisation implicite d'objets JavaScript dans le Markdown.
+
+L'action `Modifier les colonnes` est une action d'entete reservee aux documents Kanban, placee a gauche de `Supprimer`. Le rendu interne du board ne contient plus ce bouton. Les etats visuels de drag/drop utilisent des `box-shadow` internes afin que les bordures bleues ne soient pas coupees par le conteneur scrollable des colonnes.
 
 ## Verifications realisees
 
@@ -216,6 +219,8 @@ Les colonnes Kanban conservent leurs libelles dans `data-columns` et leurs coule
 - `npx playwright test tests/e2e/kanban.spec.ts --project=chromium` execute avec succes apres correction de l'edition Kanban : 8 tests passes.
 - Tests E2E ajoutes pour verifier que la modal Kanban affiche les libelles et couleurs, ne contient pas `[object Object]`, sauvegarde `data-colors`, et que la creation depuis le picker utilise les libelles/couleurs par defaut.
 - `git diff --check` execute avec succes apres correction de l'edition Kanban.
+- `npm run build` execute avec succes apres deplacement de l'action `Modifier les colonnes` et correction du highlight drag/drop Kanban.
+- `npx playwright test tests/e2e/kanban.spec.ts --project=chromium` execute avec succes apres correction du bouton d'entete et des bordures drag/drop : 9 tests passes.
 
 ## Verifications restantes
 
