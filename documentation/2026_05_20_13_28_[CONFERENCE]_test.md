@@ -1,5 +1,6 @@
 
 
+<!-- table-style: striped -->
 <!-- table-border: bordered -->
 <!-- table-color: info -->
 | Table   | Age |
