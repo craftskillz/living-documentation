@@ -1,6 +1,7 @@
 
 
 <!-- table-style: full -->
+<!-- table-color: success -->
 | Table   | Age |
 | ------- | --- |
 | Youssef | 10  |
