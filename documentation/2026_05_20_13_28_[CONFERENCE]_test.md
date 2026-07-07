@@ -1,6 +1,5 @@
 
 
-<!-- table-style: full -->
 <!-- table-border: bordered -->
 <!-- table-color: info -->
 | Table   | Age |
