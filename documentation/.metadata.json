@@ -1648,5 +1648,13 @@
       "commit": "fd2e65be9fd9a3d90569aeb189d7f028d1b28847",
       "dirty": false
     }
+  ],
+  "ADRS/2026_07_08_11_08_[THEME]_tau_site_theme_notebook_skin_via_sitetheme_config_selfhosted_ofl_fonts_and_cachedboot_application": [
+    {
+      "path": "src/frontend-svelte/src/lib/siteTheme.ts",
+      "hash": "412a1c65ceb62c90d6db9863631328dbc9d1a0577dea5ed9cd649a8b6d62e074",
+      "commit": "ceb340538434f3ef6c007e6449d3f5e3ca2ca0db",
+      "dirty": false
+    }
   ]
 }
