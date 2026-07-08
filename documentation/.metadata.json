@@ -1629,6 +1629,12 @@
       "hash": "58f220c886b3573f14495e2c4821194640a51ef05f8cc300adffb44bd201b572",
       "commit": "b09c0d4e932589e158aa13c46347fea9a2d52b2c",
       "dirty": false
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/FavoritesMenu.svelte",
+      "hash": "7885b5ffab5c6e9b1736551dc01468bf7bcadaf1149a51bfed23f1ae3b2f36fb",
+      "commit": "626dbdc570718b5fb5ba549f77754ce7e55644bb",
+      "dirty": false
     }
   ]
 }
