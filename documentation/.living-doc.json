@@ -3,6 +3,12 @@
   "title": "Projet Living Documentation",
   "theme": "system",
   "siteTheme": "base",
+  "favorites": [
+    {
+      "id": "001_BLUEPRINT%2F2026_06_24_20_34_%5BDOCUMENTATION%5D_documentation",
+      "title": "Documentation"
+    }
+  ],
   "language": "fr",
   "port": 4321,
   "extraFiles": [
