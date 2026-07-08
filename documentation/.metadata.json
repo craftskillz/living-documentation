@@ -1682,5 +1682,13 @@
       "commit": "0aafdb062960a54320423ef1e617f119fc93845f",
       "dirty": false
     }
+  ],
+  "AI/2026_07_08_19_22_[OKF]_okf_v01_conformance_audit_and_frozen_field_mapping_ticket_01": [
+    {
+      "path": "src/lib/documentLanguage.ts",
+      "hash": "e84d7d5731d9c884c5ce541ff637d9f0c1ef7a596e050c423d1e1748f1252f67",
+      "commit": "26050ca9e6df178dd6a3b36e98b03c8485f44236",
+      "dirty": false
+    }
   ]
 }
