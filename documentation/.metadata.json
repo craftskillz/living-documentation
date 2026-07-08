@@ -1668,5 +1668,13 @@
       "commit": "0b44f648ef9d6be521a4262cf1cc834a08ecc6dd",
       "dirty": false
     }
+  ],
+  "ADRS/2026_07_08_11_09_[STYLE]_full_table_style_filled_cells_on_a_uniform_separateborder_grid_with_an_intermediate_bordered_variant": [
+    {
+      "path": "src/frontend-svelte/src/lib/home/tableAttributes.ts",
+      "hash": "b29ba90eb1d1675185a0a832f6c47b683fa2a6ab3ec4c84185043c1c9063abd3",
+      "commit": "c12734a0e0d1f722686229dcb950204b361f7634",
+      "dirty": false
+    }
   ]
 }
