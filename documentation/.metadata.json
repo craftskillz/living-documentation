@@ -1655,6 +1655,12 @@
       "hash": "412a1c65ceb62c90d6db9863631328dbc9d1a0577dea5ed9cd649a8b6d62e074",
       "commit": "ceb340538434f3ef6c007e6449d3f5e3ca2ca0db",
       "dirty": false
+    },
+    {
+      "path": "scripts/fetch-tau-fonts.mjs",
+      "hash": "2fada20a2d3743cb59d6e74d033f04f57deb8d85d165bbe7918115ff29961abc",
+      "commit": "4d782e74681b09f0c62627e9f2e816e69a0d86d7",
+      "dirty": false
     }
   ]
 }
