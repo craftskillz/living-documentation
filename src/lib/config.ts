@@ -28,6 +28,13 @@ export interface DiagramDefaults {
 export type GitIntegrationMode = "unconfigured" | "disabled" | "enabled";
 export type GitPushMode = "never" | "everyNCommits";
 
+// A favorited document, referenced by its (path-encoded, portable) id plus a
+// title snapshot so the Favorites menu can render without loading every doc.
+export interface FavoriteDoc {
+  id: string;
+  title: string;
+}
+
 export interface GitIntegrationConfig {
   mode: GitIntegrationMode;
   pushMode: GitPushMode;
@@ -45,6 +52,8 @@ export interface StoredConfig {
   // Visual skin, independent of the light/dark `theme`. "tau" is a notebook-paper
   // look (serif prose on a graph-paper grid) adapted from huggingface/tau (MIT).
   siteTheme: "base" | "tau";
+  // Documents the user pinned to the Favorites menu (order preserved).
+  favorites: FavoriteDoc[];
   language: "en" | "fr";
   port: number;
   extraFiles: string[]; // relative to docsFolder (posix slashes)
@@ -132,6 +141,7 @@ const STORAGE_DEFAULTS: StoredConfig = {
   title: "Living Documentation",
   theme: "system",
   siteTheme: "base",
+  favorites: [],
   language: "en",
   port: 4321,
   extraFiles: [],

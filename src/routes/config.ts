@@ -24,6 +24,7 @@ export function configRouter(docsPath: string): Router {
         'filenamePattern',
         'theme',
         'siteTheme',
+        'favorites',
         'language',
         'showDiagramDebug',
         'diagramNodePalette',
@@ -67,6 +68,28 @@ export function configRouter(docsPath: string): Router {
       // siteTheme: only 'base' or 'tau'
       if ('siteTheme' in safe && !['base', 'tau'].includes(safe.siteTheme as string)) {
         delete (safe as Record<string, unknown>).siteTheme;
+      }
+      // favorites: array of { id, title } with non-empty string ids, deduped by id,
+      // capped to a sane length. Titles are trimmed and length-limited.
+      if ('favorites' in patch) {
+        const v = patch.favorites;
+        if (Array.isArray(v)) {
+          const seen = new Set<string>();
+          const favorites: { id: string; title: string }[] = [];
+          for (const entry of v as unknown[]) {
+            if (!entry || typeof entry !== 'object') continue;
+            const rec = entry as Record<string, unknown>;
+            const id = typeof rec.id === 'string' ? rec.id.trim() : '';
+            if (!id || seen.has(id)) continue;
+            seen.add(id);
+            const title = typeof rec.title === 'string' ? rec.title.trim().slice(0, 200) : '';
+            favorites.push({ id, title });
+            if (favorites.length >= 200) break;
+          }
+          safe.favorites = favorites;
+        } else {
+          return res.status(400).json({ error: 'favorites must be an array' });
+        }
       }
       // diagramNodePalette / diagramEdgePalette: null or array of strings.
       // Must drop invalid values explicitly — the initial allowed-key loop copied the raw

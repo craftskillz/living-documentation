@@ -6,8 +6,9 @@
 // To avoid an extra /api/config round-trip on every page load (and a flash of
 // the base theme), the skin is applied synchronously at boot from a localStorage
 // cache — the same pattern as dark mode's `ld-dark`. Config stays the source of
-// truth: a fetch hook watches the /api/config GET each page already makes and
-// re-syncs the cache, so no page pays an additional request.
+// truth: `syncSiteThemeFromConfig` is wired to the shared config observer (see
+// main.ts), so it re-syncs from the /api/config GET each page already makes
+// without any additional request.
 export type SiteTheme = "base" | "tau";
 
 const STORAGE_KEY = "ld-site-theme";
@@ -44,34 +45,7 @@ export function applySiteThemeFromCache(): void {
   applySiteTheme(normalize(cached));
 }
 
-let hookInstalled = false;
-
-// Keeps the cached skin in sync with the server config without adding a request:
-// it reads the /api/config GET response that pages already fetch.
-export function installSiteThemeFetchHook(): void {
-  if (hookInstalled) return;
-  hookInstalled = true;
-
-  const originalFetch = window.fetch.bind(window);
-  window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-    const response = await originalFetch(input, init);
-    try {
-      const url = typeof input === "string"
-        ? input
-        : input instanceof URL
-          ? input.toString()
-          : input.url;
-      const method = (init?.method || (input instanceof Request ? input.method : "GET")).toUpperCase();
-      if (method === "GET" && /\/api\/config(?:\?|$)/.test(url)) {
-        response
-          .clone()
-          .json()
-          .then((cfg: { siteTheme?: unknown }) => applySiteTheme(normalize(cfg?.siteTheme)))
-          .catch(() => {});
-      }
-    } catch {
-      // Never let theme syncing break a fetch.
-    }
-    return response;
-  };
+// Config-observer listener: re-applies the skin from the server config.
+export function syncSiteThemeFromConfig(cfg: { siteTheme?: unknown }): void {
+  applySiteTheme(normalize(cfg?.siteTheme));
 }

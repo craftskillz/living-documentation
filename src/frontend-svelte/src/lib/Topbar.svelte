@@ -1,5 +1,6 @@
 <script lang="ts">
   import AgentsMenu from "./AgentsMenu.svelte";
+  import FavoritesMenu from "./FavoritesMenu.svelte";
 
   let { title, subtitle, nav = [], children, actions }: {
     title: string;
@@ -57,6 +58,7 @@
   {/if}
 
   <div class="topbar-right">
+    <FavoritesMenu />
     {#each allNav as link}
       <a
         href={link.href}

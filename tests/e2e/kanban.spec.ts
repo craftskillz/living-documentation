@@ -124,14 +124,15 @@ test.describe('kanban board widget', () => {
     await expect(lanes).toBeVisible();
   });
 
-  test('hides regular document header actions and keeps only kanban edit plus delete', async ({ page, ld }) => {
+  test('hides regular document header actions and keeps only favorites, kanban edit plus delete', async ({ page, ld }) => {
     await page.goto(boardUrl(ld.baseURL));
     await expect(page.getByTestId('kanban-board')).toBeVisible();
 
     const viewActions = page.getByTestId('view-actions');
-    await expect(viewActions.getByRole('button')).toHaveCount(2);
+    await expect(viewActions.getByRole('button')).toHaveCount(3);
     await expect(viewActions.getByTestId('kanban-edit-columns')).toBeVisible();
-    await expect(page.getByTestId('delete-doc-btn')).toBeVisible();
+    await expect(page.getByTestId("delete-doc-btn")).toBeVisible();
+    await expect(page.getByTestId("favorite-doc-btn")).toBeVisible();
     await expect(page.locator('#doc-content').getByTestId('kanban-edit-columns')).toHaveCount(0);
 
     await expect(page.getByTestId('copy-doc-id-btn')).toHaveCount(0);

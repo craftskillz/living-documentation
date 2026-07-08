@@ -7,6 +7,7 @@
   import MetadataModal from "./MetadataModal.svelte";
   import VersionsModal from "./VersionsModal.svelte";
   import EditableMarkdown from "./EditableMarkdown.svelte";
+  import { favorites } from "../favorites.svelte";
   import ConfirmDialog from "../ConfirmDialog.svelte";
   import { metadata } from "./metadata.svelte";
   import { getDocStatus, replaceStatus, isWorklogDocument } from "./docStatus";
@@ -48,6 +49,7 @@
 
   const docStatus = $derived(getDocStatus(doc.content));
   const isKanbanDocument = $derived(KANBAN_MARKER_RE.test(doc.content));
+  const isFavorite = $derived(favorites.has(doc.id));
   const showValidate = $derived((docStatus || "").toUpperCase() === "TO BE VALIDATED");
   let editing = $state(false);
   let saveMsg = $state<{ text: string; cls: string } | null>(null);
@@ -377,6 +379,15 @@
           {@const capFill = home.markerActive ? "#fef08a" : "#93c5fd"}
           {@const nibFill = home.markerActive ? "#fde047" : "#93c5fd"}
           <div data-testid="view-actions" class="flex items-center gap-2">
+          <button
+            onclick={() => favorites.toggle({ id: doc.id, title: doc.title })}
+            data-testid="favorite-doc-btn"
+            aria-pressed={isFavorite}
+            title={isFavorite ? t("favorites.remove") : t("favorites.add")}
+            class="no-print text-sm px-3 py-1.5 rounded-lg border transition-colors {isFavorite ? 'border-amber-300 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}"
+          >
+            <i class="fa-{isFavorite ? 'solid' : 'regular'} fa-star" style="margin-right:4px"></i>{t("favorites.button")}
+          </button>
           {#if showValidate && !isKanbanDocument}
             <button onclick={validate} data-testid="validate-btn" title={t("doc.validate_mode")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-green-700 bg-green-600 text-white font-semibold hover:bg-green-700 transition-colors"><i class="fa-solid fa-check" style="margin-right:4px"></i>{t("doc.validate_btn")}</button>
           {/if}
