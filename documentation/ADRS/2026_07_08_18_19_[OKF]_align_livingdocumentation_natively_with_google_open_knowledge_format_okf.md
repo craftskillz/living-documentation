@@ -1,8 +1,8 @@
 ---
 **date:** 2026-07-08
-**status:** To be validated
-**description:** Adopt Google Cloud's Open Knowledge Format (OKF) as living-documentation's native on-disk format so the docs folder is itself a conformant OKF bundle (superset), replacing the bespoke `**bold:**` pseudo-frontmatter with real YAML via a deterministic (no-AI) migration gated at CLI startup, while keeping drift-detection, status lifecycle and the MCP as living-doc's differentiators.
-**tags:** okf, open-knowledge-format, yaml-frontmatter, interoperability, knowledge-catalog, native-alignment, deterministic-migration, cli-startup-gate, drift-detection, mcp, roadmap
+**status:** Accepted
+**description:** Adopt Google Cloud's Open Knowledge Format (OKF) as living-documentation's native on-disk format so the docs folder is itself a conformant OKF bundle (superset), replacing the bespoke `**bold:**` pseudo-frontmatter with real YAML while keeping drift-detection, status lifecycle and the MCP as living-doc's differentiators.
+**tags:** okf, open-knowledge-format, yaml-frontmatter, interoperability, knowledge-catalog, native-alignment, migration, drift-detection, mcp, roadmap
 ---
 
 ## Context
@@ -45,24 +45,6 @@ consumable by any OKF tool with **zero conversion**.
 | `add_metadata` source bindings (SHA-256 + commit) | *custom block* (e.g. `sources:`) + optional `resource` | drift-detection has no OKF equivalent — kept as a superset extension |
 | `[x](?doc=<id>)` links | bundle-relative `/path.md` | dual mapping; `?doc=` stays the in-app form |
 
-### Migration is deterministic (no AI) and gated at startup
-Two firm decisions govern how existing projects move over:
-
-- **Deterministic migration only.** Converting the `**bold:**` frontmatter to YAML
-  is a purely mechanical, reproducible transform (isolate the `---…---` block,
-  rewrite each `**key:** value` line to YAML `key: value` with proper escaping,
-  `tags` as a YAML list, `date → timestamp`, inject the derived `type`, leave the
-  body untouched). **No LLM is involved** — an AI pass would be non-deterministic
-  and unsafe across the ~106 existing ADRs. The migration is idempotent, supports
-  `--dry-run`, and emits a report.
-- **CLI startup gate.** `cli.ts` reads an OKF-migration flag from
-  `.living-doc.json` (e.g. `okfMigration: { version: "0.1" }`). If it is
-  absent/false, the CLI **refuses to open the project** and tells the user it must
-  be migrated first because of the Google OKF alignment, pointing to the migration
-  command (or an interactive "migrate now?" prompt that runs the deterministic
-  migration). The flag is written once migration succeeds; newly initialized
-  projects ship it already set and are never blocked.
-
 ### What we keep as living-doc's edge (do not lose)
 - **Drift detection** (hash + commit + accuracy) — richer than OKF's `timestamp`;
   candidate to propose upstream as an OKF convention.
@@ -75,12 +57,13 @@ Interop with Knowledge Catalog and the whole YAML-frontmatter ecosystem; a
 **graph visualizer**; `index.md` progressive disclosure; the producer
 enrichment-agent pattern for the Workspace agents.
 
-### Staged, non-breaking execution
-Broken into a phased ticket backlog in `documentation/WORKLOG/ROADMAP.md` —
-foundations first (dual-format **reader** so nothing breaks), then YAML **writes**
-+ the deterministic migration + the startup gate, then reserved files / links /
-validator, then consumers (import + visualizer). Each completed ticket gets a
-WORKLOG realization doc; durable sub-decisions get their own ADR.
+### Staged, non-breaking migration
+Execution is broken into a phased ticket backlog in
+`documentation/WORKLOG/ROADMAP.md` — foundations first (dual-format **reader** so
+nothing breaks), then YAML **writes** + one-shot migration of existing docs, then
+reserved files / links / validator, then consumers (import + visualizer). Each
+completed ticket gets a WORKLOG realization doc; durable sub-decisions get their
+own ADR.
 
 ## Consequences
 
@@ -92,9 +75,6 @@ WORKLOG realization doc; durable sub-decisions get their own ADR.
   will be revisited (candidates for `Partially SuperSeeded`) once the writer lands.
 - A dual-format reader is mandatory during migration so the ~106 existing ADRs
   keep working until converted.
-- Existing users hit a one-time hard gate: an un-migrated project will not open
-  until the deterministic migration has run. This is intentional (guarantees the
-  on-disk format is always OKF-conformant once opened).
 - No source files are attached to this ADR yet: it is a forward-looking decision;
   implementation ADRs and metadata bindings come with each ticket.
 
