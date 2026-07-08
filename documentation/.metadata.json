@@ -1689,6 +1689,12 @@
       "hash": "e84d7d5731d9c884c5ce541ff637d9f0c1ef7a596e050c423d1e1748f1252f67",
       "commit": "26050ca9e6df178dd6a3b36e98b03c8485f44236",
       "dirty": false
+    },
+    {
+      "path": "src/lib/parser.ts",
+      "hash": "371fbb9676a0b8144f9f8a009d8f9ecf1fa785985308fc95083e90603cff6aed",
+      "commit": "9c686257a01e7a74070eb2cf12e5b88e12d92ca6",
+      "dirty": false
     }
   ]
 }
