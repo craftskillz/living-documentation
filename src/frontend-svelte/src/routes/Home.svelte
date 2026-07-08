@@ -233,6 +233,9 @@
     home.imageCentered = !!cfg.imageCentered;
     home.imageBorder = !!cfg.imageBorder;
     home.codeBlockLightTheme = !!cfg.codeBlockLightTheme;
+    home.sidebarSort = ["recent", "oldest", "alphabetical"].includes(cfg.sidebarSort as string)
+      ? (cfg.sidebarSort as typeof home.sidebarSort)
+      : "recent";
     if (home.codeBlockMaxHeight > 0) {
       document.documentElement.style.setProperty("--ld-code-max-h", home.codeBlockMaxHeight + "px");
     }

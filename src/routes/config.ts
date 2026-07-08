@@ -34,6 +34,7 @@ export function configRouter(docsPath: string): Router {
         'blockedFileExtensions',
         'exclusiveFolderExpansion',
         'exclusiveCategoryExpansion',
+        'sidebarSort',
         'codeBlockMaxHeight',
         'markdownSoftBreaks',
         'imageRoundedCorners',
@@ -68,6 +69,10 @@ export function configRouter(docsPath: string): Router {
       // siteTheme: only 'base' or 'tau'
       if ('siteTheme' in safe && !['base', 'tau'].includes(safe.siteTheme as string)) {
         delete (safe as Record<string, unknown>).siteTheme;
+      }
+      // sidebarSort: only 'recent', 'oldest' or 'alphabetical'
+      if ('sidebarSort' in safe && !['recent', 'oldest', 'alphabetical'].includes(safe.sidebarSort as string)) {
+        delete (safe as Record<string, unknown>).sidebarSort;
       }
       // favorites: array of { id, title } with non-empty string ids, deduped by id,
       // capped to a sane length. Titles are trimmed and length-limited.

@@ -13,7 +13,7 @@
   } = $props();
 
   const tree = $derived(
-    buildFolderTree(home.filteredDocs, home.allFolderPaths, !home.searchQuery),
+    buildFolderTree(home.filteredDocs, home.allFolderPaths, !home.searchQuery, home.sidebarSort),
   );
   const docCount = $derived(home.filteredDocs.length);
   const isEmpty = $derived(home.filteredDocs.length === 0 && home.allFolderPaths.length === 0);

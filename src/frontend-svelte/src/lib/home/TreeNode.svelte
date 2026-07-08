@@ -31,7 +31,7 @@
 </script>
 
 {#if home.hideCategories}
-  {#each flatSortedDocs(node) as doc (doc.id)}
+  {#each flatSortedDocs(node, home.sidebarSort) as doc (doc.id)}
     {@render docItem(doc)}
   {/each}
   {#each sortedChildKeys(node) as key (key)}

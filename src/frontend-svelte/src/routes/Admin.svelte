@@ -16,6 +16,7 @@
   let title = $state("");
   let theme = $state("system");
   let siteTheme = $state<"base" | "tau">("base");
+  let sidebarSort = $state<"recent" | "oldest" | "alphabetical">("recent");
   let language = $state("en");
   let filenamePattern = $state("");
   let sourceRoot = $state("");
@@ -157,6 +158,7 @@
       title = cfg.title || "";
       theme = cfg.theme || "system";
       siteTheme = cfg.siteTheme === "tau" ? "tau" : "base";
+      sidebarSort = ["recent", "oldest", "alphabetical"].includes(cfg.sidebarSort) ? cfg.sidebarSort : "recent";
       language = cfg.language || "en";
       await loadI18n(language);
       filenamePattern = cfg.filenamePattern || "";
@@ -207,7 +209,7 @@
     }
     const blocked = blockedFileExtensions.split(/[\s,]+/).map(e => e.trim().replace(/^\.+/, "").toLowerCase()).filter(e => /^[a-z0-9]+$/.test(e));
     const payload = {
-      title, theme, siteTheme, language, filenamePattern: pattern,
+      title, theme, siteTheme, sidebarSort, language, filenamePattern: pattern,
       exclusiveFolderExpansion, exclusiveCategoryExpansion,
       codeBlockMaxHeight: Math.max(0, Math.min(5000, codeBlockMaxHeight || 0)),
       markdownSoftBreaks, imageRoundedCorners, imageCentered, imageBorder, codeBlockLightTheme,
@@ -322,6 +324,15 @@
               <option value="fr">{t("admin.appearance.language_fr")}</option>
             </select>
             <p class="field-hint">{t("admin.appearance.language_hint")}</p>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="field-sidebar-sort">{t("admin.appearance.sidebar_sort_label")}</label>
+            <select id="field-sidebar-sort" class="field-input" bind:value={sidebarSort}>
+              <option value="recent">{t("admin.appearance.sidebar_sort_recent")}</option>
+              <option value="oldest">{t("admin.appearance.sidebar_sort_oldest")}</option>
+              <option value="alphabetical">{t("admin.appearance.sidebar_sort_alphabetical")}</option>
+            </select>
+            <p class="field-hint">{t("admin.appearance.sidebar_sort_hint")}</p>
           </div>
         </ConfigSection>
 

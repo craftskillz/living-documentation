@@ -64,6 +64,8 @@ export interface StoredConfig {
   blockedFileExtensions: string[];
   exclusiveFolderExpansion: boolean;
   exclusiveCategoryExpansion: boolean;
+  // Sidebar document ordering within each category/folder.
+  sidebarSort: "recent" | "oldest" | "alphabetical";
   codeBlockMaxHeight: number;
   markdownSoftBreaks: boolean;
   imageRoundedCorners: boolean;
@@ -152,6 +154,7 @@ const STORAGE_DEFAULTS: StoredConfig = {
   blockedFileExtensions: DEFAULT_BLOCKED_FILE_EXTENSIONS,
   exclusiveFolderExpansion: false,
   exclusiveCategoryExpansion: false,
+  sidebarSort: "recent",
   codeBlockMaxHeight: 400,
   markdownSoftBreaks: true,
   imageRoundedCorners: true,

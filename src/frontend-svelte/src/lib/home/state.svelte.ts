@@ -1,4 +1,5 @@
 import type { DocSummary } from "./types";
+import type { SidebarSort } from "./tree";
 
 function readBool(key: string): boolean {
   try { return localStorage.getItem(key) === "1"; } catch { return false; }
@@ -37,6 +38,7 @@ class HomeState {
   imageCentered = $state(false);
   imageBorder = $state(false);
   codeBlockLightTheme = $state(false);
+  sidebarSort = $state<SidebarSort>("recent");
 
   // Marker (stabilo): "normal" | "active" | "hidden"
   markerState = $state<"normal" | "active" | "hidden">("normal");
