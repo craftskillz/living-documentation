@@ -239,6 +239,11 @@ Le board Kanban neutralise explicitement les marges des titres, textes vides, ti
 - `npm run build` execute avec succes apres suppression des marges `prose` internes au board Kanban.
 - `npx playwright test tests/e2e/kanban.spec.ts --project=chromium` execute avec succes apres suppression de l'espace haut des colonnes : 13 tests passes.
 - Test E2E ajoute pour verifier que les titres de colonnes demarrent pres du haut de chaque colonne.
+- Correction du rythme vertical Markdown standard : `#doc-content.prose` surcharge maintenant les marges Tailwind Typography de H1/H2/H3/H4 et des paragraphes.
+- Fixture Markdown ajoutee pour reproduire un document simple H1/H2/H3/H4.
+- `npm run build` execute avec succes apres correction du rythme vertical Markdown.
+- `npx playwright test tests/e2e/inline-snippet-edit.spec.ts -g "markdown headings keep compact vertical rhythm" --project=chromium` execute avec succes apres rebuild : 1 test passe.
+- `git diff --check` execute avec succes apres correction du rythme vertical Markdown.
 
 ## Verifications restantes
 

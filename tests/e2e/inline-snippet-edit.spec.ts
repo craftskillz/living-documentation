@@ -7,6 +7,40 @@ test.describe('inline snippet editing from viewer', () => {
 
   const docId = '2026_01_01_10_00_[General]_inline_snippets';
 
+  test('markdown headings keep compact vertical rhythm in the viewer', async ({ page, ld }) => {
+    const spacingDocId = '2026_01_04_10_00_[General]_heading_spacing';
+    const MAX_H1_TO_TEXT_GAP_PX = 34;
+    const MAX_TEXT_TO_H2_GAP_PX = 48;
+    const MAX_H2_TO_TEXT_GAP_PX = 32;
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(spacingDocId)}`);
+    await expect(page.locator('#doc-content h1')).toBeVisible();
+
+    const gaps = await page.evaluate(() => {
+      const content = document.querySelector('#doc-content');
+      if (!content) throw new Error('missing doc content');
+      const h1 = content.querySelector('h1');
+      const paragraphs = content.querySelectorAll('p');
+      const h2 = content.querySelector('h2');
+      if (!h1 || paragraphs.length < 2 || !h2) throw new Error('missing heading fixture nodes');
+
+      const h1Rect = h1.getBoundingClientRect();
+      const firstParagraphRect = paragraphs[0].getBoundingClientRect();
+      const h2Rect = h2.getBoundingClientRect();
+      const secondParagraphRect = paragraphs[1].getBoundingClientRect();
+
+      return {
+        h1ToText: firstParagraphRect.top - h1Rect.bottom,
+        textToH2: h2Rect.top - firstParagraphRect.bottom,
+        h2ToText: secondParagraphRect.top - h2Rect.bottom,
+      };
+    });
+
+    expect(gaps.h1ToText).toBeLessThanOrEqual(MAX_H1_TO_TEXT_GAP_PX);
+    expect(gaps.textToH2).toBeLessThanOrEqual(MAX_TEXT_TO_H2_GAP_PX);
+    expect(gaps.h2ToText).toBeLessThanOrEqual(MAX_H2_TO_TEXT_GAP_PX);
+  });
+
   test('right-click on colored text opens snippet editor and saves to markdown', async ({ page, ld }) => {
     const docPath = path.join(ld.docsAbs, `${docId}.md`);
 
