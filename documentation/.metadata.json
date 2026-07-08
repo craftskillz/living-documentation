@@ -1622,5 +1622,13 @@
       "commit": "c5c7bd5153f6db5ac7c2e5020a5af8ff3af41dbb",
       "dirty": true
     }
+  ],
+  "ADRS/2026_07_08_10_32_[FRONTEND]_favorites_menu_pinned_documents_in_livingdocjson_with_drag_priority_and_autoopen": [
+    {
+      "path": "src/frontend-svelte/src/lib/favorites.svelte.ts",
+      "hash": "58f220c886b3573f14495e2c4821194640a51ef05f8cc300adffb44bd201b572",
+      "commit": "b09c0d4e932589e158aa13c46347fea9a2d52b2c",
+      "dirty": false
+    }
   ]
 }
