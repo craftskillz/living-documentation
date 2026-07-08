@@ -1653,19 +1653,19 @@
     {
       "path": "src/frontend-svelte/src/lib/siteTheme.ts",
       "hash": "412a1c65ceb62c90d6db9863631328dbc9d1a0577dea5ed9cd649a8b6d62e074",
-      "commit": "ceb340538434f3ef6c007e6449d3f5e3ca2ca0db",
+      "commit": "0b44f648ef9d6be521a4262cf1cc834a08ecc6dd",
       "dirty": false
     },
     {
       "path": "scripts/fetch-tau-fonts.mjs",
       "hash": "2fada20a2d3743cb59d6e74d033f04f57deb8d85d165bbe7918115ff29961abc",
-      "commit": "4d782e74681b09f0c62627e9f2e816e69a0d86d7",
+      "commit": "0b44f648ef9d6be521a4262cf1cc834a08ecc6dd",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/styles/app.css",
       "hash": "f0e30afa22df375c134b241f4e63725efa267f2ae0cf48423b2748766fc2c257",
-      "commit": "bf481e898396ab703feba32ac6b68aed2d139323",
+      "commit": "0b44f648ef9d6be521a4262cf1cc834a08ecc6dd",
       "dirty": false
     }
   ]
