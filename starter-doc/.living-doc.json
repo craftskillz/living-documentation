@@ -3,6 +3,12 @@
   "title": "Living Documentation",
   "theme": "system",
   "language": "en",
+  "favorites": [
+    {
+      "id": "000_DOCUMENTATION%2F2026_06_30_10_00_%5BDOCUMENTATION%5D_welcome_to_living_documentation",
+      "title": "Welcome To Living Documentation"
+    }
+  ],
   "port": 4321,
   "extraFiles": [],
   "showDiagramDebug": false,

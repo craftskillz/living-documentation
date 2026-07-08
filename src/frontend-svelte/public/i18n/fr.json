@@ -33,6 +33,7 @@
   "nav.favorites": "Favoris",
   "favorites.empty": "Aucun favori. Cliquez sur l'étoile d'un document pour l'épingler ici.",
   "favorites.remove": "Retirer des favoris",
+  "favorites.reorder": "Glisser pour réordonner",
   "favorites.add": "Ajouter aux favoris",
   "favorites.button": "Favori",
   "nav.diagram": "◇ Diagramme",

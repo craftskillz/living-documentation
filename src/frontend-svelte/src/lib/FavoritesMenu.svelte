@@ -42,6 +42,34 @@
     history.pushState(null, "", href);
     window.dispatchEvent(new PopStateEvent("popstate"));
   }
+
+  // ── Drag-and-drop reordering (top = highest priority) ────────────────────────
+  let dragId = $state<string | null>(null);
+  let overId = $state<string | null>(null);
+
+  function onDragStart(event: DragEvent, id: string) {
+    dragId = id;
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", id);
+    }
+  }
+  function onDragOver(event: DragEvent, id: string) {
+    if (!dragId) return;
+    event.preventDefault();
+    if (event.dataTransfer) event.dataTransfer.dropEffect = "move";
+    overId = id;
+  }
+  function onDrop(event: DragEvent, id: string) {
+    event.preventDefault();
+    if (dragId && dragId !== id) favorites.reorder(dragId, id);
+    dragId = null;
+    overId = null;
+  }
+  function onDragEnd() {
+    dragId = null;
+    overId = null;
+  }
 </script>
 
 <button
@@ -69,7 +97,18 @@
       <p class="favorites-empty">{t("favorites.empty")}</p>
     {:else}
       {#each favorites.items as fav (fav.id)}
-        <div class="favorites-row">
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div
+          class="favorites-row"
+          class:favorites-row--over={overId === fav.id && dragId !== fav.id}
+          class:favorites-row--dragging={dragId === fav.id}
+          draggable="true"
+          ondragstart={(e) => onDragStart(e, fav.id)}
+          ondragover={(e) => onDragOver(e, fav.id)}
+          ondrop={(e) => onDrop(e, fav.id)}
+          ondragend={onDragEnd}
+        >
+          <span class="favorites-grip" aria-hidden="true" title={t("favorites.reorder")}><i class="fa-solid fa-grip-vertical"></i></span>
           <button
             type="button"
             class="favorites-item"
@@ -129,6 +168,29 @@
     display: flex;
     align-items: center;
     gap: 2px;
+    border-radius: 6px;
+    border-top: 2px solid transparent;
+    border-bottom: 2px solid transparent;
+  }
+  .favorites-row--over {
+    border-top-color: var(--accent);
+  }
+  .favorites-row--dragging {
+    opacity: 0.5;
+  }
+
+  .favorites-grip {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    color: var(--muted);
+    cursor: grab;
+    font-size: 11px;
+  }
+  .favorites-grip:active {
+    cursor: grabbing;
   }
 
   .favorites-item {

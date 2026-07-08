@@ -245,7 +245,12 @@
     if (docId) {
       openDoc(docId, true, false, location.hash ? location.hash.slice(1) : null);
     } else {
+      // With no explicit ?doc, open the highest-priority favorite (top of the
+      // list) when it still exists, else fall back to the default first doc.
+      const favList = Array.isArray(cfg.favorites) ? (cfg.favorites as { id?: string }[]) : [];
+      const topFavId = favList.length ? favList[0]?.id : undefined;
       const first =
+        (topFavId ? home.allDocs.find(d => d.id === topFavId) : undefined) ??
         home.allDocs.find(d => d.category === "DOCUMENTATION") ??
         home.allDocs.find(d => d.category === "General") ??
         home.allDocs[0];

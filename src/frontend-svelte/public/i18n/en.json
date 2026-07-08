@@ -33,6 +33,7 @@
   "nav.favorites": "Favorites",
   "favorites.empty": "No favorites yet. Star a document to pin it here.",
   "favorites.remove": "Remove from favorites",
+  "favorites.reorder": "Drag to reorder",
   "favorites.add": "Add to favorites",
   "favorites.button": "Favorite",
   "nav.diagram": "◇ Diagram",

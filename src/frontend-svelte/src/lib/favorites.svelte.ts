@@ -37,6 +37,17 @@ class FavoritesState {
     void this.persist(this.items.filter((f) => f.id !== id));
   }
 
+  // Move `fromId` to the position of `toId` (list order = priority, top first).
+  reorder(fromId: string, toId: string): void {
+    const from = this.items.findIndex((f) => f.id === fromId);
+    const to = this.items.findIndex((f) => f.id === toId);
+    if (from < 0 || to < 0 || from === to) return;
+    const next = [...this.items];
+    const [moved] = next.splice(from, 1);
+    next.splice(to, 0, moved);
+    void this.persist(next);
+  }
+
   // Optimistic write: update the UI immediately, roll back if the PUT fails.
   private async persist(next: FavoriteDoc[]): Promise<void> {
     const previous = this.items;
