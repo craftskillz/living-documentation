@@ -141,7 +141,7 @@ document `documentation/WORKLOG/AAAA_MM_JJ_HH_mm_[WORKLOG]_ticket_XX_<slug>.md`.
 
 ## Ordre recommandé
 
-- [ ] Ticket 01 - Audit de conformité & table de mapping figée
+- [x] ~~Ticket 01 - Audit de conformité & table de mapping figée~~
 - [ ] Ticket 02 - Lecteur frontmatter dual (YAML + legacy)
 - [ ] Ticket 03 - Modèle de concept OKF & dérivation du `type`
 - [ ] Ticket 04 - Écriture YAML via MCP + flip de statut
