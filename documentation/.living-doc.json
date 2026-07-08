@@ -52,7 +52,7 @@
   ],
   "exclusiveFolderExpansion": true,
   "exclusiveCategoryExpansion": true,
-  "sidebarSort": "recent",
+  "sidebarSort": "oldest",
   "codeBlockMaxHeight": 400,
   "markdownSoftBreaks": true,
   "imageRoundedCorners": true,
