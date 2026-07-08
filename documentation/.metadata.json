@@ -1635,6 +1635,12 @@
       "hash": "7885b5ffab5c6e9b1736551dc01468bf7bcadaf1149a51bfed23f1ae3b2f36fb",
       "commit": "626dbdc570718b5fb5ba549f77754ce7e55644bb",
       "dirty": false
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/configObserver.ts",
+      "hash": "43676857a69770080ec5fec790891c7649b53c11231f0065b2fa9378939eec84",
+      "commit": "364ca269fa1b1385caa88b8d762cbe9854320d67",
+      "dirty": false
     }
   ]
 }
