@@ -1,0 +1,14 @@
+# WORKLOG
+
+## Concepts
+
+* [Ticket 01 Okf Conformance Audit And Frozen Mapping](./2026_07_08_19_23_[WORKLOG]_ticket_01_okf_conformance_audit_and_frozen_mapping.md) - Réalisation du Ticket 01 — audit de conformance OKF v0.1 et table de mapping figée, sans code.
+* [Ticket 02 Dual Frontmatter Reader Yaml Legacy](./2026_07_09_19_35_[WORKLOG]_ticket_02_dual_frontmatter_reader_yaml_legacy.md) - Réalisation du Ticket 02 — module frontmatter.ts unifié (lit YAML et legacy **gras**), centralisation des lecteurs, ajout de la dépendance yaml et tests unitaires.
+* [Ticket 04 - Canonical YAML frontmatter on every write](./2026_07_09_20_17_[WORKLOG]_ticket_04_canonical_yaml_frontmatter_on_every_write.md) - Réalisation du Ticket 04 — normalisation déterministe du frontmatter en YAML canonique à chaque écriture de document, réutilisable par la migration T05.
+* [Ticket 05 - Deterministic bulk migration to OKF YAML](./2026_07_09_20_42_[WORKLOG]_ticket_05_deterministic_bulk_migration_to_okf_yaml.md) - Réalisation du Ticket 05 — migration déterministe (sans IA) des documents existants vers le YAML canonique OKF, réutilisant normalizeFrontmatter, avec écriture du flag OKF.
+* [Ticket 06 - OKF migration startup gate and migrate command](./2026_07_09_21_23_[WORKLOG]_ticket_06_okf_migration_startup_gate_and_migrate_command.md) - Réalisation du Ticket 06 — garde de démarrage CLI qui refuse d'ouvrir un projet non migré OKF, commande migrate, champ config okfMigration, et migration automatique du starter à l'init.
+* [Ticket 07 - Viewer metadata from YAML frontmatter](./2026_07_10_01_32_[WORKLOG]_ticket_07_viewer_metadata_from_yaml_frontmatter.md) - Réalisation du Ticket 07 — le détail document expose tags/type du frontmatter et le DocViewer affiche des chips de tags ; le strip et les pills gèrent déjà le YAML.
+* [Ticket 08 - Bundle-relative link resolution in the viewer](./2026_07_10_01_37_[WORKLOG]_ticket_08_bundlerelative_link_resolution_in_the_viewer.md) - Réalisation du Ticket 08 — le viewer résout les liens Markdown bundle-relatifs OKF (/ADRS/x.md, ./x.md) vers un doc id ; ?doc= reste la forme in-app et l'export émet déjà du .md relatif.
+* [Current task](./current-task.md) - Point de reprise du chantier d'alignement natif OKF — ticket courant et prochaines actions.
+* [Mcp build context tool](./mcp-build-context-tool.md) - Ajout de l'outil MCP `build_context(task, options?)` qui agrège git status/diff, contenu source et docs/ADR liés en un seul appel.
+* [ROADMAP](./ROADMAP.md) - Backlog de tickets pour aligner nativement living-documentation sur Google Open Knowledge Format (OKF) — migration algorithmique non-cassante du frontmatter vers YAML, garde de migration au démarrage, fichiers réservés, validateur, consommateurs.
