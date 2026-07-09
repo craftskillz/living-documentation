@@ -1734,5 +1734,13 @@
       "commit": "a31a26c086dc83227ae35e603e9fb4c84205e727",
       "dirty": false
     }
+  ],
+  "ADRS/2026_07_10_01_25_[OKF]_okf_migration_startup_gate_migrate_command_and_shared_migration_core": [
+    {
+      "path": "bin/cli.ts",
+      "hash": "11345c1291c720eb4d2c9f7ec6c047a94f3b205d2c169be1cc12e5c5b966841a",
+      "commit": "2a75055b7b85f674cf4fb658af7ab9f108f58e84",
+      "dirty": false
+    }
   ]
 }
