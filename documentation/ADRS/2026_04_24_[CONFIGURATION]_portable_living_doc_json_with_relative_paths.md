@@ -1,9 +1,27 @@
 ---
-`🗄️ ADR : 2026_04_24_[CONFIGURATION]_portable_living_doc_json_with_relative_paths.md`
-**date:** 2026-04-24
-**status:** Accepted
-**description:** Store docsFolder, sourceRoot and extraFiles as paths relative to the docs folder in .living-doc.json (instead of absolute), so the file can be checked into git and shared across machines. Includes silent migration of legacy configs, three-layer validation (CLI, API, Admin UI), and preserves the extraFiles feature introduced in the superseded ADR.
-**tags:** configuration, extraFiles, sourceRoot, docsFolder, relative-paths, git-portability, silent-migration, cli-validation, admin-ui, sidebar, security, api, browse, path-traversal, document-id, windows-paths, posix
+type: ADR
+title: Portable Living Doc Json With Relative Paths
+description: Store docsFolder, sourceRoot and extraFiles as paths relative to the docs folder in .living-doc.json (instead of absolute), so the file can be checked into git and shared across machines. Includes silent migration of legacy configs, three-layer validation (CLI, API, Admin UI), and preserves the extraFiles feature introduced in the superseded ADR.
+tags:
+  - configuration
+  - extraFiles
+  - sourceRoot
+  - docsFolder
+  - relative-paths
+  - git-portability
+  - silent-migration
+  - cli-validation
+  - admin-ui
+  - sidebar
+  - security
+  - api
+  - browse
+  - path-traversal
+  - document-id
+  - windows-paths
+  - posix
+timestamp: 2026-04-24T00:00:00Z
+status: Accepted
 ---
 
 ## Context

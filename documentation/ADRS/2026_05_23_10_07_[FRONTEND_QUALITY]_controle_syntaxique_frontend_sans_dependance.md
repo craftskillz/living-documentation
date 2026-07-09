@@ -1,8 +1,19 @@
 ---
-**date:** 2026-05-23
-**status:** SuperSeeded
-**description:** [SuperSeeded par la migration Svelte] Script npm `check:frontend` (`node --check` sur `src/frontend/**/*.js`) , supprime en meme temps que le frontend vanilla.
-**tags:** frontend, quality, javascript, syntax-check, node-check, npm-script, superseeded, check-frontend, scripts
+type: ADR
+title: Controle Syntaxique Frontend Sans Dependance
+description: "[SuperSeeded par la migration Svelte] Script npm `check:frontend` (`node --check` sur `src/frontend/**/*.js`) , supprime en meme temps que le frontend vanilla."
+tags:
+  - frontend
+  - quality
+  - javascript
+  - syntax-check
+  - node-check
+  - npm-script
+  - superseeded
+  - check-frontend
+  - scripts
+timestamp: 2026-05-23T10:07:00Z
+status: SuperSeeded
 ---
 
 > **SuperSeeded** par [Migration du frontend vers une application Svelte unifiee](?doc=ADRS%252F2026_06_03_10_53_%255BFRONTEND%255D_migration_du_frontend_vers_une_application_svelte_unifiee).

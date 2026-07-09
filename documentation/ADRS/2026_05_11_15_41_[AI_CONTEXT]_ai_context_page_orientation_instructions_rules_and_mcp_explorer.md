@@ -1,8 +1,20 @@
 ---
-**date:** 2026-05-10
-**status:** To be validated
-**description:** Ajout d'une page /context dédiée à l'orientation des agents IA : symlinks vers les fichiers d'instructions (CLAUDE.md, AGENTS.md, MEMORY.md), CRUD de règles AI à frontmatter, et explorateur du endpoint MCP local listant tools et prompts.
-**tags:** ai-context, context-engineering, orientation, instructions, claude.md, agents.md, memory.md, ai-rules, mcp-explorer, /api/context
+type: ADR
+title: Ai Context Page Orientation Instructions Rules And Mcp Explorer
+description: "Ajout d'une page /context dédiée à l'orientation des agents IA : symlinks vers les fichiers d'instructions (CLAUDE.md, AGENTS.md, MEMORY.md), CRUD de règles AI à frontmatter, et explorateur du endpoint MCP local listant tools et prompts."
+tags:
+  - ai-context
+  - context-engineering
+  - orientation
+  - instructions
+  - claude.md
+  - agents.md
+  - memory.md
+  - ai-rules
+  - mcp-explorer
+  - /api/context
+timestamp: 2026-05-10T15:41:00Z
+status: To be validated
 ---
 
 # Page AI Context (orientation, règles, explorateur MCP)

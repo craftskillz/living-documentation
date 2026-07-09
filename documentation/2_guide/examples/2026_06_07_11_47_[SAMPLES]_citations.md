@@ -1,3 +1,8 @@
+---
+type: Document
+title: Citations
+---
+
 # Citations
 
 Les citations (blockquotes) sont des blocs de texte mis en retrait. En Markdown standard, on les préfixe avec `>`. Living Documentation les enrichit avec des types colorés, des titres et des icônes via des commentaires HTML placés avant le bloc.

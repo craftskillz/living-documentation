@@ -1,8 +1,18 @@
 ---
-**date:** 2026-07-08
-**status:** To be validated
-**description:** Ticket 01 deliverable — line-by-line audit of OKF v0.1 conformance for living-documentation, with the frozen field mapping, frontmatter-format decision, reserved-files and link strategy that Tickets 02→15 implement against.
-**tags:** okf, conformance-audit, field-mapping, yaml-frontmatter, reserved-files, links, ticket-01, reference
+type: Technical Doc
+title: Okf V01 Conformance Audit And Frozen Field Mapping Ticket 01
+description: Ticket 01 deliverable — line-by-line audit of OKF v0.1 conformance for living-documentation, with the frozen field mapping, frontmatter-format decision, reserved-files and link strategy that Tickets 02→15 implement against.
+tags:
+  - okf
+  - conformance-audit
+  - field-mapping
+  - yaml-frontmatter
+  - reserved-files
+  - links
+  - ticket-01
+  - reference
+timestamp: 2026-07-08T19:22:00Z
+status: To be validated
 ---
 
 # OKF v0.1 conformance audit & frozen mapping

@@ -1,8 +1,15 @@
 ---
-**date:** 2026-07-01T14:53:48.918Z
-**status:** Success
-**description:** Resultat d'execution de l'agent Ask The LLM via Chat OpenRouter Cohere Mini Free.
-**tags:** agent, run-agent, workspace, llm, ask_the_llm
+type: Technical Doc
+title: Run Ask The Llm
+description: Resultat d'execution de l'agent Ask The LLM via Chat OpenRouter Cohere Mini Free.
+tags:
+  - agent
+  - run-agent
+  - workspace
+  - llm
+  - ask_the_llm
+timestamp: 2026-07-01T14:53:48.918Z
+status: Success
 ---
 
 # Run - Ask The LLM

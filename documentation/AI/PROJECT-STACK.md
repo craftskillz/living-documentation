@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: PROJECT STACK
+---
+
 # PROJECT-STACK - Living Documentation
 
 Ce fichier donne à l'assistant IA une vue rapide et factuelle du projet. Il doit rester court, concret et maintenu en continu.

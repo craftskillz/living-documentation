@@ -1,8 +1,20 @@
 ---
-**date:** 2026-06-03
-**status:** To be validated
-**description:** Reparation des 49 tests e2e casses par la migration Svelte via une convention d'ancrage `data-testid` + ids fonctionnels reutilises, une surface de test `window.openSnippetsModal*`, des attentes de montage anti-race CI, l'acceptation d'un comportement liste source-fidele, et la correction de 6 vraies regressions de parsing/rendu.
-**tags:** playwright, e2e, data-testid, svelte5, window-hooks, ci-race, table-attributes, confirm-dialog, regression, getByTestId
+type: Document
+title: Stabilisation De La Suite E2e Playwright Apres Migration Svelte Ancrage De Test Et Regressions
+description: Reparation des 49 tests e2e casses par la migration Svelte via une convention d'ancrage `data-testid` + ids fonctionnels reutilises, une surface de test `window.openSnippetsModal*`, des attentes de montage anti-race CI, l'acceptation d'un comportement liste source-fidele, et la correction de 6 vraies regressions de parsing/rendu.
+tags:
+  - playwright
+  - e2e
+  - data-testid
+  - svelte5
+  - window-hooks
+  - ci-race
+  - table-attributes
+  - confirm-dialog
+  - regression
+  - getByTestId
+timestamp: 2026-06-03T23:19:00Z
+status: To be validated
 ---
 
 ## Contexte

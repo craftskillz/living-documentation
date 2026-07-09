@@ -1,8 +1,25 @@
 ---
-**date:** 2026-06-06
-**status:** To be validated
-**description:** Le snippet tableau remplace l'editeur global ligne/colonne par une grille type tableur 2x2 navigable au clavier, stylable en direct, editable au double-clic et suppressible par menu contextuel.
-**tags:** snippet, table, spreadsheet-grid, keyboard-navigation, tab-navigation, double-click-edit, context-menu, live-style, row-deletion, column-deletion, markdown-builder, parseTableSnippetMarkdown, tableRenderGrid, inlineSnippetEdit, Svelte
+type: ADR
+title: Spreadsheet Style Table Snippet Editor
+description: Le snippet tableau remplace l'editeur global ligne/colonne par une grille type tableur 2x2 navigable au clavier, stylable en direct, editable au double-clic et suppressible par menu contextuel.
+tags:
+  - snippet
+  - table
+  - spreadsheet-grid
+  - keyboard-navigation
+  - tab-navigation
+  - double-click-edit
+  - context-menu
+  - live-style
+  - row-deletion
+  - column-deletion
+  - markdown-builder
+  - parseTableSnippetMarkdown
+  - tableRenderGrid
+  - inlineSnippetEdit
+  - Svelte
+timestamp: 2026-06-06T21:47:00Z
+status: To be validated
 ---
 
 # Spreadsheet style table snippet editor

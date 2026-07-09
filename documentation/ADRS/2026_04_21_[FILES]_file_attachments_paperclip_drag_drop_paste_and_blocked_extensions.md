@@ -1,8 +1,23 @@
 ---
-date: 2026-04-21
-status: Accepted
+type: ADR
+title: File Attachments Paperclip Drag Drop Paste And Blocked Extensions
 description: Add a file attachment feature to the Markdown editor (non-image files) , base64 upload, drag-drop / paste / file-picker entry points, paperclip decoration at render time, configurable blocked extensions and 19 MB cap.
-tags: files, attachments, upload, paperclip, drag-drop, paste, base64, blocked-extensions, admin-config, security, documents, rendering, i18n
+tags:
+  - files
+  - attachments
+  - upload
+  - paperclip
+  - drag-drop
+  - paste
+  - base64
+  - blocked-extensions
+  - admin-config
+  - security
+  - documents
+  - rendering
+  - i18n
+timestamp: 2026-04-21T00:00:00Z
+status: Accepted
 ---
 
 ## Context

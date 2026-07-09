@@ -1,8 +1,27 @@
 ---
-**date:** 2026-05-30
-**status:** To be validated
-**description:** Workspace de configuration graphique servi sur /workspace dans l'application Svelte, avec graphe hierarchique pan/zoom, persistence JSON, providers LLM configurables, agents avec system prompt, boucle tool use MCP et selection de modele dynamique.
-**tags:** workspace, svelte5, html-in-canvas, typescript, configuration-graph, llm-provider, agent, mcp, tool-use, pan-zoom, panel, persistence, ollama, chat-completions, model-select, run-agent, workspace-route
+type: ADR
+title: Workspace Configuration Graph Avec Agents Llm Et Tool Use Mcp
+description: Workspace de configuration graphique servi sur /workspace dans l'application Svelte, avec graphe hierarchique pan/zoom, persistence JSON, providers LLM configurables, agents avec system prompt, boucle tool use MCP et selection de modele dynamique.
+tags:
+  - workspace
+  - svelte5
+  - html-in-canvas
+  - typescript
+  - configuration-graph
+  - llm-provider
+  - agent
+  - mcp
+  - tool-use
+  - pan-zoom
+  - panel
+  - persistence
+  - ollama
+  - chat-completions
+  - model-select
+  - run-agent
+  - workspace-route
+timestamp: 2026-05-30T22:14:00Z
+status: To be validated
 ---
 
 # Workspace de configuration graphe avec agents LLM et tool use MCP

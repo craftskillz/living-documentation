@@ -1,8 +1,20 @@
 ---
-**date:** 2026-06-06
-**status:** To be validated
-**description:** Trois corrections sur les post-its: ouverture automatique des details ancêtres avant scroll, fermeture immédiate au scroll du conteneur, et délai de fermeture porté à 1500ms pour laisser le temps d'atteindre la popup depuis le pill.
-**tags:** annotation, post-it, details, scroll, pillEnter, pillClick, scheduleHide, hideTimer, openAncestorDetails, Annotations.svelte
+type: ADR
+title: Annotation Popup Fixes Details Autoopen Scroll Hide Hover Delay
+description: "Trois corrections sur les post-its: ouverture automatique des details ancêtres avant scroll, fermeture immédiate au scroll du conteneur, et délai de fermeture porté à 1500ms pour laisser le temps d'atteindre la popup depuis le pill."
+tags:
+  - annotation
+  - post-it
+  - details
+  - scroll
+  - pillEnter
+  - pillClick
+  - scheduleHide
+  - hideTimer
+  - openAncestorDetails
+  - Annotations.svelte
+timestamp: 2026-06-06T16:17:00Z
+status: To be validated
 ---
 
 ## Contexte

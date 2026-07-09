@@ -1,8 +1,23 @@
 ---
-**date:** 2026-05-11
-**status:** Accepted
-**description:** Les boutons "Run tool" et "Get prompt" de la page /context enregistrent les appels MCP en documents Markdown sous DOCS_FOLDER/AI/MCP, avec un contenu structuré pour les tools : description, schéma d'entrée, requête JSON-RPC et résultat JSON ou Markdown brut selon le type retourné.
-**tags:** ai-context, mcp-explorer, /api/context/mcp-result, runMcpItem, buildToolRunMarkdown, mcpItemsByKind, inputSchema, tools/call, AI/MCP, markdown-result, json-result, save-as-markdown, indexed-naming
+type: ADR
+title: Mcp Explorer Saves Run Results As Markdown Documents In Ai Mcp Folder
+description: "Les boutons \"Run tool\" et \"Get prompt\" de la page /context enregistrent les appels MCP en documents Markdown sous DOCS_FOLDER/AI/MCP, avec un contenu structuré pour les tools : description, schéma d'entrée, requête JSON-RPC et résultat JSON ou Markdown brut selon le type retourné."
+tags:
+  - ai-context
+  - mcp-explorer
+  - /api/context/mcp-result
+  - runMcpItem
+  - buildToolRunMarkdown
+  - mcpItemsByKind
+  - inputSchema
+  - tools/call
+  - AI/MCP
+  - markdown-result
+  - json-result
+  - save-as-markdown
+  - indexed-naming
+timestamp: 2026-05-11T16:08:00Z
+status: Accepted
 ---
 
 # Sauvegarde des appels MCP en documents Markdown

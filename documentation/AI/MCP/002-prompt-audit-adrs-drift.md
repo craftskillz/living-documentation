@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: 002 prompt audit adrs drift
+---
+
 [user]
 You are about to **audit ADR drift against the source code each ADR describes**, and bring every drifting ADR back to a clear state.
 

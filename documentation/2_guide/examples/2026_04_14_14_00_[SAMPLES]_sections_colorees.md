@@ -1,3 +1,8 @@
+---
+type: Document
+title: Sections Colorees
+---
+
 # Sections colorées & texte coloré
 
 Les sections colorées utilisent des `<div>` HTML avec styles inline. Contrairement aux callouts Markdown, elles n'ont pas de syntaxe dédiée : on écrit le HTML directement dans le fichier `.md`. Le rendu est identique dans tous les contextes , aucune dépendance au moteur Markdown.

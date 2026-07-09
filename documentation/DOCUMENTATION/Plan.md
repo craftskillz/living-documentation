@@ -1,8 +1,21 @@
 ---
-**date:** 2026-06-30
-**status:** Draft
-**description:** Plan de production d'une documentation utilisateur professionnelle pour Living Documentation comme atelier documentaire local et laboratoire d'automatisation agentique.
-**tags:** documentation, user-manual, product-docs, notes, process, agents, onboarding, guides, reference, visual-assets, nano-banana-pro
+type: Document
+title: Plan
+description: Plan de production d'une documentation utilisateur professionnelle pour Living Documentation comme atelier documentaire local et laboratoire d'automatisation agentique.
+tags:
+  - documentation
+  - user-manual
+  - product-docs
+  - notes
+  - process
+  - agents
+  - onboarding
+  - guides
+  - reference
+  - visual-assets
+  - nano-banana-pro
+timestamp: 2026-06-30T00:00:00Z
+status: Draft
 ---
 
 # Plan documentaire utilisateur

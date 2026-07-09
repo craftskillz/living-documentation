@@ -1,8 +1,18 @@
 ---
-**date:** 2026-06-30
-**status:** Draft
-**description:** Parcours de lecture recommandes selon les profils, objectifs et niveaux d'usage.
-**tags:** parcours, onboarding, documentation-utilisateur, roles, agents, git, mcp, workspace
+type: Document
+title: 02 parcours recommandes
+description: Parcours de lecture recommandes selon les profils, objectifs et niveaux d'usage.
+tags:
+  - parcours
+  - onboarding
+  - documentation-utilisateur
+  - roles
+  - agents
+  - git
+  - mcp
+  - workspace
+timestamp: 2026-06-30T00:00:00Z
+status: Draft
 ---
 
 # Parcours recommandes

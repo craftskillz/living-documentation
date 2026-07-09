@@ -1,3 +1,8 @@
+---
+type: Document
+title: Word Cloud
+---
+
 ## Word Cloud , visualiser le vocabulaire dominant
 
 Le **Word Cloud** génère un nuage de mots à partir du contenu de n'importe quel dossier de votre système de fichiers. Utile pour identifier les thèmes dominants d'une base de code ou d'une documentation.

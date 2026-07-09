@@ -1,8 +1,19 @@
 ---
-**date:** 2026-06-30
-**status:** Draft
-**description:** Presentation courte de Living Documentation, de son positionnement et de ses usages principaux.
-**tags:** presentation, produit, markdown, local-first, git, documentation, agents, mcp, workspace
+type: Document
+title: Living Documentation En Bref
+description: Presentation courte de Living Documentation, de son positionnement et de ses usages principaux.
+tags:
+  - presentation
+  - produit
+  - markdown
+  - local-first
+  - git
+  - documentation
+  - agents
+  - mcp
+  - workspace
+timestamp: 2026-06-30T10:10:00Z
+status: Draft
 ---
 
 ## Les fonctions principales

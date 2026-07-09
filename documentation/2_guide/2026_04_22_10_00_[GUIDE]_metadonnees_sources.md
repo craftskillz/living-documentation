@@ -1,3 +1,8 @@
+---
+type: Document
+title: Metadonnees Sources
+---
+
 # Métadonnées sources
 
 Living Documentation peut lier un document à des fichiers source du projet (`.ts`, `.svelte`, `.json`…). Ce lien stocke un **hash de contenu** au moment de la liaison. Chaque fois qu'un fichier source change, l'indice de précision du document diminue , un signal clair que la documentation est peut-être devenue obsolète.

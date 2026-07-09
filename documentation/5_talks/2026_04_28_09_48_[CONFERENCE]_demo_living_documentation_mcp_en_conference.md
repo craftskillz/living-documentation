@@ -1,8 +1,24 @@
 ---
-**date:** 2026-04-28
-**status:** Draft
-**description:** Support de présentation conférence , démo live de Living Documentation en mode IA-Assisted, scénarios A (création d'ADR) et B (audit de dérive) avec un agent codant connecté au MCP
-**tags:** conference, talk, demo, mcp, scenario-a, scenario-b, create-adr, audit-doc-drift, live-coding, claude-code, nextjs, shadcn, drift-detection, presentation
+type: Document
+title: Demo Living Documentation Mcp En Conference
+description: Support de présentation conférence , démo live de Living Documentation en mode IA-Assisted, scénarios A (création d'ADR) et B (audit de dérive) avec un agent codant connecté au MCP
+tags:
+  - conference
+  - talk
+  - demo
+  - mcp
+  - scenario-a
+  - scenario-b
+  - create-adr
+  - audit-doc-drift
+  - live-coding
+  - claude-code
+  - nextjs
+  - shadcn
+  - drift-detection
+  - presentation
+timestamp: 2026-04-28T09:48:00Z
+status: Draft
 ---
 
 # Living Documentation , co-maintenir la doc avec un agent codant

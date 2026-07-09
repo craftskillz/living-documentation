@@ -1,3 +1,8 @@
+---
+type: Document
+title: Extra Files
+---
+
 ## Extra Files , inclure des fichiers extérieurs au dossier docs
 
 Les **Extra Files** permettent d'ajouter dans Living Documentation des fichiers Markdown qui se trouvent **en dehors** du dossier de documentation principal. Typiquement : `README.md`, `CLAUDE.md`, `CONTRIBUTING.md` à la racine du dépôt.

@@ -1,8 +1,15 @@
 ---
-**date:** 2026-07-01T13:42:24.288Z
-**status:** Success
-**description:** Resultat d'execution de l'agent Code Review Specialist via Agent Sonnet Open Router.
-**tags:** agent, run-agent, workspace, llm, code_review_specialist
+type: Technical Doc
+title: Run Code Review Specialist
+description: Resultat d'execution de l'agent Code Review Specialist via Agent Sonnet Open Router.
+tags:
+  - agent
+  - run-agent
+  - workspace
+  - llm
+  - code_review_specialist
+timestamp: 2026-07-01T13:42:24.288Z
+status: Success
 ---
 
 # Run - Code Review Specialist

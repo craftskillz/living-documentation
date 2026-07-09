@@ -1,8 +1,20 @@
 ---
-**date:** 2026-05-31
-**status:** To be validated
-**description:** Les valeurs par défaut de création des formes et flèches (taille, couleur, police) sont persistées dans `.living-doc.json` sous la clé `diagramDefaults`, accessibles via l'API config, avec trois points d'entrée UI : modal ⚙ dans la toolbar, bouton ⚙ en fin de barre de propriétés des formes, et fallback automatique à la création.
-**tags:** diagram, defaults, config, living-doc-json, node-panel, edge-panel, color-picker, localStorage, fallback, persistence
+type: ADR
+title: Diagram Defaults Valeurs Par Defaut De Creation Persistees Dans Livingdocjson
+description: "Les valeurs par défaut de création des formes et flèches (taille, couleur, police) sont persistées dans `.living-doc.json` sous la clé `diagramDefaults`, accessibles via l'API config, avec trois points d'entrée UI : modal ⚙ dans la toolbar, bouton ⚙ en fin de barre de propriétés des formes, et fallback automatique à la création."
+tags:
+  - diagram
+  - defaults
+  - config
+  - living-doc-json
+  - node-panel
+  - edge-panel
+  - color-picker
+  - localStorage
+  - fallback
+  - persistence
+timestamp: 2026-05-31T11:43:00Z
+status: To be validated
 ---
 
 ## Contexte

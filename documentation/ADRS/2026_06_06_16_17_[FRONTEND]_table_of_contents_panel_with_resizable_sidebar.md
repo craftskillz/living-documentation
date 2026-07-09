@@ -1,8 +1,21 @@
 ---
-**date:** 2026-06-06
-**status:** To be validated
-**description:** Un panneau TOC sticky redimensionnable s'ouvre via un bouton fa-list-ul; le header reste pleine largeur au-dessus du contenu et la TOC se colle à top=hauteurHeader (mesurée par ResizeObserver) pour zéro sticky-travel; les clics ouvrent les details fermés avant de scroller.
-**tags:** TOC, table-of-contents, DocViewer, sticky, ResizeObserver, zero-travel, resizable, details, scroll, localStorage, headings
+type: ADR
+title: Table Of Contents Panel With Resizable Sidebar
+description: Un panneau TOC sticky redimensionnable s'ouvre via un bouton fa-list-ul; le header reste pleine largeur au-dessus du contenu et la TOC se colle à top=hauteurHeader (mesurée par ResizeObserver) pour zéro sticky-travel; les clics ouvrent les details fermés avant de scroller.
+tags:
+  - TOC
+  - table-of-contents
+  - DocViewer
+  - sticky
+  - ResizeObserver
+  - zero-travel
+  - resizable
+  - details
+  - scroll
+  - localStorage
+  - headings
+timestamp: 2026-06-06T16:17:00Z
+status: To be validated
 ---
 
 ## Contexte

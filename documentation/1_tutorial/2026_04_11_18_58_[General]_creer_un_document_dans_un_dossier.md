@@ -1,3 +1,8 @@
+---
+type: Document
+title: Creer Un Document Dans Un Dossier
+---
+
 1. Créer un document
    [![Créer un document](/images/cr_er_un_document.png)](/diagram?id=d1776024969304)
 

@@ -1,8 +1,19 @@
 ---
-**date:** 2026-05-11
-**status:** To be validated
-**description:** Ajout d'un bouton icône dans la topbar de l'éditeur de diagrammes pour copier l'identifiant MCP du diagramme courant dans le presse-papiers.
-**tags:** diagram, mcp, clipboard, topbar, btnCopyDiagramId, copyCurrentDiagramId, currentDiagramId, i18n, playwright
+type: ADR
+title: Copie Id Diagramme Mcp Depuis Topbar Editeur
+description: Ajout d'un bouton icône dans la topbar de l'éditeur de diagrammes pour copier l'identifiant MCP du diagramme courant dans le presse-papiers.
+tags:
+  - diagram
+  - mcp
+  - clipboard
+  - topbar
+  - btnCopyDiagramId
+  - copyCurrentDiagramId
+  - currentDiagramId
+  - i18n
+  - playwright
+timestamp: 2026-05-11T20:03:00Z
+status: To be validated
 ---
 
 # Copie de l'id MCP depuis la topbar de l'éditeur de diagrammes

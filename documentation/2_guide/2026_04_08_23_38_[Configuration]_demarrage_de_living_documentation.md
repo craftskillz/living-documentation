@@ -1,3 +1,8 @@
+---
+type: Document
+title: Demarrage De Living Documentation
+---
+
 1 . Pour ouvrir un dossier de documentation existant, lancez l'outil en pointant vers ce dossier. Le mieux est de versionner ce dossier au sein de votre projet :
 
 ```bash

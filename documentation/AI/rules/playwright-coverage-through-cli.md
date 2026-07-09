@@ -1,10 +1,19 @@
 ---
-id: playwright-coverage-through-cli
+type: Rule
 title: Préférer le CLI réel pour la coverage serveur
-severity: warning
 description: La couverture c8 des modules serveur est plus fiable quand Playwright exerce le vrai CLI/serveur via fixtures isolées plutôt que des imports directs de dist dans les specs.
-tags: ["tests", "playwright", "coverage", "c8", "cli"]
-appliesTo: ["tests/**/*.ts", "src/**/*.ts", "bin/**/*.ts"]
+tags:
+  - tests
+  - playwright
+  - coverage
+  - c8
+  - cli
+id: playwright-coverage-through-cli
+severity: warning
+appliesto:
+  - tests/**/*.ts
+  - src/**/*.ts
+  - bin/**/*.ts
 ---
 
 Pour tester un comportement serveur, API, CLI ou `src/lib/*`, privilégier un test Playwright qui lance le CLI réel via les helpers de fixtures, puis exerce la route ou le flux utilisateur correspondant.

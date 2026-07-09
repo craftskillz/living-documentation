@@ -1,8 +1,17 @@
 ---
-**date:** 2026-07-08
-**status:** To be validated
-**description:** Backlog de tickets pour aligner nativement living-documentation sur Google Open Knowledge Format (OKF) — migration algorithmique non-cassante du frontmatter vers YAML, garde de migration au démarrage, fichiers réservés, validateur, consommateurs.
-**tags:** roadmap, okf, yaml-frontmatter, migration, cli-gate, interoperability, backlog
+type: Worklog
+title: ROADMAP
+description: Backlog de tickets pour aligner nativement living-documentation sur Google Open Knowledge Format (OKF) — migration algorithmique non-cassante du frontmatter vers YAML, garde de migration au démarrage, fichiers réservés, validateur, consommateurs.
+tags:
+  - roadmap
+  - okf
+  - yaml-frontmatter
+  - migration
+  - cli-gate
+  - interoperability
+  - backlog
+timestamp: 2026-07-08T00:00:00Z
+status: To be validated
 ---
 
 # ROADMAP — Alignement natif OKF

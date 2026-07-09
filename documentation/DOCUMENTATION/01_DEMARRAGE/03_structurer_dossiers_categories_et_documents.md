@@ -1,8 +1,17 @@
 ---
-**date:** 2026-06-30
-**status:** Draft
-**description:** Guide pour comprendre et utiliser les dossiers, categories et documents dans Living Documentation.
-**tags:** demarrage, dossiers, categories, documents, organisation, sidebar, markdown
+type: Document
+title: 03 structurer dossiers categories et documents
+description: Guide pour comprendre et utiliser les dossiers, categories et documents dans Living Documentation.
+tags:
+  - demarrage
+  - dossiers
+  - categories
+  - documents
+  - organisation
+  - sidebar
+  - markdown
+timestamp: 2026-06-30T00:00:00Z
+status: Draft
 ---
 
 # Structurer dossiers, categories et documents

@@ -1,3 +1,8 @@
+---
+type: Document
+title: Table Des Matieres
+---
+
 # Table des matières
 
 Living Documentation génère automatiquement une table des matières flottante pour chaque document à partir de ses titres `##` et `###`. Elle reste visible pendant le défilement et surligne la section en cours de lecture.

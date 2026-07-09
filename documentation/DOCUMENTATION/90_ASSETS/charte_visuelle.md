@@ -1,8 +1,17 @@
 ---
-**date:** 2026-06-30
-**status:** Draft
-**description:** Charte visuelle pour les captures, illustrations et visuels de la documentation utilisateur.
-**tags:** assets, charte-visuelle, screenshots, images, nano-banana-pro, documentation, ui
+type: Document
+title: Charte visuelle
+description: Charte visuelle pour les captures, illustrations et visuels de la documentation utilisateur.
+tags:
+  - assets
+  - charte-visuelle
+  - screenshots
+  - images
+  - nano-banana-pro
+  - documentation
+  - ui
+timestamp: 2026-06-30T00:00:00Z
+status: Draft
 ---
 
 # Charte visuelle

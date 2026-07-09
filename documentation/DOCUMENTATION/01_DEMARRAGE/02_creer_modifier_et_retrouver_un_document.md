@@ -1,8 +1,17 @@
 ---
-**date:** 2026-06-30
-**status:** Draft
-**description:** Guide de demarrage pour creer, modifier, sauvegarder et retrouver un document dans Living Documentation.
-**tags:** demarrage, document, edition, sauvegarde, recherche, markdown, snippets
+type: Document
+title: 02 creer modifier et retrouver un document
+description: Guide de demarrage pour creer, modifier, sauvegarder et retrouver un document dans Living Documentation.
+tags:
+  - demarrage
+  - document
+  - edition
+  - sauvegarde
+  - recherche
+  - markdown
+  - snippets
+timestamp: 2026-06-30T00:00:00Z
+status: Draft
 ---
 
 # Creer, modifier et retrouver un document

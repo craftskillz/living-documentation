@@ -1,8 +1,22 @@
 ---
-**date:** 2026-07-08
-**status:** To be validated
-**description:** An optional "tau" visual skin, selected by a `siteTheme` config field orthogonal to light/dark, is applied as a `data-site-theme` attribute from a localStorage cache before mount and synced via the config observer; it overrides the `:root` design tokens plus a scoped graph-paper grid and Spectral serif on the document reading area, using three self-hosted SIL OFL fonts fetched by a reproducible script.
-**tags:** siteTheme, tau, data-site-theme, siteTheme.ts, fetch-tau-fonts, self-hosted-fonts, SIL-OFL, notebook-grid, Spectral, Space-Grotesk, light-only, THIRD-PARTY-NOTICES
+type: ADR
+title: Tau Site Theme Notebook Skin Via Sitetheme Config Selfhosted Ofl Fonts And Cachedboot Application
+description: An optional "tau" visual skin, selected by a `siteTheme` config field orthogonal to light/dark, is applied as a `data-site-theme` attribute from a localStorage cache before mount and synced via the config observer; it overrides the `:root` design tokens plus a scoped graph-paper grid and Spectral serif on the document reading area, using three self-hosted SIL OFL fonts fetched by a reproducible script.
+tags:
+  - siteTheme
+  - tau
+  - data-site-theme
+  - siteTheme.ts
+  - fetch-tau-fonts
+  - self-hosted-fonts
+  - SIL-OFL
+  - notebook-grid
+  - Spectral
+  - Space-Grotesk
+  - light-only
+  - THIRD-PARTY-NOTICES
+timestamp: 2026-07-08T11:08:00Z
+status: To be validated
 ---
 
 ## Context

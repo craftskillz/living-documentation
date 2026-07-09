@@ -1,9 +1,25 @@
 ---
-`🗄️ ADR : 2026_03_21_10_25_[CONFIGURATION]_general_category_and_sidebar_defaults.md`
-**date:** 2026-03-21
-**status:** Acceptée
-**description:** Renommer « Uncategorized » en « General », l'épingler en première position dans la sidebar, réduire toutes les autres catégories au chargement, et étendre la sidebar en une arborescence de dossiers récursive avec des pastilles de fil d'Ariane dans l'en-tête d'article.
-**tags:** configuration, sidebar, catégorie, parser, frontend, ux, general, uncategorized, navigation, dossier, arborescence, récursif, fil d'Ariane, sous-dossier, DocMetadata
+type: ADR
+title: General Category And Sidebar Defaults
+description: Renommer « Uncategorized » en « General », l'épingler en première position dans la sidebar, réduire toutes les autres catégories au chargement, et étendre la sidebar en une arborescence de dossiers récursive avec des pastilles de fil d'Ariane dans l'en-tête d'article.
+tags:
+  - configuration
+  - sidebar
+  - catégorie
+  - parser
+  - frontend
+  - ux
+  - general
+  - uncategorized
+  - navigation
+  - dossier
+  - arborescence
+  - récursif
+  - fil d'Ariane
+  - sous-dossier
+  - DocMetadata
+timestamp: 2026-03-21T10:25:00Z
+status: Acceptée
 ---
 
 ## Contexte

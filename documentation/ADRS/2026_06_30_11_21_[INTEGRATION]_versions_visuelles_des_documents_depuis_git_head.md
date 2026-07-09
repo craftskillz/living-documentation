@@ -1,8 +1,20 @@
 ---
-**date:** 2026-06-30
-**status:** To be validated
-**description:** Ajoute une API Git par document et une modale Home qui compare visuellement un commit selectionne avec HEAD, liste les commits du document et prepare des restaurations de blocs avant sauvegarde explicite.
-**tags:** git, versions, HEAD, visual-diff, document-versions, VersionsModal, restore-hunk, save-draft, baseRef, /api/git/document-versions
+type: ADR
+title: Versions Visuelles Des Documents Depuis Git Head
+description: Ajoute une API Git par document et une modale Home qui compare visuellement un commit selectionne avec HEAD, liste les commits du document et prepare des restaurations de blocs avant sauvegarde explicite.
+tags:
+  - git
+  - versions
+  - HEAD
+  - visual-diff
+  - document-versions
+  - VersionsModal
+  - restore-hunk
+  - save-draft
+  - baseRef
+  - /api/git/document-versions
+timestamp: 2026-06-30T11:21:00Z
+status: To be validated
 ---
 
 # Versions visuelles des documents depuis Git HEAD

@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: 005 tool review adr relevance
+---
+
 # MCP tool: `review_adr_relevance`
 
 ## Description

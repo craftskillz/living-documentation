@@ -1,8 +1,20 @@
 ---
-**date:** 2026-06-07
-**status:** To be validated
-**description:** Styled callout boxes (info/success/warning/error) rendered from standard Markdown blockquotes preceded by `<!-- quote-type -->`, `<!-- quote-title -->`, and `<!-- quote-icon -->` HTML comment directives, with full snippet editor support and inline-edit round-trip.
-**tags:** callout, blockquote, quote-type, quote-title, quote-icon, blockquoteAttributes, wireContent, inlineSnippetEdit, SnippetsModal, prose
+type: ADR
+title: Callout Boxes Via Html Comment Prefix On Blockquotes
+description: Styled callout boxes (info/success/warning/error) rendered from standard Markdown blockquotes preceded by `<!-- quote-type -->`, `<!-- quote-title -->`, and `<!-- quote-icon -->` HTML comment directives, with full snippet editor support and inline-edit round-trip.
+tags:
+  - callout
+  - blockquote
+  - quote-type
+  - quote-title
+  - quote-icon
+  - blockquoteAttributes
+  - wireContent
+  - inlineSnippetEdit
+  - SnippetsModal
+  - prose
+timestamp: 2026-06-07T12:23:00Z
+status: To be validated
 ---
 
 ## Context

@@ -1,9 +1,20 @@
 ---
-`🗄️ ADR : 2026_04_14_[MCP]_draft_mcp.md`
-**date:** 2026-04-14
-**status:** Draft
-**description:** Exposition d'un serveur MCP (Model Context Protocol) via HTTP pour permettre aux assistants IA (Claude Desktop, Claude Code, Cursor…) d'interagir avec les documents et diagrammes de Living Documentation sans quitter leur éditeur.
-**tags:** mcp, model-context-protocol, http, streamable-http, ai, claude-desktop, claude-code, tools, documents, diagrams
+type: ADR
+title: Draft Mcp
+description: Exposition d'un serveur MCP (Model Context Protocol) via HTTP pour permettre aux assistants IA (Claude Desktop, Claude Code, Cursor…) d'interagir avec les documents et diagrammes de Living Documentation sans quitter leur éditeur.
+tags:
+  - mcp
+  - model-context-protocol
+  - http
+  - streamable-http
+  - ai
+  - claude-desktop
+  - claude-code
+  - tools
+  - documents
+  - diagrams
+timestamp: 2026-04-14T00:00:00Z
+status: Draft
 ---
 
 ## Context

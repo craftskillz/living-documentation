@@ -1,8 +1,23 @@
 ---
-**date:** 2026-05-08
-**status:** To be validated
-**description:** Le clic et le double-clic sur une forme éditable priorisent désormais la forme avant les edges proches, sauf lorsqu'une zone de label d'edge est explicitement touchée.
-**tags:** diagram, click, double-click, node-selection, node-editing, edge-label, port-edge, hit-detection, topmostNodeAt, onClickNode, onDoubleClick, startLabelEdit, network.js
+type: ADR
+title: Node Double Click Takes Precedence Over Crossing Edges
+description: Le clic et le double-clic sur une forme éditable priorisent désormais la forme avant les edges proches, sauf lorsqu'une zone de label d'edge est explicitement touchée.
+tags:
+  - diagram
+  - click
+  - double-click
+  - node-selection
+  - node-editing
+  - edge-label
+  - port-edge
+  - hit-detection
+  - topmostNodeAt
+  - onClickNode
+  - onDoubleClick
+  - startLabelEdit
+  - network.js
+timestamp: 2026-05-08T20:45:00Z
+status: To be validated
 ---
 
 # Node Click Takes Precedence Over Crossing Edges

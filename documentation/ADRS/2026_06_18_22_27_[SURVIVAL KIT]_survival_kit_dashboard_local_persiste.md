@@ -1,8 +1,20 @@
 ---
-**date:** 2026-06-18
-**status:** To be validated
-**description:** Ajout d'un dashboard Svelte `/survival-kit` pour gerer taches, notes structurees et liens categorises dans un etat JSON local propre au dossier documentaire.
-**tags:** survival-kit, dashboard, tasks, notes, links, svelte5, persistence, .survival-kit.json, debounce, express-router
+type: ADR
+title: Survival Kit Dashboard Local Persiste
+description: Ajout d'un dashboard Svelte `/survival-kit` pour gerer taches, notes structurees et liens categorises dans un etat JSON local propre au dossier documentaire.
+tags:
+  - survival-kit
+  - dashboard
+  - tasks
+  - notes
+  - links
+  - svelte5
+  - persistence
+  - .survival-kit.json
+  - debounce
+  - express-router
+timestamp: 2026-06-18T22:27:00Z
+status: To be validated
 ---
 
 # Survival Kit : dashboard local persiste

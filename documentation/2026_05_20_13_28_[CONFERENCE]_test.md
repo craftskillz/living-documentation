@@ -1,3 +1,7 @@
+---
+type: Document
+title: Test
+---
 
 
 <!-- table-border: bordered -->

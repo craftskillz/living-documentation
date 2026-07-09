@@ -1,8 +1,21 @@
 ---
-**date:** 2026-05-29
-**status:** To be validated
-**description:** Une icône certificat dans la barre latérale fait défiler un tri-état (off → V → V+S) qui peint des pastilles de cycle de vie par document dans l'arbre , « V » verte pour `To be validated`, « S » orange pour `SuperSeeded` , alimentées par un endpoint dédié `GET /api/documents/statuses`.
-**tags:** sidebar, frontmatter-status, tri-state-toggle, cycleHighlightStatus, statusPill, /api/documents/statuses, parseDocStatus, localStorage, fa-certificate, To-be-validated, SuperSeeded
+type: ADR
+title: Sidebar Status Highlight Tristate Pills For To Be Validated And Superseeded
+description: Une icône certificat dans la barre latérale fait défiler un tri-état (off → V → V+S) qui peint des pastilles de cycle de vie par document dans l'arbre , « V » verte pour `To be validated`, « S » orange pour `SuperSeeded` , alimentées par un endpoint dédié `GET /api/documents/statuses`.
+tags:
+  - sidebar
+  - frontmatter-status
+  - tri-state-toggle
+  - cycleHighlightStatus
+  - statusPill
+  - /api/documents/statuses
+  - parseDocStatus
+  - localStorage
+  - fa-certificate
+  - To-be-validated
+  - SuperSeeded
+timestamp: 2026-05-29T14:45:00Z
+status: To be validated
 ---
 
 # Pastilles tri-état de mise en évidence des statuts dans la barre latérale

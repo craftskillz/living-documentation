@@ -1,9 +1,25 @@
 ---
-`🗄️ ADR : 2026_04_23_[FRONTEND]_tame_tailwind_typography_defaults_for_inline_images_and_hr.md`
-**date:** 2026-04-23
-**status:** Pending Validation
-**description:** Override Tailwind Typography's default margins for `.prose img` (2em top/bottom) and `.prose hr` (3em top/bottom, gray-200 border) , collapse image margins to zero when the image is inline (in a list, after `<br>`, mixed with text) and keep 1em only when the image is alone in its paragraph ; reduce hr margins to 2em and bump the border color to gray-300 (#d1d5db) for readability without epaississement.
-**tags:** frontend, css, prose, tailwind-typography, image, hr, separator, margin, spacing, rendering, soft-breaks-followup, readability, lists, list-item, ux
+type: ADR
+title: Tame Tailwind Typography Defaults For Inline Images And Hr
+description: Override Tailwind Typography's default margins for `.prose img` (2em top/bottom) and `.prose hr` (3em top/bottom, gray-200 border) , collapse image margins to zero when the image is inline (in a list, after `<br>`, mixed with text) and keep 1em only when the image is alone in its paragraph ; reduce hr margins to 2em and bump the border color to gray-300 (#d1d5db) for readability without epaississement.
+tags:
+  - frontend
+  - css
+  - prose
+  - tailwind-typography
+  - image
+  - hr
+  - separator
+  - margin
+  - spacing
+  - rendering
+  - soft-breaks-followup
+  - readability
+  - lists
+  - list-item
+  - ux
+timestamp: 2026-04-23T00:00:00Z
+status: Pending Validation
 ---
 
 ## Context

@@ -1,8 +1,20 @@
 ---
-**date:** 2026-07-08
-**status:** To be validated
-**description:** A fourth table style "full" (Plein) renders every cell filled on a uniform grid with rounded outer corners using border-collapse: separate and a single `--tbl-full-line` color (soft by default, an intermediate color-mix shade when the bordered option is on), mirrored in both the rendered view and the snippet editor, with the header forced to match the body so no line is ever hidden.
-**tags:** table-style-full, Plein, tableAttributes, ALLOWED_STYLES, border-collapse-separate, tbl-full-line, color-mix, table-color, home.css, snippet-table
+type: ADR
+title: Full Table Style Filled Cells On A Uniform Separateborder Grid With An Intermediate Bordered Variant
+description: 'A fourth table style "full" (Plein) renders every cell filled on a uniform grid with rounded outer corners using border-collapse: separate and a single `--tbl-full-line` color (soft by default, an intermediate color-mix shade when the bordered option is on), mirrored in both the rendered view and the snippet editor, with the header forced to match the body so no line is ever hidden.'
+tags:
+  - table-style-full
+  - Plein
+  - tableAttributes
+  - ALLOWED_STYLES
+  - border-collapse-separate
+  - tbl-full-line
+  - color-mix
+  - table-color
+  - home.css
+  - snippet-table
+timestamp: 2026-07-08T11:09:00Z
+status: To be validated
 ---
 
 ## Context

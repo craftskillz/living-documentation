@@ -1,3 +1,8 @@
+---
+type: Document
+title: Configurer Le Panneau Admin
+---
+
 ## Panneau Admin
 
 Le panneau Admin est accessible via le bouton **`⚙ Admin`** dans le header principal. Il permet de configurer Living Documentation sans éditer manuellement le fichier `.living-doc.json`.

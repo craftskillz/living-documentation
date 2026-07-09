@@ -1,9 +1,20 @@
 ---
-`🗄️ ADR : 2026_04_08_13_00_[EDITOR]_markdown_snippet_inserter_with_detection.md`
-**date:** 2026-04-08
-**status:** Acceptée
-**description:** Ajout d'un bouton 🧩 Snippets en mode édition qui ouvre une modale pour insérer des constructions Markdown préfabriquées à la position du curseur, avec détection automatique et pré-remplissage lorsqu'un snippet existant est sélectionné dans l'éditeur.
-**tags:** éditeur, snippet, modale, markdown, table, arbre, détection, frontend, édition-en-ligne, presse-papier
+type: ADR
+title: Markdown Snippet Inserter With Detection
+description: Ajout d'un bouton 🧩 Snippets en mode édition qui ouvre une modale pour insérer des constructions Markdown préfabriquées à la position du curseur, avec détection automatique et pré-remplissage lorsqu'un snippet existant est sélectionné dans l'éditeur.
+tags:
+  - éditeur
+  - snippet
+  - modale
+  - markdown
+  - table
+  - arbre
+  - détection
+  - frontend
+  - édition-en-ligne
+  - presse-papier
+timestamp: 2026-04-08T13:00:00Z
+status: Acceptée
 ---
 
 ## Contexte

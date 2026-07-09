@@ -1,3 +1,8 @@
+---
+type: Document
+title: Annotations
+---
+
 # Annotations
 
 Le mode annotation permet d'ajouter des surlignages et des commentaires visuels directement sur un document affiché, sans toucher au fichier Markdown source. Pratique pour les revues, les retours d'équipe, ou la formation , le document reste intact.

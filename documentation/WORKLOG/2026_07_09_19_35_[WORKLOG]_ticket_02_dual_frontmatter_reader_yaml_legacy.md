@@ -1,8 +1,16 @@
 ---
-**date:** 2026-07-09
-**status:** To Be Validated
-**description:** Réalisation du Ticket 02 — module frontmatter.ts unifié (lit YAML et legacy **gras**), centralisation des lecteurs, ajout de la dépendance yaml et tests unitaires.
-**tags:** worklog, ticket-02, okf, frontmatter, yaml, dual-reader
+type: Worklog
+title: Ticket 02 Dual Frontmatter Reader Yaml Legacy
+description: Réalisation du Ticket 02 — module frontmatter.ts unifié (lit YAML et legacy **gras**), centralisation des lecteurs, ajout de la dépendance yaml et tests unitaires.
+tags:
+  - worklog
+  - ticket-02
+  - okf
+  - frontmatter
+  - yaml
+  - dual-reader
+timestamp: 2026-07-09T19:35:00Z
+status: To Be Validated
 ---
 
 # Ticket 02 — Lecteur frontmatter dual (YAML + legacy)

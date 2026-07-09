@@ -1,8 +1,20 @@
 ---
-**date:** 2026-05-08
-**status:** To be validated
-**description:** La création d'edges n'interdit plus les connexions vers une forme plus basse en z-order sauf lorsque cette forme inférieure contient la source et agit comme arrière-plan.
-**tags:** diagram, addEdge, z-order, port-edge, custom-shape, free-arrow, lowerZTargetContainsSource, canonicalOrder, network.js, background-container
+type: ADR
+title: Lower Z Targets Can Be Connected Unless They Are Background Containers
+description: La création d'edges n'interdit plus les connexions vers une forme plus basse en z-order sauf lorsque cette forme inférieure contient la source et agit comme arrière-plan.
+tags:
+  - diagram
+  - addEdge
+  - z-order
+  - port-edge
+  - custom-shape
+  - free-arrow
+  - lowerZTargetContainsSource
+  - canonicalOrder
+  - network.js
+  - background-container
+timestamp: 2026-05-08T21:26:00Z
+status: To be validated
 ---
 
 # Lower Z Targets Can Be Connected Unless They Are Background Containers

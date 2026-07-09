@@ -1,8 +1,20 @@
 ---
-**date:** 2026-06-18
-**status:** To be validated
-**description:** Les images Markdown acceptent des directives HTML `image-width` et `image-align` immediatement en prefixe, appliquees au viewer et preservees par l'insertion et l'edition inline des snippets.
-**tags:** image, markdown, image-width, image-align, comment-directive, wireContent, imageAttributes, inlineSnippetEdit, SnippetsModal, playwright
+type: ADR
+title: Directives De Largeur Et Alignement Des Images Markdown
+description: Les images Markdown acceptent des directives HTML `image-width` et `image-align` immediatement en prefixe, appliquees au viewer et preservees par l'insertion et l'edition inline des snippets.
+tags:
+  - image
+  - markdown
+  - image-width
+  - image-align
+  - comment-directive
+  - wireContent
+  - imageAttributes
+  - inlineSnippetEdit
+  - SnippetsModal
+  - playwright
+timestamp: 2026-06-18T22:37:00Z
+status: To be validated
 ---
 
 # Directives de largeur et alignement des images Markdown

@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: 009 tool list documents
+---
+
 # MCP tool: `list_documents`
 
 ## Description

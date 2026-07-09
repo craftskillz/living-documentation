@@ -1,9 +1,26 @@
 ---
-`🗄️ ADR : 2026_04_15_[DIAGRAM]_edge_label_editor_position_fix_for_port_edges.md`
-**date:** 2026-04-15
-**status:** Accepted
-**description:** Fix the edge label editor textarea appearing at the wrong position when double-clicking port edges: root cause was that drawPortEdge never stored the bezier midpoint in st.edgeLabelCanvasPos, so startEdgeLabelEdit always fell back to the geometric midpoint which is wrong for curved bezier edges.
-**tags:** diagram, edge, label, label-editor, port-edge, drawPortEdge, edgeLabelCanvasPos, bezier, midpoint, canvas-transform, textarea, ports.js, afterDrawing, fromPort, toPort, startEdgeLabelEdit
+type: ADR
+title: Edge Label Editor Position Fix For Port Edges
+description: "Fix the edge label editor textarea appearing at the wrong position when double-clicking port edges: root cause was that drawPortEdge never stored the bezier midpoint in st.edgeLabelCanvasPos, so startEdgeLabelEdit always fell back to the geometric midpoint which is wrong for curved bezier edges."
+tags:
+  - diagram
+  - edge
+  - label
+  - label-editor
+  - port-edge
+  - drawPortEdge
+  - edgeLabelCanvasPos
+  - bezier
+  - midpoint
+  - canvas-transform
+  - textarea
+  - ports.js
+  - afterDrawing
+  - fromPort
+  - toPort
+  - startEdgeLabelEdit
+timestamp: 2026-04-15T00:00:00Z
+status: Accepted
 ---
 
 ## Context

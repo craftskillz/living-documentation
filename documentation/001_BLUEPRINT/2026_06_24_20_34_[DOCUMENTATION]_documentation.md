@@ -1,8 +1,19 @@
 ---
-**date:** 2026-06-24
-**status:** To be validated
-**description:** Le dossier `documentation/` contient la documentation vivante du projet : guides, ADR, contexte IA, worklog, médias et cartographie Blueprint.
-**tags:** documentation, living-documentation, adr, ai-context, worklog, blueprint, guides, images, files
+type: Document
+title: Documentation
+description: "Le dossier `documentation/` contient la documentation vivante du projet : guides, ADR, contexte IA, worklog, médias et cartographie Blueprint."
+tags:
+  - documentation
+  - living-documentation
+  - adr
+  - ai-context
+  - worklog
+  - blueprint
+  - guides
+  - images
+  - files
+timestamp: 2026-06-24T20:34:00Z
+status: To be validated
 ---
 
 Le dossier `documentation/` est le cœur documentaire du projet. C'est l'endroit où sont stockés les documents consultables dans l'application Living Documentation.

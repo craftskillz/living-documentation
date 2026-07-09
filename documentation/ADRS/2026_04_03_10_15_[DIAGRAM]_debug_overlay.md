@@ -1,9 +1,18 @@
 ---
-`🗄️ ADR : 2026_04_03_10_15_[DIAGRAM]_debug_overlay.md`
-**date:** 2026-04-03
-**status:** Accepted
-**description:** Overlay de débogage DOM pour les nœuds de diagramme affichant les coordonnées du centre et les dimensions de la forme, contrôlé par un indicateur de configuration showDiagramDebug activé depuis le panneau Admin.
-**tags:** diagramme, débogage, overlay, config, admin, vis-network, canvasToDOM, showDiagramDebug
+type: ADR
+title: Debug Overlay
+description: Overlay de débogage DOM pour les nœuds de diagramme affichant les coordonnées du centre et les dimensions de la forme, contrôlé par un indicateur de configuration showDiagramDebug activé depuis le panneau Admin.
+tags:
+  - diagramme
+  - débogage
+  - overlay
+  - config
+  - admin
+  - vis-network
+  - canvasToDOM
+  - showDiagramDebug
+timestamp: 2026-04-03T10:15:00Z
+status: Accepted
 ---
 
 ## Contexte

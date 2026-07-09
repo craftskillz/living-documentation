@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: 007 tool retrodocument adrs from git
+---
+
 # MCP tool: `retrodocument_adrs_from_git`
 
 ## Description

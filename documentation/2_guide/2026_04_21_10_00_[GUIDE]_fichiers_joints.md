@@ -1,3 +1,8 @@
+---
+type: Document
+title: Fichiers Joints
+---
+
 # Fichiers joints
 
 Living Documentation permet d'attacher n'importe quel fichier binaire à un document Markdown , PDF, CSV, ZIP, images séparées… Les fichiers sont stockés à côté du `.md` sur le disque et servis directement par le serveur.

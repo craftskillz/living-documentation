@@ -1,3 +1,8 @@
+---
+type: Document
+title: Crer Vos Dossiers
+---
+
 ## Introduction
 
 Les dossiers constituent l'architecture de votre documentation.

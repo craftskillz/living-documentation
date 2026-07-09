@@ -1,8 +1,20 @@
 ---
-**date:** 2026-06-30
-**status:** Draft
-**description:** Backlog des captures d'ecran a produire pour la documentation utilisateur.
-**tags:** screenshots, captures, assets, documentation, home, admin, workspace, git, versions, agents
+type: Document
+title: Screenshots a capturer
+description: Backlog des captures d'ecran a produire pour la documentation utilisateur.
+tags:
+  - screenshots
+  - captures
+  - assets
+  - documentation
+  - home
+  - admin
+  - workspace
+  - git
+  - versions
+  - agents
+timestamp: 2026-06-30T00:00:00Z
+status: Draft
 ---
 
 # Captures d'ecran a capturer

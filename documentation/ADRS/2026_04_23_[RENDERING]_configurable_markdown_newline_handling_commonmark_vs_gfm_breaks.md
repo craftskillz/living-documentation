@@ -1,9 +1,26 @@
 ---
-`🗄️ ADR : 2026_04_23_[RENDERING]_configurable_markdown_newline_handling_commonmark_vs_gfm_breaks.md`
-**date:** 2026-04-23
-**status:** Pending Validation
-**description:** Expose `markdownSoftBreaks` as an Admin option (default `false`) that toggles marked's `breaks` flag server-side , when off, the CommonMark rule applies (single newline = space, two-space-then-newline or `<br/>` force a break) ; when on, every single newline is rendered as a real `<br>`. The flag is read on every request, so no restart is needed, and it is honoured in both the live viewer and the HTML/Notion/Confluence export paths so rendered output stays consistent.
-**tags:** rendering, markdown, marked, breaks, soft-breaks, hard-breaks, commonmark, gfm, configuration, admin, documents, export, html, notion, confluence, i18n
+type: ADR
+title: Configurable Markdown Newline Handling Commonmark Vs Gfm Breaks
+description: Expose `markdownSoftBreaks` as an Admin option (default `false`) that toggles marked's `breaks` flag server-side , when off, the CommonMark rule applies (single newline = space, two-space-then-newline or `<br/>` force a break) ; when on, every single newline is rendered as a real `<br>`. The flag is read on every request, so no restart is needed, and it is honoured in both the live viewer and the HTML/Notion/Confluence export paths so rendered output stays consistent.
+tags:
+  - rendering
+  - markdown
+  - marked
+  - breaks
+  - soft-breaks
+  - hard-breaks
+  - commonmark
+  - gfm
+  - configuration
+  - admin
+  - documents
+  - export
+  - html
+  - notion
+  - confluence
+  - i18n
+timestamp: 2026-04-23T00:00:00Z
+status: Pending Validation
 ---
 
 ## Context

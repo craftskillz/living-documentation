@@ -1,8 +1,20 @@
 ---
-**date:** 2026-06-03
-**status:** To be validated
-**description:** Remplacement du frontend multi-pages vanilla par une application Vite + Svelte 5 unique, extensible par routes explicites et regroupant actuellement 10 écrans servis par Express.
-**tags:** svelte5, vite, runes, spa, migration, frontend-architecture, App.svelte, express-static, routing, survival-kit
+type: ADR
+title: Migration Du Frontend Vers Une Application Svelte Unifiee
+description: Remplacement du frontend multi-pages vanilla par une application Vite + Svelte 5 unique, extensible par routes explicites et regroupant actuellement 10 écrans servis par Express.
+tags:
+  - svelte5
+  - vite
+  - runes
+  - spa
+  - migration
+  - frontend-architecture
+  - App.svelte
+  - express-static
+  - routing
+  - survival-kit
+timestamp: 2026-06-03T10:53:00Z
+status: To be validated
 ---
 
 ## Contexte

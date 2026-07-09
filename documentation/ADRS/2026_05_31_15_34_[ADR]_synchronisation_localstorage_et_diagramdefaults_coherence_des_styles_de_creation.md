@@ -1,8 +1,20 @@
 ---
-**date:** 2026-05-31
-**status:** To be validated
-**description:** Chaque enregistrement de default (modal ⚙, bouton ⚙ formes, bouton ⚙ flèches) met à jour simultanément `.living-doc.json` et les clés localStorage correspondantes, garantissant que la prochaine création reflète immédiatement le nouveau réglage sans rechargement.
-**tags:** diagram, defaults, localStorage, diagramDefaults, synchronisation, node-panel, edge-panel, defaults-modal, ld-node-style, ld-free-arrow-style
+type: ADR
+title: Synchronisation Localstorage Et Diagramdefaults Coherence Des Styles De Creation
+description: Chaque enregistrement de default (modal ⚙, bouton ⚙ formes, bouton ⚙ flèches) met à jour simultanément `.living-doc.json` et les clés localStorage correspondantes, garantissant que la prochaine création reflète immédiatement le nouveau réglage sans rechargement.
+tags:
+  - diagram
+  - defaults
+  - localStorage
+  - diagramDefaults
+  - synchronisation
+  - node-panel
+  - edge-panel
+  - defaults-modal
+  - ld-node-style
+  - ld-free-arrow-style
+timestamp: 2026-05-31T15:34:00Z
+status: To be validated
 ---
 
 ## Contexte

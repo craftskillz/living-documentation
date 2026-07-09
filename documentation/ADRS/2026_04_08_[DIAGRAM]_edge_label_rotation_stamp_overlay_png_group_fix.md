@@ -1,9 +1,28 @@
 ---
-`🗄️ ADR : 2026_04_08_[DIAGRAM]_edge_label_rotation_stamp_overlay_png_group_fix.md`
-**date:** 2026-04-08
-**status:** Accepted
-**description:** Add edge label rotation with persistence; fix stamp overlay z-index blocking clicks; fix group outline appearing in PNG export; fix inline code rendered as bold in article view.
-**tags:** diagram, edge, label, rotation, afterDrawing, stamp, overlay, z-index, png, export, group, outline, clipboard, prose, inline-code, style, persistence, edge-panel
+type: ADR
+title: Edge Label Rotation Stamp Overlay Png Group Fix
+description: Add edge label rotation with persistence; fix stamp overlay z-index blocking clicks; fix group outline appearing in PNG export; fix inline code rendered as bold in article view.
+tags:
+  - diagram
+  - edge
+  - label
+  - rotation
+  - afterDrawing
+  - stamp
+  - overlay
+  - z-index
+  - png
+  - export
+  - group
+  - outline
+  - clipboard
+  - prose
+  - inline-code
+  - style
+  - persistence
+  - edge-panel
+timestamp: 2026-04-08T00:00:00Z
+status: Accepted
 ---
 
 ## Context

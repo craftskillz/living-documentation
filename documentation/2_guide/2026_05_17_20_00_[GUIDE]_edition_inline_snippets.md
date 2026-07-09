@@ -1,3 +1,8 @@
+---
+type: Document
+title: Edition Inline Snippets
+---
+
 # Édition inline , Snippets
 
 Living Documentation ne t'oblige pas à connaître la syntaxe Markdown par cœur. Un clic droit sur n'importe quel élément éditable ouvre une fenêtre modale avec un formulaire pré-rempli , tu modifies, tu valides, le document est mis à jour instantanément.

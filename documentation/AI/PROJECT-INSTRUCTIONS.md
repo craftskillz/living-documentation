@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: PROJECT INSTRUCTIONS
+---
+
 # PROJECT-INSTRUCTIONS - Living Documentation
 
 Ce fichier est le contrat de travail partagé par les assistants IA qui interviennent sur ce projet. Il explique comment intégrer Living Documentation au flux de développement assisté par IA.

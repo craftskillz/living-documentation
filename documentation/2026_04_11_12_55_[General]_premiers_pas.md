@@ -1,3 +1,8 @@
+---
+type: Document
+title: Premiers Pas
+---
+
 Pour vos premiers pas avec l'outil je vous recommande de suivre les différents tutoriels que vous trouverez listés dans le tableau ci-après.
 
 Pour la réalisation de ces tutoriels je vous recommande également :

@@ -1,8 +1,21 @@
 ---
-**date:** 2026-06-06
-**status:** To be validated
-**description:** Four boolean config flags (imageRoundedCorners, imageCentered, imageBorder, codeBlockLightTheme) added to StoredConfig let users control image and code block rendering from the admin panel; migration backfills existing .living-doc.json files on first startup after upgrade.
-**tags:** admin, config, StoredConfig, image-style, code-block, highlight.js, hljs, codeBlockLightTheme, migration, readAndMigrate, home.css
+type: ADR
+title: Images And Codeblock Style And Alignment
+description: Four boolean config flags (imageRoundedCorners, imageCentered, imageBorder, codeBlockLightTheme) added to StoredConfig let users control image and code block rendering from the admin panel; migration backfills existing .living-doc.json files on first startup after upgrade.
+tags:
+  - admin
+  - config
+  - StoredConfig
+  - image-style
+  - code-block
+  - highlight.js
+  - hljs
+  - codeBlockLightTheme
+  - migration
+  - readAndMigrate
+  - home.css
+timestamp: 2026-06-06T22:32:00Z
+status: To be validated
 ---
 
 ## Contexte

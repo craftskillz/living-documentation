@@ -1,3 +1,8 @@
+---
+type: Document
+title: Snippets
+---
+
 Living Documentation reconnaît les éléments structurés dans tes documents : tableaux, citations, blocs de code, images.
 Ces éléments s'appellent des **snippets**.
 Tu peux les créer, les modifier et les supprimer sans jamais écrire une ligne de Markdown , directement depuis la page, via un clic droit ou le bouton ***Modifer*** dans la barre d'outils.

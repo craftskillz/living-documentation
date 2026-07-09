@@ -1,8 +1,24 @@
 ---
-**date:** 2026-05-12
-**status:** SuperSeeded
-**description:** Les bundles Tailwind Play CDN (`tailwindcss.js`, `tailwindcss-typography.js`) et le pack Font Awesome 6.7.2 (CSS + 8 webfonts) sont vendorés sous `src/frontend/vendor/` et référencés via `/vendor/...` pour que le frontend fonctionne derrière un proxy qui filtre les domaines `cdn.tailwindcss.com` et les binaires `.woff2` de `cdnjs.cloudflare.com`.
-**tags:** packaging, vendor, offline, proxy, tailwind, tailwindcss-typography, font-awesome, play-cdn, npx, copy-assets, license-mit, license-ofl, license-cc-by, superseded
+type: ADR
+title: Vendor Tailwind Play Cdn And Font Awesome Locally For Offline And Proxy Resilience
+description: Les bundles Tailwind Play CDN (`tailwindcss.js`, `tailwindcss-typography.js`) et le pack Font Awesome 6.7.2 (CSS + 8 webfonts) sont vendorés sous `src/frontend/vendor/` et référencés via `/vendor/...` pour que le frontend fonctionne derrière un proxy qui filtre les domaines `cdn.tailwindcss.com` et les binaires `.woff2` de `cdnjs.cloudflare.com`.
+tags:
+  - packaging
+  - vendor
+  - offline
+  - proxy
+  - tailwind
+  - tailwindcss-typography
+  - font-awesome
+  - play-cdn
+  - npx
+  - copy-assets
+  - license-mit
+  - license-ofl
+  - license-cc-by
+  - superseded
+timestamp: 2026-05-12T11:06:00Z
+status: SuperSeeded
 ---
 
 > **SuperSeeded** par [`2026_05_13_19_03_[PACKAGING]_revert_vendoring_tailwind_and_font_awesome_proxy_access_restored`](?doc=ADRS%252F2026_05_13_19_03_%255BPACKAGING%255D_revert_vendoring_tailwind_and_font_awesome_proxy_access_restored). Le proxy bloquant a été levé côté infrastructure ; le frontend est repassé sur les CDN d'origine (commits `e09a53a` et `a8d1114`). La procédure de revert documentée plus bas a été exécutée verbatim. La présente décision reste ici à titre de référence si la contrainte proxy revient un jour , le pattern de vendoring décrit ci-dessous reste réutilisable tel quel.

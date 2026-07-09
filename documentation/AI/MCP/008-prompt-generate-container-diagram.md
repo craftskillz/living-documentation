@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: 008 prompt generate container diagram
+---
+
 [user]
 
 ## Before anything else , mine the existing documentation

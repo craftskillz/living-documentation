@@ -1,3 +1,8 @@
+---
+type: Document
+title: Dossiers Et Catgories
+---
+
 # Dossiers et Catégories
 
 Dans Living Documentation, deux notions distinctes structurent la barre latérale : les **dossiers** et les **catégories**. Elles ne sont pas interchangeables.

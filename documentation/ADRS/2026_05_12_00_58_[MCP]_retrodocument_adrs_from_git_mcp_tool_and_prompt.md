@@ -1,8 +1,24 @@
 ---
-**date:** 2026-05-12
-**status:** To be validated
-**description:** Ajout du workflow MCP `retrodocument_adrs_from_git` + prompt `retrodocument-adrs-from-git` pour rebâtir rétroactivement des ADRs depuis l'historique git, en classant chaque commit par `state` factuel et en datant l'ADR créée depuis le commit d'origine via un nouveau paramètre `date` optionnel sur `create_document`.
-**tags:** mcp, adr, retrodocumentation, git, history, retrodocument_adrs_from_git, prompt, create_document, date-override, supersede, add_metadata, god-files, source-files, playwright
+type: ADR
+title: Retrodocument Adrs From Git Mcp Tool And Prompt
+description: Ajout du workflow MCP `retrodocument_adrs_from_git` + prompt `retrodocument-adrs-from-git` pour rebâtir rétroactivement des ADRs depuis l'historique git, en classant chaque commit par `state` factuel et en datant l'ADR créée depuis le commit d'origine via un nouveau paramètre `date` optionnel sur `create_document`.
+tags:
+  - mcp
+  - adr
+  - retrodocumentation
+  - git
+  - history
+  - retrodocument_adrs_from_git
+  - prompt
+  - create_document
+  - date-override
+  - supersede
+  - add_metadata
+  - god-files
+  - source-files
+  - playwright
+timestamp: 2026-05-12T00:58:00Z
+status: To be validated
 ---
 
 # Retrodocumentation d'ADRs depuis l'historique git via MCP

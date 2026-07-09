@@ -1,9 +1,23 @@
 ---
-`🗄️ ADR : 2026_04_24_[TESTING]_e2e_tests_with_playwright_and_unified_coverage_via_c8.md`
-**date:** 2026-04-24
-**status:** Pending Validation
-**description:** Adopt Playwright as the sole test runner (E2E + API + unit), spawn a real CLI child process per test for isolation, and consolidate server-side coverage via c8 + NODE_V8_COVERAGE across both the runner and spawned processes. Adds a SIGTERM handler in bin/cli.ts so V8 flushes coverage on graceful shutdown.
-**tags:** testing, e2e, playwright, coverage, c8, v8-native-coverage, ci, github-actions, fixtures, sigterm, node-v8-coverage, test-isolation, dependabot
+type: ADR
+title: E2e Tests With Playwright And Unified Coverage Via C8
+description: Adopt Playwright as the sole test runner (E2E + API + unit), spawn a real CLI child process per test for isolation, and consolidate server-side coverage via c8 + NODE_V8_COVERAGE across both the runner and spawned processes. Adds a SIGTERM handler in bin/cli.ts so V8 flushes coverage on graceful shutdown.
+tags:
+  - testing
+  - e2e
+  - playwright
+  - coverage
+  - c8
+  - v8-native-coverage
+  - ci
+  - github-actions
+  - fixtures
+  - sigterm
+  - node-v8-coverage
+  - test-isolation
+  - dependabot
+timestamp: 2026-04-24T00:00:00Z
+status: Pending Validation
 ---
 
 ## Context

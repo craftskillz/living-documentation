@@ -1,9 +1,30 @@
 ---
-`🗄️ ADR : 2026_04_20_[DIAGRAM]_edge_label_resize_box_text_wrap_and_background.md`
-**date:** 2026-04-20
-**status:** Accepted
-**description:** Add a resizable label box to edge labels: dashed border (selection mode only), drag handles for symmetric width resize, text wrapping at fixed width, and an opaque canvas-background fill behind the text so the arrow line appears to pass cleanly behind the label.
-**tags:** diagram, edge, label, label-box, resize, text-wrap, wrapText, edgeLabelWidth, edgeLabelBBox, dashed-border, handles, background-fill, drawPortEdge, drawEdgeLabels, ports.js, network.js, symmetric, center-fixed, dragView, persistence
+type: ADR
+title: Edge Label Resize Box Text Wrap And Background
+description: "Add a resizable label box to edge labels: dashed border (selection mode only), drag handles for symmetric width resize, text wrapping at fixed width, and an opaque canvas-background fill behind the text so the arrow line appears to pass cleanly behind the label."
+tags:
+  - diagram
+  - edge
+  - label
+  - label-box
+  - resize
+  - text-wrap
+  - wrapText
+  - edgeLabelWidth
+  - edgeLabelBBox
+  - dashed-border
+  - handles
+  - background-fill
+  - drawPortEdge
+  - drawEdgeLabels
+  - ports.js
+  - network.js
+  - symmetric
+  - center-fixed
+  - dragView
+  - persistence
+timestamp: 2026-04-20T00:00:00Z
+status: Accepted
 ---
 
 ## Context

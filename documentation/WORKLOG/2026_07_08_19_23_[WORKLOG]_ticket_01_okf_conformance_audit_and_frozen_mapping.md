@@ -1,8 +1,15 @@
 ---
-**date:** 2026-07-08
-**status:** To Be Validated
-**description:** Réalisation du Ticket 01 — audit de conformance OKF v0.1 et table de mapping figée, sans code.
-**tags:** worklog, ticket-01, okf, conformance-audit, mapping
+type: Worklog
+title: Ticket 01 Okf Conformance Audit And Frozen Mapping
+description: Réalisation du Ticket 01 — audit de conformance OKF v0.1 et table de mapping figée, sans code.
+tags:
+  - worklog
+  - ticket-01
+  - okf
+  - conformance-audit
+  - mapping
+timestamp: 2026-07-08T19:23:00Z
+status: To Be Validated
 ---
 
 # Ticket 01 — Audit de conformance OKF & mapping figé

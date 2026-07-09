@@ -1,8 +1,17 @@
 ---
-**date:** 2026-03-22
-**status:** Accepted
-**description:** Utiliser systématiquement le thème github-dark de highlight.js quel que soit le mode clair ou sombre, en supprimant entièrement la feuille de style claire.
-**tags:** style, coloration-syntaxique, mode-sombre, highlight.js, frontend, github-dark, prose
+type: ADR
+title: Always Dark Syntax Highlighting
+description: Utiliser systématiquement le thème github-dark de highlight.js quel que soit le mode clair ou sombre, en supprimant entièrement la feuille de style claire.
+tags:
+  - style
+  - coloration-syntaxique
+  - mode-sombre
+  - highlight.js
+  - frontend
+  - github-dark
+  - prose
+timestamp: 2026-03-22T11:10:00Z
+status: Accepted
 ---
 
 ## Contexte

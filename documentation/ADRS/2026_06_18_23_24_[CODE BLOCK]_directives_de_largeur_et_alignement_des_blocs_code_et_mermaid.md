@@ -1,8 +1,20 @@
 ---
-**date:** 2026-06-18
-**status:** To be validated
-**description:** Les fences Markdown acceptent des directives locales code-width/code-align ou mermaid-width/mermaid-align, appliquees au rendu et preservees par le panneau Snippets et l'edition inline.
-**tags:** code-block, mermaid, code-width, code-align, mermaid-width, mermaid-align, codeBlockAttributes, wireContent, inlineSnippetEdit, SnippetsModal
+type: ADR
+title: Directives De Largeur Et Alignement Des Blocs Code Et Mermaid
+description: Les fences Markdown acceptent des directives locales code-width/code-align ou mermaid-width/mermaid-align, appliquees au rendu et preservees par le panneau Snippets et l'edition inline.
+tags:
+  - code-block
+  - mermaid
+  - code-width
+  - code-align
+  - mermaid-width
+  - mermaid-align
+  - codeBlockAttributes
+  - wireContent
+  - inlineSnippetEdit
+  - SnippetsModal
+timestamp: 2026-06-18T23:24:00Z
+status: To be validated
 ---
 
 # Directives de largeur et alignement des blocs code et Mermaid

@@ -1,9 +1,20 @@
 ---
-`🗄️ ADR : 2026_04_08_12_00_[FRONTEND]_new_document_creation_modal_with_folder_browser.md`
-**date:** 2026-04-08
-**status:** SuperSeeded by 2026_04_12_[SIDEBAR]_creation_dossier_icones_font_awesome_et_dossiers_vides_dans_le_drawer
-**description:** Ajout d'un bouton + à côté du compteur de documents dans la barre latérale qui ouvre une modale de création de document, avec des champs titre/catégorie, un explorateur de dossiers intégré limité à docsFolder, la création de nouveaux dossiers, un aperçu en direct du nom de fichier, et un endpoint backend POST /api/documents.
-**tags:** frontend, barre-latérale, modale, création-document, explorateur-dossiers, api, documents, nom-fichier, motif, parcourir
+type: ADR
+title: New Document Creation Modal With Folder Browser
+description: Ajout d'un bouton + à côté du compteur de documents dans la barre latérale qui ouvre une modale de création de document, avec des champs titre/catégorie, un explorateur de dossiers intégré limité à docsFolder, la création de nouveaux dossiers, un aperçu en direct du nom de fichier, et un endpoint backend POST /api/documents.
+tags:
+  - frontend
+  - barre-latérale
+  - modale
+  - création-document
+  - explorateur-dossiers
+  - api
+  - documents
+  - nom-fichier
+  - motif
+  - parcourir
+timestamp: 2026-04-08T12:00:00Z
+status: SuperSeeded by 2026_04_12_[SIDEBAR]_creation_dossier_icones_font_awesome_et_dossiers_vides_dans_le_drawer
 ---
 
 ## Contexte

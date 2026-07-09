@@ -1,8 +1,21 @@
 ---
-**date:** 2026-06-29
-**status:** To be validated
-**description:** Les providers LLM du Workspace persistent un toolMode herite par leurs agents pour autoriser les payloads tools MCP ou forcer un mode chat-only explicite sans injecter de memoire de run inutilisable.
-**tags:** workspace, llm-provider, toolMode, chat-only, mcp-tools, runAgent, CHAT_ONLY_TOOL_NOTICE, agentSystemPromptForRun, Workspace.svelte, workspace.ts, provider-compatibility
+type: ADR
+title: Workspace Llm Tool Mode Chat Only
+description: Les providers LLM du Workspace persistent un toolMode herite par leurs agents pour autoriser les payloads tools MCP ou forcer un mode chat-only explicite sans injecter de memoire de run inutilisable.
+tags:
+  - workspace
+  - llm-provider
+  - toolMode
+  - chat-only
+  - mcp-tools
+  - runAgent
+  - CHAT_ONLY_TOOL_NOTICE
+  - agentSystemPromptForRun
+  - Workspace.svelte
+  - workspace.ts
+  - provider-compatibility
+timestamp: 2026-06-29T20:25:00Z
+status: To be validated
 ---
 
 # Workspace LLM tool mode chat only

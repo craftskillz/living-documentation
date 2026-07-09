@@ -1,8 +1,24 @@
 ---
-date: 2026-04-22
-status: Accepted
+type: ADR
+title: Files Management Popup With Metadata Search And Accuracy Formula Fix
 description: Add a "Metadata Files" top-bar popup to list/replace/delete files under DOCS_FOLDER/files, fix the accuracy formula to unchanged/total, introduce a metadata:// search prefix to locate documents referencing a file, refresh the in-doc search banner live, and add a reusable showConfirm() modal replacing window.confirm().
-tags: metadata, files, accuracy, unchanged-over-total, search-prefix, metadata-search, confirm-modal, ux, modal, i18n, rest, put, delete, supersedes-accuracy-formula
+tags:
+  - metadata
+  - files
+  - accuracy
+  - unchanged-over-total
+  - search-prefix
+  - metadata-search
+  - confirm-modal
+  - ux
+  - modal
+  - i18n
+  - rest
+  - put
+  - delete
+  - supersedes-accuracy-formula
+timestamp: 2026-04-22T00:00:00Z
+status: Accepted
 ---
 
 ## Context

@@ -1,3 +1,8 @@
+---
+type: Document
+title: Utiliser Les Snippets
+---
+
 ## Introduction
 
 Les **snippets** sont des modèles Markdown prêts à l'emploi que vous insérez au curseur en un clic. Ils évitent de taper à la main les syntaxes complexes (tableaux, blocs dépliables, arbres ASCII…).

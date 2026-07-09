@@ -1,3 +1,8 @@
+---
+type: Document
+title: Tableaux
+---
+
 # Tableaux
 
 Les tableaux Markdown standard sont rendus avec un style propre et lisible. Living Documentation les enrichit via des commentaires HTML préfixes qui contrôlent l'espacement, les alternances de couleur, les bordures et le thème coloré , sans modifier la syntaxe du tableau lui-même.

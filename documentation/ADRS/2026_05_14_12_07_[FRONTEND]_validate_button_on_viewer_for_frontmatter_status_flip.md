@@ -1,8 +1,21 @@
 ---
-**date:** 2026-05-14
-**status:** Accepted
-**description:** Le viewer expose un bouton « Valider » vert dans la toolbar juste avant le bouton Marqueur, visible uniquement si le frontmatter contient un statut `To be validated` sous forme `**status:**` ou `status:`, puis flippe ce statut à `Accepted` via PUT /api/documents/:id et rafraîchit les métadonnées si la fiabilité est dégradée.
-**tags:** viewer, frontmatter, status, yaml, validate, accuracy, refresh-metadata, confirm-modal, i18n, adr-lifecycle, toolbar
+type: ADR
+title: Validate Button On Viewer For Frontmatter Status Flip
+description: Le viewer expose un bouton « Valider » vert dans la toolbar juste avant le bouton Marqueur, visible uniquement si le frontmatter contient un statut `To be validated` sous forme `**status:**` ou `status:`, puis flippe ce statut à `Accepted` via PUT /api/documents/:id et rafraîchit les métadonnées si la fiabilité est dégradée.
+tags:
+  - viewer
+  - frontmatter
+  - status
+  - yaml
+  - validate
+  - accuracy
+  - refresh-metadata
+  - confirm-modal
+  - i18n
+  - adr-lifecycle
+  - toolbar
+timestamp: 2026-05-14T12:07:00Z
+status: Accepted
 ---
 
 # Bouton « Valider » dans le viewer pour basculer le frontmatter

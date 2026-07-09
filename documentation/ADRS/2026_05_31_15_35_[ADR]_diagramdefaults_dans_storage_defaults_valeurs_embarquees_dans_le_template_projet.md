@@ -1,8 +1,20 @@
 ---
-**date:** 2026-05-31
-**status:** To be validated
-**description:** `STORAGE_DEFAULTS` dans `config.ts` inclut désormais des `diagramDefaults` non-null avec des tailles, couleurs et polices spécifiques par type de forme et pour les flèches, afin que tout nouveau projet démarre avec un style visuel cohérent dès la première utilisation.
-**tags:** diagram, defaults, config, STORAGE_DEFAULTS, living-doc-json, starter, shapes, arrows, colorKey, fontSize
+type: ADR
+title: Diagramdefaults Dans Storage Defaults Valeurs Embarquees Dans Le Template Projet
+description: "`STORAGE_DEFAULTS` dans `config.ts` inclut désormais des `diagramDefaults` non-null avec des tailles, couleurs et polices spécifiques par type de forme et pour les flèches, afin que tout nouveau projet démarre avec un style visuel cohérent dès la première utilisation."
+tags:
+  - diagram
+  - defaults
+  - config
+  - STORAGE_DEFAULTS
+  - living-doc-json
+  - starter
+  - shapes
+  - arrows
+  - colorKey
+  - fontSize
+timestamp: 2026-05-31T15:35:00Z
+status: To be validated
 ---
 
 ## Contexte

@@ -1,10 +1,18 @@
 ---
-id: i18n-user-visible-strings
+type: Rule
 title: Internationaliser tous les textes visibles
-severity: required
 description: Tout texte visible par l'utilisateur doit être déclaré dans les catalogues i18n anglais et français, puis consommé via les attributs data-i18n ou window.t.
-tags: ["frontend", "i18n", "ux", "traductions"]
-appliesTo: ["src/frontend/**/*.html", "src/frontend/**/*.js", "src/frontend/i18n/*.json"]
+tags:
+  - frontend
+  - i18n
+  - ux
+  - traductions
+id: i18n-user-visible-strings
+severity: required
+appliesto:
+  - src/frontend/**/*.html
+  - src/frontend/**/*.js
+  - src/frontend/i18n/*.json
 ---
 
 Chaque libellé, bouton, tooltip, placeholder, message d'erreur, texte de modale ou texte injecté dans l'UI doit exister dans les deux catalogues :

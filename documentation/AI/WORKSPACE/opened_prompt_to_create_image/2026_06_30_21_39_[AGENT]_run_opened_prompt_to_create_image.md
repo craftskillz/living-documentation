@@ -1,8 +1,15 @@
 ---
-**date:** 2026-06-30T19:39:06.759Z
-**status:** Success
-**description:** Resultat d'execution de l'agent Opened Prompt to Create Image via Agent OpenRouter Cohere Mini Free.
-**tags:** agent, run-agent, workspace, llm, opened_prompt_to_create_image
+type: Technical Doc
+title: Run Opened Prompt To Create Image
+description: Resultat d'execution de l'agent Opened Prompt to Create Image via Agent OpenRouter Cohere Mini Free.
+tags:
+  - agent
+  - run-agent
+  - workspace
+  - llm
+  - opened_prompt_to_create_image
+timestamp: 2026-06-30T19:39:06.759Z
+status: Success
 ---
 
 # Run - Opened Prompt to Create Image

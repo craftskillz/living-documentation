@@ -1,3 +1,8 @@
+---
+type: Document
+title: Utilisation Des Images Plein Ecran Lien Clickable
+---
+
 # Ouvrir les images et diagrammes Mermaid en plein ecran
 
 ## Gestes dans le viewer

@@ -1,8 +1,23 @@
 ---
-**date:** 2026-05-08
-**status:** To be validated
-**description:** Ajout d'un éditeur de bibliothèques de formes personnalisées image/SVG avec ancres normalisées variables, placement de label configurable, rendu `custom-shape`, stockage `.shape-libraries.json`, et barre flottante de formes dans l'éditeur de diagrammes.
-**tags:** diagram, custom-shape, shape-editor, shape-library, ports, anchors, variable-ports, labelPlacement, svg, image, drawPortDots, getNearestPort, shape-libraries
+type: ADR
+title: Custom Shape Libraries And Variable Ports
+description: Ajout d'un éditeur de bibliothèques de formes personnalisées image/SVG avec ancres normalisées variables, placement de label configurable, rendu `custom-shape`, stockage `.shape-libraries.json`, et barre flottante de formes dans l'éditeur de diagrammes.
+tags:
+  - diagram
+  - custom-shape
+  - shape-editor
+  - shape-library
+  - ports
+  - anchors
+  - variable-ports
+  - labelPlacement
+  - svg
+  - image
+  - drawPortDots
+  - getNearestPort
+  - shape-libraries
+timestamp: 2026-05-08T20:01:00Z
+status: To be validated
 ---
 
 # Custom Shape Libraries And Variable Ports

@@ -1,3 +1,8 @@
+---
+type: Document
+title: Tokens Pattern Nommage
+---
+
 ## Tokens du pattern de nommage
 
 Le pattern de nommage des fichiers est configurable via **⚙ Admin** → champ _Filename pattern_. Il détermine comment Living Documentation extrait la date, la catégorie et le titre depuis le nom du fichier.

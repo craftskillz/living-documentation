@@ -1,9 +1,20 @@
 ---
-`🗄️ ADR : 2026_04_08_12_20_[FILENAME]_datetime_precision_in_filename_pattern.md`
-**date:** 2026-04-08
-**status:** Accepted
-**description:** Extension du motif de nom de fichier par défaut de YYYY_MM_DD à YYYY_MM_DD_HH_mm pour permettre à plusieurs documents par jour de coexister sans conflit de nommage, tout en préservant la rétrocompatibilité avec les fichiers YYYY_MM_DD existants.
-**tags:** filename, pattern, datetime, parser, config, rétrocompatibilité, HH, mm, date, documents
+type: ADR
+title: Datetime Precision In Filename Pattern
+description: Extension du motif de nom de fichier par défaut de YYYY_MM_DD à YYYY_MM_DD_HH_mm pour permettre à plusieurs documents par jour de coexister sans conflit de nommage, tout en préservant la rétrocompatibilité avec les fichiers YYYY_MM_DD existants.
+tags:
+  - filename
+  - pattern
+  - datetime
+  - parser
+  - config
+  - rétrocompatibilité
+  - HH
+  - mm
+  - date
+  - documents
+timestamp: 2026-04-08T12:20:00Z
+status: Accepted
 ---
 
 ## Contexte

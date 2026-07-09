@@ -1,8 +1,20 @@
 ---
-**date:** 2026-06-03
-**status:** To be validated
-**description:** Durcissement des 5 workflows GitHub Actions sur la base de l'audit zizmor : toutes les actions pinnees sur SHA de commit, `permissions: contents: read` minimal par job, `persist-credentials: false` sur les checkouts, neutralisation d'une template-injection, et suppression documentee de 2 faux positifs cache-poisoning via `.github/zizmor.yml`.
-**tags:** ci, github-actions, zizmor, supply-chain, pinned-uses, persist-credentials, template-injection, least-privilege, cache-poisoning, just-audit
+type: Document
+title: Durcissement Securite Des Workflows Github Actions Avec Zizmor Pin Sha Permissions Et Persistcredentials
+description: "Durcissement des 5 workflows GitHub Actions sur la base de l'audit zizmor : toutes les actions pinnees sur SHA de commit, `permissions: contents: read` minimal par job, `persist-credentials: false` sur les checkouts, neutralisation d'une template-injection, et suppression documentee de 2 faux positifs cache-poisoning via `.github/zizmor.yml`."
+tags:
+  - ci
+  - github-actions
+  - zizmor
+  - supply-chain
+  - pinned-uses
+  - persist-credentials
+  - template-injection
+  - least-privilege
+  - cache-poisoning
+  - just-audit
+timestamp: 2026-06-03T23:20:00Z
+status: To be validated
 ---
 
 ## Contexte

@@ -1,3 +1,8 @@
+---
+type: Document
+title: Types De Snippets
+---
+
 ## Types de snippets disponibles
 
 Les snippets sont accessibles en mode édition via le bouton **`🧩 Snippets`**. Certains snippets rendus sont aussi modifiables depuis le viewer avec un clic droit.

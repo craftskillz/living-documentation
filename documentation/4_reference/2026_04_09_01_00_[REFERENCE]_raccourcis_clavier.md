@@ -1,3 +1,8 @@
+---
+type: Document
+title: Raccourcis Clavier
+---
+
 ## Raccourcis clavier
 
 ### Visionneuse principale (`/`)

@@ -1,9 +1,20 @@
 ---
-`🗄️ ADR : 2026_04_22_[SIDEBAR]_resizable_drawer_with_persisted_width.md`
-**date:** 2026-04-22
-**status:** Accepted
-**description:** Make the index page sidebar horizontally resizable via a drag handle on its right edge, persist the chosen width across reloads in localStorage, and keep the existing toggle (show/hide) working unchanged.
-**tags:** sidebar, drawer, resize, drag-handle, localStorage, persistence, frontend, index, toggle, ux
+type: ADR
+title: Resizable Drawer With Persisted Width
+description: Make the index page sidebar horizontally resizable via a drag handle on its right edge, persist the chosen width across reloads in localStorage, and keep the existing toggle (show/hide) working unchanged.
+tags:
+  - sidebar
+  - drawer
+  - resize
+  - drag-handle
+  - localStorage
+  - persistence
+  - frontend
+  - index
+  - toggle
+  - ux
+timestamp: 2026-04-22T00:00:00Z
+status: Accepted
 ---
 
 ## Context

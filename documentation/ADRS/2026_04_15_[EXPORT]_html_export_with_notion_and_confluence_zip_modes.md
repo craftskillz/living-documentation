@@ -1,9 +1,27 @@
 ---
-`🗄️ ADR : 2026_04_15_[EXPORT]_html_export_with_notion_and_confluence_zip_modes.md`
-**date:** 2026-04-15
-**status:** Accepted
-**description:** Add a server-side HTML export feature that converts selected first-level folders to a downloadable ZIP containing standalone HTML pages and their referenced images, with two modes: Notion (flat per group) and Confluence (HTML at group root, media in per-page subfolders).
-**tags:** export, html, zip, notion, confluence, archiver, marked, frontmatter, images, modal, i18n, express, router, processHtml, sanitizeFilename, docGroup, wrapHtml
+type: ADR
+title: Html Export With Notion And Confluence Zip Modes
+description: "Add a server-side HTML export feature that converts selected first-level folders to a downloadable ZIP containing standalone HTML pages and their referenced images, with two modes: Notion (flat per group) and Confluence (HTML at group root, media in per-page subfolders)."
+tags:
+  - export
+  - html
+  - zip
+  - notion
+  - confluence
+  - archiver
+  - marked
+  - frontmatter
+  - images
+  - modal
+  - i18n
+  - express
+  - router
+  - processHtml
+  - sanitizeFilename
+  - docGroup
+  - wrapHtml
+timestamp: 2026-04-15T00:00:00Z
+status: Accepted
 ---
 
 ## Context

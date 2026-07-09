@@ -1,3 +1,8 @@
+---
+type: Document
+title: Adrs
+---
+
 ## Les ADR : une bonne idée, des limites réelles
 
 Les **Architecture Decision Records**, ces petits documents Markdown versionnés dans le dépôt, au plus près du code, sont une des meilleures pratiques que j'aie adoptées dans ma longue carrière de développeur et elle le reste encore aujourd'hui.

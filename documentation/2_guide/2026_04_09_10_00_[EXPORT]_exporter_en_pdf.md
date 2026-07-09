@@ -1,3 +1,8 @@
+---
+type: Document
+title: Exporter En Pdf
+---
+
 ## Exporter un document en PDF
 
 Living Documentation propose deux modes d'export PDF, accessibles sans configuration particulière.

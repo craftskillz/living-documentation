@@ -1,8 +1,15 @@
 ---
-**date:** 2026-06-02T15:14:29.120Z
-**status:** Failed
-**description:** Resultat d'execution de l'agent Générer Diagramme Mermaid via DEVSTRAL SMALL 2.
-**tags:** agent, run-agent, workspace, llm, generer_diagramme_mermaid
+type: Technical Doc
+title: Run Generer Diagramme Mermaid
+description: Resultat d'execution de l'agent Générer Diagramme Mermaid via DEVSTRAL SMALL 2.
+tags:
+  - agent
+  - run-agent
+  - workspace
+  - llm
+  - generer_diagramme_mermaid
+timestamp: 2026-06-02T15:14:29.120Z
+status: Failed
 ---
 
 # Run - Générer Diagramme Mermaid

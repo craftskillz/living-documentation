@@ -1,9 +1,24 @@
 ---
-`🗄️ ADR : 2026_04_15_[DIAGRAM]_finer_grid_and_alignment_guides_closest_node_with_tiebreak.md`
-**date:** 2026-04-15
-**status:** Accepted
-**description:** Halve the grid cell size (GRID_SIZE 40 → 20) for finer positioning, and refine alignment guides detection: same-type nodes take priority per axis, any-type nodes serve as fallback, and when multiple candidates share an axis the closest one wins (tiebreak: rightmost for H, lowest for V).
-**tags:** diagram, alignment-guides, snap-to-grid, grid-size, GRID_SIZE, closest-node, tiebreak, shapeType, fallback, alignment, onDragging, snapToAlignGuides, collectCandidates, pickBest
+type: ADR
+title: Finer Grid And Alignment Guides Closest Node With Tiebreak
+description: "Halve the grid cell size (GRID_SIZE 40 → 20) for finer positioning, and refine alignment guides detection: same-type nodes take priority per axis, any-type nodes serve as fallback, and when multiple candidates share an axis the closest one wins (tiebreak: rightmost for H, lowest for V)."
+tags:
+  - diagram
+  - alignment-guides
+  - snap-to-grid
+  - grid-size
+  - GRID_SIZE
+  - closest-node
+  - tiebreak
+  - shapeType
+  - fallback
+  - alignment
+  - onDragging
+  - snapToAlignGuides
+  - collectCandidates
+  - pickBest
+timestamp: 2026-04-15T00:00:00Z
+status: Accepted
 ---
 
 ## Context

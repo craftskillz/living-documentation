@@ -1,8 +1,21 @@
 ---
-**date:** 2026-07-08
-**status:** To be validated
-**description:** A topbar Favorites dropdown persists pinned documents (id + title) as an ordered `favorites` array in `.living-doc.json`, synced client-side through a single shared `/api/config` fetch observer, toggled from a per-document star button (kanban included), reorderable by drag for priority, opened first on reload, and seeded with the welcome doc at project init.
-**tags:** favorites, FavoritesMenu, favorites.svelte.ts, configObserver, living-doc.json, drag-and-drop, priority-ordering, DocViewer-star, starter-doc-seed, i18n-preload, topbar
+type: ADR
+title: Favorites Menu Pinned Documents In Livingdocjson With Drag Priority And Autoopen
+description: A topbar Favorites dropdown persists pinned documents (id + title) as an ordered `favorites` array in `.living-doc.json`, synced client-side through a single shared `/api/config` fetch observer, toggled from a per-document star button (kanban included), reorderable by drag for priority, opened first on reload, and seeded with the welcome doc at project init.
+tags:
+  - favorites
+  - FavoritesMenu
+  - favorites.svelte.ts
+  - configObserver
+  - living-doc.json
+  - drag-and-drop
+  - priority-ordering
+  - DocViewer-star
+  - starter-doc-seed
+  - i18n-preload
+  - topbar
+timestamp: 2026-07-08T10:32:00Z
+status: To be validated
 ---
 
 ## Context

@@ -1,8 +1,19 @@
 ---
-**date:** 2026-06-30
-**status:** Draft
-**description:** Prompts Nano Banana Pro pour les illustrations conceptuelles de la documentation utilisateur.
-**tags:** prompts, nano-banana-pro, images, assets, documentation, illustrations, agents, mcp, git
+type: Document
+title: Prompts images
+description: Prompts Nano Banana Pro pour les illustrations conceptuelles de la documentation utilisateur.
+tags:
+  - prompts
+  - nano-banana-pro
+  - images
+  - assets
+  - documentation
+  - illustrations
+  - agents
+  - mcp
+  - git
+timestamp: 2026-06-30T00:00:00Z
+status: Draft
 ---
 
 # Prompts images Nano Banana Pro

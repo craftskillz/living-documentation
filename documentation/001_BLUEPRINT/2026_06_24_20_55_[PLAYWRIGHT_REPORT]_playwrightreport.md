@@ -1,8 +1,17 @@
 ---
-**date:** 2026-06-24
-**status:** To be validated
-**description:** Le dossier `playwright-report/` contient le rapport HTML généré par Playwright pour consulter les résultats de test et rejouer les traces.
-**tags:** playwright-report, playwright, html-report, traces, test-results, diagnostics, generated
+type: Document
+title: Playwrightreport
+description: Le dossier `playwright-report/` contient le rapport HTML généré par Playwright pour consulter les résultats de test et rejouer les traces.
+tags:
+  - playwright-report
+  - playwright
+  - html-report
+  - traces
+  - test-results
+  - diagnostics
+  - generated
+timestamp: 2026-06-24T20:55:00Z
+status: To be validated
 ---
 
 Le dossier `playwright-report/` contient le rapport HTML généré par Playwright après l'exécution des tests. C'est un dossier de consultation, produit automatiquement par le runner de test.

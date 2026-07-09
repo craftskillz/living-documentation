@@ -1,8 +1,18 @@
 ---
-date: 2026-04-27
+type: ADR
+title: Fix Npx 404 Via Send Dotfiles Allow
+description: "Pass `dotfiles: 'allow'` to every `res.sendFile()` and `express.static()` call so the npx cache path (~/.npm/_npx/...) no longer trips send v1.x's dotfile guard and 404s every frontend asset."
+tags:
+  - "[PACKAGING"
+  - NPX
+  - EXPRESS
+  - SEND
+  - STATIC_ASSETS
+  - DOTFILES
+  - BUGFIX
+  - SERVER]
+timestamp: 2026-04-27T00:00:00Z
 status: Pending Validation
-description: Pass `dotfiles: 'allow'` to every `res.sendFile()` and `express.static()` call so the npx cache path (~/.npm/_npx/...) no longer trips send v1.x's dotfile guard and 404s every frontend asset.
-tags: [PACKAGING, NPX, EXPRESS, SEND, STATIC_ASSETS, DOTFILES, BUGFIX, SERVER]
 ---
 
 ## Context

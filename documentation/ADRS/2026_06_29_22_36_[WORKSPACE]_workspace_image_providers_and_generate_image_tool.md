@@ -1,8 +1,21 @@
 ---
-**date:** 2026-06-29
-**status:** To be validated
-**description:** Les noeuds LLM du Workspace peuvent etre types chat ou image, et generate_image stocke les images IA sous images-ai tout en les exposant dans les runs agents.
-**tags:** workspace, mcp, generate_image, image-provider, providerType, OpenRouter, images-api, nodeProviderId, agentRunArtifacts, images-ai, toolGenerateImage
+type: ADR
+title: Workspace Image Providers And Generate Image Tool
+description: Les noeuds LLM du Workspace peuvent etre types chat ou image, et generate_image stocke les images IA sous images-ai tout en les exposant dans les runs agents.
+tags:
+  - workspace
+  - mcp
+  - generate_image
+  - image-provider
+  - providerType
+  - OpenRouter
+  - images-api
+  - nodeProviderId
+  - agentRunArtifacts
+  - images-ai
+  - toolGenerateImage
+timestamp: 2026-06-29T22:36:00Z
+status: To be validated
 ---
 
 # Workspace image providers and generate image tool

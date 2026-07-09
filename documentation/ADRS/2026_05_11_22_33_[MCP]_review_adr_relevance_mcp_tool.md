@@ -1,8 +1,24 @@
 ---
-**date:** 2026-05-11
-**status:** To be validated
-**description:** Ajout du workflow MCP ADR-only `list_adrs_below_accuracy` + `review_adr_relevance` + prompts `audit-adrs-drift` et `review-adr-relevance`, séparant les rapports factuels des décisions LLM de refresh ou supersession confirmée.
-**tags:** mcp, adr, metadata, accuracy, list_adrs_below_accuracy, audit-adrs-drift, review_adr_relevance, review-adr-relevance, prompt, refresh_metadata, update_document, source-files, supersede, playwright
+type: ADR
+title: Review Adr Relevance Mcp Tool
+description: Ajout du workflow MCP ADR-only `list_adrs_below_accuracy` + `review_adr_relevance` + prompts `audit-adrs-drift` et `review-adr-relevance`, séparant les rapports factuels des décisions LLM de refresh ou supersession confirmée.
+tags:
+  - mcp
+  - adr
+  - metadata
+  - accuracy
+  - list_adrs_below_accuracy
+  - audit-adrs-drift
+  - review_adr_relevance
+  - review-adr-relevance
+  - prompt
+  - refresh_metadata
+  - update_document
+  - source-files
+  - supersede
+  - playwright
+timestamp: 2026-05-11T22:33:00Z
+status: To be validated
 ---
 
 # Revue de pertinence et audit de dérive ADR via MCP

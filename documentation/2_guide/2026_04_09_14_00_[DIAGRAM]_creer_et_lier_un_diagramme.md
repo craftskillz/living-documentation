@@ -1,3 +1,8 @@
+---
+type: Document
+title: Creer Et Lier Un Diagramme
+---
+
 ## Créer un diagramme et le lier à un document
 
 L'éditeur de diagrammes est intégré dans Living Documentation. Les diagrammes sont stockés dans le même dossier que vos documents, versionnable avec votre code.

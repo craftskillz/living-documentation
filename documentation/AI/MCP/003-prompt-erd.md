@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: 003 prompt erd
+---
+
 [user]
 
 ## Before anything else , mine the existing documentation

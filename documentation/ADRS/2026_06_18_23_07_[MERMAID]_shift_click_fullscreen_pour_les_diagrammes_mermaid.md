@@ -1,8 +1,20 @@
 ---
-**date:** 2026-06-18
-**status:** To be validated
-**description:** Le viewer Home ouvre images et SVG Mermaid dans un lightbox partage a fond blanc via Shift+Click ou Command+Click, en serialisant Mermaid en data URL.
-**tags:** mermaid, shift-click, command-click, metaKey, lightbox, fullscreen, white-background, svg, data-url, DocViewer
+type: ADR
+title: Shift Click Fullscreen Pour Les Diagrammes Mermaid
+description: Le viewer Home ouvre images et SVG Mermaid dans un lightbox partage a fond blanc via Shift+Click ou Command+Click, en serialisant Mermaid en data URL.
+tags:
+  - mermaid
+  - shift-click
+  - command-click
+  - metaKey
+  - lightbox
+  - fullscreen
+  - white-background
+  - svg
+  - data-url
+  - DocViewer
+timestamp: 2026-06-18T23:07:00Z
+status: To be validated
 ---
 
 # Shift+Click ou Command+Click plein ecran pour Mermaid

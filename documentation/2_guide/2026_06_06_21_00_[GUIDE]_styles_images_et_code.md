@@ -1,3 +1,8 @@
+---
+type: Document
+title: Styles Images Et Code
+---
+
 # Styles, images et blocs de code
 
 L'apparence generale des images et des blocs de code est configurable depuis le panneau Admin. Une image, un bloc de code ou un diagramme Mermaid peut aussi surcharger localement sa largeur et son alignement avec des commentaires places juste au-dessus.

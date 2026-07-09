@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: 006 prompt retrodocument adrs from git
+---
+
 [user]
 You are about to **retrodocument missing ADRs by walking recent git history**, oldest commit first, so that each durable architectural decision the project actually made gets a corresponding ADR.
 

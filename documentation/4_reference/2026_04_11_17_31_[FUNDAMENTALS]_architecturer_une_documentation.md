@@ -1,3 +1,8 @@
+---
+type: Document
+title: Architecturer Une Documentation
+---
+
 Il existe plusieurs approches pour organiser une documentation : par équipe, par produit, par date, par type de contenu…, chacune ayant ses avantages.
 [![Architecturer Une Documentation (Reference)](/images/architecturer_une_documentation_reference.png)](/diagram?id=d1775924007206)
 

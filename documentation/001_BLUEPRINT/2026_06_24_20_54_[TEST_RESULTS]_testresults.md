@@ -1,8 +1,18 @@
 ---
-**date:** 2026-06-24
-**status:** To be validated
-**description:** Le dossier `test-results/` contient les artefacts générés par Playwright pour diagnostiquer les tests, notamment traces, captures et vidéos optionnelles.
-**tags:** test-results, playwright, traces, screenshots, videos, diagnostics, e2e, generated
+type: Document
+title: Testresults
+description: Le dossier `test-results/` contient les artefacts générés par Playwright pour diagnostiquer les tests, notamment traces, captures et vidéos optionnelles.
+tags:
+  - test-results
+  - playwright
+  - traces
+  - screenshots
+  - videos
+  - diagnostics
+  - e2e
+  - generated
+timestamp: 2026-06-24T20:54:00Z
+status: To be validated
 ---
 
 Le dossier `test-results/` contient les résultats générés par Playwright pendant l'exécution des tests. C'est un dossier de diagnostic, produit automatiquement par les runs de test.

@@ -1,8 +1,20 @@
 ---
-**date:** 2026-05-31
-**status:** To be validated
-**description:** La persistance du style de flèche (direction, tirets, couleur, épaisseur, taille police) est étendue à tous les types d'arêtes (pas seulement free arrows), et la création shape→shape utilise désormais les mêmes defaults que les free arrows ; un affichage de la taille de police est ajouté dans la barre edge panel.
-**tags:** diagram, edge-panel, persistFreeArrowStyle, addEdge, free-arrow, shape-to-shape, fontSize, defaults, ld-free-arrow-style, edge-font-size
+type: ADR
+title: Persistance Et Application Des Styles De Fleches Tous Types Daretes Et Defaults A La Creation
+description: La persistance du style de flèche (direction, tirets, couleur, épaisseur, taille police) est étendue à tous les types d'arêtes (pas seulement free arrows), et la création shape→shape utilise désormais les mêmes defaults que les free arrows ; un affichage de la taille de police est ajouté dans la barre edge panel.
+tags:
+  - diagram
+  - edge-panel
+  - persistFreeArrowStyle
+  - addEdge
+  - free-arrow
+  - shape-to-shape
+  - fontSize
+  - defaults
+  - ld-free-arrow-style
+  - edge-font-size
+timestamp: 2026-05-31T15:34:00Z
+status: To be validated
 ---
 
 ## Contexte

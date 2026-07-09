@@ -1,8 +1,22 @@
 ---
-**date:** 2026-05-05
-**status:** To be validated
-**description:** Le bouton cadenas du edge panel devient un toggle bidirectionnel qui déverrouille aussi bien qu'il verrouille, avec icône 🔓/🔒 reflétant en direct l'état de la sélection, et une logique de lock unifiée entre arêtes régulières et flèches libres anchor→anchor.
-**tags:** diagram, lock, unlock, edge-panel, node-panel, btnEdgeLock, btnNodeLock, toggleEdgeLock, free-arrow, anchor, edgeLocked, selectedLockState
+type: ADR
+title: Edge Lock Button Toggles Unlock In Addition To Lock
+description: Le bouton cadenas du edge panel devient un toggle bidirectionnel qui déverrouille aussi bien qu'il verrouille, avec icône 🔓/🔒 reflétant en direct l'état de la sélection, et une logique de lock unifiée entre arêtes régulières et flèches libres anchor→anchor.
+tags:
+  - diagram
+  - lock
+  - unlock
+  - edge-panel
+  - node-panel
+  - btnEdgeLock
+  - btnNodeLock
+  - toggleEdgeLock
+  - free-arrow
+  - anchor
+  - edgeLocked
+  - selectedLockState
+timestamp: 2026-05-05T15:44:00Z
+status: To be validated
 ---
 
 # Toggle déverrouillage global sur les boutons cadenas

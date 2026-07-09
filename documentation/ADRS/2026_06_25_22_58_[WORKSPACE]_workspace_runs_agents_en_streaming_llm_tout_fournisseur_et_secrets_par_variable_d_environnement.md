@@ -1,8 +1,20 @@
 ---
-**date:** 2026-06-25
-**status:** To be validated
-**description:** Rend les noeuds LLM du Workspace utilisables avec n'importe quel fournisseur OpenAI-compatible (liste d'hotes sans /v1 configurable, secrets references via env: au lieu de tokens en clair) et transforme l'execution d'agents en stream NDJSON live avec timeline tool-calls et pile de toasts persistante entre routes/reload.
-**tags:** workspace, llm, openai-compatible, deepseek, openrouter, run-agent-stream, ndjson, persistent-toast, env-secrets, spa-navigation
+type: ADR
+title: Workspace Runs Agents En Streaming Llm Tout Fournisseur Et Secrets Par Variable D Environnement
+description: "Rend les noeuds LLM du Workspace utilisables avec n'importe quel fournisseur OpenAI-compatible (liste d'hotes sans /v1 configurable, secrets references via env: au lieu de tokens en clair) et transforme l'execution d'agents en stream NDJSON live avec timeline tool-calls et pile de toasts persistante entre routes/reload."
+tags:
+  - workspace
+  - llm
+  - openai-compatible
+  - deepseek
+  - openrouter
+  - run-agent-stream
+  - ndjson
+  - persistent-toast
+  - env-secrets
+  - spa-navigation
+timestamp: 2026-06-25T22:58:00Z
+status: To be validated
 ---
 
 # ADR — Workspace : runs agents en streaming, LLM tout fournisseur, secrets par variable d'environnement

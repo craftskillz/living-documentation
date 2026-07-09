@@ -1,9 +1,30 @@
 ---
-`🗄️ ADR : 2026_04_14_[I18N]_internationalization_en_fr_with_json_translation_files.md`
-**date:** 2026-04-14
-**status:** Accepted
-**description:** Ajout du support complet d'internationalisation sur les trois pages (index.html, admin.html, diagram.html) via un chargeur partagé i18n.js, deux fichiers de traduction JSON (en.json, fr.json) et quatre attributs de données (data-i18n, data-i18n-title, data-i18n-placeholder, data-i18n-html). La langue est persistée dans la configuration en tant que "en" | "fr" et sélectionnée depuis le panneau Admin. Mis à jour le 22/04/2026 : le contenu rendu dynamiquement doit attendre initI18n avant son premier rendu pour éviter l'affichage de clés brutes (correction du bootstrap de la barre latérale du diagramme).
-**tags:** i18n, internationalization, language, translation, en, fr, json, data-i18n, i18n.js, config, admin, frontend, index, diagram, window.t, applyI18n, initI18n, bootstrap, loadDiagramList, dynamic-rendering
+type: ADR
+title: Internationalization En Fr With Json Translation Files
+description: "Ajout du support complet d'internationalisation sur les trois pages (index.html, admin.html, diagram.html) via un chargeur partagé i18n.js, deux fichiers de traduction JSON (en.json, fr.json) et quatre attributs de données (data-i18n, data-i18n-title, data-i18n-placeholder, data-i18n-html). La langue est persistée dans la configuration en tant que \"en\" | \"fr\" et sélectionnée depuis le panneau Admin. Mis à jour le 22/04/2026 : le contenu rendu dynamiquement doit attendre initI18n avant son premier rendu pour éviter l'affichage de clés brutes (correction du bootstrap de la barre latérale du diagramme)."
+tags:
+  - i18n
+  - internationalization
+  - language
+  - translation
+  - en
+  - fr
+  - json
+  - data-i18n
+  - i18n.js
+  - config
+  - admin
+  - frontend
+  - index
+  - diagram
+  - window.t
+  - applyI18n
+  - initI18n
+  - bootstrap
+  - loadDiagramList
+  - dynamic-rendering
+timestamp: 2026-04-14T00:00:00Z
+status: Accepted
 ---
 
 ## Contexte

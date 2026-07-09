@@ -1,8 +1,20 @@
 ---
-**date:** 2026-06-08
-**status:** À valider
-**description:** Rendu des blocs :::compare via un placeholder + remplacement post-parse au lieu d'injecter le HTML rendu avant marked.parse(), afin que les blocs de code internes contenant des lignes vides ne brisent plus le document.
-**tags:** compare, marked, rendering, html-block, commonmark, preprocessCompareBlocks, renderMarkdownWithCompareBlocks, placeholder, documents, export
+type: Document
+title: Compare Block Two Phase Rendering
+description: Rendu des blocs :::compare via un placeholder + remplacement post-parse au lieu d'injecter le HTML rendu avant marked.parse(), afin que les blocs de code internes contenant des lignes vides ne brisent plus le document.
+tags:
+  - compare
+  - marked
+  - rendering
+  - html-block
+  - commonmark
+  - preprocessCompareBlocks
+  - renderMarkdownWithCompareBlocks
+  - placeholder
+  - documents
+  - export
+timestamp: 2026-06-08T00:17:00Z
+status: À valider
 ---
 
 ## Contexte

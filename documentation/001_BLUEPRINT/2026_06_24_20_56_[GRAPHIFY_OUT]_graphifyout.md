@@ -1,8 +1,18 @@
 ---
-**date:** 2026-06-24
-**status:** To be validated
-**description:** Le dossier `graphify-out/` contient les sorties Graphify qui transforment le projet en graphe consultable : rapport, vues HTML, JSON et cache.
-**tags:** graphify-out, graphify, knowledge-graph, graph-report, graph-json, html, cache, architecture
+type: Document
+title: Graphifyout
+description: "Le dossier `graphify-out/` contient les sorties Graphify qui transforment le projet en graphe consultable : rapport, vues HTML, JSON et cache."
+tags:
+  - graphify-out
+  - graphify
+  - knowledge-graph
+  - graph-report
+  - graph-json
+  - html
+  - cache
+  - architecture
+timestamp: 2026-06-24T20:56:00Z
+status: To be validated
 ---
 
 Le dossier `graphify-out/` contient les sorties générées par Graphify pour représenter le projet sous forme de graphe de connaissances.

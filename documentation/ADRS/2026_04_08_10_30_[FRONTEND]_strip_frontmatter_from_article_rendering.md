@@ -1,9 +1,17 @@
 ---
-`🗄️ ADR : 2026_04_08_10_30_[FRONTEND]_strip_frontmatter_from_article_rendering.md`
-**date:** 2026-04-08
-**status:** Accepted
-**description:** Supprime le bloc frontmatter d'en-tête (---...---) du contenu markdown avant le rendu HTML, afin que les champs de métadonnées ne soient pas visibles dans la vue article.
-**tags:** frontend, frontmatter, rendu, marked, documents, métadonnées, adr
+type: ADR
+title: Strip Frontmatter From Article Rendering
+description: Supprime le bloc frontmatter d'en-tête (---...---) du contenu markdown avant le rendu HTML, afin que les champs de métadonnées ne soient pas visibles dans la vue article.
+tags:
+  - frontend
+  - frontmatter
+  - rendu
+  - marked
+  - documents
+  - métadonnées
+  - adr
+timestamp: 2026-04-08T10:30:00Z
+status: Accepted
 ---
 
 ## Contexte

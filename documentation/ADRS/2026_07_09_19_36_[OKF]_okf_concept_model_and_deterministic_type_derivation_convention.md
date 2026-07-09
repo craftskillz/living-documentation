@@ -1,8 +1,19 @@
 ---
-**date:** 2026-07-09
-**status:** To be validated
-**description:** Freezes the canonical YAML frontmatter model for a living-doc concept and the deterministic (no-AI) `type` derivation, ratifying the open decisions left by the Ticket 01 audit — the contract every OKF writer/migration must honor.
-**tags:** okf, convention, concept-model, type-derivation, yaml-frontmatter, tags, timestamp, sources, ticket-03
+type: ADR
+title: Okf Concept Model And Deterministic Type Derivation Convention
+description: Freezes the canonical YAML frontmatter model for a living-doc concept and the deterministic (no-AI) `type` derivation, ratifying the open decisions left by the Ticket 01 audit — the contract every OKF writer/migration must honor.
+tags:
+  - okf
+  - convention
+  - concept-model
+  - type-derivation
+  - yaml-frontmatter
+  - tags
+  - timestamp
+  - sources
+  - ticket-03
+timestamp: 2026-07-09T19:36:00Z
+status: To be validated
 ---
 
 # OKF concept model & `type` derivation (convention)

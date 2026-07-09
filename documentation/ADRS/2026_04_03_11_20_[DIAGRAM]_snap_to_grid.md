@@ -1,9 +1,19 @@
 ---
-`🗄️ ADR : 2026_04_03_11_20_[DIAGRAM]_snap_to_grid.md`
-**date:** 2026-04-03
-**status:** SuperSeeded by 2026_04_15_[DIAGRAM]_alignment_guides_center_snap_hitbox_fix_and_state_persistence.md
-**description:** Correction du snap-to-grid utilisant shape.width/height pour l'alignement visuel des bords, et correction du décalage DPR de la grille sur les écrans Retina en multipliant les coordonnées CSS-pixels de vis.js par devicePixelRatio.
-**tags:** diagram, snap-to-grid, grille, DPR, retina, vis-network, rendu, bounding-box, shape
+type: ADR
+title: Snap To Grid
+description: Correction du snap-to-grid utilisant shape.width/height pour l'alignement visuel des bords, et correction du décalage DPR de la grille sur les écrans Retina en multipliant les coordonnées CSS-pixels de vis.js par devicePixelRatio.
+tags:
+  - diagram
+  - snap-to-grid
+  - grille
+  - DPR
+  - retina
+  - vis-network
+  - rendu
+  - bounding-box
+  - shape
+timestamp: 2026-04-03T11:20:00Z
+status: SuperSeeded by 2026_04_15_[DIAGRAM]_alignment_guides_center_snap_hitbox_fix_and_state_persistence.md
 ---
 
 ## Contexte

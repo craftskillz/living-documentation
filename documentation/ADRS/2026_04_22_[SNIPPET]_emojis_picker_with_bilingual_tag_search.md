@@ -1,9 +1,27 @@
 ---
-`🗄️ ADR : 2026_04_22_[SNIPPET]_emojis_picker_with_bilingual_tag_search.md`
-**date:** 2026-04-22
-**status:** Accepted
-**description:** Add an "Emojis" snippet type to the editor's snippet inserter. Presents ~300 common emojis grouped in 6 categories (smileys, gestures, hearts, objects, office, symbols) with a search field that activates at 2+ characters and filters by bilingual FR/EN tags embedded in a static data structure. Users click emojis to append them to a selection input; Insert drops the concatenated string at the cursor. Also prefixes every option in the snippet type dropdown with an inline Unicode icon so the list is scannable at a glance.
-**tags:** snippet, emoji, emojis, picker, search, filter, tags, bilingual, i18n, editor, markdown, unicode, dropdown-icons, snippet-type-list, frontend, index.html, snippets.js
+type: ADR
+title: Emojis Picker With Bilingual Tag Search
+description: Add an "Emojis" snippet type to the editor's snippet inserter. Presents ~300 common emojis grouped in 6 categories (smileys, gestures, hearts, objects, office, symbols) with a search field that activates at 2+ characters and filters by bilingual FR/EN tags embedded in a static data structure. Users click emojis to append them to a selection input; Insert drops the concatenated string at the cursor. Also prefixes every option in the snippet type dropdown with an inline Unicode icon so the list is scannable at a glance.
+tags:
+  - snippet
+  - emoji
+  - emojis
+  - picker
+  - search
+  - filter
+  - tags
+  - bilingual
+  - i18n
+  - editor
+  - markdown
+  - unicode
+  - dropdown-icons
+  - snippet-type-list
+  - frontend
+  - index.html
+  - snippets.js
+timestamp: 2026-04-22T00:00:00Z
+status: Accepted
 ---
 
 ## Context

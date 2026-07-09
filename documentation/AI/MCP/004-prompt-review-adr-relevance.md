@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: 004 prompt review adr relevance
+---
+
 [user]
 You are about to **review the relevance of one specific ADR against the source files bound in its metadata**.
 

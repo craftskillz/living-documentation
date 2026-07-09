@@ -1,8 +1,21 @@
 ---
-**date:** 2026-06-23
-**status:** To be validated
-**description:** Each metadata entry now records the source-repo HEAD commit and a dirty flag alongside its SHA-256 hash, returned to the LLM so drift review diffs from that commit instead of scanning history.
-**tags:** metadata, hash, commit, sha1, dirty, accuracy, drift, add_metadata, refresh_metadata, review_adr_relevance, git
+type: ADR
+title: Commit And Dirty Flag Stored With Each Metadata Hash
+description: Each metadata entry now records the source-repo HEAD commit and a dirty flag alongside its SHA-256 hash, returned to the LLM so drift review diffs from that commit instead of scanning history.
+tags:
+  - metadata
+  - hash
+  - commit
+  - sha1
+  - dirty
+  - accuracy
+  - drift
+  - add_metadata
+  - refresh_metadata
+  - review_adr_relevance
+  - git
+timestamp: 2026-06-23T22:21:00Z
+status: To be validated
 ---
 
 # Commit and dirty flag stored with each metadata hash

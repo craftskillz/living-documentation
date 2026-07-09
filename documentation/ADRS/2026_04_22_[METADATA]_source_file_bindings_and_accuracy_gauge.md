@@ -1,8 +1,23 @@
 ---
-date: 2026-04-22
-status: Partially SuperSeeded (accuracy formula) , see 2026_04_22_[METADATA]_files_management_popup_with_metadata_search_and_accuracy_formula_fix.md
+type: ADR
+title: Source File Bindings And Accuracy Gauge
 description: Bind source files to documents via SHA-256 hashes so the viewer (and MCP clients) can detect drift between docs and code. Exposes a REST API, four MCP tools, a modal with a sourceRoot browser, and an accuracy gauge in the doc header.
-tags: metadata, accuracy, sha-256, hash, drift, documents, source-root, mcp, rest, modal, gauge, i18n, security
+tags:
+  - metadata
+  - accuracy
+  - sha-256
+  - hash
+  - drift
+  - documents
+  - source-root
+  - mcp
+  - rest
+  - modal
+  - gauge
+  - i18n
+  - security
+timestamp: 2026-04-22T00:00:00Z
+status: Partially SuperSeeded (accuracy formula) , see 2026_04_22_[METADATA]_files_management_popup_with_metadata_search_and_accuracy_formula_fix.md
 ---
 
 ## Context

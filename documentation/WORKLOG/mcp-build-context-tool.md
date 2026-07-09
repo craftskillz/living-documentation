@@ -1,8 +1,15 @@
 ---
-**date:** 2026-07-01
-**status:** Done
-**description:** Ajout de l'outil MCP `build_context(task, options?)` qui agrège git status/diff, contenu source et docs/ADR liés en un seul appel.
-**tags:** worklog, mcp, build_context, git, metadata
+type: Worklog
+title: Mcp build context tool
+description: Ajout de l'outil MCP `build_context(task, options?)` qui agrège git status/diff, contenu source et docs/ADR liés en un seul appel.
+tags:
+  - worklog
+  - mcp
+  - build_context
+  - git
+  - metadata
+timestamp: 2026-07-01T00:00:00Z
+status: Done
 ---
 
 # Current task

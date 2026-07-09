@@ -1,3 +1,8 @@
+---
+type: Document
+title: Emojis
+---
+
 # Emojis
 
 Les emojis s'insèrent directement dans le texte Markdown , pas de syntaxe spéciale, pas de plugin. Copier-coller depuis une palette système (macOS : `⌘ + Ctrl + Espace`, Windows : `Win + .`) ou taper le caractère Unicode directement.

@@ -1,8 +1,21 @@
 ---
-**date:** 2026-06-06
-**status:** To be validated
-**description:** La normalisation NFD + suppression des combining marks est appliquée dans trois couches distinctes pour rendre la recherche insensible aux accents: filtre client sidebar (state.svelte.ts), API full-text (documents.ts), et highlight in-document (searchNotice.ts).
-**tags:** search, accent, diacritic, NFD, NFC, deAccent, highlightMatches, filteredDocs, searchNotice, documents, state
+type: ADR
+title: Accentinsensitive Search Across Global Api And Indocument Highlight
+description: "La normalisation NFD + suppression des combining marks est appliquée dans trois couches distinctes pour rendre la recherche insensible aux accents: filtre client sidebar (state.svelte.ts), API full-text (documents.ts), et highlight in-document (searchNotice.ts)."
+tags:
+  - search
+  - accent
+  - diacritic
+  - NFD
+  - NFC
+  - deAccent
+  - highlightMatches
+  - filteredDocs
+  - searchNotice
+  - documents
+  - state
+timestamp: 2026-06-06T16:17:00Z
+status: To be validated
 ---
 
 ## Contexte

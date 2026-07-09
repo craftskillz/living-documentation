@@ -1,8 +1,29 @@
 ---
-**date:** 2026-05-17
-**status:** To be validated
-**description:** Le viewer mappe les snippets Markdown rendus vers leurs plages source, ouvre la modale Snippets en édition inline au clic droit sur une zone reconnue ou en insertion inline au clic droit sur une zone non reconnue, verrouille le type détecté en édition, permet la suppression confirmée, spécialise les mini éditeurs des blocs structurés et préserve l'indentation des code blocks imbriqués dans des listes.
-**tags:** snippet, inline-edit, inline-insert, contextmenu, viewer, markdown-range, deleteInlineSnippetBlock, detectSnippetType, parseAndFillSnippet, buildSnippetMarkdown, table, code-block, code-block-indent, blockquote, ordered-list, unordered-list, colored-text, colored-section, playwright
+type: ADR
+title: Edition Inline Des Snippets Depuis Le Viewer Par Clic Droit
+description: Le viewer mappe les snippets Markdown rendus vers leurs plages source, ouvre la modale Snippets en édition inline au clic droit sur une zone reconnue ou en insertion inline au clic droit sur une zone non reconnue, verrouille le type détecté en édition, permet la suppression confirmée, spécialise les mini éditeurs des blocs structurés et préserve l'indentation des code blocks imbriqués dans des listes.
+tags:
+  - snippet
+  - inline-edit
+  - inline-insert
+  - contextmenu
+  - viewer
+  - markdown-range
+  - deleteInlineSnippetBlock
+  - detectSnippetType
+  - parseAndFillSnippet
+  - buildSnippetMarkdown
+  - table
+  - code-block
+  - code-block-indent
+  - blockquote
+  - ordered-list
+  - unordered-list
+  - colored-text
+  - colored-section
+  - playwright
+timestamp: 2026-05-17T19:11:00Z
+status: To be validated
 ---
 
 # Édition inline des snippets depuis le viewer par clic droit

@@ -1,8 +1,20 @@
 ---
-**date:** 2026-05-07
-**status:** To be validated
-**description:** Separation de la semantique architecturale kind et du rendu visuel renderAs pour les noeuds crees par MCP, avec preservation dans l'editeur diagramme.
-**tags:** mcp, diagram, create_diagram, read_diagram, kind, renderAs, C4, shapeType, persistence, history
+type: ADR
+title: Architectural Kind Render As Separation
+description: Separation de la semantique architecturale kind et du rendu visuel renderAs pour les noeuds crees par MCP, avec preservation dans l'editeur diagramme.
+tags:
+  - mcp
+  - diagram
+  - create_diagram
+  - read_diagram
+  - kind
+  - renderAs
+  - C4
+  - shapeType
+  - persistence
+  - history
+timestamp: 2026-05-07T22:25:00Z
+status: To be validated
 ---
 
 # Separation du type architectural et du rendu visuel

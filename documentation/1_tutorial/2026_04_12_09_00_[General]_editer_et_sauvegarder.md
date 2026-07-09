@@ -1,3 +1,8 @@
+---
+type: Document
+title: Editer Et Sauvegarder
+---
+
 ## Introduction
 
 Living Documentation vous permet d'éditer vos fichiers Markdown directement dans le navigateur, sans quitter l'outil ni ouvrir un éditeur de code. Les modifications sont sauvegardées sur disque instantanément.

@@ -1,8 +1,22 @@
 ---
-**date:** 2026-05-14
-**status:** Accepted
-**description:** Les trois mutations de métadonnées (POST add, DELETE remove, POST refresh) , exposées par les routes HTTP `/api/metadata/:docId` et les outils MCP `add_metadata`, `remove_metadata`, `refresh_metadata` , rejettent via `assertNotSuperSeeded` quand le frontmatter contient un statut `SuperSeeded` sous forme `**status:**` ou `status:`, et la popup métadonnées cache les contrôles mutatifs avec un bandeau amber « Lecture seule ».
-**tags:** metadata, superseded, read-only, lifecycle, adr-history, frontmatter, status, yaml, viewer, routes, mcp-tools, guard
+type: ADR
+title: Read Only Metadata For Superseeded Documents
+description: Les trois mutations de métadonnées (POST add, DELETE remove, POST refresh) , exposées par les routes HTTP `/api/metadata/:docId` et les outils MCP `add_metadata`, `remove_metadata`, `refresh_metadata` , rejettent via `assertNotSuperSeeded` quand le frontmatter contient un statut `SuperSeeded` sous forme `**status:**` ou `status:`, et la popup métadonnées cache les contrôles mutatifs avec un bandeau amber « Lecture seule ».
+tags:
+  - metadata
+  - superseded
+  - read-only
+  - lifecycle
+  - adr-history
+  - frontmatter
+  - status
+  - yaml
+  - viewer
+  - routes
+  - mcp-tools
+  - guard
+timestamp: 2026-05-14T12:29:00Z
+status: Accepted
 ---
 
 # Métadonnées en lecture seule pour les documents SuperSeeded

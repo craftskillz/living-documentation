@@ -1,8 +1,20 @@
 ---
-**date:** 2026-05-07
-**status:** To be validated
-**description:** Le MCP attribue des positions deterministes aux noeuds sans coordonnees avant sauvegarde afin d'eviter l'empilement visuel des diagrammes generes.
-**tags:** diagram, mcp, create_diagram, deterministic-layout, context, flow, coordinates, vis-network, ports, readability
+type: ADR
+title: Layout Deterministe Des Diagrammes Mcp
+description: Le MCP attribue des positions deterministes aux noeuds sans coordonnees avant sauvegarde afin d'eviter l'empilement visuel des diagrammes generes.
+tags:
+  - diagram
+  - mcp
+  - create_diagram
+  - deterministic-layout
+  - context
+  - flow
+  - coordinates
+  - vis-network
+  - ports
+  - readability
+timestamp: 2026-05-07T23:23:00Z
+status: To be validated
 ---
 
 # Layout deterministe des diagrammes MCP

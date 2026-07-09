@@ -1,9 +1,22 @@
 ---
-`🗄️ ADR : 2026_04_08_13_15_[NAVIGATION]_anchor_scroll_and_folder_sort_convention.md`
-**date:** 2026-04-08
-**status:** Accepted
-**description:** Génération automatique des IDs de titres après le rendu asynchrone du document pour permettre le défilement par ancre ; introduction d'une convention de préfixe numérique (1_NOM) pour contrôler l'ordre de tri des dossiers dans la barre latérale tout en masquant le préfixe dans l'interface.
-**tags:** navigation, ancre, titre, défilement, barre-latérale, dossier, tri, convention, préfixe, frontend, marked, fil-d-ariane
+type: ADR
+title: Anchor Scroll And Folder Sort Convention
+description: Génération automatique des IDs de titres après le rendu asynchrone du document pour permettre le défilement par ancre ; introduction d'une convention de préfixe numérique (1_NOM) pour contrôler l'ordre de tri des dossiers dans la barre latérale tout en masquant le préfixe dans l'interface.
+tags:
+  - navigation
+  - ancre
+  - titre
+  - défilement
+  - barre-latérale
+  - dossier
+  - tri
+  - convention
+  - préfixe
+  - frontend
+  - marked
+  - fil-d-ariane
+timestamp: 2026-04-08T13:15:00Z
+status: Accepted
 ---
 
 ## Contexte

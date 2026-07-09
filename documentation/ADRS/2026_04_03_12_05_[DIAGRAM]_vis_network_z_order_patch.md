@@ -1,9 +1,18 @@
 ---
-`🗄️ ADR : 2026_04_03_12_05_[DIAGRAM]_vis_network_z_order_patch.md`
-**date:** 2026-04-03
-**status:** Accepted
-**description:** Monkey-patch de `_drawNodes` de vis-network pour effectuer un seul passage en ordre canonique, préservant l'ordre z défini par l'utilisateur contre le réordonnancement au survol/sélection.
-**tags:** diagram, vis-network, z-order, rendering, monkey-patch, canvas, _drawNodes, canonicalOrder
+type: ADR
+title: Vis Network Z Order Patch
+description: Monkey-patch de `_drawNodes` de vis-network pour effectuer un seul passage en ordre canonique, préservant l'ordre z défini par l'utilisateur contre le réordonnancement au survol/sélection.
+tags:
+  - diagram
+  - vis-network
+  - z-order
+  - rendering
+  - monkey-patch
+  - canvas
+  - _drawNodes
+  - canonicalOrder
+timestamp: 2026-04-03T12:05:00Z
+status: Accepted
 ---
 
 ## Contexte

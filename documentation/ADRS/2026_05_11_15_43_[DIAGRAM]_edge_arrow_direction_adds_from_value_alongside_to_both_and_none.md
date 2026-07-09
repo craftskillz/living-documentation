@@ -1,8 +1,20 @@
 ---
-**date:** 2026-05-08
-**status:** To be validated
-**description:** Extension du champ arrowDir des arêtes pour accepter la valeur "from" en plus de "to", "both" et "none", avec un quatrième bouton edgeBtnFrom dans la barre de propriétés et propagation dans le rendu canvas et le MCP create_diagram.
-**tags:** diagram, edge, arrowDir, arrowhead, edge-panel, edgeBtnFrom, drawPortEdge, visEdgeProps, create_diagram, normalizeArrowDir
+type: ADR
+title: Edge Arrow Direction Adds From Value Alongside To Both And None
+description: Extension du champ arrowDir des arêtes pour accepter la valeur "from" en plus de "to", "both" et "none", avec un quatrième bouton edgeBtnFrom dans la barre de propriétés et propagation dans le rendu canvas et le MCP create_diagram.
+tags:
+  - diagram
+  - edge
+  - arrowDir
+  - arrowhead
+  - edge-panel
+  - edgeBtnFrom
+  - drawPortEdge
+  - visEdgeProps
+  - create_diagram
+  - normalizeArrowDir
+timestamp: 2026-05-08T15:43:00Z
+status: To be validated
 ---
 
 # Direction de flèche `from` sur les arêtes

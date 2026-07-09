@@ -1,8 +1,20 @@
 ---
-**date:** 2026-06-01
-**status:** To be validated
-**description:** Le dossier `scripts/` regroupe les scripts d'automatisation qui relient le build, le serveur de développement, les contrôles frontend, les hooks Git et les gates CI du projet.
-**tags:** scripts, build, dev, npm, hooks, ci, readme-sync, zizmor, frontend-check, copy-assets
+type: Document
+title: Scripts
+description: Le dossier `scripts/` regroupe les scripts d'automatisation qui relient le build, le serveur de développement, les contrôles frontend, les hooks Git et les gates CI du projet.
+tags:
+  - scripts
+  - build
+  - dev
+  - npm
+  - hooks
+  - ci
+  - readme-sync
+  - zizmor
+  - frontend-check
+  - copy-assets
+timestamp: 2026-06-01T17:40:00Z
+status: To be validated
 ---
 
 Le dossier `scripts/` contient l'outillage local du projet et sert à automatiser les tâches qui entourent le développement : préparer `dist/`, lancer un environnement de dev confortable, vérifier la syntaxe du frontend statique, et appliquer quelques garde-fous avant commit ou publication.

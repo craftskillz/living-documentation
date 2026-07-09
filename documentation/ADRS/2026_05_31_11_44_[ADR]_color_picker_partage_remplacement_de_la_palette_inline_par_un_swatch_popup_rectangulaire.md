@@ -1,8 +1,20 @@
 ---
-**date:** 2026-05-31
-**status:** To be validated
-**description:** La palette de couleurs inline (rangée de ronds) dans les panneaux node et edge est remplacée par un unique carré-swatch cliquable qui ouvre une mini popup avec des carrés rectangulaires, via un module partagé `color-picker.js` qui respecte les `nodeColorOverrides` de runtime.
-**tags:** diagram, color-picker, node-panel, edge-panel, swatch, popup, nodeColorOverrides, UX, toolbar, shared-module
+type: ADR
+title: Color Picker Partage Remplacement De La Palette Inline Par Un Swatch Popup Rectangulaire
+description: La palette de couleurs inline (rangée de ronds) dans les panneaux node et edge est remplacée par un unique carré-swatch cliquable qui ouvre une mini popup avec des carrés rectangulaires, via un module partagé `color-picker.js` qui respecte les `nodeColorOverrides` de runtime.
+tags:
+  - diagram
+  - color-picker
+  - node-panel
+  - edge-panel
+  - swatch
+  - popup
+  - nodeColorOverrides
+  - UX
+  - toolbar
+  - shared-module
+timestamp: 2026-05-31T11:44:00Z
+status: To be validated
 ---
 
 ## Contexte

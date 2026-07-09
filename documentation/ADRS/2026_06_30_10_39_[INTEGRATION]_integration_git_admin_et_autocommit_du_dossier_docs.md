@@ -1,8 +1,20 @@
 ---
-**date:** 2026-06-30
-**status:** To be validated
-**description:** Ajoute une integration Git configurable dans Admin qui commit automatiquement les changements de docsFolder apres les sauvegardes Living Documentation et expose son etat via /api/git/status.
-**tags:** git, admin, autocommit, docsFolder, gitIntegration, gitAutoCommitMiddleware, gitStatus, persistentToast, .living-doc.json, push
+type: ADR
+title: Integration Git Admin Et Autocommit Du Dossier Docs
+description: Ajoute une integration Git configurable dans Admin qui commit automatiquement les changements de docsFolder apres les sauvegardes Living Documentation et expose son etat via /api/git/status.
+tags:
+  - git
+  - admin
+  - autocommit
+  - docsFolder
+  - gitIntegration
+  - gitAutoCommitMiddleware
+  - gitStatus
+  - persistentToast
+  - .living-doc.json
+  - push
+timestamp: 2026-06-30T10:39:00Z
+status: To be validated
 ---
 
 # Integration Git Admin et autocommit du dossier docs

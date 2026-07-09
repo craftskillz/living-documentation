@@ -1,8 +1,28 @@
 ---
-**date:** 2026-05-12
-**status:** To be validated
-**description:** Un bouton de la topbar `diagram.html` déclenche l'export du diagramme courant en mxGraph XML drawio via `src/frontend/diagram/drawio-export.js`, qui sérialise nœuds (tous shape types y compris custom-shape via image base64 inline), edges (ports normalisés en exitX/Y et entryX/Y, free arrows en sourcePoint/targetPoint), groupes (container style=group avec reparenting), métadonnées sémantiques (UserObject ld_*) et déclenche le téléchargement d'un fichier `<titre>.drawio` autonome.
-**tags:** diagram, export, drawio, mxgraph, mxfile, mxcell, mxgeometry, ports, exitX, entryX, free-arrows, sourcePoint, custom-shape, groups, UserObject, label-rotation, base64-inline, frontend
+type: ADR
+title: Export Diagrammes Au Format Drawio Mxgraph Xml
+description: Un bouton de la topbar `diagram.html` déclenche l'export du diagramme courant en mxGraph XML drawio via `src/frontend/diagram/drawio-export.js`, qui sérialise nœuds (tous shape types y compris custom-shape via image base64 inline), edges (ports normalisés en exitX/Y et entryX/Y, free arrows en sourcePoint/targetPoint), groupes (container style=group avec reparenting), métadonnées sémantiques (UserObject ld_*) et déclenche le téléchargement d'un fichier `<titre>.drawio` autonome.
+tags:
+  - diagram
+  - export
+  - drawio
+  - mxgraph
+  - mxfile
+  - mxcell
+  - mxgeometry
+  - ports
+  - exitX
+  - entryX
+  - free-arrows
+  - sourcePoint
+  - custom-shape
+  - groups
+  - UserObject
+  - label-rotation
+  - base64-inline
+  - frontend
+timestamp: 2026-05-12T11:46:00Z
+status: To be validated
 ---
 
 # Export des diagrammes au format drawio (mxGraph XML)

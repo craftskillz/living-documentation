@@ -1,8 +1,20 @@
 ---
-**date:** 2026-05-07
-**status:** To be validated
-**description:** Normalisation des diagrammes crees via MCP avec styles par defaut, ports deduits, largeurs de labels estimees et restitution des champs graphiques persistants.
-**tags:** mcp, create_diagram, read_diagram, diagram, ports, edgeLabelWidth, arrowDir, gridEnabled, alignGuides, toolCreateDiagram
+type: ADR
+title: Default Diagram Style Conventions
+description: Normalisation des diagrammes crees via MCP avec styles par defaut, ports deduits, largeurs de labels estimees et restitution des champs graphiques persistants.
+tags:
+  - mcp
+  - create_diagram
+  - read_diagram
+  - diagram
+  - ports
+  - edgeLabelWidth
+  - arrowDir
+  - gridEnabled
+  - alignGuides
+  - toolCreateDiagram
+timestamp: 2026-05-07T22:05:00Z
+status: To be validated
 ---
 
 # Conventions de dessin par defaut pour les diagrammes MCP

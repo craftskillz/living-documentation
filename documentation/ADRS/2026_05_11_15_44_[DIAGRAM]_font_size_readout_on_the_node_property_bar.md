@@ -1,8 +1,18 @@
 ---
-**date:** 2026-05-05
-**status:** Accepted
-**description:** Affichage live de la taille de police entre les boutons Aa−/Aa+ du node panel, avec un fallback "–" quand la sélection mélange plusieurs tailles ou n'a aucun nœud non-anchor sélectionné.
-**tags:** diagram, node-panel, font-size, fontSize, property-bar, nodeFontSizeValue, syncNodeFontSizeValue, mixed-selection
+type: ADR
+title: Font Size Readout On The Node Property Bar
+description: Affichage live de la taille de police entre les boutons Aa−/Aa+ du node panel, avec un fallback "–" quand la sélection mélange plusieurs tailles ou n'a aucun nœud non-anchor sélectionné.
+tags:
+  - diagram
+  - node-panel
+  - font-size
+  - fontSize
+  - property-bar
+  - nodeFontSizeValue
+  - syncNodeFontSizeValue
+  - mixed-selection
+timestamp: 2026-05-05T15:44:00Z
+status: Accepted
 ---
 
 # Affichage de la taille de police dans la barre de propriétés des nœuds

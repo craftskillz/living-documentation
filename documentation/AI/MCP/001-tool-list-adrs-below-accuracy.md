@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: 001 tool list adrs below accuracy
+---
+
 # MCP tool: `list_adrs_below_accuracy`
 
 ## Description

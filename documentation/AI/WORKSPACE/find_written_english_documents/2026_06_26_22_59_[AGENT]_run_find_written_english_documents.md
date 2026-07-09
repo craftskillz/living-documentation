@@ -1,8 +1,15 @@
 ---
-**date:** 2026-06-26T20:59:05.574Z
-**status:** Failed
-**description:** Resultat d'execution de l'agent Find Written English Documents via OpenRouter Test.
-**tags:** agent, run-agent, workspace, llm, find_written_english_documents
+type: Technical Doc
+title: Run Find Written English Documents
+description: Resultat d'execution de l'agent Find Written English Documents via OpenRouter Test.
+tags:
+  - agent
+  - run-agent
+  - workspace
+  - llm
+  - find_written_english_documents
+timestamp: 2026-06-26T20:59:05.574Z
+status: Failed
 ---
 
 # Run - Find Written English Documents

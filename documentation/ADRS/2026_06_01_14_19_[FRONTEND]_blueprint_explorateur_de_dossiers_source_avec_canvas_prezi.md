@@ -1,8 +1,19 @@
 ---
-**date:** 2026-06-01
-**status:** To be validated
-**description:** Page Blueprint , canvas pan/zoom TypeScript servant l'exploration Prezi des dossiers du sourceRoot via GET /api/blueprint, sans affichage des fichiers.
-**tags:** blueprint, frontend, canvas, pan-zoom, prezi-zoom, folder-explorer, sourceroot, typescript, blueprint-router
+type: ADR
+title: Blueprint Explorateur De Dossiers Source Avec Canvas Prezi
+description: Page Blueprint , canvas pan/zoom TypeScript servant l'exploration Prezi des dossiers du sourceRoot via GET /api/blueprint, sans affichage des fichiers.
+tags:
+  - blueprint
+  - frontend
+  - canvas
+  - pan-zoom
+  - prezi-zoom
+  - folder-explorer
+  - sourceroot
+  - typescript
+  - blueprint-router
+timestamp: 2026-06-01T14:19:00Z
+status: To be validated
 ---
 
 # Blueprint , Explorateur de dossiers source avec canvas Prezi

@@ -1,3 +1,8 @@
+---
+type: Document
+title: Welcome
+---
+
 # Living Documentation , Guide d'utilisation
 
 > La documentation est un problème que presque tout le monde a résolu en faisant semblant de l'avoir résolu.

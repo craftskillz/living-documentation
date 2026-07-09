@@ -1,8 +1,19 @@
 ---
-**date:** 2026-05-23
-**status:** To be validated
-**description:** Regroupement des scripts frontend classiques par feature folders `src/frontend/snippets/` et `src/frontend/modals/`, avec chemins de chargement HTML explicites et sans bundler.
-**tags:** frontend, feature-folders, snippets, modals, classic-scripts, no-bundler, index-html, context-html, script-order
+type: ADR
+title: Feature Folders Frontend Pour Snippets Et Modales
+description: Regroupement des scripts frontend classiques par feature folders `src/frontend/snippets/` et `src/frontend/modals/`, avec chemins de chargement HTML explicites et sans bundler.
+tags:
+  - frontend
+  - feature-folders
+  - snippets
+  - modals
+  - classic-scripts
+  - no-bundler
+  - index-html
+  - context-html
+  - script-order
+timestamp: 2026-05-23T10:40:00Z
+status: To be validated
 ---
 
 # Feature folders frontend pour snippets et modales

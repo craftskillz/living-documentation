@@ -1,8 +1,21 @@
 ---
-**date:** 2026-04-27
-**status:** To be validated
-**description:** Le MCP Living Documentation expose un SERVER_GUIDE complet (instructions à l'initialize + outil get_server_guide) qui fait de la création d'ADR une étape obligatoire de fin de feature, et ajoute l'outil update_document nécessaire au superseding.
-**tags:** mcp, server-guide, adr, feature-workflow, supersede, update_document, get_server_guide, frontmatter, living-documentation, living-ai-documentation, markdown-conventions
+type: ADR
+title: Server Guide And Feature Workflow For The Mcp
+description: Le MCP Living Documentation expose un SERVER_GUIDE complet (instructions à l'initialize + outil get_server_guide) qui fait de la création d'ADR une étape obligatoire de fin de feature, et ajoute l'outil update_document nécessaire au superseding.
+tags:
+  - mcp
+  - server-guide
+  - adr
+  - feature-workflow
+  - supersede
+  - update_document
+  - get_server_guide
+  - frontmatter
+  - living-documentation
+  - living-ai-documentation
+  - markdown-conventions
+timestamp: 2026-04-27T15:40:00Z
+status: To be validated
 ---
 
 # Server guide et workflow ADR pour le MCP

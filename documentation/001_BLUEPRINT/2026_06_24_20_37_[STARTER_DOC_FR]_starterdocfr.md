@@ -1,8 +1,18 @@
 ---
-**date:** 2026-06-24
-**status:** To be validated
-**description:** Le dossier `starter-doc-fr/` contient le modèle français copié par le wizard pour créer une documentation Living Documentation prête à l'emploi.
-**tags:** starter-doc-fr, wizard, template, francais, ai-context, adr, worklog, onboarding
+type: Document
+title: Starterdocfr
+description: Le dossier `starter-doc-fr/` contient le modèle français copié par le wizard pour créer une documentation Living Documentation prête à l'emploi.
+tags:
+  - starter-doc-fr
+  - wizard
+  - template
+  - francais
+  - ai-context
+  - adr
+  - worklog
+  - onboarding
+timestamp: 2026-06-24T20:37:00Z
+status: To be validated
 ---
 
 Le dossier `starter-doc-fr/` contient le starter français fourni avec Living Documentation. C'est le modèle copié lorsqu'un utilisateur initialise un nouveau projet de documentation en français.

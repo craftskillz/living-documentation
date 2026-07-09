@@ -1,8 +1,19 @@
 ---
-**date:** 2026-05-07
-**status:** To be validated
-**description:** Ajout d'une convention MCP pour confirmer les espaces de documentation decouples des sources puis creer les documents source-of-truth avant les diagrammes.
-**tags:** mcp, server-guide, sourceRoot, documentation-workspace, cross-project, create_document, create_diagram, evidence, workflow
+type: ADR
+title: Cross Project Documentation Workspace Confirmation
+description: Ajout d'une convention MCP pour confirmer les espaces de documentation decouples des sources puis creer les documents source-of-truth avant les diagrammes.
+tags:
+  - mcp
+  - server-guide
+  - sourceRoot
+  - documentation-workspace
+  - cross-project
+  - create_document
+  - create_diagram
+  - evidence
+  - workflow
+timestamp: 2026-05-07T23:05:00Z
+status: To be validated
 ---
 
 # Convention MCP pour les espaces de documentation decouples des sources

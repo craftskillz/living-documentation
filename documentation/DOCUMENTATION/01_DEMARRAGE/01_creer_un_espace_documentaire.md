@@ -1,8 +1,17 @@
 ---
-**date:** 2026-06-30
-**status:** Draft
-**description:** Guide de demarrage pour creer ou ouvrir un espace documentaire Living Documentation.
-**tags:** demarrage, installation, npx, docs-folder, local-first, markdown, admin
+type: Document
+title: 01 creer un espace documentaire
+description: Guide de demarrage pour creer ou ouvrir un espace documentaire Living Documentation.
+tags:
+  - demarrage
+  - installation
+  - npx
+  - docs-folder
+  - local-first
+  - markdown
+  - admin
+timestamp: 2026-06-30T00:00:00Z
+status: Draft
 ---
 
 # Creer un espace documentaire

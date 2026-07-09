@@ -1,3 +1,8 @@
+---
+type: Document
+title: Recherche Plein Texte
+---
+
 ## Recherche plein texte
 
 Living Documentation propose deux niveaux de recherche accessibles depuis le champ en haut de la barre latérale.

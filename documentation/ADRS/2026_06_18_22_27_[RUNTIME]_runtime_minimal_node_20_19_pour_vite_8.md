@@ -1,8 +1,19 @@
 ---
-**date:** 2026-06-18
-**status:** To be validated
-**description:** Le runtime minimal public et CI passe de Node.js 18 a Node.js 20.19.0 afin d'etre compatible avec Vite 8 et Commander 14.
-**tags:** nodejs, runtime, engines, vite8, commander14, npm, ci, setup-node, compatibility
+type: ADR
+title: Runtime Minimal Node 20 19 Pour Vite 8
+description: Le runtime minimal public et CI passe de Node.js 18 a Node.js 20.19.0 afin d'etre compatible avec Vite 8 et Commander 14.
+tags:
+  - nodejs
+  - runtime
+  - engines
+  - vite8
+  - commander14
+  - npm
+  - ci
+  - setup-node
+  - compatibility
+timestamp: 2026-06-18T22:27:00Z
+status: To be validated
 ---
 
 # Runtime minimal Node.js 20.19.0

@@ -1,3 +1,8 @@
+---
+type: Document
+title: Diataxis Architecture Du Contenu
+---
+
 ## Diátaxis , l'architecture du contenu
 
 La méthode <a href="https://diataxis.fr/" target="_blank">**Diátaxis**</a> répond à une question différente de celle de [`Living Documentation`](?doc=3_concept%252F2026_04_08_22_15_%255BDOCUMENTING%255D_living_documentation) mais néanmoins complémentaire : non pas _comment maintenir_ la documentation, mais _comment la structurer_ pour qu'elle serve vraiment.

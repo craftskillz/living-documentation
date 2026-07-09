@@ -1,8 +1,19 @@
 ---
-**date:** 2026-05-11
-**status:** Accepted
-**description:** La page /context conserve le message d'erreur MCP court mais affiche aussi le détail brut ou JSON de l'erreur sous le bouton d'exécution, sans sauvegarder les appels échoués dans AI/MCP.
-**tags:** ai-context, mcp-explorer, runMcpItem, setMcpResultError, stringifyMcpErrorDetail, error-detail, isError, JSON-RPC, playwright
+type: ADR
+title: Affichage Detail Erreur Appels Mcp Page Context
+description: La page /context conserve le message d'erreur MCP court mais affiche aussi le détail brut ou JSON de l'erreur sous le bouton d'exécution, sans sauvegarder les appels échoués dans AI/MCP.
+tags:
+  - ai-context
+  - mcp-explorer
+  - runMcpItem
+  - setMcpResultError
+  - stringifyMcpErrorDetail
+  - error-detail
+  - isError
+  - JSON-RPC
+  - playwright
+timestamp: 2026-05-11T19:33:00Z
+status: Accepted
 ---
 
 # Affichage du détail des erreurs MCP dans /context

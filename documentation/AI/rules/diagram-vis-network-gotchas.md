@@ -1,10 +1,20 @@
 ---
-id: diagram-vis-network-gotchas
+type: Rule
 title: Respecter les contraintes vis-network du diagram editor
-severity: warning
 description: Le rendu diagramme dépend de plusieurs contournements vis-network documentés ; les modifier sans les vérifier peut casser le z-order, les formes custom ou le resize.
-tags: ["diagram", "vis-network", "canvas", "z-order", "custom-shape"]
-appliesTo: ["src/frontend/diagram.html", "src/frontend/diagram/**/*.js", "src/frontend/shape-editor.html", "src/frontend/shape-editor.js"]
+tags:
+  - diagram
+  - vis-network
+  - canvas
+  - z-order
+  - custom-shape
+id: diagram-vis-network-gotchas
+severity: warning
+appliesto:
+  - src/frontend/diagram.html
+  - src/frontend/diagram/**/*.js
+  - src/frontend/shape-editor.html
+  - src/frontend/shape-editor.js
 ---
 
 Avant de modifier le rendu ou les interactions de l'éditeur de diagrammes, vérifier les ADR pertinents et ces contraintes :

@@ -1,3 +1,8 @@
+---
+type: Document
+title: The Living Documentation Tool
+---
+
 ## Ce que cet outil propose
 
 L'outil `Living Documentation` est un outil low footprint, opensource, ne necessitant ni abonnement, ni installation complexe, ni SAAS dédié, ni puissance de calcul massive, rien de tout cela.

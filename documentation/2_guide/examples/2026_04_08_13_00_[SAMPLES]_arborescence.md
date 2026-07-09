@@ -1,3 +1,8 @@
+---
+type: Document
+title: Arborescence
+---
+
 # Arborescence
 
 Les arborescences de fichiers ou de répertoires se représentent avec un bloc de code sans langage spécifié (ou `text`).

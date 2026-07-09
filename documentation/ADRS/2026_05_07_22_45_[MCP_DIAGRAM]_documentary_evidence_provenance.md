@@ -1,8 +1,20 @@
 ---
-**date:** 2026-05-07
-**status:** To be validated
-**description:** Ajout d'une provenance documentaire evidence sur les noeuds et relations de diagramme crees via MCP, avec consultation des sources dans l'editeur.
-**tags:** mcp, diagram, evidence, provenance, documents, read_diagram, create_diagram, source-mode, auditability, evidenceLayer
+type: ADR
+title: Documentary Evidence Provenance
+description: Ajout d'une provenance documentaire evidence sur les noeuds et relations de diagramme crees via MCP, avec consultation des sources dans l'editeur.
+tags:
+  - mcp
+  - diagram
+  - evidence
+  - provenance
+  - documents
+  - read_diagram
+  - create_diagram
+  - source-mode
+  - auditability
+  - evidenceLayer
+timestamp: 2026-05-07T22:45:00Z
+status: To be validated
 ---
 
 # Provenance documentaire des noeuds et relations de diagramme

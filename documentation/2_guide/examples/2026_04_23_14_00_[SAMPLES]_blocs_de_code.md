@@ -1,3 +1,8 @@
+---
+type: Document
+title: Blocs De Code
+---
+
 # Blocs de code
 
 Les blocs de code sont délimités par trois backticks ` ``` ` suivi du nom du langage. Living Documentation utilise **highlight.js** pour la coloration syntaxique. Le thème, la hauteur maximale et le bouton de copie sont configurables dans le panneau admin.

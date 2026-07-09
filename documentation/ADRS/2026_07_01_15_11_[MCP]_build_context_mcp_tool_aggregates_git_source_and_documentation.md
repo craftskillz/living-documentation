@@ -1,8 +1,19 @@
 ---
-**date:** 2026-07-01
-**status:** To be validated
-**description:** Adds a `build_context(task, options?)` MCP tool that aggregates working-tree git status/diff, full content of changed files, and docs/ADRs already bound to those files via the metadata system into a single JSON response, in one call instead of many.
-**tags:** mcp, build_context, context-engineering, git-diff, git-status, metadata-binding, tool-aggregation, sourceRoot, gitRoot
+type: ADR
+title: Build Context Mcp Tool Aggregates Git Source And Documentation
+description: Adds a `build_context(task, options?)` MCP tool that aggregates working-tree git status/diff, full content of changed files, and docs/ADRs already bound to those files via the metadata system into a single JSON response, in one call instead of many.
+tags:
+  - mcp
+  - build_context
+  - context-engineering
+  - git-diff
+  - git-status
+  - metadata-binding
+  - tool-aggregation
+  - sourceRoot
+  - gitRoot
+timestamp: 2026-07-01T15:11:00Z
+status: To be validated
 ---
 
 # Build Context MCP Tool Aggregates Git, Source, And Documentation

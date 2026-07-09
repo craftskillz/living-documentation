@@ -1,8 +1,15 @@
 ---
-**date:** 2026-06-29T18:38:43.141Z
-**status:** Success
-**description:** Resultat d'execution de l'agent Traducteur Anglais vers Français via OpenRouter Test.
-**tags:** agent, run-agent, workspace, llm, traducteur_anglais_vers_francais
+type: Technical Doc
+title: Run Traducteur Anglais Vers Francais
+description: Resultat d'execution de l'agent Traducteur Anglais vers Français via OpenRouter Test.
+tags:
+  - agent
+  - run-agent
+  - workspace
+  - llm
+  - traducteur_anglais_vers_francais
+timestamp: 2026-06-29T18:38:43.141Z
+status: Success
 ---
 
 # Run - Traducteur Anglais vers Français

@@ -1,8 +1,20 @@
 ---
-**date:** 2026-07-08
-**status:** Accepted
-**description:** Adopt Google Cloud's Open Knowledge Format (OKF) as living-documentation's native on-disk format so the docs folder is itself a conformant OKF bundle (superset), replacing the bespoke `**bold:**` pseudo-frontmatter with real YAML while keeping drift-detection, status lifecycle and the MCP as living-doc's differentiators.
-**tags:** okf, open-knowledge-format, yaml-frontmatter, interoperability, knowledge-catalog, native-alignment, migration, drift-detection, mcp, roadmap
+type: ADR
+title: Align Livingdocumentation Natively With Google Open Knowledge Format Okf
+description: Adopt Google Cloud's Open Knowledge Format (OKF) as living-documentation's native on-disk format so the docs folder is itself a conformant OKF bundle (superset), replacing the bespoke `**bold:**` pseudo-frontmatter with real YAML while keeping drift-detection, status lifecycle and the MCP as living-doc's differentiators.
+tags:
+  - okf
+  - open-knowledge-format
+  - yaml-frontmatter
+  - interoperability
+  - knowledge-catalog
+  - native-alignment
+  - migration
+  - drift-detection
+  - mcp
+  - roadmap
+timestamp: 2026-07-08T18:19:00Z
+status: Accepted
 ---
 
 ## Context
