@@ -1713,25 +1713,25 @@
     {
       "path": "src/lib/okf.ts",
       "hash": "0d5eac7b137b03f106be5837ed2793b20f125e042e20ef6e0ae717f3e056e420",
-      "commit": "a31a26c086dc83227ae35e603e9fb4c84205e727",
+      "commit": "d51e2a09a2b6574fd5d61559b0b4c241f1bee243",
       "dirty": false
     },
     {
       "path": "src/mcp/tools/documents.ts",
       "hash": "bf155a232090843800c1e2731980af5398cdce7404c71a08557b1de0a3943274",
-      "commit": "a31a26c086dc83227ae35e603e9fb4c84205e727",
+      "commit": "d51e2a09a2b6574fd5d61559b0b4c241f1bee243",
       "dirty": false
     },
     {
       "path": "src/routes/documents.ts",
-      "hash": "308be0cc1a96b2a6c6f8f499de1ad2b6c7e1f2a606dd519bfd31c38aa3d973c7",
-      "commit": "a31a26c086dc83227ae35e603e9fb4c84205e727",
+      "hash": "bd85eeeae27c07789797dcee13403d29a75c9190d0e340696aaf4864d7cd703c",
+      "commit": "d51e2a09a2b6574fd5d61559b0b4c241f1bee243",
       "dirty": false
     },
     {
       "path": "src/routes/workspace.ts",
       "hash": "807c34a8892804d4e928ef36bbef73a630783b06191d042a9eaebaca1f6e9afe",
-      "commit": "a31a26c086dc83227ae35e603e9fb4c84205e727",
+      "commit": "d51e2a09a2b6574fd5d61559b0b4c241f1bee243",
       "dirty": false
     }
   ],
