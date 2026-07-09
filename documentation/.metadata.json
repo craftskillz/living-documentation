@@ -1747,6 +1747,12 @@
       "hash": "363d4620f8e48feff650fe6a4dcfac737c27a754f0f608c2854966d448a7e157",
       "commit": "ff35d576280005aa7d1556486b386412a8c9961f",
       "dirty": false
+    },
+    {
+      "path": "src/lib/migrate.ts",
+      "hash": "32dafc276a3f538e4468bdb7897fcca5a0ea22bb1f29562a8016125167497b10",
+      "commit": "ce5ba3b76fe1a88172a90b1223ce0dde33a424e9",
+      "dirty": false
     }
   ]
 }
