@@ -1708,5 +1708,13 @@
       "commit": "812d32e54e40ee2c95cde4dac2ae3e411f44ccda",
       "dirty": false
     }
+  ],
+  "ADRS/2026_07_09_20_37_[OKF]_normalizeonwrite_every_document_write_emits_canonical_okf_yaml_frontmatter": [
+    {
+      "path": "src/lib/okf.ts",
+      "hash": "0d5eac7b137b03f106be5837ed2793b20f125e042e20ef6e0ae717f3e056e420",
+      "commit": "3ae015416ef28653123e9f007c884defa10cefff",
+      "dirty": false
+    }
   ]
 }
