@@ -156,7 +156,7 @@ document `documentation/WORKLOG/AAAA_MM_JJ_HH_mm_[WORKLOG]_ticket_XX_<slug>.md`.
 - [x] ~~Ticket 04 - Écriture YAML via MCP + flip de statut~~ (code + tests ; ADR d'implémentation à créer après commit)
 - [x] ~~Ticket 05 - Moulinette de migration déterministe (sans IA)~~ (254 scannés, 252 migrés, 0 erreur, idempotent, flag écrit)
 - [x] ~~Ticket 06 - Garde de migration au démarrage (cli.ts) + flag OKF~~ (garde + commande migrate + init auto-migrate ; ADR après commit)
-- [ ] Ticket 07 - Rendu viewer depuis YAML
+- [x] ~~Ticket 07 - Rendu viewer depuis YAML~~ (tags/type exposés + chips ; strip & pills déjà OK)
 - [ ] Ticket 08 - Liens bundle-relatifs ↔ `?doc=`
 - [ ] Ticket 09 - Génération des `index.md`
 - [ ] Ticket 10 - Génération du `log.md` depuis Git

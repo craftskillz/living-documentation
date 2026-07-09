@@ -15,6 +15,9 @@ export interface DocDetail {
   content: string;
   html: string;
   formattedDate?: string;
+  // OKF frontmatter fields exposed by GET /api/documents/:id.
+  tags?: string[];
+  type?: string;
 }
 
 export interface TreeNode {

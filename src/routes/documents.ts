@@ -7,6 +7,7 @@ import { readMetadataStore, writeMetadataStore } from "../lib/metadata";
 import { normalizeFolderPath } from "../lib/folderName";
 import { parseDocStatus } from "../lib/status";
 import { normalizeFrontmatter } from "../lib/okf";
+import { parseFrontmatter } from "../lib/frontmatter";
 import { renderMarkdownWithCompareBlocks } from "../lib/compareBlock";
 
 const METADATA_SEARCH_PREFIX = "metadata://";
@@ -315,12 +316,15 @@ export function documentsRouter(docsPath: string): Router {
         const content = fs.readFileSync(filePath, "utf-8");
         const meta = parseFilename(path.basename(filePath), filenamePattern);
         const html = decorateFileLinks(renderMarkdownWithCompareBlocks(stripFrontmatter(content), markedOpts));
+        const fm = parseFrontmatter(content).data;
         res.json({
           ...meta,
           id: req.params.id,
           category: "General",
           content,
           html,
+          tags: Array.isArray(fm.tags) ? fm.tags.map(String) : [],
+          type: typeof fm.type === "string" ? fm.type : undefined,
         });
       } catch {
         res.status(500).json({ error: "Failed to read document" });
@@ -349,7 +353,15 @@ export function documentsRouter(docsPath: string): Router {
           ? subdir.split("/")
           : null;
       const html = renderMarkdownWithCompareBlocks(stripFrontmatter(content), markedOpts);
-      res.json({ ...metadata, folder, content, html });
+      const fm = parseFrontmatter(content).data;
+      res.json({
+        ...metadata,
+        folder,
+        content,
+        html,
+        tags: Array.isArray(fm.tags) ? fm.tags.map(String) : [],
+        type: typeof fm.type === "string" ? fm.type : undefined,
+      });
     } catch {
       res.status(500).json({ error: "Failed to read document" });
     }
