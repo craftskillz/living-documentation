@@ -6,6 +6,7 @@ import { readConfig } from "../lib/config";
 import { readMetadataStore, writeMetadataStore } from "../lib/metadata";
 import { normalizeFolderPath } from "../lib/folderName";
 import { parseDocStatus } from "../lib/status";
+import { normalizeFrontmatter } from "../lib/okf";
 import { renderMarkdownWithCompareBlocks } from "../lib/compareBlock";
 
 const METADATA_SEARCH_PREFIX = "metadata://";
@@ -372,7 +373,11 @@ export function documentsRouter(docsPath: string): Router {
         return res.status(403).json({ error: "Access denied" });
       }
       try {
-        fs.writeFileSync(filePath, content, "utf-8");
+        fs.writeFileSync(
+          filePath,
+          normalizeFrontmatter(content, filePath, { title: parseFilename(path.basename(filePath)).title }),
+          "utf-8",
+        );
         return res.json({ ok: true });
       } catch {
         return res.status(500).json({ error: "Failed to write document" });
@@ -388,7 +393,11 @@ export function documentsRouter(docsPath: string): Router {
     }
 
     try {
-      fs.writeFileSync(filePath, content, "utf-8");
+      fs.writeFileSync(
+        filePath,
+        normalizeFrontmatter(content, filename, { title: parseFilename(path.basename(filename)).title }),
+        "utf-8",
+      );
       return res.json({ ok: true });
     } catch {
       return res.status(500).json({ error: "Failed to write document" });
@@ -604,13 +613,17 @@ export function documentsRouter(docsPath: string): Router {
       typeof content === 'string'
         ? content.trimEnd() + '\n'
         : `# ${title.trim()}\n`;
+    const relPath = path.relative(docsPath, filePath);
     try {
-      fs.writeFileSync(filePath, initialContent, 'utf-8');
+      fs.writeFileSync(
+        filePath,
+        normalizeFrontmatter(initialContent, relPath, { title: title.trim() }),
+        'utf-8',
+      );
     } catch {
       return res.status(500).json({ error: 'Failed to create document' });
     }
 
-    const relPath = path.relative(docsPath, filePath);
     const meta = parseFilename(filename, filenamePattern);
     const subdir = path.dirname(relPath);
     const folderSegments = subdir !== '.'

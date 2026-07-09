@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { readConfig } from '../../lib/config';
 import { parseFilename } from '../../lib/parser';
+import { normalizeFrontmatter } from '../../lib/okf';
 
 function buildFilename(filenamePattern: string, title: string, category: string, dateOverride?: string): string {
   const parsed = dateOverride ? new Date(dateOverride) : null;
@@ -264,7 +265,11 @@ export function toolUpdateDocument(docsPath: string, args: { id: string; content
   }
 
   if (!fs.existsSync(filePath)) throw new Error(`Document not found: ${args.id}`);
-  fs.writeFileSync(filePath, args.content, 'utf-8');
+  const relPath = path.isAbsolute(decoded) ? filePath : `${decoded}.md`;
+  const normalized = normalizeFrontmatter(args.content, relPath, {
+    title: parseFilename(path.basename(relPath)).title,
+  });
+  fs.writeFileSync(filePath, normalized, 'utf-8');
 
   return {
     content: [{
@@ -272,7 +277,7 @@ export function toolUpdateDocument(docsPath: string, args: { id: string; content
       text: JSON.stringify({
         success: true,
         id: args.id,
-        bytes: Buffer.byteLength(args.content, 'utf-8'),
+        bytes: Buffer.byteLength(normalized, 'utf-8'),
       }, null, 2),
     }],
   };
@@ -301,9 +306,9 @@ export function toolCreateDocument(docsPath: string, args: {
   if (fs.existsSync(filePath)) throw new Error('A document with this name already exists');
 
   const body = args.content ?? `# ${args.title.trim()}\n`;
-  fs.writeFileSync(filePath, body, 'utf-8');
-
   const relPath = path.relative(docsPath, filePath);
+  fs.writeFileSync(filePath, normalizeFrontmatter(body, relPath, { title: args.title }), 'utf-8');
+
   const docId = encodeURIComponent(relPath.slice(0, -3));
 
   return {

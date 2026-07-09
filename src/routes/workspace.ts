@@ -2,6 +2,7 @@ import { Router } from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
 import { readConfig } from '../lib/config';
+import { normalizeFrontmatter } from '../lib/okf';
 
 const WORKSPACE_VERSION = 1;
 const MAX_WORKSPACE_ENTITIES = 1000;
@@ -1169,8 +1170,12 @@ function createAgentRunDocument(
     suffix += 1;
   }
 
-  fs.writeFileSync(filePath, agentRunMarkdown({ title, agent, provider, ok, userInput, content, debug, artifacts }), 'utf-8');
   const relativePath = path.relative(docsPath, filePath);
+  fs.writeFileSync(
+    filePath,
+    normalizeFrontmatter(agentRunMarkdown({ title, agent, provider, ok, userInput, content, debug, artifacts }), relativePath, { title }),
+    'utf-8',
+  );
   return {
     id: encodeURIComponent(relativePath.slice(0, -3)),
     filename: relativePath,
