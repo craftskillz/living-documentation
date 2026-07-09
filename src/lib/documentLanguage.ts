@@ -1,3 +1,5 @@
+import { getFirstField } from "./frontmatter";
+
 export type DocumentLanguage = "en" | "fr";
 
 export const DOCUMENT_LANGUAGES: readonly DocumentLanguage[] = ["en", "fr"];
@@ -23,14 +25,9 @@ export function normalizeDocumentLanguage(value: string | null | undefined): Doc
 }
 
 export function getDocumentLanguage(content: string): DocumentLanguage | null {
-  const frontmatter = content.match(FRONTMATTER_RE)?.[1];
-  if (!frontmatter) return null;
-
-  for (const line of frontmatter.split(/\r?\n/)) {
-    const match = line.match(LANGUAGE_LINE_RE);
-    if (match) return normalizeDocumentLanguage(match[2]);
-  }
-  return null;
+  return normalizeDocumentLanguage(
+    getFirstField(content, ["language", "lang", "locale", "langue"]),
+  );
 }
 
 export function setDocumentLanguage(content: string, language: DocumentLanguage): string {

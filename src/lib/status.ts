@@ -8,16 +8,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import { readConfig } from "./config";
-
-const STATUS_LINE_RE = /^\s*(?:\*\*status:\*\*|status:)\s*(.+?)\s*$/im;
-const FRONTMATTER_FENCE_RE = /^---\s*\n([\s\S]*?)\n---/;
+import { getField } from "./frontmatter";
 
 export function parseDocStatus(content: string): string | null {
-  if (typeof content !== "string") return null;
-  const fence = content.match(FRONTMATTER_FENCE_RE);
-  if (!fence) return null;
-  const m = fence[1].match(STATUS_LINE_RE);
-  return m ? m[1].trim() : null;
+  return getField(content, "status");
 }
 
 // Resolve a doc id (already decoded) to its .md file path, honouring the same
