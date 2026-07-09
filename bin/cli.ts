@@ -5,6 +5,8 @@ import path from "node:path";
 import fs from "node:fs";
 import { createInterface } from "node:readline/promises";
 import { startServer } from "../src/server";
+import { readConfig, isOkfMigrated } from "../src/lib/config";
+import { migrateDocsFolder } from "../src/lib/migrate";
 
 // Handle SIGTERM gracefully so V8 flushes NODE_V8_COVERAGE (used by c8 in tests).
 // Also good hygiene — without this, process exits with code 143 and Express sockets
@@ -283,6 +285,10 @@ async function runInitWizard(
     createInitInstructionFiles(instructionFiles);
     removeStarterDefaults(docsPath);
 
+    // Make the freshly scaffolded starter a conformant OKF bundle and stamp the
+    // migration flag, so the new project opens without hitting the startup gate.
+    migrateDocsFolder(docsPath);
+
     const port = parseInt(options.port, 10);
     if (Number.isNaN(port) || port < 1 || port > 65535) {
       console.error("\nError: Invalid port number\n");
@@ -363,7 +369,56 @@ Notes:
       process.exit(1);
     }
 
+    // OKF startup gate — refuse to open a project that has not been migrated to
+    // the Open Knowledge Format YAML frontmatter.
+    if (!isOkfMigrated(readConfig(docsPath))) {
+      console.error(
+        `\nThis project is not migrated to the Open Knowledge Format (OKF).\n` +
+          `living-documentation now aligns natively with Google's OKF, so the docs\n` +
+          `folder must be migrated (a deterministic, one-time conversion) before it\n` +
+          `can be opened.\n`,
+      );
+      let doMigrate = false;
+      if (process.stdin.isTTY) {
+        const rl = createInterface({ input: process.stdin, output: process.stdout });
+        const answer = await rl.question(`Migrate "${folderToServe}" now? [y/N] `);
+        rl.close();
+        doMigrate = ["y", "yes", "o", "oui"].includes(answer.trim().toLowerCase());
+      }
+      if (!doMigrate) {
+        console.error(`Run:  npx living-ai-documentation migrate ${folderToServe}\n`);
+        process.exit(1);
+      }
+      const result = migrateDocsFolder(docsPath);
+      if (result.errors.length) {
+        console.error(`\nMigration failed:\n${result.errors.map((e) => `  ! ${e}`).join("\n")}\n`);
+        process.exit(1);
+      }
+      console.log(`\nMigrated ${result.changed} document(s) to OKF YAML. Continuing…\n`);
+    }
+
     await startServer({ docsPath, port, openBrowser: options.open ?? false });
+  });
+
+program
+  .command("migrate [folder]")
+  .description("Convert a docs folder's frontmatter to canonical OKF YAML (deterministic, no AI).")
+  .option("--dry-run", "Report what would change without writing any file")
+  .action((folder: string | undefined, options: { dryRun?: boolean }) => {
+    const target = folder ?? "documentation";
+    validateRelativeFolder(target);
+    const docsPath = path.resolve(process.cwd(), target);
+    if (!fs.existsSync(docsPath)) {
+      console.error(`\nError: Folder not found: ${docsPath}\n`);
+      process.exit(1);
+    }
+    const r = migrateDocsFolder(docsPath, { dryRun: options.dryRun });
+    console.log(`${options.dryRun ? "[dry-run] " : ""}OKF frontmatter migration — ${docsPath}`);
+    console.log(
+      `  scanned: ${r.scanned}  ${options.dryRun ? "would change" : "changed"}: ${r.changed}  unchanged: ${r.unchanged}  errors: ${r.errors.length}`,
+    );
+    for (const e of r.errors) console.error(`  ! ${e}`);
+    if (r.errors.length) process.exit(1);
   });
 
 program.parseAsync().catch((error) => {

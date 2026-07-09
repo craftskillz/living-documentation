@@ -35,6 +35,14 @@ export interface FavoriteDoc {
   title: string;
 }
 
+// OKF migration stamp. Its presence in .living-doc.json means the docs folder has
+// been migrated to canonical OKF YAML frontmatter (see the CLI startup gate).
+// Written by the migration (src/lib/migrate.ts); never set through the config API.
+export interface OkfMigration {
+  version: string;
+  migratedAt?: string;
+}
+
 export interface GitIntegrationConfig {
   mode: GitIntegrationMode;
   pushMode: GitPushMode;
@@ -82,6 +90,14 @@ export interface StoredConfig {
   // Optional Git automation for documentation saves. "unconfigured" keeps the
   // reminder visible until the user explicitly enables or disables it.
   gitIntegration: GitIntegrationConfig;
+  // Present once the docs folder is migrated to OKF YAML. Absent = not migrated;
+  // it is NOT in STORAGE_DEFAULTS so a fresh/legacy project reads as un-migrated.
+  okfMigration?: OkfMigration;
+}
+
+// True when the docs folder has been migrated to OKF YAML frontmatter.
+export function isOkfMigrated(cfg: { okfMigration?: OkfMigration }): boolean {
+  return typeof cfg.okfMigration?.version === "string" && cfg.okfMigration.version.length > 0;
 }
 
 // Runtime shape: what consumers receive from readConfig.
