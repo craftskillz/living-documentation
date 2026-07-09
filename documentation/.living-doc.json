@@ -3,12 +3,7 @@
   "title": "Projet Living Documentation",
   "theme": "system",
   "siteTheme": "base",
-  "favorites": [
-    {
-      "id": "WORKLOG%2FROADMAP",
-      "title": "ROADMAP"
-    }
-  ],
+  "favorites": [],
   "language": "fr",
   "port": 4321,
   "extraFiles": [
