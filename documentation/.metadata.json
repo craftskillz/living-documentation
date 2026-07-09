@@ -1715,6 +1715,12 @@
       "hash": "0d5eac7b137b03f106be5837ed2793b20f125e042e20ef6e0ae717f3e056e420",
       "commit": "3ae015416ef28653123e9f007c884defa10cefff",
       "dirty": false
+    },
+    {
+      "path": "src/mcp/tools/documents.ts",
+      "hash": "bf155a232090843800c1e2731980af5398cdce7404c71a08557b1de0a3943274",
+      "commit": "7a725e0f198de9bc8249d9f3755b4a0e2a9663c8",
+      "dirty": false
     }
   ]
 }
