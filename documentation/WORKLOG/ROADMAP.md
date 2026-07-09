@@ -143,7 +143,7 @@ document `documentation/WORKLOG/AAAA_MM_JJ_HH_mm_[WORKLOG]_ticket_XX_<slug>.md`.
 
 - [x] ~~Ticket 01 - Audit de conformité & table de mapping figée~~
 - [x] ~~Ticket 02 - Lecteur frontmatter dual (YAML + legacy)~~
-- [ ] Ticket 03 - Modèle de concept OKF & dérivation du `type`
+- [x] ~~Ticket 03 - Modèle de concept OKF & dérivation du `type`~~
 - [ ] Ticket 04 - Écriture YAML via MCP + flip de statut
 - [ ] Ticket 05 - Moulinette de migration déterministe (sans IA)
 - [ ] Ticket 06 - Garde de migration au démarrage (cli.ts) + flag OKF
