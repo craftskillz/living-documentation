@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { readConfig } from '../../lib/config';
 import { parseFilename } from '../../lib/parser';
-import { normalizeFrontmatter } from '../../lib/okf';
+import { isReservedOkfFile, normalizeFrontmatter } from '../../lib/okf';
 
 function buildFilename(filenamePattern: string, title: string, category: string, dateOverride?: string): string {
   const parsed = dateOverride ? new Date(dateOverride) : null;
@@ -60,7 +60,7 @@ export function listAllDocuments(docsPath: string): DocSummary[] {
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) {
         scan(full);
-      } else if (entry.name.toLowerCase().endsWith('.md')) {
+      } else if (entry.name.toLowerCase().endsWith('.md') && !isReservedOkfFile(entry.name)) {
         const relPath = path.relative(docsPath, full);
         const meta = parseFilename(entry.name, filenamePattern);
         const subdir = path.dirname(relPath);

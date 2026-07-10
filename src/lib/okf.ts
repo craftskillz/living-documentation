@@ -7,6 +7,17 @@
 // yields the same output, with no LLM involved.
 import { parseFrontmatter, serializeFrontmatter } from "./frontmatter";
 
+export const OKF_SPEC_VERSION = "0.1";
+
+// OKF reserved filenames — directory listings and changelog. They are NOT
+// concepts: excluded from the document list, never migrated, and generated.
+export const RESERVED_OKF_FILES = new Set(["index.md", "log.md"]);
+
+/** True when a filename is an OKF reserved file (case-insensitive). */
+export function isReservedOkfFile(filename: string): boolean {
+  return RESERVED_OKF_FILES.has(filename.toLowerCase());
+}
+
 // Emission order for known keys; unknown/custom keys (e.g. `sources`) follow.
 const CANONICAL_ORDER = [
   "type",

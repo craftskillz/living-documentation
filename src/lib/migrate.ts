@@ -6,12 +6,11 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parseFilename } from "./parser";
-import { normalizeFrontmatter } from "./okf";
+import { isReservedOkfFile, normalizeFrontmatter, OKF_SPEC_VERSION } from "./okf";
+import { generateOkfIndexFiles } from "./okf/index-generator";
 
-export const OKF_VERSION = "0.1";
+export const OKF_VERSION = OKF_SPEC_VERSION;
 
-// Reserved OKF filenames are not concepts and carry no frontmatter (T08/T09).
-const RESERVED = new Set(["index.md", "log.md"]);
 const IGNORED_DIRS = new Set([".git", "node_modules", "dist"]);
 
 export interface MigrateResult {
@@ -31,7 +30,7 @@ function collectMd(root: string, dir: string = root, out: string[] = []): string
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       if (!IGNORED_DIRS.has(entry.name)) collectMd(root, full, out);
-    } else if (entry.name.endsWith(".md") && !RESERVED.has(entry.name)) {
+    } else if (entry.name.endsWith(".md") && !isReservedOkfFile(entry.name)) {
       out.push(full);
     }
   }
@@ -79,6 +78,11 @@ export function migrateDocsFolder(
     }
   }
 
-  if (!opts.dryRun && result.errors.length === 0) writeOkfFlag(docsPath);
+  if (!opts.dryRun && result.errors.length === 0) {
+    // Reserved OKF files: index.md listings (+ root okf_version) reflect the
+    // now-migrated concepts; log.md is generated separately (git history).
+    generateOkfIndexFiles(docsPath);
+    writeOkfFlag(docsPath);
+  }
   return result;
 }

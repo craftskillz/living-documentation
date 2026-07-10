@@ -6,7 +6,7 @@ import { readConfig } from "../lib/config";
 import { readMetadataStore, writeMetadataStore } from "../lib/metadata";
 import { normalizeFolderPath } from "../lib/folderName";
 import { parseDocStatus } from "../lib/status";
-import { normalizeFrontmatter } from "../lib/okf";
+import { isReservedOkfFile, normalizeFrontmatter } from "../lib/okf";
 import { parseFrontmatter } from "../lib/frontmatter";
 import { renderMarkdownWithCompareBlocks } from "../lib/compareBlock";
 
@@ -29,6 +29,7 @@ export function collectMdFiles(dir: string, baseDir: string): string[] {
       results.push(...collectMdFiles(fullPath, baseDir));
     } else if (
       entry.name.toLowerCase().endsWith(".md") &&
+      !isReservedOkfFile(entry.name) &&
       (entry.isFile() || (entry.isSymbolicLink() && fs.statSync(fullPath).isFile()))
     ) {
       results.push(toPosixPath(path.relative(baseDir, fullPath)));

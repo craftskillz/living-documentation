@@ -42,6 +42,44 @@ const COPY_SVG =
 const CHECK_SVG =
   '<svg viewBox="0 0 16 16" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"/></svg>';
 
+// Resolve an inline slash/dot path (POSIX), dropping `.` and `..` segments.
+function normalizeRelPath(p: string): string {
+  const out: string[] = [];
+  for (const seg of p.split("/")) {
+    if (seg === "" || seg === ".") continue;
+    if (seg === "..") out.pop();
+    else out.push(seg);
+  }
+  return out.join("/");
+}
+
+// Map an OKF bundle-relative Markdown link (`/ADRS/x.md`, `./x.md`, `../g/x.md`,
+// `x.md`) to a document id (+ optional anchor). Returns null for non-.md or
+// external links. `currentDocId` anchors relative paths to the current doc's
+// folder.
+export function resolveBundleMdLink(
+  href: string,
+  currentDocId?: string,
+): { id: string; anchor: string | null } | null {
+  const hashIdx = href.indexOf("#");
+  const pathPart = hashIdx === -1 ? href : href.slice(0, hashIdx);
+  const anchor = hashIdx === -1 ? null : href.slice(hashIdx + 1) || null;
+  if (!pathPart.toLowerCase().endsWith(".md")) return null;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(pathPart)) return null; // scheme (http:, mailto:) → external
+
+  let rel: string;
+  if (pathPart.startsWith("/")) {
+    rel = pathPart.slice(1);
+  } else {
+    const current = currentDocId ? decodeURIComponent(currentDocId) : "";
+    const dir = current.includes("/") ? current.slice(0, current.lastIndexOf("/")) : "";
+    rel = dir ? `${dir}/${pathPart}` : pathPart;
+  }
+  rel = normalizeRelPath(rel).replace(/\.md$/i, "");
+  if (!rel) return null;
+  return { id: encodeURIComponent(rel), anchor };
+}
+
 export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireOptions): boolean {
   contentEl.innerHTML = html;
 
@@ -119,6 +157,18 @@ export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireO
     a.addEventListener("click", e => {
       e.preventDefault();
       opts.onDocLink(decodeURIComponent(m[1]), anchorTarget);
+    });
+  });
+
+  // OKF bundle-relative cross-links (/ADRS/x.md, ./x.md, ../g/x.md) → open the doc.
+  contentEl.querySelectorAll("a[href]").forEach(a => {
+    const href = a.getAttribute("href");
+    if (!href || /[?&]doc=/.test(href)) return; // ?doc= handled above
+    const resolved = resolveBundleMdLink(href, opts.docId);
+    if (!resolved) return;
+    a.addEventListener("click", e => {
+      e.preventDefault();
+      opts.onDocLink(resolved.id, resolved.anchor);
     });
   });
 
