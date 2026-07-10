@@ -8,6 +8,7 @@ import path from "node:path";
 import { parseFilename } from "./parser";
 import { isReservedOkfFile, normalizeFrontmatter, OKF_SPEC_VERSION } from "./okf";
 import { generateOkfIndexFiles } from "./okf/index-generator";
+import { generateOkfLogFile } from "./okf/log-generator";
 
 export const OKF_VERSION = OKF_SPEC_VERSION;
 
@@ -79,9 +80,10 @@ export function migrateDocsFolder(
   }
 
   if (!opts.dryRun && result.errors.length === 0) {
-    // Reserved OKF files: index.md listings (+ root okf_version) reflect the
-    // now-migrated concepts; log.md is generated separately (git history).
+    // Reserved OKF files: index.md listings (+ root okf_version) and the log.md
+    // changelog (from git history), both regenerated to reflect the bundle.
     generateOkfIndexFiles(docsPath);
+    generateOkfLogFile(docsPath);
     writeOkfFlag(docsPath);
   }
   return result;
