@@ -16,17 +16,17 @@ timestamp: 2026-07-01T15:11:00Z
 status: To be validated
 sources:
   - path: src/mcp/tools/context.ts
-    hash: 86651221bab74cfc8466a277dd96ad0f6be2296b88a1a27f61f1501a40482717
-    commit: d49e8e311e831d555c76fae658c97a976be52fe9
-    dirty: true
+    hash: 6e8b88a0e307538e2f8d32d0f80def99e991875820d73a6984b3ef2d0dcd8388
+    commit: f112eff98d0a1feff29ef00cdd867f403827ad21
+    dirty: false
   - path: src/lib/git.ts
-    hash: 4ccc5ab9941b47ac60073ee48b653c5f2f199d5bc3014710d49af6df8fa4e9fa
-    commit: 3f6a17c1bfd8f042006769f9b5ccffa1f7f34f3a
-    dirty: true
+    hash: 37f8b429af1fdfebf6ed46b8017e5499a83876d2b5e9264ff4bcf5afa6830473
+    commit: f112eff98d0a1feff29ef00cdd867f403827ad21
+    dirty: false
   - path: src/mcp/server.ts
-    hash: 8fa290cd5254d525c9d861f033393fe99ad5d44c36e01d7928b1cf4c105d36dd
-    commit: c5c7bd5153f6db5ac7c2e5020a5af8ff3af41dbb
-    dirty: true
+    hash: 3b47ab14e3820987ba65387741d7afabd76625bdd011fee073c7f08d5fe32969
+    commit: f112eff98d0a1feff29ef00cdd867f403827ad21
+    dirty: false
 ---
 
 # Build Context MCP Tool Aggregates Git, Source, And Documentation
