@@ -37,10 +37,6 @@
       "dirty": false
     },
     {
-      "path": "src/frontend/diagram/main.js",
-      "hash": "0d59628fd8a24326e20b82ad224df83775d41ca19381261686756e1ee69535d4"
-    },
-    {
       "path": "scripts/copy-assets.ts",
       "hash": "ffdb3d3b63a943a0d0eb4988f8fe71aa7e4fb937f4426a1e94bd6436ce4ae240",
       "commit": "be260560beaadd1bcaf8dfadf1a73d4679b5f1d5",
