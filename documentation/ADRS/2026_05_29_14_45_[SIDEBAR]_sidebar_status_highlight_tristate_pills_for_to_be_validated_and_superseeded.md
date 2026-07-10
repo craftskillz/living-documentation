@@ -16,6 +16,13 @@ tags:
   - SuperSeeded
 timestamp: 2026-05-29T14:45:00Z
 status: To be validated
+sources:
+  - path: src/frontend/sidebar.js
+    hash: 62a8bef22069bca33041d1db701ededa5ea8d7ff149e5800d146fdd623810dc0
+  - path: src/frontend/sidebar-helpers.js
+    hash: 9faebd8a5b7019fb8baf5acf7169f66afacd3e197acbe2c65a2fd2f33d3e951c
+  - path: src/routes/documents.ts
+    hash: 1007079df940db8be293b167d84c5d3722bfd8e223604a2e43f197afaf364f05
 ---
 
 # Pastilles tri-état de mise en évidence des statuts dans la barre latérale

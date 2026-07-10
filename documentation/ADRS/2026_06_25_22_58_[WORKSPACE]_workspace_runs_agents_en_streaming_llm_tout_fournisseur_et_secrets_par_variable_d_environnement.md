@@ -15,6 +15,59 @@ tags:
   - spa-navigation
 timestamp: 2026-06-25T22:58:00Z
 status: To be validated
+sources:
+  - path: src/routes/workspace.ts
+    hash: df208e1bad0c5d0e641a91d6cb45bacdc274f5b471d303d1d7792c139b148df7
+    commit: 2bb01b88d66591d4eb79bbe0cbc16ec807367f4c
+    dirty: false
+  - path: src/lib/config.ts
+    hash: e76e4310ecb7008bda801ffb6b39d49fa1c83015567a25656a221b9cb21e858a
+    commit: 2bb01b88d66591d4eb79bbe0cbc16ec807367f4c
+    dirty: false
+  - path: src/routes/config.ts
+    hash: 20f565abb5e14570e0aff9ffcc2a42b1cf1abe7725b61c6469c60b084ab05b45
+    commit: 2bb01b88d66591d4eb79bbe0cbc16ec807367f4c
+    dirty: false
+  - path: src/frontend-svelte/src/lib/persistentToast.ts
+    hash: 5f43913a980ef8f6ad33f64ac84431b6315c3f9361bf0919c2bd9e85baceb962
+    commit: 57432cefdc7c3e7d4b0de51152892e3be9f9256b
+    dirty: true
+  - path: src/frontend-svelte/src/lib/workspace/persistence.ts
+    hash: de0d4f1348ddbca177afd1d81ce0a0dc727750515520e221424da75f40e06924
+    commit: 2bb01b88d66591d4eb79bbe0cbc16ec807367f4c
+    dirty: false
+  - path: src/frontend-svelte/src/lib/workspace/app.ts
+    hash: 61047e59b98c901680c42e411c87014e9813e809d29e8ed111a6506ad6fbb669
+    commit: 2bb01b88d66591d4eb79bbe0cbc16ec807367f4c
+    dirty: false
+  - path: src/frontend-svelte/src/routes/Workspace.svelte
+    hash: a1c0c9ce308c7da22a57d8ec4255dfd2992b9b58b0f6aad67bfb01aca22df32e
+    commit: 2bb01b88d66591d4eb79bbe0cbc16ec807367f4c
+    dirty: false
+  - path: src/frontend-svelte/src/routes/Admin.svelte
+    hash: e12fa295872e65b9c2304b3fed8e153f58905400a87ffcdd4e82feadf68c036c
+    commit: 2bb01b88d66591d4eb79bbe0cbc16ec807367f4c
+    dirty: false
+  - path: src/frontend-svelte/src/lib/Topbar.svelte
+    hash: 076046a753bcd6023f32a56f0963fbbdc633a28a788776a0ec911f35016a7649
+    commit: 2bb01b88d66591d4eb79bbe0cbc16ec807367f4c
+    dirty: false
+  - path: src/frontend-svelte/src/App.svelte
+    hash: 46f9aa2f924c883283c601bb66915174f5cf35cd0d46aba882260ce992865a2d
+    commit: 2bb01b88d66591d4eb79bbe0cbc16ec807367f4c
+    dirty: false
+  - path: src/frontend-svelte/src/styles/app.css
+    hash: f0fada89775681970a749e81a961858e91eb938d8d75ca3651d3455d699e4da4
+    commit: 019de294d1412d5511b045bc53d1fc5b0bc7010d
+    dirty: true
+  - path: src/frontend-svelte/src/lib/diagram/diagram.css
+    hash: 32e66aa5f13b8d738c2829f9cad88e0c9810f736d98ef805640979def19085c1
+    commit: aa27219572677ddf90c8370776a31d89481e513b
+    dirty: true
+  - path: src/frontend-svelte/src/lib/workspace/styles.css
+    hash: a3511c12228c09e9f4e497b36f4d4f0a54007b91cd397278722d2d25caf57fec
+    commit: b8eca35497a74e4c2b6ec57cd721513544ae3ad9
+    dirty: true
 ---
 
 # ADR — Workspace : runs agents en streaming, LLM tout fournisseur, secrets par variable d'environnement

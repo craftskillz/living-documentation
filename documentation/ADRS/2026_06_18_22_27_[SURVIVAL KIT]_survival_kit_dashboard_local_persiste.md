@@ -15,6 +15,23 @@ tags:
   - express-router
 timestamp: 2026-06-18T22:27:00Z
 status: To be validated
+sources:
+  - path: src/routes/survival-kit.ts
+    hash: 16b13a11b4444d565f1cd9e0fa0d50af250dbdd67527fa9afacf6b29af67977a
+  - path: src/frontend-svelte/src/routes/SurvivalKit.svelte
+    hash: bd6f87fc43252250b522ad12d51a5251c82ae7e2a8ae06e9ad0a041fba0d33af
+  - path: src/frontend-svelte/src/lib/survival-kit/store.svelte.ts
+    hash: 1164eee619c5c827c8dafacc10f75edab1b2dd6decd6cf2bddee83ea20b62bdc
+  - path: src/frontend-svelte/src/lib/survival-kit/types.ts
+    hash: 4f77ab9980002b0ba23900819bffe6922d3a276fa5e9cbbab84200ba3f9539fb
+  - path: src/frontend-svelte/src/lib/survival-kit/TasksPanel.svelte
+    hash: 19a8313683404455617004c609c3b35a1e67e385f577c6b216645c8f8101f830
+  - path: src/frontend-svelte/src/lib/survival-kit/NotesPanel.svelte
+    hash: 49f6a9c9b8c9b6ca053349585cbaecf8714af643fc2b4111faebd19221aabc7c
+  - path: src/frontend-svelte/src/lib/survival-kit/LinksPanel.svelte
+    hash: 8da33029fd9b9b92ef0d6bf4a3103303c5359eaef68da10c187dddf093d77e82
+  - path: src/frontend-svelte/src/lib/survival-kit/SkModal.svelte
+    hash: 9dfd54bc7bcaa8e0c5ea5b8c5ce35338b6715b022d8447a24f751946791520b5
 ---
 
 # Survival Kit : dashboard local persiste

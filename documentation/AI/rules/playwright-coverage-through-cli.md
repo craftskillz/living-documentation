@@ -8,6 +8,13 @@ tags:
   - coverage
   - c8
   - cli
+sources:
+  - path: tests/helpers/server.ts
+    hash: d818ed9ffed40f8ea60b2c1ddc28b7a8ba0bd227638575bf4cc1354ba96d98cb
+  - path: tests/helpers/coverage.ts
+    hash: 7c73a492041aed2e61793e13b556b52ba357e30520abe5e937cfdc77c3fbcdd3
+  - path: bin/cli.ts
+    hash: 4a8a9a84e44d6e6e94dee01f6be680c1fb872fa7e8d52f98e615a81cbd057cda
 id: playwright-coverage-through-cli
 severity: warning
 appliesto:

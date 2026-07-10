@@ -14,6 +14,19 @@ tags:
   - gitRoot
 timestamp: 2026-07-01T15:11:00Z
 status: To be validated
+sources:
+  - path: src/mcp/tools/context.ts
+    hash: 86651221bab74cfc8466a277dd96ad0f6be2296b88a1a27f61f1501a40482717
+    commit: d49e8e311e831d555c76fae658c97a976be52fe9
+    dirty: true
+  - path: src/lib/git.ts
+    hash: 4ccc5ab9941b47ac60073ee48b653c5f2f199d5bc3014710d49af6df8fa4e9fa
+    commit: 3f6a17c1bfd8f042006769f9b5ccffa1f7f34f3a
+    dirty: true
+  - path: src/mcp/server.ts
+    hash: 8fa290cd5254d525c9d861f033393fe99ad5d44c36e01d7928b1cf4c105d36dd
+    commit: c5c7bd5153f6db5ac7c2e5020a5af8ff3af41dbb
+    dirty: true
 ---
 
 # Build Context MCP Tool Aggregates Git, Source, And Documentation

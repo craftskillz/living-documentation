@@ -15,6 +15,15 @@ tags:
   - snippet-table
 timestamp: 2026-07-08T11:09:00Z
 status: To be validated
+sources:
+  - path: src/frontend-svelte/src/lib/home/tableAttributes.ts
+    hash: b29ba90eb1d1675185a0a832f6c47b683fa2a6ab3ec4c84185043c1c9063abd3
+    commit: 0aafdb062960a54320423ef1e617f119fc93845f
+    dirty: false
+  - path: src/frontend-svelte/src/lib/home/home.css
+    hash: 279b25d2f40766a9ac8286648b28c7cb96fabb0b09de9595a961f28121e6baba
+    commit: 0aafdb062960a54320423ef1e617f119fc93845f
+    dirty: false
 ---
 
 ## Context

@@ -22,6 +22,27 @@ tags:
   - workspace-route
 timestamp: 2026-05-30T22:14:00Z
 status: To be validated
+sources:
+  - path: src/routes/workspace.ts
+    hash: f7547638be1f4bbbe6be59c946e63c96b65d17656a93915e2df66bc04481509c
+    commit: 9b1baf6fc181cd4be44abbf5ebdbca1304d1b54d
+    dirty: false
+  - path: src/frontend-svelte/src/routes/Workspace.svelte
+    hash: f463adb35124142fec652bb282939963863948b4a2742248b853769bc3098d37
+    commit: 9b1baf6fc181cd4be44abbf5ebdbca1304d1b54d
+    dirty: false
+  - path: src/frontend-svelte/src/lib/workspace/app.ts
+    hash: 40957f7836ba0ca13822588a1e2e7d66ec93ce1974db44bd90f8d4d42ff646ee
+    commit: 9b1baf6fc181cd4be44abbf5ebdbca1304d1b54d
+    dirty: false
+  - path: src/frontend-svelte/src/lib/workspace/persistence.ts
+    hash: 0ee0a98a7341580c5fc41b896a7d18e72571941100f8029a38842bc06e659b03
+    commit: 9b1baf6fc181cd4be44abbf5ebdbca1304d1b54d
+    dirty: false
+  - path: src/frontend-svelte/src/lib/workspace/styles.css
+    hash: 9515b85cfd68886de39b7e673ee101b771d315074b74ef2c8c9d5965e27f0626
+    commit: 9b1baf6fc181cd4be44abbf5ebdbca1304d1b54d
+    dirty: false
 ---
 
 # Workspace de configuration graphe avec agents LLM et tool use MCP

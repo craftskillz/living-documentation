@@ -15,6 +15,25 @@ tags:
   - playwright
 timestamp: 2026-06-18T22:37:00Z
 status: To be validated
+sources:
+  - path: src/frontend-svelte/src/lib/home/imageAttributes.ts
+    hash: 739269360b62dea053592957a20acb88a6ed70cae02d7f7b687ff635bf288c5a
+  - path: src/frontend-svelte/src/lib/home/wireContent.ts
+    hash: 7b567ef3276b528e4bc2bf11144e44c69dfec70c556f75e05d5911afaf6999e0
+  - path: src/frontend-svelte/src/lib/home/inlineSnippetEdit.ts
+    hash: ef790a393cc5749e0f295e5bdd48bf361e203e62a7d44292087f3070e1355d73
+  - path: src/frontend-svelte/src/lib/home/SnippetsModal.svelte
+    hash: b203ae69ee2394a4a9044ffd511621f3b8c77a192f9c2bfe3a1b9987f99e3a66
+  - path: src/frontend-svelte/src/lib/home/snippets/builders.ts
+    hash: 18010bad31e544645239b53e90ac34e395589fe455293604ee410ff7853724ac
+  - path: src/frontend-svelte/src/lib/home/snippets/parsers.ts
+    hash: 7dbea0ec90862052029571e5d3da59030f6e890b1a2546e49ded01454c550369
+  - path: src/frontend-svelte/src/lib/home/home.css
+    hash: a5c19bf37fffc52cb2a5f1c1d3ac73d263928e17b302df060ec0dc7c2c5e317e
+  - path: tests/e2e/inline-snippet-edit.spec.ts
+    hash: ba92114dc514ad28d8e3d28f3406e0b525c8d2826676335f929ac9ba5aef5ac9
+  - path: src/frontend-svelte/src/lib/home/snippets/detect.ts
+    hash: 9300539386aef77e3d7d9bd9075235f94ee7188dc2d1f17249f30a14f48a264c
 ---
 
 # Directives de largeur et alignement des images Markdown

@@ -15,6 +15,21 @@ tags:
   - persistence
 timestamp: 2026-05-31T11:43:00Z
 status: To be validated
+sources:
+  - path: src/lib/config.ts
+    hash: 40a69378387f63b27d7489c5266cc83142ec8bbf19939b864ebcc05959700f5a
+  - path: src/routes/config.ts
+    hash: b41c5ceebb5306f54e2b1b4976f1f9b991f8483911e5508dc94646ef96fa3200
+  - path: src/frontend/diagram/defaults-modal.js
+    hash: dfb01cc42807617c120191b20ba4cd6c5a9ce49cd84f5a28545e829ad947066c
+  - path: src/frontend/diagram/node-panel.js
+    hash: 6ad2e6eff35f8b78b42c54702a3a9545e002e9090308b5dec777a657c2e3ed15
+  - path: src/frontend/diagram/edge-panel.js
+    hash: 6bd76424eed5fb36efad8bb522acd7763bbd2f67eb3a74a651606a7762e8f949
+  - path: src/frontend/diagram/network.js
+    hash: 1595fe3e819c509b8dceb06c4fae85f69870f646401f4ee5d88f752d64c414e9
+  - path: src/frontend/diagram.html
+    hash: b8b831fad2cd237424f4e523d76a9c3a4bd55a74d8b4b669086e1e928ac96cc2
 ---
 
 ## Contexte

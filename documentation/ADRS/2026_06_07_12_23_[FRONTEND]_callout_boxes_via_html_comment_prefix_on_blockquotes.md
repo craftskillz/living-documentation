@@ -15,6 +15,23 @@ tags:
   - prose
 timestamp: 2026-06-07T12:23:00Z
 status: To be validated
+sources:
+  - path: src/frontend-svelte/src/lib/home/blockquoteAttributes.ts
+    hash: cbf1bc9d2fc8e2709caefa84bd045e0399ae63d79bc015e0d45c54b46a28c36d
+  - path: src/frontend-svelte/src/lib/home/wireContent.ts
+    hash: fdd1a993ac8a78f2cd94ccc36c6ab583abef50377490f7a856ba297f0423596b
+  - path: src/frontend-svelte/src/lib/home/home.css
+    hash: e8dd37c4b33813262301295c13bc5d9f9ef358cb8851eeae39e6cd1e305f9373
+  - path: src/frontend-svelte/src/lib/home/snippets/parsers.ts
+    hash: fff8c0bd6aa6bbffb078b4d7a8a3503608822dc1f16307ec06840b53715b93a9
+  - path: src/frontend-svelte/src/lib/home/snippets/builders.ts
+    hash: ee757a18e2c8b388b69b248300e25cbae8bc955f7de59bf19945b4e78f983673
+  - path: src/frontend-svelte/src/lib/home/snippets/detect.ts
+    hash: 32eee13ad452af05b12c64f57985f9c265681d06926b8effbfb31aae8db298db
+  - path: src/frontend-svelte/src/lib/home/inlineSnippetEdit.ts
+    hash: 5993e1336b6caac93c558de400b96bb695eeee7e4ef3a7fde16b4977ae9962e9
+  - path: src/frontend-svelte/src/lib/home/SnippetsModal.svelte
+    hash: b7d6e3e5fc0ed3740cf8082edc99b89b7957feeba0e99d969933ed0b0766c99c
 ---
 
 ## Context

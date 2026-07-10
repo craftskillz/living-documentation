@@ -15,6 +15,13 @@ tags:
   - ld-free-arrow-style
 timestamp: 2026-05-31T15:34:00Z
 status: To be validated
+sources:
+  - path: src/frontend/diagram/defaults-modal.js
+    hash: 58152134721bc48b2cd6aff783c4928c7b73cdf0db0d6d66ff7b1789242d5b70
+  - path: src/frontend/diagram/node-panel.js
+    hash: c3d6caff5e7e221d7669bf6cd8e0e4145b01861273847214126adc7a55be85f4
+  - path: src/frontend/diagram/edge-panel.js
+    hash: b2ddc37fb5b6f8c8da864fbef8d32b53380a797181c1ed34511896b0ea75e990
 ---
 
 ## Contexte

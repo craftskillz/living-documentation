@@ -15,6 +15,13 @@ tags:
   - DocViewer
 timestamp: 2026-06-18T23:07:00Z
 status: To be validated
+sources:
+  - path: src/frontend-svelte/src/lib/home/DocViewer.svelte
+    hash: 929ae87838a148b00d469e3dee35c7e4e6fd6f66071f4cd8451f986f2db2a129
+  - path: src/frontend-svelte/src/lib/home/wireContent.ts
+    hash: 7b567ef3276b528e4bc2bf11144e44c69dfec70c556f75e05d5911afaf6999e0
+  - path: tests/e2e/inline-snippet-edit.spec.ts
+    hash: 2ba623e25d466ce2b114991d4d4c785bf1f07751b605e6b871fbde38ef96ff2b
 ---
 
 # Shift+Click ou Command+Click plein ecran pour Mermaid

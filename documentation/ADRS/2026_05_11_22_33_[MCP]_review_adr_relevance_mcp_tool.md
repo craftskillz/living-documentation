@@ -19,6 +19,13 @@ tags:
   - playwright
 timestamp: 2026-05-11T22:33:00Z
 status: To be validated
+sources:
+  - path: src/mcp/server.ts
+    hash: 3b1a958205aacbca4131f8a5557957d09cca5266d0937dae99e464b2c3b0e7af
+  - path: src/mcp/tools/metadata.ts
+    hash: a1f4e76088ecb14b2395ae526de9766bcca185e144d891e291167fe253d44fce
+  - path: tests/api/mcp.spec.ts
+    hash: d95c629036430dded46eefcb38a3ae0e6983652860b67d2fb63fff4ba9bd005b
 ---
 
 # Revue de pertinence et audit de dérive ADR via MCP

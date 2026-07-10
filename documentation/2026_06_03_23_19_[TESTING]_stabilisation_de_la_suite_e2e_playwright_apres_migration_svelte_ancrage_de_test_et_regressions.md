@@ -15,6 +15,17 @@ tags:
   - getByTestId
 timestamp: 2026-06-03T23:19:00Z
 status: To be validated
+sources:
+  - path: src/frontend-svelte/src/lib/home/DocViewer.svelte
+    hash: 080355b3e61b241bbb859b8223edc600e0d9ab9d1858fc1b28326499bcac6f14
+  - path: src/frontend-svelte/src/lib/home/SnippetsModal.svelte
+    hash: 47318ca7c074d963147c7cd9fd74c2972667092be47f4da32195802b844b8879
+  - path: src/frontend-svelte/src/lib/ConfirmDialog.svelte
+    hash: 338fc4e946c6b121cd1b946ad7c5515237511a2701b2944651c3df905fe5cb4d
+  - path: src/frontend-svelte/src/lib/home/tableAttributes.ts
+    hash: 4d2a6ff39136097ed36c29b5217de767aa9e0f50754acdd768de59c949695c8b
+  - path: tests/e2e/inline-snippet-edit.spec.ts
+    hash: 88a64f768d683aea6d88147c1b1fd7e5bb6d1e0772daea9f59a7cfafb8a19711
 ---
 
 ## Contexte

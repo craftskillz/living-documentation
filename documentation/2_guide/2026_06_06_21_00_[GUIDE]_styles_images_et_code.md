@@ -1,6 +1,21 @@
 ---
 type: Document
 title: Styles Images Et Code
+sources:
+  - path: src/frontend-svelte/src/lib/home/imageAttributes.ts
+    hash: 739269360b62dea053592957a20acb88a6ed70cae02d7f7b687ff635bf288c5a
+  - path: src/frontend-svelte/src/lib/home/DocViewer.svelte
+    hash: 929ae87838a148b00d469e3dee35c7e4e6fd6f66071f4cd8451f986f2db2a129
+  - path: src/frontend-svelte/src/routes/Admin.svelte
+    hash: 265e8e7c2a026e8f30ff5d0529abf9cfd62f6f0abeec8453e7c5bb1f97a14640
+  - path: src/lib/config.ts
+    hash: 034aa32d6fbb232e998017b8c58d5d11db117d4ee1efa4d27326e37751694df3
+  - path: src/frontend-svelte/src/lib/home/codeBlockAttributes.ts
+    hash: bb126331426517bd2b9fa7ce3d6fb5417d29d2acfa9e6a92b82b710e73efafd0
+  - path: src/frontend-svelte/src/lib/home/wireContent.ts
+    hash: 58265311658d0ee77c77bd555aed9f1ddb713061f1b32716f4573ce25901ade2
+  - path: src/frontend-svelte/src/lib/home/SnippetsModal.svelte
+    hash: df8cf85fc589732dce2af6f96116dc035efad709bd3cc2b65d9809011e4560c7
 ---
 
 # Styles, images et blocs de code

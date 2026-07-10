@@ -14,6 +14,17 @@ tags:
   - playwright
 timestamp: 2026-05-11T19:41:00Z
 status: Accepted
+sources:
+  - path: src/frontend/index.html
+    hash: 94c14f7fc0ba2295c6749eefe9b85757f26577d8eb4b39e18d7324b223349c7e
+  - path: src/frontend/misc.js
+    hash: 723368fdc2c798be3831d64f1015a472d6e93cdc383bbe6773d75b647f1d0ef7
+  - path: src/frontend/i18n/en.json
+    hash: aa4ee832bf7c1439b175a3972b6249ae1df1e81809fef15610d6d77b09475018
+  - path: src/frontend/i18n/fr.json
+    hash: 36028b30289e541caabe6f7f8a8861e00ce77e39026a915ac4250ab8085b50cd
+  - path: tests/e2e/viewer.spec.ts
+    hash: 91cd04887c47581e2d58427623241e7d2bfbdcd4d17057e5ca15770562908ab0
 ---
 
 # Copie de l'id MCP depuis l'en-tête du document

@@ -14,6 +14,11 @@ tags:
   - playwright
 timestamp: 2026-05-11T19:33:00Z
 status: Accepted
+sources:
+  - path: src/frontend/context.html
+    hash: 72382f6d7dc3aff332db94c2a806c499095437453a0c0022b79fbb5d90e15221
+  - path: tests/e2e/context.spec.ts
+    hash: bb7da3f7fedb2e4523b4294376a01b394219baa61d6f5632cfa076664f7c6f0e
 ---
 
 # Affichage du détail des erreurs MCP dans /context

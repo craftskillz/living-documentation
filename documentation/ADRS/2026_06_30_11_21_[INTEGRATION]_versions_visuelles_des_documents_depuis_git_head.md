@@ -15,6 +15,35 @@ tags:
   - /api/git/document-versions
 timestamp: 2026-06-30T11:21:00Z
 status: To be validated
+sources:
+  - path: src/lib/git-integration.ts
+    hash: d22e2f86218e8e4595df13981996a6db7bdbfaa86f9b96bdcc8b992dc3723651
+    commit: 08f342de7cc5a83298eae9869dccb2db38bfe44b
+    dirty: true
+  - path: src/routes/git.ts
+    hash: bf4be80f5dba6f0919344d501d157bc56ef2a66579590179dbf2f048b6c29012
+    commit: 08f342de7cc5a83298eae9869dccb2db38bfe44b
+    dirty: true
+  - path: src/frontend-svelte/src/lib/home/DocViewer.svelte
+    hash: c4d6527d6e174ff4f350b9eade9e690397ec25ff9e394f2ba9f675ebac528f9a
+    commit: 08f342de7cc5a83298eae9869dccb2db38bfe44b
+    dirty: true
+  - path: src/frontend-svelte/src/lib/home/VersionsModal.svelte
+    hash: d02cf9c0afd2245fbd8e3430d849513031d69391d7ce62f952df17ebe0deb563
+    commit: 08f342de7cc5a83298eae9869dccb2db38bfe44b
+    dirty: true
+  - path: src/frontend-svelte/public/i18n/fr.json
+    hash: 77d39d0a9c08582f8ec437c90323acd513a5f618132d0d0950646ee2ed497dee
+    commit: 08f342de7cc5a83298eae9869dccb2db38bfe44b
+    dirty: true
+  - path: src/frontend-svelte/public/i18n/en.json
+    hash: e1a8700c1fcca4d2750783de3c91bbf58bf8ae2e4cc465b9252f7dc0e8ba42c3
+    commit: 08f342de7cc5a83298eae9869dccb2db38bfe44b
+    dirty: true
+  - path: tests/api/git.spec.ts
+    hash: 2a4f60c1485da8dee947491329593ce0c1997901365396e75c49ac8dde87b395
+    commit: 08f342de7cc5a83298eae9869dccb2db38bfe44b
+    dirty: true
 ---
 
 # Versions visuelles des documents depuis Git HEAD

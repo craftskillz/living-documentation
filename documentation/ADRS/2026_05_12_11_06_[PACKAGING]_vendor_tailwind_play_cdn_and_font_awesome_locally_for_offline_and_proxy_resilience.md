@@ -19,6 +19,25 @@ tags:
   - superseded
 timestamp: 2026-05-12T11:06:00Z
 status: SuperSeeded
+sources:
+  - path: src/frontend/admin.html
+    hash: 78240dfcda2ccc2fb7f19821892d5d2baee279dc9de451e66f129e7038cd8596
+  - path: src/frontend/index.html
+    hash: c2eaf78834f6a89b03ddf0c711dc1fc70d72894a16d4ca4a6545afbe03043f7d
+  - path: src/frontend/context.html
+    hash: 9ba4b60479ca8cce0f893d397a79a939908d2a4e1304e4ae37d17f34b7d1616b
+  - path: src/frontend/diagram.html
+    hash: d908f8e8fec209bcdbe0f00d18289ea98c45d5abb7c1a9e57f46c2b9b7feab3b
+  - path: src/frontend/shape-editor.html
+    hash: aeec60dea2d550687f567504f323a5a7436b4f901d40b792093c9afd0153e141
+  - path: src/frontend/export.js
+    hash: eaccd9e274bd65bb63db390a4d85d3d535a6b528ca6b42f00a18114cd7739940
+  - path: src/frontend/vendor/tailwindcss.js
+    hash: b99d37bb975db7123d1e5223a3a56604052f90796c76aa90d4d446a0d29c6d3f
+  - path: src/frontend/vendor/tailwindcss-typography.js
+    hash: 5262067e95c419465182e6e3762e122605438fe1a870cf2098a7783e212b0b01
+  - path: src/frontend/vendor/font-awesome/css/all.min.css
+    hash: 74005d7c17d4a02f2f25404ec0655d9bc2fdaa53166874c87d7b7eec69d9088a
 ---
 
 > **SuperSeeded** par [`2026_05_13_19_03_[PACKAGING]_revert_vendoring_tailwind_and_font_awesome_proxy_access_restored`](?doc=ADRS%252F2026_05_13_19_03_%255BPACKAGING%255D_revert_vendoring_tailwind_and_font_awesome_proxy_access_restored). Le proxy bloquant a été levé côté infrastructure ; le frontend est repassé sur les CDN d'origine (commits `e09a53a` et `a8d1114`). La procédure de revert documentée plus bas a été exécutée verbatim. La présente décision reste ici à titre de référence si la contrainte proxy revient un jour , le pattern de vendoring décrit ci-dessous reste réutilisable tel quel.

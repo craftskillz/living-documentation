@@ -14,6 +14,9 @@ tags:
   - defense-in-depth
 timestamp: 2026-05-14T13:01:00Z
 status: Accepted
+sources:
+  - path: .github/workflows/publish.yml
+    hash: 8e6afbb35b461d938ea96fe94dc53ded211e69c395536074ad5477b6b0e5f3b5
 ---
 
 # Gate npm publish sur tests, CodeQL et README sync

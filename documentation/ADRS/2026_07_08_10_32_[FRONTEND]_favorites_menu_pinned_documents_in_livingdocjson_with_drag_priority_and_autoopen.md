@@ -16,6 +16,23 @@ tags:
   - topbar
 timestamp: 2026-07-08T10:32:00Z
 status: To be validated
+sources:
+  - path: src/frontend-svelte/src/lib/favorites.svelte.ts
+    hash: 58f220c886b3573f14495e2c4821194640a51ef05f8cc300adffb44bd201b572
+    commit: fd2e65be9fd9a3d90569aeb189d7f028d1b28847
+    dirty: false
+  - path: src/frontend-svelte/src/lib/FavoritesMenu.svelte
+    hash: 7885b5ffab5c6e9b1736551dc01468bf7bcadaf1149a51bfed23f1ae3b2f36fb
+    commit: fd2e65be9fd9a3d90569aeb189d7f028d1b28847
+    dirty: false
+  - path: src/frontend-svelte/src/lib/configObserver.ts
+    hash: 43676857a69770080ec5fec790891c7649b53c11231f0065b2fa9378939eec84
+    commit: fd2e65be9fd9a3d90569aeb189d7f028d1b28847
+    dirty: false
+  - path: src/frontend-svelte/src/lib/home/DocViewer.svelte
+    hash: c7a191e07fd611ae061be27f87610d444ecbfea411abda54457ab73fb78fc5c5
+    commit: fd2e65be9fd9a3d90569aeb189d7f028d1b28847
+    dirty: false
 ---
 
 ## Context

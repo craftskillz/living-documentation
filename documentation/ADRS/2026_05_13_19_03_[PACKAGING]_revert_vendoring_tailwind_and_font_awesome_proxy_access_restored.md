@@ -20,6 +20,19 @@ tags:
   - socket-alerts
 timestamp: 2026-05-12T19:03:00Z
 status: Accepted
+sources:
+  - path: src/frontend/admin.html
+    hash: f86eb9f2f82e3c54185880510323a3c90a43bf4f54f24d83f845417578605dfd
+  - path: src/frontend/context.html
+    hash: 420e6bfc84ee50c0ab6dc06c344e4e17e359829184e35398be81013330d71e22
+  - path: src/frontend/diagram.html
+    hash: 4cb4ab14b4760e05812a10838f0083c6a193b50c944011c3b5d8045efdf39b4f
+  - path: src/frontend/index.html
+    hash: bcd709066a7453e82ae76b1810caac255358089a3e90fe2526daa9f7d9f19332
+  - path: src/frontend/shape-editor.html
+    hash: 703bffc8000e54af479e91269c18ca4013fa43c669d253ed0b41db15c88475f1
+  - path: src/frontend/export.js
+    hash: 44b739a3928f87a2406543d361c7e40840ea6faf2122f594717b50eef9099a74
 ---
 
 # Revert vendoring Tailwind et Font Awesome , accès CDN rétabli

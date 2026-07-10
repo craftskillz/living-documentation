@@ -17,6 +17,21 @@ tags:
   - guard
 timestamp: 2026-05-14T12:29:00Z
 status: Accepted
+sources:
+  - path: src/lib/status.ts
+    hash: 65115a2b913adea5afa830c92ee8b82ac32ba9b274bf4563f753f3ddab2fdb48
+  - path: src/routes/metadata.ts
+    hash: 2562a68e471f8665cac49b2cbdbf1480a135b1a2915fc4572ea005dc211df3b3
+  - path: src/frontend/metadata.js
+    hash: 8a155c4bb311774e0da22fa9957c6e52cb3b9f77dc5779cbd113d088387545fc
+  - path: tests/api/metadata.spec.ts
+    hash: a61c985b61e458831027ae84274cac0fc3e21fb4e00cb3c69eecb5b3cfa17ed2
+  - path: tests/e2e/metadata.spec.ts
+    hash: d1d0ac58821b1cb2f7fdaef6555c2f82b5cbe71fd85d9313903b2d6f8e45e74e
+  - path: src/mcp/tools/metadata.ts
+    hash: 1d85c3bf8204fd8962d75dc9ece0357c851aa5bfeb848b1ef3127978af7cac34
+  - path: tests/api/mcp.spec.ts
+    hash: 0d29aae6ac514629696f63160740561f56c130240267d0fb74774ee92c04e86d
 ---
 
 # Métadonnées en lecture seule pour les documents SuperSeeded

@@ -15,6 +15,13 @@ tags:
   - edge-font-size
 timestamp: 2026-05-31T15:34:00Z
 status: To be validated
+sources:
+  - path: src/frontend/diagram/edge-panel.js
+    hash: b2ddc37fb5b6f8c8da864fbef8d32b53380a797181c1ed34511896b0ea75e990
+  - path: src/frontend/diagram/network.js
+    hash: 3c74df3c34df86a2b9c91a8bd0894975dc527347a61a425480c5543656cb5cfa
+  - path: src/frontend/diagram.html
+    hash: 58126f89d4eeefb3232481f2141c172b633654e8ab4ce1a0c06d4d52a1cacb13
 ---
 
 ## Contexte

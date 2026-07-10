@@ -1,6 +1,17 @@
 ---
 type: Technical Doc
 title: PROJECT USEFUL COMMANDS
+sources:
+  - path: bin/cli.ts
+    hash: 4a8a9a84e44d6e6e94dee01f6be680c1fb872fa7e8d52f98e615a81cbd057cda
+  - path: scripts/copy-assets.ts
+    hash: c4b765a05c3508c8e61b3624a31dffa236acab0d2e03e2cd9f3401f9734a9b04
+  - path: playwright.config.ts
+    hash: 7c6a053df87117bae83dee8c3b3a9caa16b6a1792d23f7298b1fce34da0c50e9
+  - path: tests/helpers/coverage.ts
+    hash: 7c73a492041aed2e61793e13b556b52ba357e30520abe5e937cfdc77c3fbcdd3
+  - path: justfile
+    hash: 112cca6975f53d54fd2180b2ad13119587419eca27caf2a6a22ba97b63555691
 ---
 
 # PROJECT-USEFUL-COMMANDS - Living Documentation

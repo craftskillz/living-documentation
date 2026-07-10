@@ -14,6 +14,13 @@ tags:
   - blueprint-router
 timestamp: 2026-06-01T14:19:00Z
 status: To be validated
+sources:
+  - path: src/frontend/blueprint/app.ts
+    hash: d14b2737c14072c9d040e300d835cbe514f84887744f083221b9839feaeed24f
+  - path: src/frontend/blueprint/index.html
+    hash: a10943bbd348d2e21b83b6283204b4fcb30625331aa47bf6603ca47111d988dc
+  - path: src/routes/blueprint.ts
+    hash: 153c59df7bcaf3c43ec4256ecf6b9fba117f175854eb5cccd440efa7406bc840
 ---
 
 # Blueprint , Explorateur de dossiers source avec canvas Prezi

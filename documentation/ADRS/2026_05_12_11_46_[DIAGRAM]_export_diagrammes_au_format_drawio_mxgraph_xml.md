@@ -23,6 +23,13 @@ tags:
   - frontend
 timestamp: 2026-05-12T11:46:00Z
 status: To be validated
+sources:
+  - path: src/frontend/diagram/drawio-export.js
+    hash: 235dc982af7c0938de45a4a0dbd1178ded187fc2057a48d817f0ed3584b1d8db
+  - path: src/frontend/diagram.html
+    hash: 4cb4ab14b4760e05812a10838f0083c6a193b50c944011c3b5d8045efdf39b4f
+  - path: src/frontend/diagram/main.js
+    hash: eab9965bdf2ae2757ee15dc58ee16b3a8fca2cec7e36b0e9fd72ebdb4cfcf0f9
 ---
 
 # Export des diagrammes au format drawio (mxGraph XML)

@@ -14,6 +14,11 @@ tags:
   - script-order
 timestamp: 2026-05-23T10:40:00Z
 status: To be validated
+sources:
+  - path: src/frontend/index.html
+    hash: 74a96833e006020f3d36cf33aad6066c7228fe4db15477992c455fbbd377e799
+  - path: src/frontend/context.html
+    hash: 72382f6d7dc3aff332db94c2a806c499095437453a0c0022b79fbb5d90e15221
 ---
 
 # Feature folders frontend pour snippets et modales

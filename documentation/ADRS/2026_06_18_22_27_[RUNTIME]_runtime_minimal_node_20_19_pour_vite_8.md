@@ -14,6 +14,11 @@ tags:
   - compatibility
 timestamp: 2026-06-18T22:27:00Z
 status: To be validated
+sources:
+  - path: .github/workflows/e2e.yml
+    hash: 2904dbef6a425a47716ca62840b9a2b9f74c80ae989846dd24055c1646a2fc2e
+  - path: .github/workflows/publish.yml
+    hash: cef4fafcd7382d0309f170884c92a8f146a163f1ebb06fd73ef49f2b09fca0fe
 ---
 
 # Runtime minimal Node.js 20.19.0

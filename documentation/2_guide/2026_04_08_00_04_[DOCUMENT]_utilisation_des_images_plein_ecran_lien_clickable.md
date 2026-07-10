@@ -1,6 +1,11 @@
 ---
 type: Document
 title: Utilisation Des Images Plein Ecran Lien Clickable
+sources:
+  - path: src/frontend-svelte/src/lib/home/DocViewer.svelte
+    hash: 929ae87838a148b00d469e3dee35c7e4e6fd6f66071f4cd8451f986f2db2a129
+  - path: src/frontend-svelte/src/lib/home/wireContent.ts
+    hash: 7b567ef3276b528e4bc2bf11144e44c69dfec70c556f75e05d5911afaf6999e0
 ---
 
 # Ouvrir les images et diagrammes Mermaid en plein ecran

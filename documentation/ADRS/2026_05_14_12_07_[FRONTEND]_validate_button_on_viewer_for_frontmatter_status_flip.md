@@ -16,6 +16,13 @@ tags:
   - toolbar
 timestamp: 2026-05-14T12:07:00Z
 status: Accepted
+sources:
+  - path: src/frontend/validate.js
+    hash: 2092c4e34c97f5e2cbeb903ab7f25fed926a8772b9f01acb03227e5c91b8cf34
+  - path: src/frontend/documents.js
+    hash: 81a71777c18e4ad98ddcc32241357f112508655215792255c38b9952c3736bb9
+  - path: tests/e2e/validate.spec.ts
+    hash: a8b0a7d00d64eb985c4ef44d0c4840f4270c1ca8258ae207f29445a69b0eca2f
 ---
 
 # Bouton « Valider » dans le viewer pour basculer le frontmatter

@@ -15,6 +15,9 @@ tags:
   - fontSize
 timestamp: 2026-05-31T15:35:00Z
 status: To be validated
+sources:
+  - path: src/lib/config.ts
+    hash: f297004c1fcc5310d4aaa5aea27def8eb920706409894ca8ab3c9aa30fb070f2
 ---
 
 ## Contexte

@@ -15,6 +15,9 @@ tags:
   - export
 timestamp: 2026-06-08T00:17:00Z
 status: À valider
+sources:
+  - path: src/lib/compareBlock.ts
+    hash: f4ab8c4784d5021307b8ad50f7e3a1a32242807ef0fa43ac929d6dad0e0f9106
 ---
 
 ## Contexte

@@ -12,6 +12,11 @@ tags:
   - ticket-10
 timestamp: 2026-07-10T08:01:00Z
 status: To be validated
+sources:
+  - path: src/lib/okf/log-generator.ts
+    hash: 44558fa59c585f6c9172fe0a68a2d0ab259c8012481cd0a591e91fbfc78ea15e
+    commit: ec4ec03003b1da79c5b9f3bcc24491d039c7cdd8
+    dirty: false
 ---
 
 # Generated OKF `log.md` changelog

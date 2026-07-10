@@ -24,6 +24,33 @@ tags:
   - playwright
 timestamp: 2026-05-17T19:11:00Z
 status: To be validated
+sources:
+  - path: src/frontend/documents.js
+    hash: d989f31868a07fa76f5555006a2dcb6830fa32daf9442e74ef5a57e60300af59
+  - path: src/frontend/index.html
+    hash: 74a96833e006020f3d36cf33aad6066c7228fe4db15477992c455fbbd377e799
+  - path: src/frontend/i18n/en.json
+    hash: db906337069cc8be91af21fc76784bf68ac5116b6193d02dc69c815d25dfbada
+  - path: src/frontend/i18n/fr.json
+    hash: 22804170e2bce79486bc1157393151d405e81116593df632f790a2b1af70814b
+  - path: tests/e2e/inline-snippet-edit.spec.ts
+    hash: 8332f66a0b888f999f3324c5685021897239c118144de8bc4fb770183dc3cb86
+  - path: src/frontend/snippets/inline-snippet-edit.js
+    hash: 1030dda8aa9bf0f1b663070f0b87731b465a7d742c6ea91ec942af05ec8232d9
+  - path: src/frontend/snippets/snippets.js
+    hash: 31fe2f807288befeb3e84c32f3ce99e42eb5f9403c68db8ff24fb56681b25f39
+  - path: src/frontend/snippets/snippet-detect.js
+    hash: bfbdeb6281cb87c0090b2671daa5f9f9a4529fa51b04e2599fbb3144a8d6513d
+  - path: src/frontend/snippets/snippet-table.js
+    hash: c85d2879bca1fd6d4a8fb3225397e40ceb79ec838bc25ac52524c81bece5b3c2
+  - path: src/frontend/snippets/snippet-table-attributes.js
+    hash: a07d6dd0bdb26ceaad104716be662c3724cd527668c56fe6803462ce66123765
+  - path: src/frontend/snippets/snippet-list-markdown.js
+    hash: bcf423bbe1a6485311b462478c5e19446cd4c639db6a14a2812c885679aa1d3d
+  - path: src/frontend/snippets/snippet-builders.js
+    hash: 88fbf90d5ce414c485e0485342733c4cf1c408af5088ac37aa815167f043322b
+  - path: src/frontend/snippets/snippet-parsers.js
+    hash: b6077e6b7d41ebc95e9e1e78932bee0bbd3868d1e681405bbedb72f8993755d3
 ---
 
 # Édition inline des snippets depuis le viewer par clic droit

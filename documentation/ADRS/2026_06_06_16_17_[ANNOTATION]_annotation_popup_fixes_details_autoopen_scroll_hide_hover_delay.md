@@ -15,6 +15,9 @@ tags:
   - Annotations.svelte
 timestamp: 2026-06-06T16:17:00Z
 status: To be validated
+sources:
+  - path: src/frontend-svelte/src/lib/home/Annotations.svelte
+    hash: 1d7878a471b0df97b0d6686e9f43af2d10ff05a4c24f0ede85ead2b9880107f2
 ---
 
 ## Contexte

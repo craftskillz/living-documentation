@@ -15,6 +15,19 @@ tags:
   - just-audit
 timestamp: 2026-06-03T23:20:00Z
 status: To be validated
+sources:
+  - path: .github/workflows/publish.yml
+    hash: 4fd88ac69bbae78808be98e85f34ba9ba470bce5a81d78bd56f9a1a58b6f7d88
+  - path: .github/workflows/e2e.yml
+    hash: f2a7981d24b588832951dff2560f91fdaa5bb499bb70a21d9c8aaf404a4ca9ba
+  - path: .github/workflows/readme-sync.yml
+    hash: d42d67093e506ea2b07d282298444906bfbb18db484cf1e9dc1f8199226f8bb3
+  - path: .github/workflows/codeql.yml
+    hash: 9421c5e996e73ef420bb5cb1ef183a6f2f75bb359f9da520822af0f25cb44761
+  - path: .github/workflows/zizmor.yml
+    hash: 5e850966afe47f1433d8dcc88abc7dd4ce23050464eb8e1651fc9fbf1ff46bff
+  - path: .github/zizmor.yml
+    hash: ebc81c6f965228ed9bc5437fe884de7fb89c62c9e6799928e5daf21d7f969760
 ---
 
 ## Contexte

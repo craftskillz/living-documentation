@@ -15,6 +15,21 @@ tags:
   - SnippetsModal
 timestamp: 2026-06-18T23:24:00Z
 status: To be validated
+sources:
+  - path: src/frontend-svelte/src/lib/home/codeBlockAttributes.ts
+    hash: bb126331426517bd2b9fa7ce3d6fb5417d29d2acfa9e6a92b82b710e73efafd0
+  - path: src/frontend-svelte/src/lib/home/wireContent.ts
+    hash: 58265311658d0ee77c77bd555aed9f1ddb713061f1b32716f4573ce25901ade2
+  - path: src/frontend-svelte/src/lib/home/inlineSnippetEdit.ts
+    hash: 634a6070c707eb00a603421a4e668965e2128f7ab2acd47dda74518aa6ecb9ef
+  - path: src/frontend-svelte/src/lib/home/snippets/builders.ts
+    hash: d95de66cff90ad4f26b322b5378297febd447f12928fd4903e922903e5cf0152
+  - path: src/frontend-svelte/src/lib/home/snippets/parsers.ts
+    hash: f393e13c0b121c1e1478f06cc0721760a4491111ebb78e19a4fdd983c9026498
+  - path: src/frontend-svelte/src/lib/home/SnippetsModal.svelte
+    hash: df8cf85fc589732dce2af6f96116dc035efad709bd3cc2b65d9809011e4560c7
+  - path: src/frontend-svelte/src/lib/home/home.css
+    hash: a4f90a91cef6eadaed86b3bffa45f4a796804611290a4d690326a5c7f44fa4f4
 ---
 
 # Directives de largeur et alignement des blocs code et Mermaid

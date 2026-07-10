@@ -16,6 +16,55 @@ tags:
   - toolGenerateImage
 timestamp: 2026-06-29T22:36:00Z
 status: To be validated
+sources:
+  - path: src/routes/workspace.ts
+    hash: 163333307794e30dfccd8c079aae711884400b91b8bd786930e79e27d211d873
+    commit: 3362039c76fefc64713f1c72000047358b412e4b
+    dirty: true
+  - path: src/frontend-svelte/src/routes/Workspace.svelte
+    hash: dba8803012789188bc574965130b42d847263ed5da5ef274d50890e5efb8d847
+    commit: 3362039c76fefc64713f1c72000047358b412e4b
+    dirty: true
+  - path: src/frontend-svelte/src/lib/workspace/app.ts
+    hash: 9990874c2155f9117f6c3963fa3b1b12166c3b3524a7dc44e067020402093e58
+    commit: 3362039c76fefc64713f1c72000047358b412e4b
+    dirty: true
+  - path: src/frontend-svelte/src/lib/workspace/persistence.ts
+    hash: 6150f16149fd4a028c3ec861495acaba4316e018a567a087eec585e992df0c0b
+    commit: 3362039c76fefc64713f1c72000047358b412e4b
+    dirty: true
+  - path: src/mcp/server.ts
+    hash: 20a1f44973ea08b5a4ae1c895ff6e0e0d1e6838bd332663668434218702267e7
+    commit: 3362039c76fefc64713f1c72000047358b412e4b
+    dirty: true
+  - path: src/mcp/tools/images.ts
+    hash: eefbcf8879367f96b77cec9b67e5fecfb78dab0c74ab85ed594889353d5b529c
+    commit: 3362039c76fefc64713f1c72000047358b412e4b
+    dirty: true
+  - path: src/frontend-svelte/src/styles/app.css
+    hash: 6d13c0c5baad0153257094fc61346cdcbeb5c4f8283ecf1b49e320ec1f50be98
+    commit: 3362039c76fefc64713f1c72000047358b412e4b
+    dirty: true
+  - path: tests/api/mcp.spec.ts
+    hash: 98fc8017bd193d8517b6461b361f45d550681c521d3faff18857bcacde283f81
+    commit: 3362039c76fefc64713f1c72000047358b412e4b
+    dirty: true
+  - path: tests/api/workspace.spec.ts
+    hash: cacacf3760f511b27e274f292feeba507fc2654b9dad774f8a6c69a90aa1a609
+    commit: 3362039c76fefc64713f1c72000047358b412e4b
+    dirty: true
+  - path: src/server.ts
+    hash: 18e2af2babc5fca59c75335a2c881cf0df6a7fde2754ebdbdf78b00b6d74994e
+    commit: 3362039c76fefc64713f1c72000047358b412e4b
+    dirty: true
+  - path: src/routes/export.ts
+    hash: 93fe8307a0730ee0fb2ab34f112f6ad38f39bd99af7176ea24bcf5dcfa01b731
+    commit: 3362039c76fefc64713f1c72000047358b412e4b
+    dirty: true
+  - path: tests/api/export.spec.ts
+    hash: d0a1bb6b15b4bf5de3ffc3527acb3e5e24100392b9561e320b0b36befb29125e
+    commit: 3362039c76fefc64713f1c72000047358b412e4b
+    dirty: true
 ---
 
 # Workspace image providers and generate image tool

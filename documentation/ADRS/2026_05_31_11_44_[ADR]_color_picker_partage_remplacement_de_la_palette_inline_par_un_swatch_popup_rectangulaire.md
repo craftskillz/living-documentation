@@ -15,6 +15,17 @@ tags:
   - shared-module
 timestamp: 2026-05-31T11:44:00Z
 status: To be validated
+sources:
+  - path: src/frontend/diagram/color-picker.js
+    hash: 62e177b3df95ffdf463dceb838f8e2a80e8f09c690c04926496abead0543c5a3
+  - path: src/frontend/diagram/node-panel.js
+    hash: 6ad2e6eff35f8b78b42c54702a3a9545e002e9090308b5dec777a657c2e3ed15
+  - path: src/frontend/diagram/edge-panel.js
+    hash: f8ce30d561ec4833af148e047e73704b605fcee5489503d687462313d91bd0b9
+  - path: src/frontend/diagram/defaults-modal.js
+    hash: dfb01cc42807617c120191b20ba4cd6c5a9ce49cd84f5a28545e829ad947066c
+  - path: src/frontend/diagram.html
+    hash: ae5f1fd4bc047e70e4e882cc6419dc7003178099a096bd2dbac7c676d1d65faf
 ---
 
 ## Contexte

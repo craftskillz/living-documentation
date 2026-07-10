@@ -16,6 +16,31 @@ tags:
   - provider-compatibility
 timestamp: 2026-06-29T20:25:00Z
 status: To be validated
+sources:
+  - path: src/routes/workspace.ts
+    hash: 870feaafa4aba602208a1e359464afe600c11f6501c07099658fa1c6e14cad49
+    commit: 3ae2c739844bf84627189959aadb3383e6e8a8e8
+    dirty: true
+  - path: src/frontend-svelte/src/lib/workspace/app.ts
+    hash: 9990874c2155f9117f6c3963fa3b1b12166c3b3524a7dc44e067020402093e58
+    commit: 3ae2c739844bf84627189959aadb3383e6e8a8e8
+    dirty: true
+  - path: src/frontend-svelte/src/lib/workspace/persistence.ts
+    hash: 6150f16149fd4a028c3ec861495acaba4316e018a567a087eec585e992df0c0b
+    commit: 3ae2c739844bf84627189959aadb3383e6e8a8e8
+    dirty: true
+  - path: src/frontend-svelte/src/routes/Workspace.svelte
+    hash: 1fdf8f14dc64962b695da3543d7621e1f4debc10fb5854be2dfdd4341dc792c3
+    commit: 3ae2c739844bf84627189959aadb3383e6e8a8e8
+    dirty: true
+  - path: src/frontend-svelte/src/styles/app.css
+    hash: 6d13c0c5baad0153257094fc61346cdcbeb5c4f8283ecf1b49e320ec1f50be98
+    commit: 3ae2c739844bf84627189959aadb3383e6e8a8e8
+    dirty: true
+  - path: tests/api/workspace.spec.ts
+    hash: 12b16f9612c3f0d15bcaea9f62e1e277ce1d33c97ce9de1264b54f663ff41858
+    commit: 3ae2c739844bf84627189959aadb3383e6e8a8e8
+    dirty: true
 ---
 
 # Workspace LLM tool mode chat only

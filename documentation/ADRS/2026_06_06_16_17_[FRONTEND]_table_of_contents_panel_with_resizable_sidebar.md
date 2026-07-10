@@ -16,6 +16,11 @@ tags:
   - headings
 timestamp: 2026-06-06T16:17:00Z
 status: To be validated
+sources:
+  - path: src/frontend-svelte/src/lib/home/DocViewer.svelte
+    hash: f6425c3c2e9fa80d9a522146df296ce1431fd0a5b00dddd106c02d9a42055c5e
+  - path: src/frontend-svelte/src/lib/home/home.css
+    hash: 9191134c46099c924449c1db77faa7820d824ab6dd9b8a38f7059a6387122fbc
 ---
 
 ## Contexte

@@ -15,6 +15,55 @@ tags:
   - push
 timestamp: 2026-06-30T10:39:00Z
 status: To be validated
+sources:
+  - path: src/lib/config.ts
+    hash: 61eac4ad502a751b72a82bc394603dfee75540e1dbb74fa4037d1186dc41ebe0
+    commit: dfc6f86d33a6cdad76589113262ef2f63369004a
+    dirty: true
+  - path: src/lib/git-integration.ts
+    hash: d22e2f86218e8e4595df13981996a6db7bdbfaa86f9b96bdcc8b992dc3723651
+    commit: dfc6f86d33a6cdad76589113262ef2f63369004a
+    dirty: true
+  - path: src/routes/git.ts
+    hash: bf4be80f5dba6f0919344d501d157bc56ef2a66579590179dbf2f048b6c29012
+    commit: dfc6f86d33a6cdad76589113262ef2f63369004a
+    dirty: true
+  - path: src/routes/config.ts
+    hash: cbe48bdb04a8d8d9a3272fb1379c10c2a208f454e9b1e811e32a5b1a267eb30b
+    commit: dfc6f86d33a6cdad76589113262ef2f63369004a
+    dirty: true
+  - path: src/server.ts
+    hash: 8cd2c28e9c81749a00f070272fbf591e06d2c29a7713c8d9e794e6601b308f47
+    commit: dfc6f86d33a6cdad76589113262ef2f63369004a
+    dirty: true
+  - path: src/frontend-svelte/src/routes/Admin.svelte
+    hash: 3ab0a8ca4166edee93d668781045dd6047247fc400c5f32b5c87d6fadafacf20
+    commit: dfc6f86d33a6cdad76589113262ef2f63369004a
+    dirty: true
+  - path: src/frontend-svelte/src/App.svelte
+    hash: e8ec223aa1da893874ef14b4aa9873b1314269481ac36555606fe9dcd390f7a5
+    commit: dfc6f86d33a6cdad76589113262ef2f63369004a
+    dirty: true
+  - path: src/frontend-svelte/src/lib/gitToast.ts
+    hash: 856dc6285397e140f59adda3fc3e6604ccab384bf1fb9e34e102fded0e58fa23
+    commit: dfc6f86d33a6cdad76589113262ef2f63369004a
+    dirty: true
+  - path: src/frontend-svelte/src/lib/persistentToast.ts
+    hash: 5f43913a980ef8f6ad33f64ac84431b6315c3f9361bf0919c2bd9e85baceb962
+    commit: dfc6f86d33a6cdad76589113262ef2f63369004a
+    dirty: true
+  - path: src/frontend-svelte/src/styles/app.css
+    hash: f0fada89775681970a749e81a961858e91eb938d8d75ca3651d3455d699e4da4
+    commit: dfc6f86d33a6cdad76589113262ef2f63369004a
+    dirty: true
+  - path: src/frontend-svelte/public/i18n/fr.json
+    hash: 77d39d0a9c08582f8ec437c90323acd513a5f618132d0d0950646ee2ed497dee
+    commit: dfc6f86d33a6cdad76589113262ef2f63369004a
+    dirty: true
+  - path: src/frontend-svelte/public/i18n/en.json
+    hash: e1a8700c1fcca4d2750783de3c91bbf58bf8ae2e4cc465b9252f7dc0e8ba42c3
+    commit: dfc6f86d33a6cdad76589113262ef2f63369004a
+    dirty: true
 ---
 
 # Integration Git Admin et autocommit du dossier docs

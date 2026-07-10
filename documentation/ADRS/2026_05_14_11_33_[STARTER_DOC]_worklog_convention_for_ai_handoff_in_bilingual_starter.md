@@ -15,6 +15,19 @@ tags:
   - DOCS_FOLDER
 timestamp: 2026-05-14T11:33:00Z
 status: Accepted
+sources:
+  - path: starter-doc/WORKLOG/current-task.md
+    hash: 35a35a7d3c45729a7feae7d2f938c721a84e6e4618d4bce9834ac3fa55dabba5
+  - path: starter-doc/AI/rules/track-current-work.md
+    hash: a78508f937dd08a0413a3f2424972d54f06ec2bd4242dae414e695942902cab6
+  - path: starter-doc/AI/PROJECT-INSTRUCTIONS.md
+    hash: 7dfa20377e5e353b1ca70d6835f417d55ff9c5a9c5edb7cf72bc1606c8f59cec
+  - path: starter-doc-fr/WORKLOG/current-task.md
+    hash: 676bddef0cf647d6b2c5d740467fc9e38ce5f1d0c62f9dc1e5df051342acdc55
+  - path: starter-doc-fr/AI/rules/track-current-work.md
+    hash: a66c9fa2e194ac8937696f5e701f0841a8197f9eadccb854cd1fb6d929de399a
+  - path: starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md
+    hash: dd9c6d035473449d0d85ee3d7df088191aa769ff949bbeb7011c0a01dbc040a4
 ---
 
 # Convention worklog pour la reprise entre assistants IA dans le starter bilingue

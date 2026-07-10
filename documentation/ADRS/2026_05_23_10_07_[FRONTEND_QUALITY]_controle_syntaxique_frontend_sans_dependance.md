@@ -14,6 +14,9 @@ tags:
   - scripts
 timestamp: 2026-05-23T10:07:00Z
 status: SuperSeeded
+sources:
+  - path: scripts/check-frontend-js.js
+    hash: 23b0919fac275e93dd924382ffbe16a8be08ca863e402539270b77851aa1387d
 ---
 
 > **SuperSeeded** par [Migration du frontend vers une application Svelte unifiee](?doc=ADRS%252F2026_06_03_10_53_%255BFRONTEND%255D_migration_du_frontend_vers_une_application_svelte_unifiee).

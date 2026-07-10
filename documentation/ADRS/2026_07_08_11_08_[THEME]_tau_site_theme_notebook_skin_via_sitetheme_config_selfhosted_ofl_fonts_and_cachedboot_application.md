@@ -17,6 +17,19 @@ tags:
   - THIRD-PARTY-NOTICES
 timestamp: 2026-07-08T11:08:00Z
 status: To be validated
+sources:
+  - path: src/frontend-svelte/src/lib/siteTheme.ts
+    hash: 412a1c65ceb62c90d6db9863631328dbc9d1a0577dea5ed9cd649a8b6d62e074
+    commit: 0b44f648ef9d6be521a4262cf1cc834a08ecc6dd
+    dirty: false
+  - path: scripts/fetch-tau-fonts.mjs
+    hash: 2fada20a2d3743cb59d6e74d033f04f57deb8d85d165bbe7918115ff29961abc
+    commit: 0b44f648ef9d6be521a4262cf1cc834a08ecc6dd
+    dirty: false
+  - path: src/frontend-svelte/src/styles/app.css
+    hash: f0e30afa22df375c134b241f4e63725efa267f2ae0cf48423b2748766fc2c257
+    commit: 0b44f648ef9d6be521a4262cf1cc834a08ecc6dd
+    dirty: false
 ---
 
 ## Context

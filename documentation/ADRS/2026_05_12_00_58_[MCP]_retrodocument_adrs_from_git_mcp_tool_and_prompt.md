@@ -19,6 +19,13 @@ tags:
   - playwright
 timestamp: 2026-05-12T00:58:00Z
 status: To be validated
+sources:
+  - path: src/mcp/tools/git.ts
+    hash: 1a172573d31ee4cc1cb3db0e3833935dd1b274b61280e20c8152b8e56e39deb8
+  - path: src/mcp/tools/documents.ts
+    hash: b20ac6ba5b6179102bf1d0c65bc7ba4285a0a6c02ff383db965a95ebb053f832
+  - path: src/mcp/server.ts
+    hash: e15c94a4ecd2c1764863f2ae923775e720cefb5137a4555ec49e620bdaa80b24
 ---
 
 # Retrodocumentation d'ADRs depuis l'historique git via MCP

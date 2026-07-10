@@ -20,6 +20,23 @@ tags:
   - Svelte
 timestamp: 2026-06-06T21:47:00Z
 status: To be validated
+sources:
+  - path: src/frontend-svelte/src/lib/home/snippets/table.ts
+    hash: 212dae887a30d13e7d8e53fb8d53696c98e26cc4cf2b536eee0fd2b97ad0b8ec
+  - path: src/frontend-svelte/src/lib/home/SnippetsModal.svelte
+    hash: 6a98259bb9052eed533da2d6ae8f65c1cdf8ce6fc2294ca411580ab83b958eb5
+  - path: tests/e2e/inline-snippet-edit.spec.ts
+    hash: ae29b4a152d72cc8a9ce2ecb6a5eef0371d522cffcab777f78bbb7c158042ba9
+  - path: src/frontend-svelte/public/i18n/en.json
+    hash: af9e6376c30bd78dac8031a9f98b55a3c4e267b495bc1b1d9c6675448976bf1d
+  - path: src/frontend-svelte/public/i18n/fr.json
+    hash: ce6db02a4cb9ef80446b0d79ce75bb3bbb4370f3b8703f9e9b29b6de23014d8f
+  - path: src/frontend-svelte/src/lib/home/inlineSnippetEdit.ts
+    hash: 1005eeb2ac16ea3e76771f6ddb419b37a63b4e9fc316454e4fa4fe3387b49396
+  - path: src/frontend-svelte/src/lib/home/DocViewer.svelte
+    hash: 9534a83e1064105648f91468915733e77703bb1082d5a3201adb57e3f0b63889
+  - path: src/frontend-svelte/src/lib/home/home.css
+    hash: e24e17fb7f7ffafff9e884464a80d45b43617f0030088c38c791d746ae25ebdc
 ---
 
 # Spreadsheet style table snippet editor

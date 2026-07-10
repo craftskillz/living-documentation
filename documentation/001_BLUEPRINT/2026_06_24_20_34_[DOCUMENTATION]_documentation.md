@@ -14,6 +14,19 @@ tags:
   - files
 timestamp: 2026-06-24T20:34:00Z
 status: To be validated
+sources:
+  - path: documentation/AI/PROJECT-INSTRUCTIONS.md
+    hash: def0b3461126e8ba63798713337c038055a98dcc7b629cc502627e575760d61e
+    commit: 0189b560cdcf2b26a6383d20633f92bc5940c254
+    dirty: true
+  - path: documentation/AI/PROJECT-STACK.md
+    hash: ac4e9e8a0afc2e2ee4de64e5e90b2410471787ac2ea381640c99393fac7bd37b
+    commit: 0189b560cdcf2b26a6383d20633f92bc5940c254
+    dirty: true
+  - path: documentation/3_concept/2026_04_08_22_15_[DOCUMENTING]_living_documentation.md
+    hash: 63736eac53bb5722887854266d7bf652e078ede37a448140c38b5c31a838463e
+    commit: 0189b560cdcf2b26a6383d20633f92bc5940c254
+    dirty: true
 ---
 
 Le dossier `documentation/` est le cœur documentaire du projet. C'est l'endroit où sont stockés les documents consultables dans l'application Living Documentation.

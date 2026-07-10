@@ -1,6 +1,13 @@
 ---
 type: Document
 title: Types De Snippets
+sources:
+  - path: src/frontend/index.html
+    hash: 74a96833e006020f3d36cf33aad6066c7228fe4db15477992c455fbbd377e799
+  - path: src/frontend/snippets/snippets.js
+    hash: 31fe2f807288befeb3e84c32f3ce99e42eb5f9403c68db8ff24fb56681b25f39
+  - path: src/frontend/snippets/inline-snippet-edit.js
+    hash: 1030dda8aa9bf0f1b663070f0b87731b465a7d742c6ea91ec942af05ec8232d9
 ---
 
 ## Types de snippets disponibles

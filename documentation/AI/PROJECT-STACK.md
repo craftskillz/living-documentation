@@ -1,6 +1,25 @@
 ---
 type: Technical Doc
 title: PROJECT STACK
+sources:
+  - path: bin/cli.ts
+    hash: 4a8a9a84e44d6e6e94dee01f6be680c1fb872fa7e8d52f98e615a81cbd057cda
+  - path: src/server.ts
+    hash: 275e5092b8b375e04c576296c3a699cd47cc76e1b1eb9e74d4f783d80f64e24d
+  - path: src/lib/config.ts
+    hash: 543beb0a6561807c5b2611be645aaaad3a03f3cc5b0ec7939270cccc823374f3
+  - path: src/lib/parser.ts
+    hash: 371fbb9676a0b8144f9f8a009d8f9ecf1fa785985308fc95083e90603cff6aed
+  - path: src/lib/metadata.ts
+    hash: dcbaab584f303ca53a3f715d730f5f5750622bf986a295ff6feef6ff0547cb67
+  - path: src/mcp/server.ts
+    hash: 26144ade753ff5b43010b90932f3baeeaace5226beb6f120b096c9b077c9ca48
+  - path: src/frontend/boot.js
+    hash: 34759bff7df07a13b9bee03f033a32065795aaf6dca97e3a8bb71c6bbb3b5cf5
+  - path: src/frontend/diagram/main.js
+    hash: 0d59628fd8a24326e20b82ad224df83775d41ca19381261686756e1ee69535d4
+  - path: scripts/copy-assets.ts
+    hash: c4b765a05c3508c8e61b3624a31dffa236acab0d2e03e2cd9f3401f9734a9b04
 ---
 
 # PROJECT-STACK - Living Documentation

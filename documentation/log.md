@@ -2,6 +2,8 @@
 
 ## 2026-07-10
 
+* **Added**: Generate Okf Logmd Changelog From Git History
+* **Added**: Ticket 10 Generate Okf Logmd Changelog From Git History
 * **Added**: Generated Okf Indexmd Progressivedisclosure Listings And Reserved Files
 * **Added**: Ticket 09 Generate Okf Indexmd Files And Reservedname Exclusion
 * **Added**: Ticket 08 Bundlerelative Link Resolution In The Viewer

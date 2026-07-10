@@ -13,6 +13,19 @@ tags:
   - ticket-06
 timestamp: 2026-07-09T01:25:00Z
 status: To be validated
+sources:
+  - path: bin/cli.ts
+    hash: 11345c1291c720eb4d2c9f7ec6c047a94f3b205d2c169be1cc12e5c5b966841a
+    commit: e4a89a49ce450839e523ecd290f6deef85989c51
+    dirty: false
+  - path: src/lib/config.ts
+    hash: 363d4620f8e48feff650fe6a4dcfac737c27a754f0f608c2854966d448a7e157
+    commit: e4a89a49ce450839e523ecd290f6deef85989c51
+    dirty: false
+  - path: src/lib/migrate.ts
+    hash: df44ef4ceb6d9b37a750a497f75e1a17228057d9b0bbcc0424b06b573373b4eb
+    commit: e4a89a49ce450839e523ecd290f6deef85989c51
+    dirty: false
 ---
 
 # OKF migration startup gate & migration core

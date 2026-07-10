@@ -13,6 +13,23 @@ tags:
   - reference
 timestamp: 2026-07-08T19:22:00Z
 status: To be validated
+sources:
+  - path: src/lib/documentLanguage.ts
+    hash: e84d7d5731d9c884c5ce541ff637d9f0c1ef7a596e050c423d1e1748f1252f67
+    commit: 812d32e54e40ee2c95cde4dac2ae3e411f44ccda
+    dirty: false
+  - path: src/lib/parser.ts
+    hash: 371fbb9676a0b8144f9f8a009d8f9ecf1fa785985308fc95083e90603cff6aed
+    commit: 812d32e54e40ee2c95cde4dac2ae3e411f44ccda
+    dirty: false
+  - path: src/routes/documents.ts
+    hash: 6967f0b2ea73ce0a34ccf4b458da5eba778bca726e8425292df3ed20ff254546
+    commit: 812d32e54e40ee2c95cde4dac2ae3e411f44ccda
+    dirty: false
+  - path: src/routes/export.ts
+    hash: a80047c2b89c2b21e3f31f3b153a2357eb26fd0100adae1ad12c884cc5506a71
+    commit: 812d32e54e40ee2c95cde4dac2ae3e411f44ccda
+    dirty: false
 ---
 
 # OKF v0.1 conformance audit & frozen mapping

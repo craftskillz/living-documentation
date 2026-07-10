@@ -16,6 +16,23 @@ tags:
   - git
 timestamp: 2026-06-23T22:21:00Z
 status: To be validated
+sources:
+  - path: src/lib/git.ts
+    hash: ab30eacedd040cb9a54894fe5d2a373bd15db3499b3059a7117893224743c879
+    commit: 167eb7b1e3bbe8f8e31b137f02618e5eebd4eb5c
+    dirty: false
+  - path: src/lib/metadata.ts
+    hash: 84a6200b69511299c01e8f3e74234b01a352cf7583ee8307231e640da9126550
+    commit: 399d7888211ae5583938fea74088399fa209a7ad
+    dirty: false
+  - path: src/mcp/tools/metadata.ts
+    hash: 9be3219e9f39110d23864050299644f304c81d694fbb6fdb1877d104cc820ee3
+    commit: 399d7888211ae5583938fea74088399fa209a7ad
+    dirty: false
+  - path: src/routes/metadata.ts
+    hash: 9fb2a329822f32f020b1dabf91eb3fa57c954137b9038ed46c1ebe523b36a7bc
+    commit: 399d7888211ae5583938fea74088399fa209a7ad
+    dirty: false
 ---
 
 # Commit and dirty flag stored with each metadata hash

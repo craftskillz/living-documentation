@@ -16,6 +16,13 @@ tags:
   - state
 timestamp: 2026-06-06T16:17:00Z
 status: To be validated
+sources:
+  - path: src/frontend-svelte/src/lib/home/state.svelte.ts
+    hash: 88d432588d164930984225156ddbb795c20a049bd80954d14087e7f6ca3811df
+  - path: src/routes/documents.ts
+    hash: 8830e73805ba40c41ed746f05b0f7efbb6f3dd318111a3d1ddd76dfb6464d54d
+  - path: src/frontend-svelte/src/lib/home/searchNotice.ts
+    hash: 5452bd742d35bbe43f284a5d6a618a9677e50fa8c65662a5cf6649151e5aac59
 ---
 
 ## Contexte

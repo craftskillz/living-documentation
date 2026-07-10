@@ -14,6 +14,23 @@ tags:
   - ticket-04
 timestamp: 2026-07-09T20:37:00Z
 status: To be validated
+sources:
+  - path: src/lib/okf.ts
+    hash: f91233851acd4b071744adff0cda8fbf734642b98cb470c3d604cc2fac14d2c4
+    commit: 48ac580b98c3910eec92dc85949c83193b427514
+    dirty: false
+  - path: src/mcp/tools/documents.ts
+    hash: 1bd213b7646d016ad3e58863cc2ae4443031dd2519acdda9e2a4b05951bdd57b
+    commit: 48ac580b98c3910eec92dc85949c83193b427514
+    dirty: false
+  - path: src/routes/documents.ts
+    hash: 22bbc2f3b743dc5b1e45aca5c87438bf420a2ed771702735656cef8ad3dee6e3
+    commit: 48ac580b98c3910eec92dc85949c83193b427514
+    dirty: false
+  - path: src/routes/workspace.ts
+    hash: 807c34a8892804d4e928ef36bbef73a630783b06191d042a9eaebaca1f6e9afe
+    commit: 48ac580b98c3910eec92dc85949c83193b427514
+    dirty: false
 ---
 
 # Normalize-on-write (canonical OKF YAML)

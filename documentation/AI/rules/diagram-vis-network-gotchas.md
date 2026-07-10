@@ -8,6 +8,13 @@ tags:
   - canvas
   - z-order
   - custom-shape
+sources:
+  - path: src/frontend/diagram/network.js
+    hash: b75037700cefcb4276bfe5f3394f640862dfdac50518757539de8dfc245c7ee0
+  - path: src/frontend/diagram/node-rendering.js
+    hash: a436315aa7840b50a98a443d0326008d6e15650a6594cc9bead8c4988a60af57
+  - path: src/frontend/diagram/grid.js
+    hash: c751c3a259fc79f73764a6199f6da7af3f18ff2e5687b47fc2e124fdad2d8c55
 id: diagram-vis-network-gotchas
 severity: warning
 appliesto:
