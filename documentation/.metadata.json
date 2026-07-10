@@ -1762,5 +1762,13 @@
       "commit": "c224d524d5ea7076400d0dae823830fb03d9ebc8",
       "dirty": false
     }
+  ],
+  "ADRS/2026_07_10_08_01_[OKF]_generate_okf_logmd_changelog_from_git_history": [
+    {
+      "path": "src/lib/okf/log-generator.ts",
+      "hash": "44558fa59c585f6c9172fe0a68a2d0ab259c8012481cd0a591e91fbfc78ea15e",
+      "commit": "ec4ec03003b1da79c5b9f3bcc24491d039c7cdd8",
+      "dirty": false
+    }
   ]
 }
