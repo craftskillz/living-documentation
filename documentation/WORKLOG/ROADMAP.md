@@ -160,7 +160,7 @@ document `documentation/WORKLOG/AAAA_MM_JJ_HH_mm_[WORKLOG]_ticket_XX_<slug>.md`.
 - [x] ~~Ticket 08 - Liens bundle-relatifs ↔ `?doc=`~~ (viewer résout `/x.md` `./x.md` ; export émet déjà du `.md` relatif)
 - [x] ~~Ticket 09 - Génération des `index.md`~~ (31 générés + okf_version racine ; réservés exclus du listing)
 - [x] ~~Ticket 10 - Génération du `log.md` depuis Git~~ (changelog OKF par date, concepts ajoutés)
-- [ ] Ticket 11 - `resource` + bindings sources en bloc custom
+- [x] ~~Ticket 11 - `resource` + bindings sources en bloc custom~~ (mirror via `setDocEntries`, backfill 77 docs)
 - [ ] Ticket 12 - Validateur de conformance OKF + hook CI
 - [ ] Ticket 13 - Import d'un bundle OKF externe
 - [ ] Ticket 14 - Visualiseur graphe de concepts (bonus)

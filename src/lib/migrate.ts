@@ -9,6 +9,7 @@ import { parseFilename } from "./parser";
 import { isReservedOkfFile, normalizeFrontmatter, OKF_SPEC_VERSION } from "./okf";
 import { generateOkfIndexFiles } from "./okf/index-generator";
 import { generateOkfLogFile } from "./okf/log-generator";
+import { backfillSourcesFromStore } from "./metadata";
 
 export const OKF_VERSION = OKF_SPEC_VERSION;
 
@@ -80,8 +81,10 @@ export function migrateDocsFolder(
   }
 
   if (!opts.dryRun && result.errors.length === 0) {
-    // Reserved OKF files: index.md listings (+ root okf_version) and the log.md
-    // changelog (from git history), both regenerated to reflect the bundle.
+    // Mirror existing drift bindings into each doc's frontmatter `sources` block
+    // (T11) so the bundle is self-describing, then the reserved OKF files:
+    // index.md listings (+ root okf_version) and the log.md changelog.
+    backfillSourcesFromStore(docsPath);
     generateOkfIndexFiles(docsPath);
     generateOkfLogFile(docsPath);
     writeOkfFlag(docsPath);

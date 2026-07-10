@@ -18,7 +18,19 @@ export function isReservedOkfFile(filename: string): boolean {
   return RESERVED_OKF_FILES.has(filename.toLowerCase());
 }
 
-// Emission order for known keys; unknown/custom keys (e.g. `sources`) follow.
+// One source binding mirrored into the frontmatter `sources` block (T11). Same
+// shape as a metadata-store entry: a source file plus its captured drift state.
+// Emitting it in the frontmatter makes the drift bindings survive an OKF bundle
+// round-trip; the `.metadata.json` store stays the operational source of truth.
+export interface OkfSourceRef {
+  path: string;
+  hash: string;
+  commit?: string;
+  dirty?: boolean;
+}
+
+// Emission order for known keys; unknown/custom keys follow. `sources` (the
+// drift-binding block) is pinned last so it stays after the OKF-standard fields.
 const CANONICAL_ORDER = [
   "type",
   "title",
@@ -28,6 +40,7 @@ const CANONICAL_ORDER = [
   "status",
   "language",
   "resource",
+  "sources",
 ];
 
 /**
@@ -85,7 +98,7 @@ function serializeCanonical(data: Record<string, unknown>): string {
 export function normalizeFrontmatter(
   content: string,
   relPath: string,
-  defaults?: { title?: string },
+  defaults?: { title?: string; sources?: OkfSourceRef[] | null },
 ): string {
   const { data, body, format } = parseFrontmatter(content);
 
@@ -112,6 +125,22 @@ export function normalizeFrontmatter(
 
   // tags is always a YAML list.
   if (fields.tags !== undefined) fields.tags = toTagList(fields.tags);
+
+  // sources: drift bindings mirrored as an OKF-preserved custom block (T11).
+  // undefined → keep whatever the frontmatter already carries (write path must
+  // not wipe it); a non-empty array replaces it; null/empty drops the block.
+  if (defaults?.sources !== undefined) {
+    if (defaults.sources && defaults.sources.length > 0) {
+      fields.sources = defaults.sources.map((s) => ({
+        path: s.path,
+        hash: s.hash,
+        ...(s.commit !== undefined ? { commit: s.commit } : {}),
+        ...(s.dirty !== undefined ? { dirty: s.dirty } : {}),
+      }));
+    } else {
+      delete fields.sources;
+    }
+  }
 
   const yamlBlock = serializeCanonical(fields);
   // Keep exactly one blank line between the block and the body.

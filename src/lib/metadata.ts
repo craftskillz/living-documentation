@@ -4,6 +4,8 @@ import { readConfig } from "./config";
 import { sha256File } from "./hash";
 import { currentSourceCommit, type SourceCommit } from "./git";
 import { getField } from "./frontmatter";
+import { isReservedOkfFile, normalizeFrontmatter } from "./okf";
+import { parseFilename } from "./parser";
 
 export interface MetadataEntry {
   path: string; // relative to sourceRoot
@@ -168,6 +170,51 @@ export function setDocEntries(
   if (entries.length === 0) delete store[docId];
   else store[docId] = entries;
   writeMetadataStore(docsPath, store);
+  syncSourcesToFrontmatter(docsPath, docId, entries);
+}
+
+// Mirror the metadata-store bindings into the document's frontmatter as an
+// OKF-preserved `sources` block (T11), so drift bindings survive an OKF bundle
+// round-trip. The `.metadata.json` store remains the operational source of
+// truth (accuracy is computed from it); the frontmatter block is a portable
+// projection. `docId` is the *decoded* relative path (no extension), matching
+// how the callers key the store.
+export function syncSourcesToFrontmatter(
+  docsPath: string,
+  docId: string,
+  entries: MetadataEntry[],
+): void {
+  // Extra files (absolute ids) live outside the bundle — never touch them.
+  if (path.isAbsolute(docId)) return;
+  const abs = path.resolve(docsPath, `${docId}.md`);
+  const base = path.resolve(docsPath) + path.sep;
+  if (!abs.startsWith(base)) return; // path-traversal guard
+  if (isReservedOkfFile(path.basename(abs))) return;
+  if (!fs.existsSync(abs)) return;
+  // Never write through a symlink: instruction files (AGENTS.md, CLAUDE.md,
+  // MEMORY.md) are symlinked into the bundle but live outside it. Writing them
+  // would leak frontmatter into files that are not concepts (cf. T06).
+  if (fs.lstatSync(abs).isSymbolicLink()) return;
+
+  const content = fs.readFileSync(abs, "utf-8");
+  const relPath = path.relative(docsPath, abs).split(path.sep).join("/");
+  const next = normalizeFrontmatter(content, relPath, {
+    title: parseFilename(path.basename(abs)).title,
+    sources: entries.length > 0 ? entries : null,
+  });
+  if (next !== content) fs.writeFileSync(abs, next, "utf-8");
+}
+
+// One-time projection of every existing store binding into its document's
+// frontmatter (T11). Bindings recorded before the mirror existed carry no
+// frontmatter `sources` block until this runs; the migration calls it so a
+// migrated bundle is fully self-describing. Idempotent.
+export function backfillSourcesFromStore(docsPath: string): number {
+  const store = readMetadataStore(docsPath);
+  for (const docId of Object.keys(store)) {
+    syncSourcesToFrontmatter(docsPath, docId, store[docId]);
+  }
+  return Object.keys(store).length;
 }
 
 // Reads a frontmatter field from a Markdown document, format-agnostic (YAML or
