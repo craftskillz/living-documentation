@@ -1804,5 +1804,13 @@
       "commit": "0d1e4f9b695846510a19e38976fc627304e9e90d",
       "dirty": false
     }
+  ],
+  "ADRS/2026_07_10_22_23_[OKF]_import_an_external_okf_bundle_under_a_dedicated_imported_subfolder": [
+    {
+      "path": "src/lib/okf/import.ts",
+      "hash": "31fbe400ec876f612ae3f2b1da04415cd487c95dd48ffae08ffbee3f4aee62b2",
+      "commit": "472836da445bf94fce254002dcd60dfaeda1c43a",
+      "dirty": false
+    }
   ]
 }

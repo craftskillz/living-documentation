@@ -11,6 +11,11 @@ tags:
   - type-vocabulary
 timestamp: 2026-07-10T22:23:00Z
 status: To be validated
+sources:
+  - path: src/lib/okf/import.ts
+    hash: 31fbe400ec876f612ae3f2b1da04415cd487c95dd48ffae08ffbee3f4aee62b2
+    commit: 472836da445bf94fce254002dcd60dfaeda1c43a
+    dirty: false
 ---
 
 # Import an external OKF bundle
