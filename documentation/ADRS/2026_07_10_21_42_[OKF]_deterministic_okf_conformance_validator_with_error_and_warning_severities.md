@@ -14,12 +14,12 @@ timestamp: 2026-07-10T21:42:00Z
 status: To be validated
 sources:
   - path: src/lib/okf/validate.ts
-    hash: 0daa04e0f0d28171f5718b6435d46ad5bbf13cee904bfe077d4b1c961f7f3294
-    commit: c271f9458f3457bfd7c1da9fffa3607575850662
+    hash: d24a26f58104a8b259731a19b9fd2fa62616ac18e7025655578d6a5a6b34fd4a
+    commit: d04f130c5462e5b9578065ba45cd1c1d9bb81d85
     dirty: false
   - path: bin/cli.ts
-    hash: 6e9f18329e412cf9101d1c1d5f9c767c7d77507806c646d1cfc38c1d64e12191
-    commit: 0d1e4f9b695846510a19e38976fc627304e9e90d
+    hash: 2c16bc01c76103483817a163093dec56ad092f4d59ca565c14bdacda8f36886c
+    commit: d04f130c5462e5b9578065ba45cd1c1d9bb81d85
     dirty: false
 ---
 
