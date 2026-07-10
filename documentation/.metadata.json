@@ -1314,81 +1314,81 @@
   "ADRS/2026_06_25_22_58_[WORKSPACE]_workspace_runs_agents_en_streaming_llm_tout_fournisseur_et_secrets_par_variable_d_environnement": [
     {
       "path": "src/routes/workspace.ts",
-      "hash": "df208e1bad0c5d0e641a91d6cb45bacdc274f5b471d303d1d7792c139b148df7",
-      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "hash": "5d49c832b11962d5aa755405411a6641f55bd183f8a500a914df34a59da3064b",
+      "commit": "0d1b8a822b0a7a7c8c36765cf9e6f99af11dd72f",
       "dirty": false
     },
     {
       "path": "src/lib/config.ts",
-      "hash": "e76e4310ecb7008bda801ffb6b39d49fa1c83015567a25656a221b9cb21e858a",
-      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "hash": "363d4620f8e48feff650fe6a4dcfac737c27a754f0f608c2854966d448a7e157",
+      "commit": "0d1b8a822b0a7a7c8c36765cf9e6f99af11dd72f",
       "dirty": false
     },
     {
       "path": "src/routes/config.ts",
-      "hash": "20f565abb5e14570e0aff9ffcc2a42b1cf1abe7725b61c6469c60b084ab05b45",
-      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "hash": "7c6a4a9925e14e7e4794d0272e0e66daa0ed39a56c6faae568bda92cdb2c54dc",
+      "commit": "0d1b8a822b0a7a7c8c36765cf9e6f99af11dd72f",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/lib/persistentToast.ts",
       "hash": "5f43913a980ef8f6ad33f64ac84431b6315c3f9361bf0919c2bd9e85baceb962",
-      "commit": "57432cefdc7c3e7d4b0de51152892e3be9f9256b",
-      "dirty": true
+      "commit": "0d1b8a822b0a7a7c8c36765cf9e6f99af11dd72f",
+      "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/lib/workspace/persistence.ts",
-      "hash": "de0d4f1348ddbca177afd1d81ce0a0dc727750515520e221424da75f40e06924",
-      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "hash": "8064972a06548b8d2bb5e69094e6c90e5cf89f6b365b8befc4454d8bba808647",
+      "commit": "0d1b8a822b0a7a7c8c36765cf9e6f99af11dd72f",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/lib/workspace/app.ts",
-      "hash": "61047e59b98c901680c42e411c87014e9813e809d29e8ed111a6506ad6fbb669",
-      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "hash": "d1fda6a885e6e1db292ee1bbfec4b504dd1f493d0760c570095e60294c141c74",
+      "commit": "0d1b8a822b0a7a7c8c36765cf9e6f99af11dd72f",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/routes/Workspace.svelte",
-      "hash": "a1c0c9ce308c7da22a57d8ec4255dfd2992b9b58b0f6aad67bfb01aca22df32e",
-      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "hash": "26121a41d8b8a04b13f5de96e7c84b182d338216f834d263f616c05931031f94",
+      "commit": "0d1b8a822b0a7a7c8c36765cf9e6f99af11dd72f",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/routes/Admin.svelte",
-      "hash": "e12fa295872e65b9c2304b3fed8e153f58905400a87ffcdd4e82feadf68c036c",
-      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "hash": "745ad4a3ce52489313e8e65fc719f50df587275f8ea4eac90d10476790375f86",
+      "commit": "0d1b8a822b0a7a7c8c36765cf9e6f99af11dd72f",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/lib/Topbar.svelte",
-      "hash": "076046a753bcd6023f32a56f0963fbbdc633a28a788776a0ec911f35016a7649",
-      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "hash": "27eb5052b66d6a37dd232e15b54fdc8998a72c0836b62997adde0aa44c0de435",
+      "commit": "0d1b8a822b0a7a7c8c36765cf9e6f99af11dd72f",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/App.svelte",
-      "hash": "46f9aa2f924c883283c601bb66915174f5cf35cd0d46aba882260ce992865a2d",
-      "commit": "2bb01b88d66591d4eb79bbe0cbc16ec807367f4c",
+      "hash": "e8ec223aa1da893874ef14b4aa9873b1314269481ac36555606fe9dcd390f7a5",
+      "commit": "0d1b8a822b0a7a7c8c36765cf9e6f99af11dd72f",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/styles/app.css",
-      "hash": "f0fada89775681970a749e81a961858e91eb938d8d75ca3651d3455d699e4da4",
-      "commit": "019de294d1412d5511b045bc53d1fc5b0bc7010d",
-      "dirty": true
+      "hash": "f0e30afa22df375c134b241f4e63725efa267f2ae0cf48423b2748766fc2c257",
+      "commit": "0d1b8a822b0a7a7c8c36765cf9e6f99af11dd72f",
+      "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/lib/diagram/diagram.css",
       "hash": "32e66aa5f13b8d738c2829f9cad88e0c9810f736d98ef805640979def19085c1",
-      "commit": "aa27219572677ddf90c8370776a31d89481e513b",
-      "dirty": true
+      "commit": "0d1b8a822b0a7a7c8c36765cf9e6f99af11dd72f",
+      "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/lib/workspace/styles.css",
-      "hash": "a3511c12228c09e9f4e497b36f4d4f0a54007b91cd397278722d2d25caf57fec",
-      "commit": "b8eca35497a74e4c2b6ec57cd721513544ae3ad9",
-      "dirty": true
+      "hash": "fbe06d4e4b738b8ca1c392eed56332c19733d70597d12475b5eb4bcd84d8562e",
+      "commit": "0d1b8a822b0a7a7c8c36765cf9e6f99af11dd72f",
+      "dirty": false
     }
   ],
   "ADRS/2026_06_29_20_25_[WORKSPACE]_workspace_llm_tool_mode_chat_only": [
