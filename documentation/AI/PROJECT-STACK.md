@@ -26,8 +26,6 @@ sources:
     hash: 30439109036b7a19bf4b17dbf125fde8ec15b4a805a04de78529365690f06341
     commit: be260560beaadd1bcaf8dfadf1a73d4679b5f1d5
     dirty: false
-  - path: src/frontend/boot.js
-    hash: 34759bff7df07a13b9bee03f033a32065795aaf6dca97e3a8bb71c6bbb3b5cf5
   - path: src/frontend/diagram/main.js
     hash: 0d59628fd8a24326e20b82ad224df83775d41ca19381261686756e1ee69535d4
   - path: scripts/copy-assets.ts
