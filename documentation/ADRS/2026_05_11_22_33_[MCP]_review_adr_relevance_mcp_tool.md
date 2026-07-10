@@ -21,11 +21,17 @@ timestamp: 2026-05-11T22:33:00Z
 status: To be validated
 sources:
   - path: src/mcp/server.ts
-    hash: 3b1a958205aacbca4131f8a5557957d09cca5266d0937dae99e464b2c3b0e7af
+    hash: 3b47ab14e3820987ba65387741d7afabd76625bdd011fee073c7f08d5fe32969
+    commit: ce4f2bf8d3914627e95dc9d2fe37229d38a07c89
+    dirty: false
   - path: src/mcp/tools/metadata.ts
-    hash: a1f4e76088ecb14b2395ae526de9766bcca185e144d891e291167fe253d44fce
+    hash: bbbc1a63e614b5e2bbd7b45bd691fd3f1a37b7d08e2fcad656d46d70e95bc86d
+    commit: ce4f2bf8d3914627e95dc9d2fe37229d38a07c89
+    dirty: false
   - path: tests/api/mcp.spec.ts
-    hash: d95c629036430dded46eefcb38a3ae0e6983652860b67d2fb63fff4ba9bd005b
+    hash: 4a1dd3da3976d27533e52ffefaab275a4abd7df835832d7c23ce2f0b5ae001d6
+    commit: ce4f2bf8d3914627e95dc9d2fe37229d38a07c89
+    dirty: false
 ---
 
 # Revue de pertinence et audit de dérive ADR via MCP
