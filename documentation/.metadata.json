@@ -2,27 +2,39 @@
   "AI/PROJECT-STACK": [
     {
       "path": "bin/cli.ts",
-      "hash": "4a8a9a84e44d6e6e94dee01f6be680c1fb872fa7e8d52f98e615a81cbd057cda"
+      "hash": "11345c1291c720eb4d2c9f7ec6c047a94f3b205d2c169be1cc12e5c5b966841a",
+      "commit": "be260560beaadd1bcaf8dfadf1a73d4679b5f1d5",
+      "dirty": false
     },
     {
       "path": "src/server.ts",
-      "hash": "275e5092b8b375e04c576296c3a699cd47cc76e1b1eb9e74d4f783d80f64e24d"
+      "hash": "d2e9da7a978c63f86016c00a55ba313c58cc03b5ad8ca8da36cc5e1472a52c52",
+      "commit": "be260560beaadd1bcaf8dfadf1a73d4679b5f1d5",
+      "dirty": false
     },
     {
       "path": "src/lib/config.ts",
-      "hash": "543beb0a6561807c5b2611be645aaaad3a03f3cc5b0ec7939270cccc823374f3"
+      "hash": "363d4620f8e48feff650fe6a4dcfac737c27a754f0f608c2854966d448a7e157",
+      "commit": "be260560beaadd1bcaf8dfadf1a73d4679b5f1d5",
+      "dirty": false
     },
     {
       "path": "src/lib/parser.ts",
-      "hash": "371fbb9676a0b8144f9f8a009d8f9ecf1fa785985308fc95083e90603cff6aed"
+      "hash": "371fbb9676a0b8144f9f8a009d8f9ecf1fa785985308fc95083e90603cff6aed",
+      "commit": "be260560beaadd1bcaf8dfadf1a73d4679b5f1d5",
+      "dirty": false
     },
     {
       "path": "src/lib/metadata.ts",
-      "hash": "dcbaab584f303ca53a3f715d730f5f5750622bf986a295ff6feef6ff0547cb67"
+      "hash": "0498b125bfb38061564a132641c123f1d0ca634664c81f13cd25d465de1f9175",
+      "commit": "be260560beaadd1bcaf8dfadf1a73d4679b5f1d5",
+      "dirty": false
     },
     {
       "path": "src/mcp/server.ts",
-      "hash": "26144ade753ff5b43010b90932f3baeeaace5226beb6f120b096c9b077c9ca48"
+      "hash": "30439109036b7a19bf4b17dbf125fde8ec15b4a805a04de78529365690f06341",
+      "commit": "be260560beaadd1bcaf8dfadf1a73d4679b5f1d5",
+      "dirty": false
     },
     {
       "path": "src/frontend/boot.js",
@@ -34,7 +46,9 @@
     },
     {
       "path": "scripts/copy-assets.ts",
-      "hash": "c4b765a05c3508c8e61b3624a31dffa236acab0d2e03e2cd9f3401f9734a9b04"
+      "hash": "ffdb3d3b63a943a0d0eb4988f8fe71aa7e4fb937f4426a1e94bd6436ce4ae240",
+      "commit": "be260560beaadd1bcaf8dfadf1a73d4679b5f1d5",
+      "dirty": false
     }
   ],
   "AI/PROJECT-USEFUL-COMMANDS": [
