@@ -18,6 +18,10 @@ sources:
     hash: 0498b125bfb38061564a132641c123f1d0ca634664c81f13cd25d465de1f9175
     commit: 957bd510d0984dcd743cffc8b59f3a7b400b5335
     dirty: false
+  - path: src/lib/okf.ts
+    hash: 938cc3890e306e4f4fbf3688156c092e2c4f0b260c45e771d0fbdacfb23832e5
+    commit: 7ab1df75ebf3ad2182882c40fc578ddb6daffef2
+    dirty: false
 ---
 
 # Frontmatter `sources` block + `resource` field
