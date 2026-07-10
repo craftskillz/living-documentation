@@ -1754,5 +1754,13 @@
       "commit": "8b143e5b343659d517f478163167cd765266bc49",
       "dirty": false
     }
+  ],
+  "ADRS/2026_07_10_07_48_[OKF]_generated_okf_indexmd_progressivedisclosure_listings_and_reserved_files": [
+    {
+      "path": "src/lib/okf/index-generator.ts",
+      "hash": "6322bce7776d40eb3b8e34ceb0783e7532b9f347fa4029e388a13d6a21fd0cf3",
+      "commit": "c224d524d5ea7076400d0dae823830fb03d9ebc8",
+      "dirty": false
+    }
   ]
 }
