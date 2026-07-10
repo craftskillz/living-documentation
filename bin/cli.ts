@@ -7,6 +7,7 @@ import { createInterface } from "node:readline/promises";
 import { startServer } from "../src/server";
 import { readConfig, isOkfMigrated } from "../src/lib/config";
 import { migrateDocsFolder } from "../src/lib/migrate";
+import { validateOkfBundle } from "../src/lib/okf/validate";
 
 // Handle SIGTERM gracefully so V8 flushes NODE_V8_COVERAGE (used by c8 in tests).
 // Also good hygiene — without this, process exits with code 143 and Express sockets
@@ -419,6 +420,29 @@ program
     );
     for (const e of r.errors) console.error(`  ! ${e}`);
     if (r.errors.length) process.exit(1);
+  });
+
+program
+  .command("validate [folder]")
+  .description("Check that a docs folder is a conformant OKF bundle (read-only). Exits 1 on any violation.")
+  .action((folder: string | undefined) => {
+    const target = folder ?? "documentation";
+    validateRelativeFolder(target);
+    const docsPath = path.resolve(process.cwd(), target);
+    if (!fs.existsSync(docsPath)) {
+      console.error(`\nError: Folder not found: ${docsPath}\n`);
+      process.exit(1);
+    }
+    const r = validateOkfBundle(docsPath);
+    console.log(`OKF conformance — ${docsPath}`);
+    console.log(`  checked: ${r.checked}  errors: ${r.errors}  warnings: ${r.warnings}`);
+    for (const v of r.violations) {
+      const line = `  ${v.severity === "error" ? "✗" : "⚠"} ${v.file} [${v.rule}] ${v.message}`;
+      if (v.severity === "error") console.error(line);
+      else console.warn(line);
+    }
+    if (!r.ok) process.exit(1);
+    console.log("  ✓ bundle is OKF-conformant");
   });
 
 program.parseAsync().catch((error) => {

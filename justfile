@@ -85,6 +85,12 @@ lint-fix-unsafe:
 coverage:
     npm run test:coverage
 
+# ── OKF ─────────────────────────────────────────────────────────────────────
+# Check that documentation/ is a conformant OKF bundle (read-only, exits 1 on
+# any violation). Same check CI runs before publishing.
+okf-validate:
+    npm run okf:validate
+
 # ── Security ────────────────────────────────────────────────────────────────
 # Audit GitHub Actions workflows for security issues (supply-chain, injections…)
 # Exit codes: 0 = clean, 13 = only suppressed/ignored, 14 = active findings.

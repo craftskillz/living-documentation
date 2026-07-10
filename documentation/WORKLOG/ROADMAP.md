@@ -161,7 +161,7 @@ document `documentation/WORKLOG/AAAA_MM_JJ_HH_mm_[WORKLOG]_ticket_XX_<slug>.md`.
 - [x] ~~Ticket 09 - Génération des `index.md`~~ (31 générés + okf_version racine ; réservés exclus du listing)
 - [x] ~~Ticket 10 - Génération du `log.md` depuis Git~~ (changelog OKF par date, concepts ajoutés)
 - [x] ~~Ticket 11 - `resource` + bindings sources en bloc custom~~ (mirror via `setDocEntries`, backfill 77 docs)
-- [ ] Ticket 12 - Validateur de conformance OKF + hook CI
+- [x] ~~Ticket 12 - Validateur de conformance OKF + hook CI~~ (severity error/warning, CLI `validate`, étape e2e push/PR)
 - [ ] Ticket 13 - Import d'un bundle OKF externe
 - [ ] Ticket 14 - Visualiseur graphe de concepts (bonus)
 - [ ] Ticket 15 - Mise à jour docs & instructions

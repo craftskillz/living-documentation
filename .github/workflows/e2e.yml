@@ -47,6 +47,12 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: OKF bundle conformance
+        # Fails the build if documentation/ stops being a conformant OKF bundle
+        # (legacy frontmatter, unknown/empty type, malformed timestamp/sources,
+        # missing reserved files). Warnings (e.g. undated concepts) don't fail.
+        run: npm run okf:validate
+
       - name: Cache Playwright browsers
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:

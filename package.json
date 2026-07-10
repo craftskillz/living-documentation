@@ -20,6 +20,7 @@
     "start": "node dist/bin/cli.js",
     "test": "npm run test:e2e",
     "test:unit": "node -r ts-node/register --test tests/unit/*.test.ts",
+    "okf:validate": "node -r ts-node/register bin/cli.ts validate documentation",
     "test:e2e": "npm run build && playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:video": "npm run build && RECORD_VIDEO=1 playwright test",
