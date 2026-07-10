@@ -21,11 +21,17 @@ timestamp: 2026-05-12T00:58:00Z
 status: To be validated
 sources:
   - path: src/mcp/tools/git.ts
-    hash: 1a172573d31ee4cc1cb3db0e3833935dd1b274b61280e20c8152b8e56e39deb8
+    hash: 167e0b4c3c7fbabeffc10a01d85c4747afe736e72469329ecbbb41403cf7b264
+    commit: 436f14cb5e0bc09e92a30ee970aa7e71fbd94d12
+    dirty: false
   - path: src/mcp/tools/documents.ts
-    hash: b20ac6ba5b6179102bf1d0c65bc7ba4285a0a6c02ff383db965a95ebb053f832
+    hash: 1bd213b7646d016ad3e58863cc2ae4443031dd2519acdda9e2a4b05951bdd57b
+    commit: 436f14cb5e0bc09e92a30ee970aa7e71fbd94d12
+    dirty: false
   - path: src/mcp/server.ts
-    hash: e15c94a4ecd2c1764863f2ae923775e720cefb5137a4555ec49e620bdaa80b24
+    hash: 3b47ab14e3820987ba65387741d7afabd76625bdd011fee073c7f08d5fe32969
+    commit: 436f14cb5e0bc09e92a30ee970aa7e71fbd94d12
+    dirty: false
 ---
 
 # Retrodocumentation d'ADRs depuis l'historique git via MCP
