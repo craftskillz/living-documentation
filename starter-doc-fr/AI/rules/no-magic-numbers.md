@@ -1,10 +1,15 @@
 ---
-id: no-magic-numbers
+type: Rule
 title: Éviter les magic numbers
-severity: warning
 description: Les valeurs numériques porteuses de sens métier ou technique doivent être nommées par des constantes plutôt que répétées comme littéraux bruts.
-tags: ["qualite-code", "maintenabilite"]
-appliesTo: ["src/**/*.ts", "src/frontend/**/*.js"]
+tags:
+  - qualite-code
+  - maintenabilite
+id: no-magic-numbers
+severity: warning
+appliesto:
+  - src/**/*.ts
+  - src/frontend/**/*.js
 ---
 
 Les valeurs numériques qui portent un sens doivent être nommées là où elles sont introduites.

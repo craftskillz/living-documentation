@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: CLAUDE
+---
+
 # CLAUDE.md - Living Documentation
 
 Ce fichier est le point d'entrée pour Claude.

@@ -50,11 +50,15 @@ Autonomie accordée : avancer sur tous les tickets sans demander, sauf besoin r�
 - [x] **T13** — Import d'un bundle OKF externe (**core CLI**). **FAIT + EXÉCUTÉ.** Décisions : core CLI d'abord, sous-dossier `IMPORTED/<bundle>/`, type préservé. `src/lib/okf/import.ts` (`importOkfBundle`, structure + type préservés, réservés ignorés, cible non vide refusée, index régénérés), CLI `import <source> [folder] --name`. Raffinement T12 : type non reconnu = **warning**. Build + **21/21** + smoke CLI + bundle réel 0 erreur + lint 0. WORKLOG `2026_07_10_22_20_[WORKLOG]_ticket_13_...`.
   - ✅ ADR d'implémentation `2026_07_10_22_23_[OKF]_import_an_external_okf_bundle_...` + binding `import.ts` (accuracy 1) ; T06 (cli.ts) & T12 (validate.ts) rebaselinés ; phrase « unknown type » de l'ADR T12 corrigée.
   - **Suivi (hors T13)** : UI Admin/Files d'import ; liens absolus-bundle `/x.md` d'un bundle importé (résolveur T08).
-- [ ] **T14** — Visualiseur graphe de concepts (**bonus**). Vue graphe des liens réels, réutilisant l'infra diagramme. Front.
-- [ ] **T15** — Docs/instructions/starters en YAML. **PROCHAIN si on saute T14.** (PROJECT-INSTRUCTIONS, guide serveur MCP, README, templates ADR/WORKLOG, starters `starter-doc`/`starter-doc-fr` avec flag OKF ; réviser l'ADR guide serveur MCP. Acceptation : plus aucune référence au format `**gras**` ; projet neuf = bundle OKF conforme au démarrage.)
+- [x] **T15** — Docs/instructions/starters en YAML. **FAIT + VÉRIFIÉ.** Starters migrés (18+18) + flag `okfMigration` ; guide serveur MCP + prompts (`server.ts`), `git.ts`, `workspace.ts`, PROJECT-INSTRUCTIONS ×3, ADR guide serveur révisé — tout en YAML. Build + 21/21 + lint 0 + 3 bundles 0 erreur. **Smoke init : projet neuf conforme, flag posé, garde passante.** WORKLOG `2026_07_10_22_51_[WORKLOG]_ticket_15_...`.
+  - **Après commit** : rebaseliner les ADR liées à `server.ts` (ADR guide serveur MCP), `git.ts` (ADR retrodocument), `workspace.ts` (ADR normalize-on-write T04). Pas de nouvel ADR (ticket de consistance).
+- [ ] **T14** — Visualiseur graphe de concepts (**bonus**, seul ticket ouvert). Vue graphe des liens réels réutilisant l'infra diagramme (front). À planifier si souhaité.
 
-## Code à committer (T13)
-`src/lib/okf/import.ts` (nouveau), `bin/cli.ts`, `src/lib/okf/validate.ts`, `tests/unit/okf-import.test.ts` (nouveau), `tests/unit/okf-validate.test.ts`. Commit avant l'ADR T13 + les rebaselines T06/T12.
+## Chantier OKF — état : 14/15 tickets faits (T14 bonus restant)
+Le dossier `documentation/` est un bundle OKF natif conforme ; un projet neuf naît conforme.
+
+## Code à committer (T15)
+`src/mcp/server.ts`, `src/mcp/tools/git.ts`, `src/routes/workspace.ts`, `starter-doc/**`, `starter-doc-fr/**` (migrés + instructions). Les edits `documentation/` (PROJECT-INSTRUCTIONS, ADR guide) sont auto-commités par le serveur.
 
 ## Code non commité (frontend, à committer au fil de l'eau)
 - T07 : déjà committé + ADR T04 rebaseliné.

@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: MEMORY
+---
+
 # Index mémoire
 
 Toujours stocker la mémoire du projet dans le dossier `memory/` du projet courant.

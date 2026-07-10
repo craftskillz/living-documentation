@@ -1,8 +1,15 @@
 ---
-**date:** 2026-01-02
-**status:** Idle
-**description:** Point de reprise partagé entre assistants IA pour suivre la tâche courante, son statut, les fichiers touchés, les vérifications et la prochaine action.
-**tags:** worklog, handoff, progression, reprise, agents-ia
+type: Worklog
+title: Current task
+description: Point de reprise partagé entre assistants IA pour suivre la tâche courante, son statut, les fichiers touchés, les vérifications et la prochaine action.
+tags:
+  - worklog
+  - handoff
+  - progression
+  - reprise
+  - agents-ia
+timestamp: 2026-01-02T00:00:00Z
+status: Idle
 ---
 
 # Current task

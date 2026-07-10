@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: MEMORY
+---
+
 # Memory Index
 
 Always store project memory in the current project's `memory/` folder.

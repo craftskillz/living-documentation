@@ -54,5 +54,9 @@
   "exclusiveFolderExpansion": true,
   "exclusiveCategoryExpansion": true,
   "codeBlockMaxHeight": 400,
-  "markdownSoftBreaks": true
+  "markdownSoftBreaks": true,
+  "okfMigration": {
+    "version": "0.1",
+    "migratedAt": "2026-07-10T20:30:08.718Z"
+  }
 }

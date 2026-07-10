@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: PROJECT INSTRUCTIONS
+---
+
 # PROJECT-INSTRUCTIONS - Living Documentation
 
 Ce fichier est le contrat de travail partagé par les assistants IA qui interviennent sur ce projet. Il explique comment intégrer Living Documentation au flux de développement assisté par IA.
@@ -95,16 +100,22 @@ Convention de cochage dans la section « Ordre recommandé » :
 
 Si un choix durable est pris pendant la réalisation d'un ticket (par exemple, le choix d'une convention de structure de dossiers), créer un ADR architectural dans `DOCS_FOLDER/ADRS/` et faire pointer le document WORKLOG vers cet ADR , ne pas dupliquer le raisonnement.
 
-Frontmatter recommandé du document WORKLOG par ticket :
+Frontmatter YAML recommandé (Open Knowledge Format) du document WORKLOG par ticket :
 
 ```markdown
 ---
-**date:** YYYY-MM-DD
-**status:** To Be Validated
-**description:** Une phrase qui résume ce qui a été fait pour ce ticket.
-**tags:** worklog, ticket, <slugs métiers>
+type: Worklog
+title: Ticket <n> — <titre court>
+description: Une phrase qui résume ce qui a été fait pour ce ticket.
+tags:
+  - worklog
+  - ticket
+  - <slug-metier>
+status: To Be Validated
 ---
 ```
+
+`type`, `title` et un `timestamp` ISO 8601 sont dérivés automatiquement à l'écriture s'ils sont omis.
 
 Sections recommandées dans le corps :
 
@@ -131,14 +142,18 @@ Quand une feature change une décision durable :
 
 Le statut initial recommandé pour un ADR créé par l'IA est `To be validated`. L'humain pourra ensuite le valider et le passer à `Accepted`.
 
-Chaque ADR doit contenir un frontmatter utile pour la découverte :
+Chaque ADR doit contenir un frontmatter YAML (Open Knowledge Format) utile pour la découverte :
 
 ```markdown
 ---
-**date:** YYYY-MM-DD
-**status:** To be validated
-**description:** Une phrase qui résume la décision et pourquoi elle compte.
-**tags:** architecture, mcp, metadata
+type: ADR
+title: Un titre court et lisible
+description: Une phrase qui résume la décision et pourquoi elle compte.
+tags:
+  - architecture
+  - mcp
+  - metadata
+status: To be validated
 ---
 ```
 

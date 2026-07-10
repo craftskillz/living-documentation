@@ -1,9 +1,19 @@
 ---
-**date:** 2026-06-30
-**status:** Draft
-**description:** Presentation courte du menu Home et de la navigation principale dans Living Documentation.
-**tags:** home, menu, navigation, dossiers, categories, documents, recherche
+type: Document
+title: Menu Home
+description: Presentation courte du menu Home et de la navigation principale dans Living Documentation.
+tags:
+  - home
+  - menu
+  - navigation
+  - dossiers
+  - categories
+  - documents
+  - recherche
+timestamp: 2026-06-30T10:10:00Z
+status: Draft
 ---
+
 ### Menu **Home**
 
 Le menu <kbd>Home</kbd> est la porte d'entrée de votre documentation.

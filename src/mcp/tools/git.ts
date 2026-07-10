@@ -68,7 +68,7 @@ interface ChangedFile {
 interface CommitEntry {
   sha: string;
   shortSha: string;
-  committerDate: string; // ISO 8601 — use this as the ADR `**date:**`
+  committerDate: string; // ISO 8601 — use this as the ADR `timestamp:`
   authorDate: string;    // ISO 8601
   author: string;
   subject: string;

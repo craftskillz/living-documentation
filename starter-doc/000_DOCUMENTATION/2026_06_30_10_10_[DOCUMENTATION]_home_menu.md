@@ -1,8 +1,17 @@
 ---
-**date:** 2026-06-30
-**status:** Draft
-**description:** Short presentation of the Home menu and the main navigation in Living Documentation.
-**tags:** home, menu, navigation, folders, categories, documents, search
+type: Document
+title: Home Menu
+description: Short presentation of the Home menu and the main navigation in Living Documentation.
+tags:
+  - home
+  - menu
+  - navigation
+  - folders
+  - categories
+  - documents
+  - search
+timestamp: 2026-06-30T10:10:00Z
+status: Draft
 ---
 
 ### **Home** Menu

@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: PROJECT USEFUL COMMANDS
+---
+
 # PROJECT-USEFUL-COMMANDS - Template
 
 Ce fichier décrit les commandes réellement utiles pour travailler sur le projet. Il doit permettre à une IA de choisir la bonne vérification sans deviner.

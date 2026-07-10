@@ -1,8 +1,19 @@
 ---
-**date:** 2026-07-01
-**status:** Draft
-**description:** Short presentation of the Diagram menu for creating, editing, and linking diagrams to your documents.
-**tags:** diagram, diagrams, canvas, schema, markdown, evidence, mcp, drawio, documentation
+type: Document
+title: Diagram Menu
+description: Short presentation of the Diagram menu for creating, editing, and linking diagrams to your documents.
+tags:
+  - diagram
+  - diagrams
+  - canvas
+  - schema
+  - markdown
+  - evidence
+  - mcp
+  - drawio
+  - documentation
+timestamp: 2026-07-01T17:41:00Z
+status: Draft
 ---
 
 ### **Diagram** Menu

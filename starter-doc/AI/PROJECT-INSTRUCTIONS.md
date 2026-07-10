@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: PROJECT INSTRUCTIONS
+---
+
 # PROJECT-INSTRUCTIONS - Living Documentation
 
 This file is the shared working contract for AI assistants working on this project. It explains how to integrate Living Documentation into the AI-assisted development workflow.
@@ -95,16 +100,22 @@ Every time a roadmap ticket is completed, create a dedicated document under `DOC
 
 If a durable choice is made during a ticket (for example, picking a folder-structure convention), create an architectural ADR under `DOCS_FOLDER/ADRS/` and point the WORKLOG document to that ADR , do not duplicate the reasoning.
 
-Recommended frontmatter for a per-ticket WORKLOG document:
+Recommended YAML frontmatter (Open Knowledge Format) for a per-ticket WORKLOG document:
 
 ```markdown
 ---
-**date:** YYYY-MM-DD
-**status:** To Be Validated
-**description:** One sentence summarizing what was done for this ticket.
-**tags:** worklog, ticket, <domain slugs>
+type: Worklog
+title: Ticket <n> — <short title>
+description: One sentence summarizing what was done for this ticket.
+tags:
+  - worklog
+  - ticket
+  - <domain-slug>
+status: To Be Validated
 ---
 ```
+
+`type`, `title` and an ISO-8601 `timestamp` are derived automatically on write when omitted.
 
 Recommended sections in the body:
 
@@ -131,14 +142,18 @@ When a feature changes a durable decision:
 
 The recommended initial status for an AI-created ADR is `To be validated`. A human can later validate it and change it to `Accepted`.
 
-Each ADR should include frontmatter useful for discovery:
+Each ADR should include YAML frontmatter (Open Knowledge Format) useful for discovery:
 
 ```markdown
 ---
-**date:** YYYY-MM-DD
-**status:** To be validated
-**description:** One sentence summarizing the decision and why it matters.
-**tags:** architecture, mcp, metadata
+type: ADR
+title: A short human-readable title
+description: One sentence summarizing the decision and why it matters.
+tags:
+  - architecture
+  - mcp
+  - metadata
+status: To be validated
 ---
 ```
 

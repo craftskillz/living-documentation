@@ -1,10 +1,15 @@
 ---
-id: no-magic-numbers
+type: Rule
 title: Avoid magic numbers
-severity: warning
 description: Numeric values with domain meaning must be named constants instead of repeated raw literals.
-tags: ["code-quality", "maintainability"]
-appliesTo: ["src/**/*.ts", "src/frontend/**/*.js"]
+tags:
+  - code-quality
+  - maintainability
+id: no-magic-numbers
+severity: warning
+appliesto:
+  - src/**/*.ts
+  - src/frontend/**/*.js
 ---
 
 Numeric values with domain meaning should be named where they are introduced.

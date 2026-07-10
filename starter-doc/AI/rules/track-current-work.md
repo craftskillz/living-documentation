@@ -1,10 +1,17 @@
 ---
-id: track-current-work
+type: Rule
 title: Track the current task in WORKLOG
-severity: required
 description: AI assistants must read and maintain the current-task worklog to enable reliable handoff between agents.
-tags: ["worklog", "handoff", "ai-agents", "progress", "documentation"]
-appliesTo: ["**/*"]
+tags:
+  - worklog
+  - handoff
+  - ai-agents
+  - progress
+  - documentation
+id: track-current-work
+severity: required
+appliesto:
+  - "**/*"
 ---
 
 Before resuming or modifying the project, read `DOCS_FOLDER/WORKLOG/current-task.md` if the file exists.

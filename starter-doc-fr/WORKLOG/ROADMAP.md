@@ -1,7 +1,13 @@
 ---
-**date:** 2026-01-01
-**description:** Exemple de roadmap de tickets , backlog ordonné pour livrer progressivement le produit, avec un critère d'acceptation visible par ticket. Cette roadmap est écrite par l'utilisateur, elle est fournie à titre d'exemple.
-**tags:** roadmap, tickets, mvp, planning
+type: Worklog
+title: ROADMAP
+description: Exemple de roadmap de tickets , backlog ordonné pour livrer progressivement le produit, avec un critère d'acceptation visible par ticket. Cette roadmap est écrite par l'utilisateur, elle est fournie à titre d'exemple.
+tags:
+  - roadmap
+  - tickets
+  - mvp
+  - planning
+timestamp: 2026-01-01T00:00:00Z
 ---
 
 # Tickets (exemple)

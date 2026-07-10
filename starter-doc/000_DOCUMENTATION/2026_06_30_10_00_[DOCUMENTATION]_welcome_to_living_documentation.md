@@ -1,8 +1,18 @@
 ---
-**date:** 2026-06-30
-**status:** Draft
-**description:** Entry point for the Living Documentation user documentation.
-**tags:** welcome, user-documentation, living-documentation, markdown, git, agents, workspace, mcp
+type: Document
+title: Welcome To Living Documentation
+description: Entry point for the Living Documentation user documentation.
+tags:
+  - welcome
+  - user-documentation
+  - living-documentation
+  - markdown
+  - git
+  - agents
+  - workspace
+  - mcp
+timestamp: 2026-06-30T10:00:00Z
+status: Draft
 ---
 
 ### Welcome to **Living Documentation**!

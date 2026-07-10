@@ -1,8 +1,17 @@
 ---
-**date:** 2026-07-01
-**status:** Draft
-**description:** Presentation courte du menu Agents pour executer les agents configures dans le Workspace.
-**tags:** agents, workspace, execution, llm, run, automatisation, documentation
+type: Document
+title: Menu Agents
+description: Presentation courte du menu Agents pour executer les agents configures dans le Workspace.
+tags:
+  - agents
+  - workspace
+  - execution
+  - llm
+  - run
+  - automatisation
+  - documentation
+timestamp: 2026-07-01T17:04:00Z
+status: Draft
 ---
 
 ### Menu **Agents**

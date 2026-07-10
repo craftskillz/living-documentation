@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: AGENTS
+---
+
 # AGENTS.md - Living Documentation
 
 Ce fichier est le point d'entrée pour Codex et les outils de type agent.

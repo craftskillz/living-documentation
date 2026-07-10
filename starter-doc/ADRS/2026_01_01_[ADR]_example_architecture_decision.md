@@ -1,8 +1,15 @@
 ---
-**date:** 2026-01-01
-**status:** Example
-**description:** Example ADR template showing how to record a project decision with enough context, consequences, and tags for an AI assistant to discover and reuse it later.
-**tags:** adr, template, architecture-decision, ai-context, documentation
+type: ADR
+title: Example Architecture Decision
+description: Example ADR template showing how to record a project decision with enough context, consequences, and tags for an AI assistant to discover and reuse it later.
+tags:
+  - adr
+  - template
+  - architecture-decision
+  - ai-context
+  - documentation
+timestamp: 2026-01-01T00:00:00Z
+status: Example
 ---
 
 # Example Architecture Decision

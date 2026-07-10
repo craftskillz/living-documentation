@@ -1,8 +1,15 @@
 ---
-**date:** 2026-01-02
-**status:** Idle
-**description:** Shared resume point between AI assistants to track the current task, its status, the files touched, the verifications, and the next action.
-**tags:** worklog, handoff, progress, resume, ai-agents
+type: Worklog
+title: Current task
+description: Shared resume point between AI assistants to track the current task, its status, the files touched, the verifications, and the next action.
+tags:
+  - worklog
+  - handoff
+  - progress
+  - resume
+  - ai-agents
+timestamp: 2026-01-02T00:00:00Z
+status: Idle
 ---
 
 # Current task

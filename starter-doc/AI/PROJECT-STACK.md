@@ -1,3 +1,8 @@
+---
+type: Technical Doc
+title: PROJECT STACK
+---
+
 # PROJECT-STACK - Template
 
 This file gives the AI assistant a short, factual overview of the project. It must stay concise, concrete, and continuously maintained.

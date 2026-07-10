@@ -1,8 +1,15 @@
 ---
-**date:** 2026-01-01
-**status:** Exemple
-**description:** Template d'ADR montrant comment enregistrer une décision projet avec assez de contexte, conséquences et tags pour qu'un assistant IA puisse la retrouver et la réutiliser plus tard.
-**tags:** adr, template, decision-architecture, contexte-ia, documentation
+type: ADR
+title: Example Architecture Decision
+description: Template d'ADR montrant comment enregistrer une décision projet avec assez de contexte, conséquences et tags pour qu'un assistant IA puisse la retrouver et la réutiliser plus tard.
+tags:
+  - adr
+  - template
+  - decision-architecture
+  - contexte-ia
+  - documentation
+timestamp: 2026-01-01T00:00:00Z
+status: Exemple
 ---
 
 # Exemple de décision d'architecture

@@ -164,7 +164,7 @@ document `documentation/WORKLOG/AAAA_MM_JJ_HH_mm_[WORKLOG]_ticket_XX_<slug>.md`.
 - [x] ~~Ticket 12 - Validateur de conformance OKF + hook CI~~ (severity error/warning, CLI `validate`, étape e2e push/PR)
 - [x] ~~Ticket 13 - Import d'un bundle OKF externe~~ (core CLI `import` → IMPORTED/<bundle>/, type préservé ; UI en suivi)
 - [ ] Ticket 14 - Visualiseur graphe de concepts (bonus)
-- [ ] Ticket 15 - Mise à jour docs & instructions
+- [x] ~~Ticket 15 - Mise à jour docs & instructions~~ (starters migrés + flag, guide/prompts/instructions en YAML ; init naît conforme)
 
 ## Jalons
 

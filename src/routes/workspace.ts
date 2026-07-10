@@ -1081,7 +1081,7 @@ function agentRunMarkdown(args: {
   const userInput = args.userInput.trim() || '_No user input._';
   const responseContent = contentWithGeneratedImages(args.content, args.artifacts);
   const debugSection = args.debug?.trim() ? `\n## Debug\n\n${args.debug.trim()}\n` : '';
-  return `---\n**date:** ${new Date().toISOString()}\n**status:** ${status}\n**description:** Resultat d'execution de l'agent ${args.agent.label} via ${args.provider.label}.\n**tags:** agent, run-agent, workspace, llm, ${slugify(args.agent.label)}\n---\n\n# ${args.title}\n\n## Execution\n\n- Agent: ${args.agent.label}\n- Provider: ${args.provider.label}\n- Model: ${args.provider.config.model}\n- Status: ${status}\n\n## User input\n\n${userInput}\n\n## Response\n\n${responseContent}\n${debugSection}`;
+  return `---\ntitle: ${args.title}\ndescription: Resultat d'execution de l'agent ${args.agent.label} via ${args.provider.label}.\ntags:\n  - agent\n  - run-agent\n  - workspace\n  - llm\n  - ${slugify(args.agent.label)}\ntimestamp: ${new Date().toISOString()}\nstatus: ${status}\n---\n\n# ${args.title}\n\n## Execution\n\n- Agent: ${args.agent.label}\n- Provider: ${args.provider.label}\n- Model: ${args.provider.config.model}\n- Status: ${status}\n\n## User input\n\n${userInput}\n\n## Response\n\n${responseContent}\n${debugSection}`;
 }
 
 // Render an accumulated debug log into a Markdown block. Returns '' when nothing was captured.

@@ -109,5 +109,9 @@
         "colorKey": "c-gray"
       }
     }
+  },
+  "okfMigration": {
+    "version": "0.1",
+    "migratedAt": "2026-07-10T20:30:08.501Z"
   }
 }

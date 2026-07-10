@@ -85,7 +85,7 @@ covers. This is what keeps the documentation alive.
    feature, then \`read_document\` their frontmatter (\`description\`,
    \`tags\`) to confirm.
 3. **Supersede check** — if an existing ADR is **made obsolete** by the new
-   feature, use \`update_document(id, ...)\` to flip its \`**status:**\` to
+   feature, use \`update_document(id, ...)\` to flip its \`status:\` to
    \`SuperSeeded\` and add a one-line pointer to the new ADR (do **not** call
    \`create_document\` — it does not overwrite and will reject a colliding
    filename).
@@ -95,16 +95,27 @@ covers. This is what keeps the documentation alive.
    feature's logic — never god files (see \`add_metadata\`).
 
 ### Mandatory ADR frontmatter
-Every ADR document body starts with:
+Every ADR document body starts with a YAML frontmatter block (Open Knowledge
+Format). Write it as:
 
 \`\`\`
 ---
-**date:** YYYY-MM-DD
-**status:** To be validated
-**description:** One dense, technical sentence — what the decision does, not why.
-**tags:** 5–10 specific tags mixing concepts, technologies, and key symbol names
+type: ADR
+title: A short human-readable title
+description: One dense, technical sentence — what the decision does, not why.
+tags:
+  - concept
+  - technology
+  - key-symbol-name
+status: To be validated
 ---
 \`\`\`
+
+The server normalizes frontmatter to canonical OKF YAML on every write, so
+\`type\`, \`title\` and an ISO-8601 \`timestamp\` are derived automatically when you
+omit them (5–10 specific \`tags\` mixing concepts, technologies and key symbol
+names remain your job). Never use the legacy \`**key:** value\` (bold) form — it
+is converted, but writing YAML keeps your output canonical.
 
 Rules:
 - \`status:\` is **always** \`To be validated\` at creation. Only the human
@@ -420,10 +431,10 @@ const CREATE_DIAGRAM_DESCRIPTION = [
 ].join("\n");
 
 const CREATE_DOCUMENT_DESCRIPTION = [
-  "Create a **new** Markdown document. The filename is generated automatically from the configured pattern (date + category + title slug). Pass `content` as full Markdown; omit to create an empty stub. To **modify an existing document** (correct drift, flip `**status:**` to `SuperSeeded`, edit body), use `update_document(id, content)` instead — `create_document` will refuse with `A document with this name already exists` if the target filename collides.",
+  "Create a **new** Markdown document. The filename is generated automatically from the configured pattern (date + category + title slug). Pass `content` as full Markdown; omit to create an empty stub. To **modify an existing document** (correct drift, flip `status:` to `SuperSeeded`, edit body), use `update_document(id, content)` instead — `create_document` will refuse with `A document with this name already exists` if the target filename collides.",
   "",
   "## `date` argument — retrodocumentation only",
-  'By default the filename date prefix is "now". Pass `date` (ISO 8601, e.g. `2024-08-12` or `2024-08-12T14:33:00Z`) **only** when retrodocumenting an ADR from a past event — typically inside the `retrodocument-adrs-from-git` workflow, where the date must come from the originating git commit. The frontmatter `**date:**` field should match. Outside of retrodocumentation, omit `date`.',
+  'By default the filename date prefix is "now". Pass `date` (ISO 8601, e.g. `2024-08-12` or `2024-08-12T14:33:00Z`) **only** when retrodocumenting an ADR from a past event — typically inside the `retrodocument-adrs-from-git` workflow, where the date must come from the originating git commit. The derived `timestamp:` will match. Outside of retrodocumentation, omit `date`.',
   "",
   "## Primary use case — ADRs (Architecture Decision Records)",
   'On this project, the dominant use of `create_document` is to record an ADR every time a coding agent implements or modifies a feature. The full workflow is described in `get_server_guide` ("Feature workflow"). In short:',
@@ -433,17 +444,22 @@ const CREATE_DOCUMENT_DESCRIPTION = [
   "3. **Bind the source files** with `add_metadata` (see that tool for the god-files exclusion list). Without this, the ADR escapes drift detection.",
   "",
   "## Mandatory ADR frontmatter",
-  "Every ADR body starts with these four fields. They drive search, audit, and lifecycle:",
+  "Every ADR body starts with a YAML frontmatter block (Open Knowledge Format). They drive search, audit, and lifecycle:",
   "",
   "```",
   "---",
-  "**date:** YYYY-MM-DD",
-  "**status:** To be validated",
-  "**description:** One dense, technical sentence — what the decision does, not why.",
-  "**tags:** 5–10 specific tags mixing concepts, technologies, and key symbol names",
+  "type: ADR",
+  "title: A short human-readable title",
+  "description: One dense, technical sentence — what the decision does, not why.",
+  "tags:",
+  "  - concept",
+  "  - technology",
+  "  - key-symbol-name",
+  "status: To be validated",
   "---",
   "```",
   "",
+  "The server normalizes frontmatter to canonical OKF YAML on write, so `type`, `title` and an ISO-8601 `timestamp` are derived when omitted; give 5–10 specific `tags`. Never use the legacy `**key:** value` (bold) form.",
   "- `status:` is **always** `To be validated` at creation. Only the human owner promotes to `Accepted`. The status has **no effect** on how the LLM treats the ADR — only `SuperSeeded` is filtered out downstream.",
   '- `description:` stays factual and short — one sentence. The "why" goes in the body.',
   "- `tags:` are the primary search signal. Be specific.",
@@ -456,7 +472,7 @@ const CREATE_DOCUMENT_DESCRIPTION = [
   '  "title":    "ajout ressource storage s3",',
   '  "category": "SERVICES CLOUD",',
   '  "folder":   "adrs",',
-  '  "content":  "---\\n**date:** 2026-04-27\\n**status:** To be validated\\n**description:** Ajout du module S3 Storage via Amplify Gen 2 — bucket nommé via CDK override, CORS configuré, pas de mode hors-ligne\\n**tags:** s3, storage, amplify, CDK, bucket, CORS, cloud\\n---\\n\\n# Ajout ressource storage S3\\n\\n## Contexte\\n...\\n\\n## Décision\\n...\\n\\n## Conséquences\\n..."',
+  '  "content":  "---\\ntype: ADR\\ntitle: Ajout ressource storage S3\\ndescription: Ajout du module S3 Storage via Amplify Gen 2 — bucket nommé via CDK override, CORS configuré, pas de mode hors-ligne\\ntags:\\n  - s3\\n  - storage\\n  - amplify\\n  - CDK\\n  - CORS\\nstatus: To be validated\\n---\\n\\n# Ajout ressource storage S3\\n\\n## Contexte\\n...\\n\\n## Décision\\n...\\n\\n## Conséquences\\n..."',
   "}",
   "```",
   "",
@@ -603,7 +619,7 @@ const TOOLS = [
   {
     name: "update_document",
     description: [
-      "Overwrite the Markdown content of an existing document by its id. Use this whenever you need to modify a doc in place — e.g. correcting drift detected by `get_accuracy` (Scenario B audit), or flipping `**status:**` to `SuperSeeded` after a feature has obsoleted a prior ADR (Scenario A supersede).",
+      "Overwrite the Markdown content of an existing document by its id. Use this whenever you need to modify a doc in place — e.g. correcting drift detected by `get_accuracy` (Scenario B audit), or flipping `status:` to `SuperSeeded` after a feature has obsoleted a prior ADR (Scenario A supersede).",
       "",
       "## Workflow",
       "1. `read_document(id)` to load the current Markdown.",
@@ -1437,7 +1453,7 @@ Living Documentation is a tool where knowledge lives primarily in Markdown docum
 **Do not ask the user questions you can answer yourself by reading the docs.**
 
 1. Call \`list_documents\` to get the full document list.
-2. Read documents that look architecturally significant regardless of their folder name — look for ADR-style frontmatter (lines starting with \`**status:**\`, \`**description:**\`, \`**tags:**\`), README files, and any document whose title or category suggests architecture, integration, or domain knowledge.
+2. Read documents that look architecturally significant regardless of their folder name — look for ADR-style YAML frontmatter (lines starting with \`type:\`, \`status:\`, \`description:\`, \`tags:\`), README files, and any document whose title or category suggests architecture, integration, or domain knowledge.
 3. **Ignore any document whose frontmatter contains \`status: SuperSeeded\`** — it is deprecated and must not be used as a source of truth.
 4. Read the frontmatter (\`description\` and \`tags\` fields) of each relevant document with \`read_document\` to find answers to the diagram-specific questions below.
 5. Only ask the user for information that cannot be found in any active (non-superseded) document.
@@ -1664,20 +1680,26 @@ ${featureLine}
 3. \`read_document\` on the shortlisted ADRs and inspect their frontmatter (\`description\`, \`tags\`).
 4. If an existing ADR is **made obsolete** by this feature:
    - \`read_document(id)\` to load its current Markdown.
-   - Modify only the frontmatter: flip \`**status:**\` to \`SuperSeeded\` and add a one-line pointer just under the frontmatter (e.g. \`> Superseded by: <new ADR title>\`). Keep the body intact — supersede is a status flip, not a delete.
+   - Modify only the frontmatter: flip \`status:\` to \`SuperSeeded\` and add a one-line pointer just under the frontmatter (e.g. \`> Superseded by: <new ADR title>\`). Keep the body intact — supersede is a status flip, not a delete.
    - \`update_document(id, content)\` with the modified Markdown. Do **not** use \`create_document\` for this — it does not overwrite and will reject a colliding filename.
 5. If no ADR is superseded, proceed.
 
 ## Step 2 — Write the new ADR
 
-Mandatory frontmatter at the very top of \`content\`:
+Mandatory YAML frontmatter (Open Knowledge Format) at the very top of \`content\`.
+Pass \`date: ${today}\` as the \`create_document\` argument so the filename and the
+derived \`timestamp:\` match the commit:
 
 \`\`\`
 ---
-**date:** ${today}
-**status:** To be validated
-**description:** One dense, technical sentence — what the decision does, not why.
-**tags:** 5–10 specific tags mixing concepts, technologies, and key symbol names
+type: ADR
+title: A short human-readable title
+description: One dense, technical sentence — what the decision does, not why.
+tags:
+  - concept
+  - technology
+  - key-symbol-name
+status: To be validated
 ---
 \`\`\`
 
@@ -1773,14 +1795,19 @@ For **each** commit returned by the tool, in order:
 The commit carries a fresh decision that no prior ADR covers.
 
 1. Compose the body, sections suggested: \`## Contexte\`, \`## Décision\`, \`## Conséquences\`. Write the description from the **commit subject + body**, never invented context. If the commit message is empty or unintelligible, downgrade to Outcome C and skip.
-2. Mandatory frontmatter — **date comes from the commit**, not today:
+2. Mandatory YAML frontmatter — pass the \`date\` argument from the commit
+   (\`committerDate\`, not today) so the filename and derived \`timestamp:\` match:
 
 \`\`\`
 ---
-**date:** <commit committerDate, YYYY-MM-DD slice>
-**status:** To be validated
-**description:** One dense, technical sentence — what the decision does, not why.
-**tags:** 5–10 specific tags mixing concepts, technologies, and key symbol names
+type: ADR
+title: A short human-readable title
+description: One dense, technical sentence — what the decision does, not why.
+tags:
+  - concept
+  - technology
+  - key-symbol-name
+status: To be validated
 ---
 \`\`\`
 
@@ -1799,7 +1826,7 @@ The commit modifies a decision recorded by an earlier ADR (either pre-existing o
 
 1. Identify the obsoleted ADR from the inventory built in Step 2 (or from ADRs you just created earlier in the walk).
 2. \`read_document(<old id>)\` to load its current Markdown.
-3. \`update_document(<old id>, <content>)\` flipping \`**status:**\` to exactly \`SuperSeeded\` and adding a one-line pointer just under the frontmatter (e.g. \`> Superseded by: <new ADR title> (commit <shortSha>)\`). Keep the body intact.
+3. \`update_document(<old id>, <content>)\` flipping \`status:\` to exactly \`SuperSeeded\` and adding a one-line pointer just under the frontmatter (e.g. \`> Superseded by: <new ADR title> (commit <shortSha>)\`). Keep the body intact.
 4. Then proceed with Outcome A to create the replacement ADR. In the new ADR's body, explicitly reference the superseded ADR title and explain why it no longer applies.
 
 ### Outcome C — Skip

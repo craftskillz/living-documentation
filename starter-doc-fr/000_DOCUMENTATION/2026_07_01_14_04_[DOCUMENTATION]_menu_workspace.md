@@ -1,8 +1,17 @@
 ---
-**date:** 2026-07-01
-**status:** Draft
-**description:** Presentation courte du menu Workspace pour configurer des providers LLM et des agents documentaires.
-**tags:** workspace, agents, llm, mcp, providers, automatisation, documentation
+type: Document
+title: Menu Workspace
+description: Presentation courte du menu Workspace pour configurer des providers LLM et des agents documentaires.
+tags:
+  - workspace
+  - agents
+  - llm
+  - mcp
+  - providers
+  - automatisation
+  - documentation
+timestamp: 2026-07-01T14:04:00Z
+status: Draft
 ---
 
 ### Menu **Workspace**
