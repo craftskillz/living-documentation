@@ -2,44 +2,44 @@
   "AI/PROJECT-STACK": [
     {
       "path": "bin/cli.ts",
-      "hash": "11345c1291c720eb4d2c9f7ec6c047a94f3b205d2c169be1cc12e5c5b966841a",
-      "commit": "be260560beaadd1bcaf8dfadf1a73d4679b5f1d5",
+      "hash": "2c16bc01c76103483817a163093dec56ad092f4d59ca565c14bdacda8f36886c",
+      "commit": "98a36520eecf42cce386808805140737bc9c6d30",
       "dirty": false
     },
     {
       "path": "src/server.ts",
       "hash": "d2e9da7a978c63f86016c00a55ba313c58cc03b5ad8ca8da36cc5e1472a52c52",
-      "commit": "be260560beaadd1bcaf8dfadf1a73d4679b5f1d5",
+      "commit": "98a36520eecf42cce386808805140737bc9c6d30",
       "dirty": false
     },
     {
       "path": "src/lib/config.ts",
       "hash": "363d4620f8e48feff650fe6a4dcfac737c27a754f0f608c2854966d448a7e157",
-      "commit": "be260560beaadd1bcaf8dfadf1a73d4679b5f1d5",
+      "commit": "98a36520eecf42cce386808805140737bc9c6d30",
       "dirty": false
     },
     {
       "path": "src/lib/parser.ts",
       "hash": "371fbb9676a0b8144f9f8a009d8f9ecf1fa785985308fc95083e90603cff6aed",
-      "commit": "be260560beaadd1bcaf8dfadf1a73d4679b5f1d5",
+      "commit": "98a36520eecf42cce386808805140737bc9c6d30",
       "dirty": false
     },
     {
       "path": "src/lib/metadata.ts",
       "hash": "0498b125bfb38061564a132641c123f1d0ca634664c81f13cd25d465de1f9175",
-      "commit": "be260560beaadd1bcaf8dfadf1a73d4679b5f1d5",
+      "commit": "98a36520eecf42cce386808805140737bc9c6d30",
       "dirty": false
     },
     {
       "path": "src/mcp/server.ts",
-      "hash": "30439109036b7a19bf4b17dbf125fde8ec15b4a805a04de78529365690f06341",
-      "commit": "be260560beaadd1bcaf8dfadf1a73d4679b5f1d5",
+      "hash": "3b47ab14e3820987ba65387741d7afabd76625bdd011fee073c7f08d5fe32969",
+      "commit": "98a36520eecf42cce386808805140737bc9c6d30",
       "dirty": false
     },
     {
       "path": "scripts/copy-assets.ts",
       "hash": "ffdb3d3b63a943a0d0eb4988f8fe71aa7e4fb937f4426a1e94bd6436ce4ae240",
-      "commit": "be260560beaadd1bcaf8dfadf1a73d4679b5f1d5",
+      "commit": "98a36520eecf42cce386808805140737bc9c6d30",
       "dirty": false
     }
   ],
