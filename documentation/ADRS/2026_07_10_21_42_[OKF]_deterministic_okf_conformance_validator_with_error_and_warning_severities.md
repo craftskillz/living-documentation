@@ -17,6 +17,10 @@ sources:
     hash: 0daa04e0f0d28171f5718b6435d46ad5bbf13cee904bfe077d4b1c961f7f3294
     commit: c271f9458f3457bfd7c1da9fffa3607575850662
     dirty: false
+  - path: bin/cli.ts
+    hash: 6e9f18329e412cf9101d1c1d5f9c767c7d77507806c646d1cfc38c1d64e12191
+    commit: 0d1e4f9b695846510a19e38976fc627304e9e90d
+    dirty: false
 ---
 
 # OKF conformance validator + CI gate
