@@ -18,20 +18,20 @@ timestamp: 2026-06-23T22:21:00Z
 status: To be validated
 sources:
   - path: src/lib/git.ts
-    hash: ab30eacedd040cb9a54894fe5d2a373bd15db3499b3059a7117893224743c879
-    commit: 167eb7b1e3bbe8f8e31b137f02618e5eebd4eb5c
+    hash: 37f8b429af1fdfebf6ed46b8017e5499a83876d2b5e9264ff4bcf5afa6830473
+    commit: 06cbd4105fcc8e48d9f4015eeaef828101be2ecc
     dirty: false
   - path: src/lib/metadata.ts
-    hash: 84a6200b69511299c01e8f3e74234b01a352cf7583ee8307231e640da9126550
-    commit: 399d7888211ae5583938fea74088399fa209a7ad
+    hash: 0498b125bfb38061564a132641c123f1d0ca634664c81f13cd25d465de1f9175
+    commit: 06cbd4105fcc8e48d9f4015eeaef828101be2ecc
     dirty: false
   - path: src/mcp/tools/metadata.ts
-    hash: 9be3219e9f39110d23864050299644f304c81d694fbb6fdb1877d104cc820ee3
-    commit: 399d7888211ae5583938fea74088399fa209a7ad
+    hash: bbbc1a63e614b5e2bbd7b45bd691fd3f1a37b7d08e2fcad656d46d70e95bc86d
+    commit: 06cbd4105fcc8e48d9f4015eeaef828101be2ecc
     dirty: false
   - path: src/routes/metadata.ts
-    hash: 9fb2a329822f32f020b1dabf91eb3fa57c954137b9038ed46c1ebe523b36a7bc
-    commit: 399d7888211ae5583938fea74088399fa209a7ad
+    hash: ede0df5f16c5590e34374c0961c3d90b22883d10a5598cc630a89edeb889159d
+    commit: 06cbd4105fcc8e48d9f4015eeaef828101be2ecc
     dirty: false
 ---
 
