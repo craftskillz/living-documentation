@@ -41,7 +41,7 @@ Le guide formalise notamment :
 
 - la convention espaces documentation/sources découplés (déjà actée dans une ADR séparée mais désormais référencée ici) ;
 - le **workflow ADR obligatoire** (cf. section 2) ;
-- la **frontmatter ADR obligatoire** : `**date:**`, `**status:**` (toujours `To be validated` à la création), `**description:**` (une phrase technique dense), `**tags:**` (5–10 tags spécifiques) ;
+- la **frontmatter ADR obligatoire** (YAML, Open Knowledge Format) : `type`, `title`, `description` (une phrase technique dense), `tags` (5–10 tags spécifiques), `status` (toujours `To be validated` à la création) ; `type`/`title`/`timestamp` sont dérivés à l'écriture si omis. _(Historiquement en frontmatter `**gras**`, migré en YAML par le chantier OKF.)_ ;
 - les **conventions Markdown** propres au viewer : lien cross-doc `?doc=<doublyEncodedId>` avec la règle « copier le `linkHref` verbatim », lien vers diagramme `/diagram?id=...`, pièce jointe `./files/...`, ancre interne `#heading-slug`, arbres ASCII dans un fenced code block ;
 - les conventions par type de diagramme (context, container, UML, screen-guide) , déjà actées mais consolidées ici.
 
@@ -51,7 +51,7 @@ Le guide stipule qu'une feature n'est _terminée_ qu'après la création (ou sup
 
 1. `list_documents` pour récupérer l'inventaire.
 2. Shortlist des ADRs topiquement proches, puis `read_document` pour confirmer.
-3. **Supersede check** , si une ADR existante est rendue obsolète, basculer son `**status:**` à `SuperSeeded` via `update_document` et y ajouter un pointeur vers la nouvelle.
+3. **Supersede check** , si une ADR existante est rendue obsolète, basculer son `status:` à `SuperSeeded` via `update_document` et y ajouter un pointeur vers la nouvelle.
 4. `create_document` pour la nouvelle ADR (frontmatter mandatory, `status: To be validated`).
 5. `add_metadata` pour **chaque fichier source** qui porte la logique , en excluant les « god files » (lockfiles, barrels, root routers).
 
@@ -65,7 +65,7 @@ Le guide stipule qu'une feature n'est _terminée_ qu'après la création (ou sup
 
 L'outil est utilisé pour deux scénarios :
 
-- **Supersede** : flipper le `**status:**` d'une ADR + ajouter un pointeur (Scenario A du workflow).
+- **Supersede** : flipper le `status:` d'une ADR + ajouter un pointeur (Scenario A du workflow).
 - **Audit drift** : réécrire le corps d'un document désynchronisé du code, puis appeler `refresh_metadata` pour rebaseliner les hashes (Scenario B).
 
 L'outil refuse les contenus vides pour éviter d'effacer accidentellement un document.

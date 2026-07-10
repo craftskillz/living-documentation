@@ -38,9 +38,11 @@ frontmatter (not legacy/none), a non-empty `type` within the closed vocabulary
 
 Each violation carries a **severity**: `ok` is true iff there are no
 `error`-severity violations. A **missing** `timestamp` is a *warning* (undated
-concepts such as rules or project docs are legitimate); a **malformed**
-`timestamp`, legacy frontmatter, empty/unknown `type`, missing `title`,
-malformed `sources` or a missing reserved file are *errors*.
+concepts such as rules or project docs are legitimate); an **unrecognized** (but
+present, non-empty) `type` is a *warning* too — the OKF `type` vocabulary is
+extensible, so imported bundles may carry their own (refined in T13). A
+**malformed** `timestamp`, legacy frontmatter, an **empty** `type`, missing
+`title`, malformed `sources` or a missing reserved file are *errors*.
 
 Exposed as the CLI `validate [folder]` command (exit 1 on any error), the
 `okf:validate` npm script (ts-node, no build needed) and the `okf-validate`
