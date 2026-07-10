@@ -17,19 +17,19 @@ status: To be validated
 sources:
   - path: src/lib/okf.ts
     hash: 938cc3890e306e4f4fbf3688156c092e2c4f0b260c45e771d0fbdacfb23832e5
-    commit: bafd7cde5157333d62a99f879d05a551e58b4093
+    commit: f3db9907731ef4a82920acd7fff8480734e918f5
     dirty: false
   - path: src/mcp/tools/documents.ts
     hash: 1bd213b7646d016ad3e58863cc2ae4443031dd2519acdda9e2a4b05951bdd57b
-    commit: bafd7cde5157333d62a99f879d05a551e58b4093
+    commit: f3db9907731ef4a82920acd7fff8480734e918f5
     dirty: false
   - path: src/routes/documents.ts
     hash: 22bbc2f3b743dc5b1e45aca5c87438bf420a2ed771702735656cef8ad3dee6e3
-    commit: bafd7cde5157333d62a99f879d05a551e58b4093
+    commit: f3db9907731ef4a82920acd7fff8480734e918f5
     dirty: false
   - path: src/routes/workspace.ts
-    hash: 807c34a8892804d4e928ef36bbef73a630783b06191d042a9eaebaca1f6e9afe
-    commit: bafd7cde5157333d62a99f879d05a551e58b4093
+    hash: 5d49c832b11962d5aa755405411a6641f55bd183f8a500a914df34a59da3064b
+    commit: f3db9907731ef4a82920acd7fff8480734e918f5
     dirty: false
 ---
 
