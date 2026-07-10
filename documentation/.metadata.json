@@ -522,32 +522,32 @@
   "ADRS/2026_05_30_22_14_[FRONTEND]_workspace_configuration_graph_avec_agents_llm_et_tool_use_mcp": [
     {
       "path": "src/routes/workspace.ts",
-      "hash": "f7547638be1f4bbbe6be59c946e63c96b65d17656a93915e2df66bc04481509c",
-      "commit": "9b1baf6fc181cd4be44abbf5ebdbca1304d1b54d",
+      "hash": "5d49c832b11962d5aa755405411a6641f55bd183f8a500a914df34a59da3064b",
+      "commit": "c486ee4653ca3cc7f22e478e1b5ac5f5119768eb",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/routes/Workspace.svelte",
-      "hash": "f463adb35124142fec652bb282939963863948b4a2742248b853769bc3098d37",
-      "commit": "9b1baf6fc181cd4be44abbf5ebdbca1304d1b54d",
+      "hash": "26121a41d8b8a04b13f5de96e7c84b182d338216f834d263f616c05931031f94",
+      "commit": "c486ee4653ca3cc7f22e478e1b5ac5f5119768eb",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/lib/workspace/app.ts",
-      "hash": "40957f7836ba0ca13822588a1e2e7d66ec93ce1974db44bd90f8d4d42ff646ee",
-      "commit": "9b1baf6fc181cd4be44abbf5ebdbca1304d1b54d",
+      "hash": "d1fda6a885e6e1db292ee1bbfec4b504dd1f493d0760c570095e60294c141c74",
+      "commit": "c486ee4653ca3cc7f22e478e1b5ac5f5119768eb",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/lib/workspace/persistence.ts",
-      "hash": "0ee0a98a7341580c5fc41b896a7d18e72571941100f8029a38842bc06e659b03",
-      "commit": "9b1baf6fc181cd4be44abbf5ebdbca1304d1b54d",
+      "hash": "8064972a06548b8d2bb5e69094e6c90e5cf89f6b365b8befc4454d8bba808647",
+      "commit": "c486ee4653ca3cc7f22e478e1b5ac5f5119768eb",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/lib/workspace/styles.css",
-      "hash": "9515b85cfd68886de39b7e673ee101b771d315074b74ef2c8c9d5965e27f0626",
-      "commit": "9b1baf6fc181cd4be44abbf5ebdbca1304d1b54d",
+      "hash": "fbe06d4e4b738b8ca1c392eed56332c19733d70597d12475b5eb4bcd84d8562e",
+      "commit": "c486ee4653ca3cc7f22e478e1b5ac5f5119768eb",
       "dirty": false
     }
   ],
