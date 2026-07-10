@@ -15,16 +15,16 @@ timestamp: 2026-07-09T01:25:00Z
 status: To be validated
 sources:
   - path: bin/cli.ts
-    hash: 6e9f18329e412cf9101d1c1d5f9c767c7d77507806c646d1cfc38c1d64e12191
-    commit: ce760b859399e7a4a406de86d271fe703995fbf0
+    hash: 2c16bc01c76103483817a163093dec56ad092f4d59ca565c14bdacda8f36886c
+    commit: a1c6f29f50502634eeead35c47726ae85dc47492
     dirty: false
   - path: src/lib/config.ts
     hash: 363d4620f8e48feff650fe6a4dcfac737c27a754f0f608c2854966d448a7e157
-    commit: ce760b859399e7a4a406de86d271fe703995fbf0
+    commit: a1c6f29f50502634eeead35c47726ae85dc47492
     dirty: false
   - path: src/lib/migrate.ts
     hash: 4b3d4d1939de64df5d1f5b4e2fa07b918bf9084972d4c45299629fc4e98320d4
-    commit: ce760b859399e7a4a406de86d271fe703995fbf0
+    commit: a1c6f29f50502634eeead35c47726ae85dc47492
     dirty: false
 ---
 
