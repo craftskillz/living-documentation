@@ -8,6 +8,7 @@ import { startServer } from "../src/server";
 import { readConfig, isOkfMigrated } from "../src/lib/config";
 import { migrateDocsFolder } from "../src/lib/migrate";
 import { validateOkfBundle } from "../src/lib/okf/validate";
+import { importOkfBundle } from "../src/lib/okf/import";
 
 // Handle SIGTERM gracefully so V8 flushes NODE_V8_COVERAGE (used by c8 in tests).
 // Also good hygiene — without this, process exits with code 143 and Express sockets
@@ -443,6 +444,26 @@ program
     }
     if (!r.ok) process.exit(1);
     console.log("  ✓ bundle is OKF-conformant");
+  });
+
+program
+  .command("import <source> [folder]")
+  .description("Import an external OKF bundle into a project under IMPORTED/<bundle> (deterministic, no AI).")
+  .option("--name <name>", "Destination bundle folder name (defaults to the source folder name)")
+  .action((source: string, folder: string | undefined, options: { name?: string }) => {
+    const target = folder ?? "documentation";
+    validateRelativeFolder(target);
+    const docsPath = path.resolve(process.cwd(), target);
+    if (!fs.existsSync(docsPath)) {
+      console.error(`\nError: Folder not found: ${docsPath}\n`);
+      process.exit(1);
+    }
+    const sourcePath = path.resolve(process.cwd(), source);
+    const r = importOkfBundle(sourcePath, docsPath, { name: options.name });
+    console.log(`OKF bundle import — ${sourcePath} → ${target}/${r.targetDir}`);
+    console.log(`  imported: ${r.imported}  skipped (reserved): ${r.skippedReserved}  errors: ${r.errors.length}`);
+    for (const e of r.errors) console.error(`  ! ${e}`);
+    if (r.errors.length) process.exit(1);
   });
 
 program.parseAsync().catch((error) => {

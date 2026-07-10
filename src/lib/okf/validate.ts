@@ -86,11 +86,15 @@ export function validateOkfBundle(docsPath: string): OkfValidationResult {
       continue; // the remaining field checks assume a parsed YAML block
     }
 
+    // `type` must be present and non-empty (error). The OKF `type` vocabulary is
+    // extensible, so a present-but-unrecognized type is only a warning — our own
+    // concepts always use a derived (known) type, while imported bundles may
+    // carry their own vocabulary.
     const type = typeof data.type === "string" ? data.type.trim() : "";
     if (!type) {
       violations.push({ file: rel, rule: "type", message: "missing or empty `type`", severity: "error" });
     } else if (!KNOWN_TYPES.has(type)) {
-      violations.push({ file: rel, rule: "type", message: `unknown type "${type}"`, severity: "error" });
+      violations.push({ file: rel, rule: "type", message: `unrecognized type "${type}"`, severity: "warning" });
     }
 
     const title = typeof data.title === "string" ? data.title.trim() : "";

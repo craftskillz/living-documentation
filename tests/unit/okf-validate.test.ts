@@ -56,17 +56,19 @@ test("flags legacy frontmatter, empty type and missing title as errors", () => {
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
-test("flags unknown type, non-ISO timestamp, malformed sources", () => {
+test("unrecognized type is a warning; non-ISO timestamp and malformed sources are errors", () => {
   const dir = makeBundle();
   fs.writeFileSync(
     path.join(dir, "ADRS", "x.md"),
     "---\ntype: Widget\ntitle: X\ntimestamp: 2026-07-10\nsources:\n  - hash: h\n---\nbody",
   );
   const r = validateOkfBundle(dir);
-  const rules = r.violations.filter((v) => path.basename(v.file) === "x.md").map((v) => v.rule);
-  assert.ok(rules.includes("type")); // "Widget" not in the vocabulary
-  assert.ok(rules.includes("timestamp")); // date-only, not full ISO
-  assert.ok(rules.includes("sources")); // entry missing `path`
+  const vX = r.violations.filter((v) => path.basename(v.file) === "x.md");
+  const bySeverity = (rule: string) => vX.find((v) => v.rule === rule)?.severity;
+  assert.equal(bySeverity("type"), "warning"); // "Widget" outside the vocabulary → advisory
+  assert.equal(bySeverity("timestamp"), "error"); // date-only, not full ISO
+  assert.equal(bySeverity("sources"), "error"); // entry missing `path`
+  assert.equal(r.ok, false); // the two errors still fail the bundle
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
