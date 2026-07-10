@@ -13,6 +13,11 @@ tags:
   - frontmatter
 timestamp: 2026-07-10T08:23:00Z
 status: To be validated
+sources:
+  - path: src/lib/metadata.ts
+    hash: 0498b125bfb38061564a132641c123f1d0ca634664c81f13cd25d465de1f9175
+    commit: 957bd510d0984dcd743cffc8b59f3a7b400b5335
+    dirty: false
 ---
 
 # Frontmatter `sources` block + `resource` field

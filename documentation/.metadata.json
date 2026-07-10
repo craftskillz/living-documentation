@@ -1770,5 +1770,13 @@
       "commit": "ec4ec03003b1da79c5b9f3bcc24491d039c7cdd8",
       "dirty": false
     }
+  ],
+  "ADRS/2026_07_10_08_23_[OKF]_mirror_drift_bindings_into_an_okfpreserved_frontmatter_sources_block": [
+    {
+      "path": "src/lib/metadata.ts",
+      "hash": "0498b125bfb38061564a132641c123f1d0ca634664c81f13cd25d465de1f9175",
+      "commit": "957bd510d0984dcd743cffc8b59f3a7b400b5335",
+      "dirty": false
+    }
   ]
 }
