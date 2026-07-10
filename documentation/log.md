@@ -2,6 +2,8 @@
 
 ## 2026-07-10
 
+* **Added**: Mirror Drift Bindings Into An Okfpreserved Frontmatter Sources Block
+* **Added**: Ticket 11 Resource Field And Sources Driftbinding Block In Frontmatter
 * **Added**: Generate Okf Logmd Changelog From Git History
 * **Added**: Ticket 10 Generate Okf Logmd Changelog From Git History
 * **Added**: Generated Okf Indexmd Progressivedisclosure Listings And Reserved Files
