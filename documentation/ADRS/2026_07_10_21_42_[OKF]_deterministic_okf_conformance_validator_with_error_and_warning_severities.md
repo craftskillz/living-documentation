@@ -12,6 +12,11 @@ tags:
   - severity
 timestamp: 2026-07-10T21:42:00Z
 status: To be validated
+sources:
+  - path: src/lib/okf/validate.ts
+    hash: 0daa04e0f0d28171f5718b6435d46ad5bbf13cee904bfe077d4b1c961f7f3294
+    commit: c271f9458f3457bfd7c1da9fffa3607575850662
+    dirty: false
 ---
 
 # OKF conformance validator + CI gate

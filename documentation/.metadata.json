@@ -1790,5 +1790,13 @@
       "commit": "7ab1df75ebf3ad2182882c40fc578ddb6daffef2",
       "dirty": false
     }
+  ],
+  "ADRS/2026_07_10_21_42_[OKF]_deterministic_okf_conformance_validator_with_error_and_warning_severities": [
+    {
+      "path": "src/lib/okf/validate.ts",
+      "hash": "0daa04e0f0d28171f5718b6435d46ad5bbf13cee904bfe077d4b1c961f7f3294",
+      "commit": "c271f9458f3457bfd7c1da9fffa3607575850662",
+      "dirty": false
+    }
   ]
 }
