@@ -51,8 +51,8 @@ Autonomie accordée : avancer sur tous les tickets sans demander, sauf besoin r�
   - ✅ ADR d'implémentation `2026_07_10_22_23_[OKF]_import_an_external_okf_bundle_...` + binding `import.ts` (accuracy 1) ; T06 (cli.ts) & T12 (validate.ts) rebaselinés ; phrase « unknown type » de l'ADR T12 corrigée.
   - **Suivi (hors T13)** : UI Admin/Files d'import ; liens absolus-bundle `/x.md` d'un bundle importé (résolveur T08).
 - [x] **T15** — Docs/instructions/starters en YAML. **FAIT + VÉRIFIÉ.** Starters migrés (18+18) + flag `okfMigration` ; guide serveur MCP + prompts (`server.ts`), `git.ts`, `workspace.ts`, PROJECT-INSTRUCTIONS ×3, ADR guide serveur révisé — tout en YAML. Build + 21/21 + lint 0 + 3 bundles 0 erreur. **Smoke init : projet neuf conforme, flag posé, garde passante.** WORKLOG `2026_07_10_22_51_[WORKLOG]_ticket_15_...`.
-  - **Après commit** : rebaseliner les ADR liées à `server.ts` (ADR guide serveur MCP), `git.ts` (ADR retrodocument), `workspace.ts` (ADR normalize-on-write T04). Pas de nouvel ADR (ticket de consistance).
-- [ ] **T14** — Visualiseur graphe de concepts (**bonus**, seul ticket ouvert). Vue graphe des liens réels réutilisant l'infra diagramme (front). À planifier si souhaité.
+  - ✅ 10 ADR liées à `server.ts`/`git.ts`/`workspace.ts` rebaselinées (accuracy 1). T15 clos.
+- [ ] **T14** — Visualiseur graphe de concepts (**bonus**). **EN COURS.** Vue graphe des liens réels entre concepts (liens bundle-relatifs `/x.md` `./x.md` + `?doc=`), réutilisant l'infra diagramme vis-network. Nouvelle route front + endpoint graphe.
 
 ## Chantier OKF — état : 14/15 tickets faits (T14 bonus restant)
 Le dossier `documentation/` est un bundle OKF natif conforme ; un projet neuf naît conforme.
