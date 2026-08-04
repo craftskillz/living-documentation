@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-04T15:56:04.741Z",
+  "updatedAt": "2026-08-04T15:57:37.333Z",
   "entities": [
     {
       "id": "root",
@@ -30,8 +30,8 @@
       "label": "MCP",
       "kind": "mcp",
       "parentId": "root",
-      "x": 1.9099941661438983e-14,
-      "y": -311.9257189050281,
+      "x": 2.2039093979392633e-14,
+      "y": -359.9257189050281,
       "angle": -1.5707963267948966,
       "config": {
         "endpoint": "http://localhost:4321/mcp",
@@ -214,9 +214,9 @@
       "label": "Find Written English Documents",
       "kind": "agent",
       "parentId": "provider-mqtqt25p",
-      "x": 597.6599376619125,
-      "y": 434.3524216580444,
-      "angle": 0.2094395102393194,
+      "x": 540.1931246945194,
+      "y": 540.1931246945193,
+      "angle": 0.7853981633974483,
       "config": {
         "endpoint": "",
         "token": "",
@@ -260,9 +260,9 @@
       "label": "Document Image Summary",
       "kind": "agent",
       "parentId": "provider-mqtqt25p",
-      "x": 434.35242165804453,
-      "y": 597.6599376619124,
-      "angle": 1.361356816555577,
+      "x": 218.74043136535374,
+      "y": 514.8942490661433,
+      "angle": 2.5132741228718345,
       "config": {
         "endpoint": "",
         "token": "",
@@ -352,8 +352,8 @@
       "label": "Nemotron 3 Free",
       "kind": "llm",
       "parentId": "root",
-      "x": -220.56479106423427,
-      "y": -220.56479106423419,
+      "x": -254.50591656118857,
+      "y": -254.50591656118849,
       "angle": 3.9269908169872414,
       "config": {
         "endpoint": "https://openrouter.ai/api/v1",
@@ -374,14 +374,14 @@
       "id": "agent-mr9mo89z",
       "label": "Ask the LLM",
       "kind": "agent",
-      "parentId": "provider-mqtqt25p",
-      "x": 218.74043136535374,
-      "y": 514.8942490661433,
-      "angle": 2.5132741228718345,
+      "parentId": "provider-mr9mly1h",
+      "x": -456.15151014612366,
+      "y": -188.98729154686723,
+      "angle": -3.455751918948773,
       "config": {
         "endpoint": "",
         "token": "",
-        "model": "deepseek/deepseek-v4-pro",
+        "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
         "providerType": "chat",
         "toolMode": "tools",
         "timeout": 180,
@@ -398,9 +398,9 @@
       "label": "Opened Prompt to Create Image",
       "kind": "agent",
       "parentId": "provider-mr9mly1h",
-      "x": -370.48749720974797,
-      "y": -370.48749720974774,
-      "angle": -2.3561944901923453,
+      "x": -188.98729154686745,
+      "y": -456.1515101461236,
+      "angle": -1.2566370614359177,
       "config": {
         "endpoint": "",
         "token": "",
@@ -413,13 +413,13 @@
         "userInputDescription": "Enter the full image prompt",
         "expectedOutputMarker": "",
         "description": "Opened prompt to create image",
-        "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image_2"
+        "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image_3"
       }
     }
   ],
   "camera": {
-    "x": 581.7864375376336,
-    "y": 203.40071921218203,
+    "x": 247.72759128297673,
+    "y": 363.4779919394465,
     "zoom": 0.4949812343387949
   }
 }
