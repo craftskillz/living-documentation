@@ -52,10 +52,11 @@ Autonomie accordée : avancer sur tous les tickets sans demander, sauf besoin r�
   - **Suivi (hors T13)** : UI Admin/Files d'import ; liens absolus-bundle `/x.md` d'un bundle importé (résolveur T08).
 - [x] **T15** — Docs/instructions/starters en YAML. **FAIT + VÉRIFIÉ.** Starters migrés (18+18) + flag `okfMigration` ; guide serveur MCP + prompts (`server.ts`), `git.ts`, `workspace.ts`, PROJECT-INSTRUCTIONS ×3, ADR guide serveur révisé — tout en YAML. Build + 21/21 + lint 0 + 3 bundles 0 erreur. **Smoke init : projet neuf conforme, flag posé, garde passante.** WORKLOG `2026_07_10_22_51_[WORKLOG]_ticket_15_...`.
   - ✅ 10 ADR liées à `server.ts`/`git.ts`/`workspace.ts` rebaselinées (accuracy 1). T15 clos.
-- [ ] **T14** — Visualiseur graphe de concepts (**bonus**). **EN COURS.** Vue graphe des liens réels entre concepts (liens bundle-relatifs `/x.md` `./x.md` + `?doc=`), réutilisant l'infra diagramme vis-network. Nouvelle route front + endpoint graphe.
+- [x] **T14** — Visualiseur graphe de concepts (**bonus**). **FAIT + rendu validé par l'utilisateur.** `src/lib/okf/graph.ts` (`buildConceptGraph`), `GET /api/graph`, route front `/graph` (vis-network, couleurs par type, clic → doc), nav Topbar + i18n `graph.*`. Correctif encodage `?doc=` (double→simple) : 84 arêtes / 73 nœuds connectés. Build + 23/23 + lint 0. WORKLOG `2026_07_11_08_29_[WORKLOG]_ticket_14_...`.
+  - **Après commit** : ADR T14 (bindings `graph.ts` + `routes/graph.ts`) + rebaseliner les ADR liées à `server.ts` (PROJECT-STACK, blueprint `[SRC]_src`).
 
-## Chantier OKF — état : 14/15 tickets faits (T14 bonus restant)
-Le dossier `documentation/` est un bundle OKF natif conforme ; un projet neuf naît conforme.
+## Chantier OKF — état : 15/15 tickets faits ✅
+Le dossier `documentation/` est un bundle OKF natif conforme ; un projet neuf naît conforme ; validateur + CI ; import de bundle externe ; graphe de concepts.
 
 ## Code à committer (T15)
 `src/mcp/server.ts`, `src/mcp/tools/git.ts`, `src/routes/workspace.ts`, `starter-doc/**`, `starter-doc-fr/**` (migrés + instructions). Les edits `documentation/` (PROJECT-INSTRUCTIONS, ADR guide) sont auto-commités par le serveur.
