@@ -8,7 +8,7 @@ tags:
   - workspace
   - llm
   - ask_the_llm
-timestamp: 2026-08-04T15:35:00.776Z
+timestamp: 2026-08-04T15:43:02.966Z
 status: Failed
 ---
 
@@ -37,7 +37,7 @@ Quel prompt à donner à un modele de generation d'image peux tu me proposer ?
 
 - Phase: server-agent-run
 - Name: Error
-- Message: LLM chat completion https://openrouter.ai/api/v1/chat/completions → 401 Unauthorized: {"error":{"message":"User not found.","code":401}}
+- Message: LLM chat completion https://openrouter.ai/api/v1/chat/completions → 404 Not Found: {"error":{"message":"This model is unavailable for free. The paid version is available now - use this slug instead: tencent/hy3","code":404},"user_id":"user_2wUPvCtesbXrUeFij2TO9eu4Mun"}
 - Agent: Ask the LLM
 - Provider: Nemotron 3 Free
 - Model: tencent/hy3:free
@@ -45,7 +45,7 @@ Quel prompt à donner à un modele de generation d'image peux tu me proposer ?
 ## Stack trace
 
 ```text
-Error: LLM chat completion https://openrouter.ai/api/v1/chat/completions → 401 Unauthorized: {"error":{"message":"User not found.","code":401}}
+Error: LLM chat completion https://openrouter.ai/api/v1/chat/completions → 404 Not Found: {"error":{"message":"This model is unavailable for free. The paid version is available now - use this slug instead: tencent/hy3","code":404},"user_id":"user_2wUPvCtesbXrUeFij2TO9eu4Mun"}
     at runAgent (/Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/src/routes/workspace.ts:903:15)
     at processTicksAndRejections (node:internal/process/task_queues:103:5)
     at async /Users/ymedaghri/Documents/Repositories/Medaghri-Alaoui-Repositories/09_My_Published_Projects/living-documentation/src/routes/workspace.ts:1447:19
