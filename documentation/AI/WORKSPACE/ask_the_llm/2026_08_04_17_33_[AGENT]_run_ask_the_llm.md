@@ -8,7 +8,7 @@ tags:
   - workspace
   - llm
   - ask_the_llm
-timestamp: 2026-08-04T15:22:59.153Z
+timestamp: 2026-08-04T15:33:30.748Z
 status: Failed
 ---
 
@@ -23,7 +23,13 @@ status: Failed
 
 ## User input
 
-Hello
+Je suis le créateur d'un blog qui s'appelle craftskillz, je titre de ce blog est "Journal d'un vieux dev'
+Je veux mettre une image hero de mon site.
+Je pensais à une image qui reprendrait l'idée journal d'un vieux dev et craft, mais avec une dimension poétique.
+Par exemple le livre que je lis en ce moment c'est "le vieil homme et la mer de Hemingway.
+Dernièrement j'étais à la mer justement et j'ai pu reflechir en prenant du recul, sur ce qui était important, ce qui m'avait servi en Dev versus ce qui était du bruit et du temporaire.
+Au final je cherche à transmettre ce que j'ai compris et accumulé comme experience.
+Quel prompt à donner à un modele de generation d'image peux tu me proposer ?
 
 ## Response
 
@@ -191,7 +197,7 @@ POST `https://openrouter.ai/api/v1/chat/completions`
     },
     {
       "role": "user",
-      "content": "Hello"
+      "content": "Je suis le créateur d'un blog qui s'appelle craftskillz, je titre de ce blog est \"Journal d'un vieux dev'\nJe veux mettre une image hero de mon site.\nJe pensais à une image qui reprendrait l'idée journal d'un vieux dev et craft, mais avec une dimension poétique.\nPar exemple le livre que je lis en ce moment c'est \"le vieil homme et la mer de Hemingway.\nDernièrement j'étais à la mer justement et j'ai pu reflechir en prenant du recul, sur ce qui était important, ce qui m'avait servi en Dev versus ce qui était du bruit et du temporaire.\nAu final je cherche à transmettre ce que j'ai compris et accumulé comme experience.\nQuel prompt à donner à un modele de generation d'image peux tu me proposer ?"
     }
   ],
   "tools": [
