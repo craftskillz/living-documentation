@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-06T19:45:51.044Z",
+  "updatedAt": "2026-08-04T15:52:31.614Z",
   "entities": [
     {
       "id": "root",
@@ -30,8 +30,8 @@
       "label": "MCP",
       "kind": "mcp",
       "parentId": "root",
-      "x": 2.2039093979392633e-14,
-      "y": -359.9257189050281,
+      "x": 1.9099941661438983e-14,
+      "y": -311.9257189050281,
       "angle": -1.5707963267948966,
       "config": {
         "endpoint": "http://localhost:4321/mcp",
@@ -283,8 +283,8 @@
       "label": "Nano Banana Pro",
       "kind": "llm",
       "parentId": "root",
-      "x": -288.44704205814276,
-      "y": 288.4470420581428,
+      "x": -356.3292930520513,
+      "y": 356.32929305205136,
       "angle": 2.356194490192345,
       "config": {
         "endpoint": "https://openrouter.ai/api/v1",
@@ -306,8 +306,8 @@
       "label": "Agent Sonnet Open Router",
       "kind": "llm",
       "parentId": "root",
-      "x": -359.9257189050281,
-      "y": 4.4078187958785266e-14,
+      "x": -647.9257189050281,
+      "y": 7.934801577422905e-14,
       "angle": 3.141592653589793,
       "config": {
         "endpoint": "https://openrouter.ai/api/v1",
@@ -329,9 +329,9 @@
       "label": "Code Review Specialist",
       "kind": "agent",
       "parentId": "provider-mr24cpyk",
-      "x": -571.9484432436896,
-      "y": 7.004348302956962e-14,
-      "angle": 3.141592653589793,
+      "x": -744.1820214836772,
+      "y": 188.91363066193938,
+      "angle": 2.0420352248333655,
       "config": {
         "endpoint": "",
         "token": "",
@@ -352,8 +352,8 @@
       "label": "Nemotron 3 Free",
       "kind": "llm",
       "parentId": "root",
-      "x": -254.50591656118857,
-      "y": -254.50591656118849,
+      "x": -356.3292930520514,
+      "y": -356.3292930520513,
       "angle": 3.9269908169872414,
       "config": {
         "endpoint": "https://openrouter.ai/api/v1",
@@ -375,13 +375,13 @@
       "label": "Ask the LLM",
       "kind": "agent",
       "parentId": "provider-mr9mly1h",
-      "x": -456.15151014612366,
-      "y": -188.9872915468673,
-      "angle": -3.4557519189487724,
+      "x": -506.25199919756506,
+      "y": -506.2519991975648,
+      "angle": -2.3561944901923453,
       "config": {
         "endpoint": "",
         "token": "",
-        "model": "tencent/hy3:free",
+        "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
         "providerType": "chat",
         "toolMode": "tools",
         "timeout": 180,
@@ -397,14 +397,14 @@
       "id": "agent-mr9mpxji",
       "label": "Opened Prompt to Create Image",
       "kind": "agent",
-      "parentId": "provider-mr9mly1h",
-      "x": -188.98729154686737,
-      "y": -456.15151014612354,
-      "angle": -1.2566370614359172,
+      "parentId": "provider-mr24cpyk",
+      "x": -744.1820214836773,
+      "y": -188.91363066193918,
+      "angle": 4.241150082346221,
       "config": {
         "endpoint": "",
         "token": "",
-        "model": "tencent/hy3:free",
+        "model": "anthropic/claude-sonnet-5",
         "providerType": "chat",
         "toolMode": "tools",
         "timeout": 180,
@@ -413,13 +413,13 @@
         "userInputDescription": "Enter the full image prompt",
         "expectedOutputMarker": "",
         "description": "Opened prompt to create image",
-        "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image_2"
+        "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image_3"
       }
     }
   ],
   "camera": {
-    "x": 446.75536476637023,
-    "y": 435.3668802154624,
+    "x": 458.90892201304234,
+    "y": 375.61848271219276,
     "zoom": 0.5445282652115352
   }
 }
