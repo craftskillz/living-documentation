@@ -413,7 +413,7 @@
         "userInputDescription": "Enter the full image prompt",
         "expectedOutputMarker": "",
         "description": "Opened prompt to create image",
-        "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image_3"
+        "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image_2"
       }
     }
   ],
