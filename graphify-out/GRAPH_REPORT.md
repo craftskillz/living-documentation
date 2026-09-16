@@ -1,16 +1,16 @@
-# Graph Report - living-documentation  (2026-07-08)
+# Graph Report - living-documentation  (2026-09-16)
 
 ## Corpus Check
-- 606 files · ~2,478,794 words
+- 704 files · ~2,642,012 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 5298 nodes · 6941 edges · 507 communities (431 shown, 76 thin omitted)
+- 5870 nodes · 7857 edges · 549 communities (465 shown, 84 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 162 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `29292462`
+- Built from commit: `e0e44059`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -350,6 +350,7 @@
 - [[_COMMUNITY_Community 339|Community 339]]
 - [[_COMMUNITY_Community 340|Community 340]]
 - [[_COMMUNITY_Community 341|Community 341]]
+- [[_COMMUNITY_Community 342|Community 342]]
 - [[_COMMUNITY_Community 343|Community 343]]
 - [[_COMMUNITY_Community 344|Community 344]]
 - [[_COMMUNITY_Community 345|Community 345]]
@@ -389,6 +390,11 @@
 - [[_COMMUNITY_Community 379|Community 379]]
 - [[_COMMUNITY_Community 380|Community 380]]
 - [[_COMMUNITY_Community 381|Community 381]]
+- [[_COMMUNITY_Community 382|Community 382]]
+- [[_COMMUNITY_Community 386|Community 386]]
+- [[_COMMUNITY_Community 390|Community 390]]
+- [[_COMMUNITY_Community 391|Community 391]]
+- [[_COMMUNITY_Community 392|Community 392]]
 - [[_COMMUNITY_Community 399|Community 399]]
 - [[_COMMUNITY_Community 400|Community 400]]
 - [[_COMMUNITY_Community 401|Community 401]]
@@ -411,7 +417,10 @@
 - [[_COMMUNITY_Community 418|Community 418]]
 - [[_COMMUNITY_Community 419|Community 419]]
 - [[_COMMUNITY_Community 420|Community 420]]
+- [[_COMMUNITY_Community 422|Community 422]]
+- [[_COMMUNITY_Community 423|Community 423]]
 - [[_COMMUNITY_Community 424|Community 424]]
+- [[_COMMUNITY_Community 425|Community 425]]
 - [[_COMMUNITY_Community 426|Community 426]]
 - [[_COMMUNITY_Community 427|Community 427]]
 - [[_COMMUNITY_Community 428|Community 428]]
@@ -426,6 +435,7 @@
 - [[_COMMUNITY_Community 437|Community 437]]
 - [[_COMMUNITY_Community 438|Community 438]]
 - [[_COMMUNITY_Community 439|Community 439]]
+- [[_COMMUNITY_Community 440|Community 440]]
 - [[_COMMUNITY_Community 441|Community 441]]
 - [[_COMMUNITY_Community 442|Community 442]]
 - [[_COMMUNITY_Community 443|Community 443]]
@@ -466,8 +476,15 @@
 - [[_COMMUNITY_Community 478|Community 478]]
 - [[_COMMUNITY_Community 479|Community 479]]
 - [[_COMMUNITY_Community 480|Community 480]]
+- [[_COMMUNITY_Community 481|Community 481]]
 - [[_COMMUNITY_Community 482|Community 482]]
 - [[_COMMUNITY_Community 483|Community 483]]
+- [[_COMMUNITY_Community 484|Community 484]]
+- [[_COMMUNITY_Community 485|Community 485]]
+- [[_COMMUNITY_Community 486|Community 486]]
+- [[_COMMUNITY_Community 487|Community 487]]
+- [[_COMMUNITY_Community 488|Community 488]]
+- [[_COMMUNITY_Community 489|Community 489]]
 - [[_COMMUNITY_Community 490|Community 490]]
 - [[_COMMUNITY_Community 491|Community 491]]
 - [[_COMMUNITY_Community 492|Community 492]]
@@ -476,6 +493,7 @@
 - [[_COMMUNITY_Community 495|Community 495]]
 - [[_COMMUNITY_Community 496|Community 496]]
 - [[_COMMUNITY_Community 497|Community 497]]
+- [[_COMMUNITY_Community 498|Community 498]]
 - [[_COMMUNITY_Community 499|Community 499]]
 - [[_COMMUNITY_Community 500|Community 500]]
 - [[_COMMUNITY_Community 501|Community 501]]
@@ -483,6 +501,47 @@
 - [[_COMMUNITY_Community 503|Community 503]]
 - [[_COMMUNITY_Community 504|Community 504]]
 - [[_COMMUNITY_Community 506|Community 506]]
+- [[_COMMUNITY_Community 507|Community 507]]
+- [[_COMMUNITY_Community 508|Community 508]]
+- [[_COMMUNITY_Community 509|Community 509]]
+- [[_COMMUNITY_Community 510|Community 510]]
+- [[_COMMUNITY_Community 511|Community 511]]
+- [[_COMMUNITY_Community 512|Community 512]]
+- [[_COMMUNITY_Community 513|Community 513]]
+- [[_COMMUNITY_Community 514|Community 514]]
+- [[_COMMUNITY_Community 515|Community 515]]
+- [[_COMMUNITY_Community 516|Community 516]]
+- [[_COMMUNITY_Community 517|Community 517]]
+- [[_COMMUNITY_Community 518|Community 518]]
+- [[_COMMUNITY_Community 519|Community 519]]
+- [[_COMMUNITY_Community 520|Community 520]]
+- [[_COMMUNITY_Community 521|Community 521]]
+- [[_COMMUNITY_Community 522|Community 522]]
+- [[_COMMUNITY_Community 523|Community 523]]
+- [[_COMMUNITY_Community 524|Community 524]]
+- [[_COMMUNITY_Community 525|Community 525]]
+- [[_COMMUNITY_Community 526|Community 526]]
+- [[_COMMUNITY_Community 527|Community 527]]
+- [[_COMMUNITY_Community 528|Community 528]]
+- [[_COMMUNITY_Community 529|Community 529]]
+- [[_COMMUNITY_Community 530|Community 530]]
+- [[_COMMUNITY_Community 531|Community 531]]
+- [[_COMMUNITY_Community 532|Community 532]]
+- [[_COMMUNITY_Community 533|Community 533]]
+- [[_COMMUNITY_Community 534|Community 534]]
+- [[_COMMUNITY_Community 535|Community 535]]
+- [[_COMMUNITY_Community 536|Community 536]]
+- [[_COMMUNITY_Community 537|Community 537]]
+- [[_COMMUNITY_Community 538|Community 538]]
+- [[_COMMUNITY_Community 539|Community 539]]
+- [[_COMMUNITY_Community 540|Community 540]]
+- [[_COMMUNITY_Community 541|Community 541]]
+- [[_COMMUNITY_Community 542|Community 542]]
+- [[_COMMUNITY_Community 543|Community 543]]
+- [[_COMMUNITY_Community 544|Community 544]]
+- [[_COMMUNITY_Community 545|Community 545]]
+- [[_COMMUNITY_Community 546|Community 546]]
+- [[_COMMUNITY_Community 548|Community 548]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `../lib/diagram/main` - 111 edges
@@ -490,11 +549,11 @@
 3. `Debug` - 56 edges
 4. `pushSnapshot()` - 50 edges
 5. `t()` - 39 edges
-6. `test` - 35 edges
-7. `../lib/i18n.svelte` - 34 edges
-8. `../lib/home/DocViewer.svelte` - 33 edges
-9. `readConfig()` - 33 edges
-10. `Debug` - 26 edges
+6. `../lib/i18n.svelte` - 36 edges
+7. `test` - 36 edges
+8. `readConfig()` - 34 edges
+9. `../lib/home/DocViewer.svelte` - 33 edges
+10. `Changelog` - 29 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Mine existing documentation before diagramming` --semantically_similar_to--> `MCP-first documentation workflow`  [INFERRED] [semantically similar]
@@ -550,7 +609,7 @@
 - **Navigation and Documentation Structure Model** — 4_reference_2026_04_12_14_07__fundamentals__dossiers_et_catgories_folders_vs_categories, 4_reference_2026_04_12_14_07__fundamentals__dossiers_et_catgories_sidebar_ordering, 4_reference_2026_04_09_02_00__reference__tokens_pattern_nommage_tokens, 2_guide_2026_04_09_09_00__navigation__recherche_plein_texte_deep_links [INFERRED 0.85]
 - **AI-assisted Documentation Reliability Cycle** — 5_talks_2026_04_28_09_48__conference__demo_living_documentation_mcp_en_conference_mcp_contract, 5_talks_2026_04_28_09_48__conference__demo_living_documentation_mcp_en_conference_create_adr_workflow, 5_talks_2026_04_28_09_48__conference__demo_living_documentation_mcp_en_conference_audit_drift_workflow, 5_talks_2026_04_28_09_48__conference__demo_living_documentation_mcp_en_conference_metadata_hash_binding, 5_talks_2026_04_28_09_48__conference__demo_living_documentation_mcp_en_conference_human_validation [EXTRACTED 1.00]
 
-## Communities (507 total, 76 thin omitted)
+## Communities (549 total, 84 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.20
@@ -573,20 +632,20 @@ Cohesion: 0.11
 Nodes (19): announce(), buildReadingScript(), DEFAULTS, HEADING_TAGS, isMermaid(), push(), ReadingScriptOptions, ReadingSegment (+11 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.05
-Nodes (39): A retenir, Parcours par objectif, Parcours par profil, Parcours pour l'automatisation agentique, Parcours pour une equipe, Parcours recommandes, Si vous avez dix minutes, Les fonctions principales (+31 more)
+Cohesion: 0.20
+Nodes (10): Bonnes pratiques au depart, Choisir le dossier documentaire, Creer un espace documentaire, Erreurs courantes, Lancer Living Documentation, Ouvrir la configuration, Prerequis, Suite recommandee (+2 more)
 
 ### Community 6 - "Community 6"
 Cohesion: 0.07
 Nodes (33): Bounds, ChildDistanceOptions, cloneEntities(), createEntity(), defaultDescription(), defaultEndpoint(), Entity, EntityConfig (+25 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.10
-Nodes (3): DocDetail, TableAttrs, TreeNode
+Cohesion: 0.08
+Nodes (12): KanbanOptions, LaneContext, home, buildFolderTree(), compareDocs(), flatSortedDocs(), SidebarSort, sortTreeCategories() (+4 more)
 
 ### Community 8 - "Community 8"
-Cohesion: 0.13
-Nodes (30): hideEdgePanel(), expandSelectionToGroup(), promptImageName(), autoResizeTextarea(), commitLabelEdit(), labelInput, startEdgeLabelEdit(), startLabelEdit() (+22 more)
+Cohesion: 0.11
+Nodes (34): getCustomShapeDefaultSize(), getShapeDefaults(), hideEdgePanel(), expandSelectionToGroup(), promptImageName(), autoResizeTextarea(), commitLabelEdit(), labelInput (+26 more)
 
 ### Community 9 - "Community 9"
 Cohesion: 0.06
@@ -605,12 +664,12 @@ Cohesion: 0.04
 Nodes (56): Debug, Tools MCP chargés (21), Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue, Tour 1 — Tool call : `list_documents`, Tour 1 — Tool result : `list_documents`, Tour 2 — Prompt envoyé, Tour 2 — Réponse reçue (+48 more)
 
 ### Community 13 - "Community 13"
-Cohesion: 0.15
-Nodes (24): drawEdgeLabels(), bezierAt(), centerPos(), CIRCULAR_SHAPES, controlNormalForEdge(), customPortOffset(), distanceToPortEdge(), _distToBezier() (+16 more)
+Cohesion: 0.10
+Nodes (32): customShapeIdFromTool(), DEFAULT_CUSTOM_ANCHORS, getCustomShapeAnchors(), isCustomShapeTool(), loadCustomShapeLibraries(), renderCustomShapeBar(), setTool(), drawEdgeLabels() (+24 more)
 
 ### Community 14 - "Community 14"
 Cohesion: 0.07
-Nodes (36): snapToGrid(), customShapeImageOffsetY(), customShapeLayout(), getCachedImage(), getNodeColor(), hexToRgba(), _imgCache, isExternalCustomLabelPlacement() (+28 more)
+Nodes (37): getCustomShapeDefinition(), snapToGrid(), customShapeImageOffsetY(), customShapeLayout(), getCachedImage(), getNodeColor(), hexToRgba(), _imgCache (+29 more)
 
 ### Community 15 - "Community 15"
 Cohesion: 0.06
@@ -618,43 +677,43 @@ Nodes (37): Document Creation Flow, Create Document in Folder Tutorial, Category
 
 ### Community 16 - "Community 16"
 Cohesion: 0.08
-Nodes (38): codeBlockSource(), initInlineSnippetEditing(), _INLINE_DELETE_LABEL_KEY_BY_TYPE, _INLINE_EDIT_AFFORDANCE_BY_TYPE, _INLINE_SNIPPET_TYPES, _INLINE_TYPE_SELECTORS, _inlineAddBlockquoteTableRanges(), _inlineAddCodeBlockRanges() (+30 more)
+Nodes (39): blockquoteBlockSource(), codeBlockSource(), imageBlockSource(), initInlineSnippetEditing(), _INLINE_DELETE_LABEL_KEY_BY_TYPE, _INLINE_EDIT_AFFORDANCE_BY_TYPE, _INLINE_SNIPPET_TYPES, _INLINE_TYPE_SELECTORS (+31 more)
 
 ### Community 17 - "Community 17"
 Cohesion: 0.06
 Nodes (35): Consequences, Contexte, Decision, Runtime minimal Node.js 20.19.0, Vite 8 and Commander 14 Runtime Constraint, Consequences, Contexte, Decision (+27 more)
 
 ### Community 18 - "Community 18"
-Cohesion: 0.11
-Nodes (14): ./AccuracyGauge.svelte, ../lib/home/DocViewer.svelte, chooseReadingLanguage(), playDocument(), startReading(), ./docStatus, ./inlineSnippetEdit, ./kanban (+6 more)
+Cohesion: 0.09
+Nodes (16): ./AccuracyGauge.svelte, ../lib/home/DocViewer.svelte, chooseReadingLanguage(), playDocument(), startReading(), ./FavoritesMenu.svelte, ../favorites.svelte, ./docStatus (+8 more)
 
 ### Community 19 - "Community 19"
-Cohesion: 0.13
-Nodes (30): customShapeIdFromTool(), DEFAULT_CUSTOM_ANCHORS, getCustomShapeAnchors(), getCustomShapeDefaultSize(), getCustomShapeDefinition(), getCustomShapeLabelPlacement(), isCustomShapeTool(), applyCustomShapeLabelPlacement() (+22 more)
+Cohesion: 0.18
+Nodes (22): applyCustomShapeLabelPlacement(), buildGroups(), buildImageMap(), CIRC_PORT_EXIT, DATABASE_PORT_EXIT, diagramToDrawioXml(), drawioImageValue(), edgeToCell() (+14 more)
 
 ### Community 20 - "Community 20"
-Cohesion: 0.15
-Nodes (26): buildImageAttributesPrefix(), buildTableAttributesPrefix(), cleanMermaidLine(), KANBAN_COLUMN_COLORS, KANBAN_COLUMN_DEFAULT_COLORS, ldBuildAnchorDocLinkSnippetMarkdown(), ldBuildAnchorLinkSnippetMarkdown(), ldBuildBlockquoteSnippetMarkdown() (+18 more)
+Cohesion: 0.14
+Nodes (27): buildCodeBlockAttributesPrefix(), buildImageAttributesPrefix(), buildTableAttributesPrefix(), cleanMermaidLine(), KANBAN_COLUMN_COLORS, KANBAN_COLUMN_DEFAULT_COLORS, ldBuildAnchorDocLinkSnippetMarkdown(), ldBuildAnchorLinkSnippetMarkdown() (+19 more)
 
 ### Community 21 - "Community 21"
-Cohesion: 0.14
+Cohesion: 0.13
 Nodes (10): ../lib/ConfigSection.svelte, ../lib/DiagramPalettes.svelte, ../lib/FileBrowser.svelte, ../lib/Topbar.svelte, ../lib/diagram/diagram.css, ../lib/diagram/shape-editor.css, ../lib/diagram/shapeEditor, ./lib/gitToast (+2 more)
 
 ### Community 22 - "Community 22"
 Cohesion: 0.12
-Nodes (24): gitAutoCommitMiddleware(), mcpRouter(), annotationsRouter(), blueprintRouter(), browseRouter(), browseSourceRouter(), configRouter(), contextRouter() (+16 more)
+Nodes (25): gitAutoCommitMiddleware(), mcpRouter(), annotationsRouter(), blueprintRouter(), browseRouter(), browseSourceRouter(), configRouter(), contextRouter() (+17 more)
 
 ### Community 23 - "Community 23"
 Cohesion: 0.05
 Nodes (37): Architecture cible, Backlog de production, Captures d'ecran a produire, Critere de finition par document, Gabarit Explication, Gabarit Parcours guide, Gabarit Procedure, Gabarit Reference (+29 more)
 
 ### Community 24 - "Community 24"
-Cohesion: 0.12
-Nodes (27): ALLOWED_TYPES, BlockquoteAttrs, blockquoteBlockSource(), canonicalType(), collectBlockquoteAttributesFromSource(), getCalloutIcon(), ICONS, TYPE_ALIASES (+19 more)
+Cohesion: 0.08
+Nodes (38): ALLOWED_TYPES, BlockquoteAttrs, canonicalType(), collectBlockquoteAttributesFromSource(), getCalloutIcon(), ICONS, TYPE_ALIASES, codeBlockWidthClass() (+30 more)
 
 ### Community 25 - "Community 25"
-Cohesion: 0.24
-Nodes (10): currentSourceCommit(), gitDiff(), GitStatusEntry, gitStatusPorcelain(), SourceCommitOptions, BuildContextOptions, currentBranch(), repoRoot() (+2 more)
+Cohesion: 0.08
+Nodes (33): FrontmatterFormat, getField(), getFirstField(), lookupCaseInsensitive(), ParsedFrontmatter, parseFrontmatter(), parseLegacyBlock(), serializeFrontmatter() (+25 more)
 
 ### Community 26 - "Community 26"
 Cohesion: 0.05
@@ -665,8 +724,8 @@ Cohesion: 0.29
 Nodes (6): ../lib/home/WordCloudModal.svelte, ../lib/survival-kit/LinksPanel.svelte, ../lib/survival-kit/NotesPanel.svelte, ../lib/survival-kit/TasksPanel.svelte, ../lib/survival-kit/store.svelte, ./types
 
 ### Community 28 - "Community 28"
-Cohesion: 0.07
-Nodes (28): Debug, Execution, Response, Run - Find Written English Documents, Tools MCP chargés (21), Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue, Tour 1 — Tool call : `list_documents` (+20 more)
+Cohesion: 0.08
+Nodes (24): Debug, Tools MCP chargés (21), Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue, Tour 1 — Tool call : `list_documents`, Tour 1 — Tool result : `list_documents`, Tour 2 — Prompt envoyé, Tour 2 — Réponse reçue (+16 more)
 
 ### Community 29 - "Community 29"
 Cohesion: 0.13
@@ -681,12 +740,12 @@ Cohesion: 0.11
 Nodes (18): compilerOptions, allowSyntheticDefaultImports, declaration, declarationMap, esModuleInterop, forceConsistentCasingInFileNames, lib, module (+10 more)
 
 ### Community 32 - "Community 32"
-Cohesion: 0.17
-Nodes (20): confirmExistingDocumentation(), copyDir(), createInitInstructionFiles(), docsFolderReference(), findExistingDocumentationFolder(), findOneLevelDocumentationFolders(), hasLivingDocConfig(), InitInstructionFile (+12 more)
+Cohesion: 0.16
+Nodes (21): confirmExistingDocumentation(), copyDir(), createInitInstructionFiles(), docsFolderReference(), findExistingDocumentationFolder(), findOneLevelDocumentationFolders(), hasLivingDocConfig(), InitInstructionFile (+13 more)
 
 ### Community 33 - "Community 33"
-Cohesion: 0.15
-Nodes (26): activeGuides, applyAlignGuidesState(), clearAlignGuides(), collectCandidates(), drawAlignmentGuides(), findSnapAxes(), onDragging(), pickBest() (+18 more)
+Cohesion: 0.16
+Nodes (24): activeGuides, applyAlignGuidesState(), clearAlignGuides(), collectCandidates(), drawAlignmentGuides(), findSnapAxes(), onDragging(), pickBest() (+16 more)
 
 ### Community 34 - "Community 34"
 Cohesion: 0.14
@@ -710,11 +769,11 @@ Nodes (24): For /graphify add and --watch, For /graphify query, For the commit h
 
 ### Community 39 - "Community 39"
 Cohesion: 0.11
-Nodes (31): ALLOWED_ALIGNS, ALLOWED_WIDTHS, buildCodeBlockAttributesPrefix(), CodeBlockAlign, CodeBlockAttrs, CodeBlockKind, codeBlockKindForLanguage(), CodeBlockWidth (+23 more)
+Nodes (30): ALLOWED_ALIGNS, ALLOWED_WIDTHS, CodeBlockAlign, CodeBlockAttrs, CodeBlockKind, codeBlockKindForLanguage(), CodeBlockWidth, collectCodeBlockAttributesFromSource() (+22 more)
 
 ### Community 40 - "Community 40"
-Cohesion: 0.14
-Nodes (19): DEFAULT_BLOCKED_FILE_EXTENSIONS, DEFAULT_DIAGRAM_EDGE_PALETTE, DEFAULT_DIAGRAM_NODE_PALETTE, DiagramDefaults, DiagramShapeDefault, FavoriteDoc, getConfigPath(), GitIntegrationConfig (+11 more)
+Cohesion: 0.13
+Nodes (20): DEFAULT_BLOCKED_FILE_EXTENSIONS, DEFAULT_DIAGRAM_EDGE_PALETTE, DEFAULT_DIAGRAM_NODE_PALETTE, DiagramDefaults, DiagramShapeDefault, FavoriteDoc, getConfigPath(), GitIntegrationConfig (+12 more)
 
 ### Community 41 - "Community 41"
 Cohesion: 0.13
@@ -733,8 +792,8 @@ Cohesion: 0.50
 Nodes (3): Fichiers mémoire recommandés, Index mémoire, Règle d'usage
 
 ### Community 45 - "Community 45"
-Cohesion: 0.10
-Nodes (19): Admin, Appliquer Diátaxis dans Living Documentation, Convention de nommage des fichiers, Diagrammes, Export PDF, Fonctionnalités, Lecture et navigation, Les deux axes (+11 more)
+Cohesion: 0.15
+Nodes (12): Admin, Convention de nommage des fichiers, Diagrammes, Export PDF, Fonctionnalités, Lecture et navigation, Manuel d'utilisation, Organisation des documents (+4 more)
 
 ### Community 46 - "Community 46"
 Cohesion: 0.22
@@ -745,8 +804,8 @@ Cohesion: 0.15
 Nodes (13): ADR: Export diagrammes drawio mxGraph XML, One-way drawio export, Project diagram to mxGraph mapping, Diagram creation defaults, ADR: Diagram defaults persisted in .living-doc.json, Shared diagram color picker, ADR: Shared color picker swatch popup, ADR: Edge style persistence and defaults (+5 more)
 
 ### Community 48 - "Community 48"
-Cohesion: 0.09
-Nodes (21): 10. Exemple d'architecture complète, 11. Meilleures pratiques, 12. Routage et composition d'applications, 1. Concept de base du routage Express, 2. Définition et méthodes de routage, 3. Route parameters, 4. Gestionnaires de middleware dans les routes, 5. Utilisation de Router : Object-oriented Routing (+13 more)
+Cohesion: 0.15
+Nodes (13): 10. Exemple d'architecture complète, 11. Meilleures pratiques, 12. Routage et composition d'applications, 1. Concept de base du routage Express, 2. Définition et méthodes de routage, 3. Route parameters, 4. Gestionnaires de middleware dans les routes, 5. Utilisation de Router : Object-oriented Routing (+5 more)
 
 ### Community 49 - "Community 49"
 Cohesion: 0.27
@@ -781,8 +840,8 @@ Cohesion: 0.11
 Nodes (17): drawDebugOverlay(), toggleDebug(), drawGroupOutlines(), SHAPE_DEFAULTS, st, cancelHold(), hitTestLocked(), installUnlockHold() (+9 more)
 
 ### Community 57 - "Community 57"
-Cohesion: 0.21
-Nodes (12): closeAllColorPickerPopups(), openColorPickerPopup(), ARROW_SYSTEM_DEFAULTS, buildColorSwatch(), effectiveNodeColor(), getArrowDefaults(), getShapeDefaults(), openDefaultsModal() (+4 more)
+Cohesion: 0.14
+Nodes (17): closeAllColorPickerPopups(), openColorPickerPopup(), DEFAULT_EDGE_PALETTE, DEFAULT_NODE_PALETTE, deriveNodeColors(), NODE_COLORS, NODE_L_RATIOS, TOOL_BTN_MAP (+9 more)
 
 ### Community 58 - "Community 58"
 Cohesion: 0.20
@@ -797,8 +856,8 @@ Cohesion: 0.17
 Nodes (8): ../lib/ConfirmDialog.svelte, ./snippets/builders, ./snippets/detect, ./snippets/listMarkdown, ./snippets/parsers, ./snippets/pickerData, ./snippets/table, ./snippets/tree
 
 ### Community 61 - "Community 61"
-Cohesion: 0.07
-Nodes (26): Debug, Execution, Response, Run - Find Written English Documents, Tools MCP chargés (21), Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue, Tour 1 — Tool call : `list_documents` (+18 more)
+Cohesion: 0.09
+Nodes (22): Debug, Tools MCP chargés (21), Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue, Tour 1 — Tool call : `list_documents`, Tour 1 — Tool result : `list_documents`, Tour 2 — Prompt envoyé, Tour 2 — Réponse reçue (+14 more)
 
 ### Community 62 - "Community 62"
 Cohesion: 0.20
@@ -817,8 +876,8 @@ Cohesion: 0.25
 Nodes (8): CLI Options and Default Port, npx CLI Startup, Living Documentation Startup Guide, Interactive Documentation Initializer, Versioned Integrated Diagram Source, Low-footprint local documentation tool, Markdown Documentation in Git, Standalone Documentation Mode
 
 ### Community 66 - "Community 66"
-Cohesion: 0.22
-Nodes (11): Architecture Decision Records Practice, Active Documentation Maintenance, AI-assisted ADR Writing, Single Authoritative Source Principle, Documentation Drift Detection by AI Review, Scenario B Audit Drift Workflow, Scenario A Create ADR Workflow, Démo Living Documentation MCP en conférence (+3 more)
+Cohesion: 0.24
+Nodes (10): Active Documentation Maintenance, AI-assisted ADR Writing, Single Authoritative Source Principle, Documentation Drift Detection by AI Review, Scenario B Audit Drift Workflow, Scenario A Create ADR Workflow, Démo Living Documentation MCP en conférence, Human ADR Validation Gate (+2 more)
 
 ### Community 67 - "Community 67"
 Cohesion: 0.29
@@ -837,12 +896,12 @@ Cohesion: 0.07
 Nodes (39): ConfigListener, installConfigObserver(), listeners, onConfig(), FavoriteDoc, favorites, FavoritesState, checkGitIntegrationToast() (+31 more)
 
 ### Community 71 - "Community 71"
-Cohesion: 0.20
-Nodes (10): Browser Markdown Editor, Edit and Save Tutorial, Clipboard Image Paste Upload, Instant Disk Save and Rerender, Clickable Image and Fullscreen Guide, Markdown Image Syntax, Integrated diagram editor, Raccourcis clavier (+2 more)
+Cohesion: 0.29
+Nodes (7): Browser Markdown Editor, Edit and Save Tutorial, Instant Disk Save and Rerender, Integrated diagram editor, Raccourcis clavier, Keyboard shortcuts, Viewer Keyboard Shortcuts
 
 ### Community 72 - "Community 72"
-Cohesion: 0.22
-Nodes (9): Linked Image Destinations, Diagram Debug Overlay Setting, Integrated Diagram Editor, Create and Link Diagram Guide, Linked Diagram Markdown, Diagram PNG Export, Diagram Editor Keyboard Shortcuts, Article Image Shortcuts (+1 more)
+Cohesion: 0.40
+Nodes (5): Diagram Debug Overlay Setting, Integrated Diagram Editor, Create and Link Diagram Guide, Diagram Editor Keyboard Shortcuts, Diagram guardrails
 
 ### Community 73 - "Community 73"
 Cohesion: 0.18
@@ -861,12 +920,12 @@ Cohesion: 0.22
 Nodes (9): CodeQL JavaScript TypeScript Security Analysis, Dependabot Dependency Updates, Manual Major Update Policy, Playwright E2E CI, npm Provenance Publishing, npm Publish Release Gate, Build and Test Pipeline, Zizmor Cache-Poisoning Ignore (+1 more)
 
 ### Community 77 - "Community 77"
-Cohesion: 0.10
-Nodes (20): Debug, Execution, Response, Run - Traducteur Anglais vers Français, Tools MCP chargés (21), Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue, Tour 1 — Tool call : `read_document` (+12 more)
+Cohesion: 0.12
+Nodes (16): Debug, Tools MCP chargés (21), Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue, Tour 1 — Tool call : `read_document`, Tour 1 — Tool result : `read_document`, Tour 2 — Prompt envoyé, Tour 2 — Réponse reçue (+8 more)
 
 ### Community 78 - "Community 78"
-Cohesion: 0.18
-Nodes (31): SourceCommit, sha256File(), AccuracyReport, assertUnderSourceRoot(), buildReport(), classifyEntry(), getDocEntries(), getFrontmatterField() (+23 more)
+Cohesion: 0.12
+Nodes (38): currentSourceCommit(), gitDiff(), GitStatusEntry, gitStatusPorcelain(), SourceCommit, SourceCommitOptions, sha256File(), AccuracyReport (+30 more)
 
 ### Community 79 - "Community 79"
 Cohesion: 0.28
@@ -877,8 +936,8 @@ Cohesion: 0.22
 Nodes (9): Code block width and alignment directives, Collapsible details snippet, Colored section snippet, Colored text snippet, Image width and alignment directives, Inline snippets editing fixture, Mermaid width and alignment directives, Nested list snippets (+1 more)
 
 ### Community 81 - "Community 81"
-Cohesion: 0.06
-Nodes (32): Debug, Error summary, Execution, Response, Run - Find Written English Documents, Stack trace, Tools MCP chargés (21), Tour 1 — Prompt envoyé (+24 more)
+Cohesion: 0.08
+Nodes (26): Debug, Tools MCP chargés (21), Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue, Tour 1 — Tool call : `list_documents`, Tour 1 — Tool result : `list_documents`, Tour 2 — Prompt envoyé, Tour 2 — Réponse reçue (+18 more)
 
 ### Community 82 - "Community 82"
 Cohesion: 0.32
@@ -909,8 +968,8 @@ Cohesion: 0.29
 Nodes (7): Image and Mermaid fullscreen guide, Modified-click lightbox gestures, Diagram creation and linking guide, Diagram JSON, PNG, and deep-link workflow, Markdown rendering showcase, Mermaid examples, Markdown render directives
 
 ### Community 89 - "Community 89"
-Cohesion: 0.08
-Nodes (24): Global appearance configuration, Image, code and Mermaid rendering, Local rendering directives, Aligner une image, Blocs de code, Choisir la largeur d'une image, Combiner largeur et alignement d'une image, Diagrammes Mermaid (+16 more)
+Cohesion: 0.15
+Nodes (13): Image, code and Mermaid rendering, Local rendering directives, Always dark syntax highlighting, ADR always dark syntax highlighting, Bash, Bloc long , repliage automatique, Blocs de code, JavaScript (+5 more)
 
 ### Community 90 - "Community 90"
 Cohesion: 0.50
@@ -953,8 +1012,8 @@ Cohesion: 0.40
 Nodes (6): Annotation popup scroll behavior, ADR: Annotation popup scroll and hover fixes, ADR: Resizable table of contents panel, Sticky resizable TOC panel, Accent-insensitive search pipeline, ADR: Accent-insensitive search
 
 ### Community 100 - "Community 100"
-Cohesion: 0.11
-Nodes (18): Bienvenue dans cette section, Bloc de code, Citation colorée, Editer un snippet existant, Entêtes, Et encore beaucoup d'autres ..., Header 1, Header 2 (+10 more)
+Cohesion: 0.17
+Nodes (12): Bienvenue dans cette section, Bloc de code, Citation colorée, Et encore beaucoup d'autres ..., Header 2, Header 3, Header 4, Header 5 (+4 more)
 
 ### Community 101 - "Community 101"
 Cohesion: 0.12
@@ -965,24 +1024,24 @@ Cohesion: 0.33
 Nodes (6): C4 node kind and label semantics, C4 context-to-container progression, C4 Container diagram generation prompt, Mine existing documentation before diagramming, vis-network diagram editor gotchas rule, Avoid magic numbers rule
 
 ### Community 103 - "Community 103"
-Cohesion: 0.17
-Nodes (9): initShapeEditor(), CustomShape, filePath(), loadStore(), sanitizeStore(), saveStore(), ShapeAnchor, ShapeLibrary (+1 more)
+Cohesion: 0.19
+Nodes (8): CustomShape, filePath(), loadStore(), sanitizeStore(), saveStore(), ShapeAnchor, ShapeLibrary, ShapeLibraryStore
 
 ### Community 104 - "Community 104"
 Cohesion: 0.33
 Nodes (6): Already accepted validation fixture, Hidden validate button, YAML accepted fixture, YAML accepted status, No-frontmatter status handling, Plain document fixture
 
 ### Community 105 - "Community 105"
-Cohesion: 0.09
-Nodes (25): htmlEscape(), renderCompareDiv(), renderMarkdownWithCompareBlocks(), buildPatternsFromFormat(), dateStrToISO(), DocMetadata, formatDate(), parseFilename() (+17 more)
+Cohesion: 0.15
+Nodes (11): htmlEscape(), renderCompareDiv(), renderMarkdownWithCompareBlocks(), stripFrontmatter(), addExportImageAsset(), escapeHtml(), ExportImageAsset, processMarkdown() (+3 more)
 
 ### Community 106 - "Community 106"
-Cohesion: 0.12
-Nodes (30): readConfig(), buildPromptTemplate(), CREATE_DIAGRAM_DESCRIPTION, CREATE_DOCUMENT_DESCRIPTION, createMcpServer(), PREAMBLE, PromptName, PROMPTS (+22 more)
+Cohesion: 0.11
+Nodes (35): readConfig(), getFrontmatterField(), buildPromptTemplate(), CREATE_DIAGRAM_DESCRIPTION, CREATE_DOCUMENT_DESCRIPTION, createMcpServer(), PREAMBLE, PromptName (+27 more)
 
 ### Community 107 - "Community 107"
-Cohesion: 0.06
-Nodes (33): 1. Couleurs de la palette Tailwind (Tailwind palette colors), 2. Couleurs grisées (Gray scales), 3. Couleurs de la palette Tailwind + Opacité, 4. Classes utilitaires de couleur de base personnalisées, Amélioration des performances, Classes de couleur de base de base, 🔧 Combiner couleurs et tableaux, 💡 Comprendre le système de couleurs de Tailwind (+25 more)
+Cohesion: 0.10
+Nodes (20): 1. Couleurs de la palette Tailwind (Tailwind palette colors), 2. Couleurs grisées (Gray scales), 3. Couleurs de la palette Tailwind + Opacité, 4. Classes utilitaires de couleur de base personnalisées, Classes de couleur de base de base, 🔧 Combiner couleurs et tableaux, 💡 Comprendre le système de couleurs de Tailwind, Couleurs d'état (hover, focus, active) (+12 more)
 
 ### Community 108 - "Community 108"
 Cohesion: 0.60
@@ -1017,7 +1076,7 @@ Cohesion: 0.50
 Nodes (4): Checkout credential hardening, GitHub Actions hardening with zizmor, Least privilege workflow permissions, Pinned GitHub Actions
 
 ### Community 116 - "Community 116"
-Cohesion: 0.14
+Cohesion: 0.15
 Nodes (13): Colored sections, Sections colorées et texte coloré, Quote callouts, Blockquote multi-lignes, Blockquote simple, Citation typée , Avertissement, Citation typée , Erreur, Citation typée , Info (+5 more)
 
 ### Community 118 - "Community 118"
@@ -1029,12 +1088,12 @@ Cohesion: 0.12
 Nodes (14): Agents et MCP, Ce que contient l'application, Configuration, Contribution, Démarrage rapide, Développement local, Exemple Claude Code, Exemple Claude Desktop (+6 more)
 
 ### Community 120 - "Community 120"
-Cohesion: 0.07
-Nodes (67): pasteClipboard(), DEFAULT_EDGE_PALETTE, DEFAULT_NODE_PALETTE, deriveNodeColors(), NODE_COLORS, NODE_L_RATIOS, TOOL_BTN_MAP, loadCustomShapeLibraries() (+59 more)
+Cohesion: 0.08
+Nodes (60): toggleAlignGuides(), pasteClipboard(), getCustomShapeLabelPlacement(), getDiagramDefaults(), initDiagramDefaults(), changeEdgeFontSize(), changeEdgeWidth(), clearEdgePorts() (+52 more)
 
 ### Community 121 - "Community 121"
-Cohesion: 0.07
-Nodes (29): Debug, Error summary, Execution, Response, Run - Opened Prompt to Create Image, Stack trace, Tools MCP chargés (22), Tools MCP filtrés (2/22) (+21 more)
+Cohesion: 0.09
+Nodes (23): Debug, Tools MCP chargés (22), Tools MCP filtrés (2/22), Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue, Tour 1 — Tool call : `generate_image`, Tour 1 — Tool result : `generate_image`, Tour 2 — Prompt envoyé (+15 more)
 
 ### Community 122 - "Community 122"
 Cohesion: 0.12
@@ -1093,12 +1152,12 @@ Cohesion: 1.00
 Nodes (3): ADR discovery navigation, Documentation knowledge decay problem, Living Documentation welcome guide
 
 ### Community 144 - "Community 144"
-Cohesion: 0.18
+Cohesion: 0.20
 Nodes (10): Inline emoji Markdown, 💡 Astuce, 🐛 Bugs connus, Dans du texte inline, Dans un tableau, Dans un titre de section, Dans une liste, 🚀 Déploiement (+2 more)
 
 ### Community 154 - "Community 154"
-Cohesion: 0.10
-Nodes (19): Images a privilegier ensuite, Images conceptuelles disponibles, Images deja integrees, Index des assets visuels, Regle de maintenance, Prompt 10 - Du travail brut a la documentation vivante, Prompt 11 - Notes de reunion et processus, Prompt 12 - Laboratoire d'automatisation agentique (+11 more)
+Cohesion: 0.14
+Nodes (14): Prompt 10 - Du travail brut a la documentation vivante, Prompt 11 - Notes de reunion et processus, Prompt 12 - Laboratoire d'automatisation agentique, Prompt 1 - Hero produit, Prompt 2 - Documentation obsolete et connaissance fragmentee, Prompt 3 - Architecture local-first, Prompt 4 - Workflow MCP et agents, Prompt 5 - Cycle de vie d'un ADR (+6 more)
 
 ### Community 158 - "Community 158"
 Cohesion: 0.12
@@ -1126,7 +1185,7 @@ Nodes (15): KokoroModel, KokoroOptions, KokoroTtsEngine, nativeImport, SUPPORTED
 
 ### Community 164 - "Community 164"
 Cohesion: 0.10
-Nodes (22): BLUEPRINT_IGNORED_DIRS, BlueprintBoxListing, BlueprintDirectoryEntry, isBlueprintIgnoredDir(), listBlueprintBox(), normalizeBlueprintPath(), safeResolveBlueprintPath(), blueprintDocCategories() (+14 more)
+Nodes (23): BLUEPRINT_IGNORED_DIRS, BlueprintBoxListing, BlueprintDirectoryEntry, isBlueprintIgnoredDir(), listBlueprintBox(), normalizeBlueprintPath(), safeResolveBlueprintPath(), blueprintDocCategories() (+15 more)
 
 ### Community 165 - "Community 165"
 Cohesion: 0.14
@@ -1157,8 +1216,8 @@ Cohesion: 0.15
 Nodes (12): 1. Guard centralisé dans `lib/status.ts`, 2. Guard appliqué côté HTTP, 3. Guard appliqué côté MCP, 4. Cachette des contrôles côté viewer, 5. Bandeau d'information, 6. UX progressive : la modale reste consultable, CONS, Conséquences (+4 more)
 
 ### Community 172 - "Community 172"
-Cohesion: 0.22
-Nodes (12): ALLOWED_BORDERS, ALLOWED_COLORS, ALLOWED_STYLES, collectTableAttributesFromSource(), isMarkdownTableSeparatorLine(), LEGACY_BORDER_STYLES, parseMarkdownTableCells(), parsePrefix() (+4 more)
+Cohesion: 0.21
+Nodes (13): ALLOWED_BORDERS, ALLOWED_COLORS, ALLOWED_STYLES, collectTableAttributesFromSource(), isMarkdownTableSeparatorLine(), LEGACY_BORDER_STYLES, looksLikeTableSnippet(), parseMarkdownTableCells() (+5 more)
 
 ### Community 174 - "Community 174"
 Cohesion: 0.11
@@ -1209,8 +1268,8 @@ Cohesion: 0.17
 Nodes (11): Before anything else , mine the existing documentation, C4 progression , mandatory ordering, Edge rules, ⚠️ Explicit-request check, Layout rules (grid = 40 units), Linked diagrams , C4 drill-down, Node semantics and label format , mandatory, ⚠️ Pre-flight check , mandatory before anything else (+3 more)
 
 ### Community 186 - "Community 186"
-Cohesion: 0.12
-Nodes (16): scripts, build, check:readme-sync, dev, lint, lint:ci, lint:fix, lint:fix:unsafe (+8 more)
+Cohesion: 0.11
+Nodes (18): scripts, build, check:readme-sync, dev, lint, lint:ci, lint:fix, lint:fix:unsafe (+10 more)
 
 ### Community 187 - "Community 187"
 Cohesion: 0.18
@@ -1345,7 +1404,7 @@ Cohesion: 0.20
 Nodes (9): Agent startup routine, Guardrails for editing AI instruction files, Shared worklog convention, Project stack inventory template, Project structuring conventions template, Memory Index, Recommended Memory Files, Usage Rule (+1 more)
 
 ### Community 221 - "Community 221"
-Cohesion: 0.20
+Cohesion: 0.22
 Nodes (9): Compact, Couleur , Danger, Couleur , Info, Couleur , Succès + rayures, Couleur , Warning + bordures, Rayé (striped), Récapitulatif des attributs, Tableau par défaut (+1 more)
 
 ### Community 222 - "Community 222"
@@ -1353,15 +1412,15 @@ Cohesion: 0.20
 Nodes (9): Before anything else , mine the existing documentation, C4 progression , mandatory ordering, Edge rules, Layout rules (grid = 40 units), Linked diagrams , C4 drill-down, Node semantics and label format , mandatory, Step 1 , Answer these questions first (ask the user only if not found in docs), Step 2 , Build the diagram (+1 more)
 
 ### Community 223 - "Community 223"
-Cohesion: 0.22
+Cohesion: 0.25
 Nodes (8): Activer le mode annotation, Alternative persistante , les callouts, Annotations, Créer une annotation, Limites à connaître, Supprimer une annotation, Types d'annotations, Voir les annotations existantes
 
 ### Community 224 - "Community 224"
-Cohesion: 0.22
+Cohesion: 0.25
 Nodes (8): Identifier les documents à risque, Lier un fichier source via l'interface, Lier un fichier source via le MCP, Lire l'indice de précision, Métadonnées sources, Pourquoi lier des sources ?, Rafraîchir après une mise à jour, Supprimer un lien
 
 ### Community 225 - "Community 225"
-Cohesion: 0.22
+Cohesion: 0.25
 Nodes (8): Annuler une modification, Créer un nouvel élément, Principe, Prévisualisation en temps réel, Raccourcis clavier, Éditer un élément existant, Édition inline , Snippets, Éléments supportés
 
 ### Community 226 - "Community 226"
@@ -1397,8 +1456,8 @@ Cohesion: 0.22
 Nodes (8): Arêtes, Général, Images dans les articles, Navigation canvas, Nœuds, Raccourcis clavier, Visionneuse principale (`/`), Éditeur de diagramme (`/diagram`)
 
 ### Community 234 - "Community 234"
-Cohesion: 0.22
-Nodes (8): Current task, Statut courant, Contenu modifie, Documentation, Prochaine action recommandee, Tache realisee, Verifications realisees, Verifications restantes
+Cohesion: 0.18
+Nodes (10): Statut courant, Chantier OKF — état : 15/15 tickets faits ✅, Code non commité (frontend, à committer au fil de l'eau), Code à committer (T15), Current task — Chantier OKF (alignement natif), Progression, Reprise du 16 septembre 2026, T04 — branchement restant (TODO) (+2 more)
 
 ### Community 235 - "Community 235"
 Cohesion: 0.22
@@ -1429,8 +1488,8 @@ Cohesion: 0.25
 Nodes (7): Mode détection , modifier un snippet existant dans le Markdown, Édition inline depuis le viewer, Insérer un snippet simple, Insérer un tableau avec l'éditeur de tableau, Introduction, Passons à la pratique, Prérequis
 
 ### Community 242 - "Community 242"
-Cohesion: 0.25
-Nodes (7): Ajouter un fichier manuellement, Ajouter un fichier via l'interface, Fichiers joints, Formats courants, Organisation recommandée, Supprimer un fichier joint, Taille maximale
+Cohesion: 0.13
+Nodes (9): Ancres directes, Fonctionnement, Profondeur indexée, Structure recommandée, Table des matières, Titres à éviter, 2_guide, Concepts (+1 more)
 
 ### Community 243 - "Community 243"
 Cohesion: 0.25
@@ -1521,8 +1580,8 @@ Cohesion: 0.29
 Nodes (6): Mode détection , modifier un snippet existant, Insérer un snippet simple, Insérer un tableau avec l'éditeur de tableau, Introduction, Passons à la pratique, Prérequis
 
 ### Community 265 - "Community 265"
-Cohesion: 0.29
-Nodes (6): Ancres directes, Fonctionnement, Profondeur indexée, Structure recommandée, Table des matières, Titres à éviter
+Cohesion: 0.16
+Nodes (12): DocMetadata, DocumentSuperSeededError, parseDocStatus(), readDocStatus(), resolveDocFilePath(), collectMdFiles(), countFileAttachmentLinks(), isConcreteFileAttachmentHref() (+4 more)
 
 ### Community 266 - "Community 266"
 Cohesion: 0.29
@@ -1553,8 +1612,8 @@ Cohesion: 0.29
 Nodes (6): Alternatives écartées, Commit and dirty flag stored with each metadata hash, Conséquence opérationnelle — working tree propre avant d'écrire un ADR, Contexte, Décision, Portée
 
 ### Community 273 - "Community 273"
-Cohesion: 0.11
-Nodes (17): Debug, Execution, Response, Run - Code Review Specialist, Tools MCP chargés (23), Tools MCP filtrés (2/23), Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue (+9 more)
+Cohesion: 0.15
+Nodes (13): Debug, Tools MCP chargés (23), Tools MCP filtrés (2/23), Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue, Tour 1 — Tool call : `build_context`, Tour 1 — Tool result : `build_context`, Tour 2 — Prompt envoyé (+5 more)
 
 ### Community 274 - "Community 274"
 Cohesion: 0.29
@@ -1653,16 +1712,16 @@ Cohesion: 0.33
 Nodes (5): Description, MCP tool: `list_adrs_below_accuracy`, Requête effectuée, Résultat, Schéma d'entrée
 
 ### Community 298 - "Community 298"
-Cohesion: 0.33
-Nodes (5): Description, MCP tool: `review_adr_relevance`, Requête effectuée, Résultat, Schéma d'entrée
+Cohesion: 0.22
+Nodes (7): Description, MCP tool: `review_adr_relevance`, Requête effectuée, Résultat, Schéma d'entrée, Concepts, MCP
 
 ### Community 299 - "Community 299"
 Cohesion: 0.33
 Nodes (5): Description, MCP tool: `retrodocument_adrs_from_git`, Requête effectuée, Résultat, Schéma d'entrée
 
 ### Community 300 - "Community 300"
-Cohesion: 0.33
-Nodes (6): dependencies, archiver, commander, express, marked, @modelcontextprotocol/sdk
+Cohesion: 0.29
+Nodes (7): dependencies, archiver, commander, express, marked, @modelcontextprotocol/sdk, yaml
 
 ### Community 301 - "Community 301"
 Cohesion: 0.33
@@ -1670,7 +1729,7 @@ Nodes (5): For /graphify explain, For /graphify path, graphify reference: query,
 
 ### Community 302 - "Community 302"
 Cohesion: 0.33
-Nodes (5): Convention de cochage, Ordre recommandé, Ticket 01 - Initialiser le projet, Ticket 02 - Complétez ..., Tickets (exemple)
+Nodes (5): Ordre recommandé, Convention de cochage, Ticket 01 - Initialiser le projet, Ticket 02 - Complétez ..., Tickets (exemple)
 
 ### Community 303 - "Community 303"
 Cohesion: 0.33
@@ -1697,40 +1756,40 @@ Cohesion: 0.40
 Nodes (4): Gestes dans le viewer, Inserer une image avec l'editeur, Inserer une image en Markdown, Ouvrir les images et diagrammes Mermaid en plein ecran
 
 ### Community 309 - "Community 309"
-Cohesion: 0.40
-Nodes (4): Affichage du détail des erreurs MCP dans /context, Conséquences, Contexte, Décision
+Cohesion: 0.06
+Nodes (26): Conséquences, Contexte, Copie de l'id MCP depuis l'en-tête du document, Décision, Conséquences, Contexte, Décision, Portée (+18 more)
 
 ### Community 310 - "Community 310"
-Cohesion: 0.40
-Nodes (4): Conséquences, Contexte, Copie de l'id MCP depuis l'en-tête du document, Décision
+Cohesion: 0.12
+Nodes (28): collectMd(), IGNORED_DIRS, migrateDocsFolder(), MigrateResult, OKF_VERSION, writeOkfFlag(), isReservedOkfFile(), buildPatternsFromFormat() (+20 more)
 
 ### Community 311 - "Community 311"
 Cohesion: 0.40
 Nodes (4): Conséquences, Contexte, Copie de l'id MCP depuis la topbar de l'éditeur de diagrammes, Décision
 
 ### Community 312 - "Community 312"
-Cohesion: 0.40
-Nodes (4): Conséquences, Contexte, Décision, Portée
+Cohesion: 0.07
+Nodes (29): 2026-05-11, 2026-05-12, 2026-05-13, 2026-05-14, 2026-05-17, 2026-05-22, 2026-05-23, 2026-05-30 (+21 more)
 
 ### Community 313 - "Community 313"
 Cohesion: 0.23
 Nodes (7): CLI, runCli(), coverageEnv(), killLD(), pickFreePort(), spawnLD(), SpawnOptions
 
 ### Community 314 - "Community 314"
-Cohesion: 0.40
-Nodes (4): Execution, Response, Run - Agent de listage des ADRS driftés, User input
+Cohesion: 0.18
+Nodes (8): Execution, Response, Run - Agent de listage des ADRS driftés, User input, agent_de_listage_des_adrs_driftes, Concepts, Directories, WORKSPACE
 
 ### Community 315 - "Community 315"
 Cohesion: 0.40
 Nodes (4): Conseils pour un meilleur rendu, Export de tous les documents (PDF complet), Export du document courant, Exporter un document en PDF
 
 ### Community 316 - "Community 316"
-Cohesion: 0.40
-Nodes (4): Execution, Response, Run - Générer Diagramme Mermaid, User input
+Cohesion: 0.15
+Nodes (10): Execution, Response, Run - Générer Diagramme Mermaid, User input, Execution, Response, Run - Générer Diagramme Mermaid, User input (+2 more)
 
 ### Community 317 - "Community 317"
-Cohesion: 0.40
-Nodes (4): Execution, Response, Run - Générer Diagramme Mermaid, User input
+Cohesion: 0.09
+Nodes (22): Ordre recommandé, Jalons, Phase 1 — Fondations (non-cassant), Phase 2 — Conformité native, Phase 3 — Fichiers réservés & validation, Phase 4 — Consommateurs & écosystème, ROADMAP — Alignement natif OKF, Ticket 01 — Audit de conformité & table de mapping figée (+14 more)
 
 ### Community 318 - "Community 318"
 Cohesion: 0.40
@@ -1741,8 +1800,8 @@ Cohesion: 0.40
 Nodes (4): Conseils pour un meilleur rendu, Export de tous les documents (PDF complet), Export du document courant, Exporter un document en PDF
 
 ### Community 320 - "Community 320"
-Cohesion: 0.50
-Nodes (3): Consequences, Contexte, Decision
+Cohesion: 0.11
+Nodes (17): Debug, Execution, Response, Run - Opened Prompt to Create Image, Tools MCP chargés (23), Tools MCP filtrés (2/23), Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue (+9 more)
 
 ### Community 321 - "Community 321"
 Cohesion: 0.33
@@ -1784,6 +1843,10 @@ Nodes (3): Astuce , coller une image, Introduction, Passons à la pratique
 Cohesion: 0.67
 Nodes (4): Graphify BFS Traversal, Graphify DFS Traversal, Graphify Vocabulary Query Expansion, Graphify Query Result Feedback
 
+### Community 335 - "Community 335"
+Cohesion: 0.12
+Nodes (11): 3_concept, Concepts, 5_talks, Concepts, Living Documentation , Guide d'utilisation, Pourtant certaines approches ont prouvé leur valeur, Concepts, Directories (+3 more)
+
 ### Community 337 - "Community 337"
 Cohesion: 0.67
 Nodes (3): repository, type, url
@@ -1800,9 +1863,29 @@ Nodes (9): Auto-open on reload, Consequences, Context, Decision, Related, Starte
 Cohesion: 0.67
 Nodes (3): Agents and MCP, Claude Code example, Claude Desktop example
 
+### Community 342 - "Community 342"
+Cohesion: 0.11
+Nodes (17): Debug, Execution, Response, Run - Opened Prompt to Create Image, Tools MCP chargés (23), Tools MCP filtrés (2/23), Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue (+9 more)
+
 ### Community 348 - "Community 348"
 Cohesion: 0.11
 Nodes (17): Debug, Execution, Response, Run - Opened Prompt to Create Image, Tools MCP chargés (22), Tools MCP filtrés (2/22), Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue (+9 more)
+
+### Community 382 - "Community 382"
+Cohesion: 0.13
+Nodes (14): Debug, Execution, 🎯 Mon conseil, 🎨 Option 1 — Style *Midjourney v6 / v7* (le plus "artistique", cinématique), 🖼️ Option 2 — Style *DALL·E 3 / GPT-Image* (plus descriptif, narratif), ⚙️ Option 3 — Style *Stable Diffusion / SDXL* (structuré, token-friendly), 💡 Quelques variantes "signature" à tester, Response (+6 more)
+
+### Community 386 - "Community 386"
+Cohesion: 0.14
+Nodes (8): Editer un snippet existant, Entêtes, Header 1, Insérer un nouveau snippet, Quelques exemple de snippets reconnus, Vous avez également la possibilité d'accéder à la même fonctionnalité en cliquant sur <kbd>Modifier</kbd> puis <kbd>🧩 Snippets</kbd>, Concepts, examples
+
+### Community 391 - "Community 391"
+Cohesion: 0.13
+Nodes (14): Debug, Error summary, Execution, Response, Run - Opened Prompt to Create Image, Stack trace, Tools MCP chargés (23), Tools MCP filtrés (2/23) (+6 more)
+
+### Community 392 - "Community 392"
+Cohesion: 0.20
+Nodes (7): Les fonctions principales, Lire ensuite, Usages typiques, 00_ACCUEIL, Concepts, 01_DEMARRAGE, Concepts
 
 ### Community 399 - "Community 399"
 Cohesion: 0.11
@@ -1825,16 +1908,16 @@ Cohesion: 0.11
 Nodes (17): Debug, Execution, Response, Run - Opened Prompt to Create Image, Tools MCP chargés (22), Tools MCP filtrés (2/22), Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue (+9 more)
 
 ### Community 404 - "Community 404"
-Cohesion: 0.40
-Nodes (4): Execution, Response, Run - Agent 2, User input
+Cohesion: 0.15
+Nodes (10): Execution, Response, Run - Agent 2, User input, Execution, Response, Run - Agent 2, User input (+2 more)
 
 ### Community 405 - "Community 405"
 Cohesion: 0.26
 Nodes (21): addAgent(), addContextualNode(), addProvider(), entityById(), isProtectedEntity(), labelForBadge(), labelForEntityBadge(), layoutGraph() (+13 more)
 
 ### Community 406 - "Community 406"
-Cohesion: 0.40
-Nodes (4): Execution, Response, Run - Agent 2, User input
+Cohesion: 0.14
+Nodes (12): 1. OKF v0.1 conformance checklist, 2. Frozen field mapping, 3. Frontmatter format decision, 4. `type` derivation (proposed — ratified in T03), 5. Link strategy, 6. Custom-key extensions (OKF-preserved), 7. Decisions to ratify in Ticket 03 (convention ADR), 8. Migration & gate reminder (from the ADR) (+4 more)
 
 ### Community 407 - "Community 407"
 Cohesion: 0.17
@@ -1861,7 +1944,7 @@ Cohesion: 0.43
 Nodes (6): copyRecursive(), FixtureContext, rebaselineMetadata(), setupFixture(), sha256File(), teardownFixture()
 
 ### Community 413 - "Community 413"
-Cohesion: 0.33
+Cohesion: 0.40
 Nodes (5): English documents found on page 3, Execution, Response, Run - Find Written English Documents, User input
 
 ### Community 415 - "Community 415"
@@ -1869,8 +1952,8 @@ Cohesion: 0.25
 Nodes (9): buildPrettyFormat(), ChangedFile, ChangeType, CommitEntry, ensureGitRepo(), GOD_FILE_BASENAMES, parseGitLog(), resolveSourceRoot() (+1 more)
 
 ### Community 416 - "Community 416"
-Cohesion: 0.27
-Nodes (10): ADR limitations, Architecture Decision Records, Les ADR, La documentation qui vit avec le code, Living Documentation principle, Single authoritative source, Scenario B audit documentation drift, Scenario A create ADR (+2 more)
+Cohesion: 0.25
+Nodes (11): ADR limitations, Architecture Decision Records Practice, Architecture Decision Records, Les ADR, La documentation qui vit avec le code, Living Documentation principle, Single authoritative source, Scenario B audit documentation drift (+3 more)
 
 ### Community 418 - "Community 418"
 Cohesion: 0.18
@@ -1880,9 +1963,21 @@ Nodes (10): Backend Workspace, CONS, Consequences, Contexte, Decision, Frontend 
 Cohesion: 0.11
 Nodes (17): Debug, Execution, Response, Run - Opened Prompt to Create Image, Tools MCP chargés (22), Tools MCP filtrés (2/22), Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue (+9 more)
 
+### Community 422 - "Community 422"
+Cohesion: 0.12
+Nodes (12): Execution, Response, Run - Find Written English Documents, User input, Error summary, Execution, Response, Run - Find Written English Documents (+4 more)
+
+### Community 423 - "Community 423"
+Cohesion: 0.20
+Nodes (6): Execution, Response, Run - Traducteur Anglais vers Français, User input, Concepts, traducteur_anglais_vers_francais
+
 ### Community 424 - "Community 424"
 Cohesion: 0.43
 Nodes (5): DOCUMENT_LANGUAGES, DocumentLanguage, getDocumentLanguage(), normalizeDocumentLanguage(), setDocumentLanguage()
+
+### Community 425 - "Community 425"
+Cohesion: 0.18
+Nodes (11): Global appearance configuration, Aligner une image, Blocs de code, Choisir la largeur d'une image, Combiner largeur et alignement d'une image, Diagrammes Mermaid, Image cliquable, Image Markdown standard (+3 more)
 
 ### Community 426 - "Community 426"
 Cohesion: 0.11
@@ -1893,19 +1988,19 @@ Cohesion: 0.15
 Nodes (12): CONS, Consequences, Contexte, Decision, Documents de run agent, Export, Implementation, MCP generate_image (+4 more)
 
 ### Community 429 - "Community 429"
-Cohesion: 0.08
-Nodes (25): banner(), ensureColumnFolders(), fetchDocsFolder(), initKanbanBoard(), installKanbanViewportHeightSync(), KANBAN_COLUMN_THEMES, KanbanColumn, kanbanColumnTheme() (+17 more)
+Cohesion: 0.09
+Nodes (20): banner(), ensureColumnFolders(), fetchDocsFolder(), initKanbanBoard(), installKanbanViewportHeightSync(), KANBAN_COLUMN_THEMES, KanbanColumn, kanbanColumnTheme() (+12 more)
 
 ### Community 430 - "Community 430"
 Cohesion: 0.47
 Nodes (5): Annotation, annotationsPath(), AnnotationsStore, readAnnotations(), writeAnnotations()
 
 ### Community 432 - "Community 432"
-Cohesion: 0.10
+Cohesion: 0.11
 Nodes (19): Basic Graph Display, Combined Commands for Different Use Cases, Debug, Enhanced Graph Options, Execution, Limit to specific number of commits, Only merge commits, Response (+11 more)
 
 ### Community 433 - "Community 433"
-Cohesion: 0.22
+Cohesion: 0.25
 Nodes (8): Debug, Execution, Response, Run - Traducteur Anglais vers Français, Tools MCP, Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue, User input
 
 ### Community 434 - "Community 434"
@@ -1932,13 +2027,17 @@ Nodes (10): Autocommit limite a docsFolder, Avantages, Consequences, Contexte, D
 Cohesion: 0.67
 Nodes (3): git(), initRepo(), QUICKSTART_ID
 
+### Community 440 - "Community 440"
+Cohesion: 0.13
+Nodes (4): deAccent(), highlightMatches(), SearchMatch, HomeState
+
 ### Community 441 - "Community 441"
 Cohesion: 0.12
 Nodes (15): ./Annotations.svelte, ../lib/home/ExportModal.svelte, buildTocNode(), fLabel(), ../lib/home/NewDocModal.svelte, ../lib/home/NewFolderModal.svelte, ../lib/home/Sidebar.svelte, ./annotationHighlight (+7 more)
 
 ### Community 442 - "Community 442"
-Cohesion: 0.11
-Nodes (5): deAccent(), highlightMatches(), SearchMatch, home, HomeState
+Cohesion: 0.18
+Nodes (10): Debug, Error summary, Execution, Response, Run - Ask the LLM, Stack trace, Tools MCP chargés (23), Tools MCP filtrés (1/23) (+2 more)
 
 ### Community 443 - "Community 443"
 Cohesion: 0.14
@@ -2013,7 +2112,7 @@ Cohesion: 0.22
 Nodes (8): Ce que vous voyez dans le menu, Conseil simple, Exemple avec input, Lancer un agent, Le document de résultat, Menu **Agents**, Pendant l'exécution, Quand utiliser ce menu ?
 
 ### Community 461 - "Community 461"
-Cohesion: 0.22
+Cohesion: 0.25
 Nodes (8): Captures d'ecran, Charte visuelle, Diagrammes, Images generees, Intention, Placement dans les documents, Texte alternatif, Ton visuel
 
 ### Community 462 - "Community 462"
@@ -2045,8 +2144,8 @@ Cohesion: 0.22
 Nodes (8): Ce que vous voyez à droite, Ce que vous voyez à gauche, Conseil simple, Créer un document, Créer un dossier, Dossiers et catégories, Menu **Home**, Retrouver rapidement un contenu
 
 ### Community 469 - "Community 469"
-Cohesion: 0.22
-Nodes (8): Ce que vous voyez dans le menu, Conseil simple, Exemple avec input, Lancer un agent, Le document de résultat, Menu **Agents**, Pendant l'exécution, Quand utiliser ce menu ?
+Cohesion: 0.11
+Nodes (15): A votre tour, explorez les fontionnalités de **Living Documentation** ..., Bienvenue dans **Living Documentation** !, Commençons la visite !, Un modèle local-first, Ce que vous voyez dans le menu, Conseil simple, Exemple avec input, Lancer un agent (+7 more)
 
 ### Community 470 - "Community 470"
 Cohesion: 0.25
@@ -2060,33 +2159,73 @@ Nodes (8): diagramsFilePath(), hasEvidence(), loadDiagrams(), normalizeAlignedEx
 Cohesion: 0.25
 Nodes (7): Contenu modifie, Current task, Prochaine action recommandee, Statut courant, Tache realisee, Verifications realisees, Verifications restantes
 
+### Community 473 - "Community 473"
+Cohesion: 0.18
+Nodes (7): Content, trois, Concepts, En_cours, Concepts, Directories, TEST
+
 ### Community 474 - "Community 474"
-Cohesion: 0.47
-Nodes (4): DocumentSuperSeededError, parseDocStatus(), readDocStatus(), resolveDocFilePath()
+Cohesion: 0.18
+Nodes (10): Debug, Error summary, Execution, Response, Run - Ask the LLM, Stack trace, Tools MCP chargés (23), Tools MCP filtrés (1/23) (+2 more)
 
 ### Community 475 - "Community 475"
-Cohesion: 0.40
-Nodes (4): A votre tour, explorez les fontionnalités de **Living Documentation** ..., Bienvenue dans **Living Documentation** !, Commençons la visite !, Un modèle local-first
+Cohesion: 0.25
+Nodes (6): A votre tour, explorez les fontionnalités de **Living Documentation** ..., Bienvenue dans **Living Documentation** !, Commençons la visite !, Un modèle local-first, 000_DOCUMENTATION, Concepts
 
 ### Community 476 - "Community 476"
-Cohesion: 0.40
-Nodes (4): A local-first model, Let's start the tour!, Now explore the features of **Living Documentation**..., Welcome to **Living Documentation**!
+Cohesion: 0.25
+Nodes (6): A local-first model, Let's start the tour!, Now explore the features of **Living Documentation**..., Welcome to **Living Documentation**!, 000_DOCUMENTATION, Concepts
 
 ### Community 477 - "Community 477"
-Cohesion: 0.40
-Nodes (4): Backlog priorise, Captures d'ecran a capturer, Jeu de donnees recommande, Regles de capture
+Cohesion: 0.20
+Nodes (6): 90_ASSETS, Concepts, Backlog priorise, Captures d'ecran a capturer, Jeu de donnees recommande, Regles de capture
 
 ### Community 478 - "Community 478"
-Cohesion: 0.40
-Nodes (4): Execution, Response, Run - Agent 1, User input
+Cohesion: 0.14
+Nodes (10): Execution, Response, Run - Agent 1, User input, Execution, Response, Run - Code Review Specialist, User input (+2 more)
 
 ### Community 479 - "Community 479"
-Cohesion: 0.40
-Nodes (4): A votre tour, explorez les fontionnalités de **Living Documentation** ..., Bienvenue dans **Living Documentation** !, Commençons la visite !, Un modèle local-first
+Cohesion: 0.18
+Nodes (10): Debug, Execution, Prompt pour ton hero image « Journal d'un vieux dev », Response, Run - Ask the LLM, Tools MCP chargés (23), Tools MCP filtrés (1/23), Tour 1 — Prompt envoyé (+2 more)
 
 ### Community 480 - "Community 480"
 Cohesion: 0.67
 Nodes (3): BuildContextResult, git(), initRepo()
+
+### Community 481 - "Community 481"
+Cohesion: 0.20
+Nodes (10): Comprendre le nom du fichier, Conseils de redaction, Creer, modifier et retrouver un document, Creer un document, Erreurs courantes, Modifier le contenu, Prerequis, Retrouver un document (+2 more)
+
+### Community 482 - "Community 482"
+Cohesion: 0.15
+Nodes (3): Vue d'ensemble, 001_BLUEPRINT, Concepts
+
+### Community 483 - "Community 483"
+Cohesion: 0.33
+Nodes (4): Content, un, Concepts, Termine
+
+### Community 484 - "Community 484"
+Cohesion: 0.20
+Nodes (9): Central incompatibility, Consequences, Context, Decision, Field mapping (living-doc → OKF), Related, Staged, non-breaking migration, What OKF newly unlocks (+1 more)
+
+### Community 485 - "Community 485"
+Cohesion: 0.20
+Nodes (9): Debug, Execution, Response, Run - Ask the LLM, Tools MCP chargés (23), Tools MCP filtrés (1/23), Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue (+1 more)
+
+### Community 486 - "Community 486"
+Cohesion: 0.22
+Nodes (9): Choisir une structure de depart, Exemple simple, Idee principale, Quand restructurer, Regles pratiques, Structurer dossiers, categories et documents, Suite recommandee, Utiliser les categories (+1 more)
+
+### Community 487 - "Community 487"
+Cohesion: 0.18
+Nodes (8): Error summary, Execution, Response, Run - Opened Prompt to Create Image, Stack trace, User input, Concepts, opened_prompt_to_create_image
+
+### Community 488 - "Community 488"
+Cohesion: 0.22
+Nodes (8): Config flag, Consequences, Decision, New projects, OKF migration startup gate & migration core, Shared migration core, Startup gate, Verification
+
+### Community 489 - "Community 489"
+Cohesion: 0.22
+Nodes (8): Debug, Execution, Response, Run - Ask The LLM, Tools MCP, Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue, User input
 
 ### Community 491 - "Community 491"
 Cohesion: 0.40
@@ -2096,13 +2235,25 @@ Nodes (6): applyContextLayout(), applyDeterministicLayout(), applyFlowLayout(), 
 Cohesion: 0.33
 Nodes (6): isActorNode(), isCentralSystemNode(), isDatabaseNode(), isExternalSystemNode(), nodeKind(), nodeLabel()
 
+### Community 493 - "Community 493"
+Cohesion: 0.22
+Nodes (6): Execution, Response, Run - Ask The LLM, User input, ask_the_llm_2, Concepts
+
 ### Community 494 - "Community 494"
 Cohesion: 0.20
 Nodes (9): A `siteTheme` field, orthogonal to light/dark, Admin, Cached-boot application, no request, no flash, Consequences, Context, Decision, Related, Scoped CSS reskin (+1 more)
 
+### Community 497 - "Community 497"
+Cohesion: 0.33
+Nodes (4): Test board, Concepts, Directories, ZZTEST_KANBAN
+
+### Community 498 - "Community 498"
+Cohesion: 0.25
+Nodes (7): Choix retenus, Contexte, Documents liés, Réalisation, Suites éventuelles, Ticket 02 — Lecteur frontmatter dual (YAML + legacy), Vérifications
+
 ### Community 500 - "Community 500"
-Cohesion: 0.24
-Nodes (9): ALLOWED_ALIGNS, ALLOWED_WIDTHS, collectImageAttributesFromSource(), ImageAlign, ImageAttrs, imageBlockSource(), ImageWidth, parsePrefix() (+1 more)
+Cohesion: 0.25
+Nodes (7): Ajouter un fichier manuellement, Ajouter un fichier via l'interface, Fichiers joints, Formats courants, Organisation recommandée, Supprimer un fichier joint, Taille maximale
 
 ### Community 501 - "Community 501"
 Cohesion: 0.25
@@ -2120,25 +2271,137 @@ Nodes (4): test, test, test, test
 Cohesion: 0.50
 Nodes (3): Bundled fonts (tau theme), tau — "Notebook" site theme, Third-party notices
 
+### Community 506 - "Community 506"
+Cohesion: 0.25
+Nodes (7): Choix retenus, Contexte, Documents liés, Réalisation, Ticket 04 — Écriture YAML + dérivation du type, Vérifications, À finaliser (dépend d'un commit)
+
+### Community 507 - "Community 507"
+Cohesion: 0.25
+Nodes (7): Choix retenus, Contexte, Documents liés, Réalisation, Suites éventuelles, Ticket 05 — Moulinette de migration déterministe, Vérifications
+
+### Community 508 - "Community 508"
+Cohesion: 0.25
+Nodes (7): Contexte, Documents liés, Déjà acquis (T02 + existant), Réalisation, Suites / vigilance, Ticket 07 — Rendu viewer depuis YAML, Vérifications
+
+### Community 509 - "Community 509"
+Cohesion: 0.29
+Nodes (7): A retenir, Parcours par objectif, Parcours par profil, Parcours pour l'automatisation agentique, Parcours pour une equipe, Parcours recommandes, Si vous avez dix minutes
+
+### Community 510 - "Community 510"
+Cohesion: 0.29
+Nodes (7): Clipboard Image Paste Upload, Clickable Image and Fullscreen Guide, Linked Image Destinations, Markdown Image Syntax, Linked Diagram Markdown, Diagram PNG Export, Article Image Shortcuts
+
+### Community 511 - "Community 511"
+Cohesion: 0.29
+Nodes (6): Consequences, Decision, Generated `index.md` progressive-disclosure listings, Generated OKF `index.md` listings & reserved files, Rationale, Reserved OKF filenames
+
+### Community 512 - "Community 512"
+Cohesion: 0.29
+Nodes (7): Appliquer Diátaxis dans Living Documentation, Les deux axes, Quadrant 1 , Tutoriel, Quadrant 2 , Guide pratique (_How-to_), Quadrant 3 , Explication (_Concept_), Quadrant 4 , Référence, Recommandation : écrire avec la méthode Diátaxis
+
+### Community 513 - "Community 513"
+Cohesion: 0.29
+Nodes (7): Choix retenus, Contexte, Documents liés, Réalisation, Suites éventuelles, Ticket 01 — Audit de conformance OKF & mapping figé, Vérifications
+
+### Community 514 - "Community 514"
+Cohesion: 0.29
+Nodes (6): Contexte, Documents liés, Réalisation, Ticket 06 — Garde de migration au démarrage + commande migrate, Vérifications, À finaliser (dépend d'un commit)
+
+### Community 515 - "Community 515"
+Cohesion: 0.29
+Nodes (6): Contexte, Documents liés, Réalisation, Suites, Ticket 08 — Liens bundle-relatifs ↔ `?doc=`, Vérifications
+
+### Community 516 - "Community 516"
+Cohesion: 0.29
+Nodes (6): Choix retenus, Documents liés, Réalisation, Ticket 10 — Génération du `log.md` depuis Git, Vigilance / suites, Vérifications
+
+### Community 517 - "Community 517"
+Cohesion: 0.29
+Nodes (6): Documents liés, Réalisation, Sécurité, Ticket 11 — `resource` + bloc `sources` custom, Vigilance / suites, Vérifications
+
+### Community 518 - "Community 518"
+Cohesion: 0.29
+Nodes (6): Documents liés, Observation / suite possible, Réalisation, Ticket 12 — Validateur de conformité OKF + hook CI, Vigilance / suites, Vérifications
+
+### Community 519 - "Community 519"
+Cohesion: 0.29
+Nodes (6): Documents liés, Limites connues (pour l'UI / suite), Réalisation, Ticket 13 — Import d'un bundle OKF externe (core CLI), Vigilance / suites, Vérifications
+
+### Community 520 - "Community 520"
+Cohesion: 0.29
+Nodes (6): Bug corrigé (encodage `?doc=`), Documents liés, Réalisation, Ticket 14 — Visualiseur graphe de concepts (bonus), Vigilance / suites, Vérifications
+
+### Community 521 - "Community 521"
+Cohesion: 0.33
+Nodes (5): Documents liés, Réalisation, Ticket 09 — Génération des `index.md` + réservés, Vigilance / suites, Vérifications
+
+### Community 522 - "Community 522"
+Cohesion: 0.33
+Nodes (5): Documents liés, Réalisation, Ticket 15 — Docs / guide / instructions / starters en YAML, Vigilance / suites, Vérifications
+
+### Community 523 - "Community 523"
+Cohesion: 0.40
+Nodes (4): Affichage du détail des erreurs MCP dans /context, Conséquences, Contexte, Décision
+
+### Community 524 - "Community 524"
+Cohesion: 0.40
+Nodes (4): Consequences, Decision, Frontmatter `sources` block + `resource` field, Rationale
+
+### Community 525 - "Community 525"
+Cohesion: 0.40
+Nodes (4): Consequences, Decision, OKF conformance validator + CI gate, Rationale
+
+### Community 526 - "Community 526"
+Cohesion: 0.40
+Nodes (4): Consequences, Decision, Import an external OKF bundle, Rationale
+
+### Community 527 - "Community 527"
+Cohesion: 0.40
+Nodes (5): Amélioration des performances, 🛠️ Guide de dépannage, Problème : Le tableau défile horizontalement sur mobile, Problème : Les couleurs ne s'affichent pas correctement, Problème : Les lignes du tableau ne changent pas de couleur au survol
+
+### Community 528 - "Community 528"
+Cohesion: 0.40
+Nodes (4): Execution, Response, Run - Find Written English Documents, User input
+
+### Community 529 - "Community 529"
+Cohesion: 0.40
+Nodes (4): 2026-05-11, 2026-05-14, 2026-07-01, Changelog
+
+### Community 530 - "Community 530"
+Cohesion: 0.40
+Nodes (4): 2026-05-11, 2026-05-14, 2026-07-01, Changelog
+
+### Community 531 - "Community 531"
+Cohesion: 0.50
+Nodes (4): Debug, Tools MCP, Tour 1 — Prompt envoyé, Tour 1 — Réponse reçue
+
+### Community 533 - "Community 533"
+Cohesion: 0.50
+Nodes (3): AI, Concepts, Directories
+
+### Community 534 - "Community 534"
+Cohesion: 0.50
+Nodes (3): AI, Concepts, Directories
+
 ## Knowledge Gaps
-- **2682 isolated node(s):** `program`, `InitLanguage`, `InitInstructionFile`, `$schema`, `enabled` (+2677 more)
+- **3012 isolated node(s):** `program`, `InitLanguage`, `InitInstructionFile`, `$schema`, `enabled` (+3007 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **76 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **84 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `../lib/diagram/main` connect `Community 120` to `Community 33`, `Community 70`, `Community 8`, `Community 14`, `Community 49`, `Community 19`, `Community 437`, `Community 21`, `Community 56`, `Community 57`?**
-  _High betweenness centrality (0.018) - this node is a cross-community bridge._
+- **Why does `../lib/diagram/main` connect `Community 120` to `Community 33`, `Community 70`, `Community 8`, `Community 13`, `Community 14`, `Community 49`, `Community 19`, `Community 437`, `Community 21`, `Community 56`, `Community 57`?**
+  _High betweenness centrality (0.016) - this node is a cross-community bridge._
 - **Why does `t()` connect `Community 33` to `Community 70`, `Community 8`, `Community 14`, `Community 16`, `Community 49`, `Community 19`, `Community 437`, `Community 120`, `Community 57`, `Community 30`?**
-  _High betweenness centrality (0.015) - this node is a cross-community bridge._
-- **Why does `initShapeEditor()` connect `Community 103` to `Community 19`?**
-  _High betweenness centrality (0.011) - this node is a cross-community bridge._
+  _High betweenness centrality (0.013) - this node is a cross-community bridge._
 - **What connects `program`, `InitLanguage`, `InitInstructionFile` to the rest of the system?**
-  _2706 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _3036 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.09309309309309309 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09103840682788052 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.10526315789473684 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
   _Cohesion score 0.04964539007092199 - nodes in this community are weakly interconnected._
+- **Should `Community 4` be split into smaller, more focused modules?**
+  _Cohesion score 0.10873440285204991 - nodes in this community are weakly interconnected._
