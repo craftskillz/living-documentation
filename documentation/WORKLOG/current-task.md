@@ -23,7 +23,6 @@ Les 15 tickets sont réalisés dans leur périmètre retenu ; T13 porte sur l’
 - `17a8cda0` : migration des copies de fixtures par le vrai CLI avant la garde de démarrage ; fixtures source conservées.
 - `2be1dd1c` : collision de dossiers workspace évitée au renommage, avec test API conservant les fichiers existants.
 - `e0e44059` : graphe T14 (`/graph`, `/api/graph`), extraction des vrais liens Markdown via marked, exclusion images/code/frontmatter/liens externes, tests unitaires et API, libellés EN/FR.
-- `dbd2375f` : graphify actualisé (AST, sans LLM). JSON/rapport actualisés ; visualisation HTML non régénérée automatiquement au-delà de 5000 nœuds.
 - Documentation enregistrée via MCP et auto-commits : ADR T14, complément de l’ADR workspace, stack, commandes, ADR Svelte, blueprint src, roadmap.
 - Un contexte workspace sans frontmatter a été normalisé via MCP sans modifier son corps.
 
@@ -39,8 +38,13 @@ Les 15 tickets sont réalisés dans leur périmètre retenu ; T13 porte sur l’
 
 ## Suites
 
-1. Confirmer le push de `main` après revue de la clôture (fetch effectué, aucun push).
+1. Les push sont pris en charge par l’utilisateur.
 2. Interface d’import Admin/Files et résolution des liens absolus des bundles importés.
 3. Audit des dérives documentaires historiques et génération systématique de frontmatter pour les contextes workspace.
 
 ADR T14 : [Graphe de concepts OKF](?doc=ADRS%252F2026_09_16_17_40_%255BOKF%255D_readonly_okf_concept_graph_from_markdown_links).
+
+
+## Simplification de l’outillage — 16 septembre 2026
+
+Retrait de l’ancien outillage de graphe externe demandé par l’utilisateur. Le format OKF, le MCP Living Documentation et le visualiseur `/graph` sont conservés. Nettoyage des consignes, hooks, skill, caches et références documentaires en cours ; décision durable dans un ADR dédié.
