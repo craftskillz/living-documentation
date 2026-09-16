@@ -1,7 +1,7 @@
 ---
 type: ADR
 title: Migration Du Frontend Vers Une Application Svelte Unifiee
-description: Remplacement du frontend multi-pages vanilla par une application Vite + Svelte 5 unique, extensible par routes explicites et regroupant actuellement 10 écrans servis par Express.
+description: Remplacement du frontend multi-pages vanilla par une application Vite + Svelte 5 unique, extensible par routes explicites et regroupant actuellement 11 écrans servis par Express.
 tags:
   - svelte5
   - vite
@@ -38,7 +38,7 @@ Le frontend historique etait un ensemble de pages HTML independantes (`index.htm
 
 Migrer l'integralite du frontend vers **une seule application Vite + Svelte 5** sous `src/frontend-svelte/`, avec routing par `pathname` dans `App.svelte` et une liste de routes SPA explicites dans Express.
 
-L'application regroupe actuellement 10 ecrans : Home, Workspace, Admin, Blueprint, Agents, Files, AI Context, Diagram, Shape-editor et Survival Kit. L'ajout d'un ecran suit la convention suivante : composant sous `src/frontend-svelte/src/routes/`, branche de routage dans `App.svelte`, puis route SPA explicite dans `src/server.ts`.
+L'application regroupe actuellement 11 ecrans : Home, Workspace, Admin, Blueprint, Agents, Files, AI Context, Diagram, Shape-editor, Survival Kit et Concept Graph. L'ajout d'un ecran suit la convention suivante : composant sous `src/frontend-svelte/src/routes/`, branche de routage dans `App.svelte`, puis route SPA explicite dans `src/server.ts`.
 
 Principes retenus :
 
