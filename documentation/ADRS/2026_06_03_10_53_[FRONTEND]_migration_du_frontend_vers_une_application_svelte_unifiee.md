@@ -25,7 +25,9 @@ sources:
   - path: src/frontend-svelte/src/lib/i18n.svelte.ts
     hash: b7ff36300fe1dec26707f17b91cbb8199e66b4173ff617751052bc505176149d
   - path: src/server.ts
-    hash: b621d1499af1dea1970959d23f5ec9ed2e53ad8c9ec38d49208897b19f5d3d82
+    hash: d5f6198a4f91e351c94c900be132979f2f49f325c31942d50ade9e5706c9260e
+    commit: 9d26ac54b96ef2af1bfcc8b16e4cf62d4f1e1a33
+    dirty: false
   - path: scripts/dev.js
     hash: fd030670ca74d683be628d449c174f63691ce4bd1406eef52a88421260d72a65
   - path: scripts/copy-assets.ts
