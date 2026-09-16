@@ -17,19 +17,19 @@ status: To be validated
 sources:
   - path: src/lib/okf.ts
     hash: 938cc3890e306e4f4fbf3688156c092e2c4f0b260c45e771d0fbdacfb23832e5
-    commit: f3db9907731ef4a82920acd7fff8480734e918f5
+    commit: 75823b71da98fce8ca1889f057dbfb6700e17e38
     dirty: false
   - path: src/mcp/tools/documents.ts
     hash: 1bd213b7646d016ad3e58863cc2ae4443031dd2519acdda9e2a4b05951bdd57b
-    commit: f3db9907731ef4a82920acd7fff8480734e918f5
+    commit: 75823b71da98fce8ca1889f057dbfb6700e17e38
     dirty: false
   - path: src/routes/documents.ts
     hash: 22bbc2f3b743dc5b1e45aca5c87438bf420a2ed771702735656cef8ad3dee6e3
-    commit: f3db9907731ef4a82920acd7fff8480734e918f5
+    commit: 75823b71da98fce8ca1889f057dbfb6700e17e38
     dirty: false
   - path: src/routes/workspace.ts
     hash: 83c3e93af6c17efddbb24f373b348222d34cae58237c5bb258ece1737f950e27
-    commit: d4c92c0ca32bf85985e6d354ebd1e0c4c5f73cb9
+    commit: 75823b71da98fce8ca1889f057dbfb6700e17e38
     dirty: false
 ---
 
