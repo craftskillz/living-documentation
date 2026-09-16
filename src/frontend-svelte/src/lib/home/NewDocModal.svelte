@@ -3,12 +3,25 @@
   import { home } from "./state.svelte";
   import { normalizeFolderSegment } from "../../../../lib/folderName";
 
-  let { open, onclose, onsuccess }: {
+  import { templatesRequest, type TemplateLibrary } from "../templates/api";
+
+  let { open, onclose, onsuccess, initialTemplateId }: {
     open: boolean;
+    initialTemplateId?: string;
     onclose: () => void;
     onsuccess: (createdId: string) => void;
   } = $props();
 
+  let templateLibrary = $state<TemplateLibrary>({ version: 1, folders: [] });
+  let templateFolderId = $state("");
+  let templateId = $state("");
+  let templateError = $state("");
+  let templatesLoading = $state(false);
+  const templateFolder = $derived(templateLibrary.folders.find((folder) => folder.id === templateFolderId));
+  function selectTemplate() {
+    const selected = templateFolder?.templates.find((item) => item.id === templateId);
+    if (selected) title = selected.name;
+  }
   let docsFolder = $state("");
   let pattern = $state("YYYY_MM_DD_HH_mm_[Category]_title");
 
@@ -53,6 +66,8 @@
   });
 
   async function init() {
+    templatesLoading = true;
+    templateFolderId = ""; templateId = ""; templateError = "";
     try {
       const cfg = await fetch("/api/config").then((r) => r.json());
       docsFolder = cfg.docsFolder || "";
@@ -90,6 +105,15 @@
     error = "";
     creating = false;
 
+    try {
+      templateLibrary = await templatesRequest<TemplateLibrary>();
+      if (initialTemplateId) {
+        const folder = templateLibrary.folders.find((item) => item.templates.some((entry) => entry.id === initialTemplateId));
+        if (!folder) throw new Error(t("templates.errors.template_not_found"));
+        templateFolderId = folder.id; templateId = initialTemplateId; selectTemplate();
+      }
+    } catch (err) { templateError = err instanceof Error ? err.message : String(err); }
+    finally { templatesLoading = false; }
     setTimeout(() => titleInputEl?.focus(), 50);
   }
 
@@ -195,6 +219,7 @@
   }
 
   async function create() {
+    if (creating || templatesLoading || (initialTemplateId && templateError)) return;
     const trimmedTitle = title.trim();
     const cat = normalizeCategory(category) || "GENERAL";
 
@@ -210,12 +235,12 @@
       const res = await fetch("/api/documents", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: trimmedTitle, category: cat, folder: selectedFolder }),
+        body: JSON.stringify({ title: trimmedTitle, category: cat, folder: selectedFolder, ...(templateId ? { templateId } : {}) }),
       });
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Creation failed");
+        throw new Error(templateId && ["template_not_found", "storage_error"].includes(data.error) ? t(`templates.errors.${data.error}`) : data.error || "Creation failed");
       }
 
       const doc = await res.json();
@@ -236,9 +261,24 @@
 {#if open}
   <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onclick={(e) => { if (e.target === e.currentTarget) onclose(); }}>
-    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-lg mx-4 p-6 space-y-4">
+    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-lg mx-4 p-6 space-y-4 max-h-[90vh] overflow-y-auto">
       <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">&#10133; <span>{t("modal.new_doc.title")}</span></h3>
 
+      <div class="space-y-2">
+        <label for="new-doc-template-folder" class="block text-xs font-medium">{t("templates.folder")}</label>
+        <select id="new-doc-template-folder" class="w-full rounded border p-2 bg-white dark:bg-gray-800" bind:value={templateFolderId} disabled={templatesLoading} onchange={() => { templateId = ""; }}>
+          <option value="">{t("templates.blank")}</option>
+          {#each templateLibrary.folders as folder (folder.id)}<option value={folder.id}>{folder.name}</option>{/each}
+        </select>
+        {#if templateFolder}
+          <label for="new-doc-template" class="block text-xs font-medium">{t("templates.template")}</label>
+          <select id="new-doc-template" class="w-full rounded border p-2 bg-white dark:bg-gray-800" bind:value={templateId} onchange={selectTemplate}>
+            <option value="">{t("templates.blank")}</option>
+            {#each templateFolder.templates as template (template.id)}<option value={template.id}>{template.name}</option>{/each}
+          </select>
+        {/if}
+        {#if templateError}<p role="alert" class="text-xs text-red-500">{templateError}</p>{/if}
+      </div>
       <!-- Title -->
       <div class="space-y-1.5">
         <label for="new-doc-title" class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("modal.new_doc.title_label")}</label>
@@ -330,7 +370,7 @@
 
       <div class="flex justify-end gap-3 pt-1">
         <button onclick={onclose} class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t("common.cancel")}</button>
-        <button onclick={create} disabled={creating} class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">
+        <button onclick={create} disabled={creating || templatesLoading || !!(initialTemplateId && templateError)} class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">
           {creating ? t("modal.new_folder.creating_btn") : t("common.create")}
         </button>
       </div>

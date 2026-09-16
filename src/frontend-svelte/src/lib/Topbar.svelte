@@ -1,5 +1,6 @@
 <script lang="ts">
   import { t } from "./i18n.svelte";
+  import TemplatesMenu from "./templates/TemplatesMenu.svelte";
   import AgentsMenu from "./AgentsMenu.svelte";
   import FavoritesMenu from "./FavoritesMenu.svelte";
 
@@ -70,7 +71,8 @@
         {link.label}
       </a>
     {/each}
-    <AgentsMenu />
+    <TemplatesMenu />
+      <AgentsMenu />
     {#if actions}{@render actions()}{/if}
   </div>
 </header>

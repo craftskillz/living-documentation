@@ -2,6 +2,7 @@ import express from 'express';
 import type { Server } from 'node:http';
 import path from 'node:path';
 import { exec } from 'node:child_process';
+import { templatesRouter } from './routes/templates';
 import { documentsRouter } from './routes/documents';
 import { configRouter } from './routes/config';
 import { browseRouter } from './routes/browse';
@@ -52,6 +53,7 @@ export async function startServer({
 
   // API
   app.use('/api/git', gitRouter(docsPath));
+  app.use('/api/templates', templatesRouter(docsPath));
   app.use('/api/documents', documentsRouter(docsPath));
   app.use('/api/config', configRouter(docsPath));
   app.use('/api/browse', browseRouter(docsPath));

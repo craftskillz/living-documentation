@@ -1,4 +1,5 @@
 import { Router, type Request, type Response } from "express";
+import { contentFromTemplate, TemplateError } from "../lib/documentTemplates";
 import fs from "node:fs";
 import path from "node:path";
 import { parseFilename, type DocMetadata } from "../lib/parser";
@@ -574,12 +575,21 @@ export function documentsRouter(docsPath: string): Router {
 
   // POST /api/documents — create a new document
   router.post('/', (req: Request, res: Response) => {
-    const { title, category = 'General', folder = '', content } = req.body as {
-      title?: string; category?: string; folder?: string; content?: string;
+    const { title, category = 'General', folder = '', content, templateId } = req.body as {
+      title?: string; category?: string; folder?: string; content?: string; templateId?: string;
     };
 
     if (!title?.trim()) {
       return res.status(400).json({ error: 'title is required' });
+    }
+
+    let templateContent: string | undefined;
+    if (templateId !== undefined) {
+      if (content !== undefined) return res.status(400).json({ error: 'Choose content or templateId' });
+      try { templateContent = contentFromTemplate(docsPath, templateId, title.trim()); }
+      catch (error) {
+        return res.status(error instanceof TemplateError ? error.status : 500).json({ error: error instanceof TemplateError ? error.message : 'storage_error' });
+      }
     }
 
     const { filenamePattern } = readConfig(docsPath);
@@ -622,10 +632,10 @@ export function documentsRouter(docsPath: string): Router {
       return res.status(409).json({ error: 'A document with this name already exists' });
     }
 
-    const initialContent =
+    const initialContent = templateContent ?? (
       typeof content === 'string'
         ? content.trimEnd() + '\n'
-        : `# ${title.trim()}\n`;
+        : `# ${title.trim()}\n`);
     const relPath = path.relative(docsPath, filePath);
     try {
       fs.writeFileSync(
