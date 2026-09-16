@@ -1,5 +1,6 @@
 import { test as base, expect } from '@playwright/test';
-import type { ChildProcess } from 'node:child_process';
+import { execFileSync, type ChildProcess } from 'node:child_process';
+import path from 'node:path';
 import { setupFixture, teardownFixture, type FixtureContext } from './fixture';
 import { pickFreePort, spawnLD, killLD } from './server';
 
@@ -21,6 +22,12 @@ export const test = base.extend<Options & Fixtures>({
     const port = await pickFreePort();
     let proc: ChildProcess | null = null;
     try {
+      // Migrate the isolated copy through the real CLI before its startup gate.
+      // setupFixture itself stays legacy-capable for migration/CLI tests.
+      execFileSync(process.execPath, [path.resolve(__dirname, '../../dist/bin/cli.js'), 'migrate', fx.docsArg], {
+        cwd: fx.parent,
+        stdio: 'pipe',
+      });
       proc = await spawnLD({ cwd: fx.parent, docsArg: fx.docsArg, port });
       await use({
         baseURL: `http://localhost:${port}`,
