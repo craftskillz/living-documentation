@@ -1287,14 +1287,6 @@
       "dirty": true
     }
   ],
-  "001_BLUEPRINT/2026_06_24_20_56_[GRAPHIFY_OUT]_graphifyout": [
-    {
-      "path": "graphify-out/graph.json",
-      "hash": "c90ad73baa4f8377a47557ac8744a38ca858114d65f88d2868f5b87d16857696",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    }
-  ],
   "001_BLUEPRINT/2026_06_24_20_57_[SRC]_src": [
     {
       "path": "documentation/AI/PROJECT-STACK.md",
