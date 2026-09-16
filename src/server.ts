@@ -24,6 +24,7 @@ import { gitRouter } from './routes/git';
 import { mcpRouter } from './mcp/server';
 import { writeConfig } from './lib/config';
 import { gitAutoCommitMiddleware } from './lib/git-integration';
+import { JSON_BODY_LIMIT_BYTES } from './lib/limits';
 
 const activeServers = new Set<Server>();
 
@@ -40,7 +41,9 @@ export async function startServer({
 }: ServerOptions): Promise<void> {
   const app = express();
 
-  app.use(express.json({ limit: '20mb' }));
+  // Derived from MAX_UPLOAD_BYTES (see lib/limits): uploads are base64-in-JSON,
+  // so the body limit must cover the +33% inflation or large files 413 here.
+  app.use(express.json({ limit: JSON_BODY_LIMIT_BYTES }));
 
   // Persist port to .living-doc.json; readAndMigrate runs here and strips any legacy absolute paths.
   writeConfig(docsPath, { port });

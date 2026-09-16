@@ -2,8 +2,7 @@ import { Router, type Request, type Response } from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
 import { readConfig } from '../lib/config';
-
-const MAX_FILE_BYTES = 19 * 1024 * 1024; // keep below Express 20mb body limit
+import { MAX_UPLOAD_BYTES as MAX_FILE_BYTES } from '../lib/limits';
 
 function slugify(name: string): string {
   return name

@@ -6,6 +6,7 @@
   import SnippetsModal from "./SnippetsModal.svelte";
   import { initInlineSnippetEditing, type InlineSnippetRange } from "./inlineSnippetEdit";
   import { findKanbanRange } from "./kanban";
+  import { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB } from "../../../../lib/limits";
 
   // Reusable editable-markdown body: rendered view + inline snippet editing
   // (right-click), full-text textarea edit mode, the snippets modal (insert /
@@ -230,10 +231,10 @@
     });
   }
 
-  const FILE_MAX = 19 * 1024 * 1024;
+  const FILE_MAX = MAX_UPLOAD_BYTES;
   async function uploadFile(file: File, start: number, end: number) {
     if (file.size > FILE_MAX) {
-      saveMsg = { text: t("doc.file_too_large") + ` (${(file.size / 1024 / 1024).toFixed(1)} MB, max 19 MB)`, cls: "text-red-500 dark:text-red-400" };
+      saveMsg = { text: t("doc.file_too_large") + ` (${(file.size / 1024 / 1024).toFixed(1)} MB, max ${MAX_UPLOAD_MB} MB)`, cls: "text-red-500 dark:text-red-400" };
       return;
     }
     saveMsg = { text: t("doc.uploading_file"), cls: "text-gray-400" };

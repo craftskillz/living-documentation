@@ -3,6 +3,7 @@
   import Topbar from "../lib/Topbar.svelte";
   import ConfirmDialog from "../lib/ConfirmDialog.svelte";
   import { t, loadI18n } from "../lib/i18n.svelte";
+  import { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB } from "../../../lib/limits";
 
   let confirmDialog = $state<ConfirmDialog>(null!);
 
@@ -24,7 +25,7 @@
   let replacing = $state<Record<string, boolean>>({});
   let deleting = $state<Record<string, boolean>>({});
 
-  const MAX_BYTES = 19 * 1024 * 1024;
+  const MAX_BYTES = MAX_UPLOAD_BYTES;
   const filteredFiles = $derived(
     selectedFolder
       ? files.filter((entry) => entry.folder === selectedFolder || entry.folder.startsWith(selectedFolder + "/"))
@@ -94,7 +95,7 @@
       if (!ok) return;
 
       if (file.size > MAX_BYTES) {
-        actionError = { ...actionError, [entry.filename]: t("files.error_replace") + `${(file.size / 1024 / 1024).toFixed(1)} MB (max 19 MB)` };
+        actionError = { ...actionError, [entry.filename]: t("files.error_replace") + `${(file.size / 1024 / 1024).toFixed(1)} MB (max ${MAX_UPLOAD_MB} MB)` };
         return;
       }
 
