@@ -85,6 +85,8 @@ Le champ Model est une `<select>` peuplée via `POST /api/workspace/list-models`
 
 À chaque sauvegarde, le backend crée `AI/WORKSPACE/<slug>` pour chaque nœud **agent** (pas LLM). Si le libellé d'un agent change et que son dossier existant doit être renommé, l'interface demande confirmation avant que le backend déplace le dossier.
 
+Lors du renommage, une destination déjà présente sur disque ou réservée par un autre agent reçoit un suffixe `_2`, `_3`, etc. Le backend préserve les dossiers occupés et déplace les fichiers de l’agent vers le premier nom disponible. Ce comportement est couvert par le test API de collision dans `tests/api/workspace.spec.ts`.
+
 ## Propagation LLM → agents
 
 Quand model ou timeout change sur un nœud LLM, tous ses agents enfants reçoivent les nouvelles valeurs via `syncSelectedFromForm`.
