@@ -153,9 +153,9 @@ document `documentation/WORKLOG/AAAA_MM_JJ_HH_mm_[WORKLOG]_ticket_XX_<slug>.md`.
 - [x] ~~Ticket 01 - Audit de conformité & table de mapping figée~~
 - [x] ~~Ticket 02 - Lecteur frontmatter dual (YAML + legacy)~~
 - [x] ~~Ticket 03 - Modèle de concept OKF & dérivation du `type`~~
-- [x] ~~Ticket 04 - Écriture YAML via MCP + flip de statut~~ (code + tests ; ADR d'implémentation à créer après commit)
+- [x] ~~Ticket 04 - Écriture YAML via MCP + flip de statut~~ (code, tests et ADR d'implémentation livrés)
 - [x] ~~Ticket 05 - Moulinette de migration déterministe (sans IA)~~ (254 scannés, 252 migrés, 0 erreur, idempotent, flag écrit)
-- [x] ~~Ticket 06 - Garde de migration au démarrage (cli.ts) + flag OKF~~ (garde + commande migrate + init auto-migrate ; ADR après commit)
+- [x] ~~Ticket 06 - Garde de migration au démarrage (cli.ts) + flag OKF~~ (garde, commande migrate, init auto-migrate et ADR livrés)
 - [x] ~~Ticket 07 - Rendu viewer depuis YAML~~ (tags/type exposés + chips ; strip & pills déjà OK)
 - [x] ~~Ticket 08 - Liens bundle-relatifs ↔ `?doc=`~~ (viewer résout `/x.md` `./x.md` ; export émet déjà du `.md` relatif)
 - [x] ~~Ticket 09 - Génération des `index.md`~~ (31 générés + okf_version racine ; réservés exclus du listing)
@@ -172,3 +172,16 @@ document `documentation/WORKLOG/AAAA_MM_JJ_HH_mm_[WORKLOG]_ticket_XX_<slug>.md`.
 - **M2 — Bundle natif conforme & garde de migration** : T04→T09 + T12 (le dépôt valide OKF, docs migrés par algorithme, démarrage bloqué tant que non migré).
 - **M3 — Historique & assets** : T10, T11.
 - **M4 — Écosystème** : T13→T15 (import, visualiseur, docs à jour).
+
+
+## Clôture vérifiée le 16 septembre 2026
+
+Les 15 tickets sont réalisés dans leur périmètre retenu (T13 : import CLI). T14 est commité (`e0e44059`) et documenté dans [l’ADR du graphe](?doc=ADRS%252F2026_09_16_17_40_%255BOKF%255D_readonly_okf_concept_graph_from_markdown_links). Correctif de collision workspace : `2be1dd1c` ; préparation des fixtures OKF : `17a8cda0`.
+
+Suites hors clôture :
+- [ ] Interface Admin/Files pour importer un bundle.
+- [ ] Résolution des liens absolus `/x.md` à l’intérieur des bundles importés.
+- [ ] Audit des anciennes dérives documentaires hors des fichiers vérifiés pendant cette clôture.
+- [ ] Vérifier que la génération des contextes workspace produit toujours du frontmatter OKF (un fichier de contexte isolé a été normalisé pendant la clôture).
+
+La suite E2E complète n’a pas été exécutée pendant cette clôture. Les contrôles ciblés sont consignés dans `current-task.md`. Publication Git à confirmer séparément.
