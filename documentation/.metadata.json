@@ -1292,38 +1292,38 @@
   "001_BLUEPRINT/2026_06_24_20_57_[SRC]_src": [
     {
       "path": "documentation/AI/PROJECT-STACK.md",
-      "hash": "5dbd6c63420f05c0d01272aa7e54cb7db00446c36fc0c55a69428bc4c902cb33",
-      "commit": "d4ac67dc2eb4277e3f4e232794bebe8268ba5976",
+      "hash": "d751f5b244cbc0544ed63c063d2dcebf6ca8824c6ffa61fd3d5cde269da34b03",
+      "commit": "04959d8d7b07ae30732b721dddc33720ef92c225",
       "dirty": false
     },
     {
       "path": "src/server.ts",
-      "hash": "d2e9da7a978c63f86016c00a55ba313c58cc03b5ad8ca8da36cc5e1472a52c52",
-      "commit": "d4ac67dc2eb4277e3f4e232794bebe8268ba5976",
+      "hash": "d5f6198a4f91e351c94c900be132979f2f49f325c31942d50ade9e5706c9260e",
+      "commit": "04959d8d7b07ae30732b721dddc33720ef92c225",
       "dirty": false
     },
     {
       "path": "src/lib/config.ts",
       "hash": "363d4620f8e48feff650fe6a4dcfac737c27a754f0f608c2854966d448a7e157",
-      "commit": "d4ac67dc2eb4277e3f4e232794bebe8268ba5976",
+      "commit": "04959d8d7b07ae30732b721dddc33720ef92c225",
       "dirty": false
     },
     {
       "path": "src/mcp/server.ts",
       "hash": "3b47ab14e3820987ba65387741d7afabd76625bdd011fee073c7f08d5fe32969",
-      "commit": "d4ac67dc2eb4277e3f4e232794bebe8268ba5976",
+      "commit": "04959d8d7b07ae30732b721dddc33720ef92c225",
       "dirty": false
     },
     {
       "path": "src/routes/documents.ts",
       "hash": "22bbc2f3b743dc5b1e45aca5c87438bf420a2ed771702735656cef8ad3dee6e3",
-      "commit": "d4ac67dc2eb4277e3f4e232794bebe8268ba5976",
+      "commit": "04959d8d7b07ae30732b721dddc33720ef92c225",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/App.svelte",
-      "hash": "e8ec223aa1da893874ef14b4aa9873b1314269481ac36555606fe9dcd390f7a5",
-      "commit": "d4ac67dc2eb4277e3f4e232794bebe8268ba5976",
+      "hash": "cc9b0ede097865b1602c5d277d740a5e9610328cb69752000c7aa43bd59327ea",
+      "commit": "04959d8d7b07ae30732b721dddc33720ef92c225",
       "dirty": false
     }
   ],
