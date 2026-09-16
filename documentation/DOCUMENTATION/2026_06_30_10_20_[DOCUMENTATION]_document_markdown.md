@@ -22,7 +22,7 @@ Ces agents peuvent vous aider à rédiger, traduire, résumer, améliorer ou tra
 
 <!-- image-width: 2/3 -->
 
-![Workspace reliant Living Documentation, providers LLM, agents, MCP et provider image](/images/DOCUMENTATION/concept-07-workspace-providers-agents.jpg)
+![Workspace reliant Living Documentation, providers LLM, agents, MCP et provider image](/images/DOCUMENTATION/concept-07-workspace-providers-agents.png)
 
 ### A quoi sert le Workspace ?
 
