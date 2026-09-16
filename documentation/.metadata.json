@@ -47,6 +47,12 @@
       "hash": "7203f769b05ea5f6995fec7118362d463c96d8f29001745612d970f273269366",
       "commit": "ea0b33db73e02a80f453237b0b16ca2055112ae9",
       "dirty": false
+    },
+    {
+      "path": "src/lib/documentTemplates.ts",
+      "hash": "a41da1b42ebdb845b5831924ca9dc73944264a0b38deb715197e887b2e95d1b4",
+      "commit": "8a7eef7fd0fd332b92f89a0654f2cc7dbed12881",
+      "dirty": false
     }
   ],
   "AI/PROJECT-USEFUL-COMMANDS": [
