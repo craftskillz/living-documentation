@@ -1,94 +1,46 @@
 ---
 type: Worklog
-title: Current task
-description: Point de reprise du chantier d'alignement natif OKF — ticket courant et prochaines actions.
+title: Clôture du chantier OKF
+description: État vérifié du chantier OKF après commits, tests ciblés et mise à jour documentaire via MCP.
 tags:
   - worklog
   - okf
-  - current-task
-  - migration
-  - yaml-frontmatter
-timestamp: 2026-07-08T00:00:00Z
-status: In progress
+  - closure
+  - concept-graph
+  - workspace
+timestamp: 2026-09-16T15:45:00Z
+status: To be validated
 ---
 
-# Current task — Chantier OKF (alignement natif)
+# Clôture OKF — 16 septembre 2026
 
-> Le contenu précédent de ce fichier (tâche « documentation utilisateur », 30/06) est
-> conservé dans l'historique git. Ce fichier suit désormais le chantier OKF.
+## État
 
-## Statut courant
+Les 15 tickets sont réalisés dans leur périmètre retenu ; T13 porte sur l’import CLI. Les détails historiques restent dans les worklogs par ticket et Git. Ce résumé remplace les anciennes listes contradictoires de code non commité.
 
-Chantier **Alignement natif OKF** en cours. Backlog : `documentation/WORKLOG/ROADMAP.md`.
-Décision cadre : ADR `2026_07_08_18_19_[OKF]_align_livingdocumentation_natively_...` (Accepted).
-Autonomie accordée : avancer sur tous les tickets sans demander, sauf besoin réel
-(commit avant bindings ADR, vraie décision produit, MCP/serveur down).
+## Livré et commité
 
-## Progression
+- `17a8cda0` : migration des copies de fixtures par le vrai CLI avant la garde de démarrage ; fixtures source conservées.
+- `2be1dd1c` : collision de dossiers workspace évitée au renommage, avec test API conservant les fichiers existants.
+- `e0e44059` : graphe T14 (`/graph`, `/api/graph`), extraction des vrais liens Markdown via marked, exclusion images/code/frontmatter/liens externes, tests unitaires et API, libellés EN/FR.
+- `dbd2375f` : graphify actualisé (AST, sans LLM). JSON/rapport actualisés ; visualisation HTML non régénérée automatiquement au-delà de 5000 nœuds.
+- Documentation enregistrée via MCP et auto-commits : ADR T14, complément de l’ADR workspace, stack, commandes, ADR Svelte, blueprint src, roadmap.
+- Un contexte workspace sans frontmatter a été normalisé via MCP sans modifier son corps.
 
-- [x] **T01** — Audit + mapping figé. `documentation/AI/2026_07_08_19_22_[OKF]_...` (4 preuves, accuracy 1). WORKLOG `..._ticket_01_...`.
-- [x] **T02** — Lecteur frontmatter dual. `src/lib/frontmatter.ts` (+ `metadata/status/documentLanguage` migrés), dép `yaml@2.5.1` + lock npm10, `tests/unit/frontmatter.test.ts` (5/5), `npm run test:unit`. WORKLOG `2026_07_09_19_35_[WORKLOG]_ticket_02_...`.
-- [x] **T03** — Modèle de concept OKF & dérivation du `type` (ADR convention) : `documentation/ADRS/2026_07_09_19_36_[OKF]_okf_concept_model_...`. Décisions figées : vocabulaire `type` (table déterministe), `tags` liste YAML, `title` toujours émis, `timestamp` ISO 8601 UTC, bloc `sources` list-of-objects (détail T11).
-- [x] **T04** — Écriture YAML + dérivation `type`. **CODE + BRANCHEMENT FAITS, prouvé live** (un doc créé via MCP sort en YAML canonique, `type` dérivé). Écrivains branchés : HTTP POST/PUT, MCP create/update, agent-run ; flip statut client déjà dual ; langue via PUT. Tests 10/10, build OK. WORKLOG `2026_07_09_20_17_[WORKLOG]_ticket_04_...`.
-  - ✅ ADR d'implémentation `2026_07_09_20_37_[OKF]_normalizeonwrite_...` créé + 4 bindings (accuracy 1, commit `a31a26c`).
-- [x] **T05** — Moulinette de migration déterministe. **FAIT + EXÉCUTÉE** : `scripts/migrate-frontmatter-to-okf.ts` (réutilise `normalizeFrontmatter`, `--dry-run`, flag OKF). Run : **254 scannés, 252 migrés, 2 déjà YAML, 0 erreur** ; re-dry-run **0 changement** (idempotent) ; `get_accuracy` ADR = 1 (bindings `src/` intacts) ; flag `okfMigration.version=0.1` dans `.living-doc.json`. WORKLOG `2026_07_09_20_42_[WORKLOG]_ticket_05_...`. **Tout `documentation/` est désormais OKF-YAML.**
-  - **Code non commité** : `scripts/migrate-frontmatter-to-okf.ts` (pas d'ADR dédié — transform couvert par l'ADR T04). À grouper avec le commit T06.
-- [x] **T06** — Garde de démarrage + commande `migrate` + champ `okfMigration`. **FAIT + VÉRIFIÉ.** `src/lib/migrate.ts` (cœur réutilisable), `bin/cli.ts` (garde : refus si non migré + prompt TTY ; sous-commande `migrate [--dry-run]` ; init auto-migre le starter), `src/lib/config.ts` (`okfMigration?` + `isOkfMigrated`). Testé : garde refuse (exit 1) sur fixture non migré, `migrate` convertit + pose le flag, dry-run idempotent. Build + 10/10 unit. WORKLOG `2026_07_09_21_23_[WORKLOG]_ticket_06_...`.
-  - ✅ ADR d'implémentation `2026_07_10_01_25_[OKF]_okf_migration_startup_gate_...` + 3 bindings (accuracy 1, commit `8b143e5`).
-  - 🐛 Fix inclus : la moulinette **ignore les symlinks** (elle injectait du frontmatter dans `AGENTS.md`/`CLAUDE.md`/`MEMORY.md` symlinkés depuis `documentation/AI/`) ; 3 fichiers revert.
-- [x] **T07** — Rendu viewer depuis YAML. **FAIT.** GET /api/documents/:id expose `tags`/`type` (via `parseFrontmatter`, 2 branches), `DocDetail` typé, chips de tags dans `DocViewer`. Strip & pills déjà OK (format-agnostique + dual). ADR strip-frontmatter **reste exact** (pas de supersede). Build + 10/10. WORKLOG `2026_07_10_01_32_[WORKLOG]_ticket_07_...`. Pas d'ADR dédié (petit ajout UX).
-  - **À faire après commit T07** : `documents.ts` est lié à l'ADR T04 → **rebaseliner** `refresh_metadata` de l'ADR `2026_07_09_20_37_[OKF]_normalizeonwrite_...` (l'ADR reste correct, seul le chemin lecture a changé).
-- [x] **T08** — Liens bundle-relatifs. **FAIT.** `wireContent.ts` : `resolveBundleMdLink(href, docId)` (résout `/x.md`, `./x.md`, `../g/x.md` → id) + handler `onDocLink` ; export émet déjà du `.md` relatif ; `?doc=` reste in-app. Logique vérifiée + build. WORKLOG `2026_07_10_01_37_[WORKLOG]_ticket_08_...`. Pas d'ADR (stratégie figée T01).
-- [x] **T09** — Génération des `index.md` + réservés. **FAIT + EXÉCUTÉ (31 générés).** `okf.ts` (`RESERVED_OKF_FILES`/`isReservedOkfFile`/`OKF_SPEC_VERSION`), `src/lib/okf/index-generator.ts` (`generateOkfIndexFiles`, appelé par `migrateDocsFolder`), exclusion des réservés dans `documents.ts` + `mcp/tools/documents.ts`. Racine = `okf_version: "0.1"`. Build + 10/10. WORKLOG `2026_07_10_01_53_[WORKLOG]_ticket_09_...`.
-  - **Après commit** : ADR d'implémentation T09 (binding `index-generator.ts`) + **rebaseline** ADR T04 (okf.ts, documents.ts, mcp/tools/documents.ts ont changé).
-- [x] **T10** — Génération du `log.md` depuis Git. **FAIT + EXÉCUTÉ.** `src/lib/okf/log-generator.ts` (`generateOkfLogFile` : `git log --diff-filter=A --name-only`, changelog `## AAAA-MM-JJ` des concepts ajoutés), wire dans `migrateDocsFolder`. Build + 10/10. WORKLOG `2026_07_10_07_55_[WORKLOG]_ticket_10_...`.
-  - **Après commit** : ADR T10 (binding `log-generator.ts`) + **rebaseline** ADR T06 (`migrate.ts` a changé).
-- [x] **T11** — `resource` + bloc `sources` custom. **FAIT + EXÉCUTÉ (backfill 77 docs).** `resource` dans l'ordre canonique (préservé) ; `normalizeFrontmatter(..., {sources})` (undefined=préserve / array=remplace / null=drop, épinglé dernier) ; `syncSourcesToFrontmatter` branché dans le choke-point unique `setDocEntries` (add/refresh/remove MCP + 3 routes HTTP) ; `backfillSourcesFromStore` dans `migrateDocsFolder` ; garde path-traversal + réservés + **anti-symlink** (`lstat`). Build + 14/14 + fixture end-to-end + migrate idempotent. WORKLOG `2026_07_10_08_20_[WORKLOG]_ticket_11_...`.
-  - **Après commit** : ADR T11 (bindings `metadata.ts` + `okf.ts`) + **rebaseliner** ADR T04 (`okf.ts`) & ADR T06 (`migrate.ts`) ; vérifier l'ADR de rattachement de `metadata.ts`.
-- [x] **T12** — Validateur de conformance OKF + hook CI. **FAIT + EXÉCUTÉ.** `src/lib/okf/validate.ts` (`validateOkfBundle`, read-only, severity error/warning ; timestamp absent=warning, malformé=error), CLI `validate [folder]`, script `okf:validate` + just `okf-validate`, étape « OKF bundle conformance » dans `e2e.yml` (push/PR). Build + **19/19** + bundle réel **exit 0** (0 erreur) + lint:ci 0. WORKLOG `2026_07_10_21_39_[WORKLOG]_ticket_12_...`.
-  - ✅ ADR d'implémentation `2026_07_10_21_42_[OKF]_deterministic_okf_conformance_validator_...` + 2 bindings (accuracy 1) ; ADR T06 rebaseliné (cli.ts).
-- [x] **T13** — Import d'un bundle OKF externe (**core CLI**). **FAIT + EXÉCUTÉ.** Décisions : core CLI d'abord, sous-dossier `IMPORTED/<bundle>/`, type préservé. `src/lib/okf/import.ts` (`importOkfBundle`, structure + type préservés, réservés ignorés, cible non vide refusée, index régénérés), CLI `import <source> [folder] --name`. Raffinement T12 : type non reconnu = **warning**. Build + **21/21** + smoke CLI + bundle réel 0 erreur + lint 0. WORKLOG `2026_07_10_22_20_[WORKLOG]_ticket_13_...`.
-  - ✅ ADR d'implémentation `2026_07_10_22_23_[OKF]_import_an_external_okf_bundle_...` + binding `import.ts` (accuracy 1) ; T06 (cli.ts) & T12 (validate.ts) rebaselinés ; phrase « unknown type » de l'ADR T12 corrigée.
-  - **Suivi (hors T13)** : UI Admin/Files d'import ; liens absolus-bundle `/x.md` d'un bundle importé (résolveur T08).
-- [x] **T15** — Docs/instructions/starters en YAML. **FAIT + VÉRIFIÉ.** Starters migrés (18+18) + flag `okfMigration` ; guide serveur MCP + prompts (`server.ts`), `git.ts`, `workspace.ts`, PROJECT-INSTRUCTIONS ×3, ADR guide serveur révisé — tout en YAML. Build + 21/21 + lint 0 + 3 bundles 0 erreur. **Smoke init : projet neuf conforme, flag posé, garde passante.** WORKLOG `2026_07_10_22_51_[WORKLOG]_ticket_15_...`.
-  - ✅ 10 ADR liées à `server.ts`/`git.ts`/`workspace.ts` rebaselinées (accuracy 1). T15 clos.
-- [x] **T14** — Visualiseur graphe de concepts (**bonus**). **FAIT + rendu validé par l'utilisateur.** `src/lib/okf/graph.ts` (`buildConceptGraph`), `GET /api/graph`, route front `/graph` (vis-network, couleurs par type, clic → doc), nav Topbar + i18n `graph.*`. Correctif encodage `?doc=` (double→simple) : 84 arêtes / 73 nœuds connectés. Build + 23/23 + lint 0. WORKLOG `2026_07_11_08_29_[WORKLOG]_ticket_14_...`.
-  - **Après commit** : ADR T14 (bindings `graph.ts` + `routes/graph.ts`) + rebaseliner les ADR liées à `server.ts` (PROJECT-STACK, blueprint `[SRC]_src`).
+## Vérifications
 
-## Chantier OKF — état : 15/15 tickets faits ✅
-Le dossier `documentation/` est un bundle OKF natif conforme ; un projet neuf naît conforme ; validateur + CI ; import de bundle externe ; graphe de concepts.
+- `npm run test:unit` : 24/24.
+- `npx playwright test tests/api/okf-graph.spec.ts tests/api/workspace.spec.ts --project=chromium` : 9/9 (serveurs locaux autorisés hors sandbox).
+- `npm run build` : réussi ; avertissement de taille de bundle.
+- `npm run lint:ci` : aucune erreur, 61 avertissements et 2 informations.
+- Validation OKF relancée après correction du contexte ; résultat final à consulter dans le compte rendu de clôture.
+- Pas de nouvelle revue visuelle navigateur ; validation visuelle T14 historique conservée. Pas de suite E2E complète exécutée.
+- Métadonnées T14, workspace, stack, commandes, ADR Svelte, blueprint src et normalisation T04 recalculées après vérification ; captures sur arbre propre (`dirty: false`). Les anciennes dérives hors de ces documents ne sont pas déclarées résolues.
 
-## Code à committer (T15)
-`src/mcp/server.ts`, `src/mcp/tools/git.ts`, `src/routes/workspace.ts`, `starter-doc/**`, `starter-doc-fr/**` (migrés + instructions). Les edits `documentation/` (PROJECT-INSTRUCTIONS, ADR guide) sont auto-commités par le serveur.
+## Suites
 
-## Code non commité (frontend, à committer au fil de l'eau)
-- T07 : déjà committé + ADR T04 rebaseliné.
-- T08 : `src/frontend-svelte/src/lib/home/wireContent.ts` (pas de binding ADR).
-Rappel : les commits code sont demandés surtout avant un `add_metadata`/`refresh_metadata` (HEAD propre).
+1. Confirmer le push de `main` après revue de la clôture (fetch effectué, aucun push).
+2. Interface d’import Admin/Files et résolution des liens absolus des bundles importés.
+3. Audit des dérives documentaires historiques et génération systématique de frontmatter pour les contextes workspace.
 
-### T04 — cœur livré (testé)
-`src/lib/okf.ts` : `normalizeFrontmatter(content, relPath)` = transform déterministe
-legacy→YAML canonique (idempotent), `deriveType` (table T03), `date`→`timestamp`
-ISO depuis le nom de fichier, `tags` liste, préserve `sources` & clés custom, ordre
-canonique. Tests `tests/unit/okf.test.ts` (5) — **10/10** au total avec frontmatter. tsc OK.
-> `normalizeFrontmatter` est LE transform partagé T04 (écriture) **et** T05 (migration en masse).
-
-### T04 — branchement restant (TODO)
-Router les écrivains vers `normalizeFrontmatter` (ou `serializeFrontmatter`) :
-1. `src/routes/documents.ts` — normaliser `content` avant `writeFileSync` dans **PUT** (:375/:391) et le **POST** (création). Le `relPath` = `id` décodé + `.md`.
-2. MCP `create_document`/`update_document` — trouver le vrai write (probablement `src/mcp/tools/*` ou `server.ts`) ; normaliser à l'écriture. **Ne pas** confondre avec le *guide* (templates `**gras**` de `server.ts`) qui est **T15**.
-3. `src/routes/workspace.ts` (`agentRunMarkdown`, ~:1083/1172) — émettre YAML.
-4. `src/lib/documentLanguage.ts` `setDocumentLanguage` — après set, passer par normalize (ou l'écriture documents.ts s'en charge si ça passe par PUT).
-5. Client flip statut `src/frontend-svelte/src/lib/home/docStatus.ts` `replaceStatus` — le rendre **format-agnostique** (matcher `status:` ET `**status:**`) ; la conversion YAML se fait à l'enregistrement serveur.
-- **Attention viewer** : le strip frontmatter est format-agnostique et les pills lisent en dual (T02) → un doc YAML s'affiche déjà ; T06 polira.
-- Titre : `normalizeFrontmatter` n'invente pas de `title` ; l'injecter depuis le nom de fichier au niveau de l'appelant (writer/migration) — à câbler en T04/T05.
-
-## État git / commits
-Arbre code **sale** (non commité) : `src/lib/okf.ts`, `tests/unit/okf.test.ts` (T04 cœur) — le reste de T02 est déjà commité.
-Docs auto-committées par l'intégration Git (« docs: update living documentation »).
-**Demander un commit code à l'utilisateur avant l'ADR d'implémentation T04/T05** (bindings `add_metadata` → HEAD propre).
-
-
-## Reprise du 16 septembre 2026
-
-Clôture en cours, autorisée par l'utilisateur : revue T14 et correctif workspace, contrôles, commits distincts, ADR et métadonnées via MCP, nettoyage du suivi. Build et 23 tests unitaires réussis ; lint sans erreur (61 warnings). Les tests workspace ont révélé une fixture legacy refusée par la garde OKF : préparation de la copie isolée via CLI migrate et test de collision en cours. Aucun push effectué.
+ADR T14 : [Graphe de concepts OKF](?doc=ADRS%252F2026_09_16_17_40_%255BOKF%255D_readonly_okf_concept_graph_from_markdown_links).
