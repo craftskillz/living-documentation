@@ -1858,5 +1858,13 @@
       "commit": "2cf910c2b2defc2118b11f323c1e0d67ab0ad009",
       "dirty": false
     }
+  ],
+  "ADRS/2026_09_16_17_48_[OKF]_suppression_de_graphify_au_profit_de_google_okf": [
+    {
+      "path": "AGENTS.md",
+      "hash": "fb7ec7626a7fddc6671b6ba7bbc35fc5ba1095728ed47aeb425ee5d87b85a08b",
+      "commit": "fcd1111cf0dc714676d1850912d1b445377965cb",
+      "dirty": false
+    }
   ]
 }

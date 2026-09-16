@@ -10,6 +10,11 @@ tags:
   - mcp
   - concept-graph
 status: To be validated
+sources:
+  - path: AGENTS.md
+    hash: fb7ec7626a7fddc6671b6ba7bbc35fc5ba1095728ed47aeb425ee5d87b85a08b
+    commit: fcd1111cf0dc714676d1850912d1b445377965cb
+    dirty: false
 ---
 
 # Suppression de graphify au profit de Google OKF
