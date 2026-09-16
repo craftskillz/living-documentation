@@ -1897,6 +1897,12 @@
       "hash": "a9c1f5c47301edcaaa080ba9f75e276db9ceeff592b84363e85da2a1a1d15d43",
       "commit": "d419d9a8cb2ac45f2b8c5274d42f31f4d58c2582",
       "dirty": false
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/templates/api.ts",
+      "hash": "044eb0f0476924a8904c783ace928e427c35e3423ea182d081b45425e8937e7a",
+      "commit": "174ed73ab89388a220bb9881f0a38c4441dda77c",
+      "dirty": false
     }
   ]
 }
