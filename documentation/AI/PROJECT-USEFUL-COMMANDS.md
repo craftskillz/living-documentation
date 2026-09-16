@@ -12,6 +12,10 @@ sources:
     hash: 7c73a492041aed2e61793e13b556b52ba357e30520abe5e937cfdc77c3fbcdd3
   - path: justfile
     hash: 112cca6975f53d54fd2180b2ad13119587419eca27caf2a6a22ba97b63555691
+  - path: tests/helpers/ld-fixture.ts
+    hash: c515f734fecb2cbce3d6865da3587e6ee076aa9653bdf4bb328f9fb3a187cb53
+    commit: 31a91f0c16de266fa8f41c6ca5857f781a975130
+    dirty: false
 ---
 
 # PROJECT-USEFUL-COMMANDS - Living Documentation
