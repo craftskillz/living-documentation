@@ -4,35 +4,35 @@ title: PROJECT STACK
 sources:
   - path: bin/cli.ts
     hash: 2c16bc01c76103483817a163093dec56ad092f4d59ca565c14bdacda8f36886c
-    commit: 98a36520eecf42cce386808805140737bc9c6d30
+    commit: ea0b33db73e02a80f453237b0b16ca2055112ae9
     dirty: false
   - path: src/server.ts
-    hash: d2e9da7a978c63f86016c00a55ba313c58cc03b5ad8ca8da36cc5e1472a52c52
-    commit: 98a36520eecf42cce386808805140737bc9c6d30
+    hash: d5f6198a4f91e351c94c900be132979f2f49f325c31942d50ade9e5706c9260e
+    commit: ea0b33db73e02a80f453237b0b16ca2055112ae9
     dirty: false
   - path: src/lib/config.ts
     hash: 363d4620f8e48feff650fe6a4dcfac737c27a754f0f608c2854966d448a7e157
-    commit: 98a36520eecf42cce386808805140737bc9c6d30
+    commit: ea0b33db73e02a80f453237b0b16ca2055112ae9
     dirty: false
   - path: src/lib/parser.ts
     hash: 371fbb9676a0b8144f9f8a009d8f9ecf1fa785985308fc95083e90603cff6aed
-    commit: 98a36520eecf42cce386808805140737bc9c6d30
+    commit: ea0b33db73e02a80f453237b0b16ca2055112ae9
     dirty: false
   - path: src/lib/metadata.ts
     hash: 0498b125bfb38061564a132641c123f1d0ca634664c81f13cd25d465de1f9175
-    commit: 98a36520eecf42cce386808805140737bc9c6d30
+    commit: ea0b33db73e02a80f453237b0b16ca2055112ae9
     dirty: false
   - path: src/mcp/server.ts
     hash: 3b47ab14e3820987ba65387741d7afabd76625bdd011fee073c7f08d5fe32969
-    commit: 98a36520eecf42cce386808805140737bc9c6d30
+    commit: ea0b33db73e02a80f453237b0b16ca2055112ae9
     dirty: false
   - path: scripts/copy-assets.ts
     hash: ffdb3d3b63a943a0d0eb4988f8fe71aa7e4fb937f4426a1e94bd6436ce4ae240
-    commit: 98a36520eecf42cce386808805140737bc9c6d30
+    commit: ea0b33db73e02a80f453237b0b16ca2055112ae9
     dirty: false
   - path: src/lib/okf/graph.ts
     hash: 7203f769b05ea5f6995fec7118362d463c96d8f29001745612d970f273269366
-    commit: 8b100affc25add3405e9a77bb5dc1a5310f279d7
+    commit: ea0b33db73e02a80f453237b0b16ca2055112ae9
     dirty: false
 ---
 
