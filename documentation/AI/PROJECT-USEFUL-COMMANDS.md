@@ -3,18 +3,28 @@ type: Technical Doc
 title: PROJECT USEFUL COMMANDS
 sources:
   - path: bin/cli.ts
-    hash: 4a8a9a84e44d6e6e94dee01f6be680c1fb872fa7e8d52f98e615a81cbd057cda
+    hash: 2c16bc01c76103483817a163093dec56ad092f4d59ca565c14bdacda8f36886c
+    commit: fc003057894bf3b290e98dfa23df070ac8ec6720
+    dirty: false
   - path: scripts/copy-assets.ts
-    hash: c4b765a05c3508c8e61b3624a31dffa236acab0d2e03e2cd9f3401f9734a9b04
+    hash: ffdb3d3b63a943a0d0eb4988f8fe71aa7e4fb937f4426a1e94bd6436ce4ae240
+    commit: fc003057894bf3b290e98dfa23df070ac8ec6720
+    dirty: false
   - path: playwright.config.ts
-    hash: 7c6a053df87117bae83dee8c3b3a9caa16b6a1792d23f7298b1fce34da0c50e9
+    hash: bd5ec053a7955be0aff01d803d5b8ccf76f5caf3975d14d01add39131305dfa0
+    commit: fc003057894bf3b290e98dfa23df070ac8ec6720
+    dirty: false
   - path: tests/helpers/coverage.ts
-    hash: 7c73a492041aed2e61793e13b556b52ba357e30520abe5e937cfdc77c3fbcdd3
+    hash: b0618f93d98a05007f90655a43399c0d1dde0ffc821714fca078ebcc314159fe
+    commit: fc003057894bf3b290e98dfa23df070ac8ec6720
+    dirty: false
   - path: justfile
-    hash: 112cca6975f53d54fd2180b2ad13119587419eca27caf2a6a22ba97b63555691
+    hash: 59f755e76ae6bb1d9ac82a369d7aa6c1690b210929503d2e444e755203fee785
+    commit: fc003057894bf3b290e98dfa23df070ac8ec6720
+    dirty: false
   - path: tests/helpers/ld-fixture.ts
     hash: c515f734fecb2cbce3d6865da3587e6ee076aa9653bdf4bb328f9fb3a187cb53
-    commit: 31a91f0c16de266fa8f41c6ca5857f781a975130
+    commit: fc003057894bf3b290e98dfa23df070ac8ec6720
     dirty: false
 ---
 
