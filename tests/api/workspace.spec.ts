@@ -6,6 +6,25 @@ import { callTool } from '../helpers/mcp';
 
 type JsonHandler = (body: unknown, req: http.IncomingMessage) => unknown | Promise<unknown>;
 
+test('renaming an agent preserves occupied folders and its existing files', async ({ request, ld }) => {
+  const root = path.join(ld.docsAbs, 'AI/WORKSPACE');
+  for (const folder of ['old_agent', 'renamed_agent', 'renamed_agent_2']) {
+    fs.mkdirSync(path.join(root, folder), { recursive: true });
+    fs.writeFileSync(path.join(root, folder, 'keep.md'), folder);
+  }
+  const response = await request.put(`${ld.baseURL}/api/workspace`, { data: {
+    version: 1, camera: { x: 0, y: 0, zoom: 1 }, entities: [{
+      id: 'agent-rename', label: 'Renamed Agent', kind: 'agent', parentId: null,
+      config: { workspaceFolder: 'AI/WORKSPACE/old_agent' },
+    }],
+  } });
+  expect(response.ok()).toBe(true);
+  expect(fs.readFileSync(path.join(root, 'renamed_agent/keep.md'), 'utf8')).toBe('renamed_agent');
+  expect(fs.readFileSync(path.join(root, 'renamed_agent_2/keep.md'), 'utf8')).toBe('renamed_agent_2');
+  expect(fs.readFileSync(path.join(root, 'renamed_agent_3/keep.md'), 'utf8')).toBe('old_agent');
+  expect(fs.existsSync(path.join(root, 'old_agent'))).toBe(false);
+});
+
 async function startJsonServer(handler: JsonHandler): Promise<{ url: string; close: () => Promise<void> }> {
   const server = http.createServer((req, res) => {
     let raw = '';

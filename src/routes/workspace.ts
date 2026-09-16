@@ -290,7 +290,12 @@ function ensureProviderWorkspaceFolders(docsPath: string, state: WorkspaceState)
     if (existingFolder && existingFolder !== labelFolder) {
       const absoluteExisting = path.resolve(docsPath, existingFolder);
       if (fs.existsSync(absoluteExisting)) {
-        const uniqueLabel = uniqueWorkspaceFolder(labelFolder, reservedFolders);
+        // The rename target must not clobber an unrelated folder already on disk
+        // (renaming onto a non-empty directory fails with ENOTEMPTY), so treat
+        // existing directories as taken and fall back to a suffixed name.
+        const uniqueLabel = uniqueWorkspaceFolder(labelFolder, reservedFolders, (candidate) =>
+          fs.existsSync(path.resolve(docsPath, candidate)),
+        );
         const absoluteNew = path.resolve(docsPath, uniqueLabel);
         if (!absoluteNew.startsWith(`${workspaceRoot}${path.sep}`)) {
           throw new Error('provider workspace folder escapes AI/WORKSPACE');
@@ -303,7 +308,13 @@ function ensureProviderWorkspaceFolders(docsPath: string, state: WorkspaceState)
     }
 
     const baseFolder = existingFolder || labelFolder;
-    const uniqueFolder = uniqueWorkspaceFolder(baseFolder, reservedFolders);
+    // Reuse baseFolder even if it already exists on disk (it belongs to this
+    // agent); only bump away from a different folder that is already taken.
+    const uniqueFolder = uniqueWorkspaceFolder(
+      baseFolder,
+      reservedFolders,
+      (candidate) => candidate !== baseFolder && fs.existsSync(path.resolve(docsPath, candidate)),
+    );
     const absoluteFolder = path.resolve(docsPath, uniqueFolder);
     if (!absoluteFolder.startsWith(`${workspaceRoot}${path.sep}`) && absoluteFolder !== workspaceRoot) {
       throw new Error('provider workspace folder escapes AI/WORKSPACE');
@@ -333,11 +344,15 @@ function sanitizeWorkspaceFolder(folder: string): string {
   return normalized;
 }
 
-function uniqueWorkspaceFolder(folder: string, reservedFolders: Set<string>): string {
+function uniqueWorkspaceFolder(
+  folder: string,
+  reservedFolders: Set<string>,
+  isTaken: (candidate: string) => boolean = () => false,
+): string {
   const parsed = path.posix.parse(toPosixPath(folder));
   let candidate = toPosixPath(folder);
   let index = 2;
-  while (reservedFolders.has(candidate)) {
+  while (reservedFolders.has(candidate) || isTaken(candidate)) {
     candidate = path.posix.join(parsed.dir, `${parsed.name}_${index}`);
     index += 1;
   }
