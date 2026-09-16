@@ -76,15 +76,22 @@ Le TTS est low footprint : l'anglais utilise `kokoro-js` côté serveur si l'opt
 | `npm run test:e2e:ui`                                        | Ouvre Playwright UI mode                                                                                                      | Pour debug interactif, traces et replay.                                            |
 | `npm run test:coverage`                                      | Nettoie `coverage/`, build, lance Playwright avec `COVERAGE=1` et agrège via c8                                               | Pour vérifier la couverture serveur/CLI avant publication ou refactor significatif. |
 
+### Contrôles OKF
+
+- `npm run test:unit` : tests Node.js `node:test` sous `tests/unit/*.test.ts`, chargés via ts-node ; ne requiert pas de build préalable.
+- `npm run okf:validate` : validation en lecture seule du bundle `documentation/` ; erreurs bloquantes, avertissements non bloquants.
+- `node dist/bin/cli.js migrate ./docs --dry-run` : prévisualise la migration ; retirer `--dry-run` pour migrer réellement.
+- `tests/helpers/ld-fixture.ts` migre la copie temporaire via le CLI avant de démarrer le serveur. Les fixtures source restent intactes.
+
 ### Raccourcis `just` pour les tests
 
-Toutes ces cibles **buildent d'abord** (les tests unit importent `dist/`, les e2e/api lancent le CLI buildé), reproduisant les conditions CI.
+Les cibles de test ci-dessous, sauf le mode UI interactif `test-ui-watch`, **buildent d'abord** (les tests unit importent `dist/`, les e2e/api lancent le CLI buildé), reproduisant les conditions CI.
 
 | Commande              | Effet                                                                             |
 | --------------------- | --------------------------------------------------------------------------------- |
 | `just test`           | Suite complète (api + unit + e2e), headless, comme la CI.                         |
 | `just test-api`       | Uniquement les tests API (HTTP sur le CLI lancé), headless.                       |
-| `just test-unit`      | Uniquement les tests unitaires (parser, constantes de shapes).                    |
+| `just test-unit`      | Specs Playwright historiques (parser, constantes de shapes) ; les tests OKF `.test.ts` se lancent séparément avec `npm run test:unit`.                    |
 | `just test-ui`        | Tests UI/e2e headless (sans fenêtre navigateur). Filtres : `just test-ui viewer`. |
 | `just test-ui-headed` | Tests UI/e2e en mode `--headed` : on voit le navigateur exécuter les tests.       |
 | `just test-ui-watch`  | Runner interactif Playwright (`--ui`) : watch, traces, replay.                    |
@@ -100,7 +107,7 @@ Audit local des workflows GitHub Actions (le binaire `zizmor` doit être install
 
 Les 2 findings `cache-poisoning` résiduels sur `publish.yml` sont des faux positifs documentés et supprimés via `.github/zizmor.yml`.
 
-Il n'existe pas de script ESLint ou `format` dans `package.json` à ce jour. Ne pas annoncer `npm run lint` ou `npm run format` comme vérification disponible tant qu'ils ne sont pas ajoutés. Le typage frontend est assuré par `svelte-check`/`tsc` et le build Vite (le script `check:frontend` a été supprimé avec le frontend vanilla).
+Biome est disponible : `npm run lint` analyse le code, `npm run lint:ci` exécute les contrôles CI sans modification ; `npm run lint:fix` applique les corrections sûres, `lint:fix:unsafe` demande une revue des changements. Aucun script `format` n'existe. Le typage frontend est assuré par `svelte-check`/`tsc` et le build Vite (le script `check:frontend` a été supprimé avec le frontend vanilla).
 
 ## Tests ciblés
 
