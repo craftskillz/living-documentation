@@ -116,7 +116,6 @@
 * **Added**: Tests
 * **Added**: Testresults
 * **Added**: Playwrightreport
-* **Added**: Graphifyout
 * **Added**: Src
 * **Added**: Bin
 

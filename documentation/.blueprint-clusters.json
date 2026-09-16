@@ -19,7 +19,6 @@
     "id": "cl_mqshf0ut_kak8b",
     "label": "Gen AI Helpers (Claude, Codex ...)",
     "members": [
-      "graphify-out",
       "memory"
     ]
   },

@@ -10,5 +10,4 @@
 * [Tests](./2026_06_24_20_52_[TESTS]_tests.md) - Le dossier `tests/` contient les scénarios Playwright qui vérifient les API, les parcours navigateur, les comportements unitaires et les fixtures isolées du projet.
 * [Testresults](./2026_06_24_20_54_[TEST_RESULTS]_testresults.md) - Le dossier `test-results/` contient les artefacts générés par Playwright pour diagnostiquer les tests, notamment traces, captures et vidéos optionnelles.
 * [Playwrightreport](./2026_06_24_20_55_[PLAYWRIGHT_REPORT]_playwrightreport.md) - Le dossier `playwright-report/` contient le rapport HTML généré par Playwright pour consulter les résultats de test et rejouer les traces.
-* [Graphifyout](./2026_06_24_20_56_[GRAPHIFY_OUT]_graphifyout.md) - Le dossier `graphify-out/` contient les sorties Graphify qui transforment le projet en graphe consultable : rapport, vues HTML, JSON et cache.
 * [Src](./2026_06_24_20_57_[SRC]_src.md) - Le dossier `src/` contient le code applicatif principal de Living Documentation : serveur, routes API, MCP, logique partagée et frontend Svelte.
