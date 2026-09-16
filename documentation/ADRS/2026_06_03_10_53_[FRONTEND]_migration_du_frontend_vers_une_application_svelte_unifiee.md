@@ -17,7 +17,9 @@ timestamp: 2026-06-03T10:53:00Z
 status: To be validated
 sources:
   - path: src/frontend-svelte/src/App.svelte
-    hash: 23deba929bc4a2f6146d4d85c29d3b53997919885db03c7cff1eb72f23f3ff8a
+    hash: cc9b0ede097865b1602c5d277d740a5e9610328cb69752000c7aa43bd59327ea
+    commit: 91aca9a29bc7e3b20ac0f17ff91af849e2450111
+    dirty: false
   - path: src/frontend-svelte/vite.config.ts
     hash: 511957204065251c6980a47a20433ef3fd9947cc1b2e2a617133aab25f2e8af5
   - path: src/frontend-svelte/src/lib/i18n.svelte.ts
