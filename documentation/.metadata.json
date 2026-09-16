@@ -1885,6 +1885,12 @@
       "hash": "a41da1b42ebdb845b5831924ca9dc73944264a0b38deb715197e887b2e95d1b4",
       "commit": "b42d051f271929cce2d0b31b9188bab189f268f5",
       "dirty": false
+    },
+    {
+      "path": "src/routes/templates.ts",
+      "hash": "9a31301d0a973974b0bd36b640bc51b03b1fd928a67b63c89c7331440dd5f607",
+      "commit": "ee7ad56ec7d725e4e3e1955c1e18891caec2f21f",
+      "dirty": false
     }
   ]
 }
