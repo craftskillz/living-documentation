@@ -1824,5 +1824,13 @@
       "commit": "472836da445bf94fce254002dcd60dfaeda1c43a",
       "dirty": false
     }
+  ],
+  "ADRS/2026_09_16_17_40_[OKF]_readonly_okf_concept_graph_from_markdown_links": [
+    {
+      "path": "src/lib/okf/graph.ts",
+      "hash": "7203f769b05ea5f6995fec7118362d463c96d8f29001745612d970f273269366",
+      "commit": "8ff02ad701f23ee6f0063513f1ad3abf81db0339",
+      "dirty": false
+    }
   ]
 }

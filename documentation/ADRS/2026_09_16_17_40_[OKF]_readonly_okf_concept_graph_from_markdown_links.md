@@ -11,6 +11,11 @@ tags:
   - svelte
   - ticket-14
 status: To be validated
+sources:
+  - path: src/lib/okf/graph.ts
+    hash: 7203f769b05ea5f6995fec7118362d463c96d8f29001745612d970f273269366
+    commit: 8ff02ad701f23ee6f0063513f1ad3abf81db0339
+    dirty: false
 ---
 
 # OKF concept graph
