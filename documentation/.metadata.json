@@ -711,30 +711,38 @@
     {
       "path": "src/frontend-svelte/src/App.svelte",
       "hash": "cc9b0ede097865b1602c5d277d740a5e9610328cb69752000c7aa43bd59327ea",
-      "commit": "91aca9a29bc7e3b20ac0f17ff91af849e2450111",
+      "commit": "5190c9ed9dc1edba3ec5f01d6aff468fa8168b54",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/vite.config.ts",
-      "hash": "511957204065251c6980a47a20433ef3fd9947cc1b2e2a617133aab25f2e8af5"
+      "hash": "511957204065251c6980a47a20433ef3fd9947cc1b2e2a617133aab25f2e8af5",
+      "commit": "5190c9ed9dc1edba3ec5f01d6aff468fa8168b54",
+      "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/lib/i18n.svelte.ts",
-      "hash": "b7ff36300fe1dec26707f17b91cbb8199e66b4173ff617751052bc505176149d"
+      "hash": "0552e6ffb53b1800631e6cc884db6d56003b4c12a687749fa13c07be205d411e",
+      "commit": "5190c9ed9dc1edba3ec5f01d6aff468fa8168b54",
+      "dirty": false
     },
     {
       "path": "src/server.ts",
       "hash": "d5f6198a4f91e351c94c900be132979f2f49f325c31942d50ade9e5706c9260e",
-      "commit": "9d26ac54b96ef2af1bfcc8b16e4cf62d4f1e1a33",
+      "commit": "5190c9ed9dc1edba3ec5f01d6aff468fa8168b54",
       "dirty": false
     },
     {
       "path": "scripts/dev.js",
-      "hash": "fd030670ca74d683be628d449c174f63691ce4bd1406eef52a88421260d72a65"
+      "hash": "cd6e17b75a112e4b8ccb4641129971ca034c43ca624728170951c6788157930f",
+      "commit": "5190c9ed9dc1edba3ec5f01d6aff468fa8168b54",
+      "dirty": false
     },
     {
       "path": "scripts/copy-assets.ts",
-      "hash": "5bc38ba70f2c20b68f929aa1419fbadf1b8bcd88111a6a58af3dbb56f1210c3f"
+      "hash": "ffdb3d3b63a943a0d0eb4988f8fe71aa7e4fb937f4426a1e94bd6436ce4ae240",
+      "commit": "5190c9ed9dc1edba3ec5f01d6aff468fa8168b54",
+      "dirty": false
     }
   ],
   "2026_06_03_23_19_[TESTING]_stabilisation_de_la_suite_e2e_playwright_apres_migration_svelte_ancrage_de_test_et_regressions": [
