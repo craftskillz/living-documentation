@@ -1,1 +1,6 @@
+---
+type: Document
+title: Image generation context
+---
+
 Generated image: elderly-developer-dawn-code-shore.png (provider: Nano Banana Pro, model: google/gemini-3-pro-image)
