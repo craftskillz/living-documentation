@@ -99,13 +99,6 @@ List all documents with their id, title, category, folder, and `linkHref` (the r
     "linkHref": "?doc=001_BLUEPRINT%252F2026_06_24_20_55_%255BPLAYWRIGHT_REPORT%255D_playwrightreport"
   },
   {
-    "id": "001_BLUEPRINT%2F2026_06_24_20_56_%5BGRAPHIFY_OUT%5D_graphifyout",
-    "title": "Graphifyout",
-    "category": "GRAPHIFY_OUT",
-    "folder": "001_BLUEPRINT",
-    "linkHref": "?doc=001_BLUEPRINT%252F2026_06_24_20_56_%255BGRAPHIFY_OUT%255D_graphifyout"
-  },
-  {
     "id": "001_BLUEPRINT%2F2026_06_24_20_57_%5BSRC%5D_src",
     "title": "Src",
     "category": "SRC",
@@ -638,119 +631,7 @@ List all documents with their id, title, category, folder, and `linkHref` (the r
     "linkHref": "?doc=ADRS%252F2026_04_20_%255BTUTORIAL%255D_interroger_le_mcp_server_avec_curl"
   },
   {
-    "id": "ADRS%2F2026_04_21_%5BFILES%5D_file_attachments_paperclip_drag_drop_paste_and_blocked_extensions",
-    "title": "File Attachments Paperclip Drag Drop Paste And Blocked Extensions",
-    "category": "FILES",
-    "folder": "ADRS",
-    "linkHref": "?doc=ADRS%252F2026_04_21_%255BFILES%255D_file_attachments_paperclip_drag_drop_paste_and_blocked_extensions"
-  },
-  {
-    "id": "ADRS%2F2026_04_21_%5BMODAL_UX%5D_folder_picker_unification_click_to_select",
-    "title": "Folder Picker Unification Click To Select",
-    "category": "MODAL_UX",
-    "folder": "ADRS",
-    "linkHref": "?doc=ADRS%252F2026_04_21_%255BMODAL_UX%255D_folder_picker_unification_click_to_select"
-  },
-  {
-    "id": "ADRS%2F2026_04_21_%5BNAVIGATION%5D_anchor_select_dropdowns_and_navhistory_rewind",
-    "title": "Anchor Select Dropdowns And Navhistory Rewind",
-    "category": "NAVIGATION",
-    "folder": "ADRS",
-    "linkHref": "?doc=ADRS%252F2026_04_21_%255BNAVIGATION%255D_anchor_select_dropdowns_and_navhistory_rewind"
-  },
-  {
-    "id": "ADRS%2F2026_04_22_%5BMETADATA%5D_files_management_popup_with_metadata_search_and_accuracy_formula_fix",
-    "title": "Files Management Popup With Metadata Search And Accuracy Formula Fix",
-    "category": "METADATA",
-    "folder": "ADRS",
-    "linkHref": "?doc=ADRS%252F2026_04_22_%255BMETADATA%255D_files_management_popup_with_metadata_search_and_accuracy_formula_fix"
-  },
-  {
-    "id": "ADRS%2F2026_04_22_%5BMETADATA%5D_source_file_bindings_and_accuracy_gauge",
-    "title": "Source File Bindings And Accuracy Gauge",
-    "category": "METADATA",
-    "folder": "ADRS",
-    "linkHref": "?doc=ADRS%252F2026_04_22_%255BMETADATA%255D_source_file_bindings_and_accuracy_gauge"
-  },
-  {
-    "id": "ADRS%2F2026_04_22_%5BSIDEBAR%5D_resizable_drawer_with_persisted_width",
-    "title": "Resizable Drawer With Persisted Width",
-    "category": "SIDEBAR",
-    "folder": "ADRS",
-    "linkHref": "?doc=ADRS%252F2026_04_22_%255BSIDEBAR%255D_resizable_drawer_with_persisted_width"
-  },
-  {
-    "id": "ADRS%2F2026_04_22_%5BSNIPPET%5D_emojis_picker_with_bilingual_tag_search",
-    "title": "Emojis Picker With Bilingual Tag Search",
-    "category": "SNIPPET",
-    "folder": "ADRS",
-    "linkHref": "?doc=ADRS%252F2026_04_22_%255BSNIPPET%255D_emojis_picker_with_bilingual_tag_search"
-  },
-  {
-    "id": "ADRS%2F2026_04_23_%5BCONFIGURATION%5D_exclusive_folder_and_category_expansion_options",
-    "title": "Exclusive Folder And Category Expansion Options",
-    "category": "CONFIGURATION",
-    "folder": "ADRS",
-    "linkHref": "?doc=ADRS%252F2026_04_23_%255BCONFIGURATION%255D_exclusive_folder_and_category_expansion_options"
-  },
-  {
-    "id": "ADRS%2F2026_04_23_%5BEDITOR%5D_image_paste_name_live_sanitization_lowercase_ascii_only",
-    "title": "Image Paste Name Live Sanitization Lowercase Ascii Only",
-    "category": "EDITOR",
-    "folder": "ADRS",
-    "linkHref": "?doc=ADRS%252F2026_04_23_%255BEDITOR%255D_image_paste_name_live_sanitization_lowercase_ascii_only"
-  },
-  {
-    "id": "ADRS%2F2026_04_23_%5BFRONTEND%5D_code_block_collapsible_with_configurable_max_height_and_copy_button",
-    "title": "Code Block Collapsible With Configurable Max Height And Copy Button",
-    "category": "FRONTEND",
-    "folder": "ADRS",
-    "linkHref": "?doc=ADRS%252F2026_04_23_%255BFRONTEND%255D_code_block_collapsible_with_configurable_max_height_and_copy_button"
-  },
-  {
-    "id": "ADRS%2F2026_04_23_%5BFRONTEND%5D_tame_tailwind_typography_defaults_for_inline_images_and_hr",
-    "title": "Tame Tailwind Typography Defaults For Inline Images And Hr",
-    "category": "FRONTEND",
-    "folder": "ADRS",
-    "linkHref": "?doc=ADRS%252F2026_04_23_%255BFRONTEND%255D_tame_tailwind_typography_defaults_for_inline_images_and_hr"
-  },
-  {
-    "id": "ADRS%2F2026_04_23_%5BRENDERING%5D_configurable_markdown_newline_handling_commonmark_vs_gfm_breaks",
-    "title": "Configurable Markdown Newline Handling Commonmark Vs Gfm Breaks",
-    "category": "RENDERING",
-    "folder": "ADRS",
-    "linkHref": "?doc=ADRS%252F2026_04_23_%255BRENDERING%255D_configurable_markdown_newline_handling_commonmark_vs_gfm_breaks"
-  },
-  {
-    "id": "ADRS%2F2026_04_24_%5BCONFIGURATION%5D_portable_living_doc_json_with_relative_paths",
-    "title": "Portable Living Doc Json With Relative Paths",
-    "category": "CONFIGURATION",
-    "folder": "ADRS",
-    "linkHref": "?doc=ADRS%252F2026_04_24_%255BCONFIGURATION%255D_portable_living_doc_json_with_relative_paths"
-  },
-  {
-    "id": "ADRS%2F2026_04_24_%5BTESTING%5D_e2e_tests_with_playwright_and_unified_coverage_via_c8",
-    "title": "E2e Tests With Playwright And Unified Coverage Via C8",
-    "category": "TESTING",
-    "folder": "ADRS",
-    "linkHref": "?doc=ADRS%252F2026_04_24_%255BTESTING%255D_e2e_tests_with_playwright_and_unified_coverage_via_c8"
-  },
-  {
-    "id": "ADRS%2F2026_04_27_%5BPACKAGING%5D_fix_npx_404_via_send_dotfiles_allow",
-    "title": "Fix Npx 404 Via Send Dotfiles Allow",
-    "category": "PACKAGING",
-    "folder": "ADRS",
-    "linkHref": "?doc=ADRS%252F2026_04_27_%255BPACKAGING%255D_fix_npx_404_via_send_dotfiles_allow"
-  },
-  {
-    "id": "ADRS%2F2026_05_07_22_05_%5BMCP%5D_default_diagram_style_conventions",
-    "title": "Default Diagram Style Conventions",
-    "category": "MCP",
-    "folder": "ADRS",
-    "linkHref": "?doc=ADRS%252F2026_05_07_22_05_%255BMCP%255D_default_diagram_style_conventions"
-  },
-  {
-    "id": "ADRS%2F2026_05_07_22_25_%5BMCP_DIAGRAM%5D_architectural_kind_render_as_separation",
+    "i…1459 tokens truncated…AM%5D_architectural_kind_render_as_separation",
     "title": "Architectural Kind Render As Separation",
     "category": "MCP_DIAGRAM",
     "folder": "ADRS",
