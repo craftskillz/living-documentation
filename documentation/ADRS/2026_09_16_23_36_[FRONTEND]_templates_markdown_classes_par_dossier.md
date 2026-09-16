@@ -33,6 +33,10 @@ sources:
     hash: 31c1ffcd5147156e8cc5186b9089e9aa57518b80472cd0737ec847ccda1c0643
     commit: 902f1e96ddef6b37ebd5cbd943741dc13c32a79f
     dirty: false
+  - path: src/frontend-svelte/src/lib/templates/TemplatesManager.svelte
+    hash: 56bba71dc11cba7207c550946cb6afc44bd63ea473180b919c5ad28e9c886a75
+    commit: c66f4761546ff21df2d51319aadd0ce0a4b83b3b
+    dirty: false
 ---
 
 # Templates Markdown classés par dossier
