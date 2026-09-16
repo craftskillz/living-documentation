@@ -1,3 +1,4 @@
+import { readOkf } from '../helpers/okf';
 import fs from 'node:fs';
 import path from 'node:path';
 import { test, expect } from '../helpers/ld-fixture';
@@ -54,8 +55,7 @@ test.describe('validate button', () => {
 
     // The file on disk reflects the flipped status.
     const fileAfter = fs.readFileSync(docPath, 'utf-8');
-    expect(fileAfter).toContain('**status:** Accepted');
-    expect(fileAfter).not.toContain('**status:** To be validated');
+    expect(readOkf(fileAfter).fields.status).toBe('Accepted');
   });
 
   test('on YAML-style "To be validated" frontmatter: confirm flips status in place', async ({ page, ld }) => {
@@ -108,7 +108,7 @@ test.describe('validate button', () => {
       .not.toBe(hashBefore);
 
     const fileAfter = fs.readFileSync(docPath, 'utf-8');
-    expect(fileAfter).toContain('**status:** Accepted');
+    expect(readOkf(fileAfter).fields.status).toBe('Accepted');
 
     const hashAfter = JSON.parse(fs.readFileSync(metaPath, 'utf-8'))[docId][0].hash;
     expect(hashAfter).toMatch(/^[0-9a-f]{64}$/);

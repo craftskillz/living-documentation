@@ -1,3 +1,4 @@
+import { readOkf } from '../helpers/okf';
 import { test, expect } from '../helpers/ld-fixture';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -60,8 +61,8 @@ test('listen asks for a missing reading language and saves it to frontmatter', a
 
   const docPath = path.join(ld.docsAbs, '2026_01_02_10_00_[Guide]_quickstart.md');
   await expect
-    .poll(async () => fs.readFile(docPath, 'utf8'))
-    .toContain('**language:** en');
+    .poll(async () => readOkf(await fs.readFile(docPath, 'utf8')).fields.language)
+    .toBe('en');
   await expect(page.getByTestId('tts-error')).toContainText('tts unavailable for test');
 });
 

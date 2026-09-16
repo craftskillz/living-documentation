@@ -1,3 +1,4 @@
+import { readOkf } from '../helpers/okf';
 import fs from 'node:fs';
 import path from 'node:path';
 import { test, expect } from '../helpers/ld-fixture';
@@ -64,7 +65,8 @@ test.describe('documents routes for extraFiles (path.isAbsolute branch)', () => 
     });
     expect(res.ok()).toBe(true);
     const onDisk = fs.readFileSync(path.join(ld.parent, 'external.md'), 'utf-8');
-    expect(onDisk).toBe('# Updated external\n');
+    expect(readOkf(onDisk).fields).toMatchObject({ type: 'Document', title: 'External' });
+    expect(readOkf(onDisk).body).toBe('# Updated external\n');
   });
 
   test('PUT /api/documents/:id returns 403 for an absolute id not whitelisted', async ({

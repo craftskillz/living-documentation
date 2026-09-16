@@ -12,7 +12,14 @@ test('GET /api/wordcloud returns text from all matching files under a path', asy
     files: number;
     fileTexts: Array<{ path: string; text: string }>;
   };
-  expect(body.files).toBe(3); // minimal fixture has 3 .md files
+  expect(body.fileTexts.map((file) => file.path).sort()).toEqual([
+    '2026_01_01_10_00_[General]_intro.md',
+    '2026_01_02_10_00_[Guide]_quickstart.md',
+    '2026_01_03_10_00_[Guide]_advanced.md',
+    'index.md',
+    'log.md',
+  ]);
+  expect(body.files).toBe(body.fileTexts.length);
   const combined = body.fileTexts.map((f) => f.text).join('\n');
   expect(combined).toContain('Welcome to the test documentation');
   expect(combined).toContain('Quickstart');

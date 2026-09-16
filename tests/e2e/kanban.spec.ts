@@ -1,3 +1,4 @@
+import { readOkf } from '../helpers/okf';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Page } from '@playwright/test';
@@ -310,7 +311,9 @@ test.describe('kanban board widget', () => {
       .readdirSync(path.join(ld.docsAbs, '3_projets/Doing'))
       .filter((f) => f.includes('fresh_task') && f.endsWith('.md'));
     expect(created).toHaveLength(1);
-    expect(fs.readFileSync(path.join(ld.docsAbs, '3_projets/Doing', created[0]), 'utf-8')).toBe(
+    const saved = readOkf(fs.readFileSync(path.join(ld.docsAbs, '3_projets/Doing', created[0]), 'utf-8'));
+    expect(saved.fields).toMatchObject({ type: 'Document', title: 'Fresh task' });
+    expect(saved.body).toBe(
       '# Fresh task\n\nHere is the description\n\n## Content\n\nHere is the Full Content\n',
     );
   });

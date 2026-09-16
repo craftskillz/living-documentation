@@ -1,3 +1,4 @@
+import { readOkf } from '../helpers/okf';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { APIRequestContext } from '@playwright/test';
@@ -150,17 +151,24 @@ test('update_document overwrites an existing document with multiline markdown', 
     { id: intro?.id, content: updatedContent },
   );
 
-  expect(result).toEqual({
-    success: true,
-    id: intro?.id,
-    bytes: Buffer.byteLength(updatedContent, 'utf-8'),
-  });
-
   const reread = await callTool<string>(request, ld.baseURL, 'read_document', {
     id: intro?.id,
   });
-  expect(reread).toBe(updatedContent);
-  expect(fs.readFileSync(path.join(ld.docsAbs, `${decodeURIComponent(intro?.id)}.md`), 'utf-8')).toBe(updatedContent);
+  expect(result).toEqual({
+    success: true,
+    id: intro?.id,
+    bytes: Buffer.byteLength(reread, 'utf-8'),
+  });
+  const saved = readOkf(reread);
+  expect(saved.fields).toMatchObject({
+    type: 'Document', title: 'Intro', status: 'To be validated',
+    description: 'Update document MCP regression coverage.',
+    tags: ['mcp', 'update_document', 'markdown', 'regression'],
+    timestamp: '2026-01-01T10:00:00Z',
+  });
+  expect(saved.fields).not.toHaveProperty('date');
+  expect(saved.body).toBe(updatedContent.split('---\n\n')[1]);
+  expect(fs.readFileSync(path.join(ld.docsAbs, `${decodeURIComponent(intro?.id)}.md`), 'utf-8')).toBe(reread);
 });
 
 test('create_document writes a new .md file through the MCP server', async ({

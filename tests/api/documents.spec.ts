@@ -1,3 +1,4 @@
+import { readOkf } from '../helpers/okf';
 import fs from 'node:fs';
 import path from 'node:path';
 import { test, expect } from '../helpers/ld-fixture';
@@ -41,7 +42,8 @@ test('PUT /api/documents/:id persists new markdown to disk', async ({ request, l
     path.join(ld.docsAbs, '2026_01_02_10_00_[Guide]_quickstart.md'),
     'utf-8',
   );
-  expect(onDisk).toBe('# Edited\n\nNew body.');
+  expect(readOkf(onDisk).fields).toMatchObject({ type: 'Document', title: 'Quickstart' });
+  expect(readOkf(onDisk).body).toBe('# Edited\n\nNew body.');
 });
 
 test('PUT /api/documents/:id rejects a missing content field', async ({ request, ld }) => {

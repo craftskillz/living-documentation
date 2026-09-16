@@ -1,3 +1,4 @@
+import { readOkf } from '../helpers/okf';
 import fs from "node:fs";
 import path from "node:path";
 import { test, expect } from "../helpers/ld-fixture";
@@ -299,11 +300,8 @@ test.describe("blueprint document editing reuses the Home editor", () => {
       .readdirSync(path.join(ld.docsAbs, "001_BLUEPRINT"))
       .find((f) => f.includes("[BETA]_beta") && f.endsWith(".md"));
     expect(created).toBeDefined();
-    expect(
-      fs.readFileSync(
-        path.join(ld.docsAbs, "001_BLUEPRINT", created!),
-        "utf-8",
-      ),
-    ).toBe("# beta\n");
+    const saved = readOkf(fs.readFileSync(path.join(ld.docsAbs, "001_BLUEPRINT", created!), "utf-8"));
+    expect(saved.fields).toMatchObject({ type: 'Document', title: 'beta' });
+    expect(saved.body).toBe("# beta\n");
   });
 });
