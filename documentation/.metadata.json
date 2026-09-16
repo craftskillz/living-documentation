@@ -1878,5 +1878,13 @@
       "commit": "207f0b340435e44755bf79fd0e5deeac2ac1b9ca",
       "dirty": false
     }
+  ],
+  "ADRS/2026_09_16_23_36_[FRONTEND]_templates_markdown_classes_par_dossier": [
+    {
+      "path": "src/lib/documentTemplates.ts",
+      "hash": "a41da1b42ebdb845b5831924ca9dc73944264a0b38deb715197e887b2e95d1b4",
+      "commit": "b42d051f271929cce2d0b31b9188bab189f268f5",
+      "dirty": false
+    }
   ]
 }

@@ -12,6 +12,11 @@ tags:
   - NewDocModal
   - okf
 status: To be validated
+sources:
+  - path: src/lib/documentTemplates.ts
+    hash: a41da1b42ebdb845b5831924ca9dc73944264a0b38deb715197e887b2e95d1b4
+    commit: b42d051f271929cce2d0b31b9188bab189f268f5
+    dirty: false
 ---
 
 # Templates Markdown classés par dossier
