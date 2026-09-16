@@ -87,3 +87,8 @@ Router les écrivains vers `normalizeFrontmatter` (ou `serializeFrontmatter`) :
 Arbre code **sale** (non commité) : `src/lib/okf.ts`, `tests/unit/okf.test.ts` (T04 cœur) — le reste de T02 est déjà commité.
 Docs auto-committées par l'intégration Git (« docs: update living documentation »).
 **Demander un commit code à l'utilisateur avant l'ADR d'implémentation T04/T05** (bindings `add_metadata` → HEAD propre).
+
+
+## Reprise du 16 septembre 2026
+
+Clôture en cours, autorisée par l'utilisateur : revue T14 et correctif workspace, contrôles, commits distincts, ADR et métadonnées via MCP, nettoyage du suivi. Build et 23 tests unitaires réussis ; lint sans erreur (61 warnings). Les tests workspace ont révélé une fixture legacy refusée par la garde OKF : préparation de la copie isolée via CLI migrate et test de collision en cours. Aucun push effectué.
