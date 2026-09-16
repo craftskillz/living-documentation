@@ -11,7 +11,7 @@ tags:
   - contentFromTemplate
   - NewDocModal
   - okf
-status: To be validated
+status: Accepted
 sources:
   - path: src/lib/documentTemplates.ts
     hash: a41da1b42ebdb845b5831924ca9dc73944264a0b38deb715197e887b2e95d1b4
