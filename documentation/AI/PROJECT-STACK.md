@@ -60,7 +60,7 @@ L'utilisateur lance le CLI avec un dossier de documentation relatif, par exemple
 
 - **Langage principal** : TypeScript côté serveur/CLI ; côté frontend, application Svelte 5 (TypeScript + composants `.svelte`).
 - **Runtime** : Node.js >= 20.19.0, minimum imposé par Vite 8 ; Commander 14 requiert également Node.js >= 20.
-- **Framework frontend** : application **Vite + Svelte 5 (runes)** unifiée sous `src/frontend-svelte/`, routée par `pathname` dans `App.svelte`, regroupant les 10 écrans (Home, Workspace, Admin, Blueprint, Agents, Files, AI Context, Diagram, Shape-editor, Survival Kit). Voir l'ADR `[FRONTEND] migration du frontend vers une application svelte unifiee`.
+- **Framework frontend** : application **Vite + Svelte 5 (runes)** unifiée sous `src/frontend-svelte/`, routée par `pathname` dans `App.svelte`, regroupant les 11 écrans (Home, Workspace, Admin, Blueprint, Agents, Files, AI Context, Diagram, Shape-editor, Survival Kit, Concept Graph). Voir l'ADR `[FRONTEND] migration du frontend vers une application svelte unifiee`.
 - **Framework backend / serveur** : Express 5.
 - **Base de données / stockage** : système de fichiers local ; `.living-doc.json`, `.metadata.json`, `.diagrams.json`, `.annotations.json`, `.shape-libraries.json` et `.survival-kit.json` selon les fonctionnalités.
 - **API externes / intégrations** : MCP Streamable HTTP sur `/mcp` via `@modelcontextprotocol/sdk`; assets CDN côté frontend pour Tailwind, highlight.js, Font Awesome, mermaid et vis-network selon les routes; TTS local optionnel via `kokoro-js` pour l'anglais.
@@ -69,10 +69,10 @@ L'utilisateur lance le CLI avec un dossier de documentation relatif, par exemple
 - **Gestion d'état frontend** : runes Svelte (`$state`) , stores réactifs (ex. `lib/home/state.svelte.ts`, `lib/i18n.svelte.ts`) ; les moteurs impératifs réutilisés (Workspace canvas, Diagram vis-network) gardent un état mutable (`lib/diagram/state.js`) ; persistance ciblée via `localStorage`.
 - **Build / bundler** : `tsc` compile le serveur/CLI ; **Vite** build le frontend (`src/frontend-svelte/vite.config.ts` → `dist/frontend-svelte/`) ; `scripts/copy-assets.ts` ne copie plus que `starter-doc/` et `starter-doc-fr/` vers `dist/`.
 - **Package manager** : npm, avec `package-lock.json`.
-- **Tests** : Playwright comme runner unique API/E2E/unit ; les tests serveur lancent un vrai CLI isolé sur port libre. NOTE : les specs E2E ciblant l'ancien frontend vanilla sont à réécrire pour l'UI Svelte.
+- **Tests** : Playwright pour API/E2E et les specs unitaires historiques ; Node.js `node:test` via `npm run test:unit` pour les tests OKF ; les tests serveur lancent un vrai CLI isolé sur port libre. NOTE : les specs E2E ciblant l'ancien frontend vanilla sont à réécrire pour l'UI Svelte.
 - **Coverage** : c8 + couverture V8 native, agrégée depuis les processus CLI/serveur lancés par Playwright.
 - **Qualité frontend** : typage via `svelte-check` / `tsc` et build Vite (le script legacy `check:frontend` a été supprimé avec le frontend vanilla).
-- **Lint / formatage** : aucun script ESLint/format dédié documenté dans `package.json` à ce jour.
+- **Lint / formatage** : Biome via `npm run lint` et `npm run lint:ci` ; corrections explicites via `lint:fix` ou `lint:fix:unsafe`. Aucun script `format` dédié.
 - **Déploiement / publication** : package npm `living-ai-documentation`; `prepublishOnly` lance le build.
 
 ## Arborescence source utile
@@ -87,6 +87,8 @@ src/lib/hash.ts                    <- hash SHA-256 des fichiers source
 src/lib/documentLanguage.ts        <- lecture/ecriture de la langue documentaire dans le frontmatter Markdown
 src/lib/tts/*                      <- port TTS serveur et adapter Kokoro
 src/routes/*.ts                    <- routes REST documents, config, browse, files, diagrams, metadata, context, export...
+src/lib/okf/graph.ts               <- projection des concepts et liens Markdown du bundle
+src/routes/graph.ts                <- API read-only GET /api/graph
 src/routes/survival-kit.ts         <- persistance JSON du dashboard tâches, notes et liens
 src/mcp/server.ts                  <- serveur MCP Streamable HTTP exposé sur `/mcp`
 src/mcp/tools/*.ts                 <- tools MCP documents, diagrams, source, metadata
@@ -131,6 +133,7 @@ memory/                           <- mémoire projet locale indexée par `memory
 - **Worklog** : point de reprise opérationnel partagé entre assistants IA, scaffolde sous `WORKLOG/current-task.md` par le starter ; lu avant action, mis à jour avant handoff, pas un substitut aux ADR.
 - **Diagrammes** : vues dérivées de la documentation, stockées en JSON et éditées via vis-network ; les diagrammes MCP doivent citer leur provenance documentaire (`evidence`).
 - **Contexte IA** : page `/context` et documents `AI/*` qui exposent instructions, règles, mémoire et explorateur MCP.
+- **Graphe de concepts** : `/graph` affiche une projection read-only des liens Markdown via vis-network, exposée par `/api/graph` ; distinct des diagrammes éditables.
 - **Survival Kit** : dashboard local `/survival-kit` pour tâches, notes structurées et liens catégorisés, persisté dans `<docsFolder>/.survival-kit.json`.
 - **Starter doc** : initialisation interactive bilingue qui scaffold un dossier docs, `AGENTS.md`, `CLAUDE.md`, `memory/MEMORY.md` et les symlinks sous `AI/`, plus un dossier `WORKLOG/` avec `current-task.md` et une règle `track-current-work` pour la reprise opérationnelle entre assistants IA.
 - **Lecture TTS** : le viewer Home lit la langue dans le frontmatter (`language`, `lang`, `locale`, `langue`) ou la demande à l'utilisateur; la lecture passe par le port serveur `TtsEngine`/Kokoro, qui supporte actuellement `en` et renvoie une erreur explicite pour `fr`.
