@@ -15,6 +15,10 @@ sources:
     hash: fb7ec7626a7fddc6671b6ba7bbc35fc5ba1095728ed47aeb425ee5d87b85a08b
     commit: fcd1111cf0dc714676d1850912d1b445377965cb
     dirty: false
+  - path: src/lib/okf/graph.ts
+    hash: 7203f769b05ea5f6995fec7118362d463c96d8f29001745612d970f273269366
+    commit: 66a0318c878914346f06b55b593aae2f92e9ed56
+    dirty: false
 ---
 
 # Suppression de graphify au profit de Google OKF
