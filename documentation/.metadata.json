@@ -1829,19 +1829,19 @@
     {
       "path": "src/lib/okf/graph.ts",
       "hash": "7203f769b05ea5f6995fec7118362d463c96d8f29001745612d970f273269366",
-      "commit": "8ff02ad701f23ee6f0063513f1ad3abf81db0339",
+      "commit": "2cf910c2b2defc2118b11f323c1e0d67ab0ad009",
       "dirty": false
     },
     {
       "path": "src/routes/graph.ts",
       "hash": "54678083a80a891eef0fb4f216d4ece4e8398faa51f24188ff1dfa0f3fdc878c",
-      "commit": "55167ad0bb5bc61012613d2d7dbdf13a4dfb970a",
+      "commit": "2cf910c2b2defc2118b11f323c1e0d67ab0ad009",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/routes/ConceptGraph.svelte",
       "hash": "230dfff49da887daf592fb6a43695308eb7960aa13028ab834f82c57aa381709",
-      "commit": "644c25cb4c9b7aa9ad85cb8bf1d9c8760f08a7de",
+      "commit": "2cf910c2b2defc2118b11f323c1e0d67ab0ad009",
       "dirty": false
     }
   ]
