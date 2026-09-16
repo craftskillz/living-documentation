@@ -18,6 +18,7 @@ import { contextRouter } from './routes/context';
 import { workspaceRouter } from './routes/workspace';
 import { blueprintRouter } from './routes/blueprint';
 import { survivalKitRouter } from './routes/survival-kit';
+import { graphRouter } from './routes/graph';
 import { ttsRouter } from './routes/tts';
 import { gitRouter } from './routes/git';
 import { mcpRouter } from './mcp/server';
@@ -64,6 +65,7 @@ export async function startServer({
   app.use('/api/workspace', workspaceRouter(docsPath));
   app.use('/api/blueprint', blueprintRouter(docsPath));
   app.use('/api/survival-kit', survivalKitRouter(docsPath));
+  app.use('/api/graph', graphRouter(docsPath));
   app.use('/api/tts', ttsRouter());
   app.use('/mcp', mcpRouter(docsPath));
 
@@ -81,7 +83,7 @@ export async function startServer({
   // Serve the SPA shell (index.html) for the app's client-side routes. Explicit
   // list rather than a catch-all so unknown paths still 404.
   const indexHtml = path.join(frontendPath, 'index.html');
-  const spaRoutes = ['/', '/admin', '/workspace', '/blueprint', '/diagram', '/shape-editor', '/context', '/agents', '/files', '/survival-kit'];
+  const spaRoutes = ['/', '/admin', '/workspace', '/blueprint', '/diagram', '/graph', '/shape-editor', '/context', '/agents', '/files', '/survival-kit'];
   for (const route of spaRoutes) {
     app.get(route, (_req, res) => res.sendFile(indexHtml, { dotfiles: 'allow' }));
   }

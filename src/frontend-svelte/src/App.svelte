@@ -8,6 +8,7 @@
   import AiContext from "./routes/AiContext.svelte";
   import Home from "./routes/Home.svelte";
   import Diagram from "./routes/Diagram.svelte";
+  import ConceptGraph from "./routes/ConceptGraph.svelte";
   import ShapeEditor from "./routes/ShapeEditor.svelte";
   import SurvivalKit from "./routes/SurvivalKit.svelte";
   import { initPersistentToast } from "./lib/persistentToast";
@@ -126,6 +127,8 @@
   <AiContext {navigate} />
 {:else if path === "/diagram"}
   <Diagram />
+{:else if path === "/graph"}
+  <ConceptGraph />
 {:else if path === "/shape-editor"}
   <ShapeEditor />
 {:else if path === "/survival-kit"}

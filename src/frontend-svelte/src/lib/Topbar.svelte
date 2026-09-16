@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { t } from "./i18n.svelte";
   import AgentsMenu from "./AgentsMenu.svelte";
   import FavoritesMenu from "./FavoritesMenu.svelte";
 
@@ -18,6 +19,7 @@
       { label: "Workspace", href: "/workspace" },
       { label: "Blueprint", href: "/blueprint" },
       { label: "Diagram", href: "/diagram" },
+      { label: t("graph.nav"), href: "/graph" },
       { label: "Files", href: "/files" },
       { label: "Survival Kit", href: "/survival-kit" },
       { label: "AI Context", href: "/context" },
