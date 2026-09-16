@@ -33,7 +33,7 @@ Les 15 tickets sont réalisés dans leur périmètre retenu ; T13 porte sur l’
 - `npx playwright test tests/api/okf-graph.spec.ts tests/api/workspace.spec.ts --project=chromium` : 9/9 (serveurs locaux autorisés hors sandbox).
 - `npm run build` : réussi ; avertissement de taille de bundle.
 - `npm run lint:ci` : aucune erreur, 61 avertissements et 2 informations.
-- Validation OKF relancée après correction du contexte ; résultat final à consulter dans le compte rendu de clôture.
+- `npm run okf:validate` après correction du contexte : 278 documents vérifiés, 0 erreur, 66 avertissements non bloquants.
 - Pas de nouvelle revue visuelle navigateur ; validation visuelle T14 historique conservée. Pas de suite E2E complète exécutée.
 - Métadonnées T14, workspace, stack, commandes, ADR Svelte, blueprint src et normalisation T04 recalculées après vérification ; captures sur arbre propre (`dirty: false`). Les anciennes dérives hors de ces documents ne sont pas déclarées résolues.
 
