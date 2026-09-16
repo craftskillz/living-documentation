@@ -1889,49 +1889,49 @@
     {
       "path": "src/lib/documentTemplates.ts",
       "hash": "a41da1b42ebdb845b5831924ca9dc73944264a0b38deb715197e887b2e95d1b4",
-      "commit": "b42d051f271929cce2d0b31b9188bab189f268f5",
+      "commit": "c0d09d7320a586abd752c745b2e66b3aa175bbda",
       "dirty": false
     },
     {
       "path": "src/routes/templates.ts",
       "hash": "9a31301d0a973974b0bd36b640bc51b03b1fd928a67b63c89c7331440dd5f607",
-      "commit": "ee7ad56ec7d725e4e3e1955c1e18891caec2f21f",
+      "commit": "c0d09d7320a586abd752c745b2e66b3aa175bbda",
       "dirty": false
     },
     {
       "path": "src/routes/documents.ts",
       "hash": "a9c1f5c47301edcaaa080ba9f75e276db9ceeff592b84363e85da2a1a1d15d43",
-      "commit": "d419d9a8cb2ac45f2b8c5274d42f31f4d58c2582",
+      "commit": "c0d09d7320a586abd752c745b2e66b3aa175bbda",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/lib/templates/api.ts",
       "hash": "044eb0f0476924a8904c783ace928e427c35e3423ea182d081b45425e8937e7a",
-      "commit": "174ed73ab89388a220bb9881f0a38c4441dda77c",
+      "commit": "c0d09d7320a586abd752c745b2e66b3aa175bbda",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/lib/templates/TemplatesMenu.svelte",
       "hash": "31c1ffcd5147156e8cc5186b9089e9aa57518b80472cd0737ec847ccda1c0643",
-      "commit": "902f1e96ddef6b37ebd5cbd943741dc13c32a79f",
+      "commit": "c0d09d7320a586abd752c745b2e66b3aa175bbda",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/lib/templates/TemplatesManager.svelte",
       "hash": "56bba71dc11cba7207c550946cb6afc44bd63ea473180b919c5ad28e9c886a75",
-      "commit": "c66f4761546ff21df2d51319aadd0ce0a4b83b3b",
+      "commit": "c0d09d7320a586abd752c745b2e66b3aa175bbda",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/lib/home/NewDocModal.svelte",
       "hash": "4eba52f6d88df00bb5df919c41e6bbe54e2eb8f54e04b4c5b952b68464b857df",
-      "commit": "b4ddd5b8064de6e5b78a40bfefc0e13495946289",
+      "commit": "c0d09d7320a586abd752c745b2e66b3aa175bbda",
       "dirty": false
     },
     {
       "path": "tests/e2e/templates.spec.ts",
       "hash": "ee1ff80fa7a8fa544ffc8ad6bd7fc6bd53402a27aa1f96960aa6ea26a6421390",
-      "commit": "fbdf0a9c32d15f5171f2fae2ee64701e4955c577",
+      "commit": "c0d09d7320a586abd752c745b2e66b3aa175bbda",
       "dirty": false
     }
   ]
