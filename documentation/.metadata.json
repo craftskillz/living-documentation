@@ -1921,6 +1921,12 @@
       "hash": "4eba52f6d88df00bb5df919c41e6bbe54e2eb8f54e04b4c5b952b68464b857df",
       "commit": "b4ddd5b8064de6e5b78a40bfefc0e13495946289",
       "dirty": false
+    },
+    {
+      "path": "tests/e2e/templates.spec.ts",
+      "hash": "ee1ff80fa7a8fa544ffc8ad6bd7fc6bd53402a27aa1f96960aa6ea26a6421390",
+      "commit": "fbdf0a9c32d15f5171f2fae2ee64701e4955c577",
+      "dirty": false
     }
   ]
 }
