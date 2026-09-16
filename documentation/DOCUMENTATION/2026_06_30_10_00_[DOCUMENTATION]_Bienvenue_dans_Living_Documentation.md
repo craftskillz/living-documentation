@@ -40,7 +40,7 @@ Ce n'est pas un outil de generation de code, mais un outil de generation, de mai
 
 <!-- image-width: 2/3 -->
 
-![Architecture local-first reliant un dossier Markdown, Git, une interface web, des diagrammes et des agents IA](/images/DOCUMENTATION/concept-03-local-first.jpg)
+![Architecture local-first reliant un dossier Markdown, Git, une interface web, des diagrammes et des agents IA](/images/DOCUMENTATION/concept-03-local-first.png)
 
 La documentation repose sur des fichiers présents dans votre espace local :
 
