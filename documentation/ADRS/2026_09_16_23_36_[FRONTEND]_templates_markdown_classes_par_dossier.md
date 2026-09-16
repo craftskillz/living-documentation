@@ -21,6 +21,10 @@ sources:
     hash: 9a31301d0a973974b0bd36b640bc51b03b1fd928a67b63c89c7331440dd5f607
     commit: ee7ad56ec7d725e4e3e1955c1e18891caec2f21f
     dirty: false
+  - path: src/routes/documents.ts
+    hash: a9c1f5c47301edcaaa080ba9f75e276db9ceeff592b84363e85da2a1a1d15d43
+    commit: d419d9a8cb2ac45f2b8c5274d42f31f4d58c2582
+    dirty: false
 ---
 
 # Templates Markdown classés par dossier
