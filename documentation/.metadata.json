@@ -523,31 +523,31 @@
     {
       "path": "src/routes/workspace.ts",
       "hash": "83c3e93af6c17efddbb24f373b348222d34cae58237c5bb258ece1737f950e27",
-      "commit": "6ee984f24832677e481151133a010b129fd6b2ce",
+      "commit": "fb018824aa2a419ad163b734754f4de057c4b994",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/routes/Workspace.svelte",
       "hash": "26121a41d8b8a04b13f5de96e7c84b182d338216f834d263f616c05931031f94",
-      "commit": "c486ee4653ca3cc7f22e478e1b5ac5f5119768eb",
+      "commit": "fb018824aa2a419ad163b734754f4de057c4b994",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/lib/workspace/app.ts",
       "hash": "d1fda6a885e6e1db292ee1bbfec4b504dd1f493d0760c570095e60294c141c74",
-      "commit": "c486ee4653ca3cc7f22e478e1b5ac5f5119768eb",
+      "commit": "fb018824aa2a419ad163b734754f4de057c4b994",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/lib/workspace/persistence.ts",
       "hash": "8064972a06548b8d2bb5e69094e6c90e5cf89f6b365b8befc4454d8bba808647",
-      "commit": "c486ee4653ca3cc7f22e478e1b5ac5f5119768eb",
+      "commit": "fb018824aa2a419ad163b734754f4de057c4b994",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/lib/workspace/styles.css",
       "hash": "fbe06d4e4b738b8ca1c392eed56332c19733d70597d12475b5eb4bcd84d8562e",
-      "commit": "c486ee4653ca3cc7f22e478e1b5ac5f5119768eb",
+      "commit": "fb018824aa2a419ad163b734754f4de057c4b994",
       "dirty": false
     }
   ],
