@@ -29,6 +29,10 @@ sources:
     hash: 044eb0f0476924a8904c783ace928e427c35e3423ea182d081b45425e8937e7a
     commit: 174ed73ab89388a220bb9881f0a38c4441dda77c
     dirty: false
+  - path: src/frontend-svelte/src/lib/templates/TemplatesMenu.svelte
+    hash: 31c1ffcd5147156e8cc5186b9089e9aa57518b80472cd0737ec847ccda1c0643
+    commit: 902f1e96ddef6b37ebd5cbd943741dc13c32a79f
+    dirty: false
 ---
 
 # Templates Markdown classés par dossier
