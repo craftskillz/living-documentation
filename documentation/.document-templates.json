@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "folders": [
+    {
+      "id": "4eee8d8b-80b7-4330-a687-7755db5b748e",
+      "name": "Réunions",
+      "templates": [
+        {
+          "id": "12c01a9f-aa61-4a82-964a-d3d5ba0e1542",
+          "name": "Standard",
+          "content": "1 2 3"
+        }
+      ]
+    }
+  ]
+}
