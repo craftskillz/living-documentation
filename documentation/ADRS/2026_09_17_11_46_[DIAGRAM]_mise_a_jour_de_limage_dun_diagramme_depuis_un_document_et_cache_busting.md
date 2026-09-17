@@ -12,6 +12,7 @@ tags:
   - wireDiagramImageLinks
   - markDiagramImageUpdated
   - frontend
+timestamp: 2026-09-17T11:46:00Z
 status: To be validated
 sources:
   - path: src/frontend-svelte/src/lib/diagramImageLink.ts
