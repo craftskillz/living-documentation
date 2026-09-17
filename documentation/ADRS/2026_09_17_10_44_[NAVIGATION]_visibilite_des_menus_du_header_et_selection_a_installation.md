@@ -17,6 +17,10 @@ sources:
     hash: b74d3a8a068bd36cd5f358b73861fe9c1e10246c015cb2ae45b25ea37dbd2c64
     commit: 312b19e73af7e14376026829c53993831639facb
     dirty: false
+  - path: src/lib/cli/headerMenuPrompt.ts
+    hash: 1a016eff6f72a2e2fc9268f62051b01ca9172597bb57293caa3172c0f957d528
+    commit: b31c7fa53a6bd332a292b97d6c0f99785b5d7020
+    dirty: false
 ---
 
 ## Contexte
