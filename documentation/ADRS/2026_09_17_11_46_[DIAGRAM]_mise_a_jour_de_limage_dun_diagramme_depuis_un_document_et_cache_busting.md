@@ -26,6 +26,10 @@ sources:
     hash: 42c2811e1f4ea7732b9312fe612453b1399f22b4045a3e44ea0788fc323a29e2
     commit: 39ef0ef1ba56da454763cf889c802353c0d6cd6d
     dirty: false
+  - path: tests/e2e/diagram.spec.ts
+    hash: 412e3505c1ac6fb61725f7d9dc7a2f58aad4538321ad1eb9b64f4d6325ad45c6
+    commit: f1a1264f3698e069424267ed2dea2670a21f0052
+    dirty: false
 ---
 
 ## Context
