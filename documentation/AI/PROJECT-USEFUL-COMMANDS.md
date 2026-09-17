@@ -154,6 +154,37 @@ Le CLI public attend un dossier de documentation relatif. Les chemins absolus et
 | `npx living-ai-documentation ./docs`                    | Sert un dossier configure ou initialise ce dossier       | Si `./docs/.living-doc.json` existe, le dossier est servi ; sinon le wizard initialise `./docs`. |
 | `npx living-ai-documentation ./docs --port 4000 --open` | Sert sur un port explicite et ouvre le navigateur        | Le port est persisté dans `.living-doc.json` comme information.           |
 
+### Tester une première installation sans publier sur npm
+
+Depuis la racine du dépôt, après installation des dépendances, dans un terminal macOS/Linux :
+
+```bash
+npm run build
+cli="$PWD/dist/bin/cli.js"
+cd "$(mktemp -d)"
+node "$cli" ./docs --starter-language fr --port 4399 --open
+```
+
+Le dossier temporaire évite les collisions avec les fichiers `AGENTS.md`, `CLAUDE.md` et `memory/MEMORY.md` du dépôt. Remplacer `fr` par `en` pour tester l’autre langue. Arrêter le serveur avec Ctrl+C ; utiliser un nouveau dossier temporaire pour rejouer le wizard.
+
+Les cinq cases de menus optionnels sont initialement décochées. Flèches pour naviguer, Espace pour cocher/décocher, Entrée pour valider. Vérifier le résultat dans le header puis dans Admin → Menus du header, y compris après rechargement. Sans TTY sur stdin ou stdout, le sélecteur est ignoré et les cinq menus restent masqués. `--starter-language` ne rend pas à lui seul un terminal non interactif.
+
+Depuis la racine du dépôt, les tests ciblés sont :
+
+```bash
+npx playwright test tests/api/cli.spec.ts tests/api/config.spec.ts tests/e2e/header-navigation.spec.ts --project=chromium
+```
+
+Rebuilder avant si les sources ont changé. Ces tests lancent des serveurs locaux et Chromium ; un environnement sandboxé doit les autoriser.
+
+Pour vérifier le contenu distribué, `npm pack --pack-destination /tmp` fabrique après build un fichier `living-ai-documentation-<version>.tgz` sans publication. On peut le tester depuis un dossier temporaire avec :
+
+```bash
+npm exec --package=/chemin/absolu/living-ai-documentation-<version>.tgz -- living-ai-documentation ./docs --starter-language fr --port 4399 --open
+```
+
+Remplacer le chemin et la version par ceux du fichier produit. npm peut télécharger les dépendances ; cette commande ne publie rien. Le test direct via `node "$cli"` réutilise les dépendances du dépôt et suffit pour tester le wizard.
+
 ## Coverage et stratégie de test
 
 - Les tests Playwright utilisent des fixtures isolées et lancent de vrais processus CLI sur ports libres.
