@@ -17,19 +17,19 @@ status: To be validated
 sources:
   - path: src/frontend-svelte/src/lib/diagramImageLink.ts
     hash: 156acc777258e2358dd03859ddc7b5883654f6ca9c3464cd4bd7616ff9c5d00e
-    commit: 88439abf7b397feb16d73511b932c63f22808bce
+    commit: 930de9a5d7bc18a9328b4d8c4743a0b8624a304d
     dirty: false
   - path: src/frontend-svelte/src/lib/diagram/clipboard.js
     hash: b0f63fa665a046ac8e3199bf1394a43310bf71a0b07ea6163fb19c1db908b802
-    commit: 267fa7f5fe68bbdc49db57fe0e9e528b81ba74c3
+    commit: 930de9a5d7bc18a9328b4d8c4743a0b8624a304d
     dirty: false
   - path: src/frontend-svelte/src/lib/home/wireContent.ts
     hash: 42c2811e1f4ea7732b9312fe612453b1399f22b4045a3e44ea0788fc323a29e2
-    commit: 39ef0ef1ba56da454763cf889c802353c0d6cd6d
+    commit: 930de9a5d7bc18a9328b4d8c4743a0b8624a304d
     dirty: false
   - path: tests/e2e/diagram.spec.ts
     hash: 412e3505c1ac6fb61725f7d9dc7a2f58aad4538321ad1eb9b64f4d6325ad45c6
-    commit: f1a1264f3698e069424267ed2dea2670a21f0052
+    commit: 930de9a5d7bc18a9328b4d8c4743a0b8624a304d
     dirty: false
 ---
 
