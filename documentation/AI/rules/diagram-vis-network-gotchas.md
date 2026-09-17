@@ -12,19 +12,19 @@ tags:
 sources:
   - path: src/frontend-svelte/src/lib/diagram/network.js
     hash: 3c74df3c34df86a2b9c91a8bd0894975dc527347a61a425480c5543656cb5cfa
-    commit: 76ed9938ecb883cd66ab949cce4efd7ab621163e
+    commit: 69c15d0e46b862f05d882a8637c6441e437a5a97
     dirty: true
   - path: src/frontend-svelte/src/lib/diagram/node-rendering.js
     hash: a436315aa7840b50a98a443d0326008d6e15650a6594cc9bead8c4988a60af57
-    commit: 67a1ae7184efc4f7aad0f0c6ad95b40a948e6a10
+    commit: 69c15d0e46b862f05d882a8637c6441e437a5a97
     dirty: true
   - path: src/frontend-svelte/src/lib/diagram/node-panel.js
     hash: b2779eaa28fe966bea19dbb8ff9fd0b8a2ef3498932eaf914ae773fbe412728e
-    commit: 89987621d47293df1de5eb6d39e9a8c32e0d72bf
+    commit: 69c15d0e46b862f05d882a8637c6441e437a5a97
     dirty: true
   - path: src/frontend-svelte/src/lib/diagram/selection-overlay.js
     hash: a95db2e56fbfbd90738ed1594aed005de00d3d9aea82aa96136b0a0a0ac3bbff
-    commit: 891335d86af0bed9f3de54720c215a4206d27b16
+    commit: 69c15d0e46b862f05d882a8637c6441e437a5a97
     dirty: true
 id: diagram-vis-network-gotchas
 severity: warning
