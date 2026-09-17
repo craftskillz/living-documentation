@@ -22,6 +22,10 @@ sources:
     hash: b2779eaa28fe966bea19dbb8ff9fd0b8a2ef3498932eaf914ae773fbe412728e
     commit: 89987621d47293df1de5eb6d39e9a8c32e0d72bf
     dirty: true
+  - path: src/frontend-svelte/src/lib/diagram/selection-overlay.js
+    hash: a95db2e56fbfbd90738ed1594aed005de00d3d9aea82aa96136b0a0a0ac3bbff
+    commit: 891335d86af0bed9f3de54720c215a4206d27b16
+    dirty: true
 id: diagram-vis-network-gotchas
 severity: warning
 appliesto:
