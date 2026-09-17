@@ -277,6 +277,7 @@
             {#each templateFolder.templates as template (template.id)}<option value={template.id}>{template.name}</option>{/each}
           </select>
         {/if}
+        {#if templateId}<p class="text-xs text-gray-500 dark:text-gray-400">{t("templates.independent")}</p>{/if}
         {#if templateError}<p role="alert" class="text-xs text-red-500">{templateError}</p>{/if}
       </div>
       <!-- Title -->

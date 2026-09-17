@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from 'express';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import {
   readTemplateLibrary, writeTemplateLibrary, templateName, templateContent,
   getTemplateFolder, ensureUniqueTemplateName, TemplateError, type TemplateLibrary,
@@ -11,8 +11,13 @@ export function templatesRouter(docsPath: string): Router {
     (req: Request, res: Response) => {
       try {
         const library = readTemplateLibrary(docsPath);
+        const revision = (value: TemplateLibrary) => `"${createHash('sha256').update(JSON.stringify(value)).digest('hex')}"`;
+        if (mutate && req.headers['if-match'] && req.headers['if-match'] !== revision(library)) {
+          throw new TemplateError(409, 'conflict');
+        }
         const result = handler(library, req);
         if (mutate) writeTemplateLibrary(docsPath, library);
+        res.setHeader('ETag', revision(library));
         res.json(result);
       } catch (error) {
         res.status(error instanceof TemplateError ? error.status : 500).json({
@@ -55,9 +60,15 @@ export function templatesRouter(docsPath: string): Router {
     const template = folder.templates.find((item) => item.id === req.params.id);
     if (!template) throw new TemplateError(404, 'template_not_found');
     const name = templateName(req.body?.name);
-    ensureUniqueTemplateName(folder.templates, name, template.id);
+    const destination = req.body?.folderId === undefined ? folder : getTemplateFolder(library, req.body.folderId);
+    ensureUniqueTemplateName(destination.templates, name, template.id);
+    const content = templateContent(req.body?.content);
+    if (destination !== folder) {
+      folder.templates = folder.templates.filter((item) => item.id !== template.id);
+      destination.templates.push(template);
+    }
     template.name = name;
-    template.content = templateContent(req.body?.content);
+    template.content = content;
     return template;
   }));
   router.delete('/:id', action(true, (library, req) => {

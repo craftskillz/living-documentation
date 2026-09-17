@@ -29,22 +29,6 @@
     ].filter((link, index, links) => !headerNavigation.hidden.includes(link.href) && links.findIndex((item) => item.href === link.href) === index)
   );
 
-  function handleNavClick(event: MouseEvent, href: string) {
-    if (
-      event.defaultPrevented ||
-      event.button !== 0 ||
-      event.metaKey ||
-      event.ctrlKey ||
-      event.shiftKey ||
-      event.altKey
-    ) {
-      return;
-    }
-
-    event.preventDefault();
-    history.pushState(null, "", href);
-    window.dispatchEvent(new PopStateEvent("popstate"));
-  }
 </script>
 
 <header class="topbar">
@@ -66,7 +50,6 @@
       <a
         href={link.href}
         class="ghost-button"
-        onclick={(event) => handleNavClick(event, link.href)}
       >
         {link.label}
       </a>

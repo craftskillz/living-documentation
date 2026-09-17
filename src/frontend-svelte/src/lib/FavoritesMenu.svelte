@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { canLeavePage } from "./navigationGuard";
   import { t } from "./i18n.svelte";
   import { favorites } from "./favorites.svelte";
 
@@ -36,7 +37,8 @@
     open = false;
   }
 
-  function openFavorite(id: string) {
+  async function openFavorite(id: string) {
+    if (!(await canLeavePage())) return;
     close();
     const href = `/?doc=${encodeURIComponent(id)}`;
     history.pushState(null, "", href);

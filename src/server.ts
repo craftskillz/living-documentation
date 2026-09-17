@@ -88,7 +88,7 @@ export async function startServer({
   // Serve the SPA shell (index.html) for the app's client-side routes. Explicit
   // list rather than a catch-all so unknown paths still 404.
   const indexHtml = path.join(frontendPath, 'index.html');
-  const spaRoutes = ['/', '/admin', '/workspace', '/blueprint', '/diagram', '/graph', '/shape-editor', '/context', '/agents', '/files', '/survival-kit'];
+  const spaRoutes = ['/', '/admin', '/workspace', '/blueprint', '/diagram', '/graph', '/shape-editor', '/context', '/agents', '/files', '/survival-kit', '/templates'];
   for (const route of spaRoutes) {
     app.get(route, (_req, res) => res.sendFile(indexHtml, { dotfiles: 'allow' }));
   }

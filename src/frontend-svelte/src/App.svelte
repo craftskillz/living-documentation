@@ -10,6 +10,8 @@
   import Diagram from "./routes/Diagram.svelte";
   import ConceptGraph from "./routes/ConceptGraph.svelte";
   import ShapeEditor from "./routes/ShapeEditor.svelte";
+  import Templates from "./routes/Templates.svelte";
+  import { canLeavePage } from "./lib/navigationGuard";
   import SurvivalKit from "./routes/SurvivalKit.svelte";
   import { initPersistentToast } from "./lib/persistentToast";
   import { checkGitIntegrationToast, installGitToastFetchHook } from "./lib/gitToast";
@@ -31,11 +33,14 @@
     "/context",
     "/files",
     "/survival-kit",
+    "/templates",
+    "/graph",
   ]);
 
+  let currentLocation = window.location.pathname + window.location.search + window.location.hash;
   let path = $state(normalizePath(window.location.pathname));
 
-  function routeTo(to: string) {
+  async function routeTo(to: string) {
     const url = new URL(to, window.location.href);
     const normalized = normalizePath(url.pathname);
     const nextLocation = `${normalized}${url.search}${url.hash}`;
@@ -45,7 +50,9 @@
       return;
     }
 
+    if (!(await canLeavePage())) return;
     history.pushState(null, "", nextLocation);
+    currentLocation = nextLocation;
     path = normalized;
     initPersistentToast();
     void checkGitIntegrationToast();
@@ -96,7 +103,12 @@
     };
   });
 
-  window.addEventListener("popstate", () => {
+  window.addEventListener("popstate", async () => {
+    if (!(await canLeavePage())) {
+      history.pushState(null, "", currentLocation);
+      return;
+    }
+    currentLocation = window.location.pathname + window.location.search + window.location.hash;
     path = normalizePath(window.location.pathname);
     initPersistentToast();
     void checkGitIntegrationToast();
@@ -115,7 +127,9 @@
   }
 </script>
 
-{#if path === "/admin"}
+{#if path === "/templates"}
+  <Templates />
+{:else if path === "/admin"}
   <Admin {navigate} />
 {:else if path === "/blueprint"}
   <Blueprint />

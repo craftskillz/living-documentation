@@ -1,3 +1,4 @@
+import type { TemplateFolder, DocumentTemplate } from '../../src/lib/documentTemplates';
 import type { APIRequestContext } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -9,48 +10,38 @@ async function seed(request: APIRequestContext, baseURL: string) {
   return { folder, template };
 }
 
-test('manage folders and Markdown templates, persistence and confirmed deletion', async ({ page, ld }) => {
+test('library manages folders, previews, edits and confirms deletions', async ({ page, ld }) => {
   await page.goto(ld.baseURL);
   await page.getByTestId('templates-menu').click();
-  await expect(page.getByTestId('templates-dropdown')).toContainText('No template folders');
   await page.getByTestId('manage-templates').click();
+  await expect(page).toHaveURL(`${ld.baseURL}/templates`);
   const manager = page.getByTestId('templates-manager');
-  await manager.locator('#template-new-folder').fill('Réunions');
+  await manager.getByRole('button', { name: 'New template folder', exact: true }).click();
+  await manager.locator('#template-folder-input').fill('Réunions');
   await manager.getByTestId('template-add-folder').click();
   await manager.getByTestId('template-new').click();
   await manager.locator('#template-name').fill('Standard');
   await manager.locator('#template-content').fill('# Agenda\n\n- First item');
   await manager.getByTestId('template-save').click();
-  await manager.getByRole('button', { name: 'Standard', exact: true }).click();
+  await expect(page.frameLocator('iframe[title="Preview"]').getByRole('heading', { name: 'Agenda' })).toBeVisible();
+  await manager.getByTestId('template-edit').click();
   await manager.locator('#template-name').fill('Cadrage');
-  await manager.locator('#template-content').fill('# Cadrage\n\n**Goals**');
   await manager.getByTestId('template-save').click();
-  await manager.locator('#template-folder-name').fill('Workshops');
-  await manager.getByTestId('template-rename-folder').click();
-  await manager.getByRole('button', { name: 'Close', exact: true }).click();
+  await manager.getByText('Folder actions', { exact: true }).click();
+  await manager.getByRole('button', { name: 'Rename', exact: true }).click();
+  await manager.locator('#template-folder-input').fill('Workshops');
+  await manager.getByTestId('template-add-folder').click();
   await page.reload();
-  await page.getByTestId('templates-menu').click();
-  await page.getByTestId('templates-dropdown').getByRole('button', { name: /Workshops/ }).click();
-  await expect(page.getByTestId('templates-dropdown').getByRole('button', { name: 'Cadrage', exact: true })).toBeVisible();
-  await page.getByTestId('manage-templates').click();
-  await manager.getByRole('button', { name: /Workshops/ }).click();
-  await manager.getByRole('button', { name: 'Remove Cadrage', exact: true }).click();
+  await manager.getByRole('button', { name: /Workshops/ }).first().click();
+  await manager.getByText('More actions', { exact: true }).click();
+  await manager.locator('.more-actions').getByRole('button', { name: 'Remove', exact: true }).click();
   await page.getByTestId('confirm-modal-cancel').click();
-  await expect(manager.getByRole('button', { name: 'Cadrage', exact: true })).toBeVisible();
-  await manager.getByRole('button', { name: 'Remove Cadrage', exact: true }).click();
-  await page.getByTestId('confirm-modal-ok').click();
-  await expect(manager.getByRole('button', { name: 'Cadrage', exact: true })).toBeHidden();
-  await manager.getByTestId('template-new').click();
-  await manager.locator('#template-name').fill('Remaining template');
-  await manager.locator('#template-content').fill('# Remaining');
-  await manager.getByTestId('template-save').click();
+  await expect(manager.locator('.detail-heading')).toContainText('Cadrage');
+  await manager.getByText('Folder actions', { exact: true }).click();
   await manager.getByTestId('template-delete-folder').click();
-  await expect(page.getByTestId('confirm-modal-detail')).toContainText('All templates');
-  await page.getByTestId('confirm-modal-cancel').click();
-  await expect(manager.getByRole('button', { name: 'Remaining template', exact: true })).toBeVisible();
-  await manager.getByTestId('template-delete-folder').click();
+  await expect(page.getByTestId('confirm-modal-detail')).toContainText('1 templates');
   await page.getByTestId('confirm-modal-ok').click();
-  await expect(manager).toContainText('No template folders');
+  await expect(manager).toContainText('Your template library starts here');
 });
 
 test('menu opens prefilled form from another route and creates independent document', async ({ page, request, ld }) => {
@@ -140,21 +131,18 @@ test('corrupt library fails closed without overwriting data', async ({ request, 
   expect(fs.readFileSync(file, 'utf8')).toBe('{broken');
 });
 
-test('French template management reports duplicate names without losing edits', async ({ page, request, ld }) => {
+test('French library validates folder names and preserves input', async ({ page, request, ld }) => {
   await request.put(`${ld.baseURL}/api/config`, { data: { language: 'fr' } });
-  await page.addInitScript(() => localStorage.setItem('ld-lang', 'fr'));
-  await page.goto(ld.baseURL);
-  await page.getByTestId('templates-menu').click();
-  await page.getByRole('button', { name: 'Gérer les templates' }).click();
+  await page.goto(`${ld.baseURL}/templates`);
   const manager = page.getByTestId('templates-manager');
-  await expect(manager).toContainText('Nouveau dossier de templates');
-  await manager.locator('#template-new-folder').fill('Réunions');
+  await manager.getByRole('button', { name: 'Nouveau dossier de templates', exact: true }).click();
+  await manager.locator('#template-folder-input').fill('Réunions');
   await manager.getByTestId('template-add-folder').click();
-  await expect(manager.locator('#template-folder-name')).toHaveValue('Réunions');
-  await manager.locator('#template-new-folder').fill('Réunions');
+  await manager.getByRole('button', { name: '+ Dossier', exact: true }).click();
+  await manager.locator('#template-folder-input').fill('Réunions');
   await manager.getByTestId('template-add-folder').click();
-  await expect(manager.getByRole('alert')).toContainText('Ce nom est déjà utilisé');
-  await expect(manager.locator('#template-new-folder')).toHaveValue('Réunions');
+  await expect(manager.locator('#template-folder-error')).toContainText('Ce nom est déjà utilisé');
+  await expect(manager.locator('#template-folder-input')).toHaveValue('Réunions');
 });
 
 test('a template deleted while the creation form is open cannot silently create a blank document', async ({ page, request, ld }) => {
@@ -169,4 +157,103 @@ test('a template deleted while the creation form is open cannot silently create 
   await page.getByRole('button', { name: 'Create', exact: true }).click();
   await expect(page.getByText('Error: This template no longer exists.', { exact: true })).toBeVisible();
   expect((await (await request.get(`${ld.baseURL}/api/documents`)).json()).length).toBe(before.length);
+});
+
+test('library protects unsaved edits, survives failed saves, and supports search', async ({ page, request, ld }) => {
+  await seed(request, ld.baseURL);
+  await page.goto(`${ld.baseURL}/templates`);
+  await page.getByTestId('template-edit').click();
+  await page.locator('#template-content').fill('# Draft preserved');
+  await page.locator('header.topbar a[href="/admin"]').click();
+  await page.getByTestId('confirm-modal-cancel').click();
+  await expect(page).toHaveURL(`${ld.baseURL}/templates`);
+  await expect(page.locator('#template-content')).toHaveValue('# Draft preserved');
+  await page.route('**/api/templates/*', route => route.request().method() === 'PUT' ? route.abort() : route.continue());
+  await page.getByTestId('template-save').click();
+  await expect(page.getByRole('alert').filter({ hasText: 'Connection failed' })).toBeVisible();
+  await expect(page.locator('#template-content')).toHaveValue('# Draft preserved');
+  await page.unroute('**/api/templates/*');
+  await page.getByTestId('template-save').click();
+  await expect(page.getByText('Template saved.', { exact: false })).toBeVisible();
+  await page.locator('#template-search').fill('preserved');
+  await expect(page.locator('.template-item')).toHaveCount(1);
+  await page.locator('#template-search').fill('nothing matches');
+  await expect(page.locator('.template-item')).toHaveCount(0);
+});
+
+test('duplicate and move templates without changing the original', async ({ page, request, ld }, testInfo) => {
+  const { template } = await seed(request, ld.baseURL);
+  const other = await (await request.post(`${ld.baseURL}/api/templates/folders`, { data: { name: 'Architecture' } })).json();
+  await page.goto(`${ld.baseURL}/templates`);
+  await page.getByText('More actions', { exact: true }).click();
+  await page.getByRole('button', { name: 'Duplicate', exact: true }).click();
+  await page.locator('#template-name').fill('Copy');
+  await page.locator('#template-destination').selectOption(other.id);
+  await page.getByTestId('template-save').click();
+  await page.getByTestId('template-edit').click();
+  await page.locator('#template-destination').selectOption({ label: 'Réunions' });
+  await page.getByTestId('template-save').click();
+  const library = await (await request.get(`${ld.baseURL}/api/templates`)).json();
+  expect(library.folders.find((f: TemplateFolder) => f.id === other.id).templates).toHaveLength(0);
+  const items = library.folders.flatMap((f: TemplateFolder) => f.templates);
+  expect(items).toHaveLength(2);
+  expect(items.find((item: DocumentTemplate) => item.id === template.id).name).toBe('Réunion standard');
+  await page.screenshot({ path: testInfo.outputPath('library-desktop.png') });
+  await page.getByRole('button', { name: 'Create a document', exact: true }).click();
+  await expect(page.locator('#new-doc-title')).toHaveValue('Copy');
+});
+
+test('stale edits cannot overwrite a newer library revision', async ({ page, request, ld }) => {
+  const { template } = await seed(request, ld.baseURL);
+  await page.goto(`${ld.baseURL}/templates`);
+  await page.getByTestId('template-edit').click();
+  await page.locator('#template-content').fill('# Local draft');
+  await request.put(`${ld.baseURL}/api/templates/${template.id}`, { data: { name: template.name, content: '# Remote version' } });
+  await page.getByTestId('template-save').click();
+  await expect(page.getByRole('alert').filter({ hasText: 'another session' })).toBeVisible();
+  await expect(page.locator('#template-content')).toHaveValue('# Local draft');
+  const library = await (await request.get(`${ld.baseURL}/api/templates`)).json();
+  expect(library.folders[0].templates[0].content).toBe('# Remote version');
+});
+
+test('mobile library opens details and returns to the list', async ({ page, request, ld }, testInfo) => {
+  await seed(request, ld.baseURL);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`${ld.baseURL}/templates`);
+  await page.locator('.template-item').click();
+  await expect(page.getByRole('button', { name: 'Create a document', exact: true })).toBeVisible();
+  expect(await page.locator('.template-library').evaluate(element => element.scrollWidth <= element.clientWidth)).toBeTruthy();
+  await page.screenshot({ path: testInfo.outputPath('library-mobile.png') });
+  await page.getByRole('button', { name: 'Back to list', exact: false }).click();
+  await expect(page.locator('.template-item')).toBeVisible();
+});
+
+test('moving a template checks destination uniqueness and preserves storage on errors', async ({ request, ld }) => {
+  const { folder, template } = await seed(request, ld.baseURL);
+  const other = await (await request.post(`${ld.baseURL}/api/templates/folders`, { data: { name: 'Other' } })).json();
+  await request.post(`${ld.baseURL}/api/templates/folders/${other.id}/templates`, { data: { name: template.name, content: 'Existing' } });
+  expect((await request.put(`${ld.baseURL}/api/templates/${template.id}`, { data: { name: template.name, content: 'Moved', folderId: other.id } })).status()).toBe(409);
+  const response = await request.get(`${ld.baseURL}/api/templates`);
+  const library = await response.json();
+  expect(library.folders.find((f: TemplateFolder) => f.id === folder.id).templates[0].content).toBe(template.content);
+  expect((await request.put(`${ld.baseURL}/api/templates/${template.id}`, { headers: { 'If-Match': '"stale"' }, data: { name: 'Overwrite', content: '' } })).status()).toBe(409);
+});
+
+test('browser back and keyboard confirmation preserve a dirty draft', async ({ page, request, ld }) => {
+  await seed(request, ld.baseURL);
+  await page.goto(ld.baseURL);
+  await page.getByTestId('templates-menu').click();
+  await page.getByTestId('manage-templates').click();
+  await page.getByTestId('template-edit').click();
+  await page.locator('#template-content').fill('# Keep me');
+  let nativePrompt = false;
+  page.once('dialog', async (dialog) => { nativePrompt = dialog.type() === 'beforeunload'; await dialog.dismiss(); });
+  await page.evaluate(() => history.back());
+  await expect.poll(async () => nativePrompt || await page.getByTestId('confirm-modal').isVisible()).toBeTruthy();
+  if (!nativePrompt) await page.keyboard.press('Escape');
+  await expect(page).toHaveURL(`${ld.baseURL}/templates`);
+  await expect(page.locator('#template-content')).toHaveValue('# Keep me');
+  await page.locator('header.topbar a[href="/admin"]').click();
+  await page.getByTestId('confirm-modal-ok').click();
+  await expect(page).toHaveURL(`${ld.baseURL}/admin`);
 });

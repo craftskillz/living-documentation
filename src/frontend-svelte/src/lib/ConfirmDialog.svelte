@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { dialogFocus } from "./dialogFocus";
   interface ConfirmOptions {
     kicker?: string;
     title: string;
@@ -36,7 +37,7 @@
 {#if visible}
   <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
   <div class="confirm-overlay" onclick={(e) => { if (e.target === e.currentTarget) cancel(); }}>
-    <section class="confirm-dialog" id="confirm-modal" data-testid="confirm-modal" role="dialog" aria-modal="true">
+    <section use:dialogFocus={cancel} aria-label={options.title} class="confirm-dialog" id="confirm-modal" data-testid="confirm-modal" role="dialog" aria-modal="true">
       {#if options.kicker}
         <p class="confirm-kicker">{options.kicker}</p>
       {/if}
