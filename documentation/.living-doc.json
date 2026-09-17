@@ -3,6 +3,7 @@
   "title": "Projet Living Documentation",
   "theme": "system",
   "siteTheme": "base",
+  "hiddenHeaderMenus": [],
   "favorites": [],
   "language": "fr",
   "port": 4321,
