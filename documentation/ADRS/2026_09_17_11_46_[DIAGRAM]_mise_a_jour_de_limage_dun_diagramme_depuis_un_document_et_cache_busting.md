@@ -18,6 +18,10 @@ sources:
     hash: 156acc777258e2358dd03859ddc7b5883654f6ca9c3464cd4bd7616ff9c5d00e
     commit: 88439abf7b397feb16d73511b932c63f22808bce
     dirty: false
+  - path: src/frontend-svelte/src/lib/diagram/clipboard.js
+    hash: b0f63fa665a046ac8e3199bf1394a43310bf71a0b07ea6163fb19c1db908b802
+    commit: 267fa7f5fe68bbdc49db57fe0e9e528b81ba74c3
+    dirty: false
 ---
 
 ## Context
