@@ -59,3 +59,16 @@ Le titre s'affiche dans l'onglet du navigateur et en haut de la sidebar.
 En mode debug, un bouton `dbg` apparaît dans la barre d'outils de l'éditeur de diagramme. Il affiche les coordonnées et dimensions de chaque nœud sous forme d'overlays DOM.
 
 Utile pour diagnostiquer des problèmes de positionnement dans les diagrammes.
+
+
+### Choisir les menus visibles dans le header
+
+Dans **Admin → Menus du header**, cochez les menus à afficher puis enregistrez. Les changements s’appliquent immédiatement et sont conservés après rechargement.
+
+| Menus configurables | Menus toujours visibles |
+| --- | --- |
+| Workspace, Blueprint, Graph, Survival Kit, AI Context | Admin, Home, Favoris, Diagram, Files, Templates, Agents |
+
+Les cinq menus configurables sont masqués par défaut dans les nouveaux projets ; le CLI permet de les sélectionner pendant l’installation. Les projets existants conservent leur configuration. Masquer un menu ne bloque pas l’accès direct à sa page par URL.
+
+Voir la [décision sur la visibilité des menus](?doc=ADRS%252F2026_09_17_10_44_%255BNAVIGATION%255D_visibilite_des_menus_du_header_et_selection_a_installation).
