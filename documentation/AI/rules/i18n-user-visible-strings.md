@@ -23,6 +23,10 @@ sources:
     hash: 423eb04cec68d99d79db2aad0ea509318726eb4f0b4af0c180d0fa06f288a365
     commit: 843a7de9c403bf68e05e7eca1a88a43b00e19f44
     dirty: true
+  - path: src/frontend-svelte/public/i18n/fr.json
+    hash: 472d5a1cefa66c9cb634427e86678979e03c3d67e8896f7d0636abbbf7c2b913
+    commit: 6d051751c80273d380f5179fa61aeec7be115015
+    dirty: true
 id: i18n-user-visible-strings
 severity: required
 appliesto:
