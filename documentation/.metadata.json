@@ -163,10 +163,6 @@
   ],
   "AI/rules/diagram-vis-network-gotchas": [
     {
-      "path": "src/frontend/diagram/node-rendering.js",
-      "hash": "a436315aa7840b50a98a443d0326008d6e15650a6594cc9bead8c4988a60af57"
-    },
-    {
       "path": "src/frontend/diagram/grid.js",
       "hash": "c751c3a259fc79f73764a6199f6da7af3f18ff2e5687b47fc2e124fdad2d8c55"
     }
