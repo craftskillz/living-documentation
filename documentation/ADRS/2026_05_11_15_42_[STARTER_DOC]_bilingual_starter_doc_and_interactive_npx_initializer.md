@@ -57,18 +57,19 @@ starter-doc/
 
 Le placeholder `DOCS_FOLDER` est remplacé en place après copie (via `replaceDocsFolderPlaceholders` dans [bin/cli.ts](bin/cli.ts)) pour que les exemples référencent le vrai nom de dossier choisi par l'utilisateur.
 
-### 2. Wizard interactif déclenché par l'absence d'argument
+### 2. Wizard interactif pour les nouveaux projets
 
-Quand `npx living-ai-documentation` est appelé **sans** dossier, `runInitWizard()` prend la main :
+Sans argument, le CLI propose d’abord les projets déjà configurés dans le dossier courant ou un niveau en dessous. Si aucun n’est retenu, `runInitWizard()` prend la main. Le wizard est aussi utilisé pour un chemin explicite dépourvu de `.living-doc.json`.
 
 1. Demande le dossier cible (relatif, refus des chemins absolus ou `~`).
 2. Refuse si le dossier existe et est non vide.
 3. Demande la langue du starter (`en` / `fr`), avec defaut `en` en mode non-TTY ou via l'option `--starter-language <en|fr>`.
 4. Vérifie que `AGENTS.md`, `CLAUDE.md`, `memory/MEMORY.md` du projet hôte sont **absents ou vides** (refus sinon , on ne réécrit jamais le travail de l'utilisateur).
-5. Copie le starter, remplace `DOCS_FOLDER`, copie les 3 fichiers d'orientation depuis `<docs>/AI/default/` vers la racine du projet, puis crée 3 **symlinks** dans `<docs>/AI/` pointant vers ces fichiers racine.
-6. Supprime `<docs>/AI/default/` (consommé) et démarre le serveur sur le port choisi.
+5. Propose en TTY les cinq menus optionnels sous forme de cases initialement décochées (flèches, Espace, Entrée) ; hors TTY, ils restent tous masqués.
+6. Copie le starter, persiste les routes masquées dans `hiddenHeaderMenus`, remplace `DOCS_FOLDER`, copie les 3 fichiers d'orientation depuis `<docs>/AI/default/` vers la racine du projet, puis crée 3 **symlinks** dans `<docs>/AI/` pointant vers ces fichiers racine.
+7. Supprime `<docs>/AI/default/` (consommé), migre les documents vers OKF et démarre le serveur sur le port choisi.
 
-L'option `--starter-language` reste disponible pour scripter l'init sans interaction.
+L’option `--starter-language` choisit la langue du starter ; elle ne supprime pas le sélecteur de menus lorsque stdin et stdout sont TTY. Les projets existants conservent leur visibilité. La [décision sur les menus du header](?doc=ADRS%252F2026_09_17_10_44_%255BNAVIGATION%255D_visibilite_des_menus_du_header_et_selection_a_installation) complète cet ADR sans remplacer les conventions de scaffolding.
 
 ### 3. Fichiers d'orientation à la racine du projet
 
