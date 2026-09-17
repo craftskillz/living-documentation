@@ -61,23 +61,27 @@ test.describe('kanban board widget', () => {
     const columns = page.getByTestId('kanban-column');
     await expect(columns).toHaveCount(3);
 
-    const metrics = await columns.evaluateAll((els) =>
-      els.map((el) => {
-        const rect = el.getBoundingClientRect();
-        return {
-          top: rect.top,
-          height: rect.height,
-          viewportHeight: window.innerHeight,
-        };
-      }),
-    );
-    const heights = metrics.map((metric) => metric.height);
-    const firstHeight = heights[0];
-    for (const height of heights) {
-      expect(Math.abs(height - firstHeight)).toBeLessThanOrEqual(1);
-    }
-    const expectedVisibleHeight = metrics[0].viewportHeight - metrics[0].top - viewportBottomGapPx;
-    expect(firstHeight).toBeGreaterThanOrEqual(expectedVisibleHeight - 2);
+    await expect(columns.first()).toBeVisible();
+    // Layout is synchronized on animation frames; presence alone is not readiness.
+    await expect(async () => {
+      const metrics = await columns.evaluateAll((els) =>
+        els.map((el) => {
+          const rect = el.getBoundingClientRect();
+          return {
+            top: rect.top,
+            height: rect.height,
+            viewportHeight: window.innerHeight,
+          };
+        }),
+      );
+      const heights = metrics.map((metric) => metric.height);
+      const firstHeight = heights[0];
+      for (const height of heights) {
+        expect(Math.abs(height - firstHeight)).toBeLessThanOrEqual(1);
+      }
+      const expectedVisibleHeight = metrics[0].viewportHeight - metrics[0].top - viewportBottomGapPx;
+      expect(firstHeight).toBeGreaterThanOrEqual(expectedVisibleHeight - 2);
+    }).toPass({ timeout: 5_000 });
   });
 
   test('column titles start near the top without inherited prose spacing', async ({ page, ld }) => {
@@ -85,16 +89,20 @@ test.describe('kanban board widget', () => {
     const columns = page.getByTestId('kanban-column');
     await expect(columns).toHaveCount(3);
 
-    const topInsets = await columns.evaluateAll((els) =>
-      els.map((el) => {
-        const columnTop = el.getBoundingClientRect().top;
-        const titleTop = el.querySelector('h2')!.getBoundingClientRect().top;
-        return titleTop - columnTop;
-      }),
-    );
-    for (const inset of topInsets) {
-      expect(inset).toBeLessThanOrEqual(maxColumnTitleTopInsetPx);
-    }
+    await expect(columns.first()).toBeVisible();
+    // Layout is synchronized on animation frames; presence alone is not readiness.
+    await expect(async () => {
+      const topInsets = await columns.evaluateAll((els) =>
+        els.map((el) => {
+          const columnTop = el.getBoundingClientRect().top;
+          const titleTop = el.querySelector('h2')!.getBoundingClientRect().top;
+          return titleTop - columnTop;
+        }),
+      );
+      for (const inset of topInsets) {
+        expect(inset).toBeLessThanOrEqual(maxColumnTitleTopInsetPx);
+      }
+    }).toPass({ timeout: 5_000 });
   });
 
   test('columns stretch horizontally to fill the available board width', async ({ page, ld }) => {
@@ -103,26 +111,30 @@ test.describe('kanban board widget', () => {
     const columns = page.getByTestId('kanban-column');
     await expect(columns).toHaveCount(3);
 
-    const metrics = await page.evaluate(() => {
-      const laneRect = document.querySelector('[data-testid="kanban-lanes"]')!.getBoundingClientRect();
-      const columnRects = Array.from(
-        document.querySelectorAll('[data-testid="kanban-column"]'),
-      ).map((el) => el.getBoundingClientRect());
-      return {
-        laneWidth: laneRect.width,
-        columnWidths: columnRects.map((rect) => rect.width),
-        lastColumnRight: columnRects[columnRects.length - 1].right,
-        laneRight: laneRect.right,
-      };
-    });
-    const expectedColumnWidth =
-      (metrics.laneWidth - columnGapPx * (metrics.columnWidths.length - 1)) /
-      metrics.columnWidths.length;
-    for (const width of metrics.columnWidths) {
-      expect(Math.abs(width - expectedColumnWidth)).toBeLessThanOrEqual(2);
-    }
-    expect(Math.abs(metrics.laneRight - metrics.lastColumnRight)).toBeLessThanOrEqual(2);
-    await expect(lanes).toBeVisible();
+    await expect(columns.first()).toBeVisible();
+    // Layout is synchronized on animation frames; presence alone is not readiness.
+    await expect(async () => {
+      const metrics = await page.evaluate(() => {
+        const laneRect = document.querySelector('[data-testid="kanban-lanes"]')!.getBoundingClientRect();
+        const columnRects = Array.from(
+          document.querySelectorAll('[data-testid="kanban-column"]'),
+        ).map((el) => el.getBoundingClientRect());
+        return {
+          laneWidth: laneRect.width,
+          columnWidths: columnRects.map((rect) => rect.width),
+          lastColumnRight: columnRects[columnRects.length - 1].right,
+          laneRight: laneRect.right,
+        };
+      });
+      const expectedColumnWidth =
+        (metrics.laneWidth - columnGapPx * (metrics.columnWidths.length - 1)) /
+        metrics.columnWidths.length;
+      for (const width of metrics.columnWidths) {
+        expect(Math.abs(width - expectedColumnWidth)).toBeLessThanOrEqual(2);
+      }
+      expect(Math.abs(metrics.laneRight - metrics.lastColumnRight)).toBeLessThanOrEqual(2);
+      await expect(lanes).toBeVisible();
+    }).toPass({ timeout: 5_000 });
   });
 
   test('hides regular document header actions and keeps only favorites, kanban edit plus delete', async ({ page, ld }) => {
@@ -274,16 +286,51 @@ test.describe('kanban board widget', () => {
   test('dragging a card to another column moves the .md file between folders', async ({ page, ld }) => {
     await page.goto(boardUrl(ld.baseURL));
     await expectBoardDescriptionsSettled(page);
-    await expect(page.locator('[data-kanban-folder="Todo"] [data-testid="kanban-card"]')).toBeVisible();
+    const taskId = encodeURIComponent('3_projets/Todo/2026_01_06_10_00_[Task]_task_one');
+    const todoCard = page.getByTestId('kanban-card').filter({ hasText: 'Task One' });
+    const doneColumn = page.locator('[data-kanban-folder="Done"]');
+    const doingCard = page.locator('[data-kanban-folder="Doing"] [data-testid="kanban-card"]');
+    await expect(todoCard).toHaveAttribute('data-doc-id', taskId);
+    await expect(doneColumn.getByTestId('kanban-card')).toHaveCount(0);
 
-    await page.dragAndDrop(
-      '[data-kanban-folder="Todo"] [data-testid="kanban-card"]',
-      '[data-kanban-folder="Done"]',
-    );
+    // Start the native HTML drag while the pointer is still inside Task One.
+    // Keep drag activation separate from the move across the intervening card.
+    // Verify the source highlight before crossing Doing; do not synthesize drop
+    // events or retry a gesture that might already have moved the wrong file.
+    await todoCard.hover();
+    const source = await todoCard.boundingBox();
+    if (!source) throw new Error('Task One has no bounding box');
+    const dragStartOffsetPx = 12;
+    await page.mouse.down();
+    try {
+      await page.mouse.move(
+        source.x + source.width / 2 + dragStartOffsetPx,
+        source.y + source.height / 2,
+        { steps: 3 },
+      );
+      await expect(todoCard).toHaveCSS('box-shadow', /inset/);
+      await doneColumn.hover();
+      // A second move ensures the native dragover is delivered before release.
+      await doneColumn.hover({ position: { x: 24, y: 80 } });
+      await expect(doneColumn).toHaveCSS('box-shadow', /inset/);
+      const moved = page.waitForResponse((response) =>
+        response.url().endsWith(`/api/documents/${taskId}/move`)
+        && response.request().method() === 'POST',
+      );
+      await page.mouse.up();
+      const response = await moved;
+      expect(response.request().postDataJSON()).toEqual({ folder: '3_projets/Done' });
+      expect(response.ok()).toBe(true);
+    } finally {
+      await page.mouse.up();
+    }
 
-    // Board re-renders with the card in Done.
-    await expect(page.locator('[data-kanban-folder="Done"] [data-testid="kanban-card"]')).toContainText('Task One');
+    // Verify both the moved card and the untouched intermediate column.
+    await expect(doneColumn.getByTestId('kanban-card')).toHaveCount(1);
+    await expect(doneColumn.getByTestId('kanban-card')).toContainText('Task One');
     await expect(page.locator('[data-kanban-folder="Todo"] [data-testid="kanban-card"]')).toHaveCount(0);
+    await expect(doingCard).toContainText('Task Two');
+    expect(fs.existsSync(path.join(ld.docsAbs, '3_projets/Doing/2026_01_07_10_00_[Task]_task_two.md'))).toBe(true);
 
     // The file physically moved on disk.
     await expect
