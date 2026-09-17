@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-17T09:31:21.942Z",
+  "updatedAt": "2026-09-17T09:32:38.794Z",
   "entities": [
     {
       "id": "root",
@@ -413,13 +413,13 @@
         "userInputDescription": "Enter the full image prompt",
         "expectedOutputMarker": "",
         "description": "Opened prompt to create image",
-        "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image_3"
+        "workspaceFolder": "AI/WORKSPACE/opened_prompt_to_create_image_2"
       }
     }
   ],
   "camera": {
-    "x": 785.5250820332922,
-    "y": 245.90131965990008,
+    "x": 663.7008632832922,
+    "y": 383.0302259099001,
     "zoom": 0.7479592942629024
   }
 }
