@@ -3,7 +3,9 @@
   "title": "Projet Living Documentation",
   "theme": "system",
   "siteTheme": "base",
-  "hiddenHeaderMenus": [],
+  "hiddenHeaderMenus": [
+    "#word-cloud"
+  ],
   "favorites": [],
   "language": "fr",
   "port": 4321,
