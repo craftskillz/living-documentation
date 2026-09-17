@@ -19,6 +19,23 @@ tags:
   - DOCS_FOLDER
 timestamp: 2026-05-11T15:42:00Z
 status: Accepted
+sources:
+  - path: bin/cli.ts
+    hash: cbbf78b195d6066b97e20c1c32914fab4af3cc99fdbbd6038059880f1d9f5fbf
+    commit: 10cdb2fe47aff2b657f30b8956fb63e18b2f88bc
+    dirty: false
+  - path: src/lib/cli/headerMenuPrompt.ts
+    hash: 1a016eff6f72a2e2fc9268f62051b01ca9172597bb57293caa3172c0f957d528
+    commit: 10cdb2fe47aff2b657f30b8956fb63e18b2f88bc
+    dirty: false
+  - path: starter-doc/.living-doc.json
+    hash: 1465ffedd3d3bc7a4b1b456c612763f5f62561c2b3b5294e7d1b36eab141f0ca
+    commit: 10cdb2fe47aff2b657f30b8956fb63e18b2f88bc
+    dirty: false
+  - path: starter-doc-fr/.living-doc.json
+    hash: f02b5818935ce1bccebeaf5364b4a65d8807ee40cecbb2ac494b408e58e9f50e
+    commit: 10cdb2fe47aff2b657f30b8956fb63e18b2f88bc
+    dirty: false
 ---
 
 # Starter doc bilingue et initialiseur npx interactif

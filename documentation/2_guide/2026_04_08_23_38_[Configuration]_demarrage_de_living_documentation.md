@@ -1,6 +1,15 @@
 ---
 type: Document
 title: Demarrage De Living Documentation
+sources:
+  - path: bin/cli.ts
+    hash: cbbf78b195d6066b97e20c1c32914fab4af3cc99fdbbd6038059880f1d9f5fbf
+    commit: f762fb64a92748df7792ed4c95863e6b481716cb
+    dirty: false
+  - path: src/lib/cli/headerMenuPrompt.ts
+    hash: 1a016eff6f72a2e2fc9268f62051b01ca9172597bb57293caa3172c0f957d528
+    commit: f762fb64a92748df7792ed4c95863e6b481716cb
+    dirty: false
 ---
 
 1 . Pour ouvrir un dossier de documentation existant, lancez l'outil en pointant vers ce dossier. Le mieux est de versionner ce dossier au sein de votre projet :

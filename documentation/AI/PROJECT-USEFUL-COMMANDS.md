@@ -3,28 +3,48 @@ type: Technical Doc
 title: PROJECT USEFUL COMMANDS
 sources:
   - path: bin/cli.ts
-    hash: 2c16bc01c76103483817a163093dec56ad092f4d59ca565c14bdacda8f36886c
-    commit: fc003057894bf3b290e98dfa23df070ac8ec6720
+    hash: cbbf78b195d6066b97e20c1c32914fab4af3cc99fdbbd6038059880f1d9f5fbf
+    commit: 87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9
     dirty: false
   - path: scripts/copy-assets.ts
     hash: ffdb3d3b63a943a0d0eb4988f8fe71aa7e4fb937f4426a1e94bd6436ce4ae240
-    commit: fc003057894bf3b290e98dfa23df070ac8ec6720
+    commit: 87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9
     dirty: false
   - path: playwright.config.ts
     hash: bd5ec053a7955be0aff01d803d5b8ccf76f5caf3975d14d01add39131305dfa0
-    commit: fc003057894bf3b290e98dfa23df070ac8ec6720
+    commit: 87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9
     dirty: false
   - path: tests/helpers/coverage.ts
     hash: b0618f93d98a05007f90655a43399c0d1dde0ffc821714fca078ebcc314159fe
-    commit: fc003057894bf3b290e98dfa23df070ac8ec6720
+    commit: 87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9
     dirty: false
   - path: justfile
     hash: 59f755e76ae6bb1d9ac82a369d7aa6c1690b210929503d2e444e755203fee785
-    commit: fc003057894bf3b290e98dfa23df070ac8ec6720
+    commit: 87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9
     dirty: false
   - path: tests/helpers/ld-fixture.ts
     hash: c515f734fecb2cbce3d6865da3587e6ee076aa9653bdf4bb328f9fb3a187cb53
-    commit: fc003057894bf3b290e98dfa23df070ac8ec6720
+    commit: 87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9
+    dirty: false
+  - path: src/lib/cli/headerMenuPrompt.ts
+    hash: 1a016eff6f72a2e2fc9268f62051b01ca9172597bb57293caa3172c0f957d528
+    commit: 87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9
+    dirty: false
+  - path: package.json
+    hash: 73586ecb456b3247ce7d9444eca70c7920b166e90678bfb85ded2aebbdbadf7b
+    commit: 87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9
+    dirty: false
+  - path: tests/api/cli.spec.ts
+    hash: 12887cfe8f8c0084d6c7b6a31f12b1286087627eb6bca3706bba9767290c42bf
+    commit: 87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9
+    dirty: false
+  - path: tests/api/config.spec.ts
+    hash: 630668a6acedaf6e86bb365056c6efbb7fe70cd610d48accd32bb9f9647e3332
+    commit: 87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9
+    dirty: false
+  - path: tests/e2e/header-navigation.spec.ts
+    hash: ece5b5a0d23f1e1ab9155719ef51f5702ddface6ac0bf9b32a393dce70e00a8f
+    commit: 87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9
     dirty: false
 ---
 

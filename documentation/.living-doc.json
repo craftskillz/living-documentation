@@ -3,7 +3,11 @@
   "title": "Projet Living Documentation",
   "theme": "system",
   "siteTheme": "base",
-  "hiddenHeaderMenus": [],
+  "hiddenHeaderMenus": [
+    "/blueprint",
+    "/graph",
+    "/context"
+  ],
   "favorites": [],
   "language": "fr",
   "port": 4321,

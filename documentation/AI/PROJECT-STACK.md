@@ -3,40 +3,52 @@ type: Technical Doc
 title: PROJECT STACK
 sources:
   - path: bin/cli.ts
-    hash: 2c16bc01c76103483817a163093dec56ad092f4d59ca565c14bdacda8f36886c
-    commit: 50e0c05d70780cc8323e739c0b3e0f0dda9be30d
+    hash: cbbf78b195d6066b97e20c1c32914fab4af3cc99fdbbd6038059880f1d9f5fbf
+    commit: f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17
     dirty: false
   - path: src/server.ts
     hash: acad39f6285728cb47b5ca81ae9090d04e2f3e86ca60d5a381ad97860b10dc79
-    commit: 50e0c05d70780cc8323e739c0b3e0f0dda9be30d
+    commit: f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17
     dirty: false
   - path: src/lib/config.ts
-    hash: 363d4620f8e48feff650fe6a4dcfac737c27a754f0f608c2854966d448a7e157
-    commit: 50e0c05d70780cc8323e739c0b3e0f0dda9be30d
+    hash: e07357da37d1c33da0afb866fa226cfd726270c694245cc484fe636091b98006
+    commit: f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17
     dirty: false
   - path: src/lib/parser.ts
     hash: 371fbb9676a0b8144f9f8a009d8f9ecf1fa785985308fc95083e90603cff6aed
-    commit: 50e0c05d70780cc8323e739c0b3e0f0dda9be30d
+    commit: f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17
     dirty: false
   - path: src/lib/metadata.ts
     hash: 0498b125bfb38061564a132641c123f1d0ca634664c81f13cd25d465de1f9175
-    commit: 50e0c05d70780cc8323e739c0b3e0f0dda9be30d
+    commit: f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17
     dirty: false
   - path: src/mcp/server.ts
     hash: 3b47ab14e3820987ba65387741d7afabd76625bdd011fee073c7f08d5fe32969
-    commit: 50e0c05d70780cc8323e739c0b3e0f0dda9be30d
+    commit: f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17
     dirty: false
   - path: scripts/copy-assets.ts
     hash: ffdb3d3b63a943a0d0eb4988f8fe71aa7e4fb937f4426a1e94bd6436ce4ae240
-    commit: 50e0c05d70780cc8323e739c0b3e0f0dda9be30d
+    commit: f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17
     dirty: false
   - path: src/lib/okf/graph.ts
     hash: 7203f769b05ea5f6995fec7118362d463c96d8f29001745612d970f273269366
-    commit: 50e0c05d70780cc8323e739c0b3e0f0dda9be30d
+    commit: f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17
     dirty: false
   - path: src/lib/documentTemplates.ts
     hash: a41da1b42ebdb845b5831924ca9dc73944264a0b38deb715197e887b2e95d1b4
-    commit: 50e0c05d70780cc8323e739c0b3e0f0dda9be30d
+    commit: f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17
+    dirty: false
+  - path: src/shared/headerNavigation.ts
+    hash: b74d3a8a068bd36cd5f358b73861fe9c1e10246c015cb2ae45b25ea37dbd2c64
+    commit: f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17
+    dirty: false
+  - path: src/lib/cli/headerMenuPrompt.ts
+    hash: 1a016eff6f72a2e2fc9268f62051b01ca9172597bb57293caa3172c0f957d528
+    commit: f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17
+    dirty: false
+  - path: src/frontend-svelte/src/lib/headerNavigation.svelte.ts
+    hash: 4a38f86f6a96ac033b7f06d9f18d9f6452727903d99693f91f16ac19dd52526d
+    commit: f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17
     dirty: false
 ---
 

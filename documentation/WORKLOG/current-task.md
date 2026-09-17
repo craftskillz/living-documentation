@@ -1,7 +1,7 @@
 ---
 type: Worklog
-title: Clôture du chantier OKF
-description: État vérifié du chantier OKF après commits, tests ciblés et mise à jour documentaire via MCP.
+title: Menus du header et initialisation CLI — documentation à jour
+description: Clôture de la configuration des menus et du sélecteur CLI, documentation et métadonnées synchronisées via MCP.
 tags:
   - worklog
   - okf
@@ -10,6 +10,31 @@ tags:
   - workspace
 timestamp: 2026-09-16T15:45:00Z
 status: To be validated
+---
+
+# Menus du header — 17 septembre 2026
+
+## État courant
+
+Implémentation terminée et commitée : `420b9541` (visibilité depuis Admin), `395db08f` (sélection à l’installation), version `3.57.0` dans `2f6ce62b`. La correction de centrage des boutons du header est incluse dans le travail précédent.
+
+La documentation a été mise à jour via le MCP reconnecté au bon projet : nouvel [ADR navigation](?doc=ADRS%252F2026_09_17_10_44_%255BNAVIGATION%255D_visibilite_des_menus_du_header_et_selection_a_installation), complément de l’ADR starter, guides Admin/démarrage, stack et commandes de test local. Les six documents techniques ont leurs sources attachées et leurs hashes recalculés, tous inchangés avec `dirty: false`.
+
+## Vérifications réalisées pendant l’implémentation
+
+- `npm run build` réussi ; avertissement de taille du bundle.
+- Tests CLI, API config et navigateur header : 23/23.
+- `npm run lint:ci` : aucune erreur, 63 avertissements et 2 informations.
+- Sélecteur testé dans un terminal : cases initialement décochées, navigation, sélection Workspace/Survival Kit, persistance des trois autres routes masquées. Ce test a volontairement utilisé un port invalide pour arrêter après le scaffolding ; les tests automatisés vérifient le démarrage du serveur.
+- Package local produit avec `npm pack` et présence des starters, du module CLI et des catalogues EN/FR vérifiée. Pas de publication npm réalisée par l’agent.
+- Pour la présente passe documentaire, aucun changement de code ni nouvelle exécution des 23 tests ; relecture MCP et vérification des métadonnées.
+
+- Validation documentaire finale : `npm run okf:validate`, 280 documents vérifiés, 0 erreur et 69 avertissements non bloquants. Arbre Git propre après les écritures et auto-commits du MCP.
+
+## Suite
+
+Aucune implémentation restante pour cette demande. Le nouvel ADR reste « To be validated » pour revue humaine. Les éventuels push restent à la charge de l’utilisateur. Le suivi antérieur ci-dessous est conservé comme historique.
+
 ---
 
 # Clôture OKF — 16 septembre 2026

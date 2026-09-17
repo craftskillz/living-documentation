@@ -2,94 +2,142 @@
   "AI/PROJECT-STACK": [
     {
       "path": "bin/cli.ts",
-      "hash": "2c16bc01c76103483817a163093dec56ad092f4d59ca565c14bdacda8f36886c",
-      "commit": "50e0c05d70780cc8323e739c0b3e0f0dda9be30d",
+      "hash": "cbbf78b195d6066b97e20c1c32914fab4af3cc99fdbbd6038059880f1d9f5fbf",
+      "commit": "f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17",
       "dirty": false
     },
     {
       "path": "src/server.ts",
       "hash": "acad39f6285728cb47b5ca81ae9090d04e2f3e86ca60d5a381ad97860b10dc79",
-      "commit": "50e0c05d70780cc8323e739c0b3e0f0dda9be30d",
+      "commit": "f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17",
       "dirty": false
     },
     {
       "path": "src/lib/config.ts",
-      "hash": "363d4620f8e48feff650fe6a4dcfac737c27a754f0f608c2854966d448a7e157",
-      "commit": "50e0c05d70780cc8323e739c0b3e0f0dda9be30d",
+      "hash": "e07357da37d1c33da0afb866fa226cfd726270c694245cc484fe636091b98006",
+      "commit": "f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17",
       "dirty": false
     },
     {
       "path": "src/lib/parser.ts",
       "hash": "371fbb9676a0b8144f9f8a009d8f9ecf1fa785985308fc95083e90603cff6aed",
-      "commit": "50e0c05d70780cc8323e739c0b3e0f0dda9be30d",
+      "commit": "f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17",
       "dirty": false
     },
     {
       "path": "src/lib/metadata.ts",
       "hash": "0498b125bfb38061564a132641c123f1d0ca634664c81f13cd25d465de1f9175",
-      "commit": "50e0c05d70780cc8323e739c0b3e0f0dda9be30d",
+      "commit": "f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17",
       "dirty": false
     },
     {
       "path": "src/mcp/server.ts",
       "hash": "3b47ab14e3820987ba65387741d7afabd76625bdd011fee073c7f08d5fe32969",
-      "commit": "50e0c05d70780cc8323e739c0b3e0f0dda9be30d",
+      "commit": "f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17",
       "dirty": false
     },
     {
       "path": "scripts/copy-assets.ts",
       "hash": "ffdb3d3b63a943a0d0eb4988f8fe71aa7e4fb937f4426a1e94bd6436ce4ae240",
-      "commit": "50e0c05d70780cc8323e739c0b3e0f0dda9be30d",
+      "commit": "f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17",
       "dirty": false
     },
     {
       "path": "src/lib/okf/graph.ts",
       "hash": "7203f769b05ea5f6995fec7118362d463c96d8f29001745612d970f273269366",
-      "commit": "50e0c05d70780cc8323e739c0b3e0f0dda9be30d",
+      "commit": "f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17",
       "dirty": false
     },
     {
       "path": "src/lib/documentTemplates.ts",
       "hash": "a41da1b42ebdb845b5831924ca9dc73944264a0b38deb715197e887b2e95d1b4",
-      "commit": "50e0c05d70780cc8323e739c0b3e0f0dda9be30d",
+      "commit": "f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17",
+      "dirty": false
+    },
+    {
+      "path": "src/shared/headerNavigation.ts",
+      "hash": "b74d3a8a068bd36cd5f358b73861fe9c1e10246c015cb2ae45b25ea37dbd2c64",
+      "commit": "f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17",
+      "dirty": false
+    },
+    {
+      "path": "src/lib/cli/headerMenuPrompt.ts",
+      "hash": "1a016eff6f72a2e2fc9268f62051b01ca9172597bb57293caa3172c0f957d528",
+      "commit": "f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17",
+      "dirty": false
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/headerNavigation.svelte.ts",
+      "hash": "4a38f86f6a96ac033b7f06d9f18d9f6452727903d99693f91f16ac19dd52526d",
+      "commit": "f2b7c2fad5db52a5bfd0d7e4613c2206c05ade17",
       "dirty": false
     }
   ],
   "AI/PROJECT-USEFUL-COMMANDS": [
     {
       "path": "bin/cli.ts",
-      "hash": "2c16bc01c76103483817a163093dec56ad092f4d59ca565c14bdacda8f36886c",
-      "commit": "fc003057894bf3b290e98dfa23df070ac8ec6720",
+      "hash": "cbbf78b195d6066b97e20c1c32914fab4af3cc99fdbbd6038059880f1d9f5fbf",
+      "commit": "87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9",
       "dirty": false
     },
     {
       "path": "scripts/copy-assets.ts",
       "hash": "ffdb3d3b63a943a0d0eb4988f8fe71aa7e4fb937f4426a1e94bd6436ce4ae240",
-      "commit": "fc003057894bf3b290e98dfa23df070ac8ec6720",
+      "commit": "87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9",
       "dirty": false
     },
     {
       "path": "playwright.config.ts",
       "hash": "bd5ec053a7955be0aff01d803d5b8ccf76f5caf3975d14d01add39131305dfa0",
-      "commit": "fc003057894bf3b290e98dfa23df070ac8ec6720",
+      "commit": "87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9",
       "dirty": false
     },
     {
       "path": "tests/helpers/coverage.ts",
       "hash": "b0618f93d98a05007f90655a43399c0d1dde0ffc821714fca078ebcc314159fe",
-      "commit": "fc003057894bf3b290e98dfa23df070ac8ec6720",
+      "commit": "87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9",
       "dirty": false
     },
     {
       "path": "justfile",
       "hash": "59f755e76ae6bb1d9ac82a369d7aa6c1690b210929503d2e444e755203fee785",
-      "commit": "fc003057894bf3b290e98dfa23df070ac8ec6720",
+      "commit": "87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9",
       "dirty": false
     },
     {
       "path": "tests/helpers/ld-fixture.ts",
       "hash": "c515f734fecb2cbce3d6865da3587e6ee076aa9653bdf4bb328f9fb3a187cb53",
-      "commit": "fc003057894bf3b290e98dfa23df070ac8ec6720",
+      "commit": "87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9",
+      "dirty": false
+    },
+    {
+      "path": "src/lib/cli/headerMenuPrompt.ts",
+      "hash": "1a016eff6f72a2e2fc9268f62051b01ca9172597bb57293caa3172c0f957d528",
+      "commit": "87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9",
+      "dirty": false
+    },
+    {
+      "path": "package.json",
+      "hash": "73586ecb456b3247ce7d9444eca70c7920b166e90678bfb85ded2aebbdbadf7b",
+      "commit": "87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9",
+      "dirty": false
+    },
+    {
+      "path": "tests/api/cli.spec.ts",
+      "hash": "12887cfe8f8c0084d6c7b6a31f12b1286087627eb6bca3706bba9767290c42bf",
+      "commit": "87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9",
+      "dirty": false
+    },
+    {
+      "path": "tests/api/config.spec.ts",
+      "hash": "630668a6acedaf6e86bb365056c6efbb7fe70cd610d48accd32bb9f9647e3332",
+      "commit": "87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9",
+      "dirty": false
+    },
+    {
+      "path": "tests/e2e/header-navigation.spec.ts",
+      "hash": "ece5b5a0d23f1e1ab9155719ef51f5702ddface6ac0bf9b32a393dce70e00a8f",
+      "commit": "87b83ec5cc9a45ba0ad694778e1965f4fadbf7c9",
       "dirty": false
     }
   ],
@@ -1939,13 +1987,127 @@
     {
       "path": "src/shared/headerNavigation.ts",
       "hash": "b74d3a8a068bd36cd5f358b73861fe9c1e10246c015cb2ae45b25ea37dbd2c64",
-      "commit": "312b19e73af7e14376026829c53993831639facb",
+      "commit": "7633afce433bfc563f2cbe33a9205e0fc8f331b9",
       "dirty": false
     },
     {
       "path": "src/lib/cli/headerMenuPrompt.ts",
       "hash": "1a016eff6f72a2e2fc9268f62051b01ca9172597bb57293caa3172c0f957d528",
-      "commit": "b31c7fa53a6bd332a292b97d6c0f99785b5d7020",
+      "commit": "7633afce433bfc563f2cbe33a9205e0fc8f331b9",
+      "dirty": false
+    },
+    {
+      "path": "src/lib/cli/init.en.json",
+      "hash": "85f6823da57847add619a55a8a6c0ab42a9d2f9f81125d18c5a41b0e84f153bf",
+      "commit": "7633afce433bfc563f2cbe33a9205e0fc8f331b9",
+      "dirty": false
+    },
+    {
+      "path": "src/lib/cli/init.fr.json",
+      "hash": "7d51a04640e920b4294e2d2fa9c166aec8112ebb0d79955a777b4a6cc3450517",
+      "commit": "7633afce433bfc563f2cbe33a9205e0fc8f331b9",
+      "dirty": false
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/headerNavigation.svelte.ts",
+      "hash": "4a38f86f6a96ac033b7f06d9f18d9f6452727903d99693f91f16ac19dd52526d",
+      "commit": "7633afce433bfc563f2cbe33a9205e0fc8f331b9",
+      "dirty": false
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/Topbar.svelte",
+      "hash": "c52a4ad1a41d99d966a72919f3ea8da990f4fea37e751d1e73ea184dac771070",
+      "commit": "7633afce433bfc563f2cbe33a9205e0fc8f331b9",
+      "dirty": false
+    },
+    {
+      "path": "src/frontend-svelte/src/routes/Admin.svelte",
+      "hash": "0ef5c165e230244cb9fa2d2fa60d45db52a912fb4c42790a79b6c6ec30e9da56",
+      "commit": "7633afce433bfc563f2cbe33a9205e0fc8f331b9",
+      "dirty": false
+    },
+    {
+      "path": "src/routes/config.ts",
+      "hash": "417c86a901de21520a1d7d1e0ba931e5b9ed1f9f81b17ea1fe47a80dc581dddc",
+      "commit": "7633afce433bfc563f2cbe33a9205e0fc8f331b9",
+      "dirty": false
+    },
+    {
+      "path": "src/lib/config.ts",
+      "hash": "e07357da37d1c33da0afb866fa226cfd726270c694245cc484fe636091b98006",
+      "commit": "7633afce433bfc563f2cbe33a9205e0fc8f331b9",
+      "dirty": false
+    },
+    {
+      "path": "bin/cli.ts",
+      "hash": "cbbf78b195d6066b97e20c1c32914fab4af3cc99fdbbd6038059880f1d9f5fbf",
+      "commit": "7633afce433bfc563f2cbe33a9205e0fc8f331b9",
+      "dirty": false
+    },
+    {
+      "path": "starter-doc/.living-doc.json",
+      "hash": "1465ffedd3d3bc7a4b1b456c612763f5f62561c2b3b5294e7d1b36eab141f0ca",
+      "commit": "7633afce433bfc563f2cbe33a9205e0fc8f331b9",
+      "dirty": false
+    },
+    {
+      "path": "starter-doc-fr/.living-doc.json",
+      "hash": "f02b5818935ce1bccebeaf5364b4a65d8807ee40cecbb2ac494b408e58e9f50e",
+      "commit": "7633afce433bfc563f2cbe33a9205e0fc8f331b9",
+      "dirty": false
+    }
+  ],
+  "ADRS/2026_05_11_15_42_[STARTER_DOC]_bilingual_starter_doc_and_interactive_npx_initializer": [
+    {
+      "path": "bin/cli.ts",
+      "hash": "cbbf78b195d6066b97e20c1c32914fab4af3cc99fdbbd6038059880f1d9f5fbf",
+      "commit": "10cdb2fe47aff2b657f30b8956fb63e18b2f88bc",
+      "dirty": false
+    },
+    {
+      "path": "src/lib/cli/headerMenuPrompt.ts",
+      "hash": "1a016eff6f72a2e2fc9268f62051b01ca9172597bb57293caa3172c0f957d528",
+      "commit": "10cdb2fe47aff2b657f30b8956fb63e18b2f88bc",
+      "dirty": false
+    },
+    {
+      "path": "starter-doc/.living-doc.json",
+      "hash": "1465ffedd3d3bc7a4b1b456c612763f5f62561c2b3b5294e7d1b36eab141f0ca",
+      "commit": "10cdb2fe47aff2b657f30b8956fb63e18b2f88bc",
+      "dirty": false
+    },
+    {
+      "path": "starter-doc-fr/.living-doc.json",
+      "hash": "f02b5818935ce1bccebeaf5364b4a65d8807ee40cecbb2ac494b408e58e9f50e",
+      "commit": "10cdb2fe47aff2b657f30b8956fb63e18b2f88bc",
+      "dirty": false
+    }
+  ],
+  "2_guide/2026_04_09_11_00_[Configuration]_configurer_le_panneau_admin": [
+    {
+      "path": "src/frontend-svelte/src/routes/Admin.svelte",
+      "hash": "0ef5c165e230244cb9fa2d2fa60d45db52a912fb4c42790a79b6c6ec30e9da56",
+      "commit": "9edc01d3f26b7c9bd1cee1c685bf8ef8ba1e5970",
+      "dirty": false
+    },
+    {
+      "path": "src/shared/headerNavigation.ts",
+      "hash": "b74d3a8a068bd36cd5f358b73861fe9c1e10246c015cb2ae45b25ea37dbd2c64",
+      "commit": "9edc01d3f26b7c9bd1cee1c685bf8ef8ba1e5970",
+      "dirty": false
+    }
+  ],
+  "2_guide/2026_04_08_23_38_[Configuration]_demarrage_de_living_documentation": [
+    {
+      "path": "bin/cli.ts",
+      "hash": "cbbf78b195d6066b97e20c1c32914fab4af3cc99fdbbd6038059880f1d9f5fbf",
+      "commit": "f762fb64a92748df7792ed4c95863e6b481716cb",
+      "dirty": false
+    },
+    {
+      "path": "src/lib/cli/headerMenuPrompt.ts",
+      "hash": "1a016eff6f72a2e2fc9268f62051b01ca9172597bb57293caa3172c0f957d528",
+      "commit": "f762fb64a92748df7792ed4c95863e6b481716cb",
       "dirty": false
     }
   ]

@@ -1,6 +1,15 @@
 ---
 type: Document
 title: Configurer Le Panneau Admin
+sources:
+  - path: src/frontend-svelte/src/routes/Admin.svelte
+    hash: 0ef5c165e230244cb9fa2d2fa60d45db52a912fb4c42790a79b6c6ec30e9da56
+    commit: 9edc01d3f26b7c9bd1cee1c685bf8ef8ba1e5970
+    dirty: false
+  - path: src/shared/headerNavigation.ts
+    hash: b74d3a8a068bd36cd5f358b73861fe9c1e10246c015cb2ae45b25ea37dbd2c64
+    commit: 9edc01d3f26b7c9bd1cee1c685bf8ef8ba1e5970
+    dirty: false
 ---
 
 ## Panneau Admin
