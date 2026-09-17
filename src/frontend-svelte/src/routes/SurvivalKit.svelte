@@ -13,19 +13,6 @@
   let ready = $state(false);
   let dark = $state(false);
   let wordCloudOpen = $state(false);
-  let menuRevealed = $state(false);
-
-  // The top menu is a drawer that slides down only when the pointer nears the
-  // top edge. Once revealed it stays until the pointer drops below the drawer.
-  function onPointerY(clientY: number) {
-    menuRevealed = clientY <= (menuRevealed ? 84 : 10);
-  }
-  $effect(() => {
-    const onMove = (e: MouseEvent) => onPointerY(e.clientY);
-    window.addEventListener("mousemove", onMove);
-    return () => window.removeEventListener("mousemove", onMove);
-  });
-
   async function confirmDelete(title: string, message: string): Promise<boolean> {
     return confirmDialog.show({
       title,
@@ -70,21 +57,12 @@
 <ConfirmDialog bind:this={confirmDialog} />
 
 <div class="app-shell sk-root">
-  <!-- Thin hover strip at the very top that pulls the menu drawer down -->
-  <div
-    class="sk-menu-trigger"
-    role="presentation"
-    onmouseenter={() => (menuRevealed = true)}
-  ></div>
-
-  <div class="sk-menu-drawer" class:revealed={menuRevealed}>
-    <Topbar title={t("survival.title")} subtitle={t("survival.subtitle")}>
+  <Topbar title={t("survival.title")} subtitle={t("survival.subtitle")}>
       {#snippet actions()}
         <button onclick={() => (wordCloudOpen = true)} title={t("nav.word_cloud")} class="ghost-button" aria-label={t("nav.word_cloud")}><i class="fa-solid fa-cloud"></i></button>
         <button onclick={toggleDark} title="Toggle dark mode" class="ghost-button" aria-label="Toggle dark mode">{dark ? "☀" : "☾"}</button>
       {/snippet}
-    </Topbar>
-  </div>
+  </Topbar>
 
   {#if !ready}
     <p class="sk-loading">{t("common.loading")}</p>
@@ -107,39 +85,9 @@
     font-size: 14px;
   }
 
-  /* The menu is a fixed drawer, so the content row owns the full viewport. */
+  /* Keep the shared header outside the scrolling content, as on Home. */
   .sk-root {
     background: var(--bg);
-    grid-template-rows: minmax(0, 1fr);
-  }
-
-  /* ── Top menu drawer ─────────────────────────────────────────────────────── */
-  .sk-menu-trigger {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 10px;
-    z-index: 90;
-  }
-  .sk-menu-drawer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-    transform: translateY(-100%);
-    transition: transform 0.28s ease;
-    box-shadow: var(--shadow);
-  }
-  .sk-menu-drawer.revealed {
-    transform: translateY(0);
-  }
-  /* Outside the app-shell grid the topbar loses its 72px track height and
-     collapses to content height — restore it so the drawer matches the
-     regular top bar. */
-  .sk-menu-drawer :global(.topbar) {
-    height: 72px;
   }
 
   /* ── Uppercase pills & buttons (matches the original kit) ────────────────── */
