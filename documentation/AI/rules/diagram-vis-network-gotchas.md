@@ -9,6 +9,11 @@ tags:
   - z-order
   - custom-shape
   - svelte
+sources:
+  - path: src/frontend-svelte/src/lib/diagram/network.js
+    hash: 3c74df3c34df86a2b9c91a8bd0894975dc527347a61a425480c5543656cb5cfa
+    commit: 76ed9938ecb883cd66ab949cce4efd7ab621163e
+    dirty: true
 id: diagram-vis-network-gotchas
 severity: warning
 appliesto:

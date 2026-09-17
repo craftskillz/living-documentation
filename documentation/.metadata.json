@@ -2140,5 +2140,13 @@
       "commit": "930de9a5d7bc18a9328b4d8c4743a0b8624a304d",
       "dirty": false
     }
+  ],
+  "AI/rules/diagram-vis-network-gotchas": [
+    {
+      "path": "src/frontend-svelte/src/lib/diagram/network.js",
+      "hash": "3c74df3c34df86a2b9c91a8bd0894975dc527347a61a425480c5543656cb5cfa",
+      "commit": "76ed9938ecb883cd66ab949cce4efd7ab621163e",
+      "dirty": true
+    }
   ]
 }
