@@ -5,7 +5,8 @@ import path from "node:path";
 import fs from "node:fs";
 import { createInterface } from "node:readline/promises";
 import { startServer } from "../src/server";
-import { readConfig, isOkfMigrated } from "../src/lib/config";
+import { promptHiddenHeaderMenus } from "../src/lib/cli/headerMenuPrompt";
+import { readConfig, writeConfig, isOkfMigrated } from "../src/lib/config";
 import { migrateDocsFolder } from "../src/lib/migrate";
 import { validateOkfBundle } from "../src/lib/okf/validate";
 import { importOkfBundle } from "../src/lib/okf/import";
@@ -277,11 +278,15 @@ async function runInitWizard(
       }
     }
 
+    rl.close();
+    const hiddenHeaderMenus = await promptHiddenHeaderMenus(initLanguage);
+
     if (shouldCreateDocsPath) {
       fs.mkdirSync(docsPath, { recursive: true });
     }
 
     scaffoldStarter(docsPath, initLanguage);
+    writeConfig(docsPath, { hiddenHeaderMenus });
     replaceDocsFolderPlaceholders(docsPath, docsFolderReference(docsPath));
     const instructionFiles = initInstructionFiles(docsPath);
     createInitInstructionFiles(instructionFiles);
@@ -332,6 +337,8 @@ Notes:
   - The initializer copies AGENTS.md, CLAUDE.md and memory/MEMORY.md to the parent
     of the documentation folder, then exposes them in <folder>/AI/ through symbolic links.
     If one already exists with content, initialization stops instead of overwriting it.
+  - New projects hide optional header menus by default. In an interactive terminal, use
+    arrow keys and Space to select menus, then Enter to confirm. Change them later in Admin.
   - Configuration is persisted to <folder>/.living-doc.json. Edit it via the admin panel at /admin.
 `,
   )

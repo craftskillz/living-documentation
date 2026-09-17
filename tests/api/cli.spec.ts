@@ -153,6 +153,7 @@ test('CLI with an explicit folder without config initializes that folder', async
     expect(fs.existsSync(configPath)).toBe(true);
     const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
     expect(config.language).toBe('fr');
+    expect(config.hiddenHeaderMenus).toEqual(['/workspace', '/blueprint', '/graph', '/survival-kit', '/context']);
     const res = await request.get(`http://localhost:${port}/api/documents`);
     expect(res.ok()).toBe(true);
   } finally {
@@ -218,6 +219,7 @@ test('CLI without folder scaffolds starter-doc and boots the server', async () =
     const files = listFilesRecursive(dirAbs);
     const config = JSON.parse(fs.readFileSync(path.join(dirAbs, '.living-doc.json'), 'utf-8'));
     expect(config.language).toBe('en');
+    expect(config.hiddenHeaderMenus).toEqual(['/workspace', '/blueprint', '/graph', '/survival-kit', '/context']);
     expect(files.some((f) => f.endsWith('.md'))).toBe(true);
     expect(files).toContain('AI/2026_01_01_how_to.md');
     expect(files).toContain('AI/PROJECT-INSTRUCTIONS.md');
@@ -264,6 +266,7 @@ test('CLI without folder and --starter-language fr scaffolds the French starter'
     const config = JSON.parse(fs.readFileSync(path.join(dirAbs, '.living-doc.json'), 'utf-8'));
     const howTo = fs.readFileSync(path.join(dirAbs, 'AI', '2026_01_01_how_to.md'), 'utf-8');
     expect(config.language).toBe('fr');
+    expect(config.hiddenHeaderMenus).toEqual(['/workspace', '/blueprint', '/graph', '/survival-kit', '/context']);
     expect(howTo).toContain('Fonctionnement du contexte IA');
     expect(fs.existsSync(path.join(dirAbs, 'AI', 'default'))).toBe(false);
   } finally {

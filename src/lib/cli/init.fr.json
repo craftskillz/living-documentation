@@ -1,0 +1,12 @@
+{
+  "title": "Menus optionnels à afficher",
+  "help": "↑/↓ : naviguer · Espace : cocher/décocher · Entrée : valider · Échap : annuler. Modifiable ensuite dans Admin.",
+  "cancelled": "Installation annulée.",
+  "labels": {
+    "/workspace": "Workspace",
+    "/blueprint": "Blueprint",
+    "/graph": "Graph",
+    "/survival-kit": "Survival Kit",
+    "/context": "AI Context"
+  }
+}
