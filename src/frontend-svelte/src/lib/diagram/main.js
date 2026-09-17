@@ -30,6 +30,7 @@ import { loadCustomShapeLibraries, renderCustomShapeBar } from './custom-shapes.
 import { initDiagramDefaults, openDefaultsModal } from './defaults-modal.js';
 import { initNodeColorSwatch } from './node-panel.js';
 import { initEdgeColorSwatch } from './edge-panel.js';
+import { DIAGRAM_IMAGE_PARAM } from '../diagramImageLink';
 
 const DIAGRAM_ID_COPY_FEEDBACK_MS = 1800;
 
@@ -260,7 +261,7 @@ export function initDiagram() {
   document.getElementById('btnStampColor').addEventListener('click',    () => activateStamp('color'));
   document.getElementById('btnStampFontSize').addEventListener('click', () => activateStamp('fontSize'));
   document.getElementById('btnStampSize').addEventListener('click',     () => activateStamp('size'));
-  const _autoSaveImg = new URLSearchParams(window.location.search).get('img');
+  const _autoSaveImg = new URLSearchParams(window.location.search).get(DIAGRAM_IMAGE_PARAM);
   const _onCopyPng = _autoSaveImg
     ? () => saveSelectionAsPng(_autoSaveImg)
     : () => copySelectionAsPng();

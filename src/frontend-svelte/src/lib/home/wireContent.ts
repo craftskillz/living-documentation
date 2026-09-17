@@ -13,6 +13,7 @@ import {
   type CodeBlockAttrs,
 } from "./codeBlockAttributes";
 import { initKanbanBoard } from "./kanban";
+import { wireDiagramImageLinks } from "../diagramImageLink";
 import type { DocSummary } from "./types";
 
 declare global {
@@ -105,6 +106,7 @@ export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireO
   fillEmptyTableCells(contentEl);
   applyBlockquoteStyles(contentEl, opts.content);
   applyImageStyles(contentEl, opts.content);
+  wireDiagramImageLinks(contentEl);
   applyCompareBlockStyles(contentEl);
   applyColumnLayouts(contentEl);
   const codeBlockAttrs = collectCodeBlockAttributesFromSource(opts.content);

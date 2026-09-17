@@ -8,6 +8,7 @@ import { showNodePanel } from './node-panel.js';
 import { showToast }     from './toast.js';
 import { t }             from './t.js';
 import { uploadImageBlob } from './image-upload.js';
+import { markDiagramImageUpdated } from '../diagramImageLink';
 
 // ── Shared: render selection to a PNG blob ────────────────────────────────────
 
@@ -116,6 +117,7 @@ export async function saveSelectionAsPng(filename) {
   try {
     const name = filename.replace(/\.[^.]+$/, ''); // strip extension
     await uploadImageBlob(blob, 'png', name);
+    markDiagramImageUpdated(filename);
     showToast(t('diagram.toast.diagram_saved_png'));
   } catch {
     showToast(t('diagram.toast.diagram_save_png_error'), 'error');
