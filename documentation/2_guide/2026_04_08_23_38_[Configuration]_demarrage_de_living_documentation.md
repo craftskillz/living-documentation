@@ -17,7 +17,13 @@ Pour créer un nouveau projet de documentation, lancez la commande sans chemin :
 npx living-ai-documentation
 ```
 
-L'outil demande alors le dossier à créer, vérifie qu'il n'est pas non vide, puis demande la langue du starter (`en` ou `fr`).
+L’outil propose d’abord les projets configurés trouvés dans le dossier courant ou un niveau en dessous. Pour une nouvelle installation, il demande le dossier à créer, vérifie qu’il est absent ou vide, puis demande la langue du starter (`en` ou `fr`). Un chemin explicite sans `.living-doc.json` déclenche aussi l’initialisation.
+
+Dans un terminal interactif, une liste de cinq cases initialement décochées permet d’afficher Workspace, Blueprint, Graph, Survival Kit et AI Context : **↑/↓** pour naviguer, **Espace** pour cocher/décocher, **Entrée** pour valider, **Échap** ou **Ctrl+C** pour annuler. Valider sans cocher garde ces menus masqués. Sans terminal interactif, les cinq menus restent masqués sans question supplémentaire.
+
+Admin, Home, Favoris, Diagram, Files, Templates et Agents restent visibles. Le choix est modifiable ensuite dans **Admin → Menus du header**. Les projets déjà configurés conservent leurs préférences ; leurs pages restent accessibles par URL même lorsque leur menu est masqué.
+
+L’initialisation écrit aussi `AGENTS.md`, `CLAUDE.md` et `memory/MEMORY.md` dans le dossier parent des docs. Elle refuse d’écraser ces fichiers s’ils contiennent déjà du texte.
 
 ---
 
