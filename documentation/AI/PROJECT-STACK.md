@@ -87,6 +87,8 @@ L'utilisateur lance le CLI avec un dossier de documentation relatif, par exemple
 
 ```text
 bin/cli.ts                         <- entrée CLI Commander, wizard d'initialisation, validation du dossier relatif
+src/shared/headerNavigation.ts    <- liste et normalisation des menus optionnels, partagées serveur/CLI/frontend
+src/lib/cli/headerMenuPrompt.ts    <- sélecteur TTY sans dépendance, textes init.en.json / init.fr.json
 src/server.ts                      <- app Express, montage des routes API, frontend statique et MCP
 src/lib/config.ts                  <- lecture/écriture `.living-doc.json`, chemins relatifs portables, migration legacy
 src/lib/parser.ts                  <- parsing du filenamePattern et extraction date/catégorie/titre
@@ -149,6 +151,8 @@ memory/                           <- mémoire projet locale indexée par `memory
 - **Survival Kit** : dashboard local `/survival-kit` pour tâches, notes structurées et liens catégorisés, persisté dans `<docsFolder>/.survival-kit.json`.
 - **Starter doc** : initialisation interactive bilingue qui scaffold un dossier docs, `AGENTS.md`, `CLAUDE.md`, `memory/MEMORY.md` et les symlinks sous `AI/`, plus un dossier `WORKLOG/` avec `current-task.md` et une règle `track-current-work` pour la reprise opérationnelle entre assistants IA.
 - **Lecture TTS** : le viewer Home lit la langue dans le frontmatter (`language`, `lang`, `locale`, `langue`) ou la demande à l'utilisateur; la lecture passe par le port serveur `TtsEngine`/Kokoro, qui supporte actuellement `en` et renvoie une erreur explicite pour `fr`.
+
+- **Menus du header** : `hiddenHeaderMenus` persiste les routes optionnelles masquées ; Admin applique le choix au store `lib/headerNavigation.svelte.ts`. Les nouveaux starters masquent les cinq menus optionnels, sélectionnables au CLI en TTY. Les configurations existantes sans ce champ restent toutes visibles. Voir l’[ADR navigation](?doc=ADRS%252F2026_09_17_10_44_%255BNAVIGATION%255D_visibilite_des_menus_du_header_et_selection_a_installation).
 
 ## Conventions structurantes
 
