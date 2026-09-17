@@ -5,6 +5,8 @@ import path from 'node:path';
 import { test, expect } from '../helpers/ld-fixture';
 
 async function seed(request: APIRequestContext, baseURL: string) {
+  // The unconfigured-Git toast covers the library on mobile viewports.
+  await request.put(`${baseURL}/api/config`, { data: { gitIntegration: { mode: 'disabled' } } });
   const folder = await (await request.post(`${baseURL}/api/templates/folders`, { data: { name: 'Réunions' } })).json();
   const template = await (await request.post(`${baseURL}/api/templates/folders/${folder.id}/templates`, { data: { name: 'Réunion standard', content: '# Agenda\n\n- Decisions\n' } })).json();
   return { folder, template };
