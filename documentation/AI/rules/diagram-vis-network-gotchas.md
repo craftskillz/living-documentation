@@ -18,6 +18,10 @@ sources:
     hash: a436315aa7840b50a98a443d0326008d6e15650a6594cc9bead8c4988a60af57
     commit: 67a1ae7184efc4f7aad0f0c6ad95b40a948e6a10
     dirty: true
+  - path: src/frontend-svelte/src/lib/diagram/node-panel.js
+    hash: b2779eaa28fe966bea19dbb8ff9fd0b8a2ef3498932eaf914ae773fbe412728e
+    commit: 89987621d47293df1de5eb6d39e9a8c32e0d72bf
+    dirty: true
 id: diagram-vis-network-gotchas
 severity: warning
 appliesto:
