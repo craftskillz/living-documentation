@@ -16,7 +16,7 @@ status: To be validated
 
 ## État courant
 
-Implémenté, non commité. En ouvrant un lien diagramme depuis un document (`[![x](./images/n.png)](/diagram?id=…)`), le viewer ajoute `&img=n.png` au lien. Le bouton PNG écrase donc cette image au lieu de copier dans le presse-papier. Au retour, l'image est rechargée avec `?v=<timestamp>` (version en `sessionStorage` + mémoire) pour ne pas afficher la copie en cache.
+Feature terminée et commitée (`7d989d3d`). ADR créé : `ADRS/2026_09_17_11_46_[DIAGRAM]_mise_a_jour_de_limage_dun_diagramme_depuis_un_document_et_cache_busting` (To be validated, 4 sources attachées, accuracy 100 %). L'ADR `2026_04_12_[DIAGRAM]_insertion_diagramme_via_snippet_et_sauvegarde_auto_png` est passé en « Partially SuperSeeded ». En ouvrant un lien diagramme depuis un document (`[![x](./images/n.png)](/diagram?id=…)`), le viewer ajoute `&img=n.png` au lien. Le bouton PNG écrase donc cette image au lieu de copier dans le presse-papier. Au retour, l'image est rechargée avec `?v=<timestamp>` (version en `sessionStorage` + mémoire) pour ne pas afficher la copie en cache.
 
 Fichiers : `src/frontend-svelte/src/lib/diagramImageLink.ts` (nouveau), `lib/home/wireContent.ts`, `lib/diagram/clipboard.js`, `lib/diagram/main.js`, `tests/e2e/diagram.spec.ts`.
 
@@ -28,7 +28,7 @@ Fichiers : `src/frontend-svelte/src/lib/diagramImageLink.ts` (nouveau), `lib/hom
 
 ## Suite
 
-Commit par l'utilisateur, puis ADR si la feature est déclarée terminée.
+Aucune implémentation restante. Validation humaine du nouvel ADR ; `npm run okf:validate` : 281 documents, 0 erreur.
 
 ---
 
