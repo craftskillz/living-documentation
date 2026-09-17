@@ -12,6 +12,11 @@ tags:
   - svelte
   - configuration
 status: To be validated
+sources:
+  - path: src/shared/headerNavigation.ts
+    hash: b74d3a8a068bd36cd5f358b73861fe9c1e10246c015cb2ae45b25ea37dbd2c64
+    commit: 312b19e73af7e14376026829c53993831639facb
+    dirty: false
 ---
 
 ## Contexte
