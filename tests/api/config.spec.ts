@@ -57,3 +57,21 @@ test.describe("legacy config migration", () => {
     }
   });
 });
+
+test("header visibility persists only optional menus and can be reset", async ({ request, ld }) => {
+  const url = `${ld.baseURL}/api/config`;
+  expect((await (await request.get(url)).json()).hiddenHeaderMenus).toEqual([]);
+  const response = await request.put(url, {
+    data: { hiddenHeaderMenus: ["/context", "/workspace", "/blueprint", "/graph", "/survival-kit", "/context", "/admin", "/", "/diagram", "/files", "templates", "agents", "favorites", null] },
+  });
+  expect(response.ok()).toBeTruthy();
+  const expected = ["/workspace", "/blueprint", "/graph", "/survival-kit", "/context"];
+  expect((await response.json()).hiddenHeaderMenus).toEqual(expected);
+  expect((await (await request.get(url)).json()).hiddenHeaderMenus).toEqual(expected);
+  const stored = JSON.parse(fs.readFileSync(path.join(ld.docsAbs, ".living-doc.json"), "utf-8"));
+  expect(stored.hiddenHeaderMenus).toEqual(expected);
+  expect((await request.put(url, { data: { hiddenHeaderMenus: false } })).status()).toBe(400);
+  expect((await (await request.get(url)).json()).hiddenHeaderMenus).toEqual(expected);
+  await request.put(url, { data: { hiddenHeaderMenus: [] } });
+  expect((await (await request.get(url)).json()).hiddenHeaderMenus).toEqual([]);
+});

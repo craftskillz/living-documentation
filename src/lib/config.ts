@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { normalizeHiddenHeaderMenus } from "../shared/headerNavigation";
 import path from "node:path";
 
 export interface DiagramShapeDefault {
@@ -60,6 +61,7 @@ export interface StoredConfig {
   // Visual skin, independent of the light/dark `theme`. "tau" is a notebook-paper
   // look (serif prose on a graph-paper grid) adapted from huggingface/tau (MIT).
   siteTheme: "base" | "tau";
+  hiddenHeaderMenus: string[];
   // Documents the user pinned to the Favorites menu (order preserved).
   favorites: FavoriteDoc[];
   language: "en" | "fr";
@@ -159,6 +161,7 @@ const STORAGE_DEFAULTS: StoredConfig = {
   title: "Living Documentation",
   theme: "system",
   siteTheme: "base",
+  hiddenHeaderMenus: [],
   favorites: [],
   language: "en",
   port: 4321,
@@ -344,6 +347,7 @@ function readAndMigrate(docsPath: string): StoredConfig {
   return {
     ...STORAGE_DEFAULTS,
     ...(raw as Partial<StoredConfig>),
+    hiddenHeaderMenus: normalizeHiddenHeaderMenus(raw.hiddenHeaderMenus),
     gitIntegration: normalizeGitIntegration(raw.gitIntegration),
   };
 }

@@ -4,6 +4,7 @@ import App from "./App.svelte";
 import { initPersistentToast } from "./lib/persistentToast";
 import { applySiteThemeFromCache, syncSiteThemeFromConfig } from "./lib/siteTheme";
 import { installConfigObserver, onConfig } from "./lib/configObserver";
+import { syncHeaderNavigation } from "./lib/headerNavigation.svelte";
 import { favorites } from "./lib/favorites.svelte";
 import { cachedLang, loadI18n } from "./lib/i18n.svelte";
 
@@ -14,6 +15,7 @@ applySiteThemeFromCache();
 // client state (skin, favorites) in sync without any extra request.
 onConfig((cfg) => syncSiteThemeFromConfig(cfg));
 onConfig((cfg) => favorites.syncFromConfig(cfg));
+onConfig(syncHeaderNavigation);
 installConfigObserver();
 
 initPersistentToast();

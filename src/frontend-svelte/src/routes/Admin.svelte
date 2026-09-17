@@ -3,6 +3,7 @@
   import ConfigSection from "../lib/ConfigSection.svelte";
   import FileBrowser from "../lib/FileBrowser.svelte";
   import DiagramPalettes from "../lib/DiagramPalettes.svelte";
+  import { OPTIONAL_HEADER_MENUS, normalizeHiddenHeaderMenus, syncHeaderNavigation } from "../lib/headerNavigation.svelte";
   import Topbar from "../lib/Topbar.svelte";
   import { t, loadI18n } from "../lib/i18n.svelte";
   import { applySiteTheme } from "../lib/siteTheme";
@@ -15,6 +16,7 @@
   let port = $state("");
   let title = $state("");
   let theme = $state("system");
+  let hiddenHeaderMenus = $state<string[]>([]);
   let siteTheme = $state<"base" | "tau">("base");
   let sidebarSort = $state<"recent" | "oldest" | "alphabetical">("recent");
   let language = $state("en");
@@ -157,6 +159,7 @@
       port = cfg.port || "";
       title = cfg.title || "";
       theme = cfg.theme || "system";
+      hiddenHeaderMenus = normalizeHiddenHeaderMenus(cfg.hiddenHeaderMenus);
       siteTheme = cfg.siteTheme === "tau" ? "tau" : "base";
       sidebarSort = ["recent", "oldest", "alphabetical"].includes(cfg.sidebarSort) ? cfg.sidebarSort : "recent";
       language = cfg.language || "en";
@@ -209,7 +212,7 @@
     }
     const blocked = blockedFileExtensions.split(/[\s,]+/).map(e => e.trim().replace(/^\.+/, "").toLowerCase()).filter(e => /^[a-z0-9]+$/.test(e));
     const payload = {
-      title, theme, siteTheme, sidebarSort, language, filenamePattern: pattern,
+      title, theme, siteTheme, hiddenHeaderMenus, sidebarSort, language, filenamePattern: pattern,
       exclusiveFolderExpansion, exclusiveCategoryExpansion,
       codeBlockMaxHeight: Math.max(0, Math.min(5000, codeBlockMaxHeight || 0)),
       markdownSoftBreaks, imageRoundedCorners, imageCentered, imageBorder, codeBlockLightTheme,
@@ -229,6 +232,7 @@
     try {
       const res = await fetch("/api/config", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       if (!res.ok) throw new Error(await res.text());
+      syncHeaderNavigation(await res.json());
       showMsg("Settings saved.", "ok");
     } catch (err: unknown) {
       showMsg("Save failed: " + (err instanceof Error ? err.message : String(err)), "error");
@@ -334,6 +338,24 @@
             </select>
             <p class="field-hint">{t("admin.appearance.sidebar_sort_hint")}</p>
           </div>
+        </ConfigSection>
+
+        <ConfigSection icon="☰" title={t("admin.navigation.title")} description={t("admin.navigation.description")}>
+          {#each OPTIONAL_HEADER_MENUS as menu}
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                checked={!hiddenHeaderMenus.includes(menu.href)}
+                onchange={(event) => {
+                  hiddenHeaderMenus = event.currentTarget.checked
+                    ? hiddenHeaderMenus.filter((href) => href !== menu.href)
+                    : [...hiddenHeaderMenus, menu.href];
+                }}
+              />
+              {t(menu.labelKey)}
+            </label>
+          {/each}
+          <p class="field-hint">{t("admin.navigation.required")}</p>
         </ConfigSection>
 
         <!-- Filename convention -->

@@ -1,5 +1,6 @@
 import { Router, type Request, type Response } from 'express';
 import path from 'node:path';
+import { normalizeHiddenHeaderMenus } from '../shared/headerNavigation';
 import { readConfig, writeConfig, type StoredConfig } from '../lib/config';
 
 export function configRouter(docsPath: string): Router {
@@ -24,6 +25,7 @@ export function configRouter(docsPath: string): Router {
         'filenamePattern',
         'theme',
         'siteTheme',
+        'hiddenHeaderMenus',
         'favorites',
         'language',
         'showDiagramDebug',
@@ -69,6 +71,12 @@ export function configRouter(docsPath: string): Router {
       // siteTheme: only 'base' or 'tau'
       if ('siteTheme' in safe && !['base', 'tau'].includes(safe.siteTheme as string)) {
         delete (safe as Record<string, unknown>).siteTheme;
+      }
+      if ('hiddenHeaderMenus' in patch) {
+        if (!Array.isArray(patch.hiddenHeaderMenus)) {
+          return res.status(400).json({ error: 'hiddenHeaderMenus must be an array' });
+        }
+        safe.hiddenHeaderMenus = normalizeHiddenHeaderMenus(patch.hiddenHeaderMenus);
       }
       // sidebarSort: only 'recent', 'oldest' or 'alphabetical'
       if ('sidebarSort' in safe && !['recent', 'oldest', 'alphabetical'].includes(safe.sidebarSort as string)) {

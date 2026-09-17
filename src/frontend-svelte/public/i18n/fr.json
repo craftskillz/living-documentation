@@ -1,4 +1,11 @@
 {
+  "admin.navigation.title": "Menus du header",
+  "admin.navigation.description": "Choisissez les menus visibles dans la barre de navigation, puis enregistrez.",
+  "admin.navigation.required": "Toujours visibles : Admin, Home, Favoris, Diagram, Files, Templates et Agents. Les pages masquées restent accessibles par leur URL.",
+  "admin.navigation.workspace": "Workspace",
+  "admin.navigation.blueprint": "Blueprint",
+  "admin.navigation.survival_kit": "Survival Kit",
+  "admin.navigation.ai_context": "AI Context",
   "common.save": "Enregistrer",
   "common.cancel": "Annuler",
   "common.confirm": "Confirmer",

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { headerNavigation } from "./headerNavigation.svelte";
   import { t } from "./i18n.svelte";
   import TemplatesMenu from "./templates/TemplatesMenu.svelte";
   import AgentsMenu from "./AgentsMenu.svelte";
@@ -12,7 +13,6 @@
     actions?: import("svelte").Snippet;
   } = $props();
 
-  const currentPath = window.location.pathname;
 
   const allNav = $derived(
     [
@@ -26,7 +26,7 @@
       { label: "AI Context", href: "/context" },
       { label: "Admin", href: "/admin" },
       { label: "Home", href: "/" },
-    ].filter((link) => link.href !== currentPath)
+    ].filter((link, index, links) => !headerNavigation.hidden.includes(link.href) && links.findIndex((item) => item.href === link.href) === index)
   );
 
   function handleNavClick(event: MouseEvent, href: string) {

@@ -1,4 +1,11 @@
 {
+  "admin.navigation.title": "Header menus",
+  "admin.navigation.description": "Choose the menus shown in the navigation bar, then save.",
+  "admin.navigation.required": "Always visible: Admin, Home, Favorites, Diagram, Files, Templates and Agents. Hidden pages remain accessible by URL.",
+  "admin.navigation.workspace": "Workspace",
+  "admin.navigation.blueprint": "Blueprint",
+  "admin.navigation.survival_kit": "Survival Kit",
+  "admin.navigation.ai_context": "AI Context",
   "common.save": "Save",
   "common.cancel": "Cancel",
   "common.confirm": "Confirm",

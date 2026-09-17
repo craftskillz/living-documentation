@@ -65,6 +65,14 @@ textarea {
   flex-shrink: 0;
 }
 
+.topbar .ghost-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.2;
+}
+
 /* Dark mode — only active when `.dark` is set on documentElement (home page). */
 .dark .topbar {
   background: rgb(17 24 39 / 92%);
