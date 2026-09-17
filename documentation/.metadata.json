@@ -159,6 +159,12 @@
       "hash": "0552e6ffb53b1800631e6cc884db6d56003b4c12a687749fa13c07be205d411e",
       "commit": "8dd036034b277087950d771ff048c3dd43cd428d",
       "dirty": true
+    },
+    {
+      "path": "src/frontend-svelte/public/i18n/en.json",
+      "hash": "423eb04cec68d99d79db2aad0ea509318726eb4f0b4af0c180d0fa06f288a365",
+      "commit": "843a7de9c403bf68e05e7eca1a88a43b00e19f44",
+      "dirty": true
     }
   ],
   "AI/rules/diagram-vis-network-gotchas": [
