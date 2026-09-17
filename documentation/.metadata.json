@@ -143,10 +143,6 @@
   ],
   "AI/rules/i18n-user-visible-strings": [
     {
-      "path": "src/frontend/i18n/fr.json",
-      "hash": "e40ab533bb0429546d666b1b27c42fb296acbc8aa254b2f45e86c776275b7139"
-    },
-    {
       "path": "src/frontend-svelte/src/lib/i18n.svelte.ts",
       "hash": "0552e6ffb53b1800631e6cc884db6d56003b4c12a687749fa13c07be205d411e",
       "commit": "8dd036034b277087950d771ff048c3dd43cd428d",
