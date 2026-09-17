@@ -145,19 +145,19 @@
     {
       "path": "src/frontend-svelte/src/lib/i18n.svelte.ts",
       "hash": "0552e6ffb53b1800631e6cc884db6d56003b4c12a687749fa13c07be205d411e",
-      "commit": "8dd036034b277087950d771ff048c3dd43cd428d",
+      "commit": "0b0ddd9b291f1c5bba5085fa04c8956df6a1556c",
       "dirty": true
     },
     {
       "path": "src/frontend-svelte/public/i18n/en.json",
       "hash": "423eb04cec68d99d79db2aad0ea509318726eb4f0b4af0c180d0fa06f288a365",
-      "commit": "843a7de9c403bf68e05e7eca1a88a43b00e19f44",
+      "commit": "0b0ddd9b291f1c5bba5085fa04c8956df6a1556c",
       "dirty": true
     },
     {
       "path": "src/frontend-svelte/public/i18n/fr.json",
       "hash": "472d5a1cefa66c9cb634427e86678979e03c3d67e8896f7d0636abbbf7c2b913",
-      "commit": "6d051751c80273d380f5179fa61aeec7be115015",
+      "commit": "0b0ddd9b291f1c5bba5085fa04c8956df6a1556c",
       "dirty": true
     }
   ],
