@@ -34,6 +34,7 @@ Côté MCP, les agents ont `search_source` pour le code, mais **aucun outil pour
 5. **Pas de réindexation périodique.** L'index est mis à jour de façon incrémentale à l'enregistrement d'un document et vérifié juste avant chaque recherche. Un écran permet l'activation, l'indexation manuelle et le suivi de l'état.
 6. **Pas de base vectorielle.** Stockage à plat sur disque et calcul de similarité en mémoire, suffisant pour quelques milliers de passages.
 7. **Pas d'outil MCP de recherche par mots-clés séparé.** La navigation OKF (`index.md` avec descriptions) couvre l'exploration, et `search_knowledge` intègre déjà la recherche par mots-clés (BM25) dans sa recherche hybride.
+   `search_knowledge` est **toujours disponible** : sans modèle activé, il fonctionne en mode mots-clés seul (`mode: "keyword"`).
 8. **Tout ce qui est calculé vit hors du projet**, dans le cache utilisateur `~/.cache/.living-documentation/` : le modèle (partagé entre projets) et l'index de chaque projet. Rien n'est écrit dans le dossier de doc, rien ne peut être commité.
 9. **L'écran RAG est un menu masquable de la barre du haut.**
 10. **Une commande CLI permet d'activer, d'indexer et de consulter l'état du RAG** sans ouvrir l'UI.
@@ -123,7 +124,7 @@ Plus aucun point à trancher.
 
 ### ~~Ticket A3 — Outil MCP `search_documents`~~ — abandonné
 
-Redondant avec la navigation OKF (`index.md`) et avec la partie BM25 de `search_knowledge` (B5). Le besoin « recherche sans modèle » est traité par le point à trancher n° 7.
+Redondant avec la navigation OKF (`index.md`) et avec `search_knowledge`, qui fonctionne en mode mots-clés sans modèle (B5a, point tranché n° 7).
 
 ---
 
@@ -277,7 +278,7 @@ Redondant avec la navigation OKF (`index.md`) et avec la partie BM25 de `search_
     - même convention que les autres menus optionnels : proposée dans le sélecteur de menus à l'installation (masquée par défaut en installation non interactive) et réglable dans Admin ;
     - la visibilité du menu est indépendante de l'activation : masquer le menu ne désactive pas le RAG ;
   - **Page `/rag`** :
-    - état lisible : « Non installé », « Désactivé », « Modèle non téléchargé », « Non indexé », « À jour », « N documents en attente », « Indexation en cours (x / y) » ;
+    - état lisible : « Non installé », « Désactivé », « Modèle non téléchargé », « Non indexé » (les agents utilisent alors la recherche par mots-clés, à indiquer), « À jour », « N documents en attente », « Indexation en cours (x / y) » ;
     - bouton **Activer** avec confirmation indiquant la taille du téléchargement ;
     - boutons **Indexer maintenant**, **Reconstruire l'index**, **Supprimer l'index**, **Supprimer le modèle**, **Désactiver** ;
     - barre de progression pendant téléchargement et indexation ;
@@ -292,7 +293,7 @@ Redondant avec la navigation OKF (`index.md`) et avec la partie BM25 de `search_
   - modifier un document hors app → l'état affiche « 1 document en attente » ;
   - supprimer l'index puis le modèle libère l'espace disque ;
   - tests API des routes et test e2e du parcours principal (téléchargement simulé ou modèle de test léger, pour ne pas télécharger en CI).
-- **Dépend de** : B3 (B5 pour tester de bout en bout).
+- **Dépend de** : B3, B9 (même logique d'activation et d'indexation), B5b pour tester de bout en bout.
 
 ### Ticket B7 — Sources affichées dans les agents du Workspace
 
@@ -305,7 +306,7 @@ Redondant avec la navigation OKF (`index.md`) et avec la partie BM25 de `search_
   - inclure cette section dans le document de run d'agent généré ;
   - rappel : un agent n'a accès qu'aux outils nommés dans son prompt système, documenter qu'il faut y nommer `search_knowledge`.
 - **Acceptation** : un agent dont le prompt nomme `search_knowledge` affiche la liste des sources consultées, même si sa réponse texte n'en cite aucune ; test sur le flux d'événements.
-- **Dépend de** : B5.
+- **Dépend de** : B5a (fonctionne dans les deux modes).
 
 ### Ticket B8 — Documentation
 
