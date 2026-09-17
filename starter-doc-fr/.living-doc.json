@@ -3,7 +3,7 @@
   "title": "Living Documentation",
   "theme": "system",
   "language": "fr",
-  "hiddenHeaderMenus": ["/workspace", "/blueprint", "/graph", "/survival-kit", "/context"],
+  "hiddenHeaderMenus": ["/blueprint", "/graph", "/survival-kit", "/context", "#word-cloud"],
   "favorites": [
     {
       "id": "000_DOCUMENTATION%2F2026_06_30_10_00_%5BDOCUMENTATION%5D_Bienvenue_dans_Living_Documentation",

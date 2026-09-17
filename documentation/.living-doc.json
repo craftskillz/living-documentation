@@ -6,7 +6,7 @@
   "hiddenHeaderMenus": [],
   "favorites": [],
   "language": "fr",
-  "port": 4399,
+  "port": 4321,
   "extraFiles": [
     "../README.md",
     "../README.fr.md"

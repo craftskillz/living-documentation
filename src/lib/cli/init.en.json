@@ -3,10 +3,10 @@
   "help": "↑/↓: move · Space: toggle · Enter: confirm · Esc: cancel. You can change this later in Admin.",
   "cancelled": "Installation cancelled.",
   "labels": {
-    "/workspace": "Workspace",
     "/blueprint": "Blueprint",
     "/graph": "Graph",
     "/survival-kit": "Survival Kit",
-    "/context": "AI Context"
+    "/context": "AI Context",
+    "#word-cloud": "Word Cloud"
   }
 }

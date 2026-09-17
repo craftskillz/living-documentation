@@ -73,6 +73,7 @@ test("header visibility persists only optional menus and can be reset", async ({
         "/graph",
         "/survival-kit",
         "/context",
+        "#word-cloud",
         "/admin",
         "/",
         "/diagram",
@@ -85,7 +86,13 @@ test("header visibility persists only optional menus and can be reset", async ({
     },
   });
   expect(response.ok()).toBeTruthy();
-  const expected = ["/blueprint", "/graph", "/survival-kit", "/context"];
+  const expected = [
+    "/blueprint",
+    "/graph",
+    "/survival-kit",
+    "/context",
+    "#word-cloud",
+  ];
   expect((await response.json()).hiddenHeaderMenus).toEqual(expected);
   expect((await (await request.get(url)).json()).hiddenHeaderMenus).toEqual(
     expected,

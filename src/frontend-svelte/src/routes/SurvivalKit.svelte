@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import Topbar from "../lib/Topbar.svelte";
+  import { headerNavigation, WORD_CLOUD_MENU } from "../lib/headerNavigation.svelte";
   import ConfirmDialog from "../lib/ConfirmDialog.svelte";
   import { t, loadI18n } from "../lib/i18n.svelte";
   import { loadState } from "../lib/survival-kit/store.svelte";
@@ -59,7 +60,9 @@
 <div class="app-shell sk-root">
   <Topbar title={t("survival.title")} subtitle={t("survival.subtitle")}>
       {#snippet actions()}
-        <button onclick={() => (wordCloudOpen = true)} title={t("nav.word_cloud")} class="ghost-button" aria-label={t("nav.word_cloud")}><i class="fa-solid fa-cloud"></i></button>
+        {#if !headerNavigation.hidden.includes(WORD_CLOUD_MENU)}
+          <button onclick={() => (wordCloudOpen = true)} title={t("nav.word_cloud")} class="ghost-button" aria-label={t("nav.word_cloud")}><i class="fa-solid fa-cloud"></i></button>
+        {/if}
         <button onclick={toggleDark} title="Toggle dark mode" class="ghost-button" aria-label="Toggle dark mode">{dark ? "☀" : "☾"}</button>
       {/snippet}
   </Topbar>

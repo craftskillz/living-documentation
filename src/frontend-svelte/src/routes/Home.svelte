@@ -6,6 +6,7 @@
   import { t, loadI18n } from "../lib/i18n.svelte";
   import * as api from "../lib/home/api";
   import Topbar from "../lib/Topbar.svelte";
+  import { headerNavigation, WORD_CLOUD_MENU } from "../lib/headerNavigation.svelte";
   import Sidebar from "../lib/home/Sidebar.svelte";
   import DocViewer from "../lib/home/DocViewer.svelte";
   import NewFolderModal from "../lib/home/NewFolderModal.svelte";
@@ -293,7 +294,9 @@
       <span class="absolute left-2.5 top-2 text-gray-400 text-sm pointer-events-none">🔍</span>
     </div>
     {#snippet actions()}
-      <button onclick={() => (wordCloudOpen = true)} title={t("nav.word_cloud")} class="ghost-button" aria-label={t("nav.word_cloud")}><i class="fa-solid fa-cloud"></i></button>
+      {#if !headerNavigation.hidden.includes(WORD_CLOUD_MENU)}
+        <button onclick={() => (wordCloudOpen = true)} title={t("nav.word_cloud")} class="ghost-button" aria-label={t("nav.word_cloud")}><i class="fa-solid fa-cloud"></i></button>
+      {/if}
       {#if !siteThemeTau}
         <button onclick={toggleDark} title="Toggle dark mode" class="ghost-button" aria-label="Toggle dark mode">{dark ? "☀" : "☾"}</button>
       {/if}

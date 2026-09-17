@@ -183,6 +183,7 @@ test("CLI with an explicit folder without config initializes that folder", async
       "/graph",
       "/survival-kit",
       "/context",
+      "#word-cloud",
     ]);
     const res = await request.get(`http://localhost:${port}/api/documents`);
     expect(res.ok()).toBe(true);
@@ -266,6 +267,7 @@ test("CLI without folder scaffolds starter-doc and boots the server", async () =
       "/graph",
       "/survival-kit",
       "/context",
+      "#word-cloud",
     ]);
     expect(files.some((f) => f.endsWith(".md"))).toBe(true);
     expect(files).toContain("AI/2026_01_01_how_to.md");
@@ -339,6 +341,7 @@ test("CLI without folder and --starter-language fr scaffolds the French starter"
       "/graph",
       "/survival-kit",
       "/context",
+      "#word-cloud",
     ]);
     expect(howTo).toContain("Fonctionnement du contexte IA");
     expect(fs.existsSync(path.join(dirAbs, "AI", "default"))).toBe(false);
