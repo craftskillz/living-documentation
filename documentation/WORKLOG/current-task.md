@@ -12,6 +12,26 @@ timestamp: 2026-09-16T15:45:00Z
 status: To be validated
 ---
 
+# Mise à jour de l'image d'un diagramme depuis un document — 17 septembre 2026
+
+## État courant
+
+Implémenté, non commité. En ouvrant un lien diagramme depuis un document (`[![x](./images/n.png)](/diagram?id=…)`), le viewer ajoute `&img=n.png` au lien. Le bouton PNG écrase donc cette image au lieu de copier dans le presse-papier. Au retour, l'image est rechargée avec `?v=<timestamp>` (version en `sessionStorage` + mémoire) pour ne pas afficher la copie en cache.
+
+Fichiers : `src/frontend-svelte/src/lib/diagramImageLink.ts` (nouveau), `lib/home/wireContent.ts`, `lib/diagram/clipboard.js`, `lib/diagram/main.js`, `tests/e2e/diagram.spec.ts`.
+
+## Vérifications
+
+- `npm run build` réussi.
+- `tests/e2e/diagram.spec.ts` (2/2, dont le nouveau parcours complet), `inline-snippet-edit` + `viewer` (50/50).
+- Parcours vérifié manuellement dans le navigateur sur une copie de la fixture `with-diagrams`.
+
+## Suite
+
+Commit par l'utilisateur, puis ADR si la feature est déclarée terminée.
+
+---
+
 # Menus du header — 17 septembre 2026
 
 ## État courant
