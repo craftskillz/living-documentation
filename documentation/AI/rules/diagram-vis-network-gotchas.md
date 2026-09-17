@@ -9,9 +9,6 @@ tags:
   - z-order
   - custom-shape
   - svelte
-sources:
-  - path: src/frontend/diagram/grid.js
-    hash: c751c3a259fc79f73764a6199f6da7af3f18ff2e5687b47fc2e124fdad2d8c55
 id: diagram-vis-network-gotchas
 severity: warning
 appliesto:

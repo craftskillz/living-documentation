@@ -161,12 +161,6 @@
       "dirty": true
     }
   ],
-  "AI/rules/diagram-vis-network-gotchas": [
-    {
-      "path": "src/frontend/diagram/grid.js",
-      "hash": "c751c3a259fc79f73764a6199f6da7af3f18ff2e5687b47fc2e124fdad2d8c55"
-    }
-  ],
   "AI/rules/playwright-coverage-through-cli": [
     {
       "path": "tests/helpers/server.ts",
