@@ -15,8 +15,10 @@ tags:
   - frontend
   - inline-editing
 timestamp: 2026-04-12T00:00:00Z
-status: Accepted
+status: Partially SuperSeeded by 2026_09_17_11_46_[DIAGRAM]_mise_a_jour_de_limage_dun_diagramme_depuis_un_document_et_cache_busting.md (le paramètre img est aussi posé sur les liens diagramme rendus dans un document)
 ---
+
+> **Partiellement remplacé** par [Mise à jour de l'image d'un diagramme depuis un document et cache busting](?doc=ADRS%252F2026_09_17_11_46_%255BDIAGRAM%255D_mise_a_jour_de_limage_dun_diagramme_depuis_un_document_et_cache_busting) : le paramètre `img` n'est plus réservé au flux d'insertion du snippet, et l'image réexportée est réaffichée sans cache au retour. Le premier point des CONS ci-dessous ne s'applique plus quand on ouvre le diagramme depuis le document.
 
 ## Context
 
