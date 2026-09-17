@@ -2123,6 +2123,12 @@
       "hash": "b0f63fa665a046ac8e3199bf1394a43310bf71a0b07ea6163fb19c1db908b802",
       "commit": "267fa7f5fe68bbdc49db57fe0e9e528b81ba74c3",
       "dirty": false
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/wireContent.ts",
+      "hash": "42c2811e1f4ea7732b9312fe612453b1399f22b4045a3e44ea0788fc323a29e2",
+      "commit": "39ef0ef1ba56da454763cf889c802353c0d6cd6d",
+      "dirty": false
     }
   ]
 }
