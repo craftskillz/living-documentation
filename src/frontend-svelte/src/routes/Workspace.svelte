@@ -73,12 +73,13 @@
               <small class="field-note">Reference an environment variable only — <code>env:VAR_NAME</code> (or <code>&#123;VAR_NAME&#125;</code>). The secret is read from the server environment at request time; literal tokens are not stored (the workspace file is tracked by git).</small>
             </label>
             <div class="field wide model-field-row">
-              <span>Model</span>
+              <span>{t("workspace.model.label")}</span>
+              <input id="nodeModelFilter" class="model-filter" type="search" placeholder={t("workspace.model.filter_placeholder")} autocomplete="off" spellcheck="false" hidden />
               <div class="model-select-wrap">
                 <select id="nodeModel" name="nodeModel">
-                  <option value="" disabled selected>— click ↻ to load models —</option>
+                  <option value="" disabled selected>{t("workspace.model.placeholder")}</option>
                 </select>
-                <button id="loadModelsButton" class="icon-button" type="button" title="Load models from endpoint">↻</button>
+                <button id="loadModelsButton" class="icon-button" type="button" title={t("workspace.model.load")}>↻</button>
               </div>
             </div>
             <fieldset class="field wide tool-mode-field">

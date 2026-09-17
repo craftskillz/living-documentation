@@ -12,6 +12,7 @@ import {
   showPersistentLoadingToast,
   showPersistentToast,
 } from "../persistentToast.js";
+import { t } from "../i18n.svelte";
 
 type WorkspaceCanvasContext = globalThis.CanvasRenderingContext2D & {
   drawElementImage?: (
@@ -164,6 +165,7 @@ let addButton!: HTMLButtonElement;
 let fitButton!: HTMLButtonElement;
 let testNodeButton!: HTMLButtonElement;
 let loadModelsButton!: HTMLButtonElement;
+let loadedModels: string[] = [];
 let closePanelButton!: HTMLButtonElement;
 let deleteNodeButton!: HTMLButtonElement;
 let renameConfirmOverlay!: HTMLElement;
@@ -302,6 +304,7 @@ export function initWorkspace(): () => void {
     endpoint: document.getElementById("nodeEndpoint") as HTMLInputElement,
     token: document.getElementById("nodeToken") as HTMLInputElement,
     model: document.getElementById("nodeModel") as HTMLSelectElement,
+    modelFilter: document.getElementById("nodeModelFilter") as HTMLInputElement,
     providerTypeChat: document.getElementById(
       "nodeProviderTypeChat",
     ) as HTMLInputElement,
@@ -617,6 +620,10 @@ export function initWorkspace(): () => void {
     if (newName) savedAgentLabel = newName;
     savedAgentFolder = workspaceFolderForProvider(newName);
     scheduleWorkspaceSave();
+  });
+
+  fields.modelFilter.addEventListener("input", () => {
+    renderModelOptions();
   });
 
   fields.model.addEventListener("change", () => {
@@ -1569,8 +1576,8 @@ function syncLlmProviderTypeVisibility(selected: Entity) {
   fields.providerIdField.hidden = !isLlm;
   fields.toolModeField.hidden = !isLlm || isImageProvider;
   loadModelsButton.title = isImageProvider
-    ? "Load image models from endpoint"
-    : "Load chat models from endpoint";
+    ? t("workspace.model.load_image")
+    : t("workspace.model.load_chat");
   testNodeButton.title = isImageProvider
     ? "Test image provider configuration"
     : "Test chat provider configuration";
@@ -1579,6 +1586,7 @@ function syncLlmProviderTypeVisibility(selected: Entity) {
 function restoreModelSelect(savedModel: string) {
   const existing = Array.from(fields.model.options).map((o) => o.value);
   if (savedModel && !existing.includes(savedModel)) {
+    setLoadedModels([]);
     fields.model.innerHTML = "";
     const opt = document.createElement("option");
     opt.value = savedModel;
@@ -1816,6 +1824,50 @@ function tokenValueForPersistence(token: string): string {
 const TOKEN_REF_HINT =
   "API token must reference an environment variable, e.g. env:LLM_API_KEY";
 
+function setLoadedModels(models: string[]) {
+  loadedModels = models;
+  fields.modelFilter.value = "";
+  fields.modelFilter.hidden = models.length === 0;
+  renderModelOptions();
+}
+
+// Every whitespace-separated term must appear (case-insensitive), so
+// "z.ai ultra" narrows to models containing both. The current selection is
+// always kept so filtering never silently changes the saved model.
+function renderModelOptions() {
+  if (loadedModels.length === 0) return;
+  const currentValue = fields.model.value;
+  const terms = fields.modelFilter.value.toLowerCase().split(/\s+/).filter(Boolean);
+  const matches = loadedModels.filter((id) => {
+    const lower = id.toLowerCase();
+    return terms.every((term) => lower.includes(term));
+  });
+  const visible =
+    currentValue && loadedModels.includes(currentValue) && !matches.includes(currentValue)
+      ? [currentValue, ...matches]
+      : matches;
+
+  fields.model.innerHTML = "";
+  for (const id of visible) {
+    const opt = document.createElement("option");
+    opt.value = id;
+    opt.textContent = id;
+    fields.model.appendChild(opt);
+  }
+  if (matches.length === 0) {
+    const opt = document.createElement("option");
+    opt.value = "";
+    opt.disabled = true;
+    opt.textContent = t("workspace.model.no_match");
+    fields.model.appendChild(opt);
+  }
+  fields.model.value = currentValue && visible.includes(currentValue) ? currentValue : (visible[0] ?? "");
+  fields.modelFilter.title = t("workspace.model.filter_count", {
+    shown: String(matches.length),
+    total: String(loadedModels.length),
+  });
+}
+
 async function loadModelsForSelect() {
   const selected = selectedEntity();
   if (selected?.kind !== "llm") return;
@@ -1823,7 +1875,7 @@ async function loadModelsForSelect() {
   syncSelectedFromForm();
   const endpoint = selected.config.endpoint;
   if (!endpoint) {
-    showSaveToast("Set an endpoint first.");
+    showSaveToast(t("workspace.model.endpoint_required"));
     return;
   }
   if (tokenRefInvalid(selected.config.token)) {
@@ -1846,25 +1898,24 @@ async function loadModelsForSelect() {
   fields.model.disabled = false;
 
   if (!result.ok || !result.models?.length) {
-    showSaveToast(result.error ?? "No models found.");
+    showSaveToast(result.error ?? t("workspace.model.none_found"));
     return;
   }
 
   const previousValue = fields.model.value;
-  fields.model.innerHTML = "";
-  for (const id of result.models) {
-    const opt = document.createElement("option");
-    opt.value = id;
-    opt.textContent = id;
-    fields.model.appendChild(opt);
-  }
+  setLoadedModels(result.models);
   fields.model.value = result.models.includes(previousValue)
     ? previousValue
     : result.models[0];
+  renderModelOptions();
   selected.config.model = fields.model.value;
   testNodeButton.disabled = !fields.model.value;
   showSaveToast(
-    `${result.models.length} model${result.models.length === 1 ? "" : "s"} loaded.`,
+    result.models.length === 1
+      ? t("workspace.model.loaded_one")
+      : t("workspace.model.loaded_many", {
+          count: String(result.models.length),
+        }),
   );
   scheduleRender();
 }
