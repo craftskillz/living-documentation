@@ -9,8 +9,6 @@ tags:
   - ux
   - traductions
 sources:
-  - path: src/frontend/i18n/en.json
-    hash: fcb7206ee6e309871a6590d627d28778e7e247935189b880088900370a2b8768
   - path: src/frontend/i18n/fr.json
     hash: e40ab533bb0429546d666b1b27c42fb296acbc8aa254b2f45e86c776275b7139
   - path: src/frontend-svelte/src/lib/i18n.svelte.ts
