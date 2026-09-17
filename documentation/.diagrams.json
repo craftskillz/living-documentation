@@ -3627,6 +3627,32 @@
         "locked": false,
         "x": -313,
         "y": -89
+      },
+      {
+        "id": "n1789638183117",
+        "label": "TOTO",
+        "shapeType": "post-it",
+        "colorKey": "c-orange",
+        "customShapeId": null,
+        "labelPlacement": null,
+        "kind": null,
+        "renderAs": null,
+        "description": null,
+        "evidence": null,
+        "nodeWidth": 120,
+        "nodeHeight": 100,
+        "fontSize": 13,
+        "textAlign": null,
+        "textValign": null,
+        "bgOpacity": null,
+        "rotation": 0,
+        "labelRotation": 0,
+        "imageSrc": null,
+        "groupId": null,
+        "nodeLink": null,
+        "locked": false,
+        "x": 85,
+        "y": -42
       }
     ],
     "edges": [
@@ -4298,7 +4324,7 @@
     "gridEnabled": false,
     "alignGuides": true
   },
-{
+  {
     "id": "d1780845230725",
     "title": "script check-readme-sync",
     "nodes": [
@@ -4547,5 +4573,4 @@
     "gridEnabled": false,
     "alignGuides": true
   }
-
 ]
