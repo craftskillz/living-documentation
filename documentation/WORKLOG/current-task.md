@@ -93,3 +93,10 @@ ADR T14 : [Graphe de concepts OKF](?doc=ADRS%252F2026_09_16_17_40_%255BOKF%255D_
 ## Simplification de l’outillage — 16 septembre 2026
 
 Retrait de l’ancien outillage de graphe externe demandé par l’utilisateur. Le format OKF, le MCP Living Documentation et le visualiseur `/graph` sont conservés. Nettoyage des consignes, hooks, skill, caches et références documentaires terminé et commité (`bfd96ee9`). Un ADR dédié consigne la décision. Tests unitaires : 24/24 ; validation OKF sans erreur. Le push reste à la charge de l’utilisateur.
+
+
+## Correction du header Survival Kit — 17 septembre 2026
+
+Suppression du menu escamotable au survol dans `src/frontend-svelte/src/routes/SurvivalKit.svelte`. La Topbar est maintenant une ligne normale de la grille partagée `app-shell`, hors des zones défilantes, comme sur Home. Suppression du listener mousemove, du déclencheur de survol et des styles de translation du tiroir.
+
+Vérifications : build réussi et `git diff --check` sans erreur. Les tests navigateur grand/petit écran n’ont pas été exécutés : la demande d’exécution hors sandbox a été refusée. Validation visuelle à effectuer. Correction non commitée ; aucun hash documentaire recalculé sur ce code modifié.
