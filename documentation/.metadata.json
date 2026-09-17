@@ -824,27 +824,39 @@
   "2026_06_03_23_20_[CI]_durcissement_securite_des_workflows_github_actions_avec_zizmor_pin_sha_permissions_et_persistcredentials": [
     {
       "path": ".github/workflows/publish.yml",
-      "hash": "4fd88ac69bbae78808be98e85f34ba9ba470bce5a81d78bd56f9a1a58b6f7d88"
+      "hash": "7f5c1ad234a073f039092a021f5e5c26984e56e61151ceb6b60b98168d797ad2",
+      "commit": "e37ba4542e4915c77acb0007e1a682724d801e00",
+      "dirty": false
     },
     {
       "path": ".github/workflows/e2e.yml",
-      "hash": "f2a7981d24b588832951dff2560f91fdaa5bb499bb70a21d9c8aaf404a4ca9ba"
+      "hash": "208890ed944eea833b6908c3c8d7aba7c45b8799bc2da008f261722c2ba84e27",
+      "commit": "e37ba4542e4915c77acb0007e1a682724d801e00",
+      "dirty": false
     },
     {
       "path": ".github/workflows/readme-sync.yml",
-      "hash": "d42d67093e506ea2b07d282298444906bfbb18db484cf1e9dc1f8199226f8bb3"
+      "hash": "d42d67093e506ea2b07d282298444906bfbb18db484cf1e9dc1f8199226f8bb3",
+      "commit": "e37ba4542e4915c77acb0007e1a682724d801e00",
+      "dirty": false
     },
     {
       "path": ".github/workflows/codeql.yml",
-      "hash": "9421c5e996e73ef420bb5cb1ef183a6f2f75bb359f9da520822af0f25cb44761"
+      "hash": "df9bd687e22c7c7d0b03b91f5f919a8ddec5206b7cf28f6a3ab24750ebb6d436",
+      "commit": "e37ba4542e4915c77acb0007e1a682724d801e00",
+      "dirty": false
     },
     {
       "path": ".github/workflows/zizmor.yml",
-      "hash": "5e850966afe47f1433d8dcc88abc7dd4ce23050464eb8e1651fc9fbf1ff46bff"
+      "hash": "8a27b9d90126974045d0032025ef3fe6c8f7e433aaedd29a27cf4fc0733341dc",
+      "commit": "e37ba4542e4915c77acb0007e1a682724d801e00",
+      "dirty": false
     },
     {
       "path": ".github/zizmor.yml",
-      "hash": "ebc81c6f965228ed9bc5437fe884de7fb89c62c9e6799928e5daf21d7f969760"
+      "hash": "ebc81c6f965228ed9bc5437fe884de7fb89c62c9e6799928e5daf21d7f969760",
+      "commit": "e37ba4542e4915c77acb0007e1a682724d801e00",
+      "dirty": false
     }
   ],
   "ADRS/2026_06_06_16_17_[FRONTEND]_table_of_contents_panel_with_resizable_sidebar": [
