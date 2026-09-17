@@ -13,6 +13,11 @@ tags:
   - markDiagramImageUpdated
   - frontend
 status: To be validated
+sources:
+  - path: src/frontend-svelte/src/lib/diagramImageLink.ts
+    hash: 156acc777258e2358dd03859ddc7b5883654f6ca9c3464cd4bd7616ff9c5d00e
+    commit: 88439abf7b397feb16d73511b932c63f22808bce
+    dirty: false
 ---
 
 ## Context

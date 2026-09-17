@@ -2110,5 +2110,13 @@
       "commit": "f762fb64a92748df7792ed4c95863e6b481716cb",
       "dirty": false
     }
+  ],
+  "ADRS/2026_09_17_11_46_[DIAGRAM]_mise_a_jour_de_limage_dun_diagramme_depuis_un_document_et_cache_busting": [
+    {
+      "path": "src/frontend-svelte/src/lib/diagramImageLink.ts",
+      "hash": "156acc777258e2358dd03859ddc7b5883654f6ca9c3464cd4bd7616ff9c5d00e",
+      "commit": "88439abf7b397feb16d73511b932c63f22808bce",
+      "dirty": false
+    }
   ]
 }
