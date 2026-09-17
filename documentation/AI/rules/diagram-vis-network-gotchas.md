@@ -10,8 +10,6 @@ tags:
   - custom-shape
   - svelte
 sources:
-  - path: src/frontend/diagram/network.js
-    hash: b75037700cefcb4276bfe5f3394f640862dfdac50518757539de8dfc245c7ee0
   - path: src/frontend/diagram/node-rendering.js
     hash: a436315aa7840b50a98a443d0326008d6e15650a6594cc9bead8c4988a60af57
   - path: src/frontend/diagram/grid.js
