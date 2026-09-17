@@ -542,6 +542,49 @@ h1 {
   margin-top: 0;
 }
 
+.model-filter[hidden] {
+  display: none;
+}
+
+.model-results {
+  max-height: 240px;
+  margin: 6px 0 0;
+  padding: 4px;
+  overflow-y: auto;
+  list-style: none;
+  border: 1px solid var(--panel-line, var(--line));
+  border-radius: 12px;
+  background: var(--panel-field-bg, #fff);
+}
+
+.model-results[hidden] {
+  display: none;
+}
+
+.model-results li {
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--panel-ink, var(--ink));
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.model-results li:hover,
+.model-results li.active {
+  background: rgb(249 115 22 / 18%);
+}
+
+.model-results li[aria-selected="true"] {
+  font-weight: 600;
+}
+
+.model-results li.empty {
+  color: var(--panel-muted, #475467);
+  cursor: default;
+  background: none;
+}
+
 .model-select-wrap .icon-button {
   flex-shrink: 0;
   width: 36px;

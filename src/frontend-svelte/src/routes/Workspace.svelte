@@ -74,7 +74,8 @@
             </label>
             <div class="field wide model-field-row">
               <span>{t("workspace.model.label")}</span>
-              <input id="nodeModelFilter" class="model-filter" type="search" placeholder={t("workspace.model.filter_placeholder")} autocomplete="off" spellcheck="false" hidden />
+              <input id="nodeModelFilter" class="model-filter" type="search" role="combobox" aria-autocomplete="list" aria-controls="nodeModelResults" aria-expanded="false" placeholder={t("workspace.model.filter_placeholder")} autocomplete="off" spellcheck="false" hidden />
+              <ul id="nodeModelResults" class="model-results" role="listbox" hidden></ul>
               <div class="model-select-wrap">
                 <select id="nodeModel" name="nodeModel">
                   <option value="" disabled selected>{t("workspace.model.placeholder")}</option>

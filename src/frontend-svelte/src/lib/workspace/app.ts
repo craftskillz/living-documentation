@@ -166,6 +166,11 @@ let fitButton!: HTMLButtonElement;
 let testNodeButton!: HTMLButtonElement;
 let loadModelsButton!: HTMLButtonElement;
 let loadedModels: string[] = [];
+// Model lists already fetched this session, keyed by provider type + endpoint,
+// so the search stays available when coming back to a provider node.
+const modelsByEndpoint = new Map<string, string[]>();
+let modelMatches: string[] = [];
+let activeModelMatch = -1;
 let closePanelButton!: HTMLButtonElement;
 let deleteNodeButton!: HTMLButtonElement;
 let renameConfirmOverlay!: HTMLElement;
@@ -305,6 +310,7 @@ export function initWorkspace(): () => void {
     token: document.getElementById("nodeToken") as HTMLInputElement,
     model: document.getElementById("nodeModel") as HTMLSelectElement,
     modelFilter: document.getElementById("nodeModelFilter") as HTMLInputElement,
+    modelResults: document.getElementById("nodeModelResults") as HTMLUListElement,
     providerTypeChat: document.getElementById(
       "nodeProviderTypeChat",
     ) as HTMLInputElement,
@@ -622,8 +628,57 @@ export function initWorkspace(): () => void {
     scheduleWorkspaceSave();
   });
 
-  fields.modelFilter.addEventListener("input", () => {
-    renderModelOptions();
+  fields.modelFilter.addEventListener("input", (event) => {
+    // Searching is not an edit of the node: keep it away from the form's dirty tracking.
+    event.stopPropagation();
+    activeModelMatch = -1;
+    renderModelResults();
+  });
+
+  fields.modelFilter.addEventListener("focus", () => {
+    renderModelResults();
+  });
+
+  fields.modelFilter.addEventListener("blur", () => {
+    closeModelResults();
+  });
+
+  fields.modelFilter.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      if (modelMatches.length === 0) return;
+      event.preventDefault();
+      const count = modelMatches.length;
+      if (event.key === "ArrowDown") {
+        activeModelMatch = (activeModelMatch + 1) % count;
+      } else {
+        activeModelMatch = activeModelMatch <= 0 ? count - 1 : activeModelMatch - 1;
+      }
+      renderModelResults();
+    } else if (event.key === "Enter") {
+      // Never submit the node form from the search box.
+      event.preventDefault();
+      const picked =
+        modelMatches[activeModelMatch] ??
+        (modelMatches.length === 1 ? modelMatches[0] : undefined);
+      if (picked) pickModel(picked);
+    } else if (event.key === "Escape" && fields.modelFilter.value) {
+      event.preventDefault();
+      event.stopPropagation();
+      fields.modelFilter.value = "";
+      closeModelResults();
+    }
+  });
+
+  // Keep focus in the search box while clicking a result.
+  fields.modelResults.addEventListener("mousedown", (event) => {
+    event.preventDefault();
+  });
+
+  fields.modelResults.addEventListener("click", (event) => {
+    const item = (event.target as HTMLElement).closest<HTMLElement>(
+      "[data-model]",
+    );
+    if (item?.dataset.model) pickModel(item.dataset.model);
   });
 
   fields.model.addEventListener("change", () => {
@@ -1584,9 +1639,28 @@ function syncLlmProviderTypeVisibility(selected: Entity) {
 }
 
 function restoreModelSelect(savedModel: string) {
+  const selected = selectedEntity();
+  const cached =
+    selected?.kind === "llm"
+      ? modelsByEndpoint.get(modelsCacheKey(selected))
+      : undefined;
+  if (cached) {
+    const models =
+      savedModel && !cached.includes(savedModel)
+        ? [savedModel, ...cached]
+        : cached;
+    if (models !== loadedModels) setLoadedModels(models);
+    fields.model.value = savedModel || models[0];
+    return;
+  }
+
+  // No list fetched for this endpoint yet: only show the saved model.
+  if (loadedModels.length > 0) {
+    setLoadedModels([]);
+    fields.model.innerHTML = "";
+  }
   const existing = Array.from(fields.model.options).map((o) => o.value);
   if (savedModel && !existing.includes(savedModel)) {
-    setLoadedModels([]);
     fields.model.innerHTML = "";
     const opt = document.createElement("option");
     opt.value = savedModel;
@@ -1824,48 +1898,99 @@ function tokenValueForPersistence(token: string): string {
 const TOKEN_REF_HINT =
   "API token must reference an environment variable, e.g. env:LLM_API_KEY";
 
+function modelsCacheKey(entity: Entity) {
+  return `${entity.config.providerType}|${entity.config.endpoint}`;
+}
+
 function setLoadedModels(models: string[]) {
   loadedModels = models;
+  if (models.length > 0) {
+    fields.model.innerHTML = "";
+    for (const id of models) {
+      const opt = document.createElement("option");
+      opt.value = id;
+      opt.textContent = id;
+      fields.model.appendChild(opt);
+    }
+  }
   fields.modelFilter.value = "";
   fields.modelFilter.hidden = models.length === 0;
-  renderModelOptions();
+  closeModelResults();
 }
 
 // Every whitespace-separated term must appear (case-insensitive), so
-// "z.ai ultra" narrows to models containing both. The current selection is
-// always kept so filtering never silently changes the saved model.
-function renderModelOptions() {
-  if (loadedModels.length === 0) return;
-  const currentValue = fields.model.value;
-  const terms = fields.modelFilter.value.toLowerCase().split(/\s+/).filter(Boolean);
-  const matches = loadedModels.filter((id) => {
+// "z.ai ultra" narrows to models containing both.
+function renderModelResults() {
+  const terms = fields.modelFilter.value
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (terms.length === 0 || loadedModels.length === 0) {
+    closeModelResults();
+    return;
+  }
+
+  modelMatches = loadedModels.filter((id) => {
     const lower = id.toLowerCase();
     return terms.every((term) => lower.includes(term));
   });
-  const visible =
-    currentValue && loadedModels.includes(currentValue) && !matches.includes(currentValue)
-      ? [currentValue, ...matches]
-      : matches;
+  if (activeModelMatch >= modelMatches.length) activeModelMatch = -1;
 
-  fields.model.innerHTML = "";
-  for (const id of visible) {
-    const opt = document.createElement("option");
-    opt.value = id;
-    opt.textContent = id;
-    fields.model.appendChild(opt);
+  fields.modelResults.innerHTML = "";
+  modelMatches.forEach((id, index) => {
+    const item = document.createElement("li");
+    item.id = `nodeModelResult-${index}`;
+    item.role = "option";
+    item.dataset.model = id;
+    item.textContent = id;
+    item.classList.toggle("active", index === activeModelMatch);
+    item.setAttribute("aria-selected", String(id === fields.model.value));
+    fields.modelResults.appendChild(item);
+  });
+  if (modelMatches.length === 0) {
+    const empty = document.createElement("li");
+    empty.className = "empty";
+    empty.textContent = t("workspace.model.no_match");
+    fields.modelResults.appendChild(empty);
   }
-  if (matches.length === 0) {
-    const opt = document.createElement("option");
-    opt.value = "";
-    opt.disabled = true;
-    opt.textContent = t("workspace.model.no_match");
-    fields.model.appendChild(opt);
-  }
-  fields.model.value = currentValue && visible.includes(currentValue) ? currentValue : (visible[0] ?? "");
-  fields.modelFilter.title = t("workspace.model.filter_count", {
-    shown: String(matches.length),
+
+  const count = t("workspace.model.filter_count", {
+    shown: String(modelMatches.length),
     total: String(loadedModels.length),
   });
+  fields.modelResults.setAttribute("aria-label", count);
+  fields.modelFilter.title = count;
+  fields.modelResults.hidden = false;
+  fields.modelFilter.setAttribute("aria-expanded", "true");
+  if (activeModelMatch >= 0) {
+    fields.modelFilter.setAttribute(
+      "aria-activedescendant",
+      `nodeModelResult-${activeModelMatch}`,
+    );
+    fields.modelResults.children[activeModelMatch]?.scrollIntoView({
+      block: "nearest",
+    });
+  } else {
+    fields.modelFilter.removeAttribute("aria-activedescendant");
+  }
+}
+
+function closeModelResults() {
+  modelMatches = [];
+  activeModelMatch = -1;
+  fields.modelResults.hidden = true;
+  fields.modelResults.innerHTML = "";
+  fields.modelFilter.setAttribute("aria-expanded", "false");
+  fields.modelFilter.removeAttribute("aria-activedescendant");
+}
+
+function pickModel(id: string) {
+  fields.model.value = id;
+  // Mirror a native pick so the form sync and the change handler both run.
+  fields.model.dispatchEvent(new Event("input", { bubbles: true }));
+  fields.model.dispatchEvent(new Event("change", { bubbles: true }));
+  fields.modelFilter.value = "";
+  closeModelResults();
 }
 
 async function loadModelsForSelect() {
@@ -1903,11 +2028,11 @@ async function loadModelsForSelect() {
   }
 
   const previousValue = fields.model.value;
+  modelsByEndpoint.set(modelsCacheKey(selected), result.models);
   setLoadedModels(result.models);
   fields.model.value = result.models.includes(previousValue)
     ? previousValue
     : result.models[0];
-  renderModelOptions();
   selected.config.model = fields.model.value;
   testNodeButton.disabled = !fields.model.value;
   showSaveToast(

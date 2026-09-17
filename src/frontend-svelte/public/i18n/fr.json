@@ -116,7 +116,7 @@
   "agents.status.fallback": "{agent} · étape {turn} · nouvel essai sans outils",
   "workspace.model.label": "Modèle",
   "workspace.model.placeholder": "— cliquez sur ↻ pour charger les modèles —",
-  "workspace.model.filter_placeholder": "Filtrer les modèles (ex. z.ai ultra)",
+  "workspace.model.filter_placeholder": "Rechercher un modèle (ex. z.ai ultra)",
   "workspace.model.filter_count": "{shown} / {total} modèles",
   "workspace.model.no_match": "— aucun modèle ne correspond à ce filtre —",
   "workspace.model.load": "Charger les modèles depuis l'endpoint",

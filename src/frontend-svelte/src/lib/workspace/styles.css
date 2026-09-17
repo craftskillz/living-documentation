@@ -433,10 +433,6 @@ h1 {
   margin-top: 0;
 }
 
-.model-filter[hidden] {
-  display: none;
-}
-
 .model-select-wrap .icon-button {
   flex-shrink: 0;
   width: 36px;

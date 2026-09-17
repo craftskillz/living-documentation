@@ -116,7 +116,7 @@
   "agents.status.fallback": "{agent} · step {turn} · retrying without tools",
   "workspace.model.label": "Model",
   "workspace.model.placeholder": "— click ↻ to load models —",
-  "workspace.model.filter_placeholder": "Filter models (e.g. z.ai ultra)",
+  "workspace.model.filter_placeholder": "Search a model (e.g. z.ai ultra)",
   "workspace.model.filter_count": "{shown} / {total} models",
   "workspace.model.no_match": "— no model matches this filter —",
   "workspace.model.load": "Load models from endpoint",
