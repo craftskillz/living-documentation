@@ -25,6 +25,7 @@
  */
 
 import { marked } from "marked";
+import { renderMarkdownWithSummaries } from "./summaryMarkdown";
 
 function htmlEscape(str: string): string {
   return str
@@ -42,7 +43,7 @@ function renderCompareDiv(
 ): string {
   // Strip a single trailing newline so marked doesn't add an extra <p></p>
   const trimmed = content.endsWith("\n") ? content.slice(0, -1) : content;
-  const renderedHtml = marked.parse(trimmed, markedOpts) as string;
+  const renderedHtml = renderMarkdownWithSummaries(trimmed, markedOpts);
   const escapedSource = htmlEscape(trimmed);
   // URI-encode so the raw Markdown is safely embedded in an HTML attribute value
   const encodedSource = encodeURIComponent(trimmed);
@@ -79,7 +80,7 @@ export function renderMarkdownWithCompareBlocks(
     return `\n<!--${PLACEHOLDER_PREFIX}${idx}-->\n`;
   });
 
-  let html = marked.parse(withPlaceholders, markedOpts) as string;
+  let html = renderMarkdownWithSummaries(withPlaceholders, markedOpts);
 
   // Swap placeholders back for the rendered compare <div>s. Tolerate marked wrapping the
   // comment in a <p>…</p> paragraph.
