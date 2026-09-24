@@ -11,7 +11,7 @@ tags:
   - renderMarkdownWithCompareBlocks
   - templates
   - rendering
-status: To be validated
+status: Accepted
 sources:
   - path: src/lib/summaryMarkdown.ts
     hash: 4878982820817a9e0709360bbf2f44c487b8fc39787780b54858c679b28c5682
