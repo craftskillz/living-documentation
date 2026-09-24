@@ -2191,6 +2191,12 @@
       "hash": "a232c793d1d7503820a1e99d2de3807a5fc7afcd6ac3d520e6c4d258d0fee690",
       "commit": "2c3618c1bc9035fc577d314bda7cedf0dd53c103",
       "dirty": false
+    },
+    {
+      "path": "tests/api/summary-markdown.spec.ts",
+      "hash": "1b394cb276bd48a7d6f2ec7c11fc73735ecca512b400992c02e2cd8cfc60df3d",
+      "commit": "b6472db9e8ed04d23c6b220e94e9c0dbba7e8515",
+      "dirty": false
     }
   ]
 }
