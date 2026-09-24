@@ -2179,6 +2179,12 @@
       "hash": "5b7af8de73b67d1e8944bf747e9398fa7354be76d970b109be52425846983811",
       "commit": "fd42a3e6a9c96e535a0fcc690c8959113b16a15d",
       "dirty": false
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/templates/MarkdownPreview.svelte",
+      "hash": "54564f53f1bcf0a161efc962068c40bb3e374bfe6c6a8e2d0a3c927b582cdd0b",
+      "commit": "7e784bc3d616778f168517d800dbc2b99f2a5962",
+      "dirty": false
     }
   ]
 }
