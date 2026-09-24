@@ -25,6 +25,10 @@ sources:
     hash: 54564f53f1bcf0a161efc962068c40bb3e374bfe6c6a8e2d0a3c927b582cdd0b
     commit: 7e784bc3d616778f168517d800dbc2b99f2a5962
     dirty: false
+  - path: tests/unit/summary-markdown.test.ts
+    hash: a232c793d1d7503820a1e99d2de3807a5fc7afcd6ac3d520e6c4d258d0fee690
+    commit: 2c3618c1bc9035fc577d314bda7cedf0dd53c103
+    dirty: false
 ---
 
 # Rendu Markdown dans les titres des blocs repliables
