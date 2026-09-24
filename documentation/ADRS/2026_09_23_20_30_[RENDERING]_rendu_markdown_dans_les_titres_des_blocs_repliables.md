@@ -17,6 +17,10 @@ sources:
     hash: 4878982820817a9e0709360bbf2f44c487b8fc39787780b54858c679b28c5682
     commit: 4a9ab65aed70c95af497062f35af72beb1048b0c
     dirty: false
+  - path: src/lib/compareBlock.ts
+    hash: 5b7af8de73b67d1e8944bf747e9398fa7354be76d970b109be52425846983811
+    commit: fd42a3e6a9c96e535a0fcc690c8959113b16a15d
+    dirty: false
 ---
 
 # Rendu Markdown dans les titres des blocs repliables
