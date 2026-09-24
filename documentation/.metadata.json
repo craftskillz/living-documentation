@@ -2166,5 +2166,13 @@
       "commit": "69c15d0e46b862f05d882a8637c6441e437a5a97",
       "dirty": true
     }
+  ],
+  "ADRS/2026_09_23_20_30_[RENDERING]_rendu_markdown_dans_les_titres_des_blocs_repliables": [
+    {
+      "path": "src/lib/summaryMarkdown.ts",
+      "hash": "4878982820817a9e0709360bbf2f44c487b8fc39787780b54858c679b28c5682",
+      "commit": "4a9ab65aed70c95af497062f35af72beb1048b0c",
+      "dirty": false
+    }
   ]
 }

@@ -12,6 +12,11 @@ tags:
   - templates
   - rendering
 status: To be validated
+sources:
+  - path: src/lib/summaryMarkdown.ts
+    hash: 4878982820817a9e0709360bbf2f44c487b8fc39787780b54858c679b28c5682
+    commit: 4a9ab65aed70c95af497062f35af72beb1048b0c
+    dirty: false
 ---
 
 # Rendu Markdown dans les titres des blocs repliables
