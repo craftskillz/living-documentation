@@ -12,6 +12,14 @@ timestamp: 2026-09-16T15:45:00Z
 status: To be validated
 ---
 
+# ADR du rendu Markdown dans summary — 24 septembre 2026
+
+Rétrodocumentation terminée pour le commit `c1d2a1e1` du 23 septembre. [ADR : Rendu Markdown dans les titres des blocs repliables](?doc=ADRS%252F2026_09_23_20_30_%255BRENDERING%255D_rendu_markdown_dans_les_titres_des_blocs_repliables), statut `To be validated`. Aucun ADR antérieur remplacé.
+
+Code et tests relus ; cinq fichiers attachés via MCP (summaryMarkdown, compareBlock, MarkdownPreview et les deux fichiers de tests). Hashes recalculés sur arbre propre, accuracy 100 %. ADR relu via MCP. Aucun changement de code ; tests et build non relancés pour cette passe documentaire. Suite : validation humaine de l'ADR.
+
+---
+
 # Mise à jour de l'image d'un diagramme depuis un document — 17 septembre 2026
 
 ## État courant
