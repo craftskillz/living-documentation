@@ -2171,31 +2171,31 @@
     {
       "path": "src/lib/summaryMarkdown.ts",
       "hash": "4878982820817a9e0709360bbf2f44c487b8fc39787780b54858c679b28c5682",
-      "commit": "4a9ab65aed70c95af497062f35af72beb1048b0c",
+      "commit": "332d3aaa0bd6c533ecc8e87d1c7264a66a0ca686",
       "dirty": false
     },
     {
       "path": "src/lib/compareBlock.ts",
       "hash": "5b7af8de73b67d1e8944bf747e9398fa7354be76d970b109be52425846983811",
-      "commit": "fd42a3e6a9c96e535a0fcc690c8959113b16a15d",
+      "commit": "332d3aaa0bd6c533ecc8e87d1c7264a66a0ca686",
       "dirty": false
     },
     {
       "path": "src/frontend-svelte/src/lib/templates/MarkdownPreview.svelte",
       "hash": "54564f53f1bcf0a161efc962068c40bb3e374bfe6c6a8e2d0a3c927b582cdd0b",
-      "commit": "7e784bc3d616778f168517d800dbc2b99f2a5962",
+      "commit": "332d3aaa0bd6c533ecc8e87d1c7264a66a0ca686",
       "dirty": false
     },
     {
       "path": "tests/unit/summary-markdown.test.ts",
       "hash": "a232c793d1d7503820a1e99d2de3807a5fc7afcd6ac3d520e6c4d258d0fee690",
-      "commit": "2c3618c1bc9035fc577d314bda7cedf0dd53c103",
+      "commit": "332d3aaa0bd6c533ecc8e87d1c7264a66a0ca686",
       "dirty": false
     },
     {
       "path": "tests/api/summary-markdown.spec.ts",
       "hash": "1b394cb276bd48a7d6f2ec7c11fc73735ecca512b400992c02e2cd8cfc60df3d",
-      "commit": "b6472db9e8ed04d23c6b220e94e9c0dbba7e8515",
+      "commit": "332d3aaa0bd6c533ecc8e87d1c7264a66a0ca686",
       "dirty": false
     }
   ]
