@@ -1025,3 +1025,13 @@ test.describe('metadata MCP tools on the with-metadata fixture', () => {
     expect(result.totalBelowThreshold).toBe(0);
   });
 });
+
+test('list_documents includes dot-folder documents but nothing under .git or node_modules', async ({ request, ld }) => {
+  for (const rel of ['.scratch/draft.md', '.git/head.md', 'node_modules/pkg/readme.md']) {
+    fs.mkdirSync(path.dirname(path.join(ld.docsAbs, rel)), { recursive: true });
+    fs.writeFileSync(path.join(ld.docsAbs, rel), '---\ntype: Concept\ntitle: x\n---\n');
+  }
+  const ids = (await listDocuments(request, ld.baseURL)).documents.map((d) => decodeURIComponent(d.id));
+  expect(ids).toContain('.scratch/draft');
+  expect(ids.filter((id) => id.startsWith('.git/') || id.startsWith('node_modules/'))).toEqual([]);
+});

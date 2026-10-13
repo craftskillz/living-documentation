@@ -1,4 +1,4 @@
-import type { DocSummary, TreeNode } from "./types";
+import type { DocSummary, ExplorerNode, TreeNode } from "./types";
 
 export type SidebarSort = "recent" | "oldest" | "alphabetical";
 
@@ -113,4 +113,27 @@ export function otherCategoryKeys(node: TreeNode): string[] {
 
 export function flatSortedDocs(node: TreeNode, sortMode: SidebarSort = "recent"): DocSummary[] {
   return Object.values(node.categories).flat().sort(compareDocs(sortMode));
+}
+
+/**
+ * Keeps only the documents whose id is in `ids` and the folders leading to
+ * them (used while searching). Order is preserved.
+ */
+export function filterExplorerTree(nodes: ExplorerNode[], ids: Set<string>): ExplorerNode[] {
+  const kept: ExplorerNode[] = [];
+  for (const node of nodes) {
+    if (node.kind === "doc") {
+      if (node.id && ids.has(node.id)) kept.push(node);
+    } else {
+      const children = filterExplorerTree(node.children ?? [], ids);
+      if (children.length) kept.push({ ...node, children });
+    }
+  }
+  return kept;
+}
+
+/** Documents in a node's subtree that match `predicate` (all when omitted). */
+export function countExplorerDocs(node: ExplorerNode, predicate: (id: string) => boolean = () => true): number {
+  if (node.kind === "doc") return node.id && predicate(node.id) ? 1 : 0;
+  return (node.children ?? []).reduce((n, child) => n + countExplorerDocs(child, predicate), 0);
 }

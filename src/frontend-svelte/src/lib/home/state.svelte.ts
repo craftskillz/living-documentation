@@ -1,4 +1,4 @@
-import type { DocSummary } from "./types";
+import type { DocSummary, ExplorerNode } from "./types";
 import type { SidebarSort } from "./tree";
 
 function readBool(key: string): boolean {
@@ -15,6 +15,8 @@ function readHighlight(): number {
 class HomeState {
   allDocs = $state<DocSummary[]>([]);
   allFolderPaths = $state<string[]>([]);
+  explorerTree = $state<ExplorerNode[]>([]);
+  docsById = $derived(new Map(this.allDocs.map((d) => [d.id, d])));
   docsFolder = $state("");
   annotationCounts = $state<Record<string, number>>({});
   fileAttachmentCounts = $state<Record<string, number>>({});

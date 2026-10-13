@@ -7,7 +7,8 @@ import { readConfig } from "../lib/config";
 import { readMetadataStore, writeMetadataStore } from "../lib/metadata";
 import { normalizeFolderPath } from "../lib/folderName";
 import { parseDocStatus } from "../lib/status";
-import { isReservedOkfFile, normalizeFrontmatter } from "../lib/okf";
+import { isListedDir, isListedDocFile } from "../lib/explorerEntries";
+import { normalizeFrontmatter } from "../lib/okf";
 import { parseFrontmatter } from "../lib/frontmatter";
 import { renderMarkdownWithCompareBlocks } from "../lib/compareBlock";
 
@@ -21,16 +22,12 @@ function toPosixPath(value: string): string {
 
 export function collectMdFiles(dir: string, baseDir: string): string[] {
   const results: string[] = [];
-  const atDocsRoot = path.resolve(dir) === path.resolve(baseDir);
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name.startsWith(".")) continue;
-    if (atDocsRoot && RESERVED_DOCS_SUBFOLDERS.has(entry.name)) continue;
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      results.push(...collectMdFiles(fullPath, baseDir));
+      if (isListedDir(entry.name)) results.push(...collectMdFiles(fullPath, baseDir));
     } else if (
-      entry.name.toLowerCase().endsWith(".md") &&
-      !isReservedOkfFile(entry.name) &&
+      isListedDocFile(entry.name) &&
       (entry.isFile() || (entry.isSymbolicLink() && fs.statSync(fullPath).isFile()))
     ) {
       results.push(toPosixPath(path.relative(baseDir, fullPath)));

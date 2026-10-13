@@ -178,7 +178,7 @@ Une entrée de `order` ou `hidden` qui n'existe plus est ignorée à la lecture 
 ## Ordre recommandé
 
 - [x] ~~US1 — Lire le manifeste et servir un arbre ordonné~~
-- [ ] US2 — Rendre visibles les dossiers et fichiers en point
+- [x] ~~US2 — Rendre visibles les dossiers et fichiers en point~~
 - [ ] US7 — Créer `liv-doc-main.md` à la création d'un dossier
 - [ ] US3 — Masquer et réafficher des éléments
 - [ ] US5 — API de déplacement et de réordonnancement

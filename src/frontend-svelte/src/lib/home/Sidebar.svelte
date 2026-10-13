@@ -1,7 +1,7 @@
 <script lang="ts">
   import { home } from "./state.svelte";
   import { t } from "../i18n.svelte";
-  import { buildFolderTree } from "./tree";
+  import { filterExplorerTree } from "./tree";
   import TreeNode from "./TreeNode.svelte";
 
   let { onopen, onsearch, onexport, onnewfolder, onnewdoc }: {
@@ -13,10 +13,12 @@
   } = $props();
 
   const tree = $derived(
-    buildFolderTree(home.filteredDocs, home.allFolderPaths, !home.searchQuery, home.sidebarSort),
+    home.searchQuery
+      ? filterExplorerTree(home.explorerTree, new Set(home.filteredDocs.map((d) => d.id)))
+      : home.explorerTree,
   );
   const docCount = $derived(home.filteredDocs.length);
-  const isEmpty = $derived(home.filteredDocs.length === 0 && home.allFolderPaths.length === 0);
+  const isEmpty = $derived(tree.length === 0);
 
   // ── Resizable width ───────────────────────────────────────────────────────────
   const STORAGE_KEY = "ld-sidebar-w";
@@ -86,11 +88,6 @@
           title={t("nav.toggle_attachments")}
           class="transition-colors leading-none {home.hideAttachments ? 'text-gray-400 dark:text-gray-500' : 'text-blue-500 dark:text-blue-400'}"
         ><i class="fa-solid fa-paperclip"></i></button>
-        <button
-          onclick={() => home.toggleHideCategories()}
-          title={t("nav.toggle_categories")}
-          class="transition-colors leading-none {home.hideCategories ? 'text-gray-400 dark:text-gray-500' : 'text-blue-500 dark:text-blue-400'}"
-        ><i class="fa-solid fa-tags"></i></button>
         <button onclick={onexport} title={t("nav.export")} class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors leading-none"><i class="fa-solid fa-file-export"></i></button>
         <button onclick={onnewfolder} title={t("nav.new_folder")} class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors leading-none"><i class="fa-solid fa-folder-plus"></i></button>
         <button onclick={onnewdoc} title={t("nav.new_document")} class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors leading-none"><i class="fa-solid fa-file-circle-plus"></i></button>
@@ -102,7 +99,7 @@
     {#if isEmpty}
       <p class="px-4 py-8 text-sm text-gray-400 text-center">{t("sidebar.no_docs")}</p>
     {:else}
-      <TreeNode node={tree} folderPath={[]} {onopen} />
+      <TreeNode nodes={tree} folderPath={[]} {onopen} />
     {/if}
   </nav>
 

@@ -16,11 +16,11 @@ status: To be validated
 
 ## État courant
 
-Branche `feat/explorateur-liv-doc-main`. Backlog : [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), hypothèses H1–H6 validées. US1 terminée et commitée (manifeste, `GET /api/tree`, ordre des `index.md`).
+Branche `feat/explorateur-liv-doc-main`. Backlog : [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), hypothèses H1–H6 validées. US1 et US2 terminées et commitées : manifeste, `GET /api/tree`, dossiers en point visibles, explorateur sans catégories branché sur l'arbre.
 
 ## Suite
 
-US2 en TDD : rendre visibles les dossiers en point, brancher l'explorateur sur `GET /api/tree`. Lint Biome et tests navigateur à lancer sur le Mac (binaire Biome Linux et Chromium absents du shell de la session).
+US7 (manifeste à la création de dossier) puis US3 (masquer / afficher), en TDD. Sur le Mac, `node_modules` n'a que les binaires macOS : le shell de session ne peut pas lancer Biome ni Vite, et ne peut pas télécharger Chromium. Build, lint et E2E se font dans l'espace cloud de l'agent (copie du dépôt, CDN remplacés par des stubs). `npm run test:e2e` complet reste à lancer sur le Mac.
 
 MCP Living Documentation injoignable depuis la session : roadmap écrite à la main, pas de métadonnées attachées.
 

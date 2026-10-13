@@ -80,3 +80,19 @@ test('POST /api/browse/mkdir rejects a missing path', async ({ request, ld }) =>
   const res = await request.post(`${ld.baseURL}/api/browse/mkdir`, { data: {} });
   expect(res.status()).toBe(400);
 });
+
+test('GET /api/browse/alldirs lists dot folders inside the docs folder, but not .git or node_modules', async ({ request, ld }) => {
+  for (const dir of ['.scratch/inner', '.git/objects', 'node_modules/pkg']) {
+    fs.mkdirSync(path.join(ld.docsAbs, dir), { recursive: true });
+  }
+  const res = await request.get(`${ld.baseURL}/api/browse/alldirs?path=${encodeURIComponent(ld.docsAbs)}`);
+  const dirs = (await res.json()) as string[];
+  expect(dirs).toContain('.scratch');
+  expect(dirs).toContain('.scratch/inner');
+  expect(dirs.filter((d) => d.startsWith('.git') || d.startsWith('node_modules'))).toEqual([]);
+
+  const browse = await request.get(`${ld.baseURL}/api/browse?path=${encodeURIComponent(ld.docsAbs)}`);
+  const names = ((await browse.json()) as { dirs: Array<{ name: string }> }).dirs.map((d) => d.name);
+  expect(names).toContain('.scratch');
+  expect(names).not.toContain('.git');
+});

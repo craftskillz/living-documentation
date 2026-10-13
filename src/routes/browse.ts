@@ -1,12 +1,25 @@
 import { Router, type Request, type Response } from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
+import { isListedDir } from '../lib/explorerEntries';
 import { normalizeFolderSegment } from '../lib/folderName';
 
 const RESERVED_SUBFOLDERS = new Set(['files', 'images']);
 
 function toPosixPath(value: string): string {
   return value.split(path.sep).join('/');
+}
+
+function isInside(dir: string, root: string): boolean {
+  const rel = path.relative(path.resolve(root), path.resolve(dir));
+  return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
+}
+
+// Inside the docs folder dot folders are listed like the explorer does; the
+// rest of the filesystem keeps hiding them.
+function isBrowsableDir(parentDir: string, name: string, docsPath: string): boolean {
+  if (isInside(parentDir, docsPath)) return isListedDir(name);
+  return !name.startsWith('.');
 }
 
 function isReservedAtDocsRoot(
@@ -35,7 +48,7 @@ export function browseRouter(docsPath: string): Router {
         .filter(
           (e) =>
             e.isDirectory() &&
-            !e.name.startsWith('.') &&
+            isBrowsableDir(current, e.name, docsPath) &&
             !isReservedAtDocsRoot(current, e.name, docsPath),
         )
         .map((e) => ({ name: e.name, path: path.join(current, e.name) }))
@@ -69,7 +82,7 @@ export function browseRouter(docsPath: string): Router {
         for (const e of entries) {
           if (
             e.isDirectory() &&
-            !e.name.startsWith('.') &&
+            isBrowsableDir(dir, e.name, docsPath) &&
             !isReservedAtDocsRoot(dir, e.name, docsPath)
           ) {
             const full = path.join(dir, e.name);

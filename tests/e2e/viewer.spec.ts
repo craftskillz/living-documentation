@@ -6,17 +6,15 @@ import path from 'node:path';
 test('sidebar lists all documents from the minimal fixture', async ({ page, ld }) => {
   await page.goto(ld.baseURL);
   const sidebar = page.getByTestId('category-tree');
-  // "General" is expanded by default; other categories collapse — expand "Guide"
-  // (which holds Quickstart + Advanced) to assert the full document listing.
+  // No category groups: root documents are listed directly in the explorer.
   await expect(sidebar.getByText('Intro')).toBeVisible();
-  await sidebar.getByRole('button', { name: /^Guide/ }).click();
   await expect(sidebar.getByText('Quickstart')).toBeVisible();
   await expect(sidebar.getByText('Advanced')).toBeVisible();
 });
 
 test('opening a document renders its heading and body', async ({ page, ld }) => {
   await page.goto(ld.baseURL);
-  // Intro is under General, expanded by default per sidebar conventions.
+  // Root documents are listed directly in the explorer.
   await page.getByTestId('category-tree').getByText('Intro', { exact: true }).click();
   await expect(page.getByTestId('doc-title')).toHaveText(/Intro/i);
   await expect(page.getByTestId('doc-view')).toContainText('Welcome to the test documentation');

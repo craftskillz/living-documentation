@@ -1,4 +1,4 @@
-import type { DocSummary, DocDetail } from "./types";
+import type { DocSummary, DocDetail, ExplorerNode } from "./types";
 
 export async function fetchConfig(): Promise<Record<string, unknown>> {
   return fetch("/api/config").then((r) => r.json());
@@ -6,6 +6,10 @@ export async function fetchConfig(): Promise<Record<string, unknown>> {
 
 export async function fetchDocuments(): Promise<DocSummary[]> {
   return fetch("/api/documents").then((r) => r.json());
+}
+
+export async function fetchTree(): Promise<ExplorerNode[]> {
+  return fetch("/api/tree").then((r) => r.json());
 }
 
 export async function fetchAllDirs(docsFolder: string): Promise<string[]> {

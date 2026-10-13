@@ -20,6 +20,17 @@ export interface DocDetail {
   type?: string;
 }
 
+/** Node of the ordered explorer tree served by GET /api/tree. */
+export interface ExplorerNode {
+  kind: "folder" | "doc";
+  name: string;
+  /** POSIX path relative to the docs folder. */
+  path: string;
+  /** Document id (docs only). */
+  id?: string;
+  children?: ExplorerNode[];
+}
+
 export interface TreeNode {
   categories: Record<string, DocSummary[]>;
   children: Record<string, TreeNode>;

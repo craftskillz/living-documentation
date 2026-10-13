@@ -44,7 +44,7 @@ test('without manifest, folders come first then files, each alphabetical', async
   expect(zeta?.kind).toBe('folder');
   expect(zeta?.path).toBe('zeta');
   expect(names(zeta?.children)).toEqual(['a.md']);
-  expect(zeta?.children?.[0]).toMatchObject({ kind: 'doc', path: 'zeta/a.md' });
+  expect(zeta?.children?.[0]).toMatchObject({ kind: 'doc', path: 'zeta/a.md', id: encodeURIComponent('zeta/a') });
 });
 
 test('manifest order puts listed entries first, in order, then the rest by default order', async ({ request, ld }) => {
@@ -89,4 +89,37 @@ test('liv-doc-main.md is never listed as a document', async ({ request, ld }) =>
 
   const docs = (await (await request.get(`${ld.baseURL}/api/documents`)).json()) as Array<{ filename: string }>;
   expect(docs.map((d) => d.filename).filter((f) => f.endsWith('liv-doc-main.md'))).toEqual([]);
+});
+
+test('dot folders and dot Markdown files are listed; .git and node_modules are not', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, '.scratch/draft.md');
+  writeDoc(ld.docsAbs, '.notes.md');
+  fs.mkdirSync(path.join(ld.docsAbs, '.living-documentation'), { recursive: true });
+  writeDoc(ld.docsAbs, '.git/HEAD.md');
+  writeDoc(ld.docsAbs, 'node_modules/pkg/readme.md');
+  fs.writeFileSync(path.join(ld.docsAbs, '.settings.json'), '{}');
+
+  const tree = await getTree(request, ld.baseURL);
+
+  expect(names(tree)).toContain('.scratch');
+  expect(names(tree)).toContain('.living-documentation');
+  expect(names(tree)).toContain('.notes.md');
+  expect(names(tree.find((n) => n.name === '.scratch')?.children)).toEqual(['draft.md']);
+  expect(names(tree)).not.toContain('.git');
+  expect(names(tree)).not.toContain('node_modules');
+  expect(names(tree)).not.toContain('.settings.json');
+});
+
+test('GET /api/documents lists dot-folder documents but nothing under .git or node_modules', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, '.scratch/draft.md');
+  writeDoc(ld.docsAbs, '.notes.md');
+  writeDoc(ld.docsAbs, '.git/HEAD.md');
+  writeDoc(ld.docsAbs, 'node_modules/pkg/readme.md');
+
+  const res = await request.get(`${ld.baseURL}/api/documents`);
+  const files = ((await res.json()) as Array<{ filename: string }>).map((d) => d.filename);
+
+  expect(files).toContain('.scratch/draft.md');
+  expect(files).toContain('.notes.md');
+  expect(files.filter((f) => f.startsWith('.git/') || f.startsWith('node_modules/'))).toEqual([]);
 });

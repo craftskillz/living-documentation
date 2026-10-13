@@ -206,8 +206,9 @@
   }
 
   async function loadDocuments() {
-    const [docs, cfg] = await Promise.all([api.fetchDocuments(), api.fetchConfig()]);
+    const [docs, cfg, tree] = await Promise.all([api.fetchDocuments(), api.fetchConfig(), api.fetchTree()]);
     home.allDocs = docs;
+    home.explorerTree = tree;
     home.docsFolder = typeof cfg.docsFolder === "string" ? cfg.docsFolder : "";
     if (cfg.docsFolder) {
       try { home.allFolderPaths = await api.fetchAllDirs(cfg.docsFolder as string); } catch { home.allFolderPaths = []; }

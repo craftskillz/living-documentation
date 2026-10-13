@@ -2,23 +2,24 @@
   import Self from "./TreeNode.svelte";
   import { home } from "./state.svelte";
   import { t } from "../i18n.svelte";
-  import type { DocSummary, TreeNode } from "./types";
-  import {
-    countTreeDocs, countTreeAnnotatedDocs, countTreeFileAttachedDocs,
-    folderLabel, sortedChildKeys, otherCategoryKeys, flatSortedDocs,
-  } from "./tree";
+  import type { DocSummary, ExplorerNode } from "./types";
+  import { countExplorerDocs, folderLabel } from "./tree";
 
-  let { node, folderPath, onopen }: {
-    node: TreeNode;
+  let { nodes, folderPath, onopen }: {
+    nodes: ExplorerNode[];
     folderPath: string[];
     onopen: (id: string) => void;
   } = $props();
 
-  function catPathKey(cat: string) { return [...folderPath, cat].join("|"); }
   function childPathKey(key: string) { return [...folderPath, key].join("|"); }
 
   function badgeTitle(count: number, key: string): string {
     return `${count} ${t(key)}${count > 1 ? "s" : ""}`;
+  }
+
+  function summaryOf(node: ExplorerNode): DocSummary {
+    const id = node.id ?? "";
+    return home.docsById.get(id) ?? { id, title: node.name.replace(/\.md$/i, ""), category: "" };
   }
 
   function statusPill(doc: DocSummary): "V" | "S" | null {
@@ -30,24 +31,13 @@
   }
 </script>
 
-{#if home.hideCategories}
-  {#each flatSortedDocs(node, home.sidebarSort) as doc (doc.id)}
-    {@render docItem(doc)}
-  {/each}
-  {#each sortedChildKeys(node) as key (key)}
-    {@render folderGroup(key)}
-  {/each}
-{:else}
-  {#if node.categories["General"]}
-    {@render categoryGroup("General")}
+{#each nodes as node (node.path)}
+  {#if node.kind === "folder"}
+    {@render folderGroup(node)}
+  {:else}
+    {@render docItem(summaryOf(node))}
   {/if}
-  {#each sortedChildKeys(node) as key (key)}
-    {@render folderGroup(key)}
-  {/each}
-  {#each otherCategoryKeys(node) as cat (cat)}
-    {@render categoryGroup(cat)}
-  {/each}
-{/if}
+{/each}
 
 {#snippet docItem(doc: DocSummary)}
   {@const annCount = home.annotationCounts[doc.id] || 0}
@@ -80,51 +70,19 @@
   </button>
 {/snippet}
 
-{#snippet categoryGroup(cat: string)}
-  {@const key = catPathKey(cat)}
-  {@const isExpanded = home.expandedCategories.has(key)}
-  {@const docs = node.categories[cat]}
-  {@const annDocs = docs.reduce((s, d) => s + (home.annotationCounts[d.id] > 0 ? 1 : 0), 0)}
-  {@const fileDocs = docs.reduce((s, d) => s + (home.fileAttachmentCounts[d.id] > 0 ? 1 : 0), 0)}
-  <div class="mb-0.5">
-    <button
-      onclick={() => home.toggleCategory(key)}
-      class="w-full flex items-center justify-between px-3 py-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hover:bg-gray-50 dark:hover:bg-gray-800/60 rounded-md transition-colors"
-    >
-      <span class="flex items-center gap-2">
-        <span>{cat}</span>
-        {#if annDocs > 0 && !home.markerHidden}<span title={badgeTitle(annDocs, "sidebar.annotated_docs_badge")} class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-orange-400 dark:bg-orange-500 text-[10px] font-bold text-white border border-orange-600 shadow-sm">{annDocs}</span>{/if}
-        {#if fileDocs > 0 && !home.hideAttachments}<span title={badgeTitle(fileDocs, "sidebar.file_attached_docs_badge")} class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-slate-400 dark:bg-slate-500 text-[10px] font-bold text-white border border-slate-600 shadow-sm">{fileDocs}</span>{/if}
-      </span>
-      <span class="flex items-center gap-1.5">
-        <span class="font-normal normal-case text-gray-400">{docs.length}</span>
-        <span class="transition-transform duration-200 {isExpanded ? 'rotate-90' : ''}">▸</span>
-      </span>
-    </button>
-    {#if isExpanded}
-      <div class="pl-2">
-        {#each docs as doc (doc.id)}
-          {@render docItem(doc)}
-        {/each}
-      </div>
-    {/if}
-  </div>
-{/snippet}
-
-{#snippet folderGroup(key: string)}
-  {@const pathKey = childPathKey(key)}
+{#snippet folderGroup(folder: ExplorerNode)}
+  {@const pathKey = childPathKey(folder.name)}
   {@const isExpanded = home.expandedFolders.has(pathKey)}
-  {@const child = node.children[key]}
-  {@const docCount = countTreeDocs(child)}
-  {@const annDocs = countTreeAnnotatedDocs(child, home.annotationCounts)}
-  {@const fileDocs = countTreeFileAttachedDocs(child, home.fileAttachmentCounts)}
+  {@const docCount = countExplorerDocs(folder)}
+  {@const annDocs = countExplorerDocs(folder, (id) => home.annotationCounts[id] > 0)}
+  {@const fileDocs = countExplorerDocs(folder, (id) => home.fileAttachmentCounts[id] > 0)}
   <div class="mb-1">
     <button
       onclick={() => home.toggleFolder(pathKey)}
       class="w-full flex items-center justify-between px-3 py-1.5 text-xs font-semibold text-violet-600 dark:text-violet-400 uppercase tracking-wider hover:bg-gray-50 dark:hover:bg-gray-800/60 rounded-md transition-colors"
     >
       <span class="flex items-center gap-2 min-w-0">
-        <span title={key} class="truncate">📁 {folderLabel(key)}</span>
+        <span title={folder.name} class="truncate">📁 {folderLabel(folder.name)}</span>
         {#if annDocs > 0 && !home.markerHidden}<span title={badgeTitle(annDocs, "sidebar.annotated_docs_badge")} class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-orange-400 dark:bg-orange-500 text-[10px] font-bold text-white border border-orange-600 shadow-sm">{annDocs}</span>{/if}
         {#if fileDocs > 0 && !home.hideAttachments}<span title={badgeTitle(fileDocs, "sidebar.file_attached_docs_badge")} class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-slate-400 dark:bg-slate-500 text-[10px] font-bold text-white border border-slate-600 shadow-sm">{fileDocs}</span>{/if}
       </span>
@@ -135,7 +93,7 @@
     </button>
     {#if isExpanded}
       <div class="pl-3">
-        <Self node={child} folderPath={[...folderPath, key]} {onopen} />
+        <Self nodes={folder.children ?? []} folderPath={[...folderPath, folder.name]} {onopen} />
       </div>
     {/if}
   </div>
