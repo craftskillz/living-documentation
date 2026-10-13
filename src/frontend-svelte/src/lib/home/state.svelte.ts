@@ -1,5 +1,9 @@
 import type { DocSummary, ExplorerNode } from "./types";
 import type { SidebarSort } from "./tree";
+import type { DropPosition } from "./treeDrop";
+
+/** Hovering a closed folder this long while dragging opens it. */
+const FOLDER_HOVER_OPEN_MS = 600;
 
 function readBool(key: string): boolean {
   try { return localStorage.getItem(key) === "1"; } catch { return false; }
@@ -42,6 +46,30 @@ class HomeState {
   imageBorder = $state(false);
   codeBlockLightTheme = $state(false);
   sidebarSort = $state<SidebarSort>("recent");
+
+  // Explorer drag and drop: path of the dragged entry and current drop target.
+  dragSourcePath = $state<string | null>(null);
+  dropTarget = $state<{ path: string; position: DropPosition } | null>(null);
+  #hoverOpenTimer: ReturnType<typeof setTimeout> | undefined;
+
+  /** Records the drop target; a closed folder hovered "inside" opens after a delay. */
+  setDropTarget(path: string, position: DropPosition, folderKey: string | null) {
+    const current = this.dropTarget;
+    if (current?.path === path && current.position === position) return;
+    this.dropTarget = { path, position };
+    clearTimeout(this.#hoverOpenTimer);
+    if (position === "inside" && folderKey && !this.expandedFolders.has(folderKey)) {
+      this.#hoverOpenTimer = setTimeout(() => {
+        if (this.dropTarget?.path === path && !this.expandedFolders.has(folderKey)) this.toggleFolder(folderKey);
+      }, FOLDER_HOVER_OPEN_MS);
+    }
+  }
+
+  endDrag() {
+    clearTimeout(this.#hoverOpenTimer);
+    this.dragSourcePath = null;
+    this.dropTarget = null;
+  }
 
   // Marker (stabilo): "normal" | "active" | "hidden"
   markerState = $state<"normal" | "active" | "hidden">("normal");

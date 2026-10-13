@@ -53,3 +53,57 @@ test('hide an entry from its context menu, reveal it greyed, then show it again'
   await expect(tree.locator('[data-hidden="true"]')).toHaveCount(0);
   expect(fs.readFileSync(manifest, 'utf-8')).toContain('hidden: []');
 });
+
+test('drag an entry above another to reorder its folder', async ({ page, ld }) => {
+  for (const name of ['a', 'b', 'c']) writeDoc(ld.docsAbs, `${name}.md`);
+  fs.writeFileSync(path.join(ld.docsAbs, 'liv-doc-main.md'), '---\norder:\n  - a.md\n  - b.md\n  - c.md\n---\n');
+
+  await page.goto(ld.baseURL);
+  const tree = page.getByTestId('category-tree');
+  await tree.getByText('C', { exact: true }).dragTo(tree.getByText('A', { exact: true }), {
+    targetPosition: { x: 10, y: 1 },
+  });
+
+  await expect(tree.locator(':scope > .doc-item').first()).toHaveText(/C/);
+  const order = await tree.locator(':scope > .doc-item > div > span.truncate').allTextContents();
+  expect(order.slice(0, 3)).toEqual(['C', 'A', 'B']);
+  expect(fs.readFileSync(path.join(ld.docsAbs, 'liv-doc-main.md'), 'utf-8')).toContain('order:\n  - c.md\n  - a.md\n  - b.md\n');
+});
+
+test('drag the open document into a closed folder that opens on hover; the document stays open', async ({ page, ld }) => {
+  writeDoc(ld.docsAbs, 'note.md');
+  writeDoc(ld.docsAbs, 'archive/old.md');
+
+  await page.goto(ld.baseURL);
+  const tree = page.getByTestId('category-tree');
+  await tree.getByText('Note', { exact: true }).click();
+  await expect(page.locator('article')).toContainText('Body of note.md');
+
+  const archive = tree.locator('span[title="archive"]');
+  await tree.getByText('Note', { exact: true }).hover();
+  await page.mouse.down();
+  await archive.hover();
+  await archive.hover({ position: { x: 5, y: 5 } });
+  await expect(tree.locator('[data-drop="inside"]')).toHaveCount(1);
+  await expect(tree.getByText('Old', { exact: true })).toBeVisible();
+  await archive.hover();
+  await page.mouse.up();
+
+  await expect(page).toHaveURL(/doc=archive%252Fnote/);
+  expect(fs.existsSync(path.join(ld.docsAbs, 'archive/note.md'))).toBe(true);
+  await expect(page.locator('article')).toContainText('Body of note.md');
+  await expect(tree.locator('.doc-item.active')).toContainText('Note');
+});
+
+test('dropping a folder into its own descendant is refused with a toast', async ({ page, ld }) => {
+  writeDoc(ld.docsAbs, 'parent/child/leaf.md');
+
+  await page.goto(ld.baseURL);
+  const tree = page.getByTestId('category-tree');
+  await tree.locator('span[title="parent"]').click();
+  await tree.locator('span[title="parent"]').dragTo(tree.locator('span[title="child"]'));
+
+  await expect(page.locator('#workspaceToastStack')).toContainText('Could not move');
+  expect(fs.existsSync(path.join(ld.docsAbs, 'parent/child/leaf.md'))).toBe(true);
+  await expect(tree.locator('span[title="child"]')).toBeVisible();
+});

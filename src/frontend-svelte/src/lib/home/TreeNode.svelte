@@ -4,15 +4,50 @@
   import { t } from "../i18n.svelte";
   import type { DocSummary, ExplorerNode } from "./types";
   import { countExplorerDocs, folderLabel } from "./tree";
+  import { dropPositionAt, type DropPosition } from "./treeDrop";
 
-  let { nodes, folderPath, onopen, onentrymenu }: {
+  let { nodes, folderPath, onopen, onentrymenu, onmove }: {
     nodes: ExplorerNode[];
     folderPath: string[];
     onopen: (id: string) => void;
     onentrymenu: (e: MouseEvent, node: ExplorerNode) => void;
+    onmove: (source: string, targetPath: string, position: DropPosition) => void;
   } = $props();
 
   function childPathKey(key: string) { return [...folderPath, key].join("|"); }
+
+  // ── Drag and drop (disabled while searching) ─────────────────────────────────
+  const canDrag = $derived(!home.searchQuery);
+
+  function dropState(node: ExplorerNode): DropPosition | undefined {
+    return home.dropTarget?.path === node.path ? home.dropTarget.position : undefined;
+  }
+
+  function onDragStart(e: DragEvent, node: ExplorerNode) {
+    home.dragSourcePath = node.path;
+    if (e.dataTransfer) {
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", node.path);
+    }
+  }
+
+  function onDragOver(e: DragEvent, node: ExplorerNode) {
+    if (!home.dragSourcePath || !canDrag) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const position = dropPositionAt(node.kind, e.clientY - rect.top, rect.height);
+    home.setDropTarget(node.path, position, node.kind === "folder" ? childPathKey(node.name) : null);
+  }
+
+  function onDrop(e: DragEvent, node: ExplorerNode) {
+    e.preventDefault();
+    e.stopPropagation();
+    const source = home.dragSourcePath;
+    const position = dropState(node);
+    home.endDrag();
+    if (source && position) onmove(source, node.path, position);
+  }
 
   function badgeTitle(count: number, key: string): string {
     return `${count} ${t(key)}${count > 1 ? "s" : ""}`;
@@ -48,6 +83,12 @@
     id="item-{doc.id}"
     onclick={() => onopen(doc.id)}
     oncontextmenu={(e) => onentrymenu(e, node)}
+    draggable={canDrag}
+    ondragstart={(e) => onDragStart(e, node)}
+    ondragover={(e) => onDragOver(e, node)}
+    ondrop={(e) => onDrop(e, node)}
+    ondragend={() => home.endDrag()}
+    data-drop={dropState(node)}
     data-hidden={node.hidden ? "true" : undefined}
     class="{node.hidden ? 'opacity-50 italic' : ''} doc-item w-full text-left px-3 py-1.5 rounded-md text-sm transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/60 {doc.id === home.currentDocId ? 'active' : ''}"
   >
@@ -83,6 +124,12 @@
     <button
       onclick={() => home.toggleFolder(pathKey)}
       oncontextmenu={(e) => onentrymenu(e, folder)}
+      draggable={canDrag}
+      ondragstart={(e) => onDragStart(e, folder)}
+      ondragover={(e) => onDragOver(e, folder)}
+      ondrop={(e) => onDrop(e, folder)}
+      ondragend={() => home.endDrag()}
+      data-drop={dropState(folder)}
       data-hidden={folder.hidden ? "true" : undefined}
       class="{folder.hidden ? 'opacity-50 italic' : ''} w-full flex items-center justify-between px-3 py-1.5 text-xs font-semibold text-violet-600 dark:text-violet-400 uppercase tracking-wider hover:bg-gray-50 dark:hover:bg-gray-800/60 rounded-md transition-colors"
     >
@@ -98,7 +145,7 @@
     </button>
     {#if isExpanded}
       <div class="pl-3">
-        <Self nodes={folder.children ?? []} folderPath={[...folderPath, folder.name]} {onopen} {onentrymenu} />
+        <Self nodes={folder.children ?? []} folderPath={[...folderPath, folder.name]} {onopen} {onentrymenu} {onmove} />
       </div>
     {/if}
   </div>

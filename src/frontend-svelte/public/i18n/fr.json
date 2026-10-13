@@ -81,6 +81,8 @@
   "nav.toggle_hidden_entries": "Afficher les éléments cachés",
   "sidebar.hide_entry": "Masquer",
   "sidebar.show_entry": "Afficher",
+  "sidebar.move_failed": "Impossible de déplacer « {name} ».",
+  "sidebar.move_conflict": "Impossible de déplacer « {name} » : un élément porte déjà ce nom à cet endroit.",
   "nav.toggle_status_highlight": "Mettre en évidence les statuts (À valider / Obsolète)",
   "nav.export_html": "Exporter les dossiers en HTML (ZIP)",
   "nav.export_all_pdf": "Exporter tous les documents en PDF",

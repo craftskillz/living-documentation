@@ -14,6 +14,7 @@
   import ExportModal from "../lib/home/ExportModal.svelte";
   import WordCloudModal from "../lib/home/WordCloudModal.svelte";
   import type { DocDetail, DocSummary } from "../lib/home/types";
+  import { movedDocId } from "../lib/home/treeDrop";
 
   let newFolderOpen = $state(false);
   let newDocOpen = $state(false);
@@ -205,6 +206,22 @@
     }
   }
 
+  // An explorer drag and drop moved an entry: reload, and keep the open
+  // document open under its new id.
+  async function onEntryMoved(source: string, path: string) {
+    const nextId = home.currentDocId ? movedDocId(home.currentDocId, source, path) : null;
+    await loadDocuments();
+    if (!nextId) return;
+    home.currentDocId = nextId;
+    // Re-render from the new location: folder and relative links depend on it.
+    try { currentDoc = { ...(await api.fetchDocument(nextId)), id: nextId }; } catch {}
+    const url = new URL(location.href);
+    url.searchParams.set("doc", nextId);
+    history.replaceState({ docId: nextId, anchor: url.hash.slice(1) || null }, "", url);
+    const summary = home.allDocs.find(d => d.id === nextId);
+    if (summary) home.revealDoc(summary);
+  }
+
   async function loadDocuments() {
     const [docs, cfg, tree] = await Promise.all([api.fetchDocuments(), api.fetchConfig(), api.fetchTree()]);
     home.allDocs = docs;
@@ -312,6 +329,7 @@
       onexport={() => (exportOpen = true)}
       onnewfolder={() => (newFolderOpen = true)}
       onnewdoc={() => (newDocOpen = true)}
+      onmoved={onEntryMoved}
     />
 
     <main id="home-content-area" class="flex-1 overflow-y-auto">

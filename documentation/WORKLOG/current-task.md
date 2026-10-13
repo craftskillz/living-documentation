@@ -16,11 +16,11 @@ status: To be validated
 
 ## État courant
 
-Branche `feat/explorateur-liv-doc-main`. Backlog : [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), hypothèses H1–H6 validées. US1, US2, US7, US3 et US5 terminées et commitées : manifeste, `GET /api/tree`, dossiers en point visibles, explorateur branché sur l'arbre, manifeste écrit à la création de dossier, masquage / réaffichage (`PUT /api/tree/hidden`), déplacement et réordonnancement (`POST /api/tree/move`, service `src/lib/treeMove.ts`).
+Branche `feat/explorateur-liv-doc-main`. Backlog : [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), hypothèses H1–H6 validées. US1, US2, US7, US3, US5 et US6 terminées et commitées : manifeste, `GET /api/tree`, dossiers en point visibles, explorateur branché sur l'arbre, manifeste écrit à la création de dossier, masquage / réaffichage (`PUT /api/tree/hidden`), déplacement et réordonnancement (`POST /api/tree/move`, service `src/lib/treeMove.ts`), drag and drop dans l'explorateur (`lib/home/treeDrop.ts`, `TreeNode.svelte`).
 
 ## Suite
 
-US6 (drag and drop dans l'explorateur), branchée sur `POST /api/tree/move` ; `index` = position finale dans la liste complète de `GET /api/tree`, éléments cachés compris. L'environnement Mac est opérationnel : unitaires 31/31, `tests/api` 215/215 et `tests/e2e` 108/108 au 14/10/2026.
+US4 (supprimer la nomenclature), à démarrer dans une nouvelle session. Suites complètes au 14/10/2026 après US6 : unitaires 35/35, `tests/api` 215/215, `tests/e2e` 111/111.
 
 MCP Living Documentation non exposé comme outil dans la session : worklog et roadmap écrits à la main, pas de métadonnées attachées.
 

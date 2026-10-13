@@ -1,4 +1,5 @@
 import type { DocSummary, DocDetail, ExplorerNode } from "./types";
+import type { MoveRequest } from "./treeDrop";
 
 export async function fetchConfig(): Promise<Record<string, unknown>> {
   return fetch("/api/config").then((r) => r.json());
@@ -19,6 +20,19 @@ export async function setTreeHidden(path: string, hidden: boolean): Promise<bool
     body: JSON.stringify({ path, hidden }),
   });
   return res.ok;
+}
+
+export type MoveOutcome = { ok: true; path: string } | { ok: false; status: number };
+
+export async function moveTreeEntry(request: MoveRequest): Promise<MoveOutcome> {
+  const res = await fetch("/api/tree/move", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+  if (!res.ok) return { ok: false, status: res.status };
+  const { path } = (await res.json()) as { path: string };
+  return { ok: true, path };
 }
 
 export async function fetchAllDirs(docsFolder: string): Promise<string[]> {

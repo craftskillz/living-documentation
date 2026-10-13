@@ -1,13 +1,17 @@
 <script lang="ts">
   import { home } from "./state.svelte";
   import { t } from "../i18n.svelte";
-  import { fetchTree, setTreeHidden } from "./api";
+  import { fetchTree, moveTreeEntry, setTreeHidden } from "./api";
   import { filterExplorerTree, withoutHiddenEntries } from "./tree";
+  import { dropRequest, type DropPosition } from "./treeDrop";
+  import { showPersistentToast } from "../persistentToast";
   import type { ExplorerNode } from "./types";
   import TreeNode from "./TreeNode.svelte";
 
-  let { onopen, onsearch, onexport, onnewfolder, onnewdoc }: {
+  let { onopen, onsearch, onexport, onnewfolder, onnewdoc, onmoved }: {
     onopen: (id: string) => void;
+    /** An entry moved from `source` to `path` on disk; ids under it changed. */
+    onmoved: (source: string, path: string) => void;
     onsearch: (q: string) => void;
     onexport: () => void;
     onnewfolder: () => void;
@@ -36,6 +40,21 @@
     entryMenu = null;
     if (await setTreeHidden(node.path, !node.hidden)) home.explorerTree = await fetchTree();
   }
+
+  // ── Drag and drop move ─────────────────────────────────────────────────────────
+  const HTTP_CONFLICT = 409;
+
+  async function moveEntry(source: string, targetPath: string, position: DropPosition) {
+    const request = dropRequest(home.explorerTree, source, targetPath, position);
+    if (!request) return;
+    const outcome = await moveTreeEntry(request);
+    if (outcome.ok) return onmoved(source, outcome.path);
+    const name = source.split("/").pop() ?? source;
+    const key = outcome.status === HTTP_CONFLICT ? "sidebar.move_conflict" : "sidebar.move_failed";
+    showPersistentToast(t(key, { name }), "error");
+    home.explorerTree = await fetchTree();
+  }
+
   const docCount = $derived(home.filteredDocs.length);
   const isEmpty = $derived(tree.length === 0);
 
@@ -124,7 +143,7 @@
     {#if isEmpty}
       <p class="px-4 py-8 text-sm text-gray-400 text-center">{t("sidebar.no_docs")}</p>
     {:else}
-      <TreeNode nodes={tree} folderPath={[]} {onopen} onentrymenu={openEntryMenu} />
+      <TreeNode nodes={tree} folderPath={[]} {onopen} onentrymenu={openEntryMenu} onmove={moveEntry} />
     {/if}
   </nav>
 

@@ -175,7 +175,7 @@ Une entrée de `order` ou `hidden` qui n'existe plus est ignorée à la lecture 
 - [x] ~~US7 — Créer `liv-doc-main.md` à la création d'un dossier~~
 - [x] ~~US3 — Masquer et réafficher des éléments~~
 - [ ] US5 — API de déplacement et de réordonnancement
-- [ ] US6 — Drag and drop dans l'explorateur
+- [x] ~~US6 — Drag and drop dans l'explorateur~~
 - [ ] US4 — Supprimer la nomenclature
 - [ ] US8 — Migration des préfixes numériques
 - [ ] US9 — Starters et documentation
