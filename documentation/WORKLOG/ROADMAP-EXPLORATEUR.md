@@ -2,17 +2,10 @@
 type: Worklog
 title: ROADMAP — Explorateur ordonné par liv-doc-main.md
 description: Backlog des US qui remplacent les préfixes numériques et la nomenclature de catégories par un manifeste liv-doc-main.md par dossier (ordre + éléments cachés), rendent visibles les dossiers en point et ajoutent le drag and drop dans l'explorateur.
-tags:
-  - roadmap
-  - explorateur
-  - sidebar
-  - liv-doc-main
-  - drag-and-drop
-  - nomenclature
-  - migration
-  - backlog
+tags: []
 timestamp: 2026-10-13T14:00:00Z
 status: To be validated
+language: fr
 ---
 
 # ROADMAP — Explorateur ordonné par `liv-doc-main.md`
@@ -181,7 +174,7 @@ Une entrée de `order` ou `hidden` qui n'existe plus est ignorée à la lecture 
 - [x] ~~US2 — Rendre visibles les dossiers et fichiers en point~~
 - [x] ~~US7 — Créer `liv-doc-main.md` à la création d'un dossier~~
 - [x] ~~US3 — Masquer et réafficher des éléments~~
-- [x] ~~US5 — API de déplacement et de réordonnancement~~
+- [ ] US5 — API de déplacement et de réordonnancement
 - [ ] US6 — Drag and drop dans l'explorateur
 - [ ] US4 — Supprimer la nomenclature
 - [ ] US8 — Migration des préfixes numériques
