@@ -5,7 +5,7 @@ import { sha256File } from "./hash";
 import { currentSourceCommit, type SourceCommit } from "./git";
 import { getField } from "./frontmatter";
 import { isReservedOkfFile, normalizeFrontmatter } from "./okf";
-import { parseFilename } from "./parser";
+import { titleFromFilename } from "./parser";
 
 export interface MetadataEntry {
   path: string; // relative to sourceRoot
@@ -199,7 +199,7 @@ export function syncSourcesToFrontmatter(
   const content = fs.readFileSync(abs, "utf-8");
   const relPath = path.relative(docsPath, abs).split(path.sep).join("/");
   const next = normalizeFrontmatter(content, relPath, {
-    title: parseFilename(path.basename(abs)).title,
+    title: titleFromFilename(abs),
     sources: entries.length > 0 ? entries : null,
   });
   if (next !== content) fs.writeFileSync(abs, next, "utf-8");

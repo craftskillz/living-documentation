@@ -73,8 +73,7 @@
     }
     home.searchQuery = trimmed;
     home.searchResults = home.allDocs.filter(
-      d => d.title.toLowerCase().includes(trimmed.toLowerCase()) ||
-           d.category.toLowerCase().includes(trimmed.toLowerCase()),
+      d => d.title.toLowerCase().includes(trimmed.toLowerCase()),
     );
     searchTimer = window.setTimeout(async () => {
       try {
@@ -176,11 +175,7 @@
     if (!deleted) return null;
     const deletedFolder = (deleted.folder || []).join("/");
     const inSameFolder = (d: DocSummary) => (d.folder || []).join("/") === deletedFolder;
-    // Match the sidebar's ordering: flat mode lists every doc of the folder by
-    // filename; category mode keeps same-category docs in their insertion order.
-    const siblings = home.hideCategories
-      ? home.allDocs.filter(inSameFolder).slice().sort((a, b) => (a.filename || "").localeCompare(b.filename || ""))
-      : home.allDocs.filter(d => inSameFolder(d) && d.category === deleted.category);
+    const siblings = home.allDocs.filter(inSameFolder).slice().sort((a, b) => (a.filename || "").localeCompare(b.filename || ""));
     const idx = siblings.findIndex(d => d.id === deletedId);
     if (idx === -1) return null;
     const next = siblings[idx + 1] ?? siblings[idx - 1];
@@ -273,8 +268,7 @@
       const topFavId = favList.length ? favList[0]?.id : undefined;
       const first =
         (topFavId ? home.allDocs.find(d => d.id === topFavId) : undefined) ??
-        home.allDocs.find(d => d.category === "DOCUMENTATION") ??
-        home.allDocs.find(d => d.category === "General") ??
+        home.allDocs.find(d => !d.folder?.length) ??
         home.allDocs[0];
       if (first) openDoc(first.id, true);
     }

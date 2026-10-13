@@ -5,7 +5,9 @@ import { test, expect } from '../helpers/ld-fixture';
 function writeDoc(docsAbs: string, rel: string): void {
   const abs = path.join(docsAbs, rel);
   fs.mkdirSync(path.dirname(abs), { recursive: true });
-  fs.writeFileSync(abs, `---\ntype: Concept\ntitle: ${path.basename(rel, '.md')}\n---\n\nBody of ${rel}\n`);
+  const name = path.basename(rel, '.md');
+  const title = name.charAt(0).toUpperCase() + name.slice(1);
+  fs.writeFileSync(abs, `---\ntype: Concept\ntitle: ${title}\n---\n\nBody of ${rel}\n`);
 }
 
 test('explorer shows folders in manifest order, dot folders included, and opens a nested document', async ({ page, ld }) => {

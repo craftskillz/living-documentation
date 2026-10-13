@@ -81,7 +81,7 @@ covers. This is what keeps the documentation alive.
 
 ### Mandatory steps after finishing a feature
 1. \`list_documents\` — get the inventory.
-2. Shortlist ADRs whose title / category looks topically related to the
+2. Shortlist ADRs whose title / tags look topically related to the
    feature, then \`read_document\` their frontmatter (\`description\`,
    \`tags\`) to confirm.
 3. **Supersede check** — if an existing ADR is **made obsolete** by the new
@@ -126,8 +126,6 @@ Rules:
 - \`tags:\` are the primary search signal. Mix library names (\`stripe\`,
   \`amplify\`), domain concepts (\`workflow\`, \`moderation\`), and symbol
   names (\`useAdScheduler\`, \`presigned-url\`).
-- \`category\` argument: domain bucket in the filename pattern, uppercase,
-  e.g. \`SERVICES CLOUD\`, \`INTEGRATION\`, \`ALGORITHMES\`.
 - \`folder\` argument: \`adrs\` (or the project's ADR sub-folder).
 
 ## Markdown conventions for documents written via this MCP
@@ -431,15 +429,15 @@ const CREATE_DIAGRAM_DESCRIPTION = [
 ].join("\n");
 
 const CREATE_DOCUMENT_DESCRIPTION = [
-  "Create a **new** Markdown document. The filename is generated automatically from the configured pattern (date + category + title slug). Pass `content` as full Markdown; omit to create an empty stub. To **modify an existing document** (correct drift, flip `status:` to `SuperSeeded`, edit body), use `update_document(id, content)` instead — `create_document` will refuse with `A document with this name already exists` if the target filename collides.",
+  "Create a **new** Markdown document. The filename is the title slug (`Mon guide` → `mon-guide.md`, `-2`, `-3`… on collision); the title and the `timestamp` live in the frontmatter. Pass `content` as full Markdown; omit to create an empty stub. To **modify an existing document** (correct drift, flip `status:` to `SuperSeeded`, edit body), use `update_document(id, content)` instead — `create_document` always creates a new file, it never overwrites.",
   "",
   "## `date` argument — retrodocumentation only",
-  'By default the filename date prefix is "now". Pass `date` (ISO 8601, e.g. `2024-08-12` or `2024-08-12T14:33:00Z`) **only** when retrodocumenting an ADR from a past event — typically inside the `retrodocument-adrs-from-git` workflow, where the date must come from the originating git commit. The derived `timestamp:` will match. Outside of retrodocumentation, omit `date`.',
+  'By default the frontmatter `timestamp` is "now". Pass `date` (ISO 8601, e.g. `2024-08-12` or `2024-08-12T14:33:00Z`) **only** when retrodocumenting an ADR from a past event — typically inside the `retrodocument-adrs-from-git` workflow, where the date must come from the originating git commit. The derived `timestamp:` will match. Outside of retrodocumentation, omit `date`.',
   "",
   "## Primary use case — ADRs (Architecture Decision Records)",
   'On this project, the dominant use of `create_document` is to record an ADR every time a coding agent implements or modifies a feature. The full workflow is described in `get_server_guide` ("Feature workflow"). In short:',
   "",
-  "1. **Supersede check first.** `list_documents` → shortlist ADRs whose title/category overlaps the feature → `read_document` to confirm. If one is obsoleted, overwrite it with `status: SuperSeeded` + a one-line pointer to the new ADR.",
+  "1. **Supersede check first.** `list_documents` → shortlist ADRs whose title overlaps the feature → `read_document` to confirm. If one is obsoleted, overwrite it with `status: SuperSeeded` + a one-line pointer to the new ADR.",
   "2. **Create the new ADR** with the mandatory frontmatter (below).",
   "3. **Bind the source files** with `add_metadata` (see that tool for the god-files exclusion list). Without this, the ADR escapes drift detection.",
   "",
@@ -463,14 +461,12 @@ const CREATE_DOCUMENT_DESCRIPTION = [
   "- `status:` is **always** `To be validated` at creation. Only the human owner promotes to `Accepted`. The status has **no effect** on how the LLM treats the ADR — only `SuperSeeded` is filtered out downstream.",
   '- `description:` stays factual and short — one sentence. The "why" goes in the body.',
   "- `tags:` are the primary search signal. Be specific.",
-  "- `category` is the domain bucket in the filename pattern, uppercase (e.g. `SERVICES CLOUD`, `INTEGRATION`, `ALGORITHMES`).",
   "- `folder` should be `adrs` (or the project ADR sub-folder).",
   "",
   "## Worked ADR example",
   "```json",
   "{",
   '  "title":    "ajout ressource storage s3",',
-  '  "category": "SERVICES CLOUD",',
   '  "folder":   "adrs",',
   '  "content":  "---\\ntype: ADR\\ntitle: Ajout ressource storage S3\\ndescription: Ajout du module S3 Storage via Amplify Gen 2 — bucket nommé via CDK override, CORS configuré, pas de mode hors-ligne\\ntags:\\n  - s3\\n  - storage\\n  - amplify\\n  - CDK\\n  - CORS\\nstatus: To be validated\\n---\\n\\n# Ajout ressource storage S3\\n\\n## Contexte\\n...\\n\\n## Décision\\n...\\n\\n## Conséquences\\n..."',
   "}",
@@ -494,7 +490,7 @@ const TOOLS = [
   },
   {
     name: "list_documents",
-    description: `List documents with pagination. Returns \`{ total, page, pageSize, totalPages, hasNextPage, nextPage, folder, documents }\` where each document has id, title, category, folder, and \`linkHref\` (the ready-to-paste \`?doc=...\` segment — copy verbatim, do not re-encode). Default page size is 50, max 200. Pass \`folder\` to list only documents under a given folder (case-insensitive, matches the folder and anything beneath it). Call repeatedly with \`nextPage\` until \`hasNextPage\` is false. Documents are the source of truth — read them before creating or updating any diagram. ${GUIDE_HINT}`,
+    description: `List documents with pagination. Returns \`{ total, page, pageSize, totalPages, hasNextPage, nextPage, folder, documents }\` where each document has id, title, folder, and \`linkHref\` (the ready-to-paste \`?doc=...\` segment — copy verbatim, do not re-encode). Default page size is 50, max 200. Pass \`folder\` to list only documents under a given folder (case-insensitive, matches the folder and anything beneath it). Call repeatedly with \`nextPage\` until \`hasNextPage\` is false. Documents are the source of truth — read them before creating or updating any diagram. ${GUIDE_HINT}`,
     inputSchema: {
       type: "object",
       properties: {
@@ -627,7 +623,7 @@ const TOOLS = [
       "3. `update_document(id, content)` with the **full** new Markdown body — the file is overwritten exactly with this string.",
       "4. `refresh_metadata(id)` once the doc is back in sync with the source files (re-baselines the SHA-256 hashes).",
       "",
-      "The filename, id, date, category, and folder are NOT changed by this call — content-only update. To rename or recategorise, create a new doc with `create_document` and (optionally) supersede the old one via this tool.",
+      "The filename, id and folder are NOT changed by this call — content-only update. To rename or move, create a new doc with `create_document` and (optionally) supersede the old one via this tool.",
       "",
       "Returns `{ success, id, bytes }`.",
       "",
@@ -656,11 +652,6 @@ const TOOLS = [
       type: "object",
       properties: {
         title: { type: "string", description: "Human-readable document title" },
-        category: {
-          type: "string",
-          description:
-            'Category extracted from the filename, e.g. "Architecture", "Guide"',
-        },
         folder: {
           type: "string",
           description:
@@ -674,10 +665,10 @@ const TOOLS = [
         date: {
           type: "string",
           description:
-            "Optional ISO 8601 date (e.g. `2024-08-12` or `2024-08-12T14:33:00Z`) that overrides the filename date prefix. Use ONLY when retrodocumenting from a past event (typically a git commit). Defaults to now.",
+            "Optional ISO 8601 date (e.g. `2024-08-12` or `2024-08-12T14:33:00Z`) that becomes the frontmatter `timestamp`. Use ONLY when retrodocumenting from a past event (typically a git commit). Defaults to now.",
         },
       },
-      required: ["title", "category"],
+      required: ["title"],
     },
   },
   {
@@ -1190,7 +1181,7 @@ const TOOLS = [
   {
     name: "list_adrs_below_accuracy",
     description:
-      "List ADRs whose accuracy has dropped below 80%, sorted from most degraded first. Returns up to 10 ADRs per call along with the total count of ADRs below the threshold. Non-ADR documents, ADRs without metadata (total = 0), and SuperSeeded ADRs are excluded. ADR detection uses the same convention as review_adr_relevance: folder segment `ADRS`, category `ADR`, `[ADR]` in the id, or an `Architecture Decision Record` marker in the opening content.",
+      "List ADRs whose accuracy has dropped below 80%, sorted from most degraded first. Returns up to 10 ADRs per call along with the total count of ADRs below the threshold. Non-ADR documents, ADRs without metadata (total = 0), and SuperSeeded ADRs are excluded. ADR detection uses the same convention as review_adr_relevance: folder segment `ADRS`, frontmatter `type: ADR`, `[ADR]` in the id, or an `Architecture Decision Record` marker in the opening content.",
     inputSchema: { type: "object", properties: {} },
   },
   {
@@ -1453,7 +1444,7 @@ Living Documentation is a tool where knowledge lives primarily in Markdown docum
 **Do not ask the user questions you can answer yourself by reading the docs.**
 
 1. Call \`list_documents\` to get the full document list.
-2. Read documents that look architecturally significant regardless of their folder name — look for ADR-style YAML frontmatter (lines starting with \`type:\`, \`status:\`, \`description:\`, \`tags:\`), README files, and any document whose title or category suggests architecture, integration, or domain knowledge.
+2. Read documents that look architecturally significant regardless of their folder name — look for ADR-style YAML frontmatter (lines starting with \`type:\`, \`status:\`, \`description:\`, \`tags:\`), README files, and any document whose title or tags suggest architecture, integration, or domain knowledge.
 3. **Ignore any document whose frontmatter contains \`status: SuperSeeded\`** — it is deprecated and must not be used as a source of truth.
 4. Read the frontmatter (\`description\` and \`tags\` fields) of each relevant document with \`read_document\` to find answers to the diagram-specific questions below.
 5. Only ask the user for information that cannot be found in any active (non-superseded) document.
@@ -1676,7 +1667,7 @@ ${featureLine}
 ## Step 1 — Search for an ADR to supersede
 
 1. Call \`list_documents\`.
-2. Shortlist ADRs whose title or category looks topically related to the feature (cheap — just title + category strings).
+2. Shortlist ADRs whose title looks topically related to the feature (cheap — just the title strings).
 3. \`read_document\` on the shortlisted ADRs and inspect their frontmatter (\`description\`, \`tags\`).
 4. If an existing ADR is **made obsolete** by this feature:
    - \`read_document(id)\` to load its current Markdown.
@@ -1710,8 +1701,7 @@ Rules (re-stated, do not skip):
 - Body sections (suggested): \`## Contexte\`, \`## Décision\`, \`## Conséquences\`.
 
 Call \`create_document\` with:
-- \`title\` — short, lowercase, becomes the filename slug (e.g. \`ajout ressource storage s3\`).
-- \`category\` — domain bucket in the filename pattern, **uppercase**, e.g. \`SERVICES CLOUD\`, \`INTEGRATION\`, \`ALGORITHMES\`.
+- \`title\` — short, becomes the filename slug (e.g. \`Ajout ressource storage S3\` → \`ajout-ressource-storage-s3.md\`).
 - \`folder: "adrs"\` (or the project's ADR sub-folder).
 - \`content\` — frontmatter + body.
 
@@ -1766,7 +1756,7 @@ If \`totalCommits === 0\`, tell the user there is no history to retrodocument an
 
 ## Step 2 — Read the existing ADR inventory
 
-Call \`list_documents\`, shortlist ADRs (folder \`adrs\`, category \`ADR\`, or \`[ADR]\` in the id), and \`read_document\` the frontmatter (\`description\`, \`tags\`) of any whose topic could overlap the upcoming commits. You will need this to detect supersession candidates without re-listing for each commit.
+Call \`list_documents\`, shortlist ADRs (folder \`adrs\`, frontmatter \`type: ADR\`, or \`[ADR]\` in the id), and \`read_document\` the frontmatter (\`description\`, \`tags\`) of any whose topic could overlap the upcoming commits. You will need this to detect supersession candidates without re-listing for each commit.
 
 ## Step 3 — Walk commits oldest → newest
 
@@ -1813,7 +1803,6 @@ status: To be validated
 
 3. Call \`create_document\` with:
    - \`title\` — short, lowercase slug derived from the commit subject.
-   - \`category\` — uppercase domain bucket (e.g. \`SERVICES CLOUD\`, \`INTEGRATION\`).
    - \`folder: "adrs"\` (or the project's ADR sub-folder).
    - \`date\` — the commit \`committerDate\` (the optional \`date\` argument exists precisely for this retrodocumentation case; **do not omit it here**).
    - \`content\` — frontmatter + body.
@@ -2361,7 +2350,6 @@ function createMcpServer(docsPath: string): Server {
             docsPath,
             args as {
               title: string;
-              category: string;
               folder?: string;
               content?: string;
               date?: string;

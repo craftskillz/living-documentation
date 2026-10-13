@@ -22,7 +22,6 @@ export function configRouter(docsPath: string): Router {
       // Only allow safe fields — prevent path traversal via config
       const allowed: (keyof StoredConfig)[] = [
         'title',
-        'filenamePattern',
         'theme',
         'siteTheme',
         'hiddenHeaderMenus',
@@ -35,8 +34,6 @@ export function configRouter(docsPath: string): Router {
         'extraFiles',
         'blockedFileExtensions',
         'exclusiveFolderExpansion',
-        'exclusiveCategoryExpansion',
-        'sidebarSort',
         'codeBlockMaxHeight',
         'markdownSoftBreaks',
         'imageRoundedCorners',
@@ -54,16 +51,6 @@ export function configRouter(docsPath: string): Router {
           (safe as Record<string, unknown>)[key] = patch[key];
         }
       }
-      // filenamePattern: must contain exactly one [Category]
-      if ('filenamePattern' in safe && typeof safe.filenamePattern === 'string') {
-        const matches = safe.filenamePattern.match(/\[Category\]/gi);
-        if (!matches || matches.length === 0) {
-          return res.status(400).json({ error: 'filenamePattern must contain [Category]' });
-        }
-        if (matches.length > 1) {
-          return res.status(400).json({ error: 'filenamePattern must contain [Category] exactly once' });
-        }
-      }
       // language: only 'en' or 'fr'
       if ('language' in safe && !['en', 'fr'].includes(safe.language as string)) {
         delete (safe as Record<string, unknown>).language;
@@ -77,10 +64,6 @@ export function configRouter(docsPath: string): Router {
           return res.status(400).json({ error: 'hiddenHeaderMenus must be an array' });
         }
         safe.hiddenHeaderMenus = normalizeHiddenHeaderMenus(patch.hiddenHeaderMenus);
-      }
-      // sidebarSort: only 'recent', 'oldest' or 'alphabetical'
-      if ('sidebarSort' in safe && !['recent', 'oldest', 'alphabetical'].includes(safe.sidebarSort as string)) {
-        delete (safe as Record<string, unknown>).sidebarSort;
       }
       // favorites: array of { id, title } with non-empty string ids, deduped by id,
       // capped to a sane length. Titles are trimmed and length-limited.

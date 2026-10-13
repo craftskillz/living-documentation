@@ -14,13 +14,6 @@
 
   const BLUEPRINT_FOLDER = "001_BLUEPRINT";
 
-  function slugifyCategory(name: string): string {
-    return (
-      name.normalize("NFKD").replace(/[̀-ͯ]/g, "").toUpperCase()
-        .replace(/[^A-Z0-9]+/g, "_").replace(/^_+|_+$/g, "") || "FOLDER"
-    );
-  }
-
   function modalFolderPath(box: Box): string {
     const raw = box.folder.path || box.folder.name;
     const clean = raw.replace(/^\/+|\/+$/g, "");
@@ -34,7 +27,6 @@
   let view = $state<ModalView>("closed");
   let modalTitle = $state("");
   let titleValue = $state("");
-  let categoryValue = $state("");
   let contentValue = $state("");
   let docContent = $state("");
   let docHtml = $state("");
@@ -60,8 +52,6 @@
     currentAdrId = null;
     editing = false;
     saveMsg = null;
-    const category = slugifyCategory(box.folder.name);
-    categoryValue = category;
     titleValue = box.folder.name;
     contentValue = "";
     docContent = "";
@@ -79,16 +69,16 @@
       return;
     }
 
-    await loadOrCreateAdr(box, category);
+    await loadOrCreateAdr(box);
   }
 
   async function fetchDoc(id: string): Promise<{ title: string; html: string; content: string }> {
     return fetch(`/api/documents/${encodeURIComponent(id)}`).then((r) => r.json());
   }
 
-  async function loadOrCreateAdr(box: Box, category: string) {
+  async function loadOrCreateAdr(box: Box) {
     const adrRes = (await fetch(
-      `/api/blueprint/blueprint-adr?category=${encodeURIComponent(category)}`,
+      `/api/blueprint/blueprint-adr?folder=${encodeURIComponent(box.folder.name)}`,
     ).then((r) => r.json())) as { found: boolean; doc?: { id: string; title: string } };
 
     if (adrRes.found && adrRes.doc) {
@@ -128,7 +118,7 @@
   async function onFolderCreate() {
     await fetch("/api/blueprint/blueprint-folder", { method: "POST" });
     if (currentBox) {
-      await loadOrCreateAdr(currentBox, slugifyCategory(currentBox.folder.name));
+      await loadOrCreateAdr(currentBox);
     }
   }
 
@@ -141,7 +131,6 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         title: titleValue.trim() || currentBox?.folder.name || t("common.untitled"),
-        category: categoryValue,
         folder: BLUEPRINT_FOLDER,
         content: newContent,
       }),
@@ -157,7 +146,8 @@
     e.preventDefault();
     const payload = {
       title: titleValue.trim() || currentBox?.folder.name || t("common.untitled"),
-      category: categoryValue,
+      // The file is keyed by the source folder; the title stays editable.
+      name: currentBox?.folder.name,
       folder: BLUEPRINT_FOLDER,
     };
 
@@ -245,7 +235,6 @@
 
       {:else if view === "form"}
         <form class="bpadr-form" onsubmit={onSubmit}>
-          <input type="hidden" name="category" value={categoryValue} />
           <input type="hidden" name="folder" value={BLUEPRINT_FOLDER} />
           <div class="bpadr-field">
             <label for="adr-title">{t("blueprint.adr.title_label")}</label>

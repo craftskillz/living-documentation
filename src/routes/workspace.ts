@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { readConfig } from '../lib/config';
 import { normalizeFrontmatter } from '../lib/okf';
+import { uniqueDocFilename } from '../lib/parser';
 
 const WORKSPACE_VERSION = 1;
 const MAX_WORKSPACE_ENTITIES = 1000;
@@ -1174,16 +1175,7 @@ function createAgentRunDocument(
   fs.mkdirSync(targetDir, { recursive: true });
 
   const title = `Run - ${agent.label}`;
-  const baseFilename = buildWorkspaceFilenameForDocs(docsPath, title, 'AGENT');
-  const baseName = baseFilename.replace(/\.md$/, '');
-  let filename = baseFilename;
-  let filePath = path.join(targetDir, filename);
-  let suffix = 2;
-  while (fs.existsSync(filePath)) {
-    filename = `${baseName}_${suffix}.md`;
-    filePath = path.join(targetDir, filename);
-    suffix += 1;
-  }
+  const filePath = path.join(targetDir, uniqueDocFilename(targetDir, title));
 
   const relativePath = path.relative(docsPath, filePath);
   fs.writeFileSync(
@@ -1253,24 +1245,6 @@ function findWorkspaceAgentRunContext(state: WorkspaceState, agentId: string): {
     provider,
     mcp: state.entities.find((entity) => entity.kind === 'mcp') ?? null,
   };
-}
-
-function buildWorkspaceFilenameForDocs(docsPath: string, title: string, category: string): string {
-  const { filenamePattern } = readConfig(docsPath);
-  const now = new Date();
-  const yyyy = String(now.getFullYear());
-  const mm = String(now.getMonth() + 1).padStart(2, '0');
-  const dd = String(now.getDate()).padStart(2, '0');
-  const hh = String(now.getHours()).padStart(2, '0');
-  const min = String(now.getMinutes()).padStart(2, '0');
-  return `${(filenamePattern || 'YYYY_MM_DD_HH_mm_[Category]_title')
-    .replace('YYYY', yyyy)
-    .replace('MM', mm)
-    .replace('DD', dd)
-    .replace('HH', hh)
-    .replace('mm', min)
-    .replace(/\[Category\]/i, `[${category}]`)
-    .replace(/(?<![a-z0-9])(?:title_words|title)(?![a-z0-9])/i, slugify(title))}.md`;
 }
 
 export function workspaceRouter(docsPath: string): Router {

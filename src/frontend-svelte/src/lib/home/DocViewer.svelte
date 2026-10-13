@@ -352,7 +352,6 @@
             {#each doc.folder || [] as seg}
               <span title={seg} class="inline-block text-xs font-semibold px-2.5 py-0.5 rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300">{folderLabel(seg)}</span>
             {/each}
-            <span class="inline-block text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">{doc.category}</span>
           </span>
           {#if doc.formattedDate}
             <span class="text-xs text-gray-400 dark:text-gray-500">{doc.formattedDate}</span>

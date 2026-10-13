@@ -6,7 +6,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { marked } from "marked";
-import { parseFilename } from "../parser";
+import { titleFromFilename } from "../parser";
 import { parseFrontmatter } from "../frontmatter";
 import { deriveType, isReservedOkfFile } from "../okf";
 
@@ -102,7 +102,7 @@ export function buildConceptGraph(docsPath: string): ConceptGraph {
     const { data, body } = parseFrontmatter(content);
     const title =
       (typeof data.title === "string" && data.title.trim()) ||
-      parseFilename(path.basename(file)).title;
+      titleFromFilename(file);
     const type = (typeof data.type === "string" && data.type.trim()) || deriveType(relPath);
     const folder = relPath.includes("/") ? relPath.slice(0, relPath.lastIndexOf("/")) : null;
     nodes.push({ id, title, type, folder });

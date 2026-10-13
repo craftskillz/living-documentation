@@ -55,7 +55,7 @@
 
   function summaryOf(node: ExplorerNode): DocSummary {
     const id = node.id ?? "";
-    return home.docsById.get(id) ?? { id, title: node.name.replace(/\.md$/i, ""), category: "" };
+    return home.docsById.get(id) ?? { id, title: node.name.replace(/\.md$/i, "") };
   }
 
   function statusPill(doc: DocSummary): "V" | "S" | null {

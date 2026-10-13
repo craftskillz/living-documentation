@@ -57,7 +57,7 @@
     try {
       const docs: DocSummary[] = await fetch("/api/documents").then((r) => r.json());
       const groups = new Set<string>();
-      docs.forEach((doc) => groups.add(doc.folder?.[0] ?? doc.category ?? "General"));
+      docs.forEach((doc) => groups.add(doc.folder?.[0] ?? "General"));
       folderGroups = [...groups].sort((a, b) => {
         if (a === "General") return -1;
         if (b === "General") return 1;
@@ -166,8 +166,8 @@
             if (!node.children[seg]) node.children[seg] = { categories: {}, children: {} };
             node = node.children[seg];
           }
-          if (!node.categories[doc.category]) node.categories[doc.category] = [];
-          node.categories[doc.category].push(doc);
+          if (!node.categories.General) node.categories.General = [];
+          node.categories.General.push(doc);
         }
         return root;
       }
@@ -253,9 +253,9 @@
           if (!full) return "";
           const html = rewriteDocLinks(renderColumnLayoutsInHtml(full.html));
           const folderPath = Array.isArray(doc.folder)
-            ? doc.folder.map((f) => esc(fLabel(f))).join(" › ") + " › "
+            ? doc.folder.map((f) => esc(fLabel(f))).join(" › ")
             : "";
-          const meta = `${folderPath}${esc(doc.category)}${doc.formattedDate ? " · " + esc(doc.formattedDate) : ""}`;
+          const meta = [folderPath, doc.formattedDate ? esc(doc.formattedDate) : ""].filter(Boolean).join(" · ");
           const pageBreak =
             idx > 0
               ? '<div style="page-break-before:always;height:0;"></div>'

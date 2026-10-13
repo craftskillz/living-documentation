@@ -6,7 +6,7 @@
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
-import { parseFilename } from "../parser";
+import { titleFromFilename } from "../parser";
 import { isReservedOkfFile } from "../okf";
 
 // One added-concept entry: date (YYYY-MM-DD) → list of concept titles.
@@ -34,7 +34,7 @@ function collectAddedByDate(docsPath: string): Map<string, string[]> {
     if (!line.trim() || !date) continue;
     const base = line.split("/").pop() ?? "";
     if (!base.toLowerCase().endsWith(".md") || isReservedOkfFile(base)) continue;
-    const title = parseFilename(base).title;
+    const title = titleFromFilename(base);
     const list = byDate.get(date) ?? [];
     if (!list.includes(title)) list.push(title);
     byDate.set(date, list);

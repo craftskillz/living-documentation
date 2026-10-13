@@ -299,7 +299,7 @@ test.describe("blueprint document editing reuses the Home editor", () => {
 
     const created = fs
       .readdirSync(path.join(ld.docsAbs, "001_BLUEPRINT"))
-      .find((f) => f.includes("[BETA]_beta") && f.endsWith(".md"));
+      .find((f) => f === "beta.md");
     expect(created).toBeDefined();
     const saved = readOkf(fs.readFileSync(path.join(ld.docsAbs, "001_BLUEPRINT", defined(created)), "utf-8"));
     expect(saved.fields).toMatchObject({ type: 'Document', title: 'beta' });

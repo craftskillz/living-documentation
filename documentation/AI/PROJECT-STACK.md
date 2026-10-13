@@ -103,7 +103,7 @@ src/shared/headerNavigation.ts    <- liste et normalisation des menus optionnels
 src/lib/cli/headerMenuPrompt.ts    <- sélecteur TTY sans dépendance, textes init.en.json / init.fr.json
 src/server.ts                      <- app Express, montage des routes API, frontend statique et MCP
 src/lib/config.ts                  <- lecture/écriture `.living-doc.json`, chemins relatifs portables, migration legacy
-src/lib/parser.ts                  <- parsing du filenamePattern et extraction date/catégorie/titre
+src/lib/parser.ts                  <- métadonnées d'affichage (title/timestamp du frontmatter) et nommage par slug
 src/lib/metadata.ts                <- stockage des bindings source + calcul de fiabilité
 src/lib/hash.ts                    <- hash SHA-256 des fichiers source
 src/lib/documentLanguage.ts        <- lecture/ecriture de la langue documentaire dans le frontmatter Markdown
@@ -149,7 +149,7 @@ memory/                           <- mémoire projet locale indexée par `memory
 
 - **Document Markdown** : unité principale de lecture/édition, stockée en `.md` sous le dossier de documentation ou déclarée dans `extraFiles`.
 - **Templates Markdown** : bibliothèque locale classée par dossiers logiques dans `.document-templates.json` ; sélection depuis la topbar ou le formulaire de création, puis copie indépendante sans variables. Les dossiers de templates sont distincts des dossiers de destination des documents.
-- **Filename pattern** : convention configurable, par défaut `YYYY_MM_DD_HH_mm_[Category]_title`, utilisée pour extraire date, catégorie et titre.
+- **Nom de fichier** : simple identifiant. Le titre vient du frontmatter `title` (sinon du nom, préfixe historique `YYYY_MM_DD_[X]_` ignoré), la date du frontmatter `timestamp`. Un nouveau document est nommé par le slug de son titre (`mon-guide.md`, `-2` en cas de collision). Plus de catégories ni de pattern configurable.
 - **Configuration portable** : `.living-doc.json` stocke les chemins en relatif au dossier docs ; `docsFolder` et `sourceRoot` sont résolus à l'exécution.
 - **Extra files** : fichiers Markdown hors dossier docs, whitelistés en config et affichés dans la section General.
 - **Métadonnées source** : bindings entre documents et fichiers source, stockés avec hash SHA-256 pour détecter la dérive documentaire.

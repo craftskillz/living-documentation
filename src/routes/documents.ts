@@ -2,7 +2,7 @@ import { Router, type Request, type Response } from "express";
 import { contentFromTemplate, TemplateError } from "../lib/documentTemplates";
 import fs from "node:fs";
 import path from "node:path";
-import { parseFilename, type DocMetadata } from "../lib/parser";
+import { parseDocMetadata, readDocMetadata, uniqueDocFilename, type DocMetadata } from "../lib/parser";
 import { readConfig } from "../lib/config";
 import { readMetadataStore } from "../lib/metadata";
 import { RESERVED_ROOT_FOLDERS, relocateEntry, TreeMoveError } from "../lib/treeMove";
@@ -39,18 +39,15 @@ export function collectMdFiles(dir: string, baseDir: string): string[] {
 export function listDocs(
   docsPath: string,
   extraFiles: string[] = [],
-  filenamePattern?: string,
 ): DocMetadata[] {
-  // Extra files first, in config order, always General
+  // Extra files first, in config order
   const extraDocs: DocMetadata[] = [];
   for (const filePath of extraFiles) {
     if (!filePath.endsWith(".md") || !fs.existsSync(filePath)) continue;
-    const filename = path.basename(filePath);
-    const meta = parseFilename(filename, filenamePattern);
+    const meta = readDocMetadata(filePath, path.basename(filePath));
     extraDocs.push({
       ...meta,
       id: encodeURIComponent(filePath.slice(0, -3)),
-      category: "General",
       folder: null,
     });
   }
@@ -59,7 +56,7 @@ export function listDocs(
   const regularDocs = collectMdFiles(docsPath, docsPath).map((relPath) => {
     const filename = path.posix.basename(relPath);
     const subdir = path.posix.dirname(relPath);
-    const meta = parseFilename(filename, filenamePattern);
+    const meta = readDocMetadata(path.join(docsPath, relPath), filename);
     const id = encodeURIComponent(relPath.slice(0, -3));
     const folder =
       subdir !== "."
@@ -71,28 +68,6 @@ export function listDocs(
   regularDocs.sort((a, b) => a.filename.localeCompare(b.filename));
 
   return [...extraDocs, ...regularDocs];
-}
-
-function buildFilename(filenamePattern: string, title: string, category: string, date: string): string {
-  const [year, month, day] = date.split('-');
-  const now = new Date();
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  const titleSlug = title.trim()
-    .toLowerCase()
-    .replace(/\s+/g, '_')
-    .replace(/[^a-z0-9_]/g, '')
-    .replace(/_+/g, '_')
-    .replace(/^_|_$/g, '') || 'document';
-
-  return `${(filenamePattern || 'YYYY_MM_DD_HH_mm_[Category]_title')
-    .replace('YYYY', year)
-    .replace('MM', month)
-    .replace('DD', day)
-    .replace('HH', hours)
-    .replace('mm', minutes)
-    .replace(/\[Category\]/i, `[${category}]`)
-    .replace(/(?<![a-z0-9])(?:title_words|title)(?![a-z0-9])/i, titleSlug)}.md`;
 }
 
 export function safeFilePath(docsPath: string, filename: string): string | null {
@@ -177,8 +152,8 @@ export function documentsRouter(docsPath: string): Router {
   // GET /api/documents — list all docs with metadata
   router.get("/", (_req: Request, res: Response) => {
     try {
-      const { extraFiles = [], filenamePattern } = readConfig(docsPath);
-      res.json(listDocs(docsPath, extraFiles, filenamePattern));
+      const { extraFiles = [] } = readConfig(docsPath);
+      res.json(listDocs(docsPath, extraFiles));
     } catch {
       res.status(500).json({ error: "Failed to list documents" });
     }
@@ -195,8 +170,8 @@ export function documentsRouter(docsPath: string): Router {
       const needle = rawQuery.slice(METADATA_SEARCH_PREFIX.length).trim();
       if (!needle) return res.json([]);
       try {
-        const { extraFiles = [], filenamePattern } = readConfig(docsPath);
-        const docs = listDocs(docsPath, extraFiles, filenamePattern);
+        const { extraFiles = [] } = readConfig(docsPath);
+        const docs = listDocs(docsPath, extraFiles);
         const store = readMetadataStore(docsPath);
         const matchingIds = new Set<string>();
         for (const [docId, entries] of Object.entries(store)) {
@@ -222,8 +197,8 @@ export function documentsRouter(docsPath: string): Router {
     const query = deAccent(rawQuery);
 
     try {
-      const { extraFiles = [], filenamePattern } = readConfig(docsPath);
-      const docs = listDocs(docsPath, extraFiles, filenamePattern);
+      const { extraFiles = [] } = readConfig(docsPath);
+      const docs = listDocs(docsPath, extraFiles);
       const results: (DocMetadata & { excerpt: string })[] = [];
 
       for (const doc of docs) {
@@ -232,10 +207,9 @@ export function documentsRouter(docsPath: string): Router {
 
         const content = fs.readFileSync(filePath, "utf-8");
         const inTitle = deAccent(doc.title).includes(query);
-        const inCategory = deAccent(doc.category).includes(query);
         const inContent = deAccent(content).includes(query);
 
-        if (inTitle || inCategory || inContent) {
+        if (inTitle || inContent) {
           let excerpt = "";
           if (inContent) {
             const idx = deAccent(content).indexOf(query);
@@ -259,8 +233,8 @@ export function documentsRouter(docsPath: string): Router {
   // GET /api/documents/file-counts → { [docId]: attachmentCount }
   router.get("/file-counts", (_req: Request, res: Response) => {
     try {
-      const { extraFiles = [], filenamePattern } = readConfig(docsPath);
-      const docs = listDocs(docsPath, extraFiles, filenamePattern);
+      const { extraFiles = [] } = readConfig(docsPath);
+      const docs = listDocs(docsPath, extraFiles);
       const counts: Record<string, number> = {};
       for (const doc of docs) {
         const filePath = resolveDocPath(docsPath, doc, extraFiles);
@@ -280,8 +254,8 @@ export function documentsRouter(docsPath: string): Router {
   // literal path is not captured by the id param.
   router.get("/statuses", (_req: Request, res: Response) => {
     try {
-      const { extraFiles = [], filenamePattern } = readConfig(docsPath);
-      const docs = listDocs(docsPath, extraFiles, filenamePattern);
+      const { extraFiles = [] } = readConfig(docsPath);
+      const docs = listDocs(docsPath, extraFiles);
       const statuses: Record<string, string> = {};
       for (const doc of docs) {
         const filePath = resolveDocPath(docsPath, doc, extraFiles);
@@ -298,7 +272,7 @@ export function documentsRouter(docsPath: string): Router {
   // GET /api/documents/:id — get a single document (content + rendered HTML)
   router.get("/:id", async (req: Request, res: Response) => {
     const id = decodeURIComponent(req.params.id as string);
-    const { extraFiles = [], filenamePattern, markdownSoftBreaks } = readConfig(docsPath);
+    const { extraFiles = [], markdownSoftBreaks } = readConfig(docsPath);
     const markedOpts = { breaks: !!markdownSoftBreaks };
 
     // Extra file: id is an absolute path without .md
@@ -312,13 +286,12 @@ export function documentsRouter(docsPath: string): Router {
       }
       try {
         const content = fs.readFileSync(filePath, "utf-8");
-        const meta = parseFilename(path.basename(filePath), filenamePattern);
+        const meta = parseDocMetadata(path.basename(filePath), content);
         const html = decorateFileLinks(renderMarkdownWithCompareBlocks(stripFrontmatter(content), markedOpts));
         const fm = parseFrontmatter(content).data;
         res.json({
           ...meta,
           id: req.params.id,
-          category: "General",
           content,
           html,
           tags: Array.isArray(fm.tags) ? fm.tags.map(String) : [],
@@ -344,7 +317,7 @@ export function documentsRouter(docsPath: string): Router {
 
     try {
       const content = fs.readFileSync(filePath, "utf-8");
-      const metadata = parseFilename(path.basename(filename), filenamePattern);
+      const metadata = parseDocMetadata(path.basename(filename), content);
       const subdir = path.dirname(id);
       const folder =
         subdir !== "."
@@ -385,7 +358,7 @@ export function documentsRouter(docsPath: string): Router {
       try {
         fs.writeFileSync(
           filePath,
-          normalizeFrontmatter(content, filePath, { title: parseFilename(path.basename(filePath)).title }),
+          normalizeFrontmatter(content, filePath, { title: parseDocMetadata(path.basename(filePath), content).title }),
           "utf-8",
         );
         return res.json({ ok: true });
@@ -405,7 +378,7 @@ export function documentsRouter(docsPath: string): Router {
     try {
       fs.writeFileSync(
         filePath,
-        normalizeFrontmatter(content, filename, { title: parseFilename(path.basename(filename)).title }),
+        normalizeFrontmatter(content, filename, { title: parseDocMetadata(path.basename(filename), content).title }),
         "utf-8",
       );
       return res.json({ ok: true });
@@ -513,7 +486,7 @@ export function documentsRouter(docsPath: string): Router {
     if (path.resolve(targetPath) === path.resolve(sourcePath)) {
       // No-op move: return the current identity unchanged.
       const relPath = toPosixPath(path.relative(docsPath, sourcePath));
-      const meta = parseFilename(filename, readConfig(docsPath).filenamePattern);
+      const meta = readDocMetadata(sourcePath, filename);
       const subdir = path.posix.dirname(relPath);
       return res.json({
         ...meta,
@@ -540,7 +513,7 @@ export function documentsRouter(docsPath: string): Router {
     }
     const newId = relPath.slice(0, -3);
 
-    const meta = parseFilename(filename, readConfig(docsPath).filenamePattern);
+    const meta = readDocMetadata(path.join(docsPath, relPath), filename);
     const subdir = path.posix.dirname(relPath);
     return res.json({
       ...meta,
@@ -552,8 +525,10 @@ export function documentsRouter(docsPath: string): Router {
 
   // POST /api/documents — create a new document
   router.post('/', (req: Request, res: Response) => {
-    const { title, category = 'General', folder = '', content, templateId } = req.body as {
-      title?: string; category?: string; folder?: string; content?: string; templateId?: string;
+    // `name` (optional) fixes the file stem independently of the title — used by
+    // Blueprint, whose document is keyed by the source folder name.
+    const { title, name, folder = '', content, templateId } = req.body as {
+      title?: string; name?: string; folder?: string; content?: string; templateId?: string;
     };
 
     if (!title?.trim()) {
@@ -568,21 +543,6 @@ export function documentsRouter(docsPath: string): Router {
         return res.status(error instanceof TemplateError ? error.status : 500).json({ error: error instanceof TemplateError ? error.message : 'storage_error' });
       }
     }
-
-    const { filenamePattern } = readConfig(docsPath);
-    const today = new Date().toISOString().slice(0, 10);
-    const normalizedCategory =
-      (category || '')
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toUpperCase()
-        .replace(/[^A-Z0-9_-]/g, '') || 'GENERAL';
-    const filename = buildFilename(
-      filenamePattern || 'YYYY_MM_DD_HH_mm_[Category]_title',
-      title.trim(),
-      normalizedCategory,
-      today,
-    );
 
     // Resolve target directory, constrained to docsPath
     let targetDir = path.resolve(docsPath);
@@ -604,10 +564,8 @@ export function documentsRouter(docsPath: string): Router {
       fs.mkdirSync(targetDir, { recursive: true });
     }
 
+    const filename = uniqueDocFilename(targetDir, name?.trim() || title.trim());
     const filePath = path.join(targetDir, filename);
-    if (fs.existsSync(filePath)) {
-      return res.status(409).json({ error: 'A document with this name already exists' });
-    }
 
     const initialContent = templateContent ?? (
       typeof content === 'string'
@@ -617,14 +575,14 @@ export function documentsRouter(docsPath: string): Router {
     try {
       fs.writeFileSync(
         filePath,
-        normalizeFrontmatter(initialContent, relPath, { title: title.trim() }),
+        normalizeFrontmatter(initialContent, relPath, { title: title.trim(), timestamp: new Date().toISOString() }),
         'utf-8',
       );
     } catch {
       return res.status(500).json({ error: 'Failed to create document' });
     }
 
-    const meta = parseFilename(filename, filenamePattern);
+    const meta = readDocMetadata(filePath, filename);
     const subdir = path.dirname(relPath);
     const folderSegments = subdir !== '.'
       ? subdir.split(path.sep)

@@ -6,7 +6,7 @@ import { test, expect } from '../helpers/ld-fixture';
 import { callTool, getPrompt, listTools, listPrompts } from '../helpers/mcp';
 import { defined } from '../helpers/assert';
 
-type McpDocumentSummary = { id: string; title: string; category: string; folder: string | null };
+type McpDocumentSummary = { id: string; title: string; folder: string | null };
 type ListDocumentsResult = {
   total: number;
   page: number;
@@ -178,14 +178,12 @@ test('create_document writes a new .md file through the MCP server', async ({
 }) => {
   await callTool(request, ld.baseURL, 'create_document', {
     title: 'Via MCP',
-    category: 'MCP',
     content: '# Via MCP\n\nHello from the tool call.\n',
+    date: '2024-08-12T14:33:00Z',
   });
-  const newFile = fs
-    .readdirSync(ld.docsAbs)
-    .find((f: string) => f.includes('via_mcp') && f.endsWith('.md'));
-  expect(newFile).toBeDefined();
-  expect(fs.readFileSync(path.join(ld.docsAbs, defined(newFile)), 'utf-8')).toContain('Hello from the tool call');
+  const content = fs.readFileSync(path.join(ld.docsAbs, 'via-mcp.md'), 'utf-8');
+  expect(content).toContain('Hello from the tool call');
+  expect(content).toMatch(/^timestamp: ['"]?2024-08-12T14:33:00/m);
 });
 
 test('list_blueprint_box returns immediate folder and file names with source paths', async ({

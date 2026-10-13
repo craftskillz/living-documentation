@@ -5,7 +5,7 @@
 // script. Idempotent.
 import fs from "node:fs";
 import path from "node:path";
-import { parseFilename } from "./parser";
+import { titleFromFilename } from "./parser";
 import { isReservedOkfFile, normalizeFrontmatter, OKF_SPEC_VERSION } from "./okf";
 import { generateOkfIndexFiles } from "./okf/index-generator";
 import { generateOkfLogFile } from "./okf/log-generator";
@@ -66,7 +66,7 @@ export function migrateDocsFolder(
     try {
       const content = fs.readFileSync(file, "utf-8");
       const relPath = path.relative(docsPath, file).split(path.sep).join("/");
-      const title = parseFilename(path.basename(file)).title;
+      const title = titleFromFilename(file);
       const next = normalizeFrontmatter(content, relPath, { title });
       if (next === content) {
         result.unchanged += 1;

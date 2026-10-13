@@ -16,11 +16,11 @@ status: To be validated
 
 ## État courant
 
-Branche `feat/explorateur-liv-doc-main`. Backlog : [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), hypothèses H1–H6 validées. US1, US2, US7, US3, US5 et US6 terminées et commitées : manifeste, `GET /api/tree`, dossiers en point visibles, explorateur branché sur l'arbre, manifeste écrit à la création de dossier, masquage / réaffichage (`PUT /api/tree/hidden`), déplacement et réordonnancement (`POST /api/tree/move`, service `src/lib/treeMove.ts`), drag and drop dans l'explorateur (`lib/home/treeDrop.ts`, `TreeNode.svelte`).
+Branche `feat/explorateur-liv-doc-main`. Backlog : [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), hypothèses H1–H6 validées. US1, US2, US7, US3, US5, US6 et US4a terminées et commitées. US4a : le nom de fichier n'est plus qu'un identifiant (titre et date depuis le frontmatter, création par slug `mon-guide.md` / `-2`), `category` et les clés `filenamePattern` / `sidebarSort` / `exclusiveCategoryExpansion` supprimés côté serveur, MCP et Blueprint. Détails : [worklog US4a](./2026_10_14_10_00_%5BWORKLOG%5D_us_04a_supprimer_la_nomenclature_backend.md).
 
 ## Suite
 
-US4 (supprimer la nomenclature), à démarrer dans une nouvelle session. Suites complètes au 14/10/2026 après US6 : unitaires 35/35, `tests/api` 215/215, `tests/e2e` 111/111.
+US4b (frontend : Admin, NewDocModal, code mort catégories de `home/tree.ts` et `state.svelte.ts`, i18n), à démarrer dans une nouvelle session. Suites au 14/10/2026 après US4a : unitaires 43/43, `tests/api` 212/212, `tests/e2e` 111/111 (dont 4 fichiers relancés après correction).
 
 MCP Living Documentation non exposé comme outil dans la session : worklog et roadmap écrits à la main, pas de métadonnées attachées.
 

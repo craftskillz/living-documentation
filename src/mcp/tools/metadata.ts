@@ -50,13 +50,13 @@ function decodeDocId(id: unknown): string {
 }
 
 function isAdrDocument(
-  doc: { category: string; folder: string | null },
+  doc: { folder: string | null },
   docId: string,
   content: string,
 ): boolean {
   const folderParts = (doc.folder ?? "").toLowerCase().split(/[\\/]+/);
   if (folderParts.includes("adrs")) return true;
-  if (doc.category.toLowerCase() === "adr") return true;
+  if (getFrontmatterField(content, "type")?.trim().toLowerCase() === "adr") return true;
   if (/\[adr\]/i.test(docId)) return true;
   return /architecture decision record/i.test(content.slice(0, 4096));
 }
@@ -112,7 +112,6 @@ export function toolReviewAdrRelevance(docsPath: string, args: { id: string }) {
       id: doc.id,
       decodedId: docId,
       title: doc.title,
-      category: doc.category,
       folder: doc.folder,
       status,
       description: getFrontmatterField(content, "description"),
@@ -214,7 +213,6 @@ export function toolListAdrsBelowAccuracy(docsPath: string) {
   const candidates: Array<{
     id: string;
     title: string;
-    category: string;
     folder: string | null;
     accuracy: number;
     total: number;
@@ -245,7 +243,6 @@ export function toolListAdrsBelowAccuracy(docsPath: string) {
     candidates.push({
       id: doc.id,
       title: doc.title,
-      category: doc.category,
       folder: doc.folder,
       accuracy: report.accuracy,
       total: report.total,

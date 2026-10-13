@@ -7,7 +7,7 @@
 // bundle afterwards. Idempotency is not attempted: a non-empty target is refused.
 import fs from "node:fs";
 import path from "node:path";
-import { parseFilename } from "../parser";
+import { titleFromFilename } from "../parser";
 import { getField } from "../frontmatter";
 import { isReservedOkfFile, normalizeFrontmatter } from "../okf";
 import { generateOkfIndexFiles } from "./index-generator";
@@ -88,7 +88,7 @@ export function importOkfBundle(
       const destRel = path.relative(docsPath, destAbs).split(path.sep).join("/");
       const content = fs.readFileSync(file, "utf-8");
       // Preserve the concept's own title; fall back to the filename.
-      const title = getField(content, "title") || parseFilename(base).title;
+      const title = getField(content, "title") || titleFromFilename(base);
       const normalized = normalizeFrontmatter(content, destRel, { title });
       fs.mkdirSync(path.dirname(destAbs), { recursive: true });
       fs.writeFileSync(destAbs, normalized, "utf-8");

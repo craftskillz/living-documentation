@@ -11,9 +11,9 @@ const QUICKSTART_ID = encodeURIComponent('2026_01_02_10_00_[Guide]_quickstart');
 test('GET /api/documents returns the three minimal fixture docs', async ({ request, ld }) => {
   const res = await request.get(`${ld.baseURL}/api/documents`);
   expect(res.ok()).toBe(true);
-  const docs = (await res.json()) as Array<{ title: string; category: string }>;
+  const docs = (await res.json()) as Array<{ title: string }>;
   expect(docs.map((d) => d.title).sort()).toEqual(['Advanced', 'Intro', 'Quickstart']);
-  expect(docs.find((d) => d.title === 'Intro')?.category).toBe('General');
+  expect(docs[0]).not.toHaveProperty('category');
 });
 
 test('GET /api/documents/:id returns parsed metadata, content, and rendered HTML', async ({
@@ -52,21 +52,22 @@ test('PUT /api/documents/:id rejects a missing content field', async ({ request,
   expect(res.status()).toBe(400);
 });
 
-test('POST /api/documents creates a new .md file with a filename matching the pattern', async ({
+test('POST /api/documents names the file after the title slug and stores title and timestamp in the frontmatter', async ({
   request,
   ld,
 }) => {
   const res = await request.post(`${ld.baseURL}/api/documents`, {
-    data: { title: 'Brand New Doc', category: 'Release' },
+    data: { title: 'Mon guide' },
   });
   expect(res.ok()).toBe(true);
-  const body = (await res.json()) as { filename?: string; id?: string };
-  const created = fs
-    .readdirSync(ld.docsAbs)
-    .filter((f) => f.includes('brand_new_doc') && f.endsWith('.md'));
-  expect(created.length).toBe(1);
-  expect(created[0]).toMatch(/\[RELEASE\]/);
-  expect(body.id || body.filename).toBeDefined();
+  const body = (await res.json()) as { filename: string; id: string; title: string; date: string | null };
+  expect(body.filename).toBe('mon-guide.md');
+  expect(body.id).toBe('mon-guide');
+  expect(body.title).toBe('Mon guide');
+  expect(body.date).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/);
+  const content = fs.readFileSync(path.join(ld.docsAbs, 'mon-guide.md'), 'utf-8');
+  expect(content).toMatch(/^title: Mon guide$/m);
+  expect(content).toMatch(/^timestamp: /m);
 });
 
 test('POST /api/documents requires a title', async ({ request, ld }) => {
@@ -76,7 +77,7 @@ test('POST /api/documents requires a title', async ({ request, ld }) => {
 
 test('POST /api/documents rejects the reserved "images" folder name', async ({ request, ld }) => {
   const res = await request.post(`${ld.baseURL}/api/documents`, {
-    data: { title: 'X', category: 'Test', folder: 'images' },
+    data: { title: 'X', folder: 'images' },
   });
   expect(res.status()).toBe(400);
   const body = (await res.json()) as { error?: string };
@@ -88,7 +89,7 @@ test('POST /api/documents blocks path traversal via the folder argument', async 
   ld,
 }) => {
   const res = await request.post(`${ld.baseURL}/api/documents`, {
-    data: { title: 'Evil', category: 'Test', folder: '../../etc' },
+    data: { title: 'Evil', folder: '../../etc' },
   });
   expect(res.status()).toBe(403);
 });
@@ -181,18 +182,14 @@ test('GET /api/documents/file-counts ignores placeholder file-link examples', as
   expect(counts[defined(introKey)]).toBe(1);
 });
 
-test('POST /api/documents returns 409 when a document with that slug already exists', async ({
+test('POST /api/documents suffixes the slug when a document with that name already exists', async ({
   request,
   ld,
 }) => {
-  const first = await request.post(`${ld.baseURL}/api/documents`, {
-    data: { title: 'Same Title', category: 'GENERAL' },
-  });
-  expect(first.ok()).toBe(true);
-  const second = await request.post(`${ld.baseURL}/api/documents`, {
-    data: { title: 'Same Title', category: 'GENERAL' },
-  });
-  expect(second.status()).toBe(409);
+  const first = await request.post(`${ld.baseURL}/api/documents`, { data: { title: 'Mon guide' } });
+  const second = await request.post(`${ld.baseURL}/api/documents`, { data: { title: 'Mon guide' } });
+  expect(((await first.json()) as { filename: string }).filename).toBe('mon-guide.md');
+  expect(((await second.json()) as { filename: string }).filename).toBe('mon-guide-2.md');
 });
 
 test('POST /api/documents creates the target subfolder when it does not exist yet', async ({
@@ -200,7 +197,7 @@ test('POST /api/documents creates the target subfolder when it does not exist ye
   ld,
 }) => {
   const res = await request.post(`${ld.baseURL}/api/documents`, {
-    data: { title: 'Nested', category: 'GENERAL', folder: 'deep/nested' },
+    data: { title: 'Nested', folder: 'deep/nested' },
   });
   expect(res.ok()).toBe(true);
   expect(fs.existsSync(path.join(ld.docsAbs, 'deep', 'nested'))).toBe(true);

@@ -1,69 +1,22 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { parseFrontmatter } from './frontmatter';
+
 export interface DocMetadata {
   id: string;           // URL-safe identifier (encoded filename without .md)
   filename: string;     // original filename
-  title: string;        // human-readable title
-  category: string;     // extracted category
+  title: string;        // frontmatter `title`, else the filename
   folder: string[] | null; // path segments from root to parent dir, null if at root
-  date: string | null;  // ISO date string YYYY-MM-DD
+  date: string | null;  // frontmatter `timestamp`: YYYY-MM-DD or YYYY-MM-DDTHH:mm
   formattedDate: string | null;
 }
 
-function dateStrToISO(s: string): string {
-  const p = s.split('_');
-  return p.length === 5
-    ? `${p[0]}-${p[1]}-${p[2]}T${p[3]}:${p[4]}`
-    : `${p[0]}-${p[1]}-${p[2]}`;
-}
-
-function buildPatternsFromFormat(patternStr: string): {
-  full: RegExp | null;
-  dateOnly: RegExp | null;
-  hasDate: boolean;
-  hasCategory: boolean;
-  catBeforeDate: boolean;
-} {
-  const hasDate = /YYYY.*MM.*DD/.test(patternStr);
-  const hasTime = hasDate && /HH.*mm/.test(patternStr);
-  const hasCategory = /\[Category\]/i.test(patternStr);
-  // When pattern includes HH/mm, allow optional time portion so old files still parse
-  const dateGroup = hasTime
-    ? '(\\d{4}_\\d{2}_\\d{2}(?:_\\d{2}_\\d{2})?)'
-    : '(\\d{4}_\\d{2}_\\d{2})';
-  const catGroup = '\\[([^\\]]+)\\]';
-  const catBeforeDate =
-    hasDate && hasCategory &&
-    patternStr.search(/\[Category\]/i) < patternStr.search(/YYYY/i);
-
-  if (hasDate && hasCategory) {
-    const ordered = catBeforeDate
-      ? `${catGroup}_${dateGroup}`
-      : `${dateGroup}_${catGroup}`;
-    return {
-      full: new RegExp(`^${ordered}_(.+)\\.md$`, 'i'),
-      dateOnly: new RegExp(`^${dateGroup}_(.+)\\.md$`, 'i'),
-      hasDate,
-      hasCategory,
-      catBeforeDate,
-    };
-  } else if (hasDate) {
-    return {
-      full: null,
-      dateOnly: new RegExp(`^${dateGroup}_(.+)\\.md$`, 'i'),
-      hasDate,
-      hasCategory,
-      catBeforeDate: false,
-    };
-  } else if (hasCategory) {
-    return {
-      full: new RegExp(`^${catGroup}_(.+)\\.md$`, 'i'),
-      dateOnly: null,
-      hasDate,
-      hasCategory,
-      catBeforeDate: false,
-    };
-  }
-  return { full: null, dateOnly: null, hasDate, hasCategory, catBeforeDate: false };
-}
+const ISO_DATE_RE = /^(\d{4}-\d{2}-\d{2})(?:[T ](\d{2}:\d{2}))?/;
+const DIACRITICS = /[̀-ͯ]/g;
+const DEFAULT_SLUG = 'document';
+// Pre-nomenclature-removal names (`YYYY_MM_DD[_HH_mm]_[Category]_title`): the
+// prefix is dropped so documents without a frontmatter title stay readable.
+const LEGACY_PREFIX_RE = /^(?:\d{4}_\d{2}_\d{2}(?:_\d{2}_\d{2})?_)?(?:\[[^\]]*\]_)?/;
 
 function formatDate(iso: string): string {
   const hasTime = iso.includes('T');
@@ -79,52 +32,55 @@ function formatDate(iso: string): string {
   return hasTime ? `${dateStr} ${iso.split('T')[1]}` : dateStr;
 }
 
-function titleCase(raw: string): string {
-  return raw
-    .split('_')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
+// YAML may already have turned the timestamp into a Date.
+function timestampToIso(value: unknown): string | null {
+  const raw = value instanceof Date && !Number.isNaN(value.getTime())
+    ? value.toISOString()
+    : typeof value === 'string' ? value.trim() : '';
+  const match = raw.match(ISO_DATE_RE);
+  if (!match) return null;
+  return match[2] ? `${match[1]}T${match[2]}` : match[1];
 }
 
-export function parseFilename(filename: string, filenamePattern?: string): DocMetadata {
+/** Fallback title when the frontmatter has none. */
+export function titleFromFilename(filename: string): string {
+  const stem = path.basename(filename).replace(/\.md$/i, '');
+  const raw = (stem.replace(LEGACY_PREFIX_RE, '') || stem).replace(/[_-]+/g, ' ').trim();
+  return raw.replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+/** Display metadata of a document: the filename is only an identifier. */
+export function parseDocMetadata(filename: string, content: string): DocMetadata {
   const id = encodeURIComponent(filename.slice(0, -3));
-  const { full: FULL_PAT, dateOnly: DATE_ONLY_PAT, hasDate, hasCategory, catBeforeDate } =
-    buildPatternsFromFormat(filenamePattern ?? 'YYYY_MM_DD_HH_mm_[Category]_title');
+  const { data } = parseFrontmatter(content);
+  const title = typeof data.title === 'string' && data.title.trim()
+    ? data.title.trim()
+    : titleFromFilename(filename);
+  const date = timestampToIso(data.timestamp);
+  return { id, filename, title, folder: null, date, formattedDate: date ? formatDate(date) : null };
+}
 
-  if (FULL_PAT) {
-    const full = filename.match(FULL_PAT);
-    if (full) {
-      if (hasDate && hasCategory) {
-        const dateStr = catBeforeDate ? full[2] : full[1];
-        const category = catBeforeDate ? full[1] : full[2];
-        const titlePart = full[3];
-        const date = dateStrToISO(dateStr);
-        return { id, filename, title: titleCase(titlePart), category, folder: null, date, formattedDate: formatDate(date) };
-      } else if (hasCategory) {
-        const [, category, titlePart] = full;
-        return { id, filename, title: titleCase(titlePart), category, folder: null, date: null, formattedDate: null };
-      }
-    }
-  }
+/** Reads a document and returns its metadata (an unreadable file falls back to its filename). */
+export function readDocMetadata(absPath: string, filename: string): DocMetadata {
+  let content = '';
+  try { content = fs.readFileSync(absPath, 'utf-8'); } catch { /* unreadable: filename only */ }
+  return parseDocMetadata(filename, content);
+}
 
-  if (DATE_ONLY_PAT) {
-    const dateOnly = filename.match(DATE_ONLY_PAT);
-    if (dateOnly) {
-      const [, dateStr, titlePart] = dateOnly;
-      const date = dateStrToISO(dateStr);
-      return { id, filename, title: titleCase(titlePart), category: 'General', folder: null, date, formattedDate: formatDate(date) };
-    }
-  }
+/** File stem for a new document: "Mon guide" → "mon-guide". */
+export function docSlug(title: string): string {
+  return (title || '')
+    .normalize('NFD')
+    .replace(DIACRITICS, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || DEFAULT_SLUG;
+}
 
-  // Fallback — no date, no category
-  const rawTitle = filename.slice(0, -3).replace(/[_-]+/g, ' ');
-  return {
-    id,
-    filename,
-    title: rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1),
-    category: 'General',
-    folder: null,
-    date: null,
-    formattedDate: null,
-  };
+/** First free `<slug>.md`, `<slug>-2.md`, … in `dir`. */
+export function uniqueDocFilename(dir: string, title: string): string {
+  const slug = docSlug(title);
+  let candidate = `${slug}.md`;
+  for (let n = 2; fs.existsSync(path.join(dir, candidate)); n++) candidate = `${slug}-${n}.md`;
+  return candidate;
 }

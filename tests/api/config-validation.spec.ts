@@ -1,22 +1,21 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { test, expect } from '../helpers/ld-fixture';
 
-test('PUT /api/config rejects filenamePattern missing [Category]', async ({ request, ld }) => {
-  const res = await request.put(`${ld.baseURL}/api/config`, {
-    data: { filenamePattern: 'YYYY_MM_DD_title' },
-  });
-  expect(res.status()).toBe(400);
-  expect((await res.json()).error).toMatch(/\[Category\]/);
-});
+const LEGACY_NOMENCLATURE_KEYS = ['filenamePattern', 'sidebarSort', 'exclusiveCategoryExpansion'];
 
-test('PUT /api/config rejects filenamePattern with [Category] twice', async ({
-  request,
-  ld,
-}) => {
+test('legacy nomenclature keys are ignored on start and never written back', async ({ request, ld }) => {
+  // The minimal fixture still stores filenamePattern and exclusiveCategoryExpansion.
+  const cfg = (await (await request.get(`${ld.baseURL}/api/config`)).json()) as Record<string, unknown>;
+  for (const key of LEGACY_NOMENCLATURE_KEYS) expect(cfg).not.toHaveProperty(key);
+
   const res = await request.put(`${ld.baseURL}/api/config`, {
-    data: { filenamePattern: '[Category]_[Category]_title' },
+    data: { title: 'Renamed', filenamePattern: '[Category]_title', sidebarSort: 'oldest', exclusiveCategoryExpansion: true },
   });
-  expect(res.status()).toBe(400);
-  expect((await res.json()).error).toMatch(/exactly once/i);
+  expect(res.ok()).toBeTruthy();
+  const stored = JSON.parse(fs.readFileSync(path.join(ld.docsAbs, '.living-doc.json'), 'utf-8')) as Record<string, unknown>;
+  expect(stored.title).toBe('Renamed');
+  for (const key of LEGACY_NOMENCLATURE_KEYS) expect(stored).not.toHaveProperty(key);
 });
 
 test('PUT /api/config silently drops an invalid language', async ({ request, ld }) => {

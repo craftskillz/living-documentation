@@ -27,8 +27,8 @@ function sanitizeFilename(name: string): string {
 }
 
 /** Group key used to decide which ZIP folder a doc goes into. */
-function docGroup(doc: { folder?: string[] | null; category?: string }): string {
-  return doc.folder?.[0] ?? doc.category ?? 'General';
+function docGroup(doc: { folder?: string[] | null }): string {
+  return doc.folder?.[0] ?? 'General';
 }
 
 function safeAssetRelativePath(value: string): string | null {
@@ -285,9 +285,9 @@ export function exportRouter(docsPath: string): Router {
       return res.status(400).json({ error: 'No folders selected' });
     }
 
-    const { extraFiles = [], filenamePattern, markdownSoftBreaks } = readConfig(docsPath);
+    const { extraFiles = [], markdownSoftBreaks } = readConfig(docsPath);
     const markedOpts = { breaks: !!markdownSoftBreaks };
-    const docs = listDocs(docsPath, extraFiles, filenamePattern);
+    const docs = listDocs(docsPath, extraFiles);
 
     // Filter to selected groups.
     const selectedDocs = docs.filter((doc) => folders.includes(docGroup(doc)));
@@ -360,8 +360,8 @@ export function exportRouter(docsPath: string): Router {
    * Internal ?doc= links are rewritten to relative .md paths.
    */
   router.post('/markdown', async (_req: Request, res: Response) => {
-    const { extraFiles = [], filenamePattern } = readConfig(docsPath);
-    const docs = listDocs(docsPath, extraFiles, filenamePattern);
+    const { extraFiles = [] } = readConfig(docsPath);
+    const docs = listDocs(docsPath, extraFiles);
     if (!docs.length) {
       return res.status(404).json({ error: 'No documents found' });
     }

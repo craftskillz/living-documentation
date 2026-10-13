@@ -27,7 +27,7 @@ interface BuildContextResult {
     files: Array<{ path: string; status: string; untracked: boolean; staged: boolean; diff: string | null; diffTruncated: boolean }>;
   };
   source: { skipped: string | null; files: Array<{ path: string; content: string; size: number; truncated: boolean }> };
-  documentation: { relatedDocuments: Array<{ id: string; title: string; category: string; folder: string | null; matchedPaths: string[]; accuracy: number }> };
+  documentation: { relatedDocuments: Array<{ id: string; title: string; folder: string | null; matchedPaths: string[]; accuracy: number }> };
   metadata: { generatedAt: string; options: Record<string, unknown> };
 }
 

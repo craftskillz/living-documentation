@@ -2,35 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { isListedDir, isListedDocFile } from '../../lib/explorerEntries';
 import { readConfig } from '../../lib/config';
-import { parseFilename } from '../../lib/parser';
+import { readDocMetadata, titleFromFilename, uniqueDocFilename } from '../../lib/parser';
 import { normalizeFrontmatter } from '../../lib/okf';
-
-function buildFilename(filenamePattern: string, title: string, category: string, dateOverride?: string): string {
-  const parsed = dateOverride ? new Date(dateOverride) : null;
-  const now = parsed && !Number.isNaN(parsed.getTime()) ? parsed : new Date();
-  const pad = (n: number) => String(n).padStart(2, '0');
-  const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-  const [year, month, day] = today.split('-');
-  const hours = pad(now.getHours());
-  const minutes = pad(now.getMinutes());
-
-  const titleSlug = title.trim()
-    .toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/g, '_')
-    .replace(/[^a-z0-9_]/g, '')
-    .replace(/_+/g, '_')
-    .replace(/^_|_$/g, '') || 'document';
-
-  return `${(filenamePattern || 'YYYY_MM_DD_HH_mm_[Category]_title')
-    .replace('YYYY', year)
-    .replace('MM', month)
-    .replace('DD', day)
-    .replace('HH', hours)
-    .replace('mm', minutes)
-    .replace(/\[Category\]/i, `[${category}]`)
-    .replace(/(?<![a-z0-9])(?:title_words|title)(?![a-z0-9])/i, titleSlug)}.md`;
-}
 
 function safeResolve(docsPath: string, rel: string): string | null {
   const resolved = path.resolve(docsPath, rel);
@@ -41,18 +14,17 @@ function safeResolve(docsPath: string, rel: string): string | null {
 export interface DocSummary {
   id: string;
   title: string;
-  category: string;
   folder: string | null;
 }
 
 export function listAllDocuments(docsPath: string): DocSummary[] {
-  const { filenamePattern, extraFiles = [] } = readConfig(docsPath);
+  const { extraFiles = [] } = readConfig(docsPath);
   const docs: DocSummary[] = [];
 
   for (const fp of extraFiles) {
     if (!fp.endsWith('.md') || !fs.existsSync(fp)) continue;
-    const meta = parseFilename(path.basename(fp), filenamePattern);
-    docs.push({ id: encodeURIComponent(fp.slice(0, -3)), title: meta.title, category: 'General', folder: null });
+    const meta = readDocMetadata(fp, path.basename(fp));
+    docs.push({ id: encodeURIComponent(fp.slice(0, -3)), title: meta.title, folder: null });
   }
 
   function scan(dir: string) {
@@ -62,12 +34,11 @@ export function listAllDocuments(docsPath: string): DocSummary[] {
         if (isListedDir(entry.name)) scan(full);
       } else if (isListedDocFile(entry.name)) {
         const relPath = path.relative(docsPath, full);
-        const meta = parseFilename(entry.name, filenamePattern);
+        const meta = readDocMetadata(full, entry.name);
         const subdir = path.dirname(relPath);
         docs.push({
           id: encodeURIComponent(relPath.slice(0, -3)),
           title: meta.title,
-          category: meta.category,
           folder: subdir !== '.' ? subdir : null,
         });
       }
@@ -267,7 +238,7 @@ export function toolUpdateDocument(docsPath: string, args: { id: string; content
   if (!fs.existsSync(filePath)) throw new Error(`Document not found: ${args.id}`);
   const relPath = path.isAbsolute(decoded) ? filePath : `${decoded}.md`;
   const normalized = normalizeFrontmatter(args.content, relPath, {
-    title: parseFilename(path.basename(relPath)).title,
+    title: titleFromFilename(relPath),
   });
   fs.writeFileSync(filePath, normalized, 'utf-8');
 
@@ -285,13 +256,13 @@ export function toolUpdateDocument(docsPath: string, args: { id: string; content
 
 export function toolCreateDocument(docsPath: string, args: {
   title: string;
-  category: string;
   folder?: string;
   content?: string;
   date?: string;
 }) {
-  const { filenamePattern, port } = readConfig(docsPath);
-  const filename = buildFilename(filenamePattern, args.title, args.category || 'General', args.date);
+  const { port } = readConfig(docsPath);
+  const parsedDate = args.date ? new Date(args.date) : null;
+  const timestamp = (parsedDate && !Number.isNaN(parsedDate.getTime()) ? parsedDate : new Date()).toISOString();
 
   let targetDir = path.resolve(docsPath);
   if (args.folder?.trim()) {
@@ -302,12 +273,12 @@ export function toolCreateDocument(docsPath: string, args: {
 
   fs.mkdirSync(targetDir, { recursive: true });
 
+  const filename = uniqueDocFilename(targetDir, args.title);
   const filePath = path.join(targetDir, filename);
-  if (fs.existsSync(filePath)) throw new Error('A document with this name already exists');
 
   const body = args.content ?? `# ${args.title.trim()}\n`;
   const relPath = path.relative(docsPath, filePath);
-  fs.writeFileSync(filePath, normalizeFrontmatter(body, relPath, { title: args.title }), 'utf-8');
+  fs.writeFileSync(filePath, normalizeFrontmatter(body, relPath, { title: args.title, timestamp }), 'utf-8');
 
   const docId = encodeURIComponent(relPath.slice(0, -3));
 

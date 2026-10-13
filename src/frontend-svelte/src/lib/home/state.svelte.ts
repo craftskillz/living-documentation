@@ -98,7 +98,7 @@ class HomeState {
     const deAccent = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
     const q = deAccent(this.searchQuery);
     return this.allDocs.filter(
-      d => deAccent(d.title).includes(q) || deAccent(d.category).includes(q),
+      d => deAccent(d.title).includes(q),
     );
   }
 
@@ -167,14 +167,11 @@ class HomeState {
   /** Expand the sidebar path to reveal a document. */
   revealDoc(doc: DocSummary) {
     const folders = new Set(this.expandedFolders);
-    const cats = new Set(this.expandedCategories);
     const folder = doc.folder || [];
     for (let i = 0; i < folder.length; i++) {
       folders.add(folder.slice(0, i + 1).join("|"));
     }
-    cats.add([...folder, doc.category].join("|"));
     this.expandedFolders = folders;
-    this.expandedCategories = cats;
   }
 }
 

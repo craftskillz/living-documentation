@@ -356,7 +356,7 @@ test.describe('kanban board widget', () => {
 
     const created = fs
       .readdirSync(path.join(ld.docsAbs, '3_projets/Doing'))
-      .filter((f) => f.includes('fresh_task') && f.endsWith('.md'));
+      .filter((f) => f === 'fresh-task.md');
     expect(created).toHaveLength(1);
     const saved = readOkf(fs.readFileSync(path.join(ld.docsAbs, '3_projets/Doing', created[0]), 'utf-8'));
     expect(saved.fields).toMatchObject({ type: 'Document', title: 'Fresh task' });

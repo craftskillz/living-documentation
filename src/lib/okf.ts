@@ -100,7 +100,7 @@ function serializeCanonical(data: Record<string, unknown>): string {
 export function normalizeFrontmatter(
   content: string,
   relPath: string,
-  defaults?: { title?: string; sources?: OkfSourceRef[] | null },
+  defaults?: { title?: string; sources?: OkfSourceRef[] | null; timestamp?: string },
 ): string {
   const { data, body, format } = parseFrontmatter(content);
 
@@ -113,6 +113,7 @@ export function normalizeFrontmatter(
     fields.timestamp = toIsoTimestamp(String(fields.date), relPath);
   }
   delete fields.date;
+  if (fields.timestamp === undefined && defaults?.timestamp) fields.timestamp = defaults.timestamp;
 
   // Fill a missing title from the caller (e.g. filename-derived) — OKF concepts
   // should be self-describing.

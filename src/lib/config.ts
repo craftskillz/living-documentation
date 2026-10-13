@@ -55,7 +55,6 @@ export interface GitIntegrationConfig {
 // Paths are stored as POSIX-style paths RELATIVE to the docs folder, so the file
 // is portable across machines (checkable into git).
 export interface StoredConfig {
-  filenamePattern: string;
   title: string;
   theme: "light" | "dark" | "system";
   // Visual skin, independent of the light/dark `theme`. "tau" is a notebook-paper
@@ -73,9 +72,6 @@ export interface StoredConfig {
   sourceRoot: string | null; // relative to docsFolder (posix slashes); null = default ("..")
   blockedFileExtensions: string[];
   exclusiveFolderExpansion: boolean;
-  exclusiveCategoryExpansion: boolean;
-  // Sidebar document ordering within each category/folder.
-  sidebarSort: "recent" | "oldest" | "alphabetical";
   codeBlockMaxHeight: number;
   markdownSoftBreaks: boolean;
   imageRoundedCorners: boolean;
@@ -157,7 +153,6 @@ const DEFAULT_BLOCKED_FILE_EXTENSIONS = [
 ];
 
 const STORAGE_DEFAULTS: StoredConfig = {
-  filenamePattern: "YYYY_MM_DD_HH_mm_[Category]_title",
   title: "Living Documentation",
   theme: "system",
   siteTheme: "base",
@@ -172,8 +167,6 @@ const STORAGE_DEFAULTS: StoredConfig = {
   sourceRoot: "..",
   blockedFileExtensions: DEFAULT_BLOCKED_FILE_EXTENSIONS,
   exclusiveFolderExpansion: false,
-  exclusiveCategoryExpansion: false,
-  sidebarSort: "recent",
   codeBlockMaxHeight: 400,
   markdownSoftBreaks: true,
   imageRoundedCorners: true,
@@ -256,6 +249,8 @@ function normalizeGitIntegration(input: unknown): GitIntegrationConfig {
 
 // Reads raw JSON, migrates any legacy absolute paths and the removed docsFolder field
 // in-memory, and writes back if anything changed. Returns the storage-shape config.
+const OBSOLETE_KEYS = ["docsFolder", "filenamePattern", "sidebarSort", "exclusiveCategoryExpansion"];
+
 function readAndMigrate(docsPath: string): StoredConfig {
   const configPath = getConfigPath(docsPath);
   if (!fs.existsSync(configPath)) {
@@ -279,10 +274,13 @@ function readAndMigrate(docsPath: string): StoredConfig {
     }
   }
 
-  // docsFolder was stored historically — now purely runtime. Drop it silently.
-  if ("docsFolder" in raw) {
-    delete raw.docsFolder;
-    dirty = true;
+  // docsFolder was stored historically — now purely runtime. The nomenclature
+  // keys are gone: the explorer is organised by folders only. Drop them silently.
+  for (const key of OBSOLETE_KEYS) {
+    if (key in raw) {
+      delete raw[key];
+      dirty = true;
+    }
   }
 
   // Migrate sourceRoot: absolute → relative (or null if conversion impossible).

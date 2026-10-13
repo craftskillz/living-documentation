@@ -10,6 +10,7 @@ import {
 } from '../lib/blueprint';
 import { readConfig } from '../lib/config';
 import { listDocs } from './documents';
+import { docSlug, type DocMetadata } from '../lib/parser';
 
 const MAX_TEXT_BYTES = 1024 * 1024; // 1 MB
 
@@ -45,28 +46,28 @@ export interface BlueprintFolder {
   hasDoc: boolean; // true when a blueprint document already exists for this block
 }
 
-// Mirrors the frontend slug used by AdrModal: a folder name maps to an ADR
-// category. Kept identical so `hasDoc` agrees with the lookup the "D" button
-// performs (GET /blueprint-adr?category=...).
-export function slugifyCategory(name: string): string {
+// A source folder's Blueprint document is `<BLUEPRINT_FOLDER>/<docSlug(name)>.md`.
+// Documents named before the nomenclature removal (`…_[NAME]_….md`) are still
+// matched through their bracketed segment.
+function legacyBlueprintKey(name: string): string {
   return (
-    name.normalize('NFKD').replace(/[̀-ͯ]/g, '').toUpperCase()
+    name.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toUpperCase()
       .replace(/[^A-Z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'FOLDER'
   );
 }
 
-// Set of categories (uppercased) that already have a document under the
-// blueprint folder — the same filter as the /blueprint-adr lookup.
-function blueprintDocCategories(docsPath: string): Set<string> {
-  const { extraFiles = [], filenamePattern } = readConfig(docsPath);
-  const docs = listDocs(docsPath, extraFiles, filenamePattern);
-  const categories = new Set<string>();
-  for (const d of docs) {
-    if (Array.isArray(d.folder) && d.folder.length === 1 && d.folder[0] === BLUEPRINT_FOLDER) {
-      categories.add(d.category.toUpperCase());
-    }
-  }
-  return categories;
+// `doc` comes from blueprintDocs(), so it already sits in BLUEPRINT_FOLDER.
+function isBlueprintDocFor(doc: DocMetadata, folderName: string): boolean {
+  const stem = path.posix.basename(doc.filename, '.md');
+  return stem === docSlug(folderName) ||
+    stem.toUpperCase().includes(`_[${legacyBlueprintKey(folderName)}]_`);
+}
+
+function blueprintDocs(docsPath: string): DocMetadata[] {
+  const { extraFiles = [] } = readConfig(docsPath);
+  return listDocs(docsPath, extraFiles).filter(
+    (d) => Array.isArray(d.folder) && d.folder.length === 1 && d.folder[0] === BLUEPRINT_FOLDER,
+  );
 }
 
 export interface BlueprintResponse {
@@ -79,7 +80,7 @@ export interface BlueprintResponse {
 function listFolders(
   sourceRoot: string,
   relPath: string,
-  docCategories: Set<string>,
+  docs: DocMetadata[],
 ): BlueprintFolder[] {
   const absDir = path.resolve(sourceRoot, relPath);
 
@@ -97,7 +98,7 @@ function listFolders(
       const childAbs = path.resolve(sourceRoot, childRel);
       const hasChildren = fs.readdirSync(childAbs, { withFileTypes: true })
         .some((e) => e.isDirectory() && !isBlueprintIgnoredDir(e.name));
-      const hasDoc = docCategories.has(slugifyCategory(entry.name));
+      const hasDoc = docs.some((d) => isBlueprintDocFor(d, entry.name));
       return { name: entry.name, path: childRel, hasChildren, hasDoc };
     });
 }
@@ -192,7 +193,7 @@ export function blueprintRouter(docsPath: string): Router {
         ? normalizeBlueprintPath(req.query.path)
         : '';
 
-      const folders = listFolders(sourceRoot, reqPath, blueprintDocCategories(docsPath));
+      const folders = listFolders(sourceRoot, reqPath, blueprintDocs(docsPath));
       const name = reqPath ? (reqPath.split('/').pop() ?? reqPath) : path.basename(sourceRoot);
 
       const response: BlueprintResponse = {
@@ -226,16 +227,11 @@ export function blueprintRouter(docsPath: string): Router {
 
   router.get('/blueprint-adr', (req, res) => {
     try {
-      const category = typeof req.query.category === 'string' ? req.query.category.trim().toUpperCase() : '';
-      if (!category) { res.status(400).json({ error: 'category required' }); return; }
-      const { extraFiles = [], filenamePattern } = readConfig(docsPath);
-      const docs = listDocs(docsPath, extraFiles, filenamePattern);
-      const matches = docs.filter((d) =>
-        Array.isArray(d.folder) && d.folder.length === 1 && d.folder[0] === BLUEPRINT_FOLDER &&
-        d.category.toUpperCase() === category
-      );
+      const folderName = typeof req.query.folder === 'string' ? req.query.folder.trim() : '';
+      if (!folderName) { res.status(400).json({ error: 'folder required' }); return; }
+      const matches = blueprintDocs(docsPath).filter((d) => isBlueprintDocFor(d, folderName));
       if (!matches.length) { res.json({ found: false }); return; }
-      // Most recent first (filename starts with date)
+      // Slug-named doc before legacy dated ones, then most recent legacy first
       matches.sort((a, b) => b.id.localeCompare(a.id));
       res.json({ found: true, doc: matches[0] });
     } catch (error) {

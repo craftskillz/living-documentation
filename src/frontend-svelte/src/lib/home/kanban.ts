@@ -655,7 +655,6 @@ function renderLanes(
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               title: titleValue,
-              category: "General",
               folder: col.folderPath,
               content: buildKanbanItemContent(titleValue),
             }),

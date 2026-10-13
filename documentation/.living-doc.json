@@ -1,5 +1,4 @@
 {
-  "filenamePattern": "YYYY_MM_DD_HH_mm_[Category]_title",
   "title": "Projet Living Documentation",
   "theme": "system",
   "siteTheme": "base",
@@ -54,8 +53,6 @@
     "msi"
   ],
   "exclusiveFolderExpansion": true,
-  "exclusiveCategoryExpansion": true,
-  "sidebarSort": "oldest",
   "codeBlockMaxHeight": 400,
   "markdownSoftBreaks": true,
   "imageRoundedCorners": true,

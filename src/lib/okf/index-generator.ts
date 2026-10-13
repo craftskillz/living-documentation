@@ -7,7 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { applyManifestOrder, readFolderManifest } from "../folderManifest";
 import { parseFrontmatter } from "../frontmatter";
-import { parseFilename } from "../parser";
+import { titleFromFilename } from "../parser";
 import { isReservedOkfFile, OKF_SPEC_VERSION } from "../okf";
 
 const IGNORED_DIRS = new Set([".git", "node_modules", "dist", "files", "images"]);
@@ -29,7 +29,7 @@ function conceptsAndDirs(dir: string): { concepts: ConceptEntry[]; subdirs: stri
       const data = parseFrontmatter(fs.readFileSync(path.join(dir, entry.name), "utf-8")).data;
       const title = typeof data.title === "string" && data.title.trim()
         ? data.title
-        : parseFilename(entry.name).title;
+        : titleFromFilename(entry.name);
       const description = typeof data.description === "string" ? data.description : "";
       concepts.push({ file: entry.name, title, description });
     }

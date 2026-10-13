@@ -1,7 +1,6 @@
 export interface DocSummary {
   id: string;
   title: string;
-  category: string;
   folder?: string[];
   filename?: string;
   formattedDate?: string;
@@ -10,7 +9,6 @@ export interface DocSummary {
 export interface DocDetail {
   id: string;
   title: string;
-  category: string;
   folder?: string[];
   content: string;
   html: string;

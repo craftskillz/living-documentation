@@ -9,20 +9,18 @@ test.describe('documents routes for extraFiles (path.isAbsolute branch)', () => 
 
   async function findExternalDocId(request: APIRequestContext, baseURL: string): Promise<string> {
     const res = await request.get(`${baseURL}/api/documents`);
-    const docs = (await res.json()) as Array<{ id: string; title: string; category: string }>;
-    const external = docs.find(
-      (d) => d.title === 'External' && d.category === 'General',
-    );
+    const docs = (await res.json()) as Array<{ id: string; title: string }>;
+    const external = docs.find((d) => d.title === 'External');
     if (!external) throw new Error('External doc not found in listing');
     return external.id;
   }
 
-  test('GET /api/documents lists the extra file under General', async ({ request, ld }) => {
+  test('GET /api/documents lists the extra file at the root', async ({ request, ld }) => {
     const res = await request.get(`${ld.baseURL}/api/documents`);
-    const docs = (await res.json()) as Array<{ title: string; category: string }>;
+    const docs = (await res.json()) as Array<{ title: string; folder: string[] | null }>;
     const titles = docs.map((d) => d.title).sort();
     expect(titles).toEqual(['External', 'Inside']);
-    expect(docs.find((d) => d.title === 'External')?.category).toBe('General');
+    expect(docs.find((d) => d.title === 'External')?.folder).toBeNull();
   });
 
   test('GET /api/documents/:id reads an extra file via its absolute-path id', async ({
@@ -32,9 +30,8 @@ test.describe('documents routes for extraFiles (path.isAbsolute branch)', () => 
     const id = await findExternalDocId(request, ld.baseURL);
     const res = await request.get(`${ld.baseURL}/api/documents/${id}`);
     expect(res.ok()).toBe(true);
-    const body = (await res.json()) as { content: string; html: string; category: string };
+    const body = (await res.json()) as { content: string; html: string };
     expect(body.content).toContain('# External');
-    expect(body.category).toBe('General');
     expect(body.html).toContain('<h1');
   });
 

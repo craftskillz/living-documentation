@@ -132,7 +132,7 @@ export function toolBuildContext(docsPath: string, args: {
   }
 
   const relatedDocuments: Array<{
-    id: string; title: string; category: string; folder: string | null;
+    id: string; title: string; folder: string | null;
     matchedPaths: string[]; accuracy: number;
   }> = [];
   if (includeDocumentation && changedPaths.length > 0) {
@@ -146,7 +146,7 @@ export function toolBuildContext(docsPath: string, args: {
       if (matchedPaths.length === 0) continue;
       const report = buildReport(entries, sourceRoot);
       relatedDocuments.push({
-        id: doc.id, title: doc.title, category: doc.category, folder: doc.folder,
+        id: doc.id, title: doc.title, folder: doc.folder,
         matchedPaths, accuracy: report.accuracy,
       });
     }
