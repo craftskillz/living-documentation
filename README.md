@@ -25,7 +25,7 @@ Documentation often ends up scattered: README files, notes, tickets, screenshots
 | Need | What Living Documentation provides |
 | --- | --- |
 | Write fast | Markdown editor, snippets, tables, images, attachments, annotations. |
-| Structure | Folders, categories, naming conventions, full-text search. |
+| Structure | Folders ordered by drag and drop, hidden entries, full-text search. |
 | Version | Git integration, automatic commits, visual comparison, block-level restore. |
 | Visualize | Diagram editor, images, exports, clickable links inside documents. |
 | Automate | Workspace, LLM providers, reusable agents, internal MCP tools. |
@@ -142,17 +142,27 @@ Useful features:
 - automatic table of contents
 - full-text search
 
-Files are organized by real folders and by categories extracted from the file name:
+Documents are organized in real folders. The file name is only an identifier: the title and the date come from the document frontmatter, and a new document is named after its title (`prepare-a-meeting.md`).
 
-```text
-PROCESS/2026_06_30_10_00_[GUIDE]_prepare_a_meeting.md
+Each folder can hold an invisible `liv-doc-main.md` manifest that drives the explorer:
+
+```markdown
+---
+order:
+  - PROCESS
+  - welcome.md
+hidden:
+  - .scratch
+---
+
+Free description of the folder.
 ```
 
-Here:
+- entries listed in `order` come first, in that order; the others follow alphabetically, folders then files
+- entries listed in `hidden` are only shown on demand, but stay reachable by link and through MCP
+- drag and drop in the explorer reorders a folder or moves an entry into another folder, and updates the manifests
 
-- `PROCESS` is the folder
-- `GUIDE` is the category
-- `prepare_a_meeting` is the title
+Projects that used numeric folder prefixes (`001_PROCESS`, `1_tutorial`) are migrated once at startup, or with `npx living-ai-documentation migrate <folder> [--dry-run]`: folders are renamed without their prefix, their order moves to the parent manifest, and the links pointing into them are rewritten.
 
 ---
 
@@ -225,7 +235,6 @@ Example:
 
 ```json
 {
-  "filenamePattern": "YYYY_MM_DD_HH_mm_[Category]_title",
   "title": "Living Documentation",
   "theme": "system",
   "language": "en",
@@ -245,7 +254,6 @@ Important points:
 
 - paths are stored relatively when possible
 - `sourceRoot` is used by source tools and agents
-- `[Category]` is used to classify documents
 - Git can remain unconfigured, disabled, or explicitly enabled
 - attachment extensions can be blocked in Admin
 

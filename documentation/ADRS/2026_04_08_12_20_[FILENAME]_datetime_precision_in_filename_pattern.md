@@ -14,8 +14,10 @@ tags:
   - date
   - documents
 timestamp: 2026-04-08T12:20:00Z
-status: Accepted
+status: SuperSeeded by 2026_10_14_13_00_[NAVIGATION]_explorateur_ordonne_par_manifeste_liv_doc_main.md
 ---
+
+> **Remplacé** par [Explorateur ordonné par manifeste liv-doc-main.md](?doc=ADRS%252F2026_10_14_13_00_%255BNAVIGATION%255D_explorateur_ordonne_par_manifeste_liv_doc_main) : le pattern de nom de fichier (`filenamePattern`) est supprimé ; un nouveau document est nommé par le slug de son titre.
 
 ## Contexte
 

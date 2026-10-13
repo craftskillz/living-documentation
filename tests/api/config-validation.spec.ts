@@ -4,18 +4,22 @@ import { test, expect } from '../helpers/ld-fixture';
 
 const LEGACY_NOMENCLATURE_KEYS = ['filenamePattern', 'sidebarSort', 'exclusiveCategoryExpansion'];
 
-test('legacy nomenclature keys are ignored on start and never written back', async ({ request, ld }) => {
-  // The minimal fixture still stores filenamePattern and exclusiveCategoryExpansion.
-  const cfg = (await (await request.get(`${ld.baseURL}/api/config`)).json()) as Record<string, unknown>;
-  for (const key of LEGACY_NOMENCLATURE_KEYS) expect(cfg).not.toHaveProperty(key);
+test.describe('legacy nomenclature keys', () => {
+  // The legacy fixture still stores filenamePattern.
+  test.use({ fixtureName: 'legacy-abs-paths' });
 
-  const res = await request.put(`${ld.baseURL}/api/config`, {
-    data: { title: 'Renamed', filenamePattern: '[Category]_title', sidebarSort: 'oldest', exclusiveCategoryExpansion: true },
+  test('are ignored on start and never written back', async ({ request, ld }) => {
+    const cfg = (await (await request.get(`${ld.baseURL}/api/config`)).json()) as Record<string, unknown>;
+    for (const key of LEGACY_NOMENCLATURE_KEYS) expect(cfg).not.toHaveProperty(key);
+
+    const res = await request.put(`${ld.baseURL}/api/config`, {
+      data: { title: 'Renamed', filenamePattern: '[Category]_title', sidebarSort: 'oldest', exclusiveCategoryExpansion: true },
+    });
+    expect(res.ok()).toBeTruthy();
+    const stored = JSON.parse(fs.readFileSync(path.join(ld.docsAbs, '.living-doc.json'), 'utf-8')) as Record<string, unknown>;
+    expect(stored.title).toBe('Renamed');
+    for (const key of LEGACY_NOMENCLATURE_KEYS) expect(stored).not.toHaveProperty(key);
   });
-  expect(res.ok()).toBeTruthy();
-  const stored = JSON.parse(fs.readFileSync(path.join(ld.docsAbs, '.living-doc.json'), 'utf-8')) as Record<string, unknown>;
-  expect(stored.title).toBe('Renamed');
-  for (const key of LEGACY_NOMENCLATURE_KEYS) expect(stored).not.toHaveProperty(key);
 });
 
 test('PUT /api/config silently drops an invalid language', async ({ request, ld }) => {

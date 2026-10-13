@@ -1,15 +1,21 @@
 {
-  "filenamePattern": "YYYY_MM_DD_HH_mm_[Category]_title",
   "title": "Living Documentation",
   "theme": "system",
-  "language": "fr",
-  "hiddenHeaderMenus": ["/blueprint", "/graph", "/survival-kit", "/context", "#word-cloud"],
+  "siteTheme": "base",
+  "hiddenHeaderMenus": [
+    "/blueprint",
+    "/graph",
+    "/survival-kit",
+    "/context",
+    "#word-cloud"
+  ],
   "favorites": [
     {
-      "id": "000_DOCUMENTATION%2F2026_06_30_10_00_%5BDOCUMENTATION%5D_Bienvenue_dans_Living_Documentation",
+      "id": "DOCUMENTATION%2F2026_06_30_10_00_%5BDOCUMENTATION%5D_Bienvenue_dans_Living_Documentation",
       "title": "Bienvenue Dans Living Documentation"
     }
   ],
+  "language": "fr",
   "port": 4321,
   "extraFiles": [],
   "showDiagramDebug": false,
@@ -53,11 +59,79 @@
     "msi"
   ],
   "exclusiveFolderExpansion": true,
-  "exclusiveCategoryExpansion": true,
   "codeBlockMaxHeight": 400,
   "markdownSoftBreaks": true,
+  "imageRoundedCorners": true,
+  "imageCentered": true,
+  "imageBorder": true,
+  "codeBlockLightTheme": false,
+  "diagramDefaults": {
+    "arrows": {
+      "arrowDir": "to",
+      "dashes": false,
+      "fontSize": 16
+    },
+    "shapes": {
+      "box": {
+        "width": 146,
+        "height": 52,
+        "fontSize": 16,
+        "colorKey": "c-lime"
+      },
+      "ellipse": {
+        "width": 118,
+        "height": 67,
+        "fontSize": 16,
+        "colorKey": "c-red"
+      },
+      "circle": {
+        "width": 90,
+        "height": 81,
+        "fontSize": 16,
+        "colorKey": "c-amber"
+      },
+      "database": {
+        "width": 121,
+        "height": 106,
+        "fontSize": 16,
+        "colorKey": "c-cyan"
+      },
+      "actor": {
+        "width": 30,
+        "height": 52,
+        "fontSize": 16,
+        "colorKey": "c-gray"
+      },
+      "post-it": {
+        "width": 120,
+        "height": 100,
+        "fontSize": 13,
+        "colorKey": "c-orange"
+      },
+      "text-free": {
+        "width": 123,
+        "height": 44,
+        "fontSize": 16,
+        "colorKey": "c-gray"
+      }
+    }
+  },
+  "llmModelsNoV1Hosts": [
+    "https://api.deepseek.com"
+  ],
+  "debugAgents": false,
+  "gitIntegration": {
+    "mode": "unconfigured",
+    "pushMode": "never",
+    "pushEveryCommits": 1,
+    "commitMessage": "docs: update living documentation"
+  },
   "okfMigration": {
     "version": "0.1",
-    "migratedAt": "2026-07-10T20:30:08.718Z"
+    "migratedAt": "2026-10-13T22:23:49.656Z"
+  },
+  "explorerMigration": {
+    "version": "1",
+    "migratedAt": "2026-10-13T22:23:49.632Z"
   }
 }

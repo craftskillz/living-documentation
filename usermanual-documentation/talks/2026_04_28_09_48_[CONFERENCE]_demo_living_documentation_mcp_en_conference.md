@@ -305,12 +305,12 @@ Une fois cette migration faite, le projet entre dans le cycle normal : nouveaux 
 
 ## Pour aller plus loin (docs internes)
 
-- Concept général : [Living Documentation](?doc=3_concept%252F2026_04_08_22_15_%255BDOCUMENTING%255D_living_documentation)
-- Concept ADR : [ADRs](?doc=3_concept%252F2026_04_08_20_58_%255BDOCUMENTING%255D_ADRS)
-- Méthodologie d'organisation : [Diataxis Architecture du Contenu](?doc=3_concept%252F2026_04_08_22_46_%255BMETHODOLOGY%255D_diataxis_architecture_du_contenu)
-- Outil sous-jacent : [The Living Documentation Tool](?doc=4_reference%252F2026_04_08_23_14_%255BFUNDAMENTALS%255D_the_living_documentation_tool)
-- Snippets disponibles : [Types De Snippets](?doc=4_reference%252F2026_04_09_03_00_%255BREFERENCE%255D_types_de_snippets)
-- Diagrammes liés : [Creer Et Lier Un Diagramme](?doc=2_guide%252F2026_04_09_14_00_%255BDIAGRAM%255D_creer_et_lier_un_diagramme)
+- Concept général : [Living Documentation](?doc=concept%252F2026_04_08_22_15_%255BDOCUMENTING%255D_living_documentation)
+- Concept ADR : [ADRs](?doc=concept%252F2026_04_08_20_58_%255BDOCUMENTING%255D_ADRS)
+- Méthodologie d'organisation : [Diataxis Architecture du Contenu](?doc=concept%252F2026_04_08_22_46_%255BMETHODOLOGY%255D_diataxis_architecture_du_contenu)
+- Outil sous-jacent : [The Living Documentation Tool](?doc=reference%252F2026_04_08_23_14_%255BFUNDAMENTALS%255D_the_living_documentation_tool)
+- Snippets disponibles : [Types De Snippets](?doc=reference%252F2026_04_09_03_00_%255BREFERENCE%255D_types_de_snippets)
+- Diagrammes liés : [Creer Et Lier Un Diagramme](?doc=guide%252F2026_04_09_14_00_%255BDIAGRAM%255D_creer_et_lier_un_diagramme)
 
 ---
 

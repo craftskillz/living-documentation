@@ -25,7 +25,7 @@ La documentation finit souvent dispersée : README, notes, tickets, captures, AD
 | Besoin             | Ce que Living Documentation apporte                                                  |
 | ------------------ | ------------------------------------------------------------------------------------ |
 | Écrire vite        | Éditeur Markdown, snippets, tableaux, images, fichiers joints, annotations.          |
-| Structurer         | Dossiers, catégories, conventions de nommage, recherche plein texte.                 |
+| Structurer         | Dossiers ordonnés par glisser-déposer, éléments masqués, recherche plein texte.      |
 | Versionner         | Intégration Git, commits automatiques, comparaison visuelle, restauration par blocs. |
 | Visualiser         | Éditeur de diagrammes, images, exports, liens cliquables dans les documents.         |
 | Automatiser        | Workspace, providers LLM, agents réutilisables, tools MCP internes.                  |
@@ -142,17 +142,27 @@ Fonctions utiles :
 - table des matières automatique
 - recherche plein texte
 
-Les fichiers sont classés par dossiers réels et par catégories extraites du nom :
+Les documents sont classés dans de vrais dossiers. Le nom de fichier n'est qu'un identifiant : le titre et la date viennent du frontmatter du document, et un nouveau document est nommé d'après son titre (`preparer-une-reunion.md`).
 
-```text
-PROCESSUS/2026_06_30_10_00_[GUIDE]_preparer_une_reunion.md
+Chaque dossier peut contenir un manifeste invisible `liv-doc-main.md` qui pilote l'explorateur :
+
+```markdown
+---
+order:
+  - PROCESSUS
+  - bienvenue.md
+hidden:
+  - .scratch
+---
+
+Description libre du dossier.
 ```
 
-Ici :
+- les éléments listés dans `order` passent en premier, dans cet ordre ; les autres suivent par ordre alphabétique, dossiers puis fichiers
+- les éléments listés dans `hidden` ne s'affichent qu'à la demande, mais restent accessibles par lien et par le MCP
+- le glisser-déposer dans l'explorateur réordonne un dossier ou déplace un élément dans un autre dossier, et met à jour les manifestes
 
-- `PROCESSUS` est le dossier
-- `GUIDE` est la catégorie
-- `preparer_une_reunion` est le titre
+Les projets qui utilisaient des préfixes numériques de dossier (`001_PROCESSUS`, `1_tutorial`) sont migrés une fois au démarrage, ou avec `npx living-ai-documentation migrate <dossier> [--dry-run]` : les dossiers sont renommés sans préfixe, leur ordre passe dans le manifeste du parent, et les liens qui pointent dedans sont réécrits.
 
 ---
 
@@ -225,7 +235,6 @@ Exemple :
 
 ```json
 {
-  "filenamePattern": "YYYY_MM_DD_HH_mm_[Category]_title",
   "title": "Living Documentation",
   "theme": "system",
   "language": "fr",
@@ -245,7 +254,6 @@ Points importants :
 
 - les chemins sont stockés en relatif quand c'est possible
 - `sourceRoot` sert aux tools source et aux agents
-- `[Category]` est utilisé pour classer les documents
 - Git peut rester non configuré, désactivé, ou activé explicitement
 - les extensions de fichiers jointes peuvent être bloquées dans Admin
 

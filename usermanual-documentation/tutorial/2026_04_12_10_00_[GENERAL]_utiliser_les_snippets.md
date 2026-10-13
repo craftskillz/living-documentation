@@ -4,7 +4,7 @@ Les **snippets** sont des modèles Markdown prêts à l'emploi que vous insérez
 
 ## Prérequis
 
-Être en mode **édition** sur un document. Si ce n'est pas le cas, [éditez d'abord un document](?doc=1_tutorial%252F2026_04_12_09_00_%255BGeneral%255D_editer_et_sauvegarder).
+Être en mode **édition** sur un document. Si ce n'est pas le cas, [éditez d'abord un document](?doc=tutorial%252F2026_04_12_09_00_%255BGeneral%255D_editer_et_sauvegarder).
 
 ## Passons à la pratique
 

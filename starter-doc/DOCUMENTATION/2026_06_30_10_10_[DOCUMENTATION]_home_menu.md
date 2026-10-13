@@ -7,7 +7,6 @@ tags:
   - menu
   - navigation
   - folders
-  - categories
   - documents
   - search
 timestamp: 2026-06-30T10:10:00Z
@@ -18,7 +17,7 @@ status: Draft
 
 The <kbd>Home</kbd> menu is the entry point to your documentation.
 
-This is where you find your folders, categories, documents, and the main creation actions.
+This is where you find your folders, documents, and the main creation actions.
 
 ---
 
@@ -27,13 +26,12 @@ This is where you find your folders, categories, documents, and the main creatio
 <!-- layout-columns -->
 <!-- col -->
 <!-- image-width: 2/3 -->
-![Home sidebar showing documents organized by categories](/images/DOCUMENTATION/readme-sidebar.png)
+![Home sidebar showing folders and documents](/images/DOCUMENTATION/readme-sidebar.png)
 <!-- col -->
 The left column shows:
 
 - the number of available documents
 - the folders in your documentation
-- the categories detected in file names
 - Markdown documents
 - useful badges: annotations, attachments, statuses
 
@@ -61,25 +59,26 @@ Each table of contents item corresponds to a header:
 
 ---
 
-### Folders and categories
+### Folders and order
 
-In **Living Documentation**, folders and categories are not the same thing.
+In **Living Documentation**, a **folder** is a real folder on your disk, and a document is a Markdown file inside it.
 
-- a **folder** is a real folder on your disk
-- a **category** comes from the Markdown file name
+The explorer shows folders first, then documents, each in alphabetical order. To choose another order, **drag and drop** an entry: up or down to reorder its folder, or onto another folder to move it there.
 
-For example:
+The order is saved in an invisible `liv-doc-main.md` file in each folder:
 
 <!-- code-width: 1/2 -->
-```text
-PROCESS/2026_06_30_10_00_[GUIDE]_prepare_a_meeting.md
+```markdown
+---
+order:
+  - PROCESS
+  - welcome.md
+hidden:
+  - drafts
+---
 ```
 
-Here:
-
-- `PROCESS` is the folder
-- `GUIDE` is the category
-- `prepare_a_meeting` is the document title
+To hide a folder or a document, use <kbd>Hide</kbd> on that entry. <kbd>Show hidden items</kbd> brings hidden entries back, greyed out, so you can show them again. A hidden document stays reachable by link.
 
 #### Create a folder
 
@@ -94,14 +93,14 @@ Example:
 
 <!-- code-width: 1/3 -->
 ```text
-204_PROJECT HERMES
+PROJECT HERMES
 ```
 
 becomes:
 
 <!-- code-width: 1/3 -->
 ```text
-204_PROJECT_HERMES
+PROJECT_HERMES
 ```
 
 #### Create a document
@@ -114,10 +113,9 @@ The <kbd>New Document</kbd> button lets you add a Markdown document.
 You choose:
 
 - a title
-- a category
 - a destination folder
 
-The file name is then generated automatically according to the pattern configured in <kbd>Admin</kbd>.
+The file name is generated from the title, for example `prepare-a-meeting.md`. The title and the date are kept in the document frontmatter.
 
 ---
 
@@ -128,7 +126,7 @@ The Home menu also helps you quickly find a document.
 You can:
 
 - browse folders
-- open or close categories
+- open or close folders
 - use search
 - identify documents with attachments or annotations
 

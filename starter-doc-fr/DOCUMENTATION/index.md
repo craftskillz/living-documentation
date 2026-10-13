@@ -1,4 +1,4 @@
-# 000_DOCUMENTATION
+# DOCUMENTATION
 
 ## Concepts
 

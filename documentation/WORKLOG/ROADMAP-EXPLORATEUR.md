@@ -182,6 +182,6 @@ Une entrée de `order` ou `hidden` qui n'existe plus est ignorée à la lecture 
 - [x] ~~US4a — Supprimer la nomenclature (backend)~~
 - [x] ~~US4b — Supprimer la nomenclature (frontend)~~
 - [x] ~~US8 — Migration des préfixes numériques~~
-- [ ] US9 — Starters et documentation
+- [x] ~~US9 — Starters et documentation~~
 
 Convention : `[x] ~~US… ~~` une fois terminée, avec un document `AAAA_MM_JJ_HH_mm_[WORKLOG]_us_XX_<slug>.md`.

@@ -16,16 +16,17 @@ status: To be validated
 
 ## État courant
 
-Branche `feat/explorateur-liv-doc-main`. Backlog : [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), hypothèses H1–H6 validées. US1 à US7, US4a, US4b et US8 terminées et commitées. US8 : `migrate`, la garde au démarrage et `init` renomment les dossiers `001_X` sans préfixe, reportent l'ordre dans le manifeste parent et réécrivent liens, stores et preuves de diagrammes ; dossier Blueprint renommé `BLUEPRINT`. Détails : [worklog US8](./2026_10_14_12_00_%5BWORKLOG%5D_us_08_migration_des_prefixes_numeriques.md).
+Branche `feat/explorateur-liv-doc-main`. Backlog [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md) **terminé** : US1 à US9 commitées. `documentation/` du dépôt migré. ADR [Explorateur ordonné par manifeste liv-doc-main.md](?doc=ADRS%252F2026_10_14_13_00_%255BNAVIGATION%255D_explorateur_ordonne_par_manifeste_liv_doc_main) en `To be validated`. Détails : [worklog US9](./2026_10_14_13_30_%5BWORKLOG%5D_us_09_starters_et_documentation.md).
 
 ## Suite
 
-1. Migrer `documentation/` du dépôt (`node dist/bin/cli.js migrate documentation`, dry-run vérifié : 9 dossiers, 0 collision) : sans cela la garde bloque le serveur sur ce dossier.
-2. US9 (starters `000_DOCUMENTATION`, guides citant `001_BLUEPRINT`, ADR explorateur), dans une nouvelle session.
+1. Validation humaine de l'ADR, revue et merge de la branche (push à la charge de l'utilisateur).
+2. Hors périmètre : captures des starters montrant les catégories, guides de `documentation/` et du manuel décrivant l'ancienne convention.
+3. Attacher les sources de l'ADR et de `PROJECT-STACK.md` via le MCP quand il est disponible.
 
-Suites au 14/10/2026 après US8 : unitaires 55/55, `tests/api` 213/213, `tests/e2e` 113/113.
+Suites au 14/10/2026 après US9 : unitaires 56/56, `tests/api` 213/213, `tests/e2e` 113/113, `okf:validate` 0 erreur.
 
-MCP Living Documentation non exposé comme outil dans la session : worklog et roadmap écrits à la main, pas de métadonnées attachées.
+MCP Living Documentation non exposé comme outil dans la session : worklog, roadmap et ADR écrits à la main, pas de métadonnées attachées.
 
 ---
 

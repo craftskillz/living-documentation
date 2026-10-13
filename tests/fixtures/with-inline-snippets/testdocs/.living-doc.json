@@ -1,5 +1,4 @@
 {
-  "filenamePattern": "YYYY_MM_DD_HH_mm_[Category]_title",
   "title": "Inline Snippet Docs",
   "theme": "system",
   "language": "en",
@@ -9,7 +8,6 @@
   "sourceRoot": null,
   "blockedFileExtensions": ["exe", "sh", "bat"],
   "exclusiveFolderExpansion": false,
-  "exclusiveCategoryExpansion": false,
   "codeBlockMaxHeight": 400,
   "markdownSoftBreaks": false,
   "gitIntegration": { "mode": "disabled" }

@@ -1,0 +1,6 @@
+---
+order:
+  - DOCUMENTATION
+hidden:
+  - images
+---

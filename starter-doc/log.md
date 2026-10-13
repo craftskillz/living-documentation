@@ -12,8 +12,8 @@
 ## 2026-05-14
 
 * **Added**: ROADMAP
-* **Added**: Track current work
-* **Added**: Current task
+* **Added**: Track Current Work
+* **Added**: Current Task
 
 ## 2026-05-11
 
@@ -25,4 +25,4 @@
 * **Added**: AGENTS
 * **Added**: CLAUDE
 * **Added**: MEMORY
-* **Added**: No magic numbers
+* **Added**: No Magic Numbers

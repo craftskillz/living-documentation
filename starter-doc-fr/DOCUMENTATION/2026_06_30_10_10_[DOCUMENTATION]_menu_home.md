@@ -7,7 +7,6 @@ tags:
   - menu
   - navigation
   - dossiers
-  - categories
   - documents
   - recherche
 timestamp: 2026-06-30T10:10:00Z
@@ -18,7 +17,7 @@ status: Draft
 
 Le menu <kbd>Home</kbd> est la porte d'entrée de votre documentation.
 
-C'est ici que vous retrouvez vos dossiers, vos catégories, vos documents, et les principales actions de création.
+C'est ici que vous retrouvez vos dossiers, vos documents, et les principales actions de création.
 
 ---
 
@@ -27,13 +26,12 @@ C'est ici que vous retrouvez vos dossiers, vos catégories, vos documents, et le
 <!-- layout-columns -->
 <!-- col -->
 <!-- image-width: 2/3 -->
-![Barre laterale Home affichant les documents classes par categories](/images/DOCUMENTATION/readme-sidebar.png)
+![Barre laterale Home affichant les dossiers et les documents](/images/DOCUMENTATION/readme-sidebar.png)
 <!-- col -->
 La colonne de gauche affiche :
 
 - le nombre de documents disponibles
 - les dossiers de votre documentation
-- les catégories détectées dans les noms de fichiers
 - les documents Markdown
 - les badges utiles : annotations, fichiers joints, statuts
 
@@ -60,25 +58,26 @@ Chaque élement d'une table des matières correspond à un Header
 
 ---
 
-### Dossiers et catégories
+### Dossiers et ordre
 
-Dans **Living Documentation**, les dossiers et les catégories ne sont pas la même chose.
+Dans **Living Documentation**, un **dossier** correspond à un vrai dossier sur votre disque, et un document à un fichier Markdown qu'il contient.
 
-- un **dossier** correspond à un vrai dossier sur votre disque
-- une **catégorie** vient du nom du fichier Markdown
+L'explorateur affiche d'abord les dossiers, puis les documents, chacun par ordre alphabétique. Pour choisir un autre ordre, faites un **glisser-déposer** : vers le haut ou le bas pour réordonner le dossier, ou sur un autre dossier pour y déplacer l'élément.
 
-Par exemple :
+L'ordre est enregistré dans un fichier invisible `liv-doc-main.md`, dans chaque dossier :
 
 <!-- code-width: 1/2 -->
-```text
-PROCESSUS/2026_06_30_10_00_[GUIDE]_preparer_une_reunion.md
+```markdown
+---
+order:
+  - PROCESSUS
+  - bienvenue.md
+hidden:
+  - brouillons
+---
 ```
 
-Ici :
-
-- `PROCESSUS` est le dossier
-- `GUIDE` est la catégorie
-- `preparer_une_reunion` est le titre du document
+Pour cacher un dossier ou un document, utilisez <kbd>Masquer</kbd> sur cet élément. <kbd>Afficher les éléments cachés</kbd> les fait réapparaître, grisés, pour pouvoir les réafficher. Un document caché reste accessible par lien.
 
 #### Créer un dossier
 
@@ -93,14 +92,14 @@ Exemple :
 
 <!-- code-width: 1/3 -->
 ```text
-204_PROJET HERMES
+PROJET HERMES
 ```
 
 devient :
 
 <!-- code-width: 1/3 -->
 ```text
-204_PROJET_HERMES
+PROJET_HERMES
 ```
 
 #### Créer un document
@@ -113,10 +112,9 @@ Le bouton <kbd>New Document</kbd> permet d'ajouter un document Markdown.
 Vous choisissez :
 
 - un titre
-- une catégorie
 - un dossier de destination
 
-Le nom du fichier est ensuite généré automatiquement selon le pattern configuré dans <kbd>Admin</kbd>.
+Le nom du fichier est généré à partir du titre, par exemple `preparer-une-reunion.md`. Le titre et la date sont conservés dans le frontmatter du document.
 
 ---
 
@@ -127,7 +125,7 @@ Le menu Home sert aussi à retrouver vite un document.
 Vous pouvez :
 
 - parcourir les dossiers
-- ouvrir ou fermer les catégories
+- ouvrir ou fermer les dossiers
 - utiliser la recherche
 - repérer les documents avec fichiers joints ou annotations
 

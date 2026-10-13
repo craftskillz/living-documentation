@@ -19,8 +19,10 @@ tags:
   - sous-dossier
   - DocMetadata
 timestamp: 2026-03-21T10:25:00Z
-status: Acceptée
+status: Partially SuperSeeded by 2026_10_14_13_00_[NAVIGATION]_explorateur_ordonne_par_manifeste_liv_doc_main.md
 ---
+
+> **Partiellement remplacé** par [Explorateur ordonné par manifeste liv-doc-main.md](?doc=ADRS%252F2026_10_14_13_00_%255BNAVIGATION%255D_explorateur_ordonne_par_manifeste_liv_doc_main) : les catégories et le tri de la sidebar n'existent plus ; l'arborescence de dossiers récursive reste valable, ordonnée par manifeste.
 
 ## Contexte
 

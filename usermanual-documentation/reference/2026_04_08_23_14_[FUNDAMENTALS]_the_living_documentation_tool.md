@@ -10,7 +10,7 @@ Lancez l'outil en pointant vers votre dossier de documentation, le mieux étant 
 npx living-ai-documentation ./docs
 ```
 
-Pour plus d'information consulter le [`Guide de démarrage`](?doc=2_guide%252F2026_04_08_23_38_%255BConfiguration%255D_demarrage_de_living_documentation)
+Pour plus d'information consulter le [`Guide de démarrage`](?doc=guide%252F2026_04_08_23_38_%255BConfiguration%255D_demarrage_de_living_documentation)
 
 ---
 

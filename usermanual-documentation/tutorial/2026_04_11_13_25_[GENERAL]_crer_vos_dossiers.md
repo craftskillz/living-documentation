@@ -2,7 +2,7 @@
 
 Les dossiers constituent l'architecture de votre documentation.
 Cette architecture doit répondre à une question simple : **où cherchera-t-on cette information dans six mois ?**
-Pour en savoir plus sur les façons d'architecturer votre documentation, [suivez ce lien](?doc=4_reference%252F2026_04_11_17_31_%255BFUNDAMENTALS%255D_architecturer_une_documentation)
+Pour en savoir plus sur les façons d'architecturer votre documentation, [suivez ce lien](?doc=reference%252F2026_04_11_17_31_%255BFUNDAMENTALS%255D_architecturer_une_documentation)
 
 ## Passons à la pratique
 

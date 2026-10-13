@@ -1,5 +1,5 @@
 {
-  "5_talks/2026_04_28_09_48_[CONFERENCE]_demo_living_documentation_mcp_en_conference": [
+  "talks/2026_04_28_09_48_[CONFERENCE]_demo_living_documentation_mcp_en_conference": [
     {
       "path": "src/mcp/server.ts",
       "hash": "c4197cbc1358618b783fdd7977c3c37354466562f0ac3c9c216145b2a8d23030"

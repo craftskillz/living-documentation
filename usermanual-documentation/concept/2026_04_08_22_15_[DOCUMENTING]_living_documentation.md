@@ -12,6 +12,6 @@ De surcroît avec les LLM et les agents IA actuels (je fais déjà écrire mes A
 
 ---
 
-[![Diataxis](/images/diataxis_callout.png)](?doc=3_concept%252F2026_04_08_22_46_%255BMETHODOLOGY%255D_diataxis_architecture_du_contenu)
+[![Diataxis](/images/diataxis_callout.png)](?doc=concept%252F2026_04_08_22_46_%255BMETHODOLOGY%255D_diataxis_architecture_du_contenu)
 
 <h1 style="text-align:center"><code>CLIC sur l'image pour naviguer 😉</code></h1>

@@ -14,6 +14,6 @@ Mais certains problèmes subsistent :
 
 <h2 style="text-align:center">➠ Vers un meilleur type de partage de connaissance</h2>
 
-[![Living Documentation](/images/living_documentation.png)](?doc=3_concept%252F2026_04_08_22_15_%255BDOCUMENTING%255D_living_documentation)
+[![Living Documentation](/images/living_documentation.png)](?doc=concept%252F2026_04_08_22_15_%255BDOCUMENTING%255D_living_documentation)
 
 <h1 style="text-align:center"><code>CLIC sur l'image pour naviguer 😉</code></h1>

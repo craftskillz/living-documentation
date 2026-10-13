@@ -27,7 +27,7 @@ Ce n'est pas un outil de generation de code, mais un outil de generation, de mai
 
 **Living Documentation** sert à garder la connaissance utile au même endroit, dans un format lisible et versionnable :
 
-- documents Markdown classés par dossiers et catégories
+- documents Markdown classés dans des dossiers ordonnés par glisser-déposer
 - notes de réunions et comptes rendus
 - procédures, processus et checklists
 - documentation de code, décisions d'architecture (ADRs)

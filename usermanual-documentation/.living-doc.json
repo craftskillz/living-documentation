@@ -1,5 +1,4 @@
 {
-  "filenamePattern": "YYYY_MM_DD_HH_mm_[Category]_title",
   "title": "Living Documentation",
   "theme": "system",
   "language": "fr",
@@ -46,7 +45,10 @@
     "msi"
   ],
   "exclusiveFolderExpansion": true,
-  "exclusiveCategoryExpansion": true,
   "codeBlockMaxHeight": 400,
-  "markdownSoftBreaks": true
+  "markdownSoftBreaks": true,
+  "imageRoundedCorners": true,
+  "imageCentered": true,
+  "imageBorder": true,
+  "codeBlockLightTheme": false
 }

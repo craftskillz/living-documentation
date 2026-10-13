@@ -42,7 +42,7 @@ Le titre s'affiche dans l'onglet du navigateur et en haut de la sidebar.
 
 **Contrainte** : le pattern doit contenir `[Category]` **exactement une fois**. Un message d'erreur s'affiche sinon.
 
-> Pour la liste complète des tokens reconnus, consultez la [référence des tokens](?doc=4_reference%252F2026_04_09_02_00_%255BREFERENCE%255D_tokens_pattern_nommage).
+> Pour la liste complète des tokens reconnus, consultez la [référence des tokens](?doc=reference%252F2026_04_09_02_00_%255BREFERENCE%255D_tokens_pattern_nommage).
 
 ---
 

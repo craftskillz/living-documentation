@@ -27,7 +27,7 @@ This is not a code generation tool, but a tool for generating, maintaining, vers
 
 **Living Documentation** helps you keep useful knowledge in one place, in a readable and versionable format:
 
-- Markdown documents organized by folders and categories
+- Markdown documents organized in folders you order by drag and drop
 - meeting notes and reports
 - procedures, processes, and checklists
 - code documentation and architecture decisions (ADRs)

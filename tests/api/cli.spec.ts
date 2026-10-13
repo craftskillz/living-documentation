@@ -45,12 +45,10 @@ function expectRegularFile(pathToFile: string) {
 }
 
 function writeExistingDocsProject(docsPath: string, title: string) {
-  // An existing project has already gone through every startup migration.
-  const config = JSON.parse(
-    fs.readFileSync(path.resolve(__dirname, "../../starter-doc/.living-doc.json"), "utf-8"),
+  fs.copyFileSync(
+    path.resolve(__dirname, "../../starter-doc/.living-doc.json"),
+    path.join(docsPath, ".living-doc.json"),
   );
-  config.explorerMigration = { version: "1" };
-  fs.writeFileSync(path.join(docsPath, ".living-doc.json"), JSON.stringify(config, null, 2));
   fs.writeFileSync(
     path.join(docsPath, `2026_01_01_10_00_[General]_${title}.md`),
     `# ${title}\n`,
