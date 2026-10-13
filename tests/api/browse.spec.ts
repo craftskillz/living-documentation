@@ -96,3 +96,39 @@ test('GET /api/browse/alldirs lists dot folders inside the docs folder, but not 
   expect(names).toContain('.scratch');
   expect(names).not.toContain('.git');
 });
+
+test('POST /api/browse/mkdir creates a liv-doc-main.md manifest in the new docs folder', async ({ request, ld }) => {
+  const newDir = path.join(ld.docsAbs, 'guide');
+  const res = await request.post(`${ld.baseURL}/api/browse/mkdir`, { data: { path: newDir } });
+  expect(res.ok()).toBe(true);
+  const manifest = fs.readFileSync(path.join(newDir, 'liv-doc-main.md'), 'utf-8');
+  expect(manifest).toMatch(/^---\norder: \[\]\nhidden: \[\]\n---\n/);
+});
+
+test('POST /api/browse/mkdir appends the new folder to a non-empty parent order', async ({ request, ld }) => {
+  const parent = path.join(ld.docsAbs, 'parent');
+  fs.mkdirSync(parent);
+  fs.writeFileSync(path.join(parent, 'liv-doc-main.md'), '---\norder:\n  - a.md\nhidden: []\n---\n\nParent folder.\n');
+  const res = await request.post(`${ld.baseURL}/api/browse/mkdir`, { data: { path: path.join(parent, 'child') } });
+  expect(res.ok()).toBe(true);
+  const manifest = fs.readFileSync(path.join(parent, 'liv-doc-main.md'), 'utf-8');
+  expect(manifest).toContain('order:\n  - a.md\n  - child\n');
+  expect(manifest).toContain('Parent folder.');
+});
+
+test('POST /api/browse/mkdir leaves an empty parent order untouched', async ({ request, ld }) => {
+  const parent = path.join(ld.docsAbs, 'parent');
+  fs.mkdirSync(parent);
+  const original = '---\norder: []\nhidden: []\n---\n';
+  fs.writeFileSync(path.join(parent, 'liv-doc-main.md'), original);
+  await request.post(`${ld.baseURL}/api/browse/mkdir`, { data: { path: path.join(parent, 'child') } });
+  expect(fs.readFileSync(path.join(parent, 'liv-doc-main.md'), 'utf-8')).toBe(original);
+});
+
+test('POST /api/browse/mkdir does not create a manifest outside the docs folder', async ({ request, ld }) => {
+  const outside = path.join(path.dirname(ld.docsAbs), `outside_${Date.now()}`);
+  const res = await request.post(`${ld.baseURL}/api/browse/mkdir`, { data: { path: outside } });
+  expect(res.ok()).toBe(true);
+  expect(fs.existsSync(path.join(outside, 'liv-doc-main.md'))).toBe(false);
+  fs.rmSync(outside, { recursive: true, force: true });
+});

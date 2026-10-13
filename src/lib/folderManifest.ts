@@ -4,7 +4,7 @@
 // the folder. A missing or malformed manifest falls back to the default order.
 import fs from "node:fs";
 import path from "node:path";
-import { parseFrontmatter } from "./frontmatter";
+import { parseFrontmatter, serializeFrontmatter } from "./frontmatter";
 
 export const FOLDER_MANIFEST_FILE = "liv-doc-main.md";
 
@@ -49,4 +49,30 @@ export function applyManifestOrder<T extends { name: string }>(entries: T[], ord
     }
   }
   return [...listed, ...entries.filter((e) => byName.has(e.name))];
+}
+
+/** Writes an empty manifest in a new folder; an existing manifest is kept. */
+export function createFolderManifest(absDir: string): void {
+  try {
+    fs.writeFileSync(path.join(absDir, FOLDER_MANIFEST_FILE), serializeFrontmatter({ order: [], hidden: [] }), {
+      flag: "wx",
+    });
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code !== "EEXIST") throw err;
+  }
+}
+
+/**
+ * Appends `name` to the parent manifest `order` when that order is non-empty;
+ * an empty order already shows new entries in default order. Other fields and
+ * the body are kept.
+ */
+export function appendToManifestOrder(absDir: string, name: string): void {
+  const file = path.join(absDir, FOLDER_MANIFEST_FILE);
+  if (!fs.existsSync(file)) return;
+  const { data, body, format } = parseFrontmatter(fs.readFileSync(file, "utf-8"));
+  if (format !== "yaml") return;
+  const order = stringList(data.order);
+  if (order.length === 0 || order.includes(name)) return;
+  fs.writeFileSync(file, serializeFrontmatter({ ...data, order: [...order, name] }) + body);
 }

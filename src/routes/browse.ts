@@ -2,6 +2,7 @@ import { Router, type Request, type Response } from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
 import { isListedDir } from '../lib/explorerEntries';
+import { appendToManifestOrder, createFolderManifest } from '../lib/folderManifest';
 import { normalizeFolderSegment } from '../lib/folderName';
 
 const RESERVED_SUBFOLDERS = new Set(['files', 'images']);
@@ -117,6 +118,10 @@ export function browseRouter(docsPath: string): Router {
     const normalizedPath = path.join(parent, name);
     try {
       fs.mkdirSync(normalizedPath, { recursive: true });
+      if (isInside(parent, docsPath)) {
+        createFolderManifest(normalizedPath);
+        appendToManifestOrder(parent, name);
+      }
       res.json({ created: normalizedPath });
     } catch {
       res.status(500).json({ error: 'Failed to create directory' });
