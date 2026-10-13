@@ -45,10 +45,12 @@ function expectRegularFile(pathToFile: string) {
 }
 
 function writeExistingDocsProject(docsPath: string, title: string) {
-  fs.copyFileSync(
-    path.resolve(__dirname, "../../starter-doc/.living-doc.json"),
-    path.join(docsPath, ".living-doc.json"),
+  // An existing project has already gone through every startup migration.
+  const config = JSON.parse(
+    fs.readFileSync(path.resolve(__dirname, "../../starter-doc/.living-doc.json"), "utf-8"),
   );
+  config.explorerMigration = { version: "1" };
+  fs.writeFileSync(path.join(docsPath, ".living-doc.json"), JSON.stringify(config, null, 2));
   fs.writeFileSync(
     path.join(docsPath, `2026_01_01_10_00_[General]_${title}.md`),
     `# ${title}\n`,
@@ -415,9 +417,42 @@ test("CLI on a non-empty folder creates only .living-doc.json when config-only i
   expect(config.favorites).toEqual([]);
   expect(config.okfMigration).toBeUndefined();
 
-  // Not migrated yet: the OKF startup gate takes over (non-interactive → exit 1).
+  // Not migrated yet: the startup gate takes over (non-interactive → exit 1).
   expect(result.status).toBe(1);
-  expect(result.stderr).toMatch(/not migrated to the Open Knowledge Format/i);
+  expect(result.stderr).toMatch(/needs a deterministic, one-time migration/i);
+  expect(result.stderr).toMatch(/Open Knowledge Format/);
+  expect(result.stderr).toMatch(/numeric folder prefixes/);
+  fs.rmSync(tmp, { recursive: true, force: true });
+});
+
+test("CLI migrate renames numeric folder prefixes into manifests, idempotently", () => {
+  const tmp = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "ld-cli-")));
+  const docs = path.join(tmp, "docs");
+  for (const dir of ["001_A", "2_b", "c"]) fs.mkdirSync(path.join(docs, dir), { recursive: true });
+  fs.writeFileSync(path.join(docs, "001_A", "a.md"), "[b](../2_b/b.md)\n");
+  fs.writeFileSync(path.join(docs, "2_b", "b.md"), "b\n");
+
+  const dry = runCli(["migrate", "./docs", "--dry-run"], tmp);
+  expect(dry.status).toBe(0);
+  expect(dry.stdout).toContain("001_A → A");
+  expect(fs.existsSync(path.join(docs, "001_A"))).toBe(true);
+
+  expect(runCli(["migrate", "./docs"], tmp).status).toBe(0);
+  expect(fs.readdirSync(docs).filter((n) => !n.startsWith(".")).sort()).toEqual([
+    "A",
+    "b",
+    "c",
+    "index.md",
+    "liv-doc-main.md",
+    "log.md",
+  ]);
+  expect(fs.readFileSync(path.join(docs, "liv-doc-main.md"), "utf-8")).toMatch(/order:\n {2}- A\n {2}- b\n/);
+  expect(fs.readFileSync(path.join(docs, "A", "a.md"), "utf-8")).toContain("[b](../b/b.md)");
+  const config = JSON.parse(fs.readFileSync(path.join(docs, ".living-doc.json"), "utf-8"));
+  expect(config.explorerMigration.version).toBe("1");
+
+  const again = runCli(["migrate", "./docs"], tmp);
+  expect(again.stdout).toContain("renamed: 0");
   fs.rmSync(tmp, { recursive: true, force: true });
 });
 

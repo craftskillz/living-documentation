@@ -12,7 +12,7 @@
   // host can refresh the canvas (the block's "D" badge flips green ⇄ purple+).
   let { onchanged = () => {} }: { onchanged?: () => void } = $props();
 
-  const BLUEPRINT_FOLDER = "001_BLUEPRINT";
+  const BLUEPRINT_FOLDER = "BLUEPRINT";
 
   function modalFolderPath(box: Box): string {
     const raw = box.folder.path || box.folder.name;

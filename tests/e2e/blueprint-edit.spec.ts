@@ -105,7 +105,7 @@ const OPEN_PURPLE_DOC = `async () => {
 test.describe("blueprint document editing reuses the Home editor", () => {
   test.use({ fixtureName: "blueprint-edit" });
 
-  const DOC_REL = "001_BLUEPRINT/2026_01_01_10_00_[ALPHA]_alpha.md";
+  const DOC_REL = "BLUEPRINT/2026_01_01_10_00_[ALPHA]_alpha.md";
 
   test("opens the alpha block doc and supports inline + full edit", async ({
     page,
@@ -298,10 +298,10 @@ test.describe("blueprint document editing reuses the Home editor", () => {
     );
 
     const created = fs
-      .readdirSync(path.join(ld.docsAbs, "001_BLUEPRINT"))
+      .readdirSync(path.join(ld.docsAbs, "BLUEPRINT"))
       .find((f) => f === "beta.md");
     expect(created).toBeDefined();
-    const saved = readOkf(fs.readFileSync(path.join(ld.docsAbs, "001_BLUEPRINT", defined(created)), "utf-8"));
+    const saved = readOkf(fs.readFileSync(path.join(ld.docsAbs, "BLUEPRINT", defined(created)), "utf-8"));
     expect(saved.fields).toMatchObject({ type: 'Document', title: 'beta' });
     expect(saved.body).toBe("# beta\n");
   });

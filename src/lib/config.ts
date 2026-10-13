@@ -91,11 +91,19 @@ export interface StoredConfig {
   // Present once the docs folder is migrated to OKF YAML. Absent = not migrated;
   // it is NOT in STORAGE_DEFAULTS so a fresh/legacy project reads as un-migrated.
   okfMigration?: OkfMigration;
+  // Present once the numeric folder prefixes are migrated to liv-doc-main.md
+  // manifests (US8). Absent = not migrated, like okfMigration.
+  explorerMigration?: OkfMigration;
 }
 
 // True when the docs folder has been migrated to OKF YAML frontmatter.
 export function isOkfMigrated(cfg: { okfMigration?: OkfMigration }): boolean {
   return typeof cfg.okfMigration?.version === "string" && cfg.okfMigration.version.length > 0;
+}
+
+// True when the numeric folder prefixes have been migrated to manifests.
+export function isExplorerMigrated(cfg: { explorerMigration?: OkfMigration }): boolean {
+  return typeof cfg.explorerMigration?.version === "string" && cfg.explorerMigration.version.length > 0;
 }
 
 // Runtime shape: what consumers receive from readConfig.

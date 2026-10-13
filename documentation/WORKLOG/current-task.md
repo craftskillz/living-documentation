@@ -16,11 +16,14 @@ status: To be validated
 
 ## État courant
 
-Branche `feat/explorateur-liv-doc-main`. Backlog : [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), hypothèses H1–H6 validées. US1, US2, US7, US3, US5, US6, US4a et US4b terminées et commitées. US4b : l'UI ne parle plus de catégorie, de pattern ni de tri de la sidebar ; aperçu du slug dans le formulaire de création via `src/lib/docSlug.ts` partagé avec le serveur. Détails : [worklog US4b](./2026_10_14_11_00_%5BWORKLOG%5D_us_04b_supprimer_la_nomenclature_frontend.md).
+Branche `feat/explorateur-liv-doc-main`. Backlog : [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), hypothèses H1–H6 validées. US1 à US7, US4a, US4b et US8 terminées et commitées. US8 : `migrate`, la garde au démarrage et `init` renomment les dossiers `001_X` sans préfixe, reportent l'ordre dans le manifeste parent et réécrivent liens, stores et preuves de diagrammes ; dossier Blueprint renommé `BLUEPRINT`. Détails : [worklog US8](./2026_10_14_12_00_%5BWORKLOG%5D_us_08_migration_des_prefixes_numeriques.md).
 
 ## Suite
 
-US8 (migration des préfixes numériques), à démarrer dans une nouvelle session, puis US9 (starters, fixtures et guides encore porteurs des clés retirées). Suites au 14/10/2026 après US4b : unitaires 43/43, `tests/api` 212/212, `tests/e2e` 113/113.
+1. Migrer `documentation/` du dépôt (`node dist/bin/cli.js migrate documentation`, dry-run vérifié : 9 dossiers, 0 collision) : sans cela la garde bloque le serveur sur ce dossier.
+2. US9 (starters `000_DOCUMENTATION`, guides citant `001_BLUEPRINT`, ADR explorateur), dans une nouvelle session.
+
+Suites au 14/10/2026 après US8 : unitaires 55/55, `tests/api` 213/213, `tests/e2e` 113/113.
 
 MCP Living Documentation non exposé comme outil dans la session : worklog et roadmap écrits à la main, pas de métadonnées attachées.
 

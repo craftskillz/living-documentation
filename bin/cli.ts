@@ -6,8 +6,8 @@ import fs from "node:fs";
 import { createInterface } from "node:readline/promises";
 import { startServer } from "../src/server";
 import { promptHiddenHeaderMenus } from "../src/lib/cli/headerMenuPrompt";
-import { readConfig, writeConfig, isOkfMigrated } from "../src/lib/config";
-import { migrateDocsFolder } from "../src/lib/migrate";
+import { readConfig, writeConfig, isExplorerMigrated, isOkfMigrated } from "../src/lib/config";
+import { migrateProject, type ProjectMigrationResult } from "../src/lib/migrate";
 import { validateOkfBundle } from "../src/lib/okf/validate";
 import { importOkfBundle } from "../src/lib/okf/import";
 
@@ -105,8 +105,24 @@ function scaffoldConfigOnly(docsPath: string, initLanguage: InitLanguage): void 
   // will offer the migration.
   config.favorites = [];
   delete config.okfMigration;
+  delete config.explorerMigration;
   fs.writeFileSync(path.join(docsPath, CONFIG_FILENAME), JSON.stringify(config, null, 2), "utf-8");
   console.log(`\nInitialized ${initLanguage} Living Documentation configuration in ${docsPath}\n`);
+}
+
+function printMigrationReport({ prefixes, okf }: ProjectMigrationResult, dryRun: boolean): void {
+  const verb = dryRun ? "would rename" : "renamed";
+  console.log(
+    `  Folder prefixes — ${verb}: ${prefixes.renamed.length}  collisions: ${prefixes.collisions.length}  links ${dryRun ? "to rewrite" : "rewritten"}: ${prefixes.linksRewritten.length}`,
+  );
+  for (const r of prefixes.renamed) console.log(`    ${r.from} → ${r.to}`);
+  for (const c of prefixes.collisions) console.warn(`    ⚠ ${c.from} kept: ${c.to} already exists`);
+  for (const f of prefixes.linksRewritten) console.log(`    links: ${f}`);
+  if (prefixes.hiddenAdded.length) console.log(`    hidden at the root: ${prefixes.hiddenAdded.join(", ")}`);
+  console.log(
+    `  OKF frontmatter — scanned: ${okf.scanned}  ${dryRun ? "would change" : "changed"}: ${okf.changed}  unchanged: ${okf.unchanged}  errors: ${okf.errors.length}`,
+  );
+  for (const e of okf.errors) console.error(`    ! ${e}`);
 }
 
 function askYesNo(rl: ReturnType<typeof createInterface>, message: string): Promise<boolean> {
@@ -273,14 +289,17 @@ async function launchProject(
     process.exit(1);
   }
 
-  // OKF startup gate — refuse to open a project that has not been migrated to
-  // the Open Knowledge Format YAML frontmatter.
-  if (!isOkfMigrated(readConfig(docsPath))) {
+  // Startup gate — refuse to open a project that has not been migrated to the
+  // Open Knowledge Format YAML frontmatter or to the folder manifests (US8).
+  const config = readConfig(docsPath);
+  const pending = [
+    !isOkfMigrated(config) && "  - frontmatter to the Open Knowledge Format (OKF) YAML",
+    !isExplorerMigrated(config) && "  - numeric folder prefixes (001_X) to liv-doc-main.md manifests",
+  ].filter(Boolean);
+  if (pending.length) {
     console.error(
-      `\nThis project is not migrated to the Open Knowledge Format (OKF).\n` +
-        `living-documentation now aligns natively with Google's OKF, so the docs\n` +
-        `folder must be migrated (a deterministic, one-time conversion) before it\n` +
-        `can be opened.\n`,
+      `\nThis project needs a deterministic, one-time migration before it can be opened:\n` +
+        `${pending.join("\n")}\n`,
     );
     let doMigrate = false;
     if (process.stdin.isTTY) {
@@ -293,12 +312,13 @@ async function launchProject(
       console.error(`Run:  npx living-ai-documentation migrate ${folderToServe}\n`);
       process.exit(1);
     }
-    const result = migrateDocsFolder(docsPath);
-    if (result.errors.length) {
-      console.error(`\nMigration failed:\n${result.errors.map((e) => `  ! ${e}`).join("\n")}\n`);
+    const result = migrateProject(docsPath);
+    printMigrationReport(result, false);
+    if (result.okf.errors.length) {
+      console.error(`\nMigration failed.\n`);
       process.exit(1);
     }
-    console.log(`\nMigrated ${result.changed} document(s) to OKF YAML. Continuing…\n`);
+    console.log(`\nContinuing…\n`);
   }
 
   await startServer({ docsPath, port, openBrowser: options.open ?? false });
@@ -393,9 +413,10 @@ async function runInitWizard(
     createInitInstructionFiles(instructionFiles);
     removeStarterDefaults(docsPath);
 
-    // Make the freshly scaffolded starter a conformant OKF bundle and stamp the
-    // migration flag, so the new project opens without hitting the startup gate.
-    migrateDocsFolder(docsPath);
+    // Make the freshly scaffolded starter a conformant OKF bundle without folder
+    // prefixes and stamp the migration flags, so the new project opens without
+    // hitting the startup gate.
+    migrateProject(docsPath);
 
     const port = parseInt(options.port, 10);
     if (Number.isNaN(port) || port < 1 || port > 65535) {
@@ -470,7 +491,9 @@ Notes:
 
 program
   .command("migrate [folder]")
-  .description("Convert a docs folder's frontmatter to canonical OKF YAML (deterministic, no AI).")
+  .description(
+    "Convert a docs folder's frontmatter to canonical OKF YAML and its numeric folder prefixes to liv-doc-main.md manifests (deterministic, no AI).",
+  )
   .option("--dry-run", "Report what would change without writing any file")
   .action((folder: string | undefined, options: { dryRun?: boolean }) => {
     const target = folder ?? "documentation";
@@ -480,13 +503,10 @@ program
       console.error(`\nError: Folder not found: ${docsPath}\n`);
       process.exit(1);
     }
-    const r = migrateDocsFolder(docsPath, { dryRun: options.dryRun });
-    console.log(`${options.dryRun ? "[dry-run] " : ""}OKF frontmatter migration — ${docsPath}`);
-    console.log(
-      `  scanned: ${r.scanned}  ${options.dryRun ? "would change" : "changed"}: ${r.changed}  unchanged: ${r.unchanged}  errors: ${r.errors.length}`,
-    );
-    for (const e of r.errors) console.error(`  ! ${e}`);
-    if (r.errors.length) process.exit(1);
+    console.log(`${options.dryRun ? "[dry-run] " : ""}Migration — ${docsPath}`);
+    const r = migrateProject(docsPath, { dryRun: options.dryRun });
+    printMigrationReport(r, options.dryRun ?? false);
+    if (r.okf.errors.length) process.exit(1);
   });
 
 program

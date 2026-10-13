@@ -10,8 +10,11 @@ import { isReservedOkfFile, normalizeFrontmatter, OKF_SPEC_VERSION } from "./okf
 import { generateOkfIndexFiles } from "./okf/index-generator";
 import { generateOkfLogFile } from "./okf/log-generator";
 import { backfillSourcesFromStore } from "./metadata";
+import { migrateFolderPrefixes, type PrefixMigrationResult } from "./prefixMigration";
 
 export const OKF_VERSION = OKF_SPEC_VERSION;
+/** Version of the numeric-prefix → manifest migration (US8). */
+export const EXPLORER_MIGRATION_VERSION = "1";
 
 const IGNORED_DIRS = new Set([".git", "node_modules", "dist"]);
 
@@ -39,14 +42,18 @@ function collectMd(root: string, dir: string = root, out: string[] = []): string
   return out;
 }
 
-/** Persist the OKF migration flag so the CLI startup gate lets the project open. */
-export function writeOkfFlag(docsPath: string): void {
+function writeMigrationFlag(docsPath: string, key: "okfMigration" | "explorerMigration", version: string): void {
   const cfgPath = path.join(docsPath, ".living-doc.json");
   const cfg = fs.existsSync(cfgPath)
     ? (JSON.parse(fs.readFileSync(cfgPath, "utf-8")) as Record<string, unknown>)
     : {};
-  cfg.okfMigration = { version: OKF_VERSION, migratedAt: new Date().toISOString() };
+  cfg[key] = { version, migratedAt: new Date().toISOString() };
   fs.writeFileSync(cfgPath, `${JSON.stringify(cfg, null, 2)}\n`, "utf-8");
+}
+
+/** Persist the OKF migration flag so the CLI startup gate lets the project open. */
+export function writeOkfFlag(docsPath: string): void {
+  writeMigrationFlag(docsPath, "okfMigration", OKF_VERSION);
 }
 
 export function migrateDocsFolder(
@@ -90,4 +97,22 @@ export function migrateDocsFolder(
     writeOkfFlag(docsPath);
   }
   return result;
+}
+
+export interface ProjectMigrationResult {
+  prefixes: PrefixMigrationResult;
+  okf: MigrateResult;
+}
+
+/**
+ * Every deterministic migration a project needs before it opens, shared by the
+ * CLI `migrate` command, the startup gate and `init`: numeric folder prefixes
+ * to manifests first (it renames folders), then OKF frontmatter, whose index
+ * and log files must see the final paths. Collisions are only reported, so the
+ * explorer flag is stamped anyway. Idempotent.
+ */
+export function migrateProject(docsPath: string, opts: { dryRun?: boolean } = {}): ProjectMigrationResult {
+  const prefixes = migrateFolderPrefixes(docsPath, opts);
+  if (!opts.dryRun) writeMigrationFlag(docsPath, "explorerMigration", EXPLORER_MIGRATION_VERSION);
+  return { prefixes, okf: migrateDocsFolder(docsPath, opts) };
 }

@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-export const BLUEPRINT_FOLDER = "001_BLUEPRINT";
+export const BLUEPRINT_FOLDER = "BLUEPRINT";
 
 export const BLUEPRINT_IGNORED_DIRS = new Set([
   "node_modules",

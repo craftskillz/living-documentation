@@ -12,7 +12,7 @@ test.describe('kanban board widget', () => {
 
   // App-level doc id = encodeURIComponent(relative path without .md); the URL
   // param carries it encoded once more (URLSearchParams decodes one level).
-  const boardAppId = encodeURIComponent('3_projets/2026_01_05_10_00_[Board]_board');
+  const boardAppId = encodeURIComponent('projets/2026_01_05_10_00_[Board]_board');
   const boardUrl = (baseURL: string) => `${baseURL}/?doc=${encodeURIComponent(boardAppId)}`;
   const networkSettleMs = 100;
   const viewportBottomGapPx = 24;
@@ -52,7 +52,7 @@ test.describe('kanban board widget', () => {
 
     // The missing column folder was created lazily on render.
     await expect
-      .poll(() => fs.existsSync(path.join(ld.docsAbs, '3_projets/Done')))
+      .poll(() => fs.existsSync(path.join(ld.docsAbs, 'projets/Done')))
       .toBe(true);
   });
 
@@ -161,7 +161,7 @@ test.describe('kanban board widget', () => {
   test('editing columns shows labels and colors, not object strings', async ({ page, ld }) => {
     const boardPath = path.join(
       ld.docsAbs,
-      '3_projets/2026_01_05_10_00_[Board]_board.md',
+      'projets/2026_01_05_10_00_[Board]_board.md',
     );
 
     await page.goto(boardUrl(ld.baseURL));
@@ -274,7 +274,7 @@ test.describe('kanban board widget', () => {
     await page.goto(boardUrl(ld.baseURL));
     await expect(page.getByTestId('kanban-board')).toBeVisible();
     await expect
-      .poll(() => fs.existsSync(path.join(ld.docsAbs, '3_projets/Done')))
+      .poll(() => fs.existsSync(path.join(ld.docsAbs, 'projets/Done')))
       .toBe(true);
     await page.waitForTimeout(networkSettleMs);
 
@@ -286,7 +286,7 @@ test.describe('kanban board widget', () => {
   test('dragging a card to another column moves the .md file between folders', async ({ page, ld }) => {
     await page.goto(boardUrl(ld.baseURL));
     await expectBoardDescriptionsSettled(page);
-    const taskId = encodeURIComponent('3_projets/Todo/2026_01_06_10_00_[Task]_task_one');
+    const taskId = encodeURIComponent('projets/Todo/2026_01_06_10_00_[Task]_task_one');
     const todoCard = page.getByTestId('kanban-card').filter({ hasText: 'Task One' });
     const doneColumn = page.locator('[data-kanban-folder="Done"]');
     const doingCard = page.locator('[data-kanban-folder="Doing"] [data-testid="kanban-card"]');
@@ -319,7 +319,7 @@ test.describe('kanban board widget', () => {
       );
       await page.mouse.up();
       const response = await moved;
-      expect(response.request().postDataJSON()).toEqual({ folder: '3_projets/Done' });
+      expect(response.request().postDataJSON()).toEqual({ folder: 'projets/Done' });
       expect(response.ok()).toBe(true);
     } finally {
       await page.mouse.up();
@@ -330,13 +330,13 @@ test.describe('kanban board widget', () => {
     await expect(doneColumn.getByTestId('kanban-card')).toContainText('Task One');
     await expect(page.locator('[data-kanban-folder="Todo"] [data-testid="kanban-card"]')).toHaveCount(0);
     await expect(doingCard).toContainText('Task Two');
-    expect(fs.existsSync(path.join(ld.docsAbs, '3_projets/Doing/2026_01_07_10_00_[Task]_task_two.md'))).toBe(true);
+    expect(fs.existsSync(path.join(ld.docsAbs, 'projets/Doing/2026_01_07_10_00_[Task]_task_two.md'))).toBe(true);
 
     // The file physically moved on disk.
     await expect
-      .poll(() => fs.existsSync(path.join(ld.docsAbs, '3_projets/Done/2026_01_06_10_00_[Task]_task_one.md')))
+      .poll(() => fs.existsSync(path.join(ld.docsAbs, 'projets/Done/2026_01_06_10_00_[Task]_task_one.md')))
       .toBe(true);
-    expect(fs.existsSync(path.join(ld.docsAbs, '3_projets/Todo/2026_01_06_10_00_[Task]_task_one.md'))).toBe(false);
+    expect(fs.existsSync(path.join(ld.docsAbs, 'projets/Todo/2026_01_06_10_00_[Task]_task_one.md'))).toBe(false);
   });
 
   test('the + button creates a new document in the column folder', async ({ page, ld }) => {
@@ -355,10 +355,10 @@ test.describe('kanban board widget', () => {
     await expect(freshCard).toContainText('Here is the description');
 
     const created = fs
-      .readdirSync(path.join(ld.docsAbs, '3_projets/Doing'))
+      .readdirSync(path.join(ld.docsAbs, 'projets/Doing'))
       .filter((f) => f === 'fresh-task.md');
     expect(created).toHaveLength(1);
-    const saved = readOkf(fs.readFileSync(path.join(ld.docsAbs, '3_projets/Doing', created[0]), 'utf-8'));
+    const saved = readOkf(fs.readFileSync(path.join(ld.docsAbs, 'projets/Doing', created[0]), 'utf-8'));
     expect(saved.fields).toMatchObject({ type: 'Document', title: 'Fresh task' });
     expect(saved.body).toBe(
       '# Fresh task\n\nHere is the description\n\n## Content\n\nHere is the Full Content\n',

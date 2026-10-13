@@ -90,6 +90,24 @@ export function migrateDocIds(docsPath: string, from: string, to: string, isFold
     }
   }
 
+  // Diagram edges cite documents as evidence by URL-encoded id, anywhere in the store.
+  const diagramsPath = path.join(docsPath, ".diagrams.json");
+  if (fs.existsSync(diagramsPath)) {
+    try {
+      let diagramsChanged = false;
+      const store = JSON.parse(fs.readFileSync(diagramsPath, "utf-8"), (key, value) => {
+        if (key !== "documentId" || typeof value !== "string") return value;
+        const next = remapId(decodeURIComponent(value), from, to, isFolder);
+        if (next === null) return value;
+        diagramsChanged = true;
+        return encodeURIComponent(next);
+      });
+      if (diagramsChanged) fs.writeFileSync(diagramsPath, JSON.stringify(store, null, 2), "utf-8");
+    } catch {
+      /* non-fatal */
+    }
+  }
+
   // Favorites keep the URL-encoded id served to the frontend.
   const { favorites } = readConfig(docsPath);
   let favoritesChanged = false;
