@@ -15,12 +15,12 @@ okf_version: "0.1"
 
 ## Directories
 
-* [001_BLUEPRINT](./001_BLUEPRINT/index.md)
-* [1_tutorial](./1_tutorial/index.md)
-* [2_guide](./2_guide/index.md)
-* [3_concept](./3_concept/index.md)
-* [4_reference](./4_reference/index.md)
-* [5_talks](./5_talks/index.md)
+* [BLUEPRINT](./BLUEPRINT/index.md)
+* [tutorial](./tutorial/index.md)
+* [guide](./guide/index.md)
+* [concept](./concept/index.md)
+* [reference](./reference/index.md)
+* [talks](./talks/index.md)
 * [ADRS](./ADRS/index.md)
 * [AI](./AI/index.md)
 * [DOCUMENTATION](./DOCUMENTATION/index.md)

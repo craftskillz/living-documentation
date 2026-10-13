@@ -1,12 +1,8 @@
 ---
 type: Worklog
 title: US6 — Drag and drop dans l'explorateur
-description: Glisser-déposer HTML5 dans l'explorateur, branché sur POST /api/tree/move : ligne d'insertion, dépôt dans un dossier, ouverture d'un dossier fermé au survol, document ouvert conservé sous son nouvel id, toast traduit en cas d'erreur, drag désactivé pendant une recherche.
-tags:
-  - worklog
-  - us
-  - explorateur
-  - drag-and-drop
+description: "Glisser-déposer HTML5 dans l'explorateur, branché sur POST /api/tree/move : ligne d'insertion, dépôt dans un dossier, ouverture d'un dossier fermé au survol, document ouvert conservé sous son nouvel id, toast traduit en cas d'erreur, drag désactivé pendant une recherche."
+tags: []
 status: To Be Validated
 ---
 

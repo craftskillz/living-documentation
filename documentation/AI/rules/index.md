@@ -2,9 +2,9 @@
 
 ## Concepts
 
-* [Respecter les contraintes vis-network du diagram editor](./diagram-vis-network-gotchas.md) - Le rendu diagramme dépend de plusieurs contournements vis-network documentés ; les modifier sans les vérifier peut casser le z-order, les formes custom ou le resize.
-* [Internationaliser tous les textes visibles](./i18n-user-visible-strings.md) - Tout texte visible par l'utilisateur doit être déclaré dans les catalogues i18n anglais et français, puis consommé via la fonction t() de lib/i18n.svelte.ts.
+* [Travailler vite et à coût maîtrisé](./cost-efficient-agent-workflow.md) - Vérifier l'environnement avant de coder, tester de façon ciblée, une US par session, économiser le contexte, s'arrêter plutôt que contourner.
+* [Respecter les contraintes vis-network du diagram editor](./diagram-vis-network-gotchas.md) - Le rendu diagramme (Svelte, lib/diagram) dépend de plusieurs contournements vis-network documentés ; les modifier sans les vérifier peut casser le z-order, les formes custom ou le resize.
+* [Internationaliser tous les textes visibles](./i18n-user-visible-strings.md) - Tout texte visible par l'utilisateur dans le frontend Svelte doit être déclaré dans les catalogues i18n anglais et français, puis consommé via la fonction t() de lib/i18n.svelte.ts.
 * [Éviter les magic numbers](./no-magic-numbers.md) - Les valeurs numériques porteuses de sens métier ou technique doivent être nommées par des constantes plutôt que répétées comme littéraux bruts.
 * [Préférer le CLI réel pour la coverage serveur](./playwright-coverage-through-cli.md) - La couverture c8 des modules serveur est plus fiable quand Playwright exerce le vrai CLI/serveur via fixtures isolées plutôt que des imports directs de dist dans les specs.
 * [Suivre la tâche courante dans WORKLOG](./track-current-work.md) - Les assistants IA doivent lire et maintenir le worklog de tâche courante pour permettre une reprise fiable entre agents.
-* [Travailler vite et à coût maîtrisé](./cost-efficient-agent-workflow.md) - Vérifier l'environnement avant de coder, tester de façon ciblée, une US par session, économiser le contexte, s'arrêter plutôt que contourner.

@@ -491,34 +491,6 @@
       "hash": "b6077e6b7d41ebc95e9e1e78932bee0bbd3868d1e681405bbedb72f8993755d3"
     }
   ],
-  "1_tutorial/2026_04_12_10_00_[General]_utiliser_les_snippets": [
-    {
-      "path": "src/frontend/index.html",
-      "hash": "74a96833e006020f3d36cf33aad6066c7228fe4db15477992c455fbbd377e799"
-    },
-    {
-      "path": "src/frontend/snippets/snippets.js",
-      "hash": "31fe2f807288befeb3e84c32f3ce99e42eb5f9403c68db8ff24fb56681b25f39"
-    },
-    {
-      "path": "src/frontend/snippets/inline-snippet-edit.js",
-      "hash": "1030dda8aa9bf0f1b663070f0b87731b465a7d742c6ea91ec942af05ec8232d9"
-    }
-  ],
-  "4_reference/2026_04_09_03_00_[REFERENCE]_types_de_snippets": [
-    {
-      "path": "src/frontend/index.html",
-      "hash": "74a96833e006020f3d36cf33aad6066c7228fe4db15477992c455fbbd377e799"
-    },
-    {
-      "path": "src/frontend/snippets/snippets.js",
-      "hash": "31fe2f807288befeb3e84c32f3ce99e42eb5f9403c68db8ff24fb56681b25f39"
-    },
-    {
-      "path": "src/frontend/snippets/inline-snippet-edit.js",
-      "hash": "1030dda8aa9bf0f1b663070f0b87731b465a7d742c6ea91ec942af05ec8232d9"
-    }
-  ],
   "ADRS/2026_05_23_10_07_[FRONTEND_QUALITY]_controle_syntaxique_frontend_sans_dependance": [
     {
       "path": "scripts/check-frontend-js.js",
@@ -717,40 +689,6 @@
     {
       "path": "src/routes/blueprint.ts",
       "hash": "153c59df7bcaf3c43ec4256ecf6b9fba117f175854eb5cccd440efa7406bc840"
-    }
-  ],
-  "001_BLUEPRINT/2026_06_01_17_40_[SCRIPTS]_scripts": [
-    {
-      "path": "scripts/copy-assets.ts",
-      "hash": "9c9ea3b5045e7fcf70f1515fd6888024a38405015b7a0845bbf08311c58a4f60"
-    },
-    {
-      "path": "scripts/dev.js",
-      "hash": "d7fef27d9d947c9a96408cde38ea298cdb9650dc684349da28868e59bd4d41f5"
-    },
-    {
-      "path": "scripts/check-frontend-js.js",
-      "hash": "23b0919fac275e93dd924382ffbe16a8be08ca863e402539270b77851aa1387d"
-    },
-    {
-      "path": "scripts/check-readme-sync.sh",
-      "hash": "407b90db48c7e17eddc76d4b7855df829253ef42605252cd015e2fa17cd4da53"
-    },
-    {
-      "path": "scripts/check-workflows.sh",
-      "hash": "87fd1df9a19c4b83bfe1a30ea804fa08133d3ee6d781a66cd5c36339501d5c6c"
-    },
-    {
-      "path": ".githooks/pre-commit",
-      "hash": "27ca498b1ded56e7d83e09cdfcc44b5d45ad0baff29e3eef8b66ee78fa6bea91"
-    },
-    {
-      "path": ".github/workflows/readme-sync.yml",
-      "hash": "1f0e5a24a6dc096081262189b2fda59a0e706f670a6658c5632499588c86aaea"
-    },
-    {
-      "path": ".github/workflows/publish.yml",
-      "hash": "8e6afbb35b461d938ea96fe94dc53ded211e69c395536074ad5477b6b0e5f3b5"
     }
   ],
   "ADRS/2026_06_03_10_53_[FRONTEND]_migration_du_frontend_vers_une_application_svelte_unifiee": [
@@ -1071,36 +1009,6 @@
       "hash": "9300539386aef77e3d7d9bd9075235f94ee7188dc2d1f17249f30a14f48a264c"
     }
   ],
-  "2_guide/2026_06_06_21_00_[GUIDE]_styles_images_et_code": [
-    {
-      "path": "src/frontend-svelte/src/lib/home/imageAttributes.ts",
-      "hash": "739269360b62dea053592957a20acb88a6ed70cae02d7f7b687ff635bf288c5a"
-    },
-    {
-      "path": "src/frontend-svelte/src/lib/home/DocViewer.svelte",
-      "hash": "929ae87838a148b00d469e3dee35c7e4e6fd6f66071f4cd8451f986f2db2a129"
-    },
-    {
-      "path": "src/frontend-svelte/src/routes/Admin.svelte",
-      "hash": "265e8e7c2a026e8f30ff5d0529abf9cfd62f6f0abeec8453e7c5bb1f97a14640"
-    },
-    {
-      "path": "src/lib/config.ts",
-      "hash": "034aa32d6fbb232e998017b8c58d5d11db117d4ee1efa4d27326e37751694df3"
-    },
-    {
-      "path": "src/frontend-svelte/src/lib/home/codeBlockAttributes.ts",
-      "hash": "bb126331426517bd2b9fa7ce3d6fb5417d29d2acfa9e6a92b82b710e73efafd0"
-    },
-    {
-      "path": "src/frontend-svelte/src/lib/home/wireContent.ts",
-      "hash": "58265311658d0ee77c77bd555aed9f1ddb713061f1b32716f4573ce25901ade2"
-    },
-    {
-      "path": "src/frontend-svelte/src/lib/home/SnippetsModal.svelte",
-      "hash": "df8cf85fc589732dce2af6f96116dc035efad709bd3cc2b65d9809011e4560c7"
-    }
-  ],
   "ADRS/2026_06_18_23_07_[MERMAID]_shift_click_fullscreen_pour_les_diagrammes_mermaid": [
     {
       "path": "src/frontend-svelte/src/lib/home/DocViewer.svelte",
@@ -1113,16 +1021,6 @@
     {
       "path": "tests/e2e/inline-snippet-edit.spec.ts",
       "hash": "2ba623e25d466ce2b114991d4d4c785bf1f07751b605e6b871fbde38ef96ff2b"
-    }
-  ],
-  "2_guide/2026_04_08_00_04_[DOCUMENT]_utilisation_des_images_plein_ecran_lien_clickable": [
-    {
-      "path": "src/frontend-svelte/src/lib/home/DocViewer.svelte",
-      "hash": "929ae87838a148b00d469e3dee35c7e4e6fd6f66071f4cd8451f986f2db2a129"
-    },
-    {
-      "path": "src/frontend-svelte/src/lib/home/wireContent.ts",
-      "hash": "7b567ef3276b528e4bc2bf11144e44c69dfec70c556f75e05d5911afaf6999e0"
     }
   ],
   "ADRS/2026_06_18_23_24_[CODE BLOCK]_directives_de_largeur_et_alignement_des_blocs_code_et_mermaid": [
@@ -1178,208 +1076,6 @@
       "path": "src/routes/metadata.ts",
       "hash": "ede0df5f16c5590e34374c0961c3d90b22883d10a5598cc630a89edeb889159d",
       "commit": "06cbd4105fcc8e48d9f4015eeaef828101be2ecc",
-      "dirty": false
-    }
-  ],
-  "001_BLUEPRINT/2026_06_24_19_32_[BIN]_bin": [
-    {
-      "path": "bin/cli.ts",
-      "hash": "06b43a235e04d41540bffc236498418f260f0d353dedc5bc96b1479698953d6d",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": false
-    }
-  ],
-  "001_BLUEPRINT/2026_06_24_20_34_[DOCUMENTATION]_documentation": [
-    {
-      "path": "documentation/AI/PROJECT-INSTRUCTIONS.md",
-      "hash": "def0b3461126e8ba63798713337c038055a98dcc7b629cc502627e575760d61e",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    },
-    {
-      "path": "documentation/AI/PROJECT-STACK.md",
-      "hash": "ac4e9e8a0afc2e2ee4de64e5e90b2410471787ac2ea381640c99393fac7bd37b",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    },
-    {
-      "path": "documentation/3_concept/2026_04_08_22_15_[DOCUMENTING]_living_documentation.md",
-      "hash": "63736eac53bb5722887854266d7bf652e078ede37a448140c38b5c31a838463e",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    }
-  ],
-  "001_BLUEPRINT/2026_06_24_20_37_[STARTER_DOC_FR]_starterdocfr": [
-    {
-      "path": "starter-doc-fr/AI/2026_01_01_how_to.md",
-      "hash": "ae0f0d15b4f019215d08bd088e53314f20f0290df9863e40bec66c51100a4572",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    },
-    {
-      "path": "starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md",
-      "hash": "032220e135e4b421e05192cdcac2b330ef295a75bd5157bb33f751128a680d15",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    },
-    {
-      "path": "starter-doc-fr/ADRS/2026_01_01_[ADR]_example_architecture_decision.md",
-      "hash": "eee67ad993ab5628c5c0f5a77dd08d4e8b6365854755fd6cdcc287d4ecb8ea45",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    },
-    {
-      "path": "starter-doc-fr/WORKLOG/current-task.md",
-      "hash": "676bddef0cf647d6b2c5d740467fc9e38ce5f1d0c62f9dc1e5df051342acdc55",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    }
-  ],
-  "001_BLUEPRINT/2026_06_24_20_38_[STARTER_DOC]_starterdoc": [
-    {
-      "path": "starter-doc/AI/2026_01_01_how_to.md",
-      "hash": "bea067b0b1994776ceb05f170842ce32251ec7167d37d8d05eafc55e931b1235",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    },
-    {
-      "path": "starter-doc/AI/PROJECT-INSTRUCTIONS.md",
-      "hash": "0f12015050aff8230290f29d2734b0f8fb288eb389b7def4bac91d34f206083f",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    },
-    {
-      "path": "starter-doc/ADRS/2026_01_01_[ADR]_example_architecture_decision.md",
-      "hash": "60686e28f4ad89161e14dcd10d3733704337ee3dfcdcb3221ed864c93213e48a",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    },
-    {
-      "path": "starter-doc/WORKLOG/current-task.md",
-      "hash": "35a35a7d3c45729a7feae7d2f938c721a84e6e4618d4bce9834ac3fa55dabba5",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    }
-  ],
-  "001_BLUEPRINT/2026_06_24_20_52_[TESTS]_tests": [
-    {
-      "path": "playwright.config.ts",
-      "hash": "bd5ec053a7955be0aff01d803d5b8ccf76f5caf3975d14d01add39131305dfa0",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    },
-    {
-      "path": "tests/helpers/ld-fixture.ts",
-      "hash": "d9834de4583ea67b71a9ac39c194bccf67b198eb0e016e438f568d6859fd19d3",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    },
-    {
-      "path": "tests/helpers/fixture.ts",
-      "hash": "2f529df7ea88107d91cf1e4490946b45c98343bb826a4df1fb93d16481eabf5f",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    },
-    {
-      "path": "tests/helpers/server.ts",
-      "hash": "d818ed9ffed40f8ea60b2c1ddc28b7a8ba0bd227638575bf4cc1354ba96d98cb",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    },
-    {
-      "path": "tests/api/mcp.spec.ts",
-      "hash": "29876f32b33acc5e25cbbac0c3036f41881aa112905c39cd55920182dd5697ba",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    },
-    {
-      "path": "tests/e2e/blueprint-edit.spec.ts",
-      "hash": "f62a6b7c3e2a75f19a2c8c4db98c40905c2c3b8e1931ba45d2cfb232a6dd74dc",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    },
-    {
-      "path": "tests/unit/parser.spec.ts",
-      "hash": "05c2c3f8749b114d4410b17957d991ae3eaafefa0d3f9af473a80233d546dcf2",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    }
-  ],
-  "001_BLUEPRINT/2026_06_24_20_54_[TEST_RESULTS]_testresults": [
-    {
-      "path": "playwright.config.ts",
-      "hash": "bd5ec053a7955be0aff01d803d5b8ccf76f5caf3975d14d01add39131305dfa0",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    },
-    {
-      "path": "documentation/AI/PROJECT-USEFUL-COMMANDS.md",
-      "hash": "d27b0f8559f26632e1a5bce6babb0cd5224dafc4800fc4cd4c3faa91def68066",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    },
-    {
-      "path": ".gitignore",
-      "hash": "14c3ac62cdc2e940716d0927ea1408da2f099924a4623a58cf84519b136f823d",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    }
-  ],
-  "001_BLUEPRINT/2026_06_24_20_55_[PLAYWRIGHT_REPORT]_playwrightreport": [
-    {
-      "path": "playwright.config.ts",
-      "hash": "bd5ec053a7955be0aff01d803d5b8ccf76f5caf3975d14d01add39131305dfa0",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    },
-    {
-      "path": "documentation/AI/PROJECT-USEFUL-COMMANDS.md",
-      "hash": "d27b0f8559f26632e1a5bce6babb0cd5224dafc4800fc4cd4c3faa91def68066",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    },
-    {
-      "path": ".gitignore",
-      "hash": "14c3ac62cdc2e940716d0927ea1408da2f099924a4623a58cf84519b136f823d",
-      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
-      "dirty": true
-    }
-  ],
-  "001_BLUEPRINT/2026_06_24_20_57_[SRC]_src": [
-    {
-      "path": "documentation/AI/PROJECT-STACK.md",
-      "hash": "d751f5b244cbc0544ed63c063d2dcebf6ca8824c6ffa61fd3d5cde269da34b03",
-      "commit": "04959d8d7b07ae30732b721dddc33720ef92c225",
-      "dirty": false
-    },
-    {
-      "path": "src/server.ts",
-      "hash": "d5f6198a4f91e351c94c900be132979f2f49f325c31942d50ade9e5706c9260e",
-      "commit": "04959d8d7b07ae30732b721dddc33720ef92c225",
-      "dirty": false
-    },
-    {
-      "path": "src/lib/config.ts",
-      "hash": "363d4620f8e48feff650fe6a4dcfac737c27a754f0f608c2854966d448a7e157",
-      "commit": "04959d8d7b07ae30732b721dddc33720ef92c225",
-      "dirty": false
-    },
-    {
-      "path": "src/mcp/server.ts",
-      "hash": "3b47ab14e3820987ba65387741d7afabd76625bdd011fee073c7f08d5fe32969",
-      "commit": "04959d8d7b07ae30732b721dddc33720ef92c225",
-      "dirty": false
-    },
-    {
-      "path": "src/routes/documents.ts",
-      "hash": "22bbc2f3b743dc5b1e45aca5c87438bf420a2ed771702735656cef8ad3dee6e3",
-      "commit": "04959d8d7b07ae30732b721dddc33720ef92c225",
-      "dirty": false
-    },
-    {
-      "path": "src/frontend-svelte/src/App.svelte",
-      "hash": "cc9b0ede097865b1602c5d277d740a5e9610328cb69752000c7aa43bd59327ea",
-      "commit": "04959d8d7b07ae30732b721dddc33720ef92c225",
       "dirty": false
     }
   ],
@@ -2087,34 +1783,6 @@
       "dirty": false
     }
   ],
-  "2_guide/2026_04_09_11_00_[Configuration]_configurer_le_panneau_admin": [
-    {
-      "path": "src/frontend-svelte/src/routes/Admin.svelte",
-      "hash": "0ef5c165e230244cb9fa2d2fa60d45db52a912fb4c42790a79b6c6ec30e9da56",
-      "commit": "9edc01d3f26b7c9bd1cee1c685bf8ef8ba1e5970",
-      "dirty": false
-    },
-    {
-      "path": "src/shared/headerNavigation.ts",
-      "hash": "b74d3a8a068bd36cd5f358b73861fe9c1e10246c015cb2ae45b25ea37dbd2c64",
-      "commit": "9edc01d3f26b7c9bd1cee1c685bf8ef8ba1e5970",
-      "dirty": false
-    }
-  ],
-  "2_guide/2026_04_08_23_38_[Configuration]_demarrage_de_living_documentation": [
-    {
-      "path": "bin/cli.ts",
-      "hash": "cbbf78b195d6066b97e20c1c32914fab4af3cc99fdbbd6038059880f1d9f5fbf",
-      "commit": "f762fb64a92748df7792ed4c95863e6b481716cb",
-      "dirty": false
-    },
-    {
-      "path": "src/lib/cli/headerMenuPrompt.ts",
-      "hash": "1a016eff6f72a2e2fc9268f62051b01ca9172597bb57293caa3172c0f957d528",
-      "commit": "f762fb64a92748df7792ed4c95863e6b481716cb",
-      "dirty": false
-    }
-  ],
   "ADRS/2026_09_17_11_46_[DIAGRAM]_mise_a_jour_de_limage_dun_diagramme_depuis_un_document_et_cache_busting": [
     {
       "path": "src/frontend-svelte/src/lib/diagramImageLink.ts",
@@ -2197,6 +1865,338 @@
       "hash": "1b394cb276bd48a7d6f2ec7c11fc73735ecca512b400992c02e2cd8cfc60df3d",
       "commit": "332d3aaa0bd6c533ecc8e87d1c7264a66a0ca686",
       "dirty": false
+    }
+  ],
+  "BLUEPRINT/2026_06_01_17_40_[SCRIPTS]_scripts": [
+    {
+      "path": "scripts/copy-assets.ts",
+      "hash": "9c9ea3b5045e7fcf70f1515fd6888024a38405015b7a0845bbf08311c58a4f60"
+    },
+    {
+      "path": "scripts/dev.js",
+      "hash": "d7fef27d9d947c9a96408cde38ea298cdb9650dc684349da28868e59bd4d41f5"
+    },
+    {
+      "path": "scripts/check-frontend-js.js",
+      "hash": "23b0919fac275e93dd924382ffbe16a8be08ca863e402539270b77851aa1387d"
+    },
+    {
+      "path": "scripts/check-readme-sync.sh",
+      "hash": "407b90db48c7e17eddc76d4b7855df829253ef42605252cd015e2fa17cd4da53"
+    },
+    {
+      "path": "scripts/check-workflows.sh",
+      "hash": "87fd1df9a19c4b83bfe1a30ea804fa08133d3ee6d781a66cd5c36339501d5c6c"
+    },
+    {
+      "path": ".githooks/pre-commit",
+      "hash": "27ca498b1ded56e7d83e09cdfcc44b5d45ad0baff29e3eef8b66ee78fa6bea91"
+    },
+    {
+      "path": ".github/workflows/readme-sync.yml",
+      "hash": "1f0e5a24a6dc096081262189b2fda59a0e706f670a6658c5632499588c86aaea"
+    },
+    {
+      "path": ".github/workflows/publish.yml",
+      "hash": "8e6afbb35b461d938ea96fe94dc53ded211e69c395536074ad5477b6b0e5f3b5"
+    }
+  ],
+  "BLUEPRINT/2026_06_24_19_32_[BIN]_bin": [
+    {
+      "path": "bin/cli.ts",
+      "hash": "06b43a235e04d41540bffc236498418f260f0d353dedc5bc96b1479698953d6d",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": false
+    }
+  ],
+  "BLUEPRINT/2026_06_24_20_34_[DOCUMENTATION]_documentation": [
+    {
+      "path": "documentation/AI/PROJECT-INSTRUCTIONS.md",
+      "hash": "def0b3461126e8ba63798713337c038055a98dcc7b629cc502627e575760d61e",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    },
+    {
+      "path": "documentation/AI/PROJECT-STACK.md",
+      "hash": "ac4e9e8a0afc2e2ee4de64e5e90b2410471787ac2ea381640c99393fac7bd37b",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    },
+    {
+      "path": "documentation/concept/2026_04_08_22_15_[DOCUMENTING]_living_documentation.md",
+      "hash": "63736eac53bb5722887854266d7bf652e078ede37a448140c38b5c31a838463e",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    }
+  ],
+  "BLUEPRINT/2026_06_24_20_37_[STARTER_DOC_FR]_starterdocfr": [
+    {
+      "path": "starter-doc-fr/AI/2026_01_01_how_to.md",
+      "hash": "ae0f0d15b4f019215d08bd088e53314f20f0290df9863e40bec66c51100a4572",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    },
+    {
+      "path": "starter-doc-fr/AI/PROJECT-INSTRUCTIONS.md",
+      "hash": "032220e135e4b421e05192cdcac2b330ef295a75bd5157bb33f751128a680d15",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    },
+    {
+      "path": "starter-doc-fr/ADRS/2026_01_01_[ADR]_example_architecture_decision.md",
+      "hash": "eee67ad993ab5628c5c0f5a77dd08d4e8b6365854755fd6cdcc287d4ecb8ea45",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    },
+    {
+      "path": "starter-doc-fr/WORKLOG/current-task.md",
+      "hash": "676bddef0cf647d6b2c5d740467fc9e38ce5f1d0c62f9dc1e5df051342acdc55",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    }
+  ],
+  "BLUEPRINT/2026_06_24_20_38_[STARTER_DOC]_starterdoc": [
+    {
+      "path": "starter-doc/AI/2026_01_01_how_to.md",
+      "hash": "bea067b0b1994776ceb05f170842ce32251ec7167d37d8d05eafc55e931b1235",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    },
+    {
+      "path": "starter-doc/AI/PROJECT-INSTRUCTIONS.md",
+      "hash": "0f12015050aff8230290f29d2734b0f8fb288eb389b7def4bac91d34f206083f",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    },
+    {
+      "path": "starter-doc/ADRS/2026_01_01_[ADR]_example_architecture_decision.md",
+      "hash": "60686e28f4ad89161e14dcd10d3733704337ee3dfcdcb3221ed864c93213e48a",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    },
+    {
+      "path": "starter-doc/WORKLOG/current-task.md",
+      "hash": "35a35a7d3c45729a7feae7d2f938c721a84e6e4618d4bce9834ac3fa55dabba5",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    }
+  ],
+  "BLUEPRINT/2026_06_24_20_52_[TESTS]_tests": [
+    {
+      "path": "playwright.config.ts",
+      "hash": "bd5ec053a7955be0aff01d803d5b8ccf76f5caf3975d14d01add39131305dfa0",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    },
+    {
+      "path": "tests/helpers/ld-fixture.ts",
+      "hash": "d9834de4583ea67b71a9ac39c194bccf67b198eb0e016e438f568d6859fd19d3",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    },
+    {
+      "path": "tests/helpers/fixture.ts",
+      "hash": "2f529df7ea88107d91cf1e4490946b45c98343bb826a4df1fb93d16481eabf5f",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    },
+    {
+      "path": "tests/helpers/server.ts",
+      "hash": "d818ed9ffed40f8ea60b2c1ddc28b7a8ba0bd227638575bf4cc1354ba96d98cb",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    },
+    {
+      "path": "tests/api/mcp.spec.ts",
+      "hash": "29876f32b33acc5e25cbbac0c3036f41881aa112905c39cd55920182dd5697ba",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    },
+    {
+      "path": "tests/e2e/blueprint-edit.spec.ts",
+      "hash": "f62a6b7c3e2a75f19a2c8c4db98c40905c2c3b8e1931ba45d2cfb232a6dd74dc",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    },
+    {
+      "path": "tests/unit/parser.spec.ts",
+      "hash": "05c2c3f8749b114d4410b17957d991ae3eaafefa0d3f9af473a80233d546dcf2",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    }
+  ],
+  "BLUEPRINT/2026_06_24_20_54_[TEST_RESULTS]_testresults": [
+    {
+      "path": "playwright.config.ts",
+      "hash": "bd5ec053a7955be0aff01d803d5b8ccf76f5caf3975d14d01add39131305dfa0",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    },
+    {
+      "path": "documentation/AI/PROJECT-USEFUL-COMMANDS.md",
+      "hash": "d27b0f8559f26632e1a5bce6babb0cd5224dafc4800fc4cd4c3faa91def68066",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    },
+    {
+      "path": ".gitignore",
+      "hash": "14c3ac62cdc2e940716d0927ea1408da2f099924a4623a58cf84519b136f823d",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    }
+  ],
+  "BLUEPRINT/2026_06_24_20_55_[PLAYWRIGHT_REPORT]_playwrightreport": [
+    {
+      "path": "playwright.config.ts",
+      "hash": "bd5ec053a7955be0aff01d803d5b8ccf76f5caf3975d14d01add39131305dfa0",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    },
+    {
+      "path": "documentation/AI/PROJECT-USEFUL-COMMANDS.md",
+      "hash": "d27b0f8559f26632e1a5bce6babb0cd5224dafc4800fc4cd4c3faa91def68066",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    },
+    {
+      "path": ".gitignore",
+      "hash": "14c3ac62cdc2e940716d0927ea1408da2f099924a4623a58cf84519b136f823d",
+      "commit": "0189b560cdcf2b26a6383d20633f92bc5940c254",
+      "dirty": true
+    }
+  ],
+  "BLUEPRINT/2026_06_24_20_57_[SRC]_src": [
+    {
+      "path": "documentation/AI/PROJECT-STACK.md",
+      "hash": "d751f5b244cbc0544ed63c063d2dcebf6ca8824c6ffa61fd3d5cde269da34b03",
+      "commit": "04959d8d7b07ae30732b721dddc33720ef92c225",
+      "dirty": false
+    },
+    {
+      "path": "src/server.ts",
+      "hash": "d5f6198a4f91e351c94c900be132979f2f49f325c31942d50ade9e5706c9260e",
+      "commit": "04959d8d7b07ae30732b721dddc33720ef92c225",
+      "dirty": false
+    },
+    {
+      "path": "src/lib/config.ts",
+      "hash": "363d4620f8e48feff650fe6a4dcfac737c27a754f0f608c2854966d448a7e157",
+      "commit": "04959d8d7b07ae30732b721dddc33720ef92c225",
+      "dirty": false
+    },
+    {
+      "path": "src/mcp/server.ts",
+      "hash": "3b47ab14e3820987ba65387741d7afabd76625bdd011fee073c7f08d5fe32969",
+      "commit": "04959d8d7b07ae30732b721dddc33720ef92c225",
+      "dirty": false
+    },
+    {
+      "path": "src/routes/documents.ts",
+      "hash": "22bbc2f3b743dc5b1e45aca5c87438bf420a2ed771702735656cef8ad3dee6e3",
+      "commit": "04959d8d7b07ae30732b721dddc33720ef92c225",
+      "dirty": false
+    },
+    {
+      "path": "src/frontend-svelte/src/App.svelte",
+      "hash": "cc9b0ede097865b1602c5d277d740a5e9610328cb69752000c7aa43bd59327ea",
+      "commit": "04959d8d7b07ae30732b721dddc33720ef92c225",
+      "dirty": false
+    }
+  ],
+  "tutorial/2026_04_12_10_00_[General]_utiliser_les_snippets": [
+    {
+      "path": "src/frontend/index.html",
+      "hash": "74a96833e006020f3d36cf33aad6066c7228fe4db15477992c455fbbd377e799"
+    },
+    {
+      "path": "src/frontend/snippets/snippets.js",
+      "hash": "31fe2f807288befeb3e84c32f3ce99e42eb5f9403c68db8ff24fb56681b25f39"
+    },
+    {
+      "path": "src/frontend/snippets/inline-snippet-edit.js",
+      "hash": "1030dda8aa9bf0f1b663070f0b87731b465a7d742c6ea91ec942af05ec8232d9"
+    }
+  ],
+  "guide/2026_06_06_21_00_[GUIDE]_styles_images_et_code": [
+    {
+      "path": "src/frontend-svelte/src/lib/home/imageAttributes.ts",
+      "hash": "739269360b62dea053592957a20acb88a6ed70cae02d7f7b687ff635bf288c5a"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/DocViewer.svelte",
+      "hash": "929ae87838a148b00d469e3dee35c7e4e6fd6f66071f4cd8451f986f2db2a129"
+    },
+    {
+      "path": "src/frontend-svelte/src/routes/Admin.svelte",
+      "hash": "265e8e7c2a026e8f30ff5d0529abf9cfd62f6f0abeec8453e7c5bb1f97a14640"
+    },
+    {
+      "path": "src/lib/config.ts",
+      "hash": "034aa32d6fbb232e998017b8c58d5d11db117d4ee1efa4d27326e37751694df3"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/codeBlockAttributes.ts",
+      "hash": "bb126331426517bd2b9fa7ce3d6fb5417d29d2acfa9e6a92b82b710e73efafd0"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/wireContent.ts",
+      "hash": "58265311658d0ee77c77bd555aed9f1ddb713061f1b32716f4573ce25901ade2"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/SnippetsModal.svelte",
+      "hash": "df8cf85fc589732dce2af6f96116dc035efad709bd3cc2b65d9809011e4560c7"
+    }
+  ],
+  "guide/2026_04_08_00_04_[DOCUMENT]_utilisation_des_images_plein_ecran_lien_clickable": [
+    {
+      "path": "src/frontend-svelte/src/lib/home/DocViewer.svelte",
+      "hash": "929ae87838a148b00d469e3dee35c7e4e6fd6f66071f4cd8451f986f2db2a129"
+    },
+    {
+      "path": "src/frontend-svelte/src/lib/home/wireContent.ts",
+      "hash": "7b567ef3276b528e4bc2bf11144e44c69dfec70c556f75e05d5911afaf6999e0"
+    }
+  ],
+  "guide/2026_04_09_11_00_[Configuration]_configurer_le_panneau_admin": [
+    {
+      "path": "src/frontend-svelte/src/routes/Admin.svelte",
+      "hash": "0ef5c165e230244cb9fa2d2fa60d45db52a912fb4c42790a79b6c6ec30e9da56",
+      "commit": "9edc01d3f26b7c9bd1cee1c685bf8ef8ba1e5970",
+      "dirty": false
+    },
+    {
+      "path": "src/shared/headerNavigation.ts",
+      "hash": "b74d3a8a068bd36cd5f358b73861fe9c1e10246c015cb2ae45b25ea37dbd2c64",
+      "commit": "9edc01d3f26b7c9bd1cee1c685bf8ef8ba1e5970",
+      "dirty": false
+    }
+  ],
+  "guide/2026_04_08_23_38_[Configuration]_demarrage_de_living_documentation": [
+    {
+      "path": "bin/cli.ts",
+      "hash": "cbbf78b195d6066b97e20c1c32914fab4af3cc99fdbbd6038059880f1d9f5fbf",
+      "commit": "f762fb64a92748df7792ed4c95863e6b481716cb",
+      "dirty": false
+    },
+    {
+      "path": "src/lib/cli/headerMenuPrompt.ts",
+      "hash": "1a016eff6f72a2e2fc9268f62051b01ca9172597bb57293caa3172c0f957d528",
+      "commit": "f762fb64a92748df7792ed4c95863e6b481716cb",
+      "dirty": false
+    }
+  ],
+  "reference/2026_04_09_03_00_[REFERENCE]_types_de_snippets": [
+    {
+      "path": "src/frontend/index.html",
+      "hash": "74a96833e006020f3d36cf33aad6066c7228fe4db15477992c455fbbd377e799"
+    },
+    {
+      "path": "src/frontend/snippets/snippets.js",
+      "hash": "31fe2f807288befeb3e84c32f3ce99e42eb5f9403c68db8ff24fb56681b25f39"
+    },
+    {
+      "path": "src/frontend/snippets/inline-snippet-edit.js",
+      "hash": "1030dda8aa9bf0f1b663070f0b87731b465a7d742c6ea91ec942af05ec8232d9"
     }
   ]
 }

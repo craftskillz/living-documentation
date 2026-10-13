@@ -12,6 +12,6 @@
 
 ## Directories
 
-* [00_ACCUEIL](./00_ACCUEIL/index.md)
-* [01_DEMARRAGE](./01_DEMARRAGE/index.md)
-* [90_ASSETS](./90_ASSETS/index.md)
+* [ACCUEIL](./ACCUEIL/index.md)
+* [DEMARRAGE](./DEMARRAGE/index.md)
+* [ASSETS](./ASSETS/index.md)

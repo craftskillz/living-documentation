@@ -122,6 +122,10 @@
   },
   "okfMigration": {
     "version": "0.1",
-    "migratedAt": "2026-07-10T06:29:27.088Z"
+    "migratedAt": "2026-10-13T22:21:42.075Z"
+  },
+  "explorerMigration": {
+    "version": "1",
+    "migratedAt": "2026-10-13T22:21:41.856Z"
   }
 }

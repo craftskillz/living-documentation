@@ -1,7 +1,58 @@
 # Changelog
 
+## 2026-10-14
+
+* **Added**: Us 08 Migration Des Prefixes Numeriques
+* **Added**: Us 04b Supprimer La Nomenclature Frontend
+
+## 2026-10-13
+
+* **Added**: Us 04a Supprimer La Nomenclature Backend
+* **Added**: Us 06 Drag And Drop Dans L Explorateur
+* **Added**: Us 05 Api De Deplacement Et De Reordonnancement
+* **Added**: Us 03 Masquer Et Reafficher Des Elements
+* **Added**: Us 07 Manifeste A La Creation De Dossier
+* **Added**: Cost Efficient Agent Workflow
+* **Added**: Us 02 Dossiers En Point Visibles Et Explorateur Sur Api Tree
+* **Added**: Us 01 Lire Le Manifeste Et Servir Un Arbre Ordonne
+* **Added**: ROADMAP EXPLORATEUR
+
+## 2026-09-24
+
+* **Added**: Rendu Markdown Dans Les Titres Des Blocs Repliables
+
+## 2026-09-17
+
+* **Added**: ROADMAP RECHERCHE RAG
+* **Added**: Run Agent De Listage Des Adrs Driftes
+* **Added**: Mise A Jour De Limage Dun Diagramme Depuis Un Document Et Cache Busting
+* **Added**: Visibilite Des Menus Du Header Et Selection A Installation
+
+## 2026-09-16
+
+* **Added**: Templates Markdown Classes Par Dossier
+* **Added**: Standard
+* **Added**: Suppression De Graphify Au Profit De Google Okf
+* **Added**: Readonly Okf Concept Graph From Markdown Links
+
+## 2026-08-04
+
+* **Added**: Run Opened Prompt To Create Image
+* **Added**: Context
+* **Added**: Run Ask The Llm 2
+* **Added**: Run Ask The Llm
+
+## 2026-07-11
+
+* **Added**: Ticket 14 Concept Graph Visualizer
+
 ## 2026-07-10
 
+* **Added**: Ticket 15 Switch Docs Guide Instructions And Starters To Yaml Frontmatter
+* **Added**: Import An External Okf Bundle Under A Dedicated Imported Subfolder
+* **Added**: Ticket 13 Import An External Okf Bundle Cli Core
+* **Added**: Deterministic Okf Conformance Validator With Error And Warning Severities
+* **Added**: Ticket 12 Okf Conformance Validator And Ci Hook
 * **Added**: Mirror Drift Bindings Into An Okfpreserved Frontmatter Sources Block
 * **Added**: Ticket 11 Resource Field And Sources Driftbinding Block In Frontmatter
 * **Added**: Generate Okf Logmd Changelog From Git History
@@ -52,28 +103,28 @@
 * **Added**: Menu Agents
 * **Added**: Run Code Review Specialist
 * **Added**: Context
-* **Added**: Mcp build context tool
+* **Added**: Mcp Build Context Tool
 * **Added**: Build Context Mcp Tool Aggregates Git Source And Documentation
 * **Added**: Menu Workspace
-* **Added**: Zzz compare test
+* **Added**: Zzz Compare Test
 * **Added**: Document Markdown
 
 ## 2026-06-30
 
 * **Added**: Menu Home
-* **Added**: 01 creer un espace documentaire
-* **Added**: 02 creer modifier et retrouver un document
-* **Added**: 03 structurer dossiers categories et documents
+* **Added**: 01 Creer Un Espace Documentaire
+* **Added**: 02 Creer Modifier Et Retrouver Un Document
+* **Added**: 03 Structurer Dossiers Categories Et Documents
 * **Added**: Run Opened Prompt To Create Image
 * **Added**: Run Opened Prompt To Create Image 2
 * **Added**: Context
 * **Added**: Professional Editorial Hero Illustration
-* **Added**: 00 index
-* **Added**: 01 living documentation en bref
-* **Added**: 02 parcours recommandes
-* **Added**: Charte visuelle
-* **Added**: Prompts images
-* **Added**: Screenshots a capturer
+* **Added**: 00 Index
+* **Added**: 01 Living Documentation En Bref
+* **Added**: 02 Parcours Recommandes
+* **Added**: Charte Visuelle
+* **Added**: Prompts Images
+* **Added**: Screenshots A Capturer
 * **Added**: Plan
 * **Added**: Versions Visuelles Des Documents Depuis Git Head
 * **Added**: Integration Git Admin Et Autocommit Du Dossier Docs
@@ -101,7 +152,7 @@
 * **Added**: Run Calculate Mathematical Operation
 * **Added**: Workspace Runs Agents En Streaming Llm Tout Fournisseur Et Secrets Par Variable D Environnement
 * **Added**: Run Find English Documents
-* **Added**: 009 tool list documents
+* **Added**: 009 Tool List Documents
 * **Added**: Run Agent 1
 * **Added**: Run Agent 2
 * **Added**: Run Calculate Mathematical Operation 2
@@ -116,6 +167,7 @@
 * **Added**: Tests
 * **Added**: Testresults
 * **Added**: Playwrightreport
+* **Added**: Graphifyout
 * **Added**: Src
 * **Added**: Bin
 
@@ -167,7 +219,7 @@
 * **Added**: Stabilisation De La Suite E2e Playwright Apres Migration Svelte Ancrage De Test Et Regressions
 * **Added**: Durcissement Securite Des Workflows Github Actions Avec Zizmor Pin Sha Permissions Et Persistcredentials
 * **Added**: Migration Du Frontend Vers Une Application Svelte Unifiee
-* **Added**: 008 prompt generate container diagram
+* **Added**: 008 Prompt Generate Container Diagram
 
 ## 2026-06-02
 
@@ -216,8 +268,8 @@
 * **Added**: Validate Button On Viewer For Frontmatter Status Flip
 * **Added**: Read Only Metadata For Superseeded Documents
 * **Added**: Worklog Convention For Ai Handoff In Bilingual Starter
-* **Added**: Track current work
-* **Added**: Current task
+* **Added**: Track Current Work
+* **Added**: Current Task
 
 ## 2026-05-13
 
@@ -228,26 +280,26 @@
 * **Added**: Vendor Tailwind Play Cdn And Font Awesome Locally For Offline And Proxy Resilience
 * **Added**: Export Diagrammes Au Format Drawio Mxgraph Xml
 * **Added**: Retrodocument Adrs From Git Mcp Tool And Prompt
-* **Added**: 004 prompt review adr relevance
-* **Added**: 005 tool review adr relevance
-* **Added**: 006 prompt retrodocument adrs from git
-* **Added**: 007 tool retrodocument adrs from git
-* **Added**: 003 prompt erd
-* **Added**: 001 tool list adrs below accuracy
-* **Added**: 002 prompt audit adrs drift
+* **Added**: 004 Prompt Review Adr Relevance
+* **Added**: 005 Tool Review Adr Relevance
+* **Added**: 006 Prompt Retrodocument Adrs From Git
+* **Added**: 007 Tool Retrodocument Adrs From Git
+* **Added**: 003 Prompt Erd
+* **Added**: 001 Tool List Adrs Below Accuracy
+* **Added**: 002 Prompt Audit Adrs Drift
 
 ## 2026-05-11
 
 * **Added**: Document
 * **Added**: Copie Id Diagramme Mcp Depuis Topbar Editeur
 * **Added**: Review Adr Relevance Mcp Tool
-* **Added**: 017 tool read diagram
-* **Added**: 018 tool search source
-* **Added**: 019 tool get accuracy
-* **Added**: 020 tool list metadata
-* **Added**: 021 tool read source file
-* **Added**: 022 tool refresh metadata
-* **Added**: 023 prompt review adr relevance
+* **Added**: 017 Tool Read Diagram
+* **Added**: 018 Tool Search Source
+* **Added**: 019 Tool Get Accuracy
+* **Added**: 020 Tool List Metadata
+* **Added**: 021 Tool Read Source File
+* **Added**: 022 Tool Refresh Metadata
+* **Added**: 023 Prompt Review Adr Relevance
 * **Added**: Crer Vos Dossiers
 * **Added**: Creer Un Document Dans Un Dossier
 * **Added**: Editer Et Sauvegarder
@@ -262,7 +314,7 @@
 * **Added**: Extra Files
 * **Added**: Word Cloud
 * **Added**: Creer Et Lier Un Diagramme
-* **Added**: Adrs
+* **Added**: ADRS
 * **Added**: Living Documentation
 * **Added**: Diataxis Architecture Du Contenu
 * **Added**: The Living Documentation Tool
@@ -274,22 +326,22 @@
 * **Added**: Demo Living Documentation Mcp En Conference
 * **Added**: Affichage Detail Erreur Appels Mcp Page Context
 * **Added**: Copie Id Document Mcp Depuis Entete Viewer
-* **Added**: 001 tool get server guide
-* **Added**: 002 tool list documents
-* **Added**: 003 tool create document
-* **Added**: 004 tool list diagrams
-* **Added**: 005 tool list source files
-* **Added**: 006 tool list documents below accuracy
-* **Added**: 007 prompt audit doc drift
-* **Added**: 008 prompt create adr
-* **Added**: 009 prompt generate context diagram
-* **Added**: 010 prompt generate container diagram
-* **Added**: 011 prompt generate uml diagram
-* **Added**: 012 prompt update diagram from docs
-* **Added**: 013 prompt generate screen guide
-* **Added**: 014 prompt flow
-* **Added**: 015 prompt erd
-* **Added**: 016 tool read document
+* **Added**: 001 Tool Get Server Guide
+* **Added**: 002 Tool List Documents
+* **Added**: 003 Tool Create Document
+* **Added**: 004 Tool List Diagrams
+* **Added**: 005 Tool List Source Files
+* **Added**: 006 Tool List Documents Below Accuracy
+* **Added**: 007 Prompt Audit Doc Drift
+* **Added**: 008 Prompt Create Adr
+* **Added**: 009 Prompt Generate Context Diagram
+* **Added**: 010 Prompt Generate Container Diagram
+* **Added**: 011 Prompt Generate Uml Diagram
+* **Added**: 012 Prompt Update Diagram From Docs
+* **Added**: 013 Prompt Generate Screen Guide
+* **Added**: 014 Prompt Flow
+* **Added**: 015 Prompt Erd
+* **Added**: 016 Tool Read Document
 * **Added**: Link Extra Files As Documentation
 * **Added**: General Category And Sidebar Defaults
 * **Added**: Always Dark Syntax Highlighting
@@ -359,7 +411,7 @@
 * **Added**: PROJECT INSTRUCTIONS
 * **Added**: PROJECT STACK
 * **Added**: PROJECT USEFUL COMMANDS
-* **Added**: Diagram vis network gotchas
-* **Added**: I18n user visible strings
-* **Added**: No magic numbers
-* **Added**: Playwright coverage through cli
+* **Added**: Diagram Vis Network Gotchas
+* **Added**: I18n User Visible Strings
+* **Added**: No Magic Numbers
+* **Added**: Playwright Coverage Through Cli
