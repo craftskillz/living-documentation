@@ -2,6 +2,13 @@
 
 Ce fichier est le point d'entrée pour Codex et les outils de type agent.
 
+> ⚠️ **COÛT ET DURÉE — à appliquer AVANT toute tâche** (règle complète : `documentation/AI/rules/cost-efficient-agent-workflow.md`, incident : `memory/agent-cost-lessons.md`) :
+> 1. Vérifier l'environnement d'abord (build, lint, un test Playwright). En cas d'échec d'environnement, s'arrêter et le signaler, sans contournement.
+> 2. Tests ciblés pendant la boucle TDD ; suites complètes une seule fois en fin d'US ; pas de mutation testing sauf demande.
+> 3. Une US par session.
+> 4. Lire des extraits ciblés, filtrer les sorties.
+> 5. Plus de 3 tentatives ou un contournement : s'arrêter et demander.
+
 Avant toute modification :
 
 1. Lire `documentation/AI/PROJECT-INSTRUCTIONS.md`.

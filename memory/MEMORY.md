@@ -16,6 +16,10 @@ memory/domain-language.md
 memory/blueprint-documentation-style.md
 ```
 
+## Fichiers mémoire présents
+
+- `memory/agent-cost-lessons.md` : incident de coût du 13/10/2026 et ses causes (origine de la règle `cost-efficient-agent-workflow`).
+
 ## Règle d'usage
 
 La mémoire sert au contexte stable et fréquemment réutilisé.

@@ -2,6 +2,11 @@
 
 Ce fichier est le point d'entrée pour Claude.
 
+> ⚠️ **COÛT ET DURÉE : la règle ci-dessous est chargée automatiquement. L'appliquer AVANT toute tâche.**
+> Incident du 13/10/2026 : 2 US ont coûté une session entière (environnement inadapté contourné, suites complètes relancées, session trop longue). Détails : `memory/agent-cost-lessons.md`.
+
+@documentation/AI/rules/cost-efficient-agent-workflow.md
+
 Avant toute modification :
 
 1. Lire `documentation/AI/PROJECT-INSTRUCTIONS.md`.
