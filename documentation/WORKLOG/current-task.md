@@ -12,6 +12,21 @@ timestamp: 2026-09-16T15:45:00Z
 status: To be validated
 ---
 
+# Explorateur ordonné par liv-doc-main.md — 13 octobre 2026
+
+## État courant
+
+Cadrage terminé, aucun code modifié. Backlog : [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md) (US1 à US9, décisions utilisateur et hypothèses H1–H6 à valider).
+
+## Suite
+
+Valider les hypothèses H1–H6, puis démarrer US1 en TDD (`src/lib/folderManifest.ts`, `GET /api/tree`).
+
+MCP Living Documentation injoignable depuis la session : roadmap écrite à la main, pas de métadonnées attachées.
+
+---
+
+
 # ADR du rendu Markdown dans summary — 24 septembre 2026
 
 Rétrodocumentation terminée pour le commit `c1d2a1e1` du 23 septembre. [ADR : Rendu Markdown dans les titres des blocs repliables](?doc=ADRS%252F2026_09_23_20_30_%255BRENDERING%255D_rendu_markdown_dans_les_titres_des_blocs_repliables), statut `To be validated`. Aucun ADR antérieur remplacé.
