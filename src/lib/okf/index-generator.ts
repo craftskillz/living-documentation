@@ -5,6 +5,7 @@
 // migration. `index.md`/`log.md` are reserved and never listed as concepts.
 import fs from "node:fs";
 import path from "node:path";
+import { applyManifestOrder, readFolderManifest } from "../folderManifest";
 import { parseFrontmatter } from "../frontmatter";
 import { parseFilename } from "../parser";
 import { isReservedOkfFile, OKF_SPEC_VERSION } from "../okf";
@@ -33,9 +34,14 @@ function conceptsAndDirs(dir: string): { concepts: ConceptEntry[]; subdirs: stri
       concepts.push({ file: entry.name, title, description });
     }
   }
-  concepts.sort((a, b) => a.file.localeCompare(b.file));
-  subdirs.sort((a, b) => a.localeCompare(b));
-  return { concepts, subdirs };
+  // Same order as the explorer: default alphabetical, then the folder manifest.
+  const { order } = readFolderManifest(dir);
+  concepts.sort((a, b) => a.file.localeCompare(b.file, undefined, { sensitivity: "base" }));
+  subdirs.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+  return {
+    concepts: applyManifestOrder(concepts.map((c) => ({ ...c, name: c.file })), order),
+    subdirs: applyManifestOrder(subdirs.map((name) => ({ name })), order).map((d) => d.name),
+  };
 }
 
 // Depth-first: build children first so a directory can decide it is non-empty.

@@ -16,11 +16,11 @@ status: To be validated
 
 ## État courant
 
-Cadrage terminé, aucun code modifié. Backlog : [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md) (US1 à US9, décisions utilisateur et hypothèses H1–H6 à valider).
+Branche `feat/explorateur-liv-doc-main`. Backlog : [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), hypothèses H1–H6 validées. US1 terminée et commitée (manifeste, `GET /api/tree`, ordre des `index.md`).
 
 ## Suite
 
-Valider les hypothèses H1–H6, puis démarrer US1 en TDD (`src/lib/folderManifest.ts`, `GET /api/tree`).
+US2 en TDD : rendre visibles les dossiers en point, brancher l'explorateur sur `GET /api/tree`. Lint Biome et tests navigateur à lancer sur le Mac (binaire Biome Linux et Chromium absents du shell de la session).
 
 MCP Living Documentation injoignable depuis la session : roadmap écrite à la main, pas de métadonnées attachées.
 

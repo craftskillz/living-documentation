@@ -5,13 +5,15 @@
 // convention ADR. It is the single deterministic transform shared by the write
 // path (T04) and the bulk migration (T05): given the same input it always
 // yields the same output, with no LLM involved.
+import { FOLDER_MANIFEST_FILE } from "./folderManifest";
 import { parseFrontmatter, serializeFrontmatter } from "./frontmatter";
 
 export const OKF_SPEC_VERSION = "0.1";
 
-// OKF reserved filenames — directory listings and changelog. They are NOT
-// concepts: excluded from the document list, never migrated, and generated.
-export const RESERVED_OKF_FILES = new Set(["index.md", "log.md"]);
+// Reserved filenames — OKF directory listings and changelog, plus the
+// living-doc folder manifest. They are NOT concepts: excluded from the
+// document list, never migrated, never listed in generated indexes.
+export const RESERVED_OKF_FILES = new Set(["index.md", "log.md", FOLDER_MANIFEST_FILE]);
 
 /** True when a filename is an OKF reserved file (case-insensitive). */
 export function isReservedOkfFile(filename: string): boolean {
