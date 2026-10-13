@@ -12,6 +12,12 @@ dev:
 lock:
     npx -y npm@10.8.2 install
 
+pack: build
+    #!/usr/bin/env bash
+    set -euo pipefail
+    tgz=$(npm pack --loglevel=warn | tail -n 1)
+    echo "use: npx --package {{justfile_directory()}}/$tgz living-ai-documentation ."
+            
 build:
     npm run build
 

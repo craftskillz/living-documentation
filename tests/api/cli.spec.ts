@@ -371,7 +371,7 @@ test("CLI without folder creates a missing target folder", async () => {
   }
 });
 
-test("CLI without folder exits 1 when target folder is not empty", () => {
+test("CLI without folder exits 1 when target folder is not empty and config-only init is declined", () => {
   const tmp = fs.realpathSync(
     fs.mkdtempSync(path.join(os.tmpdir(), "ld-cli-")),
   );
@@ -381,10 +381,43 @@ test("CLI without folder exits 1 when target folder is not empty", () => {
     encoding: "utf-8",
     env: coverageEnv(),
     cwd: tmp,
-    input: "./docs\n",
+    input: "./docs\nn\n",
   });
   expect(result.status).toBe(1);
   expect(result.stderr).toMatch(/Folder is not empty/i);
+  expect(fs.existsSync(path.join(tmp, "docs", ".living-doc.json"))).toBe(false);
+  fs.rmSync(tmp, { recursive: true, force: true });
+});
+
+test("CLI on a non-empty folder creates only .living-doc.json when config-only init is accepted", () => {
+  const tmp = fs.realpathSync(
+    fs.mkdtempSync(path.join(os.tmpdir(), "ld-cli-")),
+  );
+  const docs = path.join(tmp, "docs");
+  fs.mkdirSync(docs);
+  fs.writeFileSync(path.join(docs, "existing.md"), "x");
+  fs.writeFileSync(path.join(tmp, "AGENTS.md"), "# Existing instructions\n");
+  const result = spawnSync("node", [CLI, "./docs", "--starter-language", "fr"], {
+    encoding: "utf-8",
+    env: coverageEnv(),
+    cwd: tmp,
+    input: "y\n",
+  });
+
+  expect(listFilesRecursive(docs).sort()).toEqual([".living-doc.json", "existing.md"]);
+  expect(fs.readFileSync(path.join(docs, "existing.md"), "utf-8")).toBe("x");
+  expect(fs.readFileSync(path.join(tmp, "AGENTS.md"), "utf-8")).toBe("# Existing instructions\n");
+  expect(fs.existsSync(path.join(tmp, "CLAUDE.md"))).toBe(false);
+  expect(fs.existsSync(path.join(tmp, "memory"))).toBe(false);
+
+  const config = JSON.parse(fs.readFileSync(path.join(docs, ".living-doc.json"), "utf-8"));
+  expect(config.language).toBe("fr");
+  expect(config.favorites).toEqual([]);
+  expect(config.okfMigration).toBeUndefined();
+
+  // Not migrated yet: the OKF startup gate takes over (non-interactive → exit 1).
+  expect(result.status).toBe(1);
+  expect(result.stderr).toMatch(/not migrated to the Open Knowledge Format/i);
   fs.rmSync(tmp, { recursive: true, force: true });
 });
 

@@ -92,6 +92,36 @@ function scaffoldStarter(docsPath: string, initLanguage: InitLanguage): void {
   console.log(`\nInitialized ${initLanguage} documentation project in ${docsPath}\n`);
 }
 
+function scaffoldConfigOnly(docsPath: string, initLanguage: InitLanguage): void {
+  const starterDir = initLanguage === "fr" ? "starter-doc-fr" : "starter-doc";
+  const starterConfigPath = path.join(__dirname, "..", starterDir, CONFIG_FILENAME);
+  if (!fs.existsSync(starterConfigPath)) {
+    console.error(`\nError: Starter configuration not found: ${starterDir}/${CONFIG_FILENAME}\n`);
+    process.exit(1);
+  }
+  const config = JSON.parse(fs.readFileSync(starterConfigPath, "utf-8")) as Record<string, unknown>;
+  // The starter favorites point to demo pages that are not copied, and the
+  // existing Markdown files have not been migrated to OKF yet: the startup gate
+  // will offer the migration.
+  config.favorites = [];
+  delete config.okfMigration;
+  fs.writeFileSync(path.join(docsPath, CONFIG_FILENAME), JSON.stringify(config, null, 2), "utf-8");
+  console.log(`\nInitialized ${initLanguage} Living Documentation configuration in ${docsPath}\n`);
+}
+
+function askYesNo(rl: ReturnType<typeof createInterface>, message: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    const onClose = () => resolve(false);
+    rl.once("close", onClose);
+    rl.question(message)
+      .then((answer) => {
+        rl.off("close", onClose);
+        resolve(["y", "yes", "o", "oui"].includes(answer.trim().toLowerCase()));
+      })
+      .catch(() => resolve(false));
+  });
+}
+
 function initInstructionFiles(docsPath: string): InitInstructionFile[] {
   const projectRoot = path.dirname(docsPath);
   const aiPath = path.join(docsPath, "AI");
@@ -221,6 +251,59 @@ async function findExistingDocumentationFolder(): Promise<string | null> {
   return null;
 }
 
+async function launchProject(
+  folderToServe: string,
+  docsPath: string,
+  options: { port: string; open: boolean },
+): Promise<void> {
+  if (!fs.existsSync(docsPath)) {
+    console.error(`\nError: Folder not found: ${docsPath}\n`);
+    process.exit(1);
+  }
+
+  const stat = fs.statSync(docsPath);
+  if (!stat.isDirectory()) {
+    console.error(`\nError: Not a directory: ${docsPath}\n`);
+    process.exit(1);
+  }
+
+  const port = parseInt(options.port, 10);
+  if (Number.isNaN(port) || port < 1 || port > 65535) {
+    console.error("\nError: Invalid port number\n");
+    process.exit(1);
+  }
+
+  // OKF startup gate — refuse to open a project that has not been migrated to
+  // the Open Knowledge Format YAML frontmatter.
+  if (!isOkfMigrated(readConfig(docsPath))) {
+    console.error(
+      `\nThis project is not migrated to the Open Knowledge Format (OKF).\n` +
+        `living-documentation now aligns natively with Google's OKF, so the docs\n` +
+        `folder must be migrated (a deterministic, one-time conversion) before it\n` +
+        `can be opened.\n`,
+    );
+    let doMigrate = false;
+    if (process.stdin.isTTY) {
+      const rl = createInterface({ input: process.stdin, output: process.stdout });
+      const answer = await rl.question(`Migrate "${folderToServe}" now? [y/N] `);
+      rl.close();
+      doMigrate = ["y", "yes", "o", "oui"].includes(answer.trim().toLowerCase());
+    }
+    if (!doMigrate) {
+      console.error(`Run:  npx living-ai-documentation migrate ${folderToServe}\n`);
+      process.exit(1);
+    }
+    const result = migrateDocsFolder(docsPath);
+    if (result.errors.length) {
+      console.error(`\nMigration failed:\n${result.errors.map((e) => `  ! ${e}`).join("\n")}\n`);
+      process.exit(1);
+    }
+    console.log(`\nMigrated ${result.changed} document(s) to OKF YAML. Continuing…\n`);
+  }
+
+  await startServer({ docsPath, port, openBrowser: options.open ?? false });
+}
+
 async function runInitWizard(
   options: { starterLanguage?: string; port: string; open: boolean },
   presetFolder?: string,
@@ -242,6 +325,7 @@ async function runInitWizard(
     validateRelativeFolder(folder);
     const docsPath = path.resolve(process.cwd(), folder);
     let shouldCreateDocsPath = false;
+    let configOnly = false;
 
     if (options.starterLanguage && !parseInitLanguage(options.starterLanguage)) {
       console.error("\nError: Invalid init language. Expected en or fr.\n");
@@ -256,13 +340,23 @@ async function runInitWizard(
       }
       const existing = fs.readdirSync(docsPath);
       if (existing.length > 0) {
-        console.error(`\nError: Folder is not empty: ${docsPath}\n`);
-        process.exit(1);
+        configOnly = await askYesNo(
+          rl,
+          `Folder is not empty: ${docsPath}\n` +
+            "Create only the Living Documentation configuration (.living-doc.json), without starter content or AGENTS.md / CLAUDE.md / memory? " +
+            "/ Le dossier n'est pas vide. Créer uniquement la configuration ? (y/n) ",
+        );
+        if (!configOnly) {
+          console.error(`\nError: Folder is not empty: ${docsPath}\n`);
+          process.exit(1);
+        }
       }
     } else {
       shouldCreateDocsPath = true;
     }
-    validateInitInstructionTargets(docsPath, initInstructionFiles(docsPath));
+    if (!configOnly) {
+      validateInitInstructionTargets(docsPath, initInstructionFiles(docsPath));
+    }
 
     let initLanguage = options.starterLanguage ? parseInitLanguage(options.starterLanguage) : null;
     if (!initLanguage && !process.stdin.isTTY) {
@@ -280,6 +374,13 @@ async function runInitWizard(
 
     rl.close();
     const hiddenHeaderMenus = await promptHiddenHeaderMenus(initLanguage);
+
+    if (configOnly) {
+      scaffoldConfigOnly(docsPath, initLanguage);
+      writeConfig(docsPath, { hiddenHeaderMenus });
+      await launchProject(folder, docsPath, options);
+      return;
+    }
 
     if (shouldCreateDocsPath) {
       fs.mkdirSync(docsPath, { recursive: true });
@@ -337,6 +438,9 @@ Notes:
   - The initializer copies AGENTS.md, CLAUDE.md and memory/MEMORY.md to the parent
     of the documentation folder, then exposes them in <folder>/AI/ through symbolic links.
     If one already exists with content, initialization stops instead of overwriting it.
+  - When the documentation folder already contains files, the initializer offers to create only
+    .living-doc.json (no starter content, no AGENTS.md / CLAUDE.md / memory). Existing Markdown
+    files are left untouched; the OKF migration is then offered at startup.
   - New projects hide optional header menus by default. In an interactive terminal, use
     arrow keys and Space to select menus, then Enter to confirm. Change them later in Admin.
   - Configuration is persisted to <folder>/.living-doc.json. Edit it via the admin panel at /admin.
@@ -361,52 +465,7 @@ Notes:
       return;
     }
 
-    if (!fs.existsSync(docsPath)) {
-      console.error(`\nError: Folder not found: ${docsPath}\n`);
-      process.exit(1);
-    }
-
-    const stat = fs.statSync(docsPath);
-    if (!stat.isDirectory()) {
-      console.error(`\nError: Not a directory: ${docsPath}\n`);
-      process.exit(1);
-    }
-
-    const port = parseInt(options.port, 10);
-    if (Number.isNaN(port) || port < 1 || port > 65535) {
-      console.error("\nError: Invalid port number\n");
-      process.exit(1);
-    }
-
-    // OKF startup gate — refuse to open a project that has not been migrated to
-    // the Open Knowledge Format YAML frontmatter.
-    if (!isOkfMigrated(readConfig(docsPath))) {
-      console.error(
-        `\nThis project is not migrated to the Open Knowledge Format (OKF).\n` +
-          `living-documentation now aligns natively with Google's OKF, so the docs\n` +
-          `folder must be migrated (a deterministic, one-time conversion) before it\n` +
-          `can be opened.\n`,
-      );
-      let doMigrate = false;
-      if (process.stdin.isTTY) {
-        const rl = createInterface({ input: process.stdin, output: process.stdout });
-        const answer = await rl.question(`Migrate "${folderToServe}" now? [y/N] `);
-        rl.close();
-        doMigrate = ["y", "yes", "o", "oui"].includes(answer.trim().toLowerCase());
-      }
-      if (!doMigrate) {
-        console.error(`Run:  npx living-ai-documentation migrate ${folderToServe}\n`);
-        process.exit(1);
-      }
-      const result = migrateDocsFolder(docsPath);
-      if (result.errors.length) {
-        console.error(`\nMigration failed:\n${result.errors.map((e) => `  ! ${e}`).join("\n")}\n`);
-        process.exit(1);
-      }
-      console.log(`\nMigrated ${result.changed} document(s) to OKF YAML. Continuing…\n`);
-    }
-
-    await startServer({ docsPath, port, openBrowser: options.open ?? false });
+    await launchProject(folderToServe, docsPath, options);
   });
 
 program
