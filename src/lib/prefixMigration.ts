@@ -5,8 +5,10 @@
 // that pointed into it follow. Documents are never renamed.
 import fs from "node:fs";
 import path from "node:path";
+import { readConfig } from "./config";
 import { FOLDER_MANIFEST_FILE } from "./folderManifest";
 import { parseFrontmatter, serializeFrontmatter } from "./frontmatter";
+import { readMetadataStore, writeMetadataStore } from "./metadata";
 import { migrateDocIds, RESERVED_ROOT_FOLDERS } from "./treeMove";
 
 const IGNORED_DIRS = new Set([".git", "node_modules", "dist"]);
@@ -179,6 +181,28 @@ export function rewriteMovedLinks(
     .join("\n");
 }
 
+/**
+ * Source bindings are paths relative to `sourceRoot`; those that point at a
+ * document of the docs folder follow its renamed folders.
+ */
+function migrateSourcePaths(docsPath: string, mapPath: (oldRel: string) => string | null): void {
+  const { sourceRoot } = readConfig(docsPath);
+  const store = readMetadataStore(docsPath);
+  let changed = false;
+  for (const entries of Object.values(store)) {
+    for (const entry of Array.isArray(entries) ? entries : []) {
+      if (typeof entry?.path !== "string") continue;
+      const rel = path.relative(docsPath, path.resolve(sourceRoot, entry.path)).split(path.sep).join("/");
+      if (rel.startsWith("..") || path.isAbsolute(rel)) continue;
+      const next = mapPath(rel);
+      if (next === null) continue;
+      entry.path = path.relative(sourceRoot, path.join(docsPath, next)).split(path.sep).join("/");
+      changed = true;
+    }
+  }
+  if (changed) writeMetadataStore(docsPath, store);
+}
+
 function collectMd(docsPath: string, relDir = "", out: string[] = []): string[] {
   for (const entry of fs.readdirSync(path.join(docsPath, relDir), { withFileTypes: true })) {
     if (entry.isSymbolicLink()) continue;
@@ -250,6 +274,7 @@ export function migrateFolderPrefixes(docsPath: string, opts: { dryRun?: boolean
     fs.renameSync(path.join(docsPath, from), path.join(docsPath, r.parentOld, r.toName));
     migrateDocIds(docsPath, from, join(r.parentOld, r.toName), true);
   }
+  if (plan.length) migrateSourcePaths(docsPath, mapPath);
 
   const byParent = new Map<string, PlannedRename[]>();
   for (const r of plan) byParent.set(r.parentOld, [...(byParent.get(r.parentOld) ?? []), r]);

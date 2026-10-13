@@ -141,6 +141,23 @@ test("migrates metadata, annotations and favorites keys of documents under renam
   assert.equal(JSON.parse(read(dir, ".living-doc.json")).favorites[0].id, encodeURIComponent("tuto/intro"));
 });
 
+test("migrates source bindings that point at documents under renamed folders", () => {
+  const dir = makeBundle({ "1_tuto/intro.md": "", "doc.md": "" });
+  // Default sourceRoot is the docs folder parent: source paths start with its name.
+  const docs = path.basename(dir);
+  fs.writeFileSync(
+    path.join(dir, ".metadata.json"),
+    JSON.stringify({ doc: [{ path: `${docs}/1_tuto/intro.md`, hash: "h" }, { path: "src/a.ts", hash: "h" }] }),
+  );
+  migrateFolderPrefixes(dir);
+
+  const entries = JSON.parse(read(dir, ".metadata.json")).doc;
+  assert.deepEqual(
+    entries.map((e: { path: string }) => e.path),
+    [`${docs}/tuto/intro.md`, "src/a.ts"],
+  );
+});
+
 test("migrates the document ids cited as evidence in diagrams", () => {
   const evidence = (id: string) => ({ evidence: [{ documentId: encodeURIComponent(id), label: "x" }] });
   const dir = makeBundle({
