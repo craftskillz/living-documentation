@@ -1,6 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { parseFrontmatter } from './frontmatter';
+import { docSlug } from './docSlug';
+
+export { docSlug };
 
 export interface DocMetadata {
   id: string;           // URL-safe identifier (encoded filename without .md)
@@ -12,8 +15,6 @@ export interface DocMetadata {
 }
 
 const ISO_DATE_RE = /^(\d{4}-\d{2}-\d{2})(?:[T ](\d{2}:\d{2}))?/;
-const DIACRITICS = /[̀-ͯ]/g;
-const DEFAULT_SLUG = 'document';
 // Pre-nomenclature-removal names (`YYYY_MM_DD[_HH_mm]_[Category]_title`): the
 // prefix is dropped so documents without a frontmatter title stay readable.
 const LEGACY_PREFIX_RE = /^(?:\d{4}_\d{2}_\d{2}(?:_\d{2}_\d{2})?_)?(?:\[[^\]]*\]_)?/;
@@ -65,16 +66,6 @@ export function readDocMetadata(absPath: string, filename: string): DocMetadata 
   let content = '';
   try { content = fs.readFileSync(absPath, 'utf-8'); } catch { /* unreadable: filename only */ }
   return parseDocMetadata(filename, content);
-}
-
-/** File stem for a new document: "Mon guide" → "mon-guide". */
-export function docSlug(title: string): string {
-  return (title || '')
-    .normalize('NFD')
-    .replace(DIACRITICS, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '') || DEFAULT_SLUG;
 }
 
 /** First free `<slug>.md`, `<slug>-2.md`, … in `dir`. */

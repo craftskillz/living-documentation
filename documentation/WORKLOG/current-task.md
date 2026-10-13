@@ -12,15 +12,15 @@ timestamp: 2026-09-16T15:45:00Z
 status: To be validated
 ---
 
-# Explorateur ordonné par liv-doc-main.md — 13 octobre 2026
+# Explorateur ordonné par liv-doc-main.md — 14 octobre 2026
 
 ## État courant
 
-Branche `feat/explorateur-liv-doc-main`. Backlog : [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), hypothèses H1–H6 validées. US1, US2, US7, US3, US5, US6 et US4a terminées et commitées. US4a : le nom de fichier n'est plus qu'un identifiant (titre et date depuis le frontmatter, création par slug `mon-guide.md` / `-2`), `category` et les clés `filenamePattern` / `sidebarSort` / `exclusiveCategoryExpansion` supprimés côté serveur, MCP et Blueprint. Détails : [worklog US4a](./2026_10_14_10_00_%5BWORKLOG%5D_us_04a_supprimer_la_nomenclature_backend.md).
+Branche `feat/explorateur-liv-doc-main`. Backlog : [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), hypothèses H1–H6 validées. US1, US2, US7, US3, US5, US6, US4a et US4b terminées et commitées. US4b : l'UI ne parle plus de catégorie, de pattern ni de tri de la sidebar ; aperçu du slug dans le formulaire de création via `src/lib/docSlug.ts` partagé avec le serveur. Détails : [worklog US4b](./2026_10_14_11_00_%5BWORKLOG%5D_us_04b_supprimer_la_nomenclature_frontend.md).
 
 ## Suite
 
-US4b (frontend : Admin, NewDocModal, code mort catégories de `home/tree.ts` et `state.svelte.ts`, i18n), à démarrer dans une nouvelle session. Suites au 14/10/2026 après US4a : unitaires 43/43, `tests/api` 212/212, `tests/e2e` 111/111 (dont 4 fichiers relancés après correction).
+US8 (migration des préfixes numériques), à démarrer dans une nouvelle session, puis US9 (starters, fixtures et guides encore porteurs des clés retirées). Suites au 14/10/2026 après US4b : unitaires 43/43, `tests/api` 212/212, `tests/e2e` 113/113.
 
 MCP Living Documentation non exposé comme outil dans la session : worklog et roadmap écrits à la main, pas de métadonnées attachées.
 

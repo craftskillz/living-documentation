@@ -28,7 +28,6 @@
   // tau is light-only for now, so the dark toggle is hidden while it's active.
   let siteThemeTau = $state(false);
   let appTitle = $state("Living AI Documentation");
-  let welcomePattern = $state("YYYY_MM_DD_HH_mm_[Category]_title.md");
 
   let searchTimer: number | null = null;
 
@@ -239,21 +238,15 @@
     const cfg = await api.fetchConfig();
     await loadI18n((cfg.language as string) || "en");
     if (cfg.title) { document.title = cfg.title as string; appTitle = cfg.title as string; }
-    if (cfg.filenamePattern) welcomePattern = (cfg.filenamePattern as string) + ".md";
     home.exclusiveFolderExpansion = !!cfg.exclusiveFolderExpansion;
-    home.exclusiveCategoryExpansion = !!cfg.exclusiveCategoryExpansion;
     home.codeBlockMaxHeight = typeof cfg.codeBlockMaxHeight === "number" ? cfg.codeBlockMaxHeight : 400;
     home.imageRoundedCorners = !!cfg.imageRoundedCorners;
     home.imageCentered = !!cfg.imageCentered;
     home.imageBorder = !!cfg.imageBorder;
     home.codeBlockLightTheme = !!cfg.codeBlockLightTheme;
-    home.sidebarSort = ["recent", "oldest", "alphabetical"].includes(cfg.sidebarSort as string)
-      ? (cfg.sidebarSort as typeof home.sidebarSort)
-      : "recent";
     if (home.codeBlockMaxHeight > 0) {
       document.documentElement.style.setProperty("--ld-code-max-h", home.codeBlockMaxHeight + "px");
     }
-    if (home.expandedCategories.size === 0) home.expandedCategories = new Set(["DOCUMENTATION", "General"]);
 
     await loadDocuments();
 
@@ -339,8 +332,6 @@
             <div class="text-5xl mb-4 select-none" aria-hidden="true">📚</div>
             <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">{t("welcome.title")}</h2>
             <p class="text-sm text-gray-500 dark:text-gray-500">{t("welcome.hint")}</p>
-            <p class="mt-4 text-xs text-gray-400 dark:text-gray-600 font-mono bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 inline-block">{welcomePattern}</p>
-            <p class="mt-2 text-xs text-gray-400">{t("welcome.pattern_hint")}</p>
           </div>
         </div>
       {/if}

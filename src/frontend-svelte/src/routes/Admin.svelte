@@ -18,12 +18,9 @@
   let theme = $state("system");
   let hiddenHeaderMenus = $state<string[]>([]);
   let siteTheme = $state<"base" | "tau">("base");
-  let sidebarSort = $state<"recent" | "oldest" | "alphabetical">("recent");
   let language = $state("en");
-  let filenamePattern = $state("");
   let sourceRoot = $state("");
   let exclusiveFolderExpansion = $state(false);
-  let exclusiveCategoryExpansion = $state(false);
   let codeBlockMaxHeight = $state(400);
   let markdownSoftBreaks = $state(false);
   let imageRoundedCorners = $state(false);
@@ -67,69 +64,6 @@
 
   let fileBrowser = $state<FileBrowser>(null!);
 
-  // ── Pattern preview ───────────────────────────────────────────────────────────
-
-  const EXAMPLES = [
-    "2024_01_15_09_30_[DevOps]_deploy_pipeline.md",
-    "2023_11_03_14_45_[Frontend]_react_hooks_guide.md",
-    "2025_06_20_08_00_meeting_notes.md",
-    "readme.md",
-  ];
-
-  function dateStrToISO(s: string) {
-    const p = s.split("_");
-    return p.length === 5 ? `${p[0]}-${p[1]}-${p[2]}T${p[3]}:${p[4]}` : `${p[0]}-${p[1]}-${p[2]}`;
-  }
-
-  function buildPatterns(patternStr: string) {
-    if (!patternStr) patternStr = "YYYY_MM_DD_HH_mm_[Category]_title";
-    const hasDate = /YYYY.*MM.*DD/.test(patternStr);
-    const hasTime = hasDate && /HH.*mm/.test(patternStr);
-    const hasCategory = /\[Category\]/i.test(patternStr);
-    const dateGroup = hasTime ? "(\\d{4}_\\d{2}_\\d{2}(?:_\\d{2}_\\d{2})?)" : "(\\d{4}_\\d{2}_\\d{2})";
-    const catGroup = "\\[([^\\]]+)\\]";
-    const catBeforeDate = hasDate && hasCategory && patternStr.search(/\[Category\]/i) < patternStr.search(/YYYY/i);
-    let full: RegExp | null = null, dateOnly: RegExp | null = null;
-    if (hasDate && hasCategory) {
-      const ordered = catBeforeDate ? `${catGroup}_${dateGroup}` : `${dateGroup}_${catGroup}`;
-      full = new RegExp("^" + ordered + "_(.+)\\.md$", "i");
-      dateOnly = new RegExp("^" + dateGroup + "_(.+)\\.md$", "i");
-    } else if (hasDate) {
-      dateOnly = new RegExp("^" + dateGroup + "_(.+)\\.md$", "i");
-    } else if (hasCategory) {
-      full = new RegExp("^" + catGroup + "_(.+)\\.md$", "i");
-    }
-    return { full, dateOnly, hasDate, hasCategory, catBeforeDate };
-  }
-
-  function titleCase(s: string) {
-    return s.split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
-  }
-
-  function parsePreview(filename: string, patterns: ReturnType<typeof buildPatterns>) {
-    if (patterns.full) {
-      const m = filename.match(patterns.full);
-      if (m) {
-        if (patterns.hasDate && patterns.hasCategory) {
-          const dateStr = patterns.catBeforeDate ? m[2] : m[1];
-          const category = patterns.catBeforeDate ? m[1] : m[2];
-          return { date: dateStrToISO(dateStr), category, title: titleCase(m[3]), match: true };
-        } else if (patterns.hasCategory) {
-          return { date: null, category: m[1], title: titleCase(m[2]), match: true };
-        }
-      }
-    }
-    if (patterns.dateOnly) {
-      const m = filename.match(patterns.dateOnly);
-      if (m) return { date: dateStrToISO(m[1]), category: "General", title: titleCase(m[2]), match: true };
-    }
-    return { date: null, category: "General", title: filename.replace(".md", ""), match: false };
-  }
-
-  let patternPreviews = $derived(
-    EXAMPLES.map(f => ({ filename: f, ...parsePreview(f, buildPatterns(filenamePattern)) }))
-  );
-
   // ── Path helpers ─────────────────────────────────────────────────────────────
 
   function isAbsolutePath(p: string) {
@@ -161,13 +95,10 @@
       theme = cfg.theme || "system";
       hiddenHeaderMenus = normalizeHiddenHeaderMenus(cfg.hiddenHeaderMenus);
       siteTheme = cfg.siteTheme === "tau" ? "tau" : "base";
-      sidebarSort = ["recent", "oldest", "alphabetical"].includes(cfg.sidebarSort) ? cfg.sidebarSort : "recent";
       language = cfg.language || "en";
       await loadI18n(language);
-      filenamePattern = cfg.filenamePattern || "";
       sourceRoot = cfg.docsFolder && cfg.sourceRoot ? pathRelative(cfg.docsFolder, cfg.sourceRoot) : "";
       exclusiveFolderExpansion = !!cfg.exclusiveFolderExpansion;
-      exclusiveCategoryExpansion = !!cfg.exclusiveCategoryExpansion;
       codeBlockMaxHeight = typeof cfg.codeBlockMaxHeight === "number" ? cfg.codeBlockMaxHeight : 400;
       markdownSoftBreaks = !!cfg.markdownSoftBreaks;
       imageRoundedCorners = !!cfg.imageRoundedCorners;
@@ -201,19 +132,13 @@
 
   async function saveConfig(e: SubmitEvent) {
     e.preventDefault();
-    const pattern = filenamePattern.trim();
-    if (pattern) {
-      const catCount = (pattern.match(/\[Category\]/gi) || []).length;
-      if (catCount === 0) { showMsg("Pattern must include [Category].", "error"); return; }
-      if (catCount > 1) { showMsg("Pattern must include [Category] only once.", "error"); return; }
-    }
     if (sourceRoot !== "" && isAbsolutePath(sourceRoot)) {
       showMsg("Source root must be a relative path.", "error"); return;
     }
     const blocked = blockedFileExtensions.split(/[\s,]+/).map(e => e.trim().replace(/^\.+/, "").toLowerCase()).filter(e => /^[a-z0-9]+$/.test(e));
     const payload = {
-      title, theme, siteTheme, hiddenHeaderMenus, sidebarSort, language, filenamePattern: pattern,
-      exclusiveFolderExpansion, exclusiveCategoryExpansion,
+      title, theme, siteTheme, hiddenHeaderMenus, language,
+      exclusiveFolderExpansion,
       codeBlockMaxHeight: Math.max(0, Math.min(5000, codeBlockMaxHeight || 0)),
       markdownSoftBreaks, imageRoundedCorners, imageCentered, imageBorder, codeBlockLightTheme,
       diagramNodePalette: [...nodePalette],
@@ -329,15 +254,6 @@
             </select>
             <p class="field-hint">{t("admin.appearance.language_hint")}</p>
           </div>
-          <div class="field-group">
-            <label class="field-label" for="field-sidebar-sort">{t("admin.appearance.sidebar_sort_label")}</label>
-            <select id="field-sidebar-sort" class="field-input" bind:value={sidebarSort}>
-              <option value="recent">{t("admin.appearance.sidebar_sort_recent")}</option>
-              <option value="oldest">{t("admin.appearance.sidebar_sort_oldest")}</option>
-              <option value="alphabetical">{t("admin.appearance.sidebar_sort_alphabetical")}</option>
-            </select>
-            <p class="field-hint">{t("admin.appearance.sidebar_sort_hint")}</p>
-          </div>
         </ConfigSection>
 
         <ConfigSection icon="☰" title={t("admin.navigation.title")} description={t("admin.navigation.description")}>
@@ -358,40 +274,6 @@
           <p class="field-hint">{t("admin.navigation.required")}</p>
         </ConfigSection>
 
-        <!-- Filename convention -->
-        <ConfigSection icon="📝" title={t("admin.section.filename.title")} description={t("admin.section.filename.desc")}>
-          <div class="field-group">
-            <label class="field-label" for="field-pattern">{t("admin.pattern.label")}</label>
-            <input id="field-pattern" type="text" class="field-input" bind:value={filenamePattern} placeholder={t("admin.pattern.placeholder")} />
-            <p class="field-hint">{t("admin.pattern.hint")} <code>{(filenamePattern || "YYYY_MM_DD_HH_mm_[Category]_title") + ".md"}</code></p>
-          </div>
-          <div class="pattern-preview">
-            <h4 class="pattern-preview-title">{t("admin.pattern.preview_title")}</h4>
-            <p class="field-hint">{t("admin.pattern.preview_desc")}</p>
-            <div class="pattern-rows">
-              {#each patternPreviews as p}
-                <div class="pattern-row">
-                  <p class="pattern-filename">{p.filename}</p>
-                  <div class="pattern-cols">
-                    <div>
-                      <span class="pattern-col-label">{t("admin.pattern.col_date")}</span>
-                      <span class={p.date ? "pattern-value--date" : "pattern-value--none"}>{p.date || t("admin.pattern.col_none")}</span>
-                    </div>
-                    <div>
-                      <span class="pattern-col-label">{t("admin.pattern.col_category")}</span>
-                      <span class="pattern-value--cat">{p.category}</span>
-                    </div>
-                    <div>
-                      <span class="pattern-col-label">{t("admin.pattern.col_title")}</span>
-                      <span class="pattern-value--title">{p.title}</span>
-                    </div>
-                  </div>
-                </div>
-              {/each}
-            </div>
-          </div>
-        </ConfigSection>
-
         <!-- Source & extra files -->
         <ConfigSection icon="📂" title={t("admin.section.source.title")} description={t("admin.section.source.desc")}>
           <div class="field-group">
@@ -410,13 +292,6 @@
               <span>{t("admin.appearance.exclusive_folder_label")}</span>
             </label>
             <p class="field-hint checkbox-hint">{t("admin.appearance.exclusive_folder_hint")}</p>
-          </div>
-          <div class="field-group">
-            <label class="checkbox-label">
-              <input type="checkbox" bind:checked={exclusiveCategoryExpansion} />
-              <span>{t("admin.appearance.exclusive_category_label")}</span>
-            </label>
-            <p class="field-hint checkbox-hint">{t("admin.appearance.exclusive_category_hint")}</p>
           </div>
         </ConfigSection>
 

@@ -114,7 +114,7 @@ Une entrée de `order` ou `hidden` qui n'existe plus est ignorée à la lecture 
 - **Dépend de** : US2 (l'arbre ne groupe plus par catégorie).
 - **Découpage (13/10/2026)** : décisions utilisateur — `category` supprimé complètement des API (pas de champ legacy), nommage par slug partout (UI, MCP, workspace, Blueprint), US4 découpée en deux.
   - **US4a — backend** (terminée) : parser (titre/date depuis le frontmatter, slug + suffixe `-2`), config (clés retirées, purgées au démarrage), `POST /api/documents`, MCP `create_document` / `list_documents`, workspace, export, Blueprint (document `001_BLUEPRINT/<slug-du-dossier>.md`, anciens `_[NOM]_` toujours trouvés), points d'appel front qui auraient planté.
-  - **US4b — frontend** : `Admin.svelte` (pattern, aperçu, `exclusiveCategoryExpansion`, `sidebarSort`), `NewDocModal.svelte` (champ catégorie, aperçu du nom), code mort de `home/tree.ts` (`buildFolderTree`, catégories, tri), `hideCategories` / `expandedCategories` dans `home/state.svelte.ts`, CSS `.category-docs`, i18n EN/FR, tests E2E Admin/éditeur concernés.
+  - **US4b — frontend** (terminée) : `Admin.svelte` (pattern, aperçu, `exclusiveCategoryExpansion`, `sidebarSort`), `NewDocModal.svelte` (champ catégorie, aperçu du nom), code mort de `home/tree.ts` (`buildFolderTree`, catégories, tri), `hideCategories` / `expandedCategories` dans `home/state.svelte.ts`, CSS `.category-docs`, i18n EN/FR, tests E2E Admin/éditeur concernés.
 
 ## US5 — API de déplacement et de réordonnancement
 
@@ -180,7 +180,7 @@ Une entrée de `order` ou `hidden` qui n'existe plus est ignorée à la lecture 
 - [x] ~~US5 — API de déplacement et de réordonnancement~~
 - [x] ~~US6 — Drag and drop dans l'explorateur~~
 - [x] ~~US4a — Supprimer la nomenclature (backend)~~
-- [ ] US4b — Supprimer la nomenclature (frontend)
+- [x] ~~US4b — Supprimer la nomenclature (frontend)~~
 - [ ] US8 — Migration des préfixes numériques
 - [ ] US9 — Starters et documentation
 

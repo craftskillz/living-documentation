@@ -291,25 +291,6 @@
         border: 1px solid var(--tbl-accent);
       }
 
-      /* Smooth sidebar transitions */
-      .category-docs {
-        transition:
-          max-height 0.2s ease,
-          opacity 0.2s ease;
-      }
-      .category-docs.collapsed {
-        max-height: 0;
-        opacity: 0;
-        overflow: hidden;
-      }
-      .category-docs.expanded {
-        max-height: 9999px;
-        opacity: 1;
-      }
-      .category-docs.no-transition {
-        transition: none !important;
-      }
-
       /* Code block decorations (copy + collapse) */
       .prose pre {
         position: relative;

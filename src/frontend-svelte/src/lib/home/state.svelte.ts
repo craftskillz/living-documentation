@@ -1,5 +1,4 @@
 import type { DocSummary, ExplorerNode } from "./types";
-import type { SidebarSort } from "./tree";
 import type { DropPosition } from "./treeDrop";
 
 /** Hovering a closed folder this long while dragging opens it. */
@@ -30,22 +29,18 @@ class HomeState {
   searchQuery = $state("");
   searchResults = $state<DocSummary[] | null>(null);
 
-  expandedCategories = $state<Set<string>>(new Set());
   expandedFolders = $state<Set<string>>(new Set());
 
-  hideCategories = $state(readBool("ld-hide-categories"));
   hideAttachments = $state(readBool("ld-hide-attachments"));
   showHiddenEntries = $state(readBool("ld-show-hidden-entries"));
   highlightStatusState = $state(readHighlight());
 
   exclusiveFolderExpansion = $state(false);
-  exclusiveCategoryExpansion = $state(false);
   codeBlockMaxHeight = $state(400);
   imageRoundedCorners = $state(false);
   imageCentered = $state(false);
   imageBorder = $state(false);
   codeBlockLightTheme = $state(false);
-  sidebarSort = $state<SidebarSort>("recent");
 
   // Explorer drag and drop: path of the dragged entry and current drop target.
   dragSourcePath = $state<string | null>(null);
@@ -102,11 +97,6 @@ class HomeState {
     );
   }
 
-  toggleHideCategories() {
-    this.hideCategories = !this.hideCategories;
-    try { localStorage.setItem("ld-hide-categories", this.hideCategories ? "1" : "0"); } catch {}
-  }
-
   toggleHideAttachments() {
     this.hideAttachments = !this.hideAttachments;
     try { localStorage.setItem("ld-hide-attachments", this.hideAttachments ? "1" : "0"); } catch {}
@@ -122,22 +112,6 @@ class HomeState {
     try { localStorage.setItem("ld-highlight-status", String(this.highlightStatusState)); } catch {}
   }
 
-  toggleCategory(key: string) {
-    const next = new Set(this.expandedCategories);
-    if (next.has(key)) {
-      next.delete(key);
-    } else {
-      if (this.exclusiveCategoryExpansion) {
-        const parent = key.split("|").slice(0, -1).join("|");
-        for (const other of [...next]) {
-          if (other.split("|").slice(0, -1).join("|") === parent) next.delete(other);
-        }
-      }
-      next.add(key);
-    }
-    this.expandedCategories = next;
-  }
-
   toggleFolder(pathKey: string) {
     const next = new Set(this.expandedFolders);
     if (next.has(pathKey)) {
@@ -145,9 +119,6 @@ class HomeState {
       // collapse descendants
       const prefix = `${pathKey}|`;
       for (const k of [...next]) if (k.startsWith(prefix)) next.delete(k);
-      const cats = new Set(this.expandedCategories);
-      for (const k of [...cats]) if (k.startsWith(prefix)) cats.delete(k);
-      this.expandedCategories = cats;
     } else {
       if (this.exclusiveFolderExpansion) {
         const parent = pathKey.split("|").slice(0, -1).join("|");

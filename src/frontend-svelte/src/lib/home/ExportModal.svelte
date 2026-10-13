@@ -126,7 +126,7 @@
   }
 
   interface TreeNode {
-    categories: Record<string, DocSummary[]>;
+    docs: DocSummary[];
     children: Record<string, TreeNode>;
   }
 
@@ -159,28 +159,22 @@
       }
 
       function buildTree(list: DocSummary[]): TreeNode {
-        const root: TreeNode = { categories: {}, children: {} };
+        const root: TreeNode = { docs: [], children: {} };
         for (const doc of list) {
           let node = root;
           for (const seg of doc.folder || []) {
-            if (!node.children[seg]) node.children[seg] = { categories: {}, children: {} };
+            if (!node.children[seg]) node.children[seg] = { docs: [], children: {} };
             node = node.children[seg];
           }
-          if (!node.categories.General) node.categories.General = [];
-          node.categories.General.push(doc);
+          node.docs.push(doc);
         }
         return root;
       }
 
       function orderedDocs(node: TreeNode): DocSummary[] {
-        const result: DocSummary[] = [];
-        if (node.categories["General"]) result.push(...node.categories["General"]);
+        const result: DocSummary[] = [...node.docs];
         const childKeys = Object.keys(node.children).sort((a, b) => a.localeCompare(b));
         for (const key of childKeys) result.push(...orderedDocs(node.children[key]));
-        const otherCats = Object.keys(node.categories)
-          .filter((c) => c !== "General")
-          .sort((a, b) => a.localeCompare(b));
-        for (const cat of otherCats) result.push(...node.categories[cat]);
         return result;
       }
 
@@ -194,22 +188,13 @@
       function buildTocNode(node: TreeNode, depth: number): string {
         let html = "";
         const indent = depth * 1.25;
-        const renderCatItems = (cat: string, catDocs: DocSummary[]) => {
-          const catLabel = depth === 0 && cat === "General" ? "General" : cat;
-          html += `<li style="margin-left:${indent}rem;margin-top:${depth === 0 ? "0.75" : "0.4"}rem;">`;
-          html += `<span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6b7280;">${catLabel}</span>`;
-          html += `<ul style="margin:0.2rem 0 0 0;padding:0;list-style:none;">`;
-          for (const doc of catDocs) {
-            html += `<li style="margin-left:${indent + 0.75}rem;padding:0.15rem 0;">`;
-            html += `<a href="#doc-${doc.id}" style="color:#1d4ed8;text-decoration:none;font-size:0.875rem;">${esc(doc.title)}</a>`;
-            if (doc.formattedDate)
-              html += `<span style="color:#9ca3af;font-size:0.7rem;margin-left:0.5rem;">${esc(doc.formattedDate)}</span>`;
-            html += `</li>`;
-          }
-          html += `</ul></li>`;
-        };
-
-        if (node.categories["General"]) renderCatItems("General", node.categories["General"]);
+        for (const doc of node.docs) {
+          html += `<li style="margin-left:${indent}rem;padding:0.15rem 0;">`;
+          html += `<a href="#doc-${doc.id}" style="color:#1d4ed8;text-decoration:none;font-size:0.875rem;">${esc(doc.title)}</a>`;
+          if (doc.formattedDate)
+            html += `<span style="color:#9ca3af;font-size:0.7rem;margin-left:0.5rem;">${esc(doc.formattedDate)}</span>`;
+          html += `</li>`;
+        }
 
         const childKeys = Object.keys(node.children).sort((a, b) => a.localeCompare(b));
         for (const key of childKeys) {
@@ -219,11 +204,6 @@
           html += buildTocNode(node.children[key], depth + 1);
           html += `</ul></li>`;
         }
-
-        const otherCats = Object.keys(node.categories)
-          .filter((c) => c !== "General")
-          .sort((a, b) => a.localeCompare(b));
-        for (const cat of otherCats) renderCatItems(cat, node.categories[cat]);
 
         return html;
       }

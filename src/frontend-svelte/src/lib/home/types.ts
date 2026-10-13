@@ -31,11 +31,6 @@ export interface ExplorerNode {
   children?: ExplorerNode[];
 }
 
-export interface TreeNode {
-  categories: Record<string, DocSummary[]>;
-  children: Record<string, TreeNode>;
-}
-
 export interface TableAttrs {
   style: string | null;
   border: string | null;

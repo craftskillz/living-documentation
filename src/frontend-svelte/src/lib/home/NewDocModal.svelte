@@ -2,6 +2,7 @@
   import { t } from "../i18n.svelte";
   import { home } from "./state.svelte";
   import { normalizeFolderSegment } from "../../../../lib/folderName";
+  import { docSlug } from "../../../../lib/docSlug";
 
   import { templatesRequest, type TemplateLibrary } from "../templates/api";
 
@@ -23,14 +24,12 @@
     if (selected) title = selected.name;
   }
   let docsFolder = $state("");
-  let pattern = $state("YYYY_MM_DD_HH_mm_[Category]_title");
 
   let browseCurrent = $state<string | null>(null);
   let browseParent = $state<string | null>(null);
   let selectedFolder = $state("");
 
   let title = $state("");
-  let category = $state("");
   let folderDisplay = $state("/ (root)");
   let browserOpen = $state(false);
   let browsePath = $state("");
@@ -38,19 +37,10 @@
   let browseLoading = $state(false);
   let browseLoadError = $state(false);
   let newFolderName = $state("");
-  let categoryOptions = $state<string[]>([]);
   let error = $state("");
   let creating = $state(false);
 
   let titleInputEl = $state<HTMLInputElement | null>(null);
-
-  function normalizeCategory(raw: string): string {
-    return (raw || "")
-      .normalize("NFD")
-      .replace(/[̀-ͯ]/g, "")
-      .toUpperCase()
-      .replace(/[^A-Z0-9_-]/g, "");
-  }
 
   function absToRel(absPath: string): string {
     const base = docsFolder;
@@ -71,16 +61,9 @@
     try {
       const cfg = await fetch("/api/config").then((r) => r.json());
       docsFolder = cfg.docsFolder || "";
-      pattern = cfg.filenamePattern || "YYYY_MM_DD_HH_mm_[Category]_title";
     } catch {
       docsFolder = "";
-      pattern = "YYYY_MM_DD_HH_mm_[Category]_title";
     }
-
-    const currentDoc =
-      home.currentDocId && home.allDocs.find((d) => d.id === home.currentDocId);
-    const prefillCategory =
-      normalizeCategory((currentDoc && currentDoc.category) || "General") || "GENERAL";
 
     let prefillFolder = "";
     if (home.currentDocId) {
@@ -95,10 +78,8 @@
     selectedFolder = prefillFolder;
     browseCurrent = prefillFolderAbs || null;
     browseParent = null;
-    populateCategoryOptions();
 
     title = "";
-    category = prefillCategory;
     folderDisplay = prefillFolder ? "/" + prefillFolder : "/ (root)";
     browserOpen = false;
     newFolderName = "";
@@ -117,20 +98,6 @@
     setTimeout(() => titleInputEl?.focus(), 50);
   }
 
-  function populateCategoryOptions() {
-    const seen = new Set<string>();
-    (home.allDocs || []).forEach((d) => {
-      const cat = normalizeCategory(d.category || "");
-      if (cat) seen.add(cat);
-    });
-    categoryOptions = Array.from(seen).sort((a, b) => a.localeCompare(b));
-  }
-
-  function sanitizeCategoryInput() {
-    const normalized = normalizeCategory(category);
-    if (category !== normalized) category = normalized;
-  }
-
   function sanitizeNewFolderNameInput(event: Event) {
     const input = event.currentTarget as HTMLInputElement;
     const normalized = normalizeFolderSegment(input.value);
@@ -138,35 +105,11 @@
     if (newFolderName !== normalized) newFolderName = normalized;
   }
 
+  // Mirrors the server naming; a `-2`, `-3`… suffix is added when the name is taken.
   const filenamePreview = $derived.by(() => {
     const trimmed = title.trim();
     if (!trimmed) return t("modal.new_doc.title_placeholder");
-
-    const cat = normalizeCategory(category) || "GENERAL";
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-    const hours = String(now.getHours()).padStart(2, "0");
-    const minutes = String(now.getMinutes()).padStart(2, "0");
-    const titleSlug =
-      trimmed
-        .toLowerCase()
-        .replace(/\s+/g, "_")
-        .replace(/[^a-z0-9_]/g, "")
-        .replace(/_+/g, "_")
-        .replace(/^_|_$/g, "") || "document";
-
-    const filename =
-      pattern
-        .replace("YYYY", String(year))
-        .replace("MM", month)
-        .replace("DD", day)
-        .replace("HH", hours)
-        .replace("mm", minutes)
-        .replace(/\[Category\]/i, `[${cat}]`)
-        .replace(/(?<![a-z0-9])(?:title_words|title)(?![a-z0-9])/i, titleSlug) + ".md";
-
+    const filename = docSlug(trimmed) + ".md";
     return selectedFolder ? selectedFolder + "/" + filename : filename;
   });
 
@@ -221,8 +164,6 @@
   async function create() {
     if (creating || templatesLoading || (initialTemplateId && templateError)) return;
     const trimmedTitle = title.trim();
-    const cat = normalizeCategory(category) || "GENERAL";
-
     if (!trimmedTitle) {
       error = t("modal.new_doc.error_empty_title");
       return;
@@ -235,7 +176,7 @@
       const res = await fetch("/api/documents", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: trimmedTitle, category: cat, folder: selectedFolder, ...(templateId ? { templateId } : {}) }),
+        body: JSON.stringify({ title: trimmedTitle, folder: selectedFolder, ...(templateId ? { templateId } : {}) }),
       });
 
       if (!res.ok) {
@@ -294,27 +235,6 @@
         />
       </div>
 
-      <!-- Category -->
-      <div class="space-y-1.5">
-        <label for="new-doc-category" class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("modal.new_doc.category_label")}</label>
-        <input
-          id="new-doc-category"
-          bind:value={category}
-          oninput={sanitizeCategoryInput}
-          onkeydown={onMainKeydown}
-          type="text"
-          list="new-doc-category-options"
-          autocomplete="off"
-          placeholder="GENERAL"
-          class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <datalist id="new-doc-category-options">
-          {#each categoryOptions as cat (cat)}
-            <option value={cat}></option>
-          {/each}
-        </datalist>
-      </div>
-
       <!-- Location -->
       <div class="space-y-1.5">
         <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("modal.new_doc.location_label")}</label>
@@ -364,7 +284,7 @@
       <!-- Filename preview -->
       <div class="space-y-1.5">
         <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("modal.new_doc.filename_label")}</label>
-        <p class="text-xs bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 font-mono text-gray-600 dark:text-gray-300 break-all">{filenamePreview}</p>
+        <p data-testid="new-doc-filename-preview" class="text-xs bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 font-mono text-gray-600 dark:text-gray-300 break-all">{filenamePreview}</p>
       </div>
 
       {#if error}<p class="text-xs text-red-500">{error}</p>{/if}

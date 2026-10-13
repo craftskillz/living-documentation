@@ -149,7 +149,7 @@ memory/                           <- mémoire projet locale indexée par `memory
 
 - **Document Markdown** : unité principale de lecture/édition, stockée en `.md` sous le dossier de documentation ou déclarée dans `extraFiles`.
 - **Templates Markdown** : bibliothèque locale classée par dossiers logiques dans `.document-templates.json` ; sélection depuis la topbar ou le formulaire de création, puis copie indépendante sans variables. Les dossiers de templates sont distincts des dossiers de destination des documents.
-- **Nom de fichier** : simple identifiant. Le titre vient du frontmatter `title` (sinon du nom, préfixe historique `YYYY_MM_DD_[X]_` ignoré), la date du frontmatter `timestamp`. Un nouveau document est nommé par le slug de son titre (`mon-guide.md`, `-2` en cas de collision). Plus de catégories ni de pattern configurable.
+- **Nom de fichier** : simple identifiant. Le titre vient du frontmatter `title` (sinon du nom, préfixe historique `YYYY_MM_DD_[X]_` ignoré), la date du frontmatter `timestamp`. Un nouveau document est nommé par le slug de son titre (`mon-guide.md`, `-2` en cas de collision) ; le slug vient de `src/lib/docSlug.ts`, module pur partagé par le serveur et l'aperçu de `NewDocModal.svelte`. Plus de catégories ni de pattern configurable, ni côté serveur ni dans l'UI (Admin, création, explorateur).
 - **Configuration portable** : `.living-doc.json` stocke les chemins en relatif au dossier docs ; `docsFolder` et `sourceRoot` sont résolus à l'exécution.
 - **Extra files** : fichiers Markdown hors dossier docs, whitelistés en config et affichés dans la section General.
 - **Métadonnées source** : bindings entre documents et fichiers source, stockés avec hash SHA-256 pour détecter la dérive documentaire.
