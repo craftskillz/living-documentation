@@ -28,6 +28,8 @@ export interface ExplorerNode {
   path: string;
   /** Document id (docs only). */
   id?: string;
+  /** Listed in the parent manifest `hidden`. */
+  hidden?: boolean;
   children?: ExplorerNode[];
 }
 

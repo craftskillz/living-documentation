@@ -31,6 +31,7 @@ class HomeState {
 
   hideCategories = $state(readBool("ld-hide-categories"));
   hideAttachments = $state(readBool("ld-hide-attachments"));
+  showHiddenEntries = $state(readBool("ld-show-hidden-entries"));
   highlightStatusState = $state(readHighlight());
 
   exclusiveFolderExpansion = $state(false);
@@ -81,6 +82,11 @@ class HomeState {
   toggleHideAttachments() {
     this.hideAttachments = !this.hideAttachments;
     try { localStorage.setItem("ld-hide-attachments", this.hideAttachments ? "1" : "0"); } catch {}
+  }
+
+  toggleShowHiddenEntries() {
+    this.showHiddenEntries = !this.showHiddenEntries;
+    try { localStorage.setItem("ld-show-hidden-entries", this.showHiddenEntries ? "1" : "0"); } catch {}
   }
 
   cycleHighlightStatus() {

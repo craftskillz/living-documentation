@@ -16,11 +16,11 @@ status: To be validated
 
 ## État courant
 
-Branche `feat/explorateur-liv-doc-main`. Backlog : [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), hypothèses H1–H6 validées. US1, US2 et US7 terminées et commitées : manifeste, `GET /api/tree`, dossiers en point visibles, explorateur branché sur l'arbre, manifeste écrit à la création de dossier.
+Branche `feat/explorateur-liv-doc-main`. Backlog : [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), hypothèses H1–H6 validées. US1, US2, US7 et US3 terminées et commitées : manifeste, `GET /api/tree`, dossiers en point visibles, explorateur branché sur l'arbre, manifeste écrit à la création de dossier, masquage / réaffichage (`PUT /api/tree/hidden`).
 
 ## Suite
 
-US3 (masquer / afficher), en TDD. L'environnement Mac est opérationnel (build, Biome, Playwright API et E2E) : `tests/api` 206/206 et `tests/e2e` 107/107 au 13/10/2026.
+US5 (API de déplacement et de réordonnancement), en TDD. L'environnement Mac est opérationnel (build, Biome, Playwright API et E2E) : unitaires 31/31, `tests/api` 210/210 et `tests/e2e` 108/108 au 14/10/2026.
 
 MCP Living Documentation non exposé comme outil dans la session : worklog et roadmap écrits à la main, pas de métadonnées attachées.
 

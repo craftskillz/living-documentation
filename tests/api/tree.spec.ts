@@ -6,6 +6,7 @@ interface TreeNode {
   kind: 'folder' | 'doc';
   name: string;
   path: string;
+  hidden?: boolean;
   children?: TreeNode[];
 }
 
@@ -122,4 +123,54 @@ test('GET /api/documents lists dot-folder documents but nothing under .git or no
   expect(files).toContain('.scratch/draft.md');
   expect(files).toContain('.notes.md');
   expect(files.filter((f) => f.startsWith('.git/') || f.startsWith('node_modules/'))).toEqual([]);
+});
+
+test('entries listed in the manifest hidden are flagged hidden in the tree', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'guide/a.md');
+  writeDoc(ld.docsAbs, 'guide/b.md');
+  fs.writeFileSync(path.join(ld.docsAbs, 'guide/liv-doc-main.md'), '---\norder: []\nhidden:\n  - b.md\n---\n');
+
+  const guide = (await getTree(request, ld.baseURL)).find((n) => n.name === 'guide');
+  const children = guide?.children ?? [];
+  expect(children.find((n) => n.name === 'a.md')?.hidden).toBeUndefined();
+  expect(children.find((n) => n.name === 'b.md')?.hidden).toBe(true);
+});
+
+test('PUT /api/tree/hidden hides then shows an entry through the parent manifest', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'guide/a.md');
+  const manifest = path.join(ld.docsAbs, 'guide/liv-doc-main.md');
+
+  const hide = await request.put(`${ld.baseURL}/api/tree/hidden`, { data: { path: 'guide/a.md', hidden: true } });
+  expect(hide.ok()).toBe(true);
+  expect(fs.readFileSync(manifest, 'utf-8')).toContain('hidden:\n  - a.md\n');
+  const guide = (await getTree(request, ld.baseURL)).find((n) => n.name === 'guide');
+  expect(guide?.children?.[0]?.hidden).toBe(true);
+
+  const show = await request.put(`${ld.baseURL}/api/tree/hidden`, { data: { path: 'guide/a.md', hidden: false } });
+  expect(show.ok()).toBe(true);
+  expect(fs.readFileSync(manifest, 'utf-8')).toContain('hidden: []');
+});
+
+test('PUT /api/tree/hidden keeps the manifest order and body', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'a.md');
+  writeDoc(ld.docsAbs, 'b.md');
+  const manifest = path.join(ld.docsAbs, 'liv-doc-main.md');
+  fs.writeFileSync(manifest, '---\norder:\n  - b.md\nhidden: []\n---\n\nRoot folder.\n');
+
+  const res = await request.put(`${ld.baseURL}/api/tree/hidden`, { data: { path: 'a.md', hidden: true } });
+  expect(res.ok()).toBe(true);
+  const content = fs.readFileSync(manifest, 'utf-8');
+  expect(content).toContain('order:\n  - b.md\n');
+  expect(content).toContain('hidden:\n  - a.md\n');
+  expect(content).toContain('Root folder.');
+});
+
+test('PUT /api/tree/hidden rejects unknown, reserved or escaping paths', async ({ request, ld }) => {
+  const put = (data: unknown) => request.put(`${ld.baseURL}/api/tree/hidden`, { data });
+  expect((await put({ path: 'missing.md', hidden: true })).status()).toBe(404);
+  expect((await put({ path: '../outside.md', hidden: true })).status()).toBe(400);
+  expect((await put({ path: '', hidden: true })).status()).toBe(400);
+  expect((await put({ path: 'liv-doc-main.md', hidden: true })).status()).toBe(400);
+  writeDoc(ld.docsAbs, 'a.md');
+  expect((await put({ path: 'a.md', hidden: 'yes' })).status()).toBe(400);
 });

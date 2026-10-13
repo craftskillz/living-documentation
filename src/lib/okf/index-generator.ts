@@ -18,7 +18,7 @@ interface ConceptEntry {
   description: string;
 }
 
-function conceptsAndDirs(dir: string): { concepts: ConceptEntry[]; subdirs: string[] } {
+function conceptsAndDirs(dir: string): { concepts: ConceptEntry[]; subdirs: string[]; hidden: Set<string> } {
   const concepts: ConceptEntry[] = [];
   const subdirs: string[] = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -35,20 +35,24 @@ function conceptsAndDirs(dir: string): { concepts: ConceptEntry[]; subdirs: stri
     }
   }
   // Same order as the explorer: default alphabetical, then the folder manifest.
-  const { order } = readFolderManifest(dir);
+  const { order, hidden } = readFolderManifest(dir);
   concepts.sort((a, b) => a.file.localeCompare(b.file, undefined, { sensitivity: "base" }));
   subdirs.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
   return {
     concepts: applyManifestOrder(concepts.map((c) => ({ ...c, name: c.file })), order),
     subdirs: applyManifestOrder(subdirs.map((name) => ({ name })), order).map((d) => d.name),
+    hidden: new Set(hidden),
   };
 }
 
 // Depth-first: build children first so a directory can decide it is non-empty.
 function generateForDir(root: string, dir: string): number {
-  const { concepts, subdirs } = conceptsAndDirs(dir);
+  const all = conceptsAndDirs(dir);
   let written = 0;
-  for (const sub of subdirs) written += generateForDir(root, path.join(dir, sub));
+  // Hidden entries are left out of the listing; hidden folders keep their own index.
+  for (const sub of all.subdirs) written += generateForDir(root, path.join(dir, sub));
+  const concepts = all.concepts.filter((c) => !all.hidden.has(c.file));
+  const subdirs = all.subdirs.filter((s) => !all.hidden.has(s));
 
   const isRoot = path.resolve(dir) === path.resolve(root);
   if (!isRoot && concepts.length === 0 && subdirs.length === 0) return written;

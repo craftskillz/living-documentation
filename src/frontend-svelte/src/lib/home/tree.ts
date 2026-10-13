@@ -132,6 +132,13 @@ export function filterExplorerTree(nodes: ExplorerNode[], ids: Set<string>): Exp
   return kept;
 }
 
+/** Drops the entries flagged hidden by their folder manifest (and their subtree). */
+export function withoutHiddenEntries(nodes: ExplorerNode[]): ExplorerNode[] {
+  return nodes
+    .filter((node) => !node.hidden)
+    .map((node) => (node.kind === "folder" ? { ...node, children: withoutHiddenEntries(node.children ?? []) } : node));
+}
+
 /** Documents in a node's subtree that match `predicate` (all when omitted). */
 export function countExplorerDocs(node: ExplorerNode, predicate: (id: string) => boolean = () => true): number {
   if (node.kind === "doc") return node.id && predicate(node.id) ? 1 : 0;

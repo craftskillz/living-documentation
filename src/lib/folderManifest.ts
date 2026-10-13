@@ -76,3 +76,19 @@ export function appendToManifestOrder(absDir: string, name: string): void {
   if (order.length === 0 || order.includes(name)) return;
   fs.writeFileSync(file, serializeFrontmatter({ ...data, order: [...order, name] }) + body);
 }
+
+/**
+ * Adds `name` to (or removes it from) the manifest `hidden` of `absDir`,
+ * creating the manifest when missing. Returns false, writing nothing, when the
+ * existing manifest has no valid YAML frontmatter.
+ */
+export function setManifestHidden(absDir: string, name: string, hidden: boolean): boolean {
+  const file = path.join(absDir, FOLDER_MANIFEST_FILE);
+  const content = fs.existsSync(file) ? fs.readFileSync(file, "utf-8") : serializeFrontmatter({ order: [], hidden: [] });
+  const { data, body, format } = parseFrontmatter(content);
+  if (format !== "yaml") return false;
+  const current = stringList(data.hidden).filter((n) => n !== name);
+  const next = hidden ? [...current, name] : current;
+  fs.writeFileSync(file, serializeFrontmatter({ ...data, order: stringList(data.order), hidden: next }) + body);
+  return true;
+}

@@ -12,6 +12,15 @@ export async function fetchTree(): Promise<ExplorerNode[]> {
   return fetch("/api/tree").then((r) => r.json());
 }
 
+export async function setTreeHidden(path: string, hidden: boolean): Promise<boolean> {
+  const res = await fetch("/api/tree/hidden", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ path, hidden }),
+  });
+  return res.ok;
+}
+
 export async function fetchAllDirs(docsFolder: string): Promise<string[]> {
   return fetch(
     `/api/browse/alldirs?path=${encodeURIComponent(docsFolder)}`,

@@ -5,10 +5,11 @@
   import type { DocSummary, ExplorerNode } from "./types";
   import { countExplorerDocs, folderLabel } from "./tree";
 
-  let { nodes, folderPath, onopen }: {
+  let { nodes, folderPath, onopen, onentrymenu }: {
     nodes: ExplorerNode[];
     folderPath: string[];
     onopen: (id: string) => void;
+    onentrymenu: (e: MouseEvent, node: ExplorerNode) => void;
   } = $props();
 
   function childPathKey(key: string) { return [...folderPath, key].join("|"); }
@@ -35,18 +36,20 @@
   {#if node.kind === "folder"}
     {@render folderGroup(node)}
   {:else}
-    {@render docItem(summaryOf(node))}
+    {@render docItem(summaryOf(node), node)}
   {/if}
 {/each}
 
-{#snippet docItem(doc: DocSummary)}
+{#snippet docItem(doc: DocSummary, node: ExplorerNode)}
   {@const annCount = home.annotationCounts[doc.id] || 0}
   {@const fileCount = home.fileAttachmentCounts[doc.id] || 0}
   {@const pill = statusPill(doc)}
   <button
     id="item-{doc.id}"
     onclick={() => onopen(doc.id)}
-    class="doc-item w-full text-left px-3 py-1.5 rounded-md text-sm transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/60 {doc.id === home.currentDocId ? 'active' : ''}"
+    oncontextmenu={(e) => onentrymenu(e, node)}
+    data-hidden={node.hidden ? "true" : undefined}
+    class="{node.hidden ? 'opacity-50 italic' : ''} doc-item w-full text-left px-3 py-1.5 rounded-md text-sm transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/60 {doc.id === home.currentDocId ? 'active' : ''}"
   >
     <div class="leading-snug flex items-center justify-between gap-2">
       <span class="truncate">{doc.title}</span>
@@ -79,7 +82,9 @@
   <div class="mb-1">
     <button
       onclick={() => home.toggleFolder(pathKey)}
-      class="w-full flex items-center justify-between px-3 py-1.5 text-xs font-semibold text-violet-600 dark:text-violet-400 uppercase tracking-wider hover:bg-gray-50 dark:hover:bg-gray-800/60 rounded-md transition-colors"
+      oncontextmenu={(e) => onentrymenu(e, folder)}
+      data-hidden={folder.hidden ? "true" : undefined}
+      class="{folder.hidden ? 'opacity-50 italic' : ''} w-full flex items-center justify-between px-3 py-1.5 text-xs font-semibold text-violet-600 dark:text-violet-400 uppercase tracking-wider hover:bg-gray-50 dark:hover:bg-gray-800/60 rounded-md transition-colors"
     >
       <span class="flex items-center gap-2 min-w-0">
         <span title={folder.name} class="truncate">📁 {folderLabel(folder.name)}</span>
@@ -93,7 +98,7 @@
     </button>
     {#if isExpanded}
       <div class="pl-3">
-        <Self nodes={folder.children ?? []} folderPath={[...folderPath, folder.name]} {onopen} />
+        <Self nodes={folder.children ?? []} folderPath={[...folderPath, folder.name]} {onopen} {onentrymenu} />
       </div>
     {/if}
   </div>

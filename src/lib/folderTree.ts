@@ -13,6 +13,8 @@ export interface FolderTreeNode {
   path: string;
   /** Document id, same as GET /api/documents (docs only). */
   id?: string;
+  /** Listed in the parent manifest `hidden`: shown only on demand, greyed. */
+  hidden?: true;
   children?: FolderTreeNode[];
 }
 
@@ -33,7 +35,8 @@ function readFolder(docsPath: string, relDir: string): FolderTreeNode[] {
       docs.push({ kind: "doc", name: entry.name, path: relPath, id: encodeURIComponent(relPath.slice(0, -3)) });
     }
   }
-  const { order } = readFolderManifest(absDir);
+  const { order, hidden } = readFolderManifest(absDir);
+  for (const node of [...folders, ...docs]) if (hidden.includes(node.name)) node.hidden = true;
   return applyManifestOrder([...folders.sort(byName), ...docs.sort(byName)], order);
 }
 

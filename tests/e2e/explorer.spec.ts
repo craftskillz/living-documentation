@@ -27,3 +27,29 @@ test('explorer shows folders in manifest order, dot folders included, and opens 
   await tree.getByText('A', { exact: true }).click();
   await expect(page.locator('article')).toContainText('Body of zeta/a.md');
 });
+
+test('hide an entry from its context menu, reveal it greyed, then show it again', async ({ page, ld }) => {
+  writeDoc(ld.docsAbs, 'keep.md');
+  writeDoc(ld.docsAbs, 'secret.md');
+  const manifest = path.join(ld.docsAbs, 'liv-doc-main.md');
+
+  await page.goto(ld.baseURL);
+  const tree = page.getByTestId('category-tree');
+  const secret = tree.getByText('Secret', { exact: true });
+  await secret.click({ button: 'right' });
+  await page.getByTestId('tree-menu-toggle-hidden').click();
+
+  await expect(secret).toHaveCount(0);
+  await expect(tree.getByText('Keep', { exact: true })).toBeVisible();
+  expect(fs.readFileSync(manifest, 'utf-8')).toContain('hidden:\n  - secret.md\n');
+
+  await page.getByTestId('toggle-show-hidden').click();
+  await expect(tree.locator('[data-hidden="true"]')).toContainText('Secret');
+
+  await page.reload();
+  await expect(tree.locator('[data-hidden="true"]')).toContainText('Secret');
+  await tree.getByText('Secret', { exact: true }).click({ button: 'right' });
+  await page.getByTestId('tree-menu-toggle-hidden').click();
+  await expect(tree.locator('[data-hidden="true"]')).toHaveCount(0);
+  expect(fs.readFileSync(manifest, 'utf-8')).toContain('hidden: []');
+});

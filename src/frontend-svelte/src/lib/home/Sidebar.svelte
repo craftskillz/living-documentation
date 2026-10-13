@@ -1,7 +1,9 @@
 <script lang="ts">
   import { home } from "./state.svelte";
   import { t } from "../i18n.svelte";
-  import { filterExplorerTree } from "./tree";
+  import { fetchTree, setTreeHidden } from "./api";
+  import { filterExplorerTree, withoutHiddenEntries } from "./tree";
+  import type { ExplorerNode } from "./types";
   import TreeNode from "./TreeNode.svelte";
 
   let { onopen, onsearch, onexport, onnewfolder, onnewdoc }: {
@@ -12,11 +14,28 @@
     onnewdoc: () => void;
   } = $props();
 
+  // Hidden entries stay out of the tree and of its search unless revealed.
+  const visibleTree = $derived(home.showHiddenEntries ? home.explorerTree : withoutHiddenEntries(home.explorerTree));
   const tree = $derived(
     home.searchQuery
-      ? filterExplorerTree(home.explorerTree, new Set(home.filteredDocs.map((d) => d.id)))
-      : home.explorerTree,
+      ? filterExplorerTree(visibleTree, new Set(home.filteredDocs.map((d) => d.id)))
+      : visibleTree,
   );
+
+  // ── Entry context menu (hide / show) ──────────────────────────────────────────
+  let entryMenu = $state<{ x: number; y: number; node: ExplorerNode } | null>(null);
+
+  function openEntryMenu(e: MouseEvent, node: ExplorerNode) {
+    e.preventDefault();
+    entryMenu = { x: e.clientX, y: e.clientY, node };
+  }
+
+  async function toggleEntryHidden() {
+    if (!entryMenu) return;
+    const { node } = entryMenu;
+    entryMenu = null;
+    if (await setTreeHidden(node.path, !node.hidden)) home.explorerTree = await fetchTree();
+  }
   const docCount = $derived(home.filteredDocs.length);
   const isEmpty = $derived(tree.length === 0);
 
@@ -88,6 +107,12 @@
           title={t("nav.toggle_attachments")}
           class="transition-colors leading-none {home.hideAttachments ? 'text-gray-400 dark:text-gray-500' : 'text-blue-500 dark:text-blue-400'}"
         ><i class="fa-solid fa-paperclip"></i></button>
+        <button
+          data-testid="toggle-show-hidden"
+          onclick={() => home.toggleShowHiddenEntries()}
+          title={t("nav.toggle_hidden_entries")}
+          class="transition-colors leading-none {home.showHiddenEntries ? 'text-blue-500 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'}"
+        ><i class="fa-solid {home.showHiddenEntries ? 'fa-eye' : 'fa-eye-slash'}"></i></button>
         <button onclick={onexport} title={t("nav.export")} class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors leading-none"><i class="fa-solid fa-file-export"></i></button>
         <button onclick={onnewfolder} title={t("nav.new_folder")} class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors leading-none"><i class="fa-solid fa-folder-plus"></i></button>
         <button onclick={onnewdoc} title={t("nav.new_document")} class="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors leading-none"><i class="fa-solid fa-file-circle-plus"></i></button>
@@ -99,9 +124,28 @@
     {#if isEmpty}
       <p class="px-4 py-8 text-sm text-gray-400 text-center">{t("sidebar.no_docs")}</p>
     {:else}
-      <TreeNode nodes={tree} folderPath={[]} {onopen} />
+      <TreeNode nodes={tree} folderPath={[]} {onopen} onentrymenu={openEntryMenu} />
     {/if}
   </nav>
+
+  {#if entryMenu}
+    <!-- svelte-ignore a11y_no_static_element_interactions, a11y_click_events_have_key_events -->
+    <div class="fixed inset-0 z-40" onclick={() => (entryMenu = null)} oncontextmenu={(e) => { e.preventDefault(); entryMenu = null; }}></div>
+    <div
+      role="menu"
+      class="fixed z-50 min-w-[8rem] py-1 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg text-sm"
+      style="left:{entryMenu.x}px; top:{entryMenu.y}px"
+    >
+      <button
+        role="menuitem"
+        data-testid="tree-menu-toggle-hidden"
+        onclick={toggleEntryHidden}
+        class="w-full text-left px-3 py-1.5 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+      >
+        <i class="fa-solid {entryMenu.node.hidden ? 'fa-eye' : 'fa-eye-slash'} mr-2"></i>{t(entryMenu.node.hidden ? "sidebar.show_entry" : "sidebar.hide_entry")}
+      </button>
+    </div>
+  {/if}
 
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div
