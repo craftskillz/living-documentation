@@ -4,7 +4,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { parseFilename, type DocMetadata } from "../lib/parser";
 import { readConfig } from "../lib/config";
-import { readMetadataStore, writeMetadataStore } from "../lib/metadata";
+import { readMetadataStore } from "../lib/metadata";
+import { RESERVED_ROOT_FOLDERS, relocateEntry, TreeMoveError } from "../lib/treeMove";
 import { normalizeFolderPath } from "../lib/folderName";
 import { parseDocStatus } from "../lib/status";
 import { isListedDir, isListedDocFile } from "../lib/explorerEntries";
@@ -14,7 +15,6 @@ import { renderMarkdownWithCompareBlocks } from "../lib/compareBlock";
 
 const METADATA_SEARCH_PREFIX = "metadata://";
 
-const RESERVED_DOCS_SUBFOLDERS = new Set(["files", "images"]);
 
 function toPosixPath(value: string): string {
   return value.split(path.sep).join("/");
@@ -496,7 +496,7 @@ export function documentsRouter(docsPath: string): Router {
       return res.status(403).json({ error: "Access denied" });
     }
     const firstSegment = requestedFolder.split("/")[0];
-    if (RESERVED_DOCS_SUBFOLDERS.has(firstSegment)) {
+    if (RESERVED_ROOT_FOLDERS.has(firstSegment)) {
       return res.status(400).json({
         error: `"${firstSegment}" is a reserved folder name at the docs root`,
       });
@@ -528,36 +528,17 @@ export function documentsRouter(docsPath: string): Router {
         .json({ error: "A document with this name already exists" });
     }
 
+    // Disk move, folder manifests and doc-keyed stores (.metadata.json,
+    // .annotations.json, favorites) are migrated by the shared tree service.
+    let relPath: string;
     try {
       fs.mkdirSync(targetDir, { recursive: true });
-      fs.renameSync(sourcePath, targetPath);
-    } catch {
+      relPath = relocateEntry(docsPath, sourcePath, targetDir);
+    } catch (err) {
+      if (err instanceof TreeMoveError) return res.status(err.status).json({ error: err.message });
       return res.status(500).json({ error: "Failed to move document" });
     }
-
-    const relPath = toPosixPath(path.relative(docsPath, targetPath));
     const newId = relPath.slice(0, -3);
-
-    // Migrate doc-keyed store entries from the old id to the new one.
-    const metadataStore = readMetadataStore(docsPath);
-    if (metadataStore[id]) {
-      metadataStore[newId] = metadataStore[id];
-      delete metadataStore[id];
-      writeMetadataStore(docsPath, metadataStore);
-    }
-    const annPath = path.join(docsPath, ".annotations.json");
-    if (fs.existsSync(annPath)) {
-      try {
-        const store = JSON.parse(fs.readFileSync(annPath, "utf-8"));
-        if (store && typeof store === "object" && store[id]) {
-          store[newId] = store[id];
-          delete store[id];
-          fs.writeFileSync(annPath, JSON.stringify(store, null, 2), "utf-8");
-        }
-      } catch {
-        /* non-fatal */
-      }
-    }
 
     const meta = parseFilename(filename, readConfig(docsPath).filenamePattern);
     const subdir = path.posix.dirname(relPath);
@@ -611,7 +592,7 @@ export function documentsRouter(docsPath: string): Router {
         return res.status(403).json({ error: 'Access denied' });
       }
       const firstSegment = folder.trim().replace(/^\/+/, '').split('/')[0];
-      if (RESERVED_DOCS_SUBFOLDERS.has(firstSegment)) {
+      if (RESERVED_ROOT_FOLDERS.has(firstSegment)) {
         return res.status(400).json({
           error: `"${firstSegment}" is a reserved folder name at the docs root`,
         });

@@ -5,6 +5,7 @@ import { isListedDocFile, isListedDir } from "../lib/explorerEntries";
 import { isReservedOkfFile } from "../lib/okf";
 import { setManifestHidden } from "../lib/folderManifest";
 import { buildFolderTree } from "../lib/folderTree";
+import { moveTreeEntry, TreeMoveError } from "../lib/treeMove";
 
 export function treeRouter(docsPath: string): Router {
   const router = Router();
@@ -41,6 +42,21 @@ export function treeRouter(docsPath: string): Router {
       return res.status(409).json({ error: "Parent liv-doc-main.md has an invalid frontmatter" });
     }
     res.json({ path: rel.split(path.sep).join("/"), hidden });
+  });
+
+  // POST /api/tree/move — { source, targetFolder, index }: reorders an entry
+  // in its folder or moves it, with its doc ids, to another folder.
+  router.post("/move", (req: Request, res: Response) => {
+    const { source, targetFolder, index } = req.body as { source?: unknown; targetFolder?: unknown; index?: unknown };
+    if (typeof source !== "string" || !source.trim() || typeof targetFolder !== "string" || typeof index !== "number") {
+      return res.status(400).json({ error: "source, targetFolder and index (number) are required" });
+    }
+    try {
+      res.json(moveTreeEntry(docsPath, { source, targetFolder, index }));
+    } catch (err) {
+      if (err instanceof TreeMoveError) return res.status(err.status).json({ error: err.message });
+      res.status(500).json({ error: "Failed to move entry" });
+    }
   });
 
   return router;

@@ -92,3 +92,38 @@ export function setManifestHidden(absDir: string, name: string, hidden: boolean)
   fs.writeFileSync(file, serializeFrontmatter({ ...data, order: stringList(data.order), hidden: next }) + body);
   return true;
 }
+
+/** True when `absDir` has no manifest yet or one with a valid YAML frontmatter. */
+export function isManifestWritable(absDir: string): boolean {
+  const file = path.join(absDir, FOLDER_MANIFEST_FILE);
+  return !fs.existsSync(file) || parseFrontmatter(fs.readFileSync(file, "utf-8")).format === "yaml";
+}
+
+function rewriteManifest(absDir: string, edit: (manifest: FolderManifest) => FolderManifest): void {
+  const file = path.join(absDir, FOLDER_MANIFEST_FILE);
+  const content = fs.existsSync(file) ? fs.readFileSync(file, "utf-8") : serializeFrontmatter({ order: [], hidden: [] });
+  const { data, body, format } = parseFrontmatter(content);
+  if (format !== "yaml") return;
+  const next = edit({ order: stringList(data.order), hidden: stringList(data.hidden) });
+  fs.writeFileSync(file, serializeFrontmatter({ ...data, ...next }) + body);
+}
+
+/**
+ * Replaces the manifest `order` of `absDir` (created when missing) and purges
+ * `hidden` names that no longer exist on disk.
+ */
+export function setManifestOrder(absDir: string, order: string[]): void {
+  rewriteManifest(absDir, ({ hidden }) => ({
+    order,
+    hidden: hidden.filter((name) => fs.existsSync(path.join(absDir, name))),
+  }));
+}
+
+/** Removes `name` from the `order` and `hidden` of an existing manifest. */
+export function removeFromManifest(absDir: string, name: string): void {
+  if (!fs.existsSync(path.join(absDir, FOLDER_MANIFEST_FILE))) return;
+  rewriteManifest(absDir, ({ order, hidden }) => ({
+    order: order.filter((n) => n !== name),
+    hidden: hidden.filter((n) => n !== name),
+  }));
+}

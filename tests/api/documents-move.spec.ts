@@ -112,4 +112,22 @@ test.describe('documents move API — metadata key migration', () => {
     // Unrelated entries untouched.
     expect(store['2026_01_02_10_00_[ADR]_superseded']).toHaveLength(1);
   });
+
+  test('keeps the folder manifests in step: removed from the source, appended to a non-empty target order', async ({ request, ld }) => {
+    fs.writeFileSync(
+      path.join(ld.docsAbs, 'liv-doc-main.md'),
+      '---\norder:\n  - 2026_01_01_10_00_[General]_intro.md\nhidden:\n  - 2026_01_01_10_00_[General]_intro.md\n---\n',
+    );
+    fs.mkdirSync(path.join(ld.docsAbs, 'Todo'), { recursive: true });
+    fs.writeFileSync(path.join(ld.docsAbs, 'Todo/a.md'), '# a\n');
+    fs.writeFileSync(path.join(ld.docsAbs, 'Todo/liv-doc-main.md'), '---\norder:\n  - a.md\n---\n');
+
+    const res = await request.post(`${ld.baseURL}/api/documents/${INTRO_ID}/move`, { data: { folder: 'Todo' } });
+
+    expect(res.ok()).toBe(true);
+    expect(fs.readFileSync(path.join(ld.docsAbs, 'liv-doc-main.md'), 'utf-8')).not.toContain('intro');
+    expect(fs.readFileSync(path.join(ld.docsAbs, 'Todo/liv-doc-main.md'), 'utf-8')).toMatch(
+      /- a\.md\n\s+- 2026_01_01_10_00_\[General\]_intro\.md/,
+    );
+  });
 });

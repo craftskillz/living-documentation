@@ -174,3 +174,106 @@ test('PUT /api/tree/hidden rejects unknown, reserved or escaping paths', async (
   writeDoc(ld.docsAbs, 'a.md');
   expect((await put({ path: 'a.md', hidden: 'yes' })).status()).toBe(400);
 });
+
+function readJson(file: string): Record<string, unknown> {
+  return JSON.parse(fs.readFileSync(file, 'utf-8')) as Record<string, unknown>;
+}
+
+async function move(
+  request: import('@playwright/test').APIRequestContext,
+  baseURL: string,
+  data: Record<string, unknown>,
+) {
+  return request.post(`${baseURL}/api/tree/move`, { data });
+}
+
+test('POST /api/tree/move reorders inside the same folder through the manifest only', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'guide/a.md');
+  writeDoc(ld.docsAbs, 'guide/b.md');
+  writeDoc(ld.docsAbs, 'guide/c.md');
+  fs.writeFileSync(path.join(ld.docsAbs, 'guide/liv-doc-main.md'), '---\norder:\n  - gone.md\n---\n\nGuide folder.\n');
+
+  const res = await move(request, ld.baseURL, { source: 'guide/c.md', targetFolder: 'guide', index: 1 });
+
+  expect(res.status()).toBe(200);
+  expect(await res.json()).toMatchObject({ path: 'guide/c.md', id: encodeURIComponent('guide/c') });
+  const guide = (await getTree(request, ld.baseURL)).find((n) => n.name === 'guide');
+  expect(names(guide?.children)).toEqual(['a.md', 'c.md', 'b.md']);
+  expect(fs.existsSync(path.join(ld.docsAbs, 'guide/c.md'))).toBe(true);
+  const manifest = fs.readFileSync(path.join(ld.docsAbs, 'guide/liv-doc-main.md'), 'utf-8');
+  expect(manifest).not.toContain('gone.md');
+  expect(manifest).toContain('Guide folder.');
+});
+
+test('POST /api/tree/move moves a file to another folder at the given index', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'guide/a.md');
+  writeDoc(ld.docsAbs, 'guide/b.md');
+  writeDoc(ld.docsAbs, 'notes/x.md');
+  writeDoc(ld.docsAbs, 'notes/y.md');
+  fs.writeFileSync(path.join(ld.docsAbs, 'guide/liv-doc-main.md'), '---\norder:\n  - b.md\n  - a.md\nhidden:\n  - a.md\n---\n');
+  fs.writeFileSync(path.join(ld.docsAbs, 'notes/liv-doc-main.md'), '---\norder:\n  - y.md\n---\n');
+
+  const res = await move(request, ld.baseURL, { source: 'guide/a.md', targetFolder: 'notes', index: 1 });
+
+  expect(res.status()).toBe(200);
+  expect(await res.json()).toMatchObject({ path: 'notes/a.md', id: encodeURIComponent('notes/a') });
+  expect(fs.existsSync(path.join(ld.docsAbs, 'guide/a.md'))).toBe(false);
+  expect(fs.existsSync(path.join(ld.docsAbs, 'notes/a.md'))).toBe(true);
+  const tree = await getTree(request, ld.baseURL);
+  expect(names(tree.find((n) => n.name === 'notes')?.children)).toEqual(['y.md', 'a.md', 'x.md']);
+  expect(fs.readFileSync(path.join(ld.docsAbs, 'guide/liv-doc-main.md'), 'utf-8')).not.toContain('a.md');
+});
+
+test('POST /api/tree/move moves a folder and migrates every doc id it contains', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'guide/sub/d.md');
+  writeDoc(ld.docsAbs, 'guide/keep.md');
+  const metadataFile = path.join(ld.docsAbs, '.metadata.json');
+  const annotationsFile = path.join(ld.docsAbs, '.annotations.json');
+  const configFile = path.join(ld.docsAbs, '.living-doc.json');
+  fs.writeFileSync(metadataFile, JSON.stringify({ 'guide/sub/d': [{ path: 'x' }], 'guide/keep': [] }));
+  fs.writeFileSync(annotationsFile, JSON.stringify({ 'guide/sub/d': [{ id: 'n1' }] }));
+  const config = readJson(configFile);
+  fs.writeFileSync(
+    configFile,
+    JSON.stringify({ ...config, favorites: [{ id: encodeURIComponent('guide/sub/d'), title: 'D' }] }),
+  );
+
+  const res = await move(request, ld.baseURL, { source: 'guide/sub', targetFolder: '', index: 0 });
+
+  expect(res.status()).toBe(200);
+  expect(await res.json()).toMatchObject({ path: 'sub' });
+  expect(fs.existsSync(path.join(ld.docsAbs, 'sub/d.md'))).toBe(true);
+  expect(names(await getTree(request, ld.baseURL))[0]).toBe('sub');
+  expect(Object.keys(readJson(metadataFile)).sort()).toEqual(['guide/keep', 'sub/d']);
+  expect(Object.keys(readJson(annotationsFile))).toEqual(['sub/d']);
+  expect(readJson(configFile).favorites).toEqual([{ id: encodeURIComponent('sub/d'), title: 'D' }]);
+});
+
+test('POST /api/tree/move rejects invalid moves without touching the disk', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'guide/sub/d.md');
+  writeDoc(ld.docsAbs, 'notes/d.md');
+  writeDoc(ld.docsAbs, 'guide/d.md');
+  fs.mkdirSync(path.join(ld.docsAbs, 'images'), { recursive: true });
+
+  const cases: [Record<string, unknown>, number][] = [
+    [{ source: 'guide', targetFolder: 'guide', index: 0 }, 400],
+    [{ source: 'guide', targetFolder: 'guide/sub', index: 0 }, 400],
+    [{ source: 'guide/d.md', targetFolder: 'notes', index: 0 }, 409],
+    [{ source: '../outside.md', targetFolder: '', index: 0 }, 403],
+    [{ source: 'guide/d.md', targetFolder: '../..', index: 0 }, 403],
+    [{ source: 'guide/d.md', targetFolder: 'images', index: 0 }, 400],
+    [{ source: 'images', targetFolder: 'guide', index: 0 }, 400],
+    [{ source: 'guide/liv-doc-main.md', targetFolder: 'notes', index: 0 }, 400],
+    [{ source: 'guide/missing.md', targetFolder: 'notes', index: 0 }, 404],
+    [{ source: 'guide/d.md', targetFolder: 'missing', index: 0 }, 404],
+    [{ source: 'guide/d.md', targetFolder: 'notes', index: -1 }, 400],
+    [{ source: 'guide/d.md', targetFolder: 'notes', index: 'x' }, 400],
+  ];
+  for (const [data, status] of cases) {
+    const res = await move(request, ld.baseURL, data);
+    expect(res.status(), JSON.stringify(data)).toBe(status);
+  }
+  expect(fs.existsSync(path.join(ld.docsAbs, 'guide/d.md'))).toBe(true);
+  expect(fs.existsSync(path.join(ld.docsAbs, 'guide/sub/d.md'))).toBe(true);
+  expect(fs.existsSync(path.join(ld.docsAbs, 'images'))).toBe(true);
+});
