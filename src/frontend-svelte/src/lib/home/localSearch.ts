@@ -127,7 +127,8 @@ export function initLocalSearch(contentEl: HTMLElement, mount: HTMLElement, t: T
 
   function clearHighlights() {
     contentEl.querySelectorAll("mark.ld-local-mark").forEach(m => {
-      const parent = m.parentNode!;
+      const parent = m.parentNode;
+      if (!parent) return;
       while (m.firstChild) parent.insertBefore(m.firstChild, m);
       parent.removeChild(m);
     });
@@ -199,9 +200,8 @@ export function initLocalSearch(contentEl: HTMLElement, mount: HTMLElement, t: T
       const { normalized: norm, map } = normalizeWithMap(original);
       if (!norm) return;
       const localMatches: { start: number; end: number; term: string }[] = [];
-      let m: RegExpExecArray | null;
       re.lastIndex = 0;
-      while ((m = re.exec(norm)) !== null) {
+      for (let m = re.exec(norm); m !== null; m = re.exec(norm)) {
         if (m[0].length === 0) { re.lastIndex++; continue; }
         localMatches.push({ start: m.index, end: m.index + m[0].length, term: m[0] });
       }
@@ -216,8 +216,11 @@ export function initLocalSearch(contentEl: HTMLElement, mount: HTMLElement, t: T
         out += `<mark class="ld-local-mark" id="ld-local-match-${matchIdx++}">${esc(original.slice(origStart, origEnd))}</mark>`;
         cursor = origEnd;
         if (block) {
-          if (!blockCoverage.has(block)) blockCoverage.set(block, new Set());
-          const cov = blockCoverage.get(block)!;
+          let cov = blockCoverage.get(block);
+          if (!cov) {
+            cov = new Set();
+            blockCoverage.set(block, cov);
+          }
           tokenVariants.forEach((vs, ti) => { if (vs.has(mm.term)) cov.add(ti); });
         }
       });
@@ -274,7 +277,8 @@ export function initLocalSearch(contentEl: HTMLElement, mount: HTMLElement, t: T
     results.classList.remove("hidden");
 
     listEl.querySelectorAll(".ld-local-item").forEach(btn => {
-      btn.addEventListener("click", () => scrollToLocalMatch((btn as HTMLElement).dataset.target!));
+      const target = (btn as HTMLElement).dataset.target;
+      if (target) btn.addEventListener("click", () => scrollToLocalMatch(target));
     });
   }
 
@@ -287,7 +291,9 @@ export function initLocalSearch(contentEl: HTMLElement, mount: HTMLElement, t: T
       if (ancestor.tagName === "DETAILS" && !(ancestor as HTMLDetailsElement).open) (ancestor as HTMLDetailsElement).open = true;
       ancestor = ancestor.parentElement;
     }
-    contentEl.querySelectorAll("mark.ld-local-mark.ld-local-active").forEach(m => m.classList.remove("ld-local-active"));
+    contentEl.querySelectorAll("mark.ld-local-mark.ld-local-active").forEach(m => {
+      m.classList.remove("ld-local-active");
+    });
     mark.classList.add("ld-local-active");
     listEl.querySelectorAll(".ld-local-item").forEach(b => {
       (b as HTMLElement).classList.toggle("ld-local-item-active", (b as HTMLElement).dataset.target === id);

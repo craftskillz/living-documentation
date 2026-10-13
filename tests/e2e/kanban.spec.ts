@@ -95,7 +95,7 @@ test.describe('kanban board widget', () => {
       const topInsets = await columns.evaluateAll((els) =>
         els.map((el) => {
           const columnTop = el.getBoundingClientRect().top;
-          const titleTop = el.querySelector('h2')!.getBoundingClientRect().top;
+          const titleTop = (el.querySelector('h2') as HTMLElement).getBoundingClientRect().top;
           return titleTop - columnTop;
         }),
       );
@@ -115,7 +115,7 @@ test.describe('kanban board widget', () => {
     // Layout is synchronized on animation frames; presence alone is not readiness.
     await expect(async () => {
       const metrics = await page.evaluate(() => {
-        const laneRect = document.querySelector('[data-testid="kanban-lanes"]')!.getBoundingClientRect();
+        const laneRect = (document.querySelector('[data-testid="kanban-lanes"]') as HTMLElement).getBoundingClientRect();
         const columnRects = Array.from(
           document.querySelectorAll('[data-testid="kanban-column"]'),
         ).map((el) => el.getBoundingClientRect());
@@ -191,9 +191,9 @@ test.describe('kanban board widget', () => {
   test('creating a kanban snippet uses default labels and colors in preview', async ({ page, ld }) => {
     await page.goto(boardUrl(ld.baseURL));
     await expect(page.getByTestId('kanban-board')).toBeVisible();
-    await page.waitForFunction(() => typeof (window as any).openSnippetsModalForInlineInsert === 'function');
+    await page.waitForFunction(() => typeof window.openSnippetsModalForInlineInsert === 'function');
     await page.evaluate(() => {
-      (window as any).openSnippetsModalForInlineInsert(0);
+      window.openSnippetsModalForInlineInsert(0);
     });
     await page.locator('#snippet-picker [data-snippet-type="kanban"]').click();
 

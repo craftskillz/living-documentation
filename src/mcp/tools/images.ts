@@ -274,7 +274,7 @@ export async function toolGenerateImage(
     );
   }
 
-  const folder = args.folder || '';
+  const folder = args.folder || '';
   const imagesDir = path.join(docsPath, GENERATED_IMAGE_FOLDER, folder);
   fs.mkdirSync(imagesDir, { recursive: true });
   const basename = timestampedFilename(args.filename, ext);

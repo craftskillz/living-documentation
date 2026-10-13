@@ -466,7 +466,7 @@ function applyBlockquoteStyles(contentEl: HTMLElement, content: string) {
     if (hasTitle) {
       const titleSpan = document.createElement("span");
       titleSpan.className = "ld-callout-title";
-      titleSpan.textContent = a.title!;
+      titleSpan.textContent = a.title ?? "";
       header.appendChild(titleSpan);
     }
 
@@ -531,7 +531,7 @@ function applyCompareBlockStyles(contentEl: HTMLElement) {
         if (hasTitle) {
           const titleSpan = document.createElement("span");
           titleSpan.className = "ld-callout-title";
-          titleSpan.textContent = a.title!;
+          titleSpan.textContent = a.title ?? "";
           header.appendChild(titleSpan);
         }
         bq.insertBefore(header, bq.firstChild);

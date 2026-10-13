@@ -1,13 +1,14 @@
 import fs from "node:fs";
 import path from "node:path";
 import { test, expect } from "../helpers/ld-fixture";
+import type { APIRequestContext } from "@playwright/test";
 
 // Small text file encoded as base64 — used as the default upload payload.
 const TEXT_B64 = Buffer.from("hello living-ai-documentation").toString(
   "base64",
 );
 
-async function uploadSample(request: any, baseURL: string, name = "note.txt", documentId?: string) {
+async function uploadSample(request: APIRequestContext, baseURL: string, name = "note.txt", documentId?: string) {
   const res = await request.post(`${baseURL}/api/files/upload`, {
     data: { data: TEXT_B64, name, documentId },
   });

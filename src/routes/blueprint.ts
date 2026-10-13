@@ -193,7 +193,7 @@ export function blueprintRouter(docsPath: string): Router {
         : '';
 
       const folders = listFolders(sourceRoot, reqPath, blueprintDocCategories(docsPath));
-      const name = reqPath ? reqPath.split('/').pop()! : path.basename(sourceRoot);
+      const name = reqPath ? (reqPath.split('/').pop() ?? reqPath) : path.basename(sourceRoot);
 
       const response: BlueprintResponse = {
         sourceRoot: path.basename(sourceRoot),

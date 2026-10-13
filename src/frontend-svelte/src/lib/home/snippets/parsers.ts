@@ -187,6 +187,7 @@ export function ldParseSnippetMarkdown(
   type: string,
   markdown: string,
   options: { inlineIndent?: string } = {},
+  // biome-ignore lint/suspicious/noExplicitAny: parsed shape depends on `type`
 ): any {
   const text = (markdown || "").trim();
   switch (type) {

@@ -81,8 +81,7 @@ function matchesPattern(filePath: string, pattern?: string): boolean {
 function walk(root: string, onFile: (relPath: string, absPath: string) => boolean): void {
   // onFile returns false to stop walking.
   const stack: string[] = [root];
-  while (stack.length) {
-    const dir = stack.pop()!;
+  for (let dir = stack.pop(); dir !== undefined; dir = stack.pop()) {
     let entries: fs.Dirent[];
     try {
       entries = fs.readdirSync(dir, { withFileTypes: true });

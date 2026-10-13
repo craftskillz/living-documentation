@@ -59,18 +59,6 @@ interface Entity {
   config: EntityConfig;
 }
 
-interface Point {
-  x: number;
-  y: number;
-}
-
-interface Bounds {
-  left: number;
-  top: number;
-  right: number;
-  bottom: number;
-}
-
 interface ChildDistanceOptions {
   spread?: number;
   includeSubtree?: boolean;

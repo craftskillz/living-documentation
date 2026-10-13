@@ -149,7 +149,7 @@ function setCardDragHighlight(card: HTMLElement, active: boolean): void {
   card.style.opacity = active ? KANBAN_CARD_DRAG_OPACITY : "";
 }
 
-function syncKanbanViewportHeight(root: HTMLElement, lanes: HTMLElement): void {
+function syncKanbanViewportHeight(lanes: HTMLElement): void {
   const columns = Array.from(
     lanes.querySelectorAll<HTMLElement>("[data-testid='kanban-column']"),
   );
@@ -176,7 +176,7 @@ function installKanbanViewportHeightSync(
 ): () => void {
   const apply = () => {
     if (!document.body.contains(root)) return;
-    syncKanbanViewportHeight(root, lanes);
+    syncKanbanViewportHeight(lanes);
   };
   apply();
   requestAnimationFrame(apply);

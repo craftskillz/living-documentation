@@ -141,8 +141,7 @@ export function isConcreteFileAttachmentHref(href: string): boolean {
 export function countFileAttachmentLinks(content: string): number {
   const linkRe = /\[[^\]]*]\(\s*(\.?\/files\/[^)\s]+)(?:\s+["'][^)]*["'])?\s*\)/gi;
   let count = 0;
-  let match: RegExpExecArray | null;
-  while ((match = linkRe.exec(content)) !== null) {
+  for (let match = linkRe.exec(content); match !== null; match = linkRe.exec(content)) {
     if (isConcreteFileAttachmentHref(match[1])) count += 1;
   }
   return count;
@@ -631,7 +630,7 @@ export function documentsRouter(docsPath: string): Router {
 
     const initialContent = templateContent ?? (
       typeof content === 'string'
-        ? content.trimEnd() + '\n'
+        ? `${content.trimEnd()}\n`
         : `# ${title.trim()}\n`);
     const relPath = path.relative(docsPath, filePath);
     try {

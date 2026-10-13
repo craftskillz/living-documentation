@@ -1,4 +1,5 @@
 import { test, expect } from '../helpers/ld-fixture';
+import { defined } from '../helpers/assert';
 
 test.describe('annotations on the with-annotations fixture', () => {
   test.use({ fixtureName: 'with-annotations' });
@@ -11,7 +12,7 @@ test.describe('annotations on the with-annotations fixture', () => {
     const counts = (await res.json()) as Record<string, number>;
     const matchingKey = Object.keys(counts).find((k) => k.includes('intro'));
     expect(matchingKey).toBeDefined();
-    expect(counts[matchingKey!]).toBe(1);
+    expect(counts[defined(matchingKey)]).toBe(1);
   });
 
   test('GET /api/annotations/:docId returns the fixture annotation', async ({ request, ld }) => {

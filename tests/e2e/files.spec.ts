@@ -1,9 +1,10 @@
 import { test, expect } from '../helpers/ld-fixture';
+import type { APIRequestContext } from '@playwright/test';
 
 const TEXT_B64 = Buffer.from('file page fixture').toString('base64');
 
 async function upload(
-  request: any,
+  request: APIRequestContext,
   baseURL: string,
   name: string,
   documentId?: string,

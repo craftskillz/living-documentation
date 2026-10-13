@@ -4,6 +4,14 @@ import path from 'node:path';
 import { setupFixture, teardownFixture, type FixtureContext } from './fixture';
 import { pickFreePort, spawnLD, killLD } from './server';
 
+// Test hooks the Home page exposes on `window` for the snippet modal.
+declare global {
+  interface Window {
+    openSnippetsModal(): void;
+    openSnippetsModalForInlineInsert(pos: number): void;
+  }
+}
+
 export interface LDContext {
   baseURL: string;
   port: number;

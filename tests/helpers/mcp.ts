@@ -7,13 +7,16 @@ function parseSSE(text: string): unknown {
   return JSON.parse(match[1]);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: JSON-RPC payloads are walked dynamically by the specs
+type RpcResponse = { result?: any; error?: any };
+
 async function rpcCall(
   request: APIRequestContext,
   baseURL: string,
   id: number,
   method: string,
   params: Record<string, unknown>,
-): Promise<{ result?: any; error?: any }> {
+): Promise<RpcResponse> {
   const res = await request.post(`${baseURL}/mcp`, {
     headers: {
       'Content-Type': 'application/json',
@@ -24,7 +27,7 @@ async function rpcCall(
   if (!res.ok()) {
     throw new Error(`MCP HTTP ${res.status()}: ${await res.text()}`);
   }
-  return parseSSE(await res.text()) as { result?: any; error?: any };
+  return parseSSE(await res.text()) as RpcResponse;
 }
 
 async function initialize(request: APIRequestContext, baseURL: string): Promise<void> {

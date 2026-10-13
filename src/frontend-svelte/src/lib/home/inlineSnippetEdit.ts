@@ -184,8 +184,7 @@ function _inlineAddRegexRanges(
 
 function _inlineAddCompareBlockRanges(ranges: InlineSnippetRange[], content: string): void {
   const regex = /^:::compare[ \t]*\n[\s\S]*?^:::[ \t]*$/gm;
-  let match: RegExpExecArray | null;
-  while ((match = regex.exec(content))) {
+  for (let match = regex.exec(content); match; match = regex.exec(content)) {
     const raw = match[0];
     if (!raw.trim()) {
       if (raw.length === 0) regex.lastIndex += 1;
@@ -201,8 +200,7 @@ function _inlineAddCompareBlockRanges(ranges: InlineSnippetRange[], content: str
 
 function _inlineAddCodeBlockRanges(ranges: InlineSnippetRange[], content: string): void {
   const regex = new RegExp(`^${codeBlockSource()}`, "gm");
-  let match: RegExpExecArray | null;
-  while ((match = regex.exec(content))) {
+  for (let match = regex.exec(content); match; match = regex.exec(content)) {
     const raw = match[0];
     if (!raw.trim()) {
       if (raw.length === 0) regex.lastIndex += 1;

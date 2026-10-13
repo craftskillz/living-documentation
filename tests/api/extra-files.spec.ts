@@ -2,11 +2,12 @@ import { readOkf } from '../helpers/okf';
 import fs from 'node:fs';
 import path from 'node:path';
 import { test, expect } from '../helpers/ld-fixture';
+import type { APIRequestContext } from '@playwright/test';
 
 test.describe('documents routes for extraFiles (path.isAbsolute branch)', () => {
   test.use({ fixtureName: 'with-extra-files' });
 
-  async function findExternalDocId(request: any, baseURL: string): Promise<string> {
+  async function findExternalDocId(request: APIRequestContext, baseURL: string): Promise<string> {
     const res = await request.get(`${baseURL}/api/documents`);
     const docs = (await res.json()) as Array<{ id: string; title: string; category: string }>;
     const external = docs.find(

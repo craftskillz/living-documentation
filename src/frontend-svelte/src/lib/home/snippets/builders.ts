@@ -401,6 +401,7 @@ export function ldBuildColumnsSnippetMarkdown(data: {
   return `${header}\n\n${columns.join("\n\n")}\n\n<!-- /layout-columns -->`;
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: snippet data shape depends on `type`
 export function ldBuildSnippetMarkdown(type: string, data: any): string {
   switch (type) {
     case "collapsible":

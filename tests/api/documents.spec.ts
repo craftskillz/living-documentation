@@ -2,6 +2,7 @@ import { readOkf } from '../helpers/okf';
 import fs from 'node:fs';
 import path from 'node:path';
 import { test, expect } from '../helpers/ld-fixture';
+import { defined } from '../helpers/assert';
 
 // The minimal fixture has: Intro (General), Quickstart (Guide), Advanced (Guide).
 const INTRO_ID = encodeURIComponent('2026_01_01_10_00_[General]_intro');
@@ -154,7 +155,7 @@ test('GET /api/documents/file-counts returns attachment counts per doc', async (
   const counts = (await res.json()) as Record<string, number>;
   const introKey = Object.keys(counts).find((k) => decodeURIComponent(k).includes('intro'));
   expect(introKey).toBeDefined();
-  expect(counts[introKey!]).toBe(1);
+  expect(counts[defined(introKey)]).toBe(1);
 });
 
 test('GET /api/documents/file-counts ignores placeholder file-link examples', async ({
@@ -177,7 +178,7 @@ test('GET /api/documents/file-counts ignores placeholder file-link examples', as
   const counts = (await res.json()) as Record<string, number>;
   const introKey = Object.keys(counts).find((k) => decodeURIComponent(k).includes('intro'));
   expect(introKey).toBeDefined();
-  expect(counts[introKey!]).toBe(1);
+  expect(counts[defined(introKey)]).toBe(1);
 });
 
 test('POST /api/documents returns 409 when a document with that slug already exists', async ({

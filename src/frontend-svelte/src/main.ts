@@ -24,5 +24,7 @@ initPersistentToast();
 // chrome (e.g. the topbar Favorites menu) never flashes raw i18n keys. Pages
 // still reload i18n from the live config language on mount.
 void loadI18n(cachedLang()).finally(() => {
-  mount(App, { target: document.getElementById("app")! });
+  const target = document.getElementById("app");
+  if (!target) throw new Error("#app element is missing");
+  mount(App, { target });
 });

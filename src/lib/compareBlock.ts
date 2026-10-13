@@ -24,7 +24,7 @@
  *   compare <div>s afterwards.
  */
 
-import { marked } from "marked";
+import type { marked } from "marked";
 import { renderMarkdownWithSummaries } from "./summaryMarkdown";
 
 function htmlEscape(str: string): string {

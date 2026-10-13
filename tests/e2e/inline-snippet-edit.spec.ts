@@ -233,7 +233,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(tinyDocId)}`);
     await expect(page.locator('#doc-content')).toBeVisible();
     await page.evaluate(() => {
-      (window as any).openSnippetsModalForInlineInsert(99999);
+      window.openSnippetsModalForInlineInsert(99999);
     });
 
     await page.locator('#snippet-picker [data-snippet-type="image"]').click();
@@ -353,7 +353,7 @@ test.describe('inline snippet editing from viewer', () => {
     // Wait for the Svelte DocViewer to mount before reaching for its window hook.
     await expect(page.locator('#doc-content')).toBeVisible();
     await page.evaluate(() => {
-      (window as any).openSnippetsModalForInlineInsert(99999);
+      window.openSnippetsModalForInlineInsert(99999);
     });
 
     await page.locator('#snippet-picker [data-snippet-type="table"]').click();
@@ -383,7 +383,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(tinyDocId)}`);
     await expect(page.locator('#doc-content')).toBeVisible();
     await page.evaluate(() => {
-      (window as any).openSnippetsModalForInlineInsert(99999);
+      window.openSnippetsModalForInlineInsert(99999);
     });
 
     await page.locator('#snippet-picker [data-snippet-type="table"]').click();
@@ -511,7 +511,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(tinyDocId)}`);
     await expect(page.locator('#doc-content h1')).toContainText('Tiny doc');
     await page.evaluate(() => {
-      (window as any).openSnippetsModalForInlineInsert(99999);
+      window.openSnippetsModalForInlineInsert(99999);
     });
 
     await page.locator('#snippet-picker [data-snippet-type="table"]').click();
@@ -547,7 +547,7 @@ test.describe('inline snippet editing from viewer', () => {
     // Wait for the Svelte DocViewer to mount before reaching for its window hook.
     await expect(page.locator('#doc-content')).toBeVisible();
     await page.evaluate(() => {
-      (window as any).openSnippetsModalForInlineInsert(99999);
+      window.openSnippetsModalForInlineInsert(99999);
     });
 
     await page.locator('#snippet-picker [data-snippet-type="table"]').click();
@@ -949,8 +949,8 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(page.locator('#doc-content')).toBeVisible();
 
     const coords = await page.evaluate(() => {
-      const content = document.getElementById('doc-content')!;
-      const h1 = content.querySelector('h1')!;
+      const content = document.getElementById('doc-content') as HTMLElement;
+      const h1 = content.querySelector('h1') as HTMLElement;
       const next = h1.nextElementSibling as HTMLElement;
       const h1Rect = h1.getBoundingClientRect();
       const nextRect = next.getBoundingClientRect();
@@ -988,7 +988,7 @@ test.describe('inline snippet editing from viewer', () => {
       const editor = document.getElementById('doc-editor') as HTMLTextAreaElement;
       editor.selectionStart = 0;
       editor.selectionEnd = 0;
-      (window as any).openSnippetsModal();
+      window.openSnippetsModal();
     });
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
@@ -1012,7 +1012,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await expect(page.locator('#doc-content')).toBeVisible();
     await page.evaluate(() => {
-      (window as any).openSnippetsModal();
+      window.openSnippetsModal();
     });
 
     await expect(page.locator('#snippet-picker-search')).toBeFocused();
@@ -1037,7 +1037,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await expect(page.locator('#doc-content')).toBeVisible();
     await page.evaluate(() => {
-      (window as any).openSnippetsModalForInlineInsert(0);
+      window.openSnippetsModalForInlineInsert(0);
     });
 
     await page.locator('#snippet-picker [data-snippet-type="mermaid"]').click();
@@ -1077,7 +1077,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await expect(page.locator('#doc-content')).toBeVisible();
     await page.evaluate(() => {
-      (window as any).openSnippetsModalForInlineInsert(0);
+      window.openSnippetsModalForInlineInsert(0);
     });
 
     await page.locator('#snippet-picker [data-snippet-type="mermaid"]').click();
@@ -1117,7 +1117,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await expect(page.locator('#doc-content')).toBeVisible();
     await page.evaluate(() => {
-      (window as any).openSnippetsModalForInlineInsert(0);
+      window.openSnippetsModalForInlineInsert(0);
     });
 
     await page.locator('#snippet-picker [data-snippet-type="mermaid"]').click();
@@ -1164,7 +1164,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await expect(page.locator('#doc-content')).toBeVisible();
     await page.evaluate(() => {
-      (window as any).openSnippetsModalForInlineInsert(0);
+      window.openSnippetsModalForInlineInsert(0);
     });
 
     await page.locator('#snippet-picker [data-snippet-type="mermaid"]').click();
@@ -1210,7 +1210,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await expect(page.locator('#doc-content')).toBeVisible();
     await page.evaluate(() => {
-      (window as any).openSnippetsModalForInlineInsert(0);
+      window.openSnippetsModalForInlineInsert(0);
     });
 
     await expect(page.locator('#snippet-picker')).toBeVisible();
@@ -1248,7 +1248,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
     await expect(page.locator('#doc-content')).toBeVisible();
     await page.evaluate(() => {
-      (window as any).openSnippetsModal();
+      window.openSnippetsModal();
     });
 
     await page.locator('#snippet-picker [data-snippet-type="blockquote"]').click();
@@ -1270,8 +1270,8 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(page.locator('#doc-content')).toBeVisible();
 
     const coords = await page.evaluate(() => {
-      const main = document.getElementById('home-content-area')!;
-      const docContent = document.getElementById('doc-content')!;
+      const main = document.getElementById('home-content-area') as HTMLElement;
+      const docContent = document.getElementById('doc-content') as HTMLElement;
       const mainRect = main.getBoundingClientRect();
       const docRect = docContent.getBoundingClientRect();
       return {
@@ -1313,7 +1313,7 @@ test.describe('inline snippet editing from viewer', () => {
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(tinyDocId)}`);
     await expect(page.locator('#doc-content h1')).toContainText('Tiny doc');
     await page.evaluate(() => {
-      (window as any).openSnippetsModalForInlineInsert(99999);
+      window.openSnippetsModalForInlineInsert(99999);
     });
 
     await expect(page.locator('#snippet-picker')).toBeVisible();

@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { test, expect } from '../helpers/ld-fixture';
+import { defined } from '../helpers/assert';
 
 test.describe('metadata routes on the with-metadata fixture', () => {
   test.use({ fixtureName: 'with-metadata' });
@@ -165,7 +166,7 @@ test.describe('metadata records the source commit when sourceRoot is a git repo'
     });
     expect(add.ok()).toBe(true);
     const added = (await add.json()) as { items: Array<{ path: string; commit?: string; dirty?: boolean }> };
-    const second = added.items.find((i) => i.path === 'second.ts')!;
+    const second = defined(added.items.find((i) => i.path === 'second.ts'));
     expect(second.commit).toMatch(SHA1);
     expect(second.dirty).toBe(true);
   });
