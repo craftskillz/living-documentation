@@ -8,8 +8,20 @@ tags:
   - progression
   - reprise
   - agents-ia
-timestamp: 2026-10-14T19:00:00Z
+timestamp: 2026-10-14T20:00:00Z
 status: To be validated
+---
+
+# Règles IA : front-matter YAML lu et écrit en OKF — 14 octobre 2026
+
+`src/routes/context.ts` n'a plus de parseur maison : `readAiRules` passe par le lecteur partagé `parseFrontmatter` (`src/lib/frontmatter.ts`, qui exporte désormais `lookupCaseInsensitive`). `appliesto` (clé canonique en minuscules écrite par `normalizeFrontmatter`) et les listes YAML multi-lignes (`tags`, `appliesto`) arrivent donc dans `/api/context/orientation` et l'écran AI Rules. `createRuleMarkdown` écrit le YAML OKF canonique (`type: Rule`, listes en bloc, `appliesto`) via `normalizeFrontmatter`. Contrat de l'API inchangé (champ JSON `appliesTo`).
+
+Tests : `tests/api/context.spec.ts` (nouveau test de lecture YAML canonique, test de création renforcé). Suites : unitaires 69/69, `tests/api` 220/220, `tests/e2e` 117/117, `okf:validate` conforme.
+
+Proposé, non appliqué (fichiers d'instructions IA, validation attendue) : préciser dans `PROJECT-INSTRUCTIONS.md` (dépôt et deux starters) que `appliesTo` s'écrit `appliesto` dans le front-matter canonique.
+
+MCP Living Documentation non exposé : pas de métadonnées attachées.
+
 ---
 
 # Audit des instructions agents — 14 octobre 2026
@@ -18,7 +30,7 @@ Instructions agents allégées sans perte de consigne : chaque consigne n'est pl
 
 Reste à l'utilisateur : supprimer `09_My_Published_Projects/CLAUDE.md` (pointe vers un `testproject/` inexistant ; suppression refusée par le classifieur de permissions). Configuration du MCP : à rediscuter.
 
-Non vérifié : les règles déclarent `appliesto` alors que `/context` lit `appliesTo` (`src/routes/context.ts:147`).
+US suivante, livrée le 14/10 (voir section ci-dessus) : `parseFrontmatter` de `src/routes/context.ts:87` ne lit pas le front-matter YAML des règles. (1) Les règles écrivent `appliesto` alors que le code lit `fields.appliesTo` (l. 147). (2) Les lignes `  - x` sont ignorées : `tags` et `appliesto`, écrits en listes YAML multi-lignes, arrivent vides dans `/api/context` et l'écran AI Rules. Piste : réutiliser le lecteur de front-matter partagé (ticket 02) et aligner `createRuleMarkdown` (l. 164) sur le YAML canonique. Démarrer par un test API rouge sur `/api/context`.
 
 ---
 

@@ -52,6 +52,45 @@ test('GET /api/context/orientation returns user-added instructions and rules', a
   expect(body.rulesFolder).toBe('AI/rules');
 });
 
+test('GET /api/context/orientation reads canonical OKF YAML rules (multi-line lists, lower-case appliesto)', async ({
+  request,
+  ld,
+}) => {
+  const rulesDir = path.join(ld.docsAbs, 'AI', 'rules');
+  fs.mkdirSync(rulesDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(rulesDir, 'track-current-work.md'),
+    [
+      '---',
+      'type: Rule',
+      'title: Track current work',
+      'description: Keep the worklog up to date.',
+      'tags:',
+      '  - worklog',
+      '  - handoff',
+      'id: track-current-work',
+      'severity: required',
+      'appliesto:',
+      '  - "**/*"',
+      '  - src/**/*.ts',
+      '---',
+      '',
+      'Read the worklog first.',
+      '',
+    ].join('\n'),
+    'utf-8',
+  );
+
+  const res = await request.get(`${ld.baseURL}/api/context/orientation`);
+  const body = await res.json();
+  expect(body.rules).toContainEqual(expect.objectContaining({
+    id: 'track-current-work',
+    severity: 'required',
+    tags: ['worklog', 'handoff'],
+    appliesTo: ['**/*', 'src/**/*.ts'],
+  }));
+});
+
 test('POST /api/context/rules creates an AI rule markdown file under docs', async ({
   request,
   ld,
@@ -75,13 +114,19 @@ test('POST /api/context/rules creates an AI rule markdown file under docs', asyn
   });
 
   const rulePath = path.join(ld.docsAbs, 'AI', 'rules', 'avoid-magic-numbers.md');
-  expect(fs.readFileSync(rulePath, 'utf-8')).toContain('title: Avoid magic numbers');
+  const written = fs.readFileSync(rulePath, 'utf-8');
+  expect(written).toContain('title: Avoid magic numbers');
+  expect(written).toContain('type: Rule');
+  expect(written).toContain('tags:\n  - code-quality');
+  expect(written).toContain('appliesto:\n  - src/**/*.ts');
 
   const orientation = await request.get(`${ld.baseURL}/api/context/orientation`);
   const orientationBody = await orientation.json();
   expect(orientationBody.rules).toContainEqual(expect.objectContaining({
     id: 'avoid-magic-numbers',
     title: 'Avoid magic numbers',
+    tags: ['code-quality'],
+    appliesTo: ['src/**/*.ts'],
   }));
 });
 

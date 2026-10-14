@@ -72,7 +72,8 @@ function parseLegacyBlock(raw: string): Record<string, unknown> {
   return data;
 }
 
-function lookupCaseInsensitive(data: Record<string, unknown>, key: string): unknown {
+/** Case-insensitive raw field read: canonical OKF keys are lower-case (`appliesto`). */
+export function lookupCaseInsensitive(data: Record<string, unknown>, key: string): unknown {
   const lower = key.toLowerCase();
   for (const k of Object.keys(data)) {
     if (k.toLowerCase() === lower) return data[k];

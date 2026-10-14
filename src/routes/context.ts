@@ -2,6 +2,8 @@ import { Router } from "express";
 import fs from "node:fs";
 import path from "node:path";
 import { readConfig } from "../lib/config";
+import { lookupCaseInsensitive, parseFrontmatter, serializeFrontmatter } from "../lib/frontmatter";
+import { normalizeFrontmatter } from "../lib/okf";
 
 interface FileSummary {
   path: string;
@@ -60,10 +62,6 @@ function safeStringArray(value: unknown): string[] {
     : [];
 }
 
-function frontmatterArray(values: string[]): string {
-  return `[${values.map((item) => JSON.stringify(item)).join(", ")}]`;
-}
-
 function describePath(entry: string, root: FileSummary["root"], rootPath: string): FileSummary {
   const abs = path.resolve(rootPath, entry);
   const rel = path.relative(rootPath, abs);
@@ -82,28 +80,6 @@ function describePath(entry: string, root: FileSummary["root"], rootPath: string
     size: stat.isFile() ? stat.size : null,
     modifiedAt: stat.mtime.toISOString(),
   };
-}
-
-function parseFrontmatter(md: string): { fields: Record<string, string>; body: string } {
-  const match = md.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
-  if (!match) return { fields: {}, body: md.trim() };
-  const fields: Record<string, string> = {};
-  match[1].split(/\r?\n/).forEach((line) => {
-    const idx = line.indexOf(":");
-    if (idx <= 0 || /^\s+-\s+/.test(line)) return;
-    fields[line.slice(0, idx).trim()] = line.slice(idx + 1).trim();
-  });
-  return { fields, body: md.slice(match[0].length).trim() };
-}
-
-function parseInlineArray(raw: string | undefined): string[] {
-  if (!raw) return [];
-  return raw
-    .replace(/^\[/, "")
-    .replace(/\]$/, "")
-    .split(",")
-    .map((item) => item.trim().replace(/^["']|["']$/g, ""))
-    .filter(Boolean);
 }
 
 function firstParagraph(body: string): string {
@@ -135,16 +111,18 @@ function readAiRules(docsPath: string): AiRule[] {
       const abs = path.join(rulesDir, entry.name);
       const stat = fs.statSync(abs);
       const raw = fs.readFileSync(abs, "utf-8");
-      const { fields, body } = parseFrontmatter(raw);
-      const id = safeString(fields.id, path.basename(entry.name, ".md"));
-      const title = safeString(fields.title, id);
+      const { data, body: rawBody } = parseFrontmatter(raw);
+      const field = (key: string) => lookupCaseInsensitive(data, key);
+      const body = rawBody.trim();
+      const id = safeString(field("id"), path.basename(entry.name, ".md"));
+      const title = safeString(field("title"), id);
       return {
         id,
         title,
-        severity: safeString(fields.severity, "guideline"),
-        description: safeString(fields.description, firstParagraph(body)),
-        tags: parseInlineArray(fields.tags),
-        appliesTo: parseInlineArray(fields.appliesTo),
+        severity: safeString(field("severity"), "guideline"),
+        description: safeString(field("description"), firstParagraph(body)),
+        tags: safeStringArray(field("tags")),
+        appliesTo: safeStringArray(field("appliesTo")),
         path: toPosixPath(path.join(AI_RULES_DIR, entry.name)),
         body,
         modifiedAt: stat.mtime.toISOString(),
@@ -154,19 +132,17 @@ function readAiRules(docsPath: string): AiRule[] {
 }
 
 function createRuleMarkdown(rule: AiRule): string {
-  return [
-    "---",
-    `id: ${rule.id}`,
-    `title: ${rule.title}`,
-    `severity: ${rule.severity}`,
-    `description: ${rule.description}`,
-    `tags: ${frontmatterArray(rule.tags)}`,
-    `appliesTo: ${frontmatterArray(rule.appliesTo)}`,
-    "---",
-    "",
-    rule.body,
-    "",
-  ].join("\n");
+  const fields = {
+    type: "Rule",
+    title: rule.title,
+    description: rule.description,
+    tags: rule.tags,
+    id: rule.id,
+    severity: rule.severity,
+    appliesTo: rule.appliesTo,
+  };
+  // Canonical OKF YAML: lower-case keys (`appliesto`) and block lists.
+  return normalizeFrontmatter(`${serializeFrontmatter(fields)}\n${rule.body}\n`, rule.path);
 }
 
 function linkInstructionFile(sourcePath: string, docsPath: string): FileSummary | { error: string; status: number } {
