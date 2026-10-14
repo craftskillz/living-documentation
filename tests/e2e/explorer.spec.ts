@@ -217,3 +217,47 @@ test('rename is not offered on hidden entries nor on the reserved root folders',
   await expect(page.getByTestId('tree-menu-toggle-hidden')).toBeVisible();
   await expect(page.getByTestId('tree-menu-rename')).toHaveCount(0);
 });
+
+test('delete a folder from its context menu after confirming: the open document inside it closes', async ({ page, ld }) => {
+  writeDoc(ld.docsAbs, 'drafts/a.md');
+  writeDoc(ld.docsAbs, 'drafts/sub/b.md');
+
+  await page.goto(ld.baseURL);
+  const tree = page.getByTestId('category-tree');
+  await tree.locator('span[title="drafts"]').click();
+  await tree.getByText('A', { exact: true }).click();
+  await expect(page).toHaveURL(/doc=drafts%(25)?2Fa/);
+
+  await tree.locator('span[title="drafts"]').click({ button: 'right' });
+  await page.getByTestId('tree-menu-delete').click();
+  await expect(page.getByTestId('delete-folder-count')).toContainText('2 documents');
+  await page.getByRole('button', { name: 'Cancel' }).click();
+  await expect(page.getByTestId('delete-folder-dialog')).toHaveCount(0);
+  expect(fs.existsSync(path.join(ld.docsAbs, 'drafts/a.md'))).toBe(true);
+
+  await tree.locator('span[title="drafts"]').click({ button: 'right' });
+  await page.getByTestId('tree-menu-delete').click();
+  await page.getByTestId('delete-folder-submit').click();
+
+  await expect(page.getByTestId('delete-folder-dialog')).toHaveCount(0);
+  await expect(tree.locator('span[title="drafts"]')).toHaveCount(0);
+  await expect(page).not.toHaveURL(/doc=/);
+  expect(fs.existsSync(path.join(ld.docsAbs, 'drafts'))).toBe(false);
+});
+
+test('delete is offered on folders only, never on documents nor on the reserved root folders', async ({ page, ld }) => {
+  writeDoc(ld.docsAbs, 'note.md');
+  writeDoc(ld.docsAbs, 'images/readme.md');
+
+  await page.goto(ld.baseURL);
+  const tree = page.getByTestId('category-tree');
+  await tree.locator('span[title="images"]').click({ button: 'right' });
+  await expect(page.getByTestId('tree-menu-toggle-hidden')).toBeVisible();
+  await expect(page.getByTestId('tree-menu-delete')).toHaveCount(0);
+  await page.keyboard.press('Escape');
+  await page.mouse.click(1, 1);
+
+  await tree.getByText('Note', { exact: true }).click({ button: 'right' });
+  await expect(page.getByTestId('tree-menu-rename')).toBeVisible();
+  await expect(page.getByTestId('tree-menu-delete')).toHaveCount(0);
+});

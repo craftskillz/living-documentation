@@ -216,6 +216,16 @@
     if (summary) home.revealDoc(summary);
   }
 
+  // An explorer folder was deleted: reload, and close the open document if it was inside.
+  async function onFolderDeleted(path: string) {
+    if (home.currentDocId && decodeURIComponent(home.currentDocId).startsWith(`${path}/`)) {
+      home.currentDocId = null;
+      currentDoc = null;
+      history.pushState({}, "", location.pathname);
+    }
+    await loadDocuments();
+  }
+
   async function loadDocuments() {
     const [docs, cfg, tree] = await Promise.all([api.fetchDocuments(), api.fetchConfig(), api.fetchTree()]);
     home.allDocs = docs;
@@ -317,6 +327,7 @@
       onnewfolder={() => (newFolderOpen = true)}
       onnewdoc={() => (newDocOpen = true)}
       onmoved={onEntryMoved}
+      onfolderdeleted={onFolderDeleted}
     />
 
     <main id="home-content-area" class="flex-1 overflow-y-auto">

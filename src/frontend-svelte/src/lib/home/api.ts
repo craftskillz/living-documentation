@@ -48,6 +48,16 @@ export async function renameTreeEntry(path: string, newName: string): Promise<Re
   return { ok: true, path: renamed };
 }
 
+/** Deletes a folder and everything it contains; true once it is gone. */
+export async function deleteTreeFolder(path: string): Promise<boolean> {
+  const res = await fetch("/api/tree", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ path }),
+  });
+  return res.ok;
+}
+
 export async function fetchAllDirs(docsFolder: string): Promise<string[]> {
   return fetch(
     `/api/browse/alldirs?path=${encodeURIComponent(docsFolder)}`,

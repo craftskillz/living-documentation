@@ -132,6 +132,37 @@ export function migrateDocIds(docsPath: string, from: string, to: string, isFold
   if (favoritesChanged) writeConfig(docsPath, { favorites: nextFavorites });
 }
 
+function dropKeysUnder<T>(store: Record<string, T>, folder: string): boolean {
+  const doomed = Object.keys(store).filter((key) => key.startsWith(`${folder}/`));
+  for (const key of doomed) delete store[key];
+  return doomed.length > 0;
+}
+
+/**
+ * Drops every doc id below `folder` from `.metadata.json`, `.annotations.json`
+ * and the favorites of `.living-doc.json`.
+ */
+function dropFolderDocIds(docsPath: string, folder: string): void {
+  const metadata = readMetadataStore(docsPath);
+  if (dropKeysUnder(metadata, folder)) writeMetadataStore(docsPath, metadata);
+
+  const annPath = path.join(docsPath, ".annotations.json");
+  if (fs.existsSync(annPath)) {
+    try {
+      const store = JSON.parse(fs.readFileSync(annPath, "utf-8"));
+      if (store && typeof store === "object" && dropKeysUnder(store, folder)) {
+        fs.writeFileSync(annPath, JSON.stringify(store, null, 2), "utf-8");
+      }
+    } catch {
+      /* non-fatal */
+    }
+  }
+
+  const { favorites } = readConfig(docsPath);
+  const kept = favorites.filter((fav) => !decodeURIComponent(fav.id).startsWith(`${folder}/`));
+  if (kept.length !== favorites.length) writeConfig(docsPath, { favorites: kept });
+}
+
 /** Regenerates the OKF `index.md` files of a bundle that already has them. */
 function refreshOkfIndexes(docsPath: string): void {
   if (fs.existsSync(path.join(docsPath, "index.md"))) generateOkfIndexFiles(docsPath);
@@ -284,4 +315,37 @@ export function renameTreeEntry(docsPath: string, request: TreeRenameRequest): T
   renameInManifest(parentDir, name, newName);
   refreshOkfIndexes(docsPath);
   return result(toRel);
+}
+
+/**
+ * DELETE /api/tree: deletes a folder and everything it contains. Its parent
+ * manifest forgets it and the doc-keyed stores drop the ids it held; a linked
+ * file inside is removed as a link, its target is kept.
+ */
+export function deleteTreeFolder(docsPath: string, relPath: string): TreeMoveResult {
+  const root = path.resolve(docsPath);
+  const absFolder = path.resolve(root, relPath);
+  if (absFolder === root || !insideRoot(root, absFolder)) throw new TreeMoveError(403, "Access denied");
+
+  const name = path.basename(absFolder);
+  const parentDir = path.dirname(absFolder);
+  if (isSymlink(absFolder)) throw new TreeMoveError(400, "Linked entries cannot be deleted");
+  let stat: fs.Stats;
+  try {
+    stat = fs.statSync(absFolder);
+  } catch {
+    throw new TreeMoveError(404, "Entry not found");
+  }
+  if (!stat.isDirectory()) throw new TreeMoveError(400, "Only folders can be deleted here");
+  if (!isListedDir(name)) throw new TreeMoveError(400, "This entry is not shown in the explorer");
+  if (parentDir === root && RESERVED_ROOT_FOLDERS.has(name)) throw new TreeMoveError(400, `"${name}" is a reserved folder`);
+  if (readFolderManifest(parentDir).hidden.includes(name)) throw new TreeMoveError(400, "Hidden entries cannot be deleted");
+  if (!isManifestWritable(parentDir)) throw new TreeMoveError(409, "Parent liv-doc-main.md has an invalid frontmatter");
+
+  const rel = toPosix(path.relative(root, absFolder));
+  fs.rmSync(absFolder, { recursive: true });
+  removeFromManifest(parentDir, name);
+  dropFolderDocIds(docsPath, rel);
+  refreshOkfIndexes(docsPath);
+  return { path: rel };
 }

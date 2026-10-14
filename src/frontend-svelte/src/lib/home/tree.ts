@@ -41,6 +41,20 @@ export function canRenameEntry(node: ExplorerNode): boolean {
   return !(node.kind === "folder" && RESERVED_ROOT_FOLDERS.has(node.path));
 }
 
+/** Folders follow the rename rule: hidden and reserved root folders cannot be deleted. */
+export function canDeleteFolder(node: ExplorerNode): boolean {
+  return node.kind === "folder" && canRenameEntry(node);
+}
+
+/** The node at `path` in the tree, or null. */
+export function findExplorerNode(nodes: ExplorerNode[], path: string): ExplorerNode | null {
+  for (const node of nodes) {
+    if (node.path === path) return node;
+    if (node.kind === "folder" && path.startsWith(`${node.path}/`)) return findExplorerNode(node.children ?? [], path);
+  }
+  return null;
+}
+
 /** Documents in a node's subtree that match `predicate` (all when omitted). */
 export function countExplorerDocs(node: ExplorerNode, predicate: (id: string) => boolean = () => true): number {
   if (node.kind === "doc") return node.id && !node.reserved && predicate(node.id) ? 1 : 0;

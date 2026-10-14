@@ -5,7 +5,7 @@ import { isListedDocFile, isListedDir } from "../lib/explorerEntries";
 import { isReservedOkfFile } from "../lib/okf";
 import { setManifestHidden } from "../lib/folderManifest";
 import { buildFolderTree } from "../lib/folderTree";
-import { moveTreeEntry, renameTreeEntry, TreeMoveError } from "../lib/treeMove";
+import { deleteTreeFolder, moveTreeEntry, renameTreeEntry, TreeMoveError } from "../lib/treeMove";
 
 export function treeRouter(docsPath: string): Router {
   const router = Router();
@@ -71,6 +71,20 @@ export function treeRouter(docsPath: string): Router {
     } catch (err) {
       if (err instanceof TreeMoveError) return res.status(err.status).json({ error: err.message });
       res.status(500).json({ error: "Failed to rename entry" });
+    }
+  });
+
+  // DELETE /api/tree — { path }: deletes a folder and everything it contains.
+  router.delete("/", (req: Request, res: Response) => {
+    const { path: relPath } = (req.body ?? {}) as { path?: unknown };
+    if (typeof relPath !== "string" || !relPath.trim()) {
+      return res.status(400).json({ error: "path is required" });
+    }
+    try {
+      res.json(deleteTreeFolder(docsPath, relPath));
+    } catch (err) {
+      if (err instanceof TreeMoveError) return res.status(err.status).json({ error: err.message });
+      res.status(500).json({ error: "Failed to delete folder" });
     }
   });
 

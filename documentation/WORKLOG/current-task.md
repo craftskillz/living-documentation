@@ -8,8 +8,21 @@ tags:
   - progression
   - reprise
   - agents-ia
-timestamp: 2026-10-14T20:00:00Z
+timestamp: 2026-10-14T21:00:00Z
 status: To be validated
+---
+
+
+# Explorateur : supprimer un dossier depuis le menu contextuel — 14 octobre 2026
+
+Entrée « Supprimer » dans le menu contextuel des dossiers (mêmes exclusions que « Renommer » : masqués, `files`/`images` racine ; jamais sur un document). Modale `DeleteFolderModal.svelte` avec le nombre de documents (compté sur l'arbre complet) ; le document ouvert se ferme s'il était dans le dossier. Backend `DELETE /api/tree` `{ path }` → `deleteTreeFolder` (`src/lib/treeMove.ts`) : suppression récursive, retrait du manifeste parent, purge des ids sous le dossier dans `.metadata.json`, `.annotations.json` et les favoris, régénération des `index.md` OKF ; un lien symbolique contenu est supprimé sans toucher sa cible. i18n `sidebar.delete_folder`, `modal.delete_folder.*` EN/FR. ADR explorateur et `PROJECT-STACK.md` complétés.
+
+Hors scope : liens entrants vers les documents supprimés non réécrits ; preuves de diagrammes pointant ces documents non purgées (comme pour la suppression d'un document).
+
+Tests : deux tests `tests/api/tree.spec.ts`, deux tests `tests/e2e/explorer.spec.ts`. Suites : unitaires 69/69, `tests/api` 226/226, `tests/e2e` 120/120, lint OK.
+
+MCP Living Documentation non exposé : pas de métadonnées attachées (sources à attacher : `src/lib/treeMove.ts`, `src/routes/tree.ts`, `src/frontend-svelte/src/lib/home/DeleteFolderModal.svelte`).
+
 ---
 
 # Explorateur : fichiers liés (AI/CLAUDE.md…) de nouveau visibles — 14 octobre 2026

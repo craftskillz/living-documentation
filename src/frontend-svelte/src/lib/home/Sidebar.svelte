@@ -2,17 +2,20 @@
   import { home } from "./state.svelte";
   import { t } from "../i18n.svelte";
   import { fetchTree, moveTreeEntry, setTreeHidden } from "./api";
-  import { canRenameEntry, filterExplorerTree, withoutHiddenEntries } from "./tree";
+  import { canDeleteFolder, canRenameEntry, filterExplorerTree, withoutHiddenEntries } from "./tree";
   import { dropRequest, type DropPosition } from "./treeDrop";
   import { showPersistentToast } from "../persistentToast";
   import type { ExplorerNode } from "./types";
   import TreeNode from "./TreeNode.svelte";
   import RenameEntryModal from "./RenameEntryModal.svelte";
+  import DeleteFolderModal from "./DeleteFolderModal.svelte";
 
-  let { onopen, onsearch, onexport, onnewfolder, onnewdoc, onmoved }: {
+  let { onopen, onsearch, onexport, onnewfolder, onnewdoc, onmoved, onfolderdeleted }: {
     onopen: (id: string) => void;
     /** An entry moved from `source` to `path` on disk; ids under it changed. */
     onmoved: (source: string, path: string) => void;
+    /** The folder at `path` was deleted with its content. */
+    onfolderdeleted: (path: string) => void;
     onsearch: (q: string) => void;
     onexport: () => void;
     onnewfolder: () => void;
@@ -27,7 +30,7 @@
       : visibleTree,
   );
 
-  // ── Entry context menu (hide / show / rename) ─────────────────────────────────────────
+  // ── Entry context menu (hide / show / rename / delete) ────────────────────────────────
   let entryMenu = $state<{ x: number; y: number; node: ExplorerNode } | null>(null);
 
   function openEntryMenu(e: MouseEvent, node: ExplorerNode) {
@@ -52,6 +55,18 @@
   function onRenamed(source: string, path: string) {
     renaming = null;
     onmoved(source, path);
+  }
+
+  let deleting = $state<ExplorerNode | null>(null);
+
+  function startDelete() {
+    deleting = entryMenu?.node ?? null;
+    entryMenu = null;
+  }
+
+  function onDeleted(path: string) {
+    deleting = null;
+    onfolderdeleted(path);
   }
 
   // ── Drag and drop move ─────────────────────────────────────────────────────────
@@ -186,10 +201,21 @@
           <i class="fa-solid fa-pen mr-2"></i>{t("sidebar.rename_entry")}
         </button>
       {/if}
+      {#if canDeleteFolder(entryMenu.node)}
+        <button
+          role="menuitem"
+          data-testid="tree-menu-delete"
+          onclick={startDelete}
+          class="w-full text-left px-3 py-1.5 text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+        >
+          <i class="fa-solid fa-trash mr-2"></i>{t("sidebar.delete_folder")}
+        </button>
+      {/if}
     </div>
   {/if}
 
   <RenameEntryModal node={renaming} onclose={() => (renaming = null)} onrenamed={onRenamed} />
+  <DeleteFolderModal node={deleting} onclose={() => (deleting = null)} ondeleted={onDeleted} />
 
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div

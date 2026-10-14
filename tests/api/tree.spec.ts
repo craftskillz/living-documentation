@@ -453,3 +453,58 @@ test('linked documents cannot be moved or renamed through the tree API', async (
   expect(ren.status()).toBe(400);
   expect(fs.lstatSync(path.join(ld.docsAbs, 'AI', 'CLAUDE.md')).isSymbolicLink()).toBe(true);
 });
+
+test('DELETE /api/tree deletes a folder with its content, its manifest entry and its doc-keyed stores', async ({ request, ld }) => {
+  fs.writeFileSync(path.join(ld.parent, 'CLAUDE.md'), '# Claude\n');
+  writeDoc(ld.docsAbs, 'guide/a.md');
+  writeDoc(ld.docsAbs, 'guide/sub/b.md');
+  writeDoc(ld.docsAbs, 'guidebook/c.md');
+  fs.symlinkSync('../../CLAUDE.md', path.join(ld.docsAbs, 'guide', 'CLAUDE.md'));
+  fs.writeFileSync(path.join(ld.docsAbs, 'liv-doc-main.md'), '---\norder:\n  - guidebook\n  - guide\nhidden: []\n---\n\nRoot body\n');
+  const metadataFile = path.join(ld.docsAbs, '.metadata.json');
+  fs.writeFileSync(metadataFile, JSON.stringify({ 'guide/a': [{ path: 'src/x.ts' }], 'guidebook/c': [{ path: 'src/y.ts' }] }));
+  const annotationsFile = path.join(ld.docsAbs, '.annotations.json');
+  fs.writeFileSync(annotationsFile, JSON.stringify({ 'guide/sub/b': [{ id: 'n1' }], 'guidebook/c': [{ id: 'n2' }] }));
+
+  const res = await request.delete(`${ld.baseURL}/api/tree`, { data: { path: 'guide' } });
+
+  expect(res.status()).toBe(200);
+  expect(await res.json()).toEqual({ path: 'guide' });
+  expect(fs.existsSync(path.join(ld.docsAbs, 'guide'))).toBe(false);
+  expect(fs.readFileSync(path.join(ld.parent, 'CLAUDE.md'), 'utf-8')).toBe('# Claude\n');
+  expect(names(await getTree(request, ld.baseURL)).filter((n) => !n.endsWith('.md'))).toEqual(['guidebook']);
+  const manifest = fs.readFileSync(path.join(ld.docsAbs, 'liv-doc-main.md'), 'utf-8');
+  expect(manifest).not.toMatch(/- guide\n/);
+  expect(manifest).toContain('Root body');
+  expect(Object.keys(readJson(metadataFile))).toEqual(['guidebook/c']);
+  expect(Object.keys(readJson(annotationsFile))).toEqual(['guidebook/c']);
+});
+
+test('DELETE /api/tree rejects documents, protected folders and escaping paths without touching the disk', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'guide/a.md');
+  writeDoc(ld.docsAbs, 'secret/s.md');
+  fs.writeFileSync(path.join(ld.docsAbs, 'liv-doc-main.md'), '---\norder: []\nhidden:\n  - secret\n---\n');
+  fs.mkdirSync(path.join(ld.docsAbs, 'images'), { recursive: true });
+  fs.mkdirSync(path.join(ld.docsAbs, '.git'), { recursive: true });
+  fs.symlinkSync('guide', path.join(ld.docsAbs, 'linked'));
+
+  const cases: [Record<string, unknown>, number][] = [
+    [{}, 400],
+    [{ path: '' }, 400],
+    [{ path: 'guide/a.md' }, 400],
+    [{ path: 'images' }, 400],
+    [{ path: '.git' }, 400],
+    [{ path: 'secret' }, 400],
+    [{ path: 'linked' }, 400],
+    [{ path: 'missing' }, 404],
+    [{ path: '.' }, 403],
+    [{ path: '../outside' }, 403],
+  ];
+  for (const [data, status] of cases) {
+    const res = await request.delete(`${ld.baseURL}/api/tree`, { data });
+    expect(res.status(), JSON.stringify(data)).toBe(status);
+  }
+  for (const rel of ['guide/a.md', 'secret/s.md', 'images', '.git', 'linked']) {
+    expect(fs.existsSync(path.join(ld.docsAbs, rel)), rel).toBe(true);
+  }
+});
