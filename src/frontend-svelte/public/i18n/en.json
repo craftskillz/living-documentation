@@ -192,6 +192,7 @@
   "doc.copy_mcp_id_copied": "MCP document id copied",
   "doc.edit": "Edit document",
   "doc.edit_btn": "Edit",
+  "doc.read_only": "Read-only: generated file",
   "doc.delete": "Delete document",
   "doc.delete_btn": "Delete",
   "doc.confirm_delete": "Permanently delete this document?",

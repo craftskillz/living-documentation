@@ -380,6 +380,8 @@
           <button onclick={() => editable.openSnippets()} title={t("doc.snippets")} class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t("doc.snippets_btn")}</button>
           <button onclick={() => editable.save()} class="text-sm px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">{t("common.save")}</button>
           </div>
+        {:else if doc.reserved}
+          <span data-testid="read-only-badge" class="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400"><i class="fa-solid fa-lock" style="margin-right:4px"></i>{t("doc.read_only")}</span>
         {:else}
           {@const bodyFill = home.markerActive ? "#fef08a" : "#bfdbfe"}
           {@const capFill = home.markerActive ? "#fef08a" : "#93c5fd"}
@@ -493,6 +495,7 @@
     onconfirmdelete={confirmInlineDelete}
     oncontentwired={handleContentWired}
     rewireSignal={home.searchQuery}
+    readonly={doc.reserved}
   />
 </article>
 

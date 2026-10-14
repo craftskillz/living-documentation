@@ -54,3 +54,13 @@ test('the open document id follows its own move and the move of an ancestor fold
   assert.equal(movedDocId(id, 'guid', 'other/guid'), null);
   assert.equal(movedDocId(id, 'x.md', 'guides/x.md'), null);
 });
+
+test('reserved files shown at the head of a folder do not shift the drop index', () => {
+  const withReserved: ExplorerNode[] = [
+    { ...doc('liv-doc-main.md'), reserved: true },
+    doc('x.md'),
+    doc('y.md'),
+  ];
+  assert.deepEqual(dropRequest(withReserved, 'y.md', 'x.md', 'before'), { source: 'y.md', targetFolder: '', index: 0 });
+  assert.equal(dropRequest(withReserved, 'y.md', 'liv-doc-main.md', 'after'), null);
+});

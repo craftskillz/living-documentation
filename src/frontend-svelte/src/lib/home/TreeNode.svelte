@@ -79,6 +79,17 @@
   {@const annCount = home.annotationCounts[doc.id] || 0}
   {@const fileCount = home.fileAttachmentCounts[doc.id] || 0}
   {@const pill = statusPill(doc)}
+  {#if node.reserved}
+    <button
+      id="item-{doc.id}"
+      onclick={() => onopen(doc.id)}
+      oncontextmenu={(e) => e.preventDefault()}
+      data-reserved="true"
+      class="opacity-50 italic doc-item w-full text-left px-3 py-1.5 rounded-md text-sm transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/60 {doc.id === home.currentDocId ? 'active' : ''}"
+    >
+      <span class="truncate"><i class="fa-solid fa-lock text-[10px] mr-1.5"></i>{node.name}</span>
+    </button>
+  {:else}
   <button
     id="item-{doc.id}"
     onclick={() => onopen(doc.id)}
@@ -112,6 +123,7 @@
       <div class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{doc.formattedDate}</div>
     {/if}
   </button>
+  {/if}
 {/snippet}
 
 {#snippet folderGroup(folder: ExplorerNode)}

@@ -192,6 +192,7 @@
   "doc.copy_mcp_id_copied": "Id MCP du document copié",
   "doc.edit": "Modifier le document",
   "doc.edit_btn": "Modifier",
+  "doc.read_only": "Lecture seule : fichier généré",
   "doc.delete": "Supprimer le document",
   "doc.delete_btn": "Supprimer",
   "doc.confirm_delete": "Supprimer définitivement ce document ?",

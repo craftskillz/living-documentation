@@ -27,13 +27,17 @@ function parentOf(path: string): string {
   return slash === -1 ? "" : path.slice(0, slash);
 }
 
-/** Full children list (hidden entries included) of the folder at `path`; "" is the root. */
+/** Children of the folder at `path` ("" is the root) as ordered on disk: hidden entries included, reserved files left out. */
 function childrenOf(tree: ExplorerNode[], path: string): ExplorerNode[] {
+  return folderChildren(tree, path).filter((node) => !node.reserved);
+}
+
+function folderChildren(tree: ExplorerNode[], path: string): ExplorerNode[] {
   if (!path) return tree;
   for (const node of tree) {
     if (node.kind !== "folder") continue;
     if (node.path === path) return node.children ?? [];
-    if (path.startsWith(`${node.path}/`)) return childrenOf(node.children ?? [], path);
+    if (path.startsWith(`${node.path}/`)) return folderChildren(node.children ?? [], path);
   }
   return [];
 }

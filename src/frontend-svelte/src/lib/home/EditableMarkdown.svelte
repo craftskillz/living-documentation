@@ -27,6 +27,8 @@
     // `oncontentwired` re-fires. DocViewer passes the global search query so its
     // highlight refreshes; other hosts can leave it undefined.
     rewireSignal = undefined,
+    // Rendered view only: no inline snippet editing (reserved files).
+    readonly = false,
     editing = $bindable(false),
     saveMsg = $bindable(null),
   }: {
@@ -39,6 +41,7 @@
     onconfirmdelete?: (() => Promise<boolean>) | undefined;
     oncontentwired?: (el: HTMLElement) => void;
     rewireSignal?: unknown;
+    readonly?: boolean;
     editing?: boolean;
     saveMsg?: { text: string; cls: string } | null;
   } = $props();
@@ -119,7 +122,7 @@
 
     // A kanban board handles its own interactions (drag & drop, add, edit via
     // the gear button) — the inline right-click editing would be misleading.
-    if (!kanbanTakeover) {
+    if (!kanbanTakeover && !readonly) {
       disposeInline = initInlineSnippetEditing(contentEl, content, {
         onEdit: (range) => { snippetMode = "inline-edit"; snippetRange = range; snippetsOpen = true; },
         onInsert: (pos) => { snippetMode = "inline-insert"; snippetInsertPos = pos; snippetsOpen = true; },

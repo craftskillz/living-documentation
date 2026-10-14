@@ -12,6 +12,16 @@ timestamp: 2026-09-16T15:45:00Z
 status: To be validated
 ---
 
+# Explorateur : US10 livrée — 14 octobre 2026
+
+US10 terminée sur `main` : les fichiers réservés apparaissent avec les éléments cachés, en lecture seule. Détails : [worklog US10](./2026_10_14_15_00_%5BWORKLOG%5D_us_10_fichiers_reserves_avec_les_elements_caches.md). Suites : unitaires 57/57, `tests/api` 215/215, `tests/e2e` 114/114.
+
+Suite : US11 (renommage + réécriture des liens) dans une nouvelle session, découpable en US11a backend / US11b frontend. Les nœuds `reserved` de `/api/tree` devront être exclus du menu « Renommer ».
+
+MCP Living Documentation non exposé : pas de métadonnées attachées.
+
+---
+
 # Explorateur : cadrage US10 et US11 — 14 octobre 2026
 
 Branche `feat/explorateur-liv-doc-main` fusionnée dans `main`. Deux nouvelles US cadrées avec l'utilisateur dans [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), aucune ligne de code :

@@ -9,7 +9,7 @@ import { RESERVED_ROOT_FOLDERS, relocateEntry, TreeMoveError } from "../lib/tree
 import { normalizeFolderPath } from "../lib/folderName";
 import { parseDocStatus } from "../lib/status";
 import { isListedDir, isListedDocFile } from "../lib/explorerEntries";
-import { normalizeFrontmatter } from "../lib/okf";
+import { isReservedOkfFile, normalizeFrontmatter } from "../lib/okf";
 import { parseFrontmatter } from "../lib/frontmatter";
 import { renderMarkdownWithCompareBlocks } from "../lib/compareBlock";
 
@@ -95,6 +95,24 @@ export function stripFrontmatter(content: string): string {
   if (end === -1) return content;
   return content.slice(end + 4).replace(/^\n/, "");
 }
+
+/**
+ * Markdown shown for a reserved file: its frontmatter (the useful part of
+ * liv-doc-main.md) as a YAML code block, then its body.
+ */
+function reservedFileMarkdown(content: string): string {
+  const body = stripFrontmatter(content);
+  if (body === content) return content;
+  const yaml = content.slice(content.indexOf("\n") + 1, content.indexOf("\n---", 3));
+  return `\`\`\`yaml\n${yaml}\n\`\`\`\n\n${body}`;
+}
+
+/** Reserved files (index.md, log.md, liv-doc-main.md) are generated: read-only through the API. */
+function isReservedDocId(id: string): boolean {
+  return isReservedOkfFile(path.basename(`${id}.md`));
+}
+
+const RESERVED_READ_ONLY = { error: "Reserved files are read-only" };
 
 export function isConcreteFileAttachmentHref(href: string): boolean {
   const raw = (href || "").trim();
@@ -323,10 +341,13 @@ export function documentsRouter(docsPath: string): Router {
         subdir !== "."
           ? subdir.split("/")
           : null;
-      const html = renderMarkdownWithCompareBlocks(stripFrontmatter(content), markedOpts);
+      const reserved = isReservedDocId(id);
+      const markdown = reserved ? reservedFileMarkdown(content) : stripFrontmatter(content);
+      const html = renderMarkdownWithCompareBlocks(markdown, markedOpts);
       const fm = parseFrontmatter(content).data;
       res.json({
         ...metadata,
+        ...(reserved && { reserved: true }),
         folder,
         content,
         html,
@@ -368,6 +389,7 @@ export function documentsRouter(docsPath: string): Router {
     }
 
     // Normal file inside docsPath
+    if (isReservedDocId(id)) return res.status(400).json(RESERVED_READ_ONLY);
     const filename = `${id}.md`;
     const filePath = safeFilePath(docsPath, filename);
 
@@ -408,6 +430,7 @@ export function documentsRouter(docsPath: string): Router {
       }
     }
 
+    if (isReservedDocId(id)) return res.status(400).json(RESERVED_READ_ONLY);
     const filename = `${id}.md`;
     const filePath = safeFilePath(docsPath, filename);
     if (!filePath) return res.status(403).json({ error: "Access denied" });
@@ -452,6 +475,7 @@ export function documentsRouter(docsPath: string): Router {
     if (typeof folder !== "string" || !folder.trim()) {
       return res.status(400).json({ error: "folder is required" });
     }
+    if (isReservedDocId(id)) return res.status(400).json(RESERVED_READ_ONLY);
 
     const sourcePath = safeFilePath(docsPath, `${id}.md`);
     if (!sourcePath) return res.status(403).json({ error: "Access denied" });

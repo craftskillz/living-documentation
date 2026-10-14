@@ -56,6 +56,32 @@ test('hide an entry from its context menu, reveal it greyed, then show it again'
   expect(fs.readFileSync(manifest, 'utf-8')).toContain('hidden: []');
 });
 
+test('show hidden entries reveals reserved files first, greyed, opened read-only without actions', async ({ page, ld }) => {
+  writeDoc(ld.docsAbs, 'keep.md');
+  fs.writeFileSync(path.join(ld.docsAbs, 'liv-doc-main.md'), '---\norder:\n  - keep.md\nhidden: []\n---\n');
+
+  await page.goto(ld.baseURL);
+  const tree = page.getByTestId('category-tree');
+  await expect(tree.getByText('Keep', { exact: true })).toBeVisible();
+  await expect(tree.locator('[data-reserved="true"]')).toHaveCount(0);
+
+  await page.getByTestId('toggle-show-hidden').click();
+  const reserved = tree.locator(':scope > [data-reserved="true"]');
+  await expect(reserved).toHaveText(['index.md', 'log.md', 'liv-doc-main.md']);
+  expect(await tree.locator(':scope > button').first().getAttribute('data-reserved')).toBe('true');
+
+  const manifest = reserved.filter({ hasText: 'liv-doc-main.md' });
+  await expect(manifest).not.toHaveAttribute('draggable', 'true');
+  await manifest.click({ button: 'right' });
+  await expect(page.getByTestId('tree-menu-toggle-hidden')).toHaveCount(0);
+
+  await manifest.click();
+  await expect(page.locator('article code.language-yaml')).toContainText('keep.md');
+  await expect(page.getByTestId('read-only-badge')).toBeVisible();
+  await expect(page.getByTestId('edit-doc-btn')).toHaveCount(0);
+  await expect(page.getByTestId('delete-doc-btn')).toHaveCount(0);
+});
+
 test('drag an entry above another to reorder its folder', async ({ page, ld }) => {
   for (const name of ['a', 'b', 'c']) writeDoc(ld.docsAbs, `${name}.md`);
   fs.writeFileSync(path.join(ld.docsAbs, 'liv-doc-main.md'), '---\norder:\n  - a.md\n  - b.md\n  - c.md\n---\n');

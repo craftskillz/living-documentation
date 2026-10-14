@@ -7,6 +7,7 @@ interface TreeNode {
   name: string;
   path: string;
   hidden?: boolean;
+  reserved?: boolean;
   children?: TreeNode[];
 }
 
@@ -16,7 +17,12 @@ async function getTree(request: import('@playwright/test').APIRequestContext, ba
   return (await res.json()) as TreeNode[];
 }
 
+/** Names of the listed entries, reserved files left out. */
 function names(nodes: TreeNode[] | undefined): string[] {
+  return (nodes ?? []).filter((n) => !n.reserved).map((n) => n.name);
+}
+
+function allNames(nodes: TreeNode[] | undefined): string[] {
   return (nodes ?? []).map((n) => n.name);
 }
 
@@ -79,17 +85,56 @@ test('malformed manifest or unknown order entries fall back to the default order
   expect(names(tree.find((n) => n.name === 'stale')?.children)).toEqual(['b.md', 'a.md']);
 });
 
-test('liv-doc-main.md is never listed as a document', async ({ request, ld }) => {
+test('reserved files are listed first in their folder, flagged reserved, but never as documents', async ({ request, ld }) => {
   writeDoc(ld.docsAbs, 'guide/a.md');
   fs.writeFileSync(path.join(ld.docsAbs, 'liv-doc-main.md'), '---\norder: []\n---\n');
   fs.writeFileSync(path.join(ld.docsAbs, 'guide/liv-doc-main.md'), '---\norder: []\n---\n');
+  fs.writeFileSync(path.join(ld.docsAbs, 'guide/log.md'), '# Log\n');
+  fs.writeFileSync(path.join(ld.docsAbs, 'guide/index.md'), '# Index\n');
 
   const tree = await getTree(request, ld.baseURL);
-  expect(names(tree)).not.toContain('liv-doc-main.md');
-  expect(names(tree.find((n) => n.name === 'guide')?.children)).toEqual(['a.md']);
+  expect(allNames(tree).slice(0, 3)).toEqual(['index.md', 'log.md', 'liv-doc-main.md']);
+  expect(tree[2]).toMatchObject({ kind: 'doc', path: 'liv-doc-main.md', reserved: true });
+  const guide = tree.find((n) => n.name === 'guide');
+  expect(allNames(guide?.children)).toEqual(['index.md', 'log.md', 'liv-doc-main.md', 'a.md']);
+  expect(guide?.children?.[2]).toMatchObject({ id: encodeURIComponent('guide/liv-doc-main'), reserved: true });
+  expect(guide?.children?.[3].reserved).toBeUndefined();
 
   const docs = (await (await request.get(`${ld.baseURL}/api/documents`)).json()) as Array<{ filename: string }>;
-  expect(docs.map((d) => d.filename).filter((f) => f.endsWith('liv-doc-main.md'))).toEqual([]);
+  expect(docs.map((d) => d.filename).filter((f) => /(liv-doc-main|index|log)\.md$/.test(f))).toEqual([]);
+});
+
+test('GET /api/documents/:id serves a reserved file read-only, frontmatter shown as YAML', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'guide/a.md');
+  fs.writeFileSync(path.join(ld.docsAbs, 'guide/liv-doc-main.md'), '---\norder:\n  - a.md\nhidden:\n  - b.md\n---\n\nGuide folder.\n');
+
+  const res = await request.get(`${ld.baseURL}/api/documents/${encodeURIComponent('guide/liv-doc-main')}`);
+  expect(res.ok()).toBe(true);
+  const doc = (await res.json()) as { reserved?: boolean; html: string };
+  expect(doc.reserved).toBe(true);
+  expect(doc.html).toContain('language-yaml');
+  expect(doc.html).toContain('hidden:');
+  expect(doc.html).toContain('Guide folder.');
+
+  const normal = (await (await request.get(`${ld.baseURL}/api/documents/${encodeURIComponent('guide/a')}`)).json()) as { reserved?: boolean };
+  expect(normal.reserved).toBeUndefined();
+});
+
+test('reserved files cannot be written, deleted or moved through the documents API', async ({ request, ld }) => {
+  const manifest = '---\norder: []\n---\n';
+  fs.mkdirSync(path.join(ld.docsAbs, 'guide'), { recursive: true });
+  fs.mkdirSync(path.join(ld.docsAbs, 'notes'), { recursive: true });
+  fs.writeFileSync(path.join(ld.docsAbs, 'guide/liv-doc-main.md'), manifest);
+  fs.writeFileSync(path.join(ld.docsAbs, 'INDEX.md'), '# Index\n');
+  const id = encodeURIComponent('guide/liv-doc-main');
+
+  expect((await request.put(`${ld.baseURL}/api/documents/${id}`, { data: { content: 'x' } })).status()).toBe(400);
+  expect((await request.put(`${ld.baseURL}/api/documents/INDEX`, { data: { content: 'x' } })).status()).toBe(400);
+  expect((await request.delete(`${ld.baseURL}/api/documents/${id}`)).status()).toBe(400);
+  expect((await request.post(`${ld.baseURL}/api/documents/${id}/move`, { data: { folder: 'notes' } })).status()).toBe(400);
+
+  expect(fs.readFileSync(path.join(ld.docsAbs, 'guide/liv-doc-main.md'), 'utf-8')).toBe(manifest);
+  expect(fs.readFileSync(path.join(ld.docsAbs, 'INDEX.md'), 'utf-8')).toBe('# Index\n');
 });
 
 test('dot folders and dot Markdown files are listed; .git and node_modules are not', async ({ request, ld }) => {
@@ -144,7 +189,7 @@ test('PUT /api/tree/hidden hides then shows an entry through the parent manifest
   expect(hide.ok()).toBe(true);
   expect(fs.readFileSync(manifest, 'utf-8')).toContain('hidden:\n  - a.md\n');
   const guide = (await getTree(request, ld.baseURL)).find((n) => n.name === 'guide');
-  expect(guide?.children?.[0]?.hidden).toBe(true);
+  expect(guide?.children?.find((n) => n.name === 'a.md')?.hidden).toBe(true);
 
   const show = await request.put(`${ld.baseURL}/api/tree/hidden`, { data: { path: 'guide/a.md', hidden: false } });
   expect(show.ok()).toBe(true);
