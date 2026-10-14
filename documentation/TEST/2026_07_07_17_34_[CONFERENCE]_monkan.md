@@ -1,6 +1,0 @@
----
-type: Document
-title: Monkan
----
-
-<div data-ld-kanban data-columns="En cours|Terminé|Colonne 3" data-colors="sky|amber|emerald"></div>

@@ -5,8 +5,8 @@ order:
   - guide
   - concept
   - reference
-  - talks
 hidden:
   - files
   - images
+  - images-ai
 ---
