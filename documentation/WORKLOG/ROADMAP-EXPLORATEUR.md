@@ -169,6 +169,41 @@ Une entrée de `order` ou `hidden` qui n'existe plus est ignorée à la lecture 
 - **ADR** : nouvel ADR « Explorateur ordonné par manifeste `liv-doc-main.md` » qui remplace `2026_04_08_13_15_[NAVIGATION]_anchor_scroll_and_folder_sort_convention` (partie tri : `Partially SuperSeeded`) et rend partiellement caducs `2026_03_21_10_25_[CONFIGURATION]_general_category_and_sidebar_defaults`, `2026_04_08_12_20_[FILENAME]_datetime_precision_in_filename_pattern` et `2026_04_23_[CONFIGURATION]_exclusive_folder_and_category_expansion_options` (partie catégories).
 - **Dépend de** : US1 à US8.
 
+## US10 — Dévoiler les fichiers réservés avec les éléments cachés
+
+**En tant que** utilisateur, **je veux** que « Afficher les éléments cachés » dévoile aussi les fichiers réservés (`index.md`, `log.md`, `liv-doc-main.md`) **afin de** voir et consulter ce que l'outil génère dans chaque dossier.
+
+- **Zones** : `src/lib/folderTree.ts` (lister les fichiers réservés dans `/api/tree` avec un marqueur `reserved: true`, sans toucher `isListedEntry` partagé avec la liste des documents, la recherche et le MCP), `GET /api/documents/:id` (servir un fichier réservé en lecture), `PUT /api/documents/:id` (refuser l'écriture d'un fichier réservé), `TreeNode.svelte` / `Sidebar.svelte`, viewer (mode lecture seule), i18n EN/FR.
+- **Décisions utilisateur (14/10/2026)** : ouverture en lecture seule ; aucune action sur ces fichiers.
+- **Critères d'acceptation** :
+  - bouton « Afficher les éléments cachés » désactivé : aucun fichier réservé dans l'arbre (comportement actuel) ;
+  - bouton activé : les fichiers réservés présents apparaissent grisés, comme les éléments cachés, en tête de leur dossier ;
+  - clic sur un fichier réservé : le viewer l'affiche sans bouton d'édition ; pour `liv-doc-main.md`, dont le contenu utile est le frontmatter (`order`, `hidden`), le YAML est affiché ;
+  - l'API refuse l'écriture d'un fichier réservé ;
+  - ni drag and drop, ni menu Masquer/Afficher, ni renommage, ni suppression sur un fichier réservé ; l'API de déplacement les refuse ;
+  - les fichiers réservés restent absents de la liste des documents, de la recherche de la sidebar quand le bouton est désactivé, des `index.md` générés et du MCP.
+- **Dépend de** : US3.
+
+## US11 — Renommer un fichier ou un dossier, liens entrants à jour
+
+**En tant que** utilisateur, **je veux** renommer un fichier ou un dossier depuis le menu contextuel de l'explorateur **afin de** réorganiser sans casser les liens des autres documents. Le drag and drop bénéficie de la même réécriture des liens.
+
+- **Zones** : nouvelle route `PUT /api/tree/rename` (`{ path, newName }`) dans `src/routes/tree.ts`, `src/lib/treeMove.ts` (renommage sur disque, `migrateDocIds`, remplacement du nom dans `order` / `hidden` du manifeste parent, réécriture des liens après un renommage **et** après un déplacement `moveTreeEntry`), `src/lib/prefixMigration.ts` (`rewriteMovedLinks` / `rewriteTarget` à généraliser : aujourd'hui ils ne savent que retirer un préfixe numérique), régénération des `index.md` concernés, `TreeNode.svelte` (entrée « Renommer » + saisie en place ou modale), i18n EN/FR.
+- **Décisions utilisateur (14/10/2026)** :
+  - pour un fichier, « Renommer » change le **nom de fichier** (`.md` conservé) ; le `title` du frontmatter n'est pas modifié ;
+  - la réécriture des liens entrants s'applique aussi au drag and drop (US5/US6), qui jusqu'ici ne met à jour que les stores et les favoris ;
+  - l'`index.md` OKF ne sert pas à détecter les dépendances (il liste les liens sortants d'un dossier et peut être périmé) : les liens entrants sont trouvés en parcourant tous les `.md`, comme en US8.
+- **Critères d'acceptation** :
+  - menu contextuel « Renommer » sur les fichiers et dossiers **non masqués** ; absent sur les éléments masqués, sur les fichiers réservés (US10) et sur les dossiers racine réservés `files` / `images` ;
+  - nom invalide (vide, `/`, nom réservé, `.` / `..`) → 400 ; nom déjà pris dans le dossier → 409 ; rien n'est modifié en cas d'erreur ;
+  - l'élément renommé garde sa position dans `order` et son état dans le manifeste parent ;
+  - métadonnées, annotations, diagrammes, favoris et sources liées suivent le nouvel identifiant (`migrateDocIds`), y compris pour tous les documents d'un dossier renommé ;
+  - les liens entrants des autres documents sont réécrits, qu'ils soient relatifs (`./x.md`, `../d/x.md`), bundle-relatifs (`/d/x.md`) ou `?doc=` ; ancres et suffixes conservés ; les liens dans les blocs de code ne sont pas modifiés ; un lien non concerné reste identique à l'octet près ;
+  - après un déplacement par drag and drop, les liens entrants **et** les liens relatifs sortants des documents déplacés (recalculés depuis leur nouvel emplacement) restent valides ;
+  - le document ouvert renommé reste affiché (URL mise à jour) ;
+  - les `index.md` OKF des dossiers concernés sont régénérés ; `okf:validate` reste à 0 erreur.
+- **Dépend de** : US3, US5, US8.
+
 ---
 
 ## Ordre recommandé
@@ -183,5 +218,7 @@ Une entrée de `order` ou `hidden` qui n'existe plus est ignorée à la lecture 
 - [x] ~~US4b — Supprimer la nomenclature (frontend)~~
 - [x] ~~US8 — Migration des préfixes numériques~~
 - [x] ~~US9 — Starters et documentation~~
+- [ ] US10 — Dévoiler les fichiers réservés avec les éléments cachés
+- [ ] US11 — Renommer un fichier ou un dossier, liens entrants à jour
 
 Convention : `[x] ~~US… ~~` une fois terminée, avec un document `AAAA_MM_JJ_HH_mm_[WORKLOG]_us_XX_<slug>.md`.

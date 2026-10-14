@@ -12,6 +12,17 @@ timestamp: 2026-09-16T15:45:00Z
 status: To be validated
 ---
 
+# Explorateur : cadrage US10 et US11 — 14 octobre 2026
+
+Branche `feat/explorateur-liv-doc-main` fusionnée dans `main`. Deux nouvelles US cadrées avec l'utilisateur dans [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), aucune ligne de code :
+
+- **US10** : « Afficher les éléments cachés » dévoile aussi `index.md`, `log.md`, `liv-doc-main.md` (grisés, en tête du dossier, ouverture en lecture seule, aucune action). Marqueur `reserved: true` dans `/api/tree` seulement, sans toucher `isListedEntry`.
+- **US11** : « Renommer » (nom de fichier, pas le `title`) sur les éléments non masqués, liens entrants réécrits ; le drag and drop réécrit aussi les liens. Généraliser `rewriteTarget` (`src/lib/prefixMigration.ts`). Découpage US11a backend / US11b frontend possible.
+
+Suite : implémenter US10 dans une nouvelle session (une US par session).
+
+---
+
 # Explorateur ordonné par liv-doc-main.md — 14 octobre 2026
 
 ## État courant
