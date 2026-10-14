@@ -8,10 +8,16 @@ tags:
   - progression
   - reprise
   - agents-ia
-timestamp: 2026-10-15T03:00:00Z
+timestamp: 2026-10-15T03:15:00Z
 status: To be validated
 ---
 
+
+# Explorateur : groupe « General » renommé « Extra Files » — 14 octobre 2026
+
+Choix de l'utilisateur, pour s'aligner sur l'admin : `sidebar.extra_files_group` vaut « Extra Files » en EN et en FR. `PROJECT-STACK.md` et `tests/e2e/admin.spec.ts` suivent. Suite `tests/e2e` 124/124.
+
+---
 
 # Explorateur : ouvrir un dossier de « General » ne ferme plus le groupe — 14 octobre 2026
 
