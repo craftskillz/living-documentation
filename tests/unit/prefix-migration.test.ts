@@ -3,7 +3,8 @@ import { test } from "node:test";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { migrateFolderPrefixes, rewriteMovedLinks, stripNumericPrefix } from "../../src/lib/prefixMigration";
+import { rewriteMovedLinks } from "../../src/lib/linkRewrite";
+import { migrateFolderPrefixes, stripNumericPrefix } from "../../src/lib/prefixMigration";
 import { readFolderManifest } from "../../src/lib/folderManifest";
 import { parseFrontmatter } from "../../src/lib/frontmatter";
 

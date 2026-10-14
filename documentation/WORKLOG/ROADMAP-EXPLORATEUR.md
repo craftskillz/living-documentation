@@ -219,6 +219,7 @@ Une entrée de `order` ou `hidden` qui n'existe plus est ignorée à la lecture 
 - [x] ~~US8 — Migration des préfixes numériques~~
 - [x] ~~US9 — Starters et documentation~~
 - [x] ~~US10 — Dévoiler les fichiers réservés avec les éléments cachés~~
-- [ ] US11 — Renommer un fichier ou un dossier, liens entrants à jour
+- [x] ~~US11a — Renommer et réécrire les liens (backend)~~
+- [ ] US11b — Renommer depuis l'explorateur (frontend)
 
 Convention : `[x] ~~US… ~~` une fois terminée, avec un document `AAAA_MM_JJ_HH_mm_[WORKLOG]_us_XX_<slug>.md`.

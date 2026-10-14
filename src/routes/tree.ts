@@ -5,7 +5,7 @@ import { isListedDocFile, isListedDir } from "../lib/explorerEntries";
 import { isReservedOkfFile } from "../lib/okf";
 import { setManifestHidden } from "../lib/folderManifest";
 import { buildFolderTree } from "../lib/folderTree";
-import { moveTreeEntry, TreeMoveError } from "../lib/treeMove";
+import { moveTreeEntry, renameTreeEntry, TreeMoveError } from "../lib/treeMove";
 
 export function treeRouter(docsPath: string): Router {
   const router = Router();
@@ -56,6 +56,21 @@ export function treeRouter(docsPath: string): Router {
     } catch (err) {
       if (err instanceof TreeMoveError) return res.status(err.status).json({ error: err.message });
       res.status(500).json({ error: "Failed to move entry" });
+    }
+  });
+
+  // PUT /api/tree/rename — { path, newName }: renames an entry in place; doc
+  // ids, manifest position and the links of every document follow.
+  router.put("/rename", (req: Request, res: Response) => {
+    const { path: relPath, newName } = req.body as { path?: unknown; newName?: unknown };
+    if (typeof relPath !== "string" || !relPath.trim() || typeof newName !== "string") {
+      return res.status(400).json({ error: "path and newName are required" });
+    }
+    try {
+      res.json(renameTreeEntry(docsPath, { path: relPath, newName }));
+    } catch (err) {
+      if (err instanceof TreeMoveError) return res.status(err.status).json({ error: err.message });
+      res.status(500).json({ error: "Failed to rename entry" });
     }
   });
 

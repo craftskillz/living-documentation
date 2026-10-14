@@ -5,10 +5,9 @@
 // that pointed into it follow. Documents are never renamed.
 import fs from "node:fs";
 import path from "node:path";
-import { readConfig } from "./config";
 import { FOLDER_MANIFEST_FILE } from "./folderManifest";
 import { parseFrontmatter, serializeFrontmatter } from "./frontmatter";
-import { readMetadataStore, writeMetadataStore } from "./metadata";
+import { applyLinkRewrites, migrateSourcePaths, type PathMapper, planLinkRewrites } from "./linkRewrite";
 import { migrateDocIds, RESERVED_ROOT_FOLDERS } from "./treeMove";
 
 const IGNORED_DIRS = new Set([".git", "node_modules", "dist"]);
@@ -77,7 +76,7 @@ function planRenames(docsPath: string, relDir = "", plan: PlannedRename[] = [], 
  * Maps an old POSIX path, segment by segment, through the planned renames.
  * Returns null when no segment changes.
  */
-function pathMapper(plan: PlannedRename[]): (oldRel: string) => string | null {
+function pathMapper(plan: PlannedRename[]): PathMapper {
   const renames = new Map(plan.map((r) => [join(r.parentOld, r.fromName), r.toName]));
   return (oldRel) => {
     let current = "";
@@ -91,127 +90,6 @@ function pathMapper(plan: PlannedRename[]): (oldRel: string) => string | null {
     });
     return changed ? out.join("/") : null;
   };
-}
-
-function normalizeSegments(segments: string[]): string[] | null {
-  const out: string[] = [];
-  for (const seg of segments) {
-    if (seg === "" || seg === ".") continue;
-    if (seg === "..") {
-      if (out.length === 0) return null;
-      out.pop();
-    } else out.push(seg);
-  }
-  return out;
-}
-
-function safeDecode(value: string): string {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return value;
-  }
-}
-
-/**
- * Rewrites one link target written in the file `fileOldRel`. Each path segment
- * that walks into a renamed folder loses its prefix; `.`/`..`, encoding,
- * fragments and the rest are kept, so an unaffected link stays byte-identical.
- */
-function rewriteTarget(target: string, fileOldRel: string, mapPath: (oldRel: string) => string | null): string {
-  if (/^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(target)) return target;
-
-  const doc = target.match(/([?&]doc=)([^&#]+)/);
-  if (doc) {
-    const id = safeDecode(safeDecode(doc[2]));
-    const next = mapPath(id);
-    if (next === null) return target;
-    return target.replace(doc[0], doc[1] + encodeURIComponent(encodeURIComponent(next)));
-  }
-
-  const cut = target.search(/[?#]/);
-  const pathPart = cut === -1 ? target : target.slice(0, cut);
-  if (!pathPart) return target;
-  const absolute = pathPart.startsWith("/");
-  const fileDir = fileOldRel.includes("/") ? fileOldRel.slice(0, fileOldRel.lastIndexOf("/")).split("/") : [];
-  const segments = pathPart.split("/");
-  let base = absolute ? [] : fileDir;
-  let changed = false;
-  const out = segments.map((seg, i) => {
-    if (i === 0 && absolute) return seg;
-    const resolved = normalizeSegments([...base, safeDecode(seg)]);
-    if (resolved === null) return seg;
-    base = resolved;
-    if (seg === "" || seg === "." || seg === "..") return seg;
-    const mapped = mapPath(resolved.join("/"));
-    if (mapped === null || mapped.split("/").at(-1) === resolved.at(-1)) return seg;
-    changed = true;
-    return seg.replace(NUMERIC_PREFIX, "");
-  });
-  return changed ? out.join("/") + target.slice(pathPart.length) : target;
-}
-
-/**
- * Rewrites the inline links and reference definitions of a Markdown file
- * (fenced code excluded) that point into renamed folders.
- */
-export function rewriteMovedLinks(
-  content: string,
-  fileOldRel: string,
-  mapPath: (oldRel: string) => string | null,
-): string {
-  let fence: string | null = null;
-  return content
-    .split("\n")
-    .map((line) => {
-      const marker = line.match(/^\s{0,3}(`{3,}|~{3,})/);
-      if (marker) {
-        if (fence === null) fence = marker[1][0];
-        else if (marker[1][0] === fence) fence = null;
-        return line;
-      }
-      if (fence !== null) return line;
-      return line
-        .replace(/(\]\()([^)\s]+)/g, (_m, open: string, t: string) => open + rewriteTarget(t, fileOldRel, mapPath))
-        .replace(
-          /^(\s{0,3}\[[^\]]+\]:\s*)(\S+)/,
-          (_m, open: string, t: string) => open + rewriteTarget(t, fileOldRel, mapPath),
-        );
-    })
-    .join("\n");
-}
-
-/**
- * Source bindings are paths relative to `sourceRoot`; those that point at a
- * document of the docs folder follow its renamed folders.
- */
-function migrateSourcePaths(docsPath: string, mapPath: (oldRel: string) => string | null): void {
-  const { sourceRoot } = readConfig(docsPath);
-  const store = readMetadataStore(docsPath);
-  let changed = false;
-  for (const entries of Object.values(store)) {
-    for (const entry of Array.isArray(entries) ? entries : []) {
-      if (typeof entry?.path !== "string") continue;
-      const rel = path.relative(docsPath, path.resolve(sourceRoot, entry.path)).split(path.sep).join("/");
-      if (rel.startsWith("..") || path.isAbsolute(rel)) continue;
-      const next = mapPath(rel);
-      if (next === null) continue;
-      entry.path = path.relative(sourceRoot, path.join(docsPath, next)).split(path.sep).join("/");
-      changed = true;
-    }
-  }
-  if (changed) writeMetadataStore(docsPath, store);
-}
-
-function collectMd(docsPath: string, relDir = "", out: string[] = []): string[] {
-  for (const entry of fs.readdirSync(path.join(docsPath, relDir), { withFileTypes: true })) {
-    if (entry.isSymbolicLink()) continue;
-    const rel = join(relDir, entry.name);
-    if (entry.isDirectory()) {
-      if (!IGNORED_DIRS.has(entry.name)) collectMd(docsPath, rel, out);
-    } else if (entry.name.endsWith(".md")) out.push(rel);
-  }
-  return out;
 }
 
 /**
@@ -252,12 +130,7 @@ export function migrateFolderPrefixes(docsPath: string, opts: { dryRun?: boolean
     .filter((name) => fs.existsSync(path.join(docsPath, name)))
     .filter((name) => !(Array.isArray(rootHidden) && rootHidden.includes(name)));
 
-  const rewrites = collectMd(docsPath)
-    .map((oldRel) => {
-      const content = fs.readFileSync(path.join(docsPath, oldRel), "utf-8");
-      return { oldRel, content, next: rewriteMovedLinks(content, oldRel, mapPath) };
-    })
-    .filter((r) => r.next !== r.content);
+  const rewrites = planLinkRewrites(docsPath, mapPath);
 
   const result: PrefixMigrationResult = {
     renamed: plan.map((r) => ({ from: join(r.parentOld, r.fromName), to: newPath(join(r.parentOld, r.fromName)) })),
@@ -283,6 +156,6 @@ export function migrateFolderPrefixes(docsPath: string, opts: { dryRun?: boolean
     mergeManifest(path.join(docsPath, newPath(parentOld)), renames, parentOld === "" ? hiddenAdded : []);
   }
 
-  for (const r of rewrites) fs.writeFileSync(path.join(docsPath, newPath(r.oldRel)), r.next, "utf-8");
+  applyLinkRewrites(docsPath, rewrites, mapPath);
   return result;
 }

@@ -12,6 +12,16 @@ timestamp: 2026-09-16T15:45:00Z
 status: To be validated
 ---
 
+# Explorateur : US11a livrée — 14 octobre 2026
+
+US11a (backend) terminée sur `main` : `PUT /api/tree/rename` et réécriture des liens au renommage et au déplacement (`src/lib/linkRewrite.ts`). Détails : [worklog US11a](./2026_10_14_17_00_%5BWORKLOG%5D_us_11a_renommer_et_reecrire_les_liens_backend.md). Suites : unitaires 64/64, `tests/api` 219/219, `tests/e2e` 114/114, `okf:validate` conforme.
+
+Suite : US11b (frontend : menu « Renommer », URL du document ouvert, i18n EN/FR) dans une nouvelle session.
+
+MCP Living Documentation non exposé : pas de métadonnées attachées.
+
+---
+
 # Explorateur : US10 livrée — 14 octobre 2026
 
 US10 terminée sur `main` : les fichiers réservés apparaissent avec les éléments cachés, en lecture seule. Détails : [worklog US10](./2026_10_14_15_00_%5BWORKLOG%5D_us_10_fichiers_reserves_avec_les_elements_caches.md). Suites : unitaires 57/57, `tests/api` 215/215, `tests/e2e` 114/114.

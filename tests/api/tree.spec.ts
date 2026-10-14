@@ -322,3 +322,107 @@ test('POST /api/tree/move rejects invalid moves without touching the disk', asyn
   expect(fs.existsSync(path.join(ld.docsAbs, 'guide/sub/d.md'))).toBe(true);
   expect(fs.existsSync(path.join(ld.docsAbs, 'images'))).toBe(true);
 });
+
+test('POST /api/tree/move rewrites incoming links and the relative links of the moved document', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'notes/y.md');
+  writeDoc(ld.docsAbs, 'archive/old/z.md');
+  fs.mkdirSync(path.join(ld.docsAbs, 'guide'), { recursive: true });
+  fs.writeFileSync(path.join(ld.docsAbs, 'guide/a.md'), '[home](../home.md) [y](../notes/y.md#s) [w](https://w.org)\n');
+  fs.writeFileSync(path.join(ld.docsAbs, 'home.md'), '[a](./guide/a.md) [y](notes/y.md)\n');
+
+  const res = await move(request, ld.baseURL, { source: 'guide/a.md', targetFolder: 'archive/old', index: 0 });
+
+  expect(res.status()).toBe(200);
+  expect(fs.readFileSync(path.join(ld.docsAbs, 'home.md'), 'utf-8')).toBe('[a](./archive/old/a.md) [y](notes/y.md)\n');
+  expect(fs.readFileSync(path.join(ld.docsAbs, 'archive/old/a.md'), 'utf-8')).toBe(
+    '[home](../../home.md) [y](../../notes/y.md#s) [w](https://w.org)\n',
+  );
+});
+
+async function rename(
+  request: import('@playwright/test').APIRequestContext,
+  baseURL: string,
+  data: Record<string, unknown>,
+) {
+  return request.put(`${baseURL}/api/tree/rename`, { data });
+}
+
+test('PUT /api/tree/rename renames a file in place, its stores and incoming links following', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'guide/a.md');
+  writeDoc(ld.docsAbs, 'guide/b.md');
+  writeDoc(ld.docsAbs, 'guide/c.md');
+  fs.writeFileSync(path.join(ld.docsAbs, 'guide/liv-doc-main.md'), '---\norder:\n  - c.md\n  - a.md\n  - b.md\nhidden: []\n---\n\nGuide body\n');
+  fs.writeFileSync(path.join(ld.docsAbs, 'home.md'), '[a](./guide/a.md#top) [abs](/guide/a.md) [b](guide/b.md)\n\n```\n[code](./guide/a.md)\n```\n');
+  const metadataFile = path.join(ld.docsAbs, '.metadata.json');
+  fs.writeFileSync(metadataFile, JSON.stringify({ 'guide/a': [{ path: 'src/x.ts' }] }));
+
+  const res = await rename(request, ld.baseURL, { path: 'guide/a.md', newName: 'alpha' });
+
+  expect(res.status()).toBe(200);
+  expect(await res.json()).toMatchObject({ path: 'guide/alpha.md', id: encodeURIComponent('guide/alpha') });
+  expect(fs.existsSync(path.join(ld.docsAbs, 'guide/a.md'))).toBe(false);
+  expect(fs.readFileSync(path.join(ld.docsAbs, 'guide/alpha.md'), 'utf-8')).toContain('title: a');
+  const tree = await getTree(request, ld.baseURL);
+  expect(names(tree.find((n) => n.name === 'guide')?.children)).toEqual(['c.md', 'alpha.md', 'b.md']);
+  expect(fs.readFileSync(path.join(ld.docsAbs, 'guide/liv-doc-main.md'), 'utf-8')).toContain('Guide body');
+  expect(fs.readFileSync(path.join(ld.docsAbs, 'home.md'), 'utf-8')).toBe(
+    '[a](./guide/alpha.md#top) [abs](/guide/alpha.md) [b](guide/b.md)\n\n```\n[code](./guide/a.md)\n```\n',
+  );
+  expect(Object.keys(readJson(metadataFile))).toEqual(['guide/alpha']);
+  expect(fs.readFileSync(path.join(ld.docsAbs, 'guide/index.md'), 'utf-8')).toContain('(./alpha.md)');
+});
+
+test('PUT /api/tree/rename renames a folder: doc ids below it and links into it follow', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'guide/sub/d.md');
+  fs.writeFileSync(path.join(ld.docsAbs, 'liv-doc-main.md'), '---\norder:\n  - guide\nhidden: []\n---\n');
+  fs.writeFileSync(path.join(ld.docsAbs, 'home.md'), '[d](./guide/sub/d.md)\n');
+  const annotationsFile = path.join(ld.docsAbs, '.annotations.json');
+  fs.writeFileSync(annotationsFile, JSON.stringify({ 'guide/sub/d': [{ id: 'n1' }] }));
+
+  const res = await rename(request, ld.baseURL, { path: 'guide', newName: 'manual' });
+
+  expect(res.status()).toBe(200);
+  expect(await res.json()).toEqual({ path: 'manual' });
+  expect(fs.existsSync(path.join(ld.docsAbs, 'manual/sub/d.md'))).toBe(true);
+  expect(names(await getTree(request, ld.baseURL))[0]).toBe('manual');
+  expect(fs.readFileSync(path.join(ld.docsAbs, 'home.md'), 'utf-8')).toBe('[d](./manual/sub/d.md)\n');
+  expect(Object.keys(readJson(annotationsFile))).toEqual(['manual/sub/d']);
+});
+
+test('PUT /api/tree/rename rejects invalid names, taken names and protected entries without touching the disk', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'guide/a.md');
+  writeDoc(ld.docsAbs, 'guide/b.md');
+  writeDoc(ld.docsAbs, 'guide/secret.md');
+  fs.writeFileSync(path.join(ld.docsAbs, 'guide/liv-doc-main.md'), '---\norder: []\nhidden:\n  - secret.md\n---\n');
+  fs.mkdirSync(path.join(ld.docsAbs, 'images'), { recursive: true });
+
+  const cases: [Record<string, unknown>, number][] = [
+    [{ path: 'guide/a.md', newName: '' }, 400],
+    [{ path: 'guide/a.md', newName: '   ' }, 400],
+    [{ path: 'guide/a.md', newName: 'x/y' }, 400],
+    [{ path: 'guide/a.md', newName: '..' }, 400],
+    [{ path: 'guide', newName: '.' }, 400],
+    [{ path: 'guide/a.md', newName: 'index' }, 400],
+    [{ path: 'guide/a.md', newName: 'liv-doc-main.md' }, 400],
+    [{ path: 'guide', newName: 'images' }, 400],
+    [{ path: 'images', newName: 'pictures' }, 400],
+    [{ path: 'guide/liv-doc-main.md', newName: 'x' }, 400],
+    [{ path: 'guide/secret.md', newName: 'public' }, 400],
+    [{ path: 'guide/a.md', newName: 'b' }, 409],
+    [{ path: 'guide/a.md', newName: 'b.md' }, 409],
+    [{ path: 'guide/missing.md', newName: 'x' }, 404],
+    [{ path: '../outside.md', newName: 'x' }, 403],
+    [{ path: 'guide/a.md' }, 400],
+  ];
+  for (const [data, status] of cases) {
+    const res = await rename(request, ld.baseURL, data);
+    expect(res.status(), JSON.stringify(data)).toBe(status);
+  }
+  expect(fs.readdirSync(path.join(ld.docsAbs, 'guide')).filter((n) => n !== 'index.md').sort()).toEqual([
+    'a.md',
+    'b.md',
+    'liv-doc-main.md',
+    'secret.md',
+  ]);
+  expect(fs.existsSync(path.join(ld.docsAbs, 'images'))).toBe(true);
+});

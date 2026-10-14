@@ -1,7 +1,8 @@
-// Moves a document or a folder inside the docs tree, keeping the folder
-// manifests (`liv-doc-main.md`) and the doc-keyed stores in step. A doc id is
-// its relative path without `.md`, so a move changes the ids of the document,
-// or of every document under a moved folder.
+// Moves or renames a document or a folder inside the docs tree, keeping the
+// folder manifests (`liv-doc-main.md`), the doc-keyed stores, the links of
+// every document and the OKF `index.md` files in step. A doc id is its
+// relative path without `.md`, so a move changes the ids of the document, or
+// of every document under a moved folder.
 import fs from "node:fs";
 import path from "node:path";
 import { readConfig, writeConfig } from "./config";
@@ -9,12 +10,16 @@ import { isListedDir, isListedDocFile } from "./explorerEntries";
 import {
   appendToManifestOrder,
   isManifestWritable,
+  readFolderManifest,
   removeFromManifest,
+  renameInManifest,
   setManifestOrder,
 } from "./folderManifest";
 import { orderedEntryNames } from "./folderTree";
+import { applyLinkRewrites, entryMapper, migrateSourcePaths, planLinkRewrites } from "./linkRewrite";
 import { readMetadataStore, writeMetadataStore } from "./metadata";
 import { isReservedOkfFile } from "./okf";
+import { generateOkfIndexFiles } from "./okf/index-generator";
 
 /** Folders at the docs root that hold assets, never documents. */
 export const RESERVED_ROOT_FOLDERS = new Set(["files", "images"]);
@@ -35,6 +40,13 @@ export interface TreeMoveRequest {
   targetFolder: string;
   /** Position of the entry in the destination folder once moved; past the end appends. */
   index: number;
+}
+
+export interface TreeRenameRequest {
+  /** POSIX path of the entry to rename, relative to the docs folder. */
+  path: string;
+  /** New file or folder name; `.md` is added to a document name without it. */
+  newName: string;
 }
 
 export interface TreeMoveResult {
@@ -120,6 +132,29 @@ export function migrateDocIds(docsPath: string, from: string, to: string, isFold
   if (favoritesChanged) writeConfig(docsPath, { favorites: nextFavorites });
 }
 
+/** Regenerates the OKF `index.md` files of a bundle that already has them. */
+function refreshOkfIndexes(docsPath: string): void {
+  if (fs.existsSync(path.join(docsPath, "index.md"))) generateOkfIndexFiles(docsPath);
+}
+
+/**
+ * Renames `absFrom` to `absTo` on disk; doc ids, source bindings and the links
+ * of every document (incoming, and the relative ones of the moved documents)
+ * follow. Returns the new POSIX relative path.
+ */
+function changeEntryPath(docsPath: string, absFrom: string, absTo: string, isFolder: boolean): string {
+  const fromRel = toPosix(path.relative(docsPath, absFrom));
+  const toRel = toPosix(path.relative(docsPath, absTo));
+  const mapPath = entryMapper(fromRel, toRel, isFolder);
+  const rewrites = planLinkRewrites(docsPath, mapPath);
+  fs.renameSync(absFrom, absTo);
+  const strip = (rel: string) => (isFolder ? rel : rel.slice(0, -3));
+  migrateDocIds(docsPath, strip(fromRel), strip(toRel), isFolder);
+  migrateSourcePaths(docsPath, mapPath);
+  applyLinkRewrites(docsPath, rewrites, mapPath);
+  return toRel;
+}
+
 /**
  * Moves `absSource` into the existing folder `absTargetDir`. With an `index`,
  * the destination manifest `order` is rewritten with the entry at that
@@ -141,22 +176,18 @@ export function relocateEntry(docsPath: string, absSource: string, absTargetDir:
 
   if (sourceDir === absTargetDir) {
     if (index !== undefined) setManifestOrder(absTargetDir, insertAt(orderedEntryNames(absTargetDir)));
+    refreshOkfIndexes(docsPath);
     return toPosix(path.relative(docsPath, absSource));
   }
 
   const targetOrder = index === undefined ? null : insertAt(orderedEntryNames(absTargetDir));
-  const absTarget = path.join(absTargetDir, name);
   const isFolder = fs.statSync(absSource).isDirectory();
-  fs.renameSync(absSource, absTarget);
+  const toRel = changeEntryPath(docsPath, absSource, path.join(absTargetDir, name), isFolder);
 
   removeFromManifest(sourceDir, name);
   if (targetOrder) setManifestOrder(absTargetDir, targetOrder);
   else appendToManifestOrder(absTargetDir, name);
-
-  const fromRel = toPosix(path.relative(docsPath, absSource));
-  const toRel = toPosix(path.relative(docsPath, absTarget));
-  const strip = (rel: string) => (isFolder ? rel : rel.slice(0, -3));
-  migrateDocIds(docsPath, strip(fromRel), strip(toRel), isFolder);
+  refreshOkfIndexes(docsPath);
   return toRel;
 }
 
@@ -202,4 +233,53 @@ export function moveTreeEntry(docsPath: string, request: TreeMoveRequest): TreeM
 
   const newPath = relocateEntry(docsPath, absSource, absTargetDir, index);
   return isFolder ? { path: newPath } : { path: newPath, id: encodeURIComponent(newPath.slice(0, -3)) };
+}
+
+/** PUT /api/tree/rename: renames a visible entry in place, keeping its manifest position and state. */
+export function renameTreeEntry(docsPath: string, request: TreeRenameRequest): TreeMoveResult {
+  const root = path.resolve(docsPath);
+  const absSource = path.resolve(root, request.path);
+  if (absSource === root || !insideRoot(root, absSource)) throw new TreeMoveError(403, "Access denied");
+
+  const name = path.basename(absSource);
+  const parentDir = path.dirname(absSource);
+  if (isReservedOkfFile(name)) throw new TreeMoveError(400, "Reserved files cannot be renamed");
+  let sourceStat: fs.Stats;
+  try {
+    sourceStat = fs.statSync(absSource);
+  } catch {
+    throw new TreeMoveError(404, "Entry not found");
+  }
+  const isFolder = sourceStat.isDirectory();
+  const listed = isFolder ? isListedDir(name) : sourceStat.isFile() && isListedDocFile(name);
+  if (!listed) throw new TreeMoveError(400, "This entry is not shown in the explorer");
+  const atRoot = parentDir === root;
+  if (isFolder && atRoot && RESERVED_ROOT_FOLDERS.has(name)) throw new TreeMoveError(400, `"${name}" is a reserved folder`);
+  if (readFolderManifest(parentDir).hidden.includes(name)) throw new TreeMoveError(400, "Hidden entries cannot be renamed");
+
+  const trimmed = request.newName.trim();
+  const newName = isFolder || trimmed.toLowerCase().endsWith(".md") ? trimmed : `${trimmed}.md`;
+  const invalid =
+    !trimmed ||
+    /[/\\]/.test(trimmed) ||
+    trimmed === "." ||
+    trimmed === ".." ||
+    isReservedOkfFile(newName) ||
+    !(isFolder ? isListedDir(newName) : isListedDocFile(newName)) ||
+    (isFolder && atRoot && RESERVED_ROOT_FOLDERS.has(newName));
+  if (invalid) throw new TreeMoveError(400, "Invalid name");
+
+  const result = (rel: string) => (isFolder ? { path: rel } : { path: rel, id: encodeURIComponent(rel.slice(0, -3)) });
+  if (newName === name) return result(toPosix(path.relative(root, absSource)));
+  // A case-only rename finds the entry itself on a case-insensitive disk.
+  const sameEntry = newName.toLowerCase() === name.toLowerCase();
+  if (!sameEntry && fs.existsSync(path.join(parentDir, newName))) {
+    throw new TreeMoveError(409, "An entry with this name already exists in this folder");
+  }
+  if (!isManifestWritable(parentDir)) throw new TreeMoveError(409, "Parent liv-doc-main.md has an invalid frontmatter");
+
+  const toRel = changeEntryPath(docsPath, absSource, path.join(parentDir, newName), isFolder);
+  renameInManifest(parentDir, name, newName);
+  refreshOkfIndexes(docsPath);
+  return result(toRel);
 }

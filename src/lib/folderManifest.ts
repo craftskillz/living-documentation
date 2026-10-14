@@ -127,3 +127,10 @@ export function removeFromManifest(absDir: string, name: string): void {
     hidden: hidden.filter((n) => n !== name),
   }));
 }
+
+/** Replaces `from` by `to` in the `order` and `hidden` of an existing manifest, keeping positions. */
+export function renameInManifest(absDir: string, from: string, to: string): void {
+  if (!fs.existsSync(path.join(absDir, FOLDER_MANIFEST_FILE))) return;
+  const swap = (n: string) => (n === from ? to : n);
+  rewriteManifest(absDir, ({ order, hidden }) => ({ order: order.map(swap), hidden: hidden.map(swap) }));
+}
