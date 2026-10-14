@@ -181,9 +181,9 @@ Chaque règle utilise un frontmatter :
 - `severity` - `guideline`, `warning` ou `required` ;
 - `description` - résumé concis ;
 - `tags` - thèmes utilisés pour la découverte ;
-- `appliesTo` - globs indiquant où la règle s'applique.
+- `appliesto` - globs indiquant où la règle s'applique (clé écrite en minuscules dans le front-matter canonique ; `appliesTo` est aussi accepté à la lecture).
 
-Appliquer chaque règle dont les motifs `appliesTo` correspondent aux fichiers modifiés.
+Appliquer chaque règle dont les motifs `appliesto` correspondent aux fichiers modifiés.
 
 ## Modification des fichiers d'instructions IA
 

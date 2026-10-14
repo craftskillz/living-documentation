@@ -207,9 +207,9 @@ Each rule uses frontmatter:
 - `severity` - `guideline`, `warning`, or `required`;
 - `description` - concise summary;
 - `tags` - themes used for discovery;
-- `appliesTo` - globs describing where the rule applies.
+- `appliesto` - globs describing where the rule applies (key written in lower case in the canonical front-matter; `appliesTo` is also accepted when reading).
 
-Apply every rule whose `appliesTo` patterns match files you touch. If a rule conflicts with the user request or another project instruction, state the conflict explicitly before proceeding.
+Apply every rule whose `appliesto` patterns match files you touch. If a rule conflicts with the user request or another project instruction, state the conflict explicitly before proceeding.
 
 ## Memory
 

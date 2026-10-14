@@ -40,7 +40,7 @@ MCP Living Documentation non exposé : pas de métadonnées attachées.
 
 Tests : `tests/api/context.spec.ts` (nouveau test de lecture YAML canonique, test de création renforcé). Suites : unitaires 69/69, `tests/api` 220/220, `tests/e2e` 117/117, `okf:validate` conforme.
 
-Proposé, non appliqué (fichiers d'instructions IA, validation attendue) : préciser dans `PROJECT-INSTRUCTIONS.md` (dépôt et deux starters) que `appliesTo` s'écrit `appliesto` dans le front-matter canonique.
+Appliqué après validation de l'utilisateur : précisé dans `PROJECT-INSTRUCTIONS.md` (dépôt et deux starters) que `appliesTo` s'écrit `appliesto` dans le front-matter canonique.
 
 MCP Living Documentation non exposé : pas de métadonnées attachées.
 
