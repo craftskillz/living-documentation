@@ -233,6 +233,7 @@
     home.allDocs = docs;
     home.explorerTree = tree;
     home.docsFolder = typeof cfg.docsFolder === "string" ? cfg.docsFolder : "";
+    home.extraEntries = Array.isArray(cfg.extraFiles) ? (cfg.extraFiles as string[]) : [];
     if (cfg.docsFolder) {
       try { home.allFolderPaths = await api.fetchAllDirs(cfg.docsFolder as string); } catch { home.allFolderPaths = []; }
     }

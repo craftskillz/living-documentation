@@ -27,6 +27,7 @@
     withExtraFilesGroup(
       home.showHiddenEntries ? home.explorerTree : withoutHiddenEntries(home.explorerTree),
       home.allDocs,
+      home.extraEntries,
       t("sidebar.extra_files_group"),
     ),
   );

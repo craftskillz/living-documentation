@@ -63,19 +63,79 @@ export function countExplorerDocs(node: ExplorerNode, predicate: (id: string) =>
 
 const EXTRA_FILES_GROUP_PATH = ":extra-files:";
 
+function isAbsoluteId(id: string): boolean {
+  const decoded = decodeURIComponent(id);
+  return decoded.startsWith("/") || /^[A-Za-z]:[\\/]/.test(decoded);
+}
+
+const toSlashes = (p: string) => p.replace(/\\/g, "/");
+
 /**
  * Extra files (absolute ids, outside the docs folder) are not in GET /api/tree:
- * show them first, flat, in a read-only group, in the documents listing order.
+ * show them first in a read-only group, one node per configured entry (in
+ * config order). A folder entry keeps its name and sub-folders.
  */
-export function withExtraFilesGroup(tree: ExplorerNode[], docs: DocSummary[], label: string): ExplorerNode[] {
-  const extras = docs.filter((doc) => decodeURIComponent(doc.id).startsWith("/") || /^[A-Za-z]:[\\/]/.test(decodeURIComponent(doc.id)));
+export function withExtraFilesGroup(
+  tree: ExplorerNode[],
+  docs: DocSummary[],
+  extraEntries: string[],
+  label: string,
+): ExplorerNode[] {
+  const extras = docs.filter((doc) => isAbsoluteId(doc.id));
   if (extras.length === 0) return tree;
-  const children: ExplorerNode[] = extras.map((doc) => ({
-    kind: "doc",
-    name: doc.filename ?? `${doc.title}.md`,
-    path: `${EXTRA_FILES_GROUP_PATH}${doc.id}`,
-    id: doc.id,
+  const placed = new Set<string>();
+
+  const docNode = (doc: DocSummary): ExplorerNode => {
+    placed.add(doc.id);
+    return {
+      kind: "doc",
+      name: doc.filename ?? `${doc.title}.md`,
+      path: `${EXTRA_FILES_GROUP_PATH}${doc.id}`,
+      id: doc.id,
+      extra: true,
+    };
+  };
+
+  const folderNode = (folderPath: string, name: string): ExplorerNode => ({
+    kind: "folder",
+    name,
+    path: `${EXTRA_FILES_GROUP_PATH}${folderPath}`,
     extra: true,
-  }));
+    children: [],
+  });
+
+  const children: ExplorerNode[] = [];
+  for (const rawEntry of extraEntries) {
+    const entry = toSlashes(rawEntry).replace(/\/+$/, "");
+    const asFile = extras.find((doc) => `${toSlashes(decodeURIComponent(doc.id))}.md` === entry);
+    if (asFile) {
+      if (!placed.has(asFile.id)) children.push(docNode(asFile));
+      continue;
+    }
+    const inFolder = extras.filter(
+      (doc) => !placed.has(doc.id) && toSlashes(decodeURIComponent(doc.id)).startsWith(`${entry}/`),
+    );
+    if (inFolder.length === 0) continue;
+    const root = folderNode(entry, entry.split("/").pop() as string);
+    for (const doc of inFolder) {
+      const segments = toSlashes(decodeURIComponent(doc.id)).slice(entry.length + 1).split("/");
+      segments.pop();
+      let parent = root;
+      let parentPath = entry;
+      for (const segment of segments) {
+        parentPath = `${parentPath}/${segment}`;
+        let next = parent.children?.find((n) => n.kind === "folder" && n.name === segment);
+        if (!next) {
+          next = folderNode(parentPath, segment);
+          parent.children?.push(next);
+        }
+        parent = next;
+      }
+      parent.children?.push(docNode(doc));
+    }
+    children.push(root);
+  }
+  for (const doc of extras) if (!placed.has(doc.id)) children.push(docNode(doc));
+
   return [{ kind: "folder", name: label, path: EXTRA_FILES_GROUP_PATH, extra: true, children }, ...tree];
 }

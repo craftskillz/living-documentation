@@ -8,10 +8,20 @@ tags:
   - progression
   - reprise
   - agents-ia
-timestamp: 2026-10-15T01:30:00Z
+timestamp: 2026-10-15T02:30:00Z
 status: To be validated
 ---
 
+
+# Explorateur : un dossier extra garde sa structure dans « General » — 14 octobre 2026
+
+Changement de choix de l'utilisateur (option B au lieu de la liste à plat) : dans le groupe « General » de l'explorateur, chaque entrée `extraFiles` est un nœud, dans l'ordre de la config. Un dossier ajouté apparaît sous son nom (`.agents`) avec ses sous-dossiers ; un fichier ajouté seul reste à la racine du groupe. `withExtraFilesGroup` reçoit les entrées absolues de la config (`home.extraEntries`, rempli depuis `/api/config`). Côté serveur, `/api/documents` ne change pas.
+
+Tests : `tests/unit/extra-files-group.test.ts` réécrit, `tests/e2e/admin.spec.ts` ouvre General → `.agents` → `skills`. Suites : unitaires 73/73, `tests/api` 230/230, `tests/e2e` 123/123, lint OK.
+
+MCP Living Documentation non exposé : pas de métadonnées attachées.
+
+---
 
 # Explorateur : extra files de nouveau visibles (groupe « General ») — 14 octobre 2026
 

@@ -21,6 +21,8 @@ class HomeState {
   explorerTree = $state<ExplorerNode[]>([]);
   docsById = $derived(new Map(this.allDocs.map((d) => [d.id, d])));
   docsFolder = $state("");
+  /** Absolute admin "Extra Files" entries (files or folders), in config order. */
+  extraEntries = $state<string[]>([]);
   annotationCounts = $state<Record<string, number>>({});
   fileAttachmentCounts = $state<Record<string, number>>({});
   docStatuses = $state<Record<string, string>>({});
