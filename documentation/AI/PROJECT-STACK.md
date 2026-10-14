@@ -56,19 +56,7 @@ sources:
 
 Ce fichier donne à l'assistant IA une vue rapide et factuelle du projet. Il doit rester court, concret et maintenu en continu.
 
-Il ne remplace pas les ADR : il sert à savoir rapidement où regarder, quelles technologies sont en jeu et quels concepts structurent le code. Pour le pourquoi détaillé d'une décision, lire les ADR pertinents.
-
-## Règle de maintenance
-
-L'IA doit proposer une mise à jour de ce fichier lorsqu'une tâche :
-
-- introduit, retire ou remplace une technologie importante ;
-- modifie une convention structurante ;
-- ajoute ou déplace une zone source importante ;
-- change un concept métier ou technique central ;
-- rend une information ci-dessous fausse ou incomplète.
-
-Ne pas documenter ici les détails volatils, les TODO temporaires ou les informations qui appartiennent clairement à un ADR.
+Il ne remplace pas les ADR : il sert à savoir rapidement où regarder, quelles technologies sont en jeu et quels concepts structurent le code. Pour le pourquoi détaillé d'une décision, lire les ADR pertinents. Règle de maintenance : section « Stack et commandes projet » de `PROJECT-INSTRUCTIONS.md`.
 
 ## Vue d'ensemble
 
@@ -89,7 +77,7 @@ L'utilisateur lance le CLI avec un dossier de documentation relatif, par exemple
 - **Gestion d'état frontend** : runes Svelte (`$state`) , stores réactifs (ex. `lib/home/state.svelte.ts`, `lib/i18n.svelte.ts`) ; les moteurs impératifs réutilisés (Workspace canvas, Diagram vis-network) gardent un état mutable (`lib/diagram/state.js`) ; persistance ciblée via `localStorage`.
 - **Build / bundler** : `tsc` compile le serveur/CLI ; **Vite** build le frontend (`src/frontend-svelte/vite.config.ts` → `dist/frontend-svelte/`) ; `scripts/copy-assets.ts` ne copie plus que `starter-doc/` et `starter-doc-fr/` vers `dist/`.
 - **Package manager** : npm, avec `package-lock.json`.
-- **Tests** : Playwright pour API/E2E et les specs unitaires historiques ; Node.js `node:test` via `npm run test:unit` pour les tests OKF ; les tests serveur lancent un vrai CLI isolé sur port libre. NOTE : les specs E2E ciblant l'ancien frontend vanilla sont à réécrire pour l'UI Svelte.
+- **Tests** : Playwright pour API/E2E et quelques specs unitaires historiques (`tests/unit/*.spec.ts`) ; Node.js `node:test` via `npm run test:unit` pour la logique pure (`tests/unit/*.test.ts`) ; les tests serveur lancent un vrai CLI isolé sur port libre.
 - **Coverage** : c8 + couverture V8 native, agrégée depuis les processus CLI/serveur lancés par Playwright.
 - **Qualité frontend** : typage via `svelte-check` / `tsc` et build Vite (le script legacy `check:frontend` a été supprimé avec le frontend vanilla).
 - **Lint / formatage** : Biome via `npm run lint` et `npm run lint:ci` ; corrections explicites via `lint:fix` ou `lint:fix:unsafe`. Aucun script `format` dédié.
@@ -143,7 +131,8 @@ starter-doc-fr/                    <- starter de documentation français empaque
 tests/api/*.spec.ts                <- tests API et CLI via Playwright
 tests/e2e/*.spec.ts                <- tests navigateur E2E
 tests/helpers/*.ts                 <- fixtures, serveur CLI isolé, hooks coverage
-tests/unit/*.spec.ts               <- tests unitaires de lisibilité, pas la source principale de coverage
+tests/unit/*.test.ts               <- tests unitaires node:test de la logique pure (npm run test:unit)
+tests/unit/*.spec.ts               <- specs unitaires Playwright historiques
 playwright.config.ts               <- configuration Playwright Chromium
 justfile                           <- raccourcis locaux optionnels (`just dev`, `just build`, `just start`)
 documentation/AI/                 <- instructions IA, stack, commandes, règles
@@ -177,12 +166,10 @@ memory/                           <- mémoire projet locale indexée par `memory
 
 - **Documentation comme source de vérité** : pour les diagrammes MCP, lire ou créer les documents source-of-truth avant de dessiner ; ne pas inventer d'acteurs ou relations absents des documents.
 - **MCP avant édition manuelle** : quand le MCP est disponible, utiliser `read_document`, `update_document`, `create_document`, `add_metadata` et `refresh_metadata` pour maintenir la documentation.
-- **Internationalisation obligatoire** : tout texte visible utilisateur doit exister dans `src/frontend-svelte/public/i18n/en.json` et `fr.json`; dans les composants Svelte, utiliser `{t('key')}` (import `{ t, loadI18n } from "../lib/i18n.svelte"`), pas de `data-i18n`/`window.t`. Chaque route appelle `loadI18n(lang)` au montage.
+- **Internationalisation obligatoire** : règle `i18n-user-visible-strings`. Chaque route appelle `loadI18n(lang)` au montage.
 - **Frontend bundlé par Vite** : les écrans sont des routes/composants Svelte ; ajouter une route = nouveau `.svelte` dans `routes/` + branche dans `App.svelte`. Les moteurs impératifs réutilisés (Workspace, Diagram) câblent le DOM par `getElementById` → conserver les `id` du markup et exposer un `init*()` appelé dans `onMount` (Diagram importe `main.js` dynamiquement car il touche le DOM au chargement).
 - **Diagram editor modulaire** : modifier le module responsable sous `src/frontend-svelte/src/lib/diagram/`; `vis` (vis-network) doit rester le seul global CDN de l'éditeur ; conteneur réseau = `#vis-canvas`.
-- **vis-network fragile** : avant de toucher au rendu diagramme, vérifier les ADR et règles sur `ctxRenderer`, `getBoundingBox`, `refreshNeeded`, `_drawNodes` et `_canonicalOrder`.
 - **Confirmation destructive** : utiliser le composant partagé `lib/ConfirmDialog.svelte` (`confirmDialog.show({...})`) plutôt que `window.confirm()` pour les actions destructives côté frontend.
 - **Chemins sûrs** : les routes qui lisent/écrivent des chemins utilisateur doivent résoudre puis vérifier que le chemin reste sous `docsFolder` ou `sourceRoot` selon le cas.
 - **Config portable** : ne pas persister de chemins absolus dans `.living-doc.json`; stocker en relatif POSIX.
-- **Tests de comportement** : privilégier les tests qui exercent le vrai CLI/serveur via Playwright et fixtures isolées ; les imports directs de `dist/` dans les specs ne doivent pas être la stratégie principale de coverage.
-- **Règles IA** : appliquer toutes les règles de `documentation/AI/rules/*.md` dont `appliesTo` couvre les fichiers modifiés.
+- **Tests de comportement** : règle `playwright-coverage-through-cli` ; stratégie de test par type de changement : règle `cost-efficient-agent-workflow`.

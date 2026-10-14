@@ -20,11 +20,12 @@ Quand une tâche est commencée, interrompue, terminée ou laissée avec des sui
 
 - le statut courant ;
 - la tâche en cours ;
+- le scope inclus et exclu si nécessaire ;
 - les fichiers ou zones concernés ;
 - les vérifications réalisées ;
 - les vérifications restantes ;
 - la prochaine action recommandée.
 
-Pour un ticket MVP réellement commencé, créer ou mettre à jour un document dédié dans `documentation/WORKLOG/CURRENT/` si le suivi ne tient plus clairement dans `current-task.md`.
+Quand un ticket de roadmap est terminé, sa trace de réalisation va dans `documentation/WORKLOG/CURRENT/` (convention complète : section « Suivi de progression » de `PROJECT-INSTRUCTIONS.md`).
 
 Le worklog ne remplace pas les ADR : il décrit l'avancement opérationnel et les points de reprise, pas les décisions durables.

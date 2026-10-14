@@ -7,21 +7,7 @@ title: PROJECT INSTRUCTIONS
 
 Ce fichier est le contrat de travail partagé par les assistants IA qui interviennent sur ce projet. Il explique comment intégrer Living Documentation au flux de développement assisté par IA.
 
-`AGENTS.md` et `CLAUDE.md` sont des points d'entrée propres aux outils. Ils doivent rester courts et pointer vers ce fichier, qui porte les règles communes.
-
-## Routine de démarrage
-
-Avant de modifier le projet :
-
-1. Lire `AGENTS.md` ou `CLAUDE.md`, selon l'outil utilisé.
-2. Lire ce fichier : `documentation/AI/PROJECT-INSTRUCTIONS.md`.
-3. Lire `documentation/AI/PROJECT-STACK.md` pour comprendre la stack, l'arborescence utile, les concepts centraux et les conventions structurantes.
-4. Lire `documentation/AI/PROJECT-USEFUL-COMMANDS.md` pour connaître les commandes de développement, build, test, lint et setup.
-5. Lire `memory/MEMORY.md` et charger seulement les fichiers mémoire utiles à la tâche.
-6. Lire toutes les règles dans `documentation/AI/rules/*.md`.
-7. Lire `documentation/WORKLOG/current-task.md` si présent pour reprendre l'état de la tâche courante.
-8. Inspecter les ADR existants : lister `documentation/ADRS/`, lire d'abord `description` et `tags`, puis ouvrir l'ADR complet seulement s'il est pertinent.
-9. Vérifier si le MCP `living-ai-documentation` est disponible avant de créer ou modifier de la documentation.
+`AGENTS.md` et `CLAUDE.md` sont des points d'entrée propres aux outils : ils portent la routine de démarrage et pointent vers ce fichier, qui porte les règles communes.
 
 ## Rôle du MCP Living Documentation
 
@@ -37,7 +23,7 @@ Utiliser notamment :
 - `refresh_metadata` pour recalculer les hashes après mise à jour ;
 - `get_accuracy` ou les outils équivalents pour détecter une dérive entre documentation et code.
 
-Si le MCP n'est pas disponible, l'IA peut proposer les changements à faire dans la documentation, mais elle doit signaler explicitement que les métadonnées et les hashes n'ont pas pu être mis à jour.
+Si le MCP n'est pas disponible, l'IA peut proposer les changements à faire dans la documentation, mais elle doit signaler explicitement que les métadonnées et les hashes n'ont pas pu être mis à jour, et lister les fichiers source à attacher.
 
 ## Documentation continue
 
@@ -71,27 +57,15 @@ Cycle de vie : une roadmap est créée dans `FUTURE/`, passe dans `CURRENT/` qua
 
 ### 1. `documentation/WORKLOG/current-task.md` , point de reprise partagé
 
-Tout assistant doit le lire avant de reprendre une tâche et le mettre à jour avant de rendre la main lorsqu'il a commencé, terminé, interrompu ou laissé une suite connue.
-
-Le worklog doit rester factuel et utile pour l'agent suivant :
-
-- statut courant ;
-- tâche en cours ;
-- scope inclus et exclu si nécessaire ;
-- fichiers ou zones concernés ;
-- vérifications réalisées ;
-- vérifications restantes ;
-- prochaine action recommandée.
+Quand le lire et quoi y écrire : règle `track-current-work` (`documentation/AI/rules/track-current-work.md`).
 
 ### 2. `documentation/WORKLOG/<CURRENT|FUTURE|FINISHED>/ROADMAP*.md` , backlog de tickets
 
-Liste ordonnée des tickets à réaliser pour livrer le produit (ou une grande étape). Format proche d'un ADR : frontmatter (`date`, `status`, `description`, `tags`) + corps Markdown.
-
-Le starter livre une roadmap d'exemple dans `FUTURE/` , l'utilisateur doit la remplacer par les tickets réels du projet.
+Liste ordonnée des tickets à réaliser pour livrer le produit (ou une grande étape). Format proche d'un ADR : frontmatter (`title`, `description`, `tags`, `status`) + corps Markdown.
 
 Quand un ticket est terminé, l'agent :
 
-1. coche et barre la ligne du ticket dans `ROADMAP.md` ;
+1. coche et barre la ligne du ticket dans la roadmap ;
 2. crée un document dédié dans `documentation/WORKLOG/CURRENT/` qui consigne la réalisation (voir point 3) ;
 3. si c'était le dernier ticket, déplace la roadmap et ses traces dans `documentation/WORKLOG/FINISHED/`.
 
@@ -120,7 +94,7 @@ tags:
   - worklog
   - ticket
   - <slug-metier>
-status: To Be Validated
+status: To be validated
 ---
 ```
 
@@ -128,12 +102,12 @@ status: To Be Validated
 
 Sections recommandées dans le corps :
 
-- **Contexte** , rappel du ticket et de son objectif (un paragraphe court, lien vers `ROADMAP.md`) ;
+- **Contexte** , rappel du ticket et de son objectif (un paragraphe court, lien vers la roadmap) ;
 - **Réalisation** , liste factuelle de ce qui a été fait ;
 - **Choix retenus** , décisions techniques prises pendant le ticket. Pointer vers un ADR si la décision est durable ;
 - **Vérifications** , tests passés, validations manuelles ;
 - **Suites éventuelles** , points de vigilance pour les tickets suivants ;
-- **Documents liés** , lien vers `ROADMAP.md` et ADR(s) éventuel(s).
+- **Documents liés** , lien vers la roadmap et ADR(s) éventuel(s).
 
 ## ADR
 
@@ -178,7 +152,7 @@ Quand l'IA crée ou met à jour un ADR ou un document technique :
 4. Après correction du document, appeler `refresh_metadata` pour recalculer les hashes.
 5. Si un document reste correct malgré un changement cosmétique du code, utiliser `refresh_metadata` pour rebaseliner le hash sans réécrire inutilement le document.
 
-Les métadonnées ne sont pas optionnelles pour les documents qui décrivent du code. Si elles ne peuvent pas être mises à jour, l'IA doit le signaler dans sa réponse finale et lister les fichiers à attacher.
+Les métadonnées ne sont pas optionnelles pour les documents qui décrivent du code.
 
 ## Stack et commandes projet
 
@@ -186,11 +160,11 @@ Les métadonnées ne sont pas optionnelles pour les documents qui décrivent du 
 
 `documentation/AI/PROJECT-USEFUL-COMMANDS.md` contient les commandes réellement utiles : installation, développement local, build, tests, lint, formatage, setup et commandes dangereuses.
 
-Ces deux fichiers sont de la documentation vivante. L'IA doit proposer leur mise à jour lorsqu'une tâche rend leur contenu faux, incomplet ou insuffisamment précis.
+Ces deux fichiers sont de la documentation vivante. Si une tâche rend leur contenu faux, incomplet ou obsolète (technologie, zone source, concept central, script, setup ou commande qui ne marche plus), l'IA propose ou effectue leur mise à jour dans la même tâche, sauf instruction contraire de l'utilisateur.
 
 Règles :
 
-- garder ces fichiers courts, concrets et orientés action ;
+- garder ces fichiers courts, concrets et orientés action, sans détails volatils ni TODO temporaires ;
 - ne pas y dupliquer les ADR ;
 - pointer vers les ADR lorsqu'une explication durable existe ;
 - vérifier l'existence d'une commande avant de la documenter ;
@@ -209,15 +183,7 @@ Chaque règle utilise un frontmatter :
 - `tags` - thèmes utilisés pour la découverte ;
 - `appliesTo` - globs indiquant où la règle s'applique.
 
-Appliquer chaque règle dont les motifs `appliesTo` correspondent aux fichiers modifiés. Si une règle contredit la demande utilisateur ou une autre instruction du projet, signaler explicitement le conflit avant de continuer.
-
-## Mémoire
-
-Les fichiers mémoire vivent dans le projet, sous `memory/`.
-
-Ne pas stocker la mémoire projet dans un dossier global propre à un outil si l'utilisateur attend une mémoire locale au projet. Mettre à jour `memory/MEMORY.md` à chaque ajout ou suppression de fichier mémoire.
-
-La mémoire sert aux informations stables et fréquemment réutilisées. Les décisions durables doivent plutôt être écrites dans des ADR.
+Appliquer chaque règle dont les motifs `appliesTo` correspondent aux fichiers modifiés.
 
 ## Modification des fichiers d'instructions IA
 
@@ -231,14 +197,3 @@ Mais ces fichiers pilotent directement le comportement des assistants IA. Avant 
 4. attendre une validation explicite si le changement peut réduire la visibilité, supprimer une règle, affaiblir une contrainte ou rendre l'agent plus autonome.
 
 Aucune modification destructive de ces fichiers ne doit être faite silencieusement.
-
-## Vérification
-
-Avant de terminer une tâche, lancer la plus petite vérification utile :
-
-- commande de build si du code typé ou des fichiers de build ont changé ;
-- tests ciblés si le comportement a changé ;
-- lint ou formatage si le projet en possède ;
-- vérification MCP/documentation si des ADR ou métadonnées ont été créés ou modifiés.
-
-Si une vérification ne peut pas être lancée, expliquer pourquoi.

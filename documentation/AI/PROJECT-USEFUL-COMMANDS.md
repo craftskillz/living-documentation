@@ -52,19 +52,7 @@ sources:
 
 Ce fichier décrit les commandes réellement utiles pour travailler sur le projet. Il doit permettre à une IA de choisir la bonne vérification sans deviner.
 
-Il doit rester à jour. Une commande fausse coûte plus cher qu'une commande absente.
-
-## Règle de maintenance
-
-L'IA doit proposer une mise à jour de ce fichier lorsqu'une tâche :
-
-- ajoute, retire ou renomme un script de développement ;
-- change le package manager ;
-- change la commande de build, test, lint ou formatage ;
-- introduit une étape de setup nécessaire ;
-- révèle qu'une commande documentée ne marche plus.
-
-Avant d'ajouter une commande, vérifier qu'elle existe réellement dans `package.json`, un Makefile, un script ou la documentation du projet.
+Il doit rester à jour : une commande fausse coûte plus cher qu'une commande absente. Vérifier qu'une commande existe (`package.json`, `justfile`, script) avant de l'ajouter. Règle de maintenance : section « Stack et commandes projet » de `PROJECT-INSTRUCTIONS.md`.
 
 ## Package manager
 
@@ -84,7 +72,6 @@ Indices : `package-lock.json` est présent, les scripts officiels sont dans `pac
 | Commande                                                  | Effet                                                                 | Notes                                                                                                                                                                                                                                                                |
 | --------------------------------------------------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `npm run dev -- ./documentation`                          | Démarre le frontend Vite (port 5174) + le backend Express en mode dev | `scripts/dev.js` lance Vite (HMR frontend) et `nodemon` + `ts-node` (backend seul : surveille `src`/`bin` `.ts`, ignore `src/frontend-svelte`). Backend port 4321 ; **ouvrir l'UI sur http://localhost:5174**. Proxy Vite : `/api`,`/mcp`,`/images`,`/files` → 4321. |
-| `npm run dev -- ./example-doc`                            | Démarre le serveur de dev sur la documentation d'exemple              | Utile pour vérifier une UX sans modifier la documentation projet.                                                                                                                                                                                                    |
 | `npm run start -- ./documentation`                        | Lance le CLI compilé depuis `dist/bin/cli.js`                         | Nécessite `npm run build` avant si `dist/` n'est pas à jour.                                                                                                                                                                                                         |
 | `node dist/bin/cli.js ./documentation --port 4321 --open` | Lance explicitement l'artefact buildé                                 | Utile pour reproduire le comportement publié/npm.                                                                                                                                                                                                                    |
 | `npx living-ai-documentation ./documentation`             | Lance la version installée/résolue par npm                            | Sert surtout à vérifier le flux utilisateur publié, pas le code local non buildé.                                                                                                                                                                                    |
@@ -205,29 +192,19 @@ npm exec --package=/chemin/absolu/living-ai-documentation-<version>.tgz -- livin
 
 Remplacer le chemin et la version par ceux du fichier produit. npm peut télécharger les dépendances ; cette commande ne publie rien. Le test direct via `node "$cli"` réutilise les dépendances du dépôt et suffit pour tester le wizard.
 
-## Coverage et stratégie de test
+## Coverage
 
-- Les tests Playwright utilisent des fixtures isolées et lancent de vrais processus CLI sur ports libres.
-- Pour augmenter la coverage de `src/lib/*` ou du serveur, préférer exercer le comportement via routes/CLI plutôt qu'importer directement `dist/` dans une spec Playwright.
-- `tests/helpers/coverage.ts` active `NODE_V8_COVERAGE=coverage/tmp` quand `COVERAGE=1`.
-- `bin/cli.ts` gère `SIGTERM` pour permettre à V8 de flusher la coverage quand les tests arrêtent le serveur.
-- Les tests unitaires restent utiles pour la lisibilité et la correction, mais ne sont pas la stratégie principale de coverage c8.
+- `tests/helpers/coverage.ts` active `NODE_V8_COVERAGE=coverage/tmp` quand `COVERAGE=1` ; `bin/cli.ts` gère `SIGTERM` pour que V8 flushe la coverage à l'arrêt du serveur.
+- Stratégie : règle `playwright-coverage-through-cli`.
 
 ## Commandes dangereuses ou coûteuses
 
-| Commande                      | Risque                                          | Règle                                                                                                            |
-| ----------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------- |
-| `npm version <patch           | minor                                           | major>`                                                                                                          | Modifie `package.json`, `package-lock.json` et crée un tag Git | Demander validation explicite avant de changer la version. |
-| `git push && git push --tags` | Publie commits et tags vers le remote           | Demander validation explicite avant exécution.                                                                   |
-| `just publish patch           | minor                                           | major`                                                                                                           | Combine bump version + push + push tags                        | Commande de publication ; demander validation explicite.   |
-| `npm publish`                 | Publication npm réelle si exécutée manuellement | Demander validation explicite ; `prepublishOnly` déclenche `npm run build`.                                      |
-| `rm -rf coverage`             | Supprime le rapport de coverage local           | Inclus dans `npm run test:coverage`; acceptable dans ce script, mais ne pas généraliser à d'autres suppressions. |
+| Commande | Risque | Règle |
+| --- | --- | --- |
+| `npm version <patch\|minor\|major>` | Modifie `package.json`, `package-lock.json` et crée un tag Git | Demander validation explicite avant de changer la version. |
+| `git push && git push --tags` | Publie commits et tags vers le remote | Demander validation explicite avant exécution. |
+| `just publish <patch\|minor\|major>` | Combine bump version + push + push tags | Commande de publication ; demander validation explicite. |
+| `npm publish` | Publication npm réelle si exécutée manuellement | Demander validation explicite ; `prepublishOnly` déclenche `npm run build`. |
+| `rm -rf coverage` | Supprime le rapport de coverage local | Inclus dans `npm run test:coverage` ; ne pas généraliser à d'autres suppressions. |
 
-## Notes pour l'IA
-
-- Lancer la plus petite vérification utile avant de terminer.
-- Pour un changement documentaire seul, relire le document via MCP et mettre à jour les métadonnées si des fichiers source prouvent le contenu.
-- Pour un changement frontend visible, préférer au minimum `npm run build`; lancer un test Playwright ciblé si le comportement est testable.
-- Pour un changement serveur/API/MCP, lancer `npm run build` puis le fichier Playwright ciblé ou `npm run test:e2e` selon le risque.
-- Si une commande échoue, reporter la commande exacte, le symptôme et l'hypothèse la plus probable.
-- Ne pas inventer de scripts : si une commande manque, le dire et proposer de l'ajouter.
+Si une commande échoue, reporter la commande exacte, le symptôme et l'hypothèse la plus probable.

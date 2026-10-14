@@ -12,6 +12,16 @@ timestamp: 2026-10-14T19:00:00Z
 status: To be validated
 ---
 
+# Audit des instructions agents — 14 octobre 2026
+
+Instructions agents allégées sans perte de consigne : chaque consigne n'est plus écrite qu'à un seul endroit (routine et conflits dans `CLAUDE.md`/`AGENTS.md`, MCP, métadonnées et « documents vivants » dans `PROJECT-INSTRUCTIONS.md`, vérification dans la règle `cost-efficient-agent-workflow`, contenu de `current-task.md` dans la règle `track-current-work`, i18n, vis-network et coverage dans leurs règles). Corrigé : nom du MCP (`living-ai-documentation`), `example-doc` inexistant, tableau des commandes dangereuses, note E2E périmée, `appliesto` de `no-magic-numbers`, front-matter des roadmaps et worklogs. `memory/project_svelte_migration.md` supprimé (périmé), `MEMORY.md` réindexé.
+
+Reste à l'utilisateur : supprimer `09_My_Published_Projects/CLAUDE.md` (pointe vers un `testproject/` inexistant ; suppression refusée par le classifieur de permissions). Configuration du MCP : à rediscuter.
+
+Non vérifié : les règles déclarent `appliesto` alors que `/context` lit `appliesTo` (`src/routes/context.ts:147`).
+
+---
+
 # okf:validate contrôle les index.md — 14 octobre 2026
 
 Nouvelle règle `index` (erreur) dans `src/lib/okf/validate.ts` : chaque `index.md` doit être exactement ce que le générateur écrirait (périmé, manquant ou dans un dossier sans document → erreur, corrigée par `migrate`). Le générateur expose `planOkfIndexFiles` (lecture seule), partagé avec le validateur, et supprime l'`index.md` d'un dossier vidé (`documentation/images-ai/index.md` retiré). Règle ignorée sans `index.md` racine (bundle jamais migré, ex. `usermanual-documentation`, déjà non conforme).

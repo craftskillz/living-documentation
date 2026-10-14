@@ -9,7 +9,8 @@ id: no-magic-numbers
 severity: warning
 appliesto:
   - src/**/*.ts
-  - src/frontend/**/*.js
+  - src/frontend-svelte/src/**/*.js
+  - src/frontend-svelte/src/**/*.svelte
 ---
 
 Les valeurs numériques qui portent un sens doivent être nommées là où elles sont introduites.

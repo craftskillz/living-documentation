@@ -1,29 +1,12 @@
 # Index mémoire
 
-Toujours stocker la mémoire du projet dans le dossier `memory/` du projet courant.
+La mémoire du projet vit dans `memory/`, jamais dans un dossier global propre à un outil IA (par exemple `~/.claude`).
 
-Ne pas écrire la mémoire projet dans un dossier global propre à un outil IA, par exemple `~/.claude`.
+Elle sert au contexte stable et fréquemment réutilisé. Les décisions durables vont dans des ADR sous `documentation/ADRS/`.
 
-## Fichiers mémoire recommandés
-
-Ajouter ici les fichiers mémoire réellement utiles au projet, par exemple :
-
-```text
-memory/project-overview.md
-memory/architecture.md
-memory/testing.md
-memory/domain-language.md
-memory/blueprint-documentation-style.md
-```
+Mettre à jour ce fichier lorsque des fichiers mémoire sont ajoutés, renommés ou supprimés.
 
 ## Fichiers mémoire présents
 
 - `memory/agent-cost-lessons.md` : incident de coût du 13/10/2026 et ses causes (origine de la règle `cost-efficient-agent-workflow`).
-
-## Règle d'usage
-
-La mémoire sert au contexte stable et fréquemment réutilisé.
-
-Les décisions durables doivent être écrites dans des ADR sous `documentation/ADRS/`.
-
-Mettre à jour ce fichier lorsque des fichiers mémoire sont ajoutés, renommés ou supprimés.
+- `memory/blueprint-documentation-style.md` : style de rédaction des documents Blueprint (niveau fonctionnel, formulations positives, sections courtes).
