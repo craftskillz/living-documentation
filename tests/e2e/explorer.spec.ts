@@ -82,6 +82,24 @@ test('show hidden entries reveals reserved files first, greyed, opened read-only
   await expect(page.getByTestId('delete-doc-btn')).toHaveCount(0);
 });
 
+test('a linked instruction file is listed like a document, without drag or context menu', async ({ page, ld }) => {
+  fs.writeFileSync(path.join(ld.parent, 'CLAUDE.md'), '---\ntitle: Claude entry point\n---\n\nRead me first.\n');
+  fs.mkdirSync(path.join(ld.docsAbs, 'AI'), { recursive: true });
+  fs.symlinkSync('../../CLAUDE.md', path.join(ld.docsAbs, 'AI', 'CLAUDE.md'));
+
+  await page.goto(ld.baseURL);
+  const tree = page.getByTestId('category-tree');
+  await tree.locator('span[title="AI"]').click();
+  const linked = tree.locator('[data-linked="true"]');
+  await expect(linked).toContainText('Claude entry point');
+  await expect(linked).not.toHaveAttribute('draggable', 'true');
+  await linked.click({ button: 'right' });
+  await expect(page.getByTestId('tree-menu-toggle-hidden')).toHaveCount(0);
+
+  await linked.click();
+  await expect(page.locator('article')).toContainText('Read me first.');
+});
+
 test('drag an entry above another to reorder its folder', async ({ page, ld }) => {
   for (const name of ['a', 'b', 'c']) writeDoc(ld.docsAbs, `${name}.md`);
   fs.writeFileSync(path.join(ld.docsAbs, 'liv-doc-main.md'), '---\norder:\n  - a.md\n  - b.md\n  - c.md\n---\n');

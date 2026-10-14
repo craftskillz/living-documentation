@@ -93,18 +93,19 @@
   <button
     id="item-{doc.id}"
     onclick={() => onopen(doc.id)}
-    oncontextmenu={(e) => onentrymenu(e, node)}
-    draggable={canDrag}
+    oncontextmenu={(e) => (node.linked ? e.preventDefault() : onentrymenu(e, node))}
+    draggable={canDrag && !node.linked}
     ondragstart={(e) => onDragStart(e, node)}
     ondragover={(e) => onDragOver(e, node)}
     ondrop={(e) => onDrop(e, node)}
     ondragend={() => home.endDrag()}
     data-drop={dropState(node)}
     data-hidden={node.hidden ? "true" : undefined}
+    data-linked={node.linked ? "true" : undefined}
     class="{node.hidden ? 'opacity-50 italic' : ''} doc-item w-full text-left px-3 py-1.5 rounded-md text-sm transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/60 {doc.id === home.currentDocId ? 'active' : ''}"
   >
     <div class="leading-snug flex items-center justify-between gap-2">
-      <span class="truncate">{doc.title}</span>
+      <span class="truncate">{#if node.linked}<i class="fa-solid fa-link text-[10px] mr-1.5" title={t("sidebar.linked_file")}></i>{/if}{doc.title}</span>
       <span class="flex items-center gap-1 shrink-0">
         {#if pill === "V"}
           <span title={t("sidebar.status_to_validate")} class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-500 text-[10px] font-bold text-white border border-green-600 shadow-sm">V</span>

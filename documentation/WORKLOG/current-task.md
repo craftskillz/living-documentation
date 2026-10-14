@@ -12,6 +12,18 @@ timestamp: 2026-10-14T20:00:00Z
 status: To be validated
 ---
 
+# Explorateur : fichiers liés (AI/CLAUDE.md…) de nouveau visibles — 14 octobre 2026
+
+Régression depuis le passage de l'explorateur sur `/api/tree` : `isListedEntry` ne gardait que les fichiers réguliers, donc les liens symboliques `AI/AGENTS.md`, `AI/CLAUDE.md`, `AI/MEMORY.md` disparaissaient de l'arbre (mais restaient dans `/api/documents`). Choix de l'utilisateur : visibles normalement, lecture seule dans l'explorateur. `/api/tree` les liste avec `linked: true` (lien cassé ignoré) ; `POST /api/tree/move` et `PUT /api/tree/rename` les refusent (400) — avant, le déplacement réussissait et cassait le lien relatif. Frontend : icône lien, ni glisser-déposer, ni menu contextuel, ni renommage ; le contenu reste éditable depuis le viewer. i18n `sidebar.linked_file` EN/FR.
+
+Tests : deux tests `tests/api/tree.spec.ts`, un test `tests/e2e/explorer.spec.ts`. Suites : unitaires 69/69, `tests/api` 224/224, `tests/e2e` 118/118, `okf:validate` conforme.
+
+Suite possible : compléter l'ADR explorateur (manifeste `liv-doc-main.md`) avec la règle des fichiers liés.
+
+MCP Living Documentation non exposé : pas de métadonnées attachées.
+
+---
+
 # Lien symbolique cassé : la liste des documents ne tombe plus — 14 octobre 2026
 
 La suppression de `CLAUDE.md` (commit `47b743c0`) avait cassé le lien `documentation/AI/CLAUDE.md` ; `fs.statSync` levait `ENOENT` et `/api/documents` et `/api/context/orientation` répondaient 500. Nouveau helper `isFileOrLinkToFile` (`src/lib/explorerEntries.ts`) utilisé par `collectMdFiles` (`src/routes/documents.ts`) et `listInstructionFiles` (`src/routes/context.ts`) : un lien cassé est ignoré. `CLAUDE.md` restauré à la demande de l'utilisateur (`f394fe59`).

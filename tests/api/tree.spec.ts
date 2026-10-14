@@ -8,6 +8,7 @@ interface TreeNode {
   path: string;
   hidden?: boolean;
   reserved?: boolean;
+  linked?: boolean;
   children?: TreeNode[];
 }
 
@@ -425,4 +426,30 @@ test('PUT /api/tree/rename rejects invalid names, taken names and protected entr
     'secret.md',
   ]);
   expect(fs.existsSync(path.join(ld.docsAbs, 'images'))).toBe(true);
+});
+
+test('a symlink to a Markdown file is listed as a linked document; a broken one is skipped', async ({ request, ld }) => {
+  fs.writeFileSync(path.join(ld.parent, 'CLAUDE.md'), '# Claude\n');
+  fs.mkdirSync(path.join(ld.docsAbs, 'AI'), { recursive: true });
+  fs.symlinkSync('../../CLAUDE.md', path.join(ld.docsAbs, 'AI', 'CLAUDE.md'));
+  fs.symlinkSync('../../MISSING.md', path.join(ld.docsAbs, 'AI', 'BROKEN.md'));
+
+  const ai = (await getTree(request, ld.baseURL)).find((n) => n.name === 'AI');
+  expect(names(ai?.children)).toEqual(['CLAUDE.md']);
+  expect(ai?.children?.find((n) => n.name === 'CLAUDE.md')).toMatchObject({ kind: 'doc', linked: true });
+});
+
+test('linked documents cannot be moved or renamed through the tree API', async ({ request, ld }) => {
+  fs.writeFileSync(path.join(ld.parent, 'CLAUDE.md'), '# Claude\n');
+  writeDoc(ld.docsAbs, 'guide/a.md');
+  fs.mkdirSync(path.join(ld.docsAbs, 'AI'), { recursive: true });
+  fs.symlinkSync('../../CLAUDE.md', path.join(ld.docsAbs, 'AI', 'CLAUDE.md'));
+
+  const move = await request.post(`${ld.baseURL}/api/tree/move`, {
+    data: { source: 'AI/CLAUDE.md', targetFolder: 'guide', index: 0 },
+  });
+  expect(move.status()).toBe(400);
+  const ren = await request.put(`${ld.baseURL}/api/tree/rename`, { data: { path: 'AI/CLAUDE.md', newName: 'X' } });
+  expect(ren.status()).toBe(400);
+  expect(fs.lstatSync(path.join(ld.docsAbs, 'AI', 'CLAUDE.md')).isSymbolicLink()).toBe(true);
 });

@@ -179,6 +179,7 @@
   "sidebar.file_attachment_badge": "attachment",
   "sidebar.file_attached_docs_badge": "document with attachments",
   "sidebar.status_to_validate": "To be validated",
+  "sidebar.linked_file": "Linked file: cannot be moved or renamed",
   "sidebar.status_superseeded": "SuperSeeded",
   "doc.validate_mode": "Validate document — flip frontmatter status from \"To be validated\" to \"Accepted\"",
   "doc.validate_btn": "Validate",

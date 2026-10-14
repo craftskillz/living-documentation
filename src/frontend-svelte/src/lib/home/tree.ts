@@ -35,9 +35,9 @@ export function withoutHiddenEntries(nodes: ExplorerNode[]): ExplorerNode[] {
 /** Root folders the server keeps for attachments; they cannot be renamed. */
 const RESERVED_ROOT_FOLDERS = new Set(["files", "images"]);
 
-/** Hidden entries, reserved files and the reserved root folders cannot be renamed. */
+/** Hidden entries, reserved and linked files and the reserved root folders cannot be renamed. */
 export function canRenameEntry(node: ExplorerNode): boolean {
-  if (node.hidden || node.reserved) return false;
+  if (node.hidden || node.reserved || node.linked) return false;
   return !(node.kind === "folder" && RESERVED_ROOT_FOLDERS.has(node.path));
 }
 

@@ -6,7 +6,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { readConfig, writeConfig } from "./config";
-import { isListedDir, isListedDocFile } from "./explorerEntries";
+import { isListedDir, isListedDocFile, isSymlink } from "./explorerEntries";
 import {
   appendToManifestOrder,
   isManifestWritable,
@@ -205,6 +205,7 @@ export function moveTreeEntry(docsPath: string, request: TreeMoveRequest): TreeM
 
   const name = path.basename(absSource);
   if (isReservedOkfFile(name)) throw new TreeMoveError(400, "Reserved files cannot be moved");
+  if (isSymlink(absSource)) throw new TreeMoveError(400, "Linked files cannot be moved");
   let sourceStat: fs.Stats;
   try {
     sourceStat = fs.statSync(absSource);
@@ -244,6 +245,7 @@ export function renameTreeEntry(docsPath: string, request: TreeRenameRequest): T
   const name = path.basename(absSource);
   const parentDir = path.dirname(absSource);
   if (isReservedOkfFile(name)) throw new TreeMoveError(400, "Reserved files cannot be renamed");
+  if (isSymlink(absSource)) throw new TreeMoveError(400, "Linked files cannot be renamed");
   let sourceStat: fs.Stats;
   try {
     sourceStat = fs.statSync(absSource);

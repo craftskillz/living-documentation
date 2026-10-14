@@ -32,6 +32,8 @@ export interface ExplorerNode {
   hidden?: boolean;
   /** Reserved file (index.md, log.md, liv-doc-main.md), shown with the hidden entries, read-only. */
   reserved?: boolean;
+  /** Symlink to a Markdown file (linked AI instruction file): listed, never dragged, renamed or hidden. */
+  linked?: boolean;
   children?: ExplorerNode[];
 }
 

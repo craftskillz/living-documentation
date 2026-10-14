@@ -15,9 +15,9 @@ export function isListedDocFile(name: string): boolean {
   return name.toLowerCase().endsWith(".md") && !isReservedOkfFile(name);
 }
 
-export function isListedEntry(entry: fs.Dirent): boolean {
+export function isListedEntry(entry: fs.Dirent, fullPath: string): boolean {
   if (entry.isDirectory()) return isListedDir(entry.name);
-  return entry.isFile() && isListedDocFile(entry.name);
+  return isListedDocFile(entry.name) && isFileOrLinkToFile(entry, fullPath);
 }
 
 /**
@@ -29,6 +29,15 @@ export function isFileOrLinkToFile(entry: fs.Dirent, fullPath: string): boolean 
   if (!entry.isSymbolicLink()) return false;
   try {
     return fs.statSync(fullPath).isFile();
+  } catch {
+    return false;
+  }
+}
+
+/** True when `absPath` is itself a symlink (not followed); false when it does not exist. */
+export function isSymlink(absPath: string): boolean {
+  try {
+    return fs.lstatSync(absPath).isSymbolicLink();
   } catch {
     return false;
   }

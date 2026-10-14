@@ -19,6 +19,8 @@ export interface FolderTreeNode {
   hidden?: true;
   /** Generated file (index.md, log.md, liv-doc-main.md): shown only on demand, read-only. */
   reserved?: true;
+  /** Symlink to a Markdown file (linked AI instruction file): listed, but never moved or renamed. */
+  linked?: true;
   children?: FolderTreeNode[];
 }
 
@@ -28,7 +30,9 @@ function byDirentName(a: fs.Dirent, b: fs.Dirent): number {
 
 /** Entries the explorer lists in `absDir`, in display order (manifest, then folders, then files). */
 function orderedListedEntries(absDir: string, order = readFolderManifest(absDir).order): fs.Dirent[] {
-  const entries = fs.readdirSync(absDir, { withFileTypes: true }).filter(isListedEntry);
+  const entries = fs
+    .readdirSync(absDir, { withFileTypes: true })
+    .filter((e) => isListedEntry(e, path.join(absDir, e.name)));
   const folders = entries.filter((e) => e.isDirectory()).sort(byDirentName);
   const docs = entries.filter((e) => !e.isDirectory()).sort(byDirentName);
   return applyManifestOrder([...folders, ...docs], order);
@@ -62,6 +66,7 @@ function readFolder(docsPath: string, relDir: string): FolderTreeNode[] {
       ? { kind: "folder", name: entry.name, path: relPath, children: readFolder(docsPath, relPath) }
       : docNode(relDir, entry.name);
     if (hidden.includes(entry.name)) node.hidden = true;
+    if (entry.isSymbolicLink()) node.linked = true;
     return node;
   });
   return [...reservedFileNodes(absDir, relDir), ...listed];
