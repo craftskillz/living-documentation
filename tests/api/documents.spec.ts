@@ -230,3 +230,14 @@ test('DELETE /api/documents/:id also removes matching annotations from .annotati
   expect(store[docId]).toBeUndefined();
   expect(store['other-doc']).toBeDefined(); // untouched
 });
+
+test('GET /api/documents skips a broken symlink instead of failing', async ({ request, ld }) => {
+  fs.mkdirSync(path.join(ld.docsAbs, 'AI'), { recursive: true });
+  fs.symlinkSync('../../MISSING.md', path.join(ld.docsAbs, 'AI', 'CLAUDE.md'));
+
+  const res = await request.get(`${ld.baseURL}/api/documents`);
+  expect(res.ok()).toBe(true);
+  const docs = (await res.json()) as Array<{ id: string }>;
+  expect(docs.length).toBeGreaterThan(0);
+  expect(docs.map((d) => d.id).join(' ')).not.toContain('CLAUDE');
+});

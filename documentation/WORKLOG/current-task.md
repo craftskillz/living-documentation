@@ -12,6 +12,16 @@ timestamp: 2026-10-14T20:00:00Z
 status: To be validated
 ---
 
+# Lien symbolique cassé : la liste des documents ne tombe plus — 14 octobre 2026
+
+La suppression de `CLAUDE.md` (commit `47b743c0`) avait cassé le lien `documentation/AI/CLAUDE.md` ; `fs.statSync` levait `ENOENT` et `/api/documents` et `/api/context/orientation` répondaient 500. Nouveau helper `isFileOrLinkToFile` (`src/lib/explorerEntries.ts`) utilisé par `collectMdFiles` (`src/routes/documents.ts`) et `listInstructionFiles` (`src/routes/context.ts`) : un lien cassé est ignoré. `CLAUDE.md` restauré à la demande de l'utilisateur (`f394fe59`).
+
+Tests : un test « broken symlink » dans `tests/api/documents.spec.ts` et `tests/api/context.spec.ts`. Suites : unitaires 69/69, `tests/api` 222/222, `tests/e2e` 117/117.
+
+MCP Living Documentation non exposé : pas de métadonnées attachées.
+
+---
+
 # Règles IA : front-matter YAML lu et écrit en OKF — 14 octobre 2026
 
 `src/routes/context.ts` n'a plus de parseur maison : `readAiRules` passe par le lecteur partagé `parseFrontmatter` (`src/lib/frontmatter.ts`, qui exporte désormais `lookupCaseInsensitive`). `appliesto` (clé canonique en minuscules écrite par `normalizeFrontmatter`) et les listes YAML multi-lignes (`tags`, `appliesto`) arrivent donc dans `/api/context/orientation` et l'écran AI Rules. `createRuleMarkdown` écrit le YAML OKF canonique (`type: Rule`, listes en bloc, `appliesto`) via `normalizeFrontmatter`. Contrat de l'API inchangé (champ JSON `appliesTo`).

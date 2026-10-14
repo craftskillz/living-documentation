@@ -8,7 +8,7 @@ import { readMetadataStore } from "../lib/metadata";
 import { RESERVED_ROOT_FOLDERS, relocateEntry, TreeMoveError } from "../lib/treeMove";
 import { normalizeFolderPath } from "../lib/folderName";
 import { parseDocStatus } from "../lib/status";
-import { isListedDir, isListedDocFile } from "../lib/explorerEntries";
+import { isFileOrLinkToFile, isListedDir, isListedDocFile } from "../lib/explorerEntries";
 import { isReservedOkfFile, normalizeFrontmatter } from "../lib/okf";
 import { parseFrontmatter } from "../lib/frontmatter";
 import { renderMarkdownWithCompareBlocks } from "../lib/compareBlock";
@@ -26,10 +26,7 @@ export function collectMdFiles(dir: string, baseDir: string): string[] {
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       if (isListedDir(entry.name)) results.push(...collectMdFiles(fullPath, baseDir));
-    } else if (
-      isListedDocFile(entry.name) &&
-      (entry.isFile() || (entry.isSymbolicLink() && fs.statSync(fullPath).isFile()))
-    ) {
+    } else if (isListedDocFile(entry.name) && isFileOrLinkToFile(entry, fullPath)) {
       results.push(toPosixPath(path.relative(baseDir, fullPath)));
     }
   }

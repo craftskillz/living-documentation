@@ -190,3 +190,17 @@ test('DELETE /api/context/instructions/:filename removes the linked AI document 
   const docs = (await docsRes.json()) as Array<{ filename: string }>;
   expect(docs).not.toContainEqual(expect.objectContaining({ filename: 'AI/AGENTS.md' }));
 });
+
+test('GET /api/context/orientation skips a broken instruction symlink instead of failing', async ({
+  request,
+  ld,
+}) => {
+  fs.mkdirSync(path.join(ld.docsAbs, 'AI'), { recursive: true });
+  fs.writeFileSync(path.join(ld.docsAbs, 'AI', 'AGENTS.md'), '# Agent rules\n', 'utf-8');
+  fs.symlinkSync('../../MISSING.md', path.join(ld.docsAbs, 'AI', 'CLAUDE.md'));
+
+  const res = await request.get(`${ld.baseURL}/api/context/orientation`);
+  expect(res.ok()).toBe(true);
+  const body = await res.json();
+  expect(body.instructions.map((f: { path: string }) => f.path)).toEqual(['AI/AGENTS.md']);
+});

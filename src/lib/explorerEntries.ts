@@ -2,7 +2,7 @@
 // scanners list. Dot folders and dot Markdown files are listed like any other
 // entry; only tool directories (.git, node_modules) and reserved files
 // (index.md, log.md, liv-doc-main.md) are never listed.
-import type fs from "node:fs";
+import fs from "node:fs";
 import { isReservedOkfFile } from "./okf";
 
 export const ALWAYS_IGNORED_DIRS = new Set([".git", "node_modules"]);
@@ -18,4 +18,18 @@ export function isListedDocFile(name: string): boolean {
 export function isListedEntry(entry: fs.Dirent): boolean {
   if (entry.isDirectory()) return isListedDir(entry.name);
   return entry.isFile() && isListedDocFile(entry.name);
+}
+
+/**
+ * A regular file, or a symlink to one (linked AI instruction files). A broken
+ * symlink — its target was deleted — is skipped instead of failing the scan.
+ */
+export function isFileOrLinkToFile(entry: fs.Dirent, fullPath: string): boolean {
+  if (entry.isFile()) return true;
+  if (!entry.isSymbolicLink()) return false;
+  try {
+    return fs.statSync(fullPath).isFile();
+  } catch {
+    return false;
+  }
 }

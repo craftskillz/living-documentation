@@ -2,6 +2,7 @@ import { Router } from "express";
 import fs from "node:fs";
 import path from "node:path";
 import { readConfig } from "../lib/config";
+import { isFileOrLinkToFile } from "../lib/explorerEntries";
 import { lookupCaseInsensitive, parseFrontmatter, serializeFrontmatter } from "../lib/frontmatter";
 import { normalizeFrontmatter } from "../lib/okf";
 
@@ -96,7 +97,7 @@ function listInstructionFiles(docsPath: string): FileSummary[] {
     .filter((entry) => {
       if (!entry.name.toLowerCase().endsWith(".md")) return false;
       const fullPath = path.join(instructionDir, entry.name);
-      return entry.isFile() || (entry.isSymbolicLink() && fs.statSync(fullPath).isFile());
+      return isFileOrLinkToFile(entry, fullPath);
     })
     .map((entry) => describePath(path.join(AI_ROOT_DIR, entry.name), "docsFolder", docsPath))
     .sort((a, b) => a.path.localeCompare(b.path));
