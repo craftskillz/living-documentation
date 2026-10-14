@@ -1,12 +1,6 @@
 {
   "AI/PROJECT-USEFUL-COMMANDS": [
     {
-      "path": "src/lib/cli/headerMenuPrompt.ts",
-      "hash": "1a016eff6f72a2e2fc9268f62051b01ca9172597bb57293caa3172c0f957d528",
-      "commit": "09940a37c77396f4b9a48caf637a248b5d10c968",
-      "dirty": false
-    },
-    {
       "path": "package.json",
       "hash": "53331ead9d08a2c3588a33a1da7f4a971186964c237605918313f40a8941a311",
       "commit": "09940a37c77396f4b9a48caf637a248b5d10c968",
