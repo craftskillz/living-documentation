@@ -45,23 +45,32 @@ function conceptsAndDirs(dir: string): { concepts: ConceptEntry[]; subdirs: stri
   };
 }
 
-// Depth-first: build children first so a directory can decide it is non-empty.
-function generateForDir(root: string, dir: string): { written: number; indexed: boolean } {
+/** What the generator would write, computed without touching the disk. */
+export interface OkfIndexPlan {
+  /** Bundle-relative POSIX path of each `index.md` → its expected content. */
+  files: Map<string, string>;
+  /** Bundle-relative POSIX paths of `index.md` files in folders without concepts. */
+  orphans: string[];
+}
+
+const relIndex = (root: string, dir: string) =>
+  path.relative(root, path.join(dir, "index.md")).split(path.sep).join("/");
+
+// Depth-first: plan children first so a directory can decide it is non-empty.
+// Returns whether `dir` gets an index.md of its own.
+function planForDir(root: string, dir: string, plan: OkfIndexPlan): boolean {
   const all = conceptsAndDirs(dir);
-  let written = 0;
   // A folder without concepts gets no index.md, so it is not listed either.
-  const indexed = new Set<string>();
-  for (const sub of all.subdirs) {
-    const child = generateForDir(root, path.join(dir, sub));
-    if (child.indexed) indexed.add(sub);
-    written += child.written;
-  }
+  const indexed = new Set(all.subdirs.filter((sub) => planForDir(root, path.join(dir, sub), plan)));
   // Hidden entries are left out of the listing; hidden folders keep their own index.
   const concepts = all.concepts.filter((c) => !all.hidden.has(c.file));
   const subdirs = all.subdirs.filter((s) => indexed.has(s) && !all.hidden.has(s));
 
   const isRoot = path.resolve(dir) === path.resolve(root);
-  if (!isRoot && concepts.length === 0 && subdirs.length === 0) return { written, indexed: false };
+  if (!isRoot && concepts.length === 0 && subdirs.length === 0) {
+    if (fs.existsSync(path.join(dir, "index.md"))) plan.orphans.push(relIndex(root, dir));
+    return false;
+  }
 
   const name = path.basename(path.resolve(dir));
   let md = isRoot ? `---\nokf_version: "${OKF_SPEC_VERSION}"\n---\n\n` : "";
@@ -76,11 +85,24 @@ function generateForDir(root: string, dir: string): { written: number; indexed: 
     md += "\n## Directories\n\n";
     for (const s of subdirs) md += `* [${s}](./${s}/index.md)\n`;
   }
-  fs.writeFileSync(path.join(dir, "index.md"), md.endsWith("\n") ? md : `${md}\n`, "utf-8");
-  return { written: written + 1, indexed: true };
+  plan.files.set(relIndex(root, dir), md.endsWith("\n") ? md : `${md}\n`);
+  return true;
 }
 
-/** Generate all `index.md` files for the bundle; returns how many were written. */
+/** Plan every `index.md` of the bundle (read-only), shared by generation and validation. */
+export function planOkfIndexFiles(docsPath: string): OkfIndexPlan {
+  const plan: OkfIndexPlan = { files: new Map(), orphans: [] };
+  planForDir(docsPath, docsPath, plan);
+  return plan;
+}
+
+/**
+ * Generate all `index.md` files for the bundle and remove those of folders
+ * without concepts; returns how many were written.
+ */
 export function generateOkfIndexFiles(docsPath: string): number {
-  return generateForDir(docsPath, docsPath).written;
+  const plan = planOkfIndexFiles(docsPath);
+  for (const [rel, content] of plan.files) fs.writeFileSync(path.join(docsPath, rel), content, "utf-8");
+  for (const rel of plan.orphans) fs.rmSync(path.join(docsPath, rel));
+  return plan.files.size;
 }

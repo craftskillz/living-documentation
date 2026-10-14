@@ -113,7 +113,7 @@ Le TTS est low footprint : l'anglais utilise `kokoro-js` côté serveur si l'opt
 ### Contrôles OKF
 
 - `npm run test:unit` : tests Node.js `node:test` sous `tests/unit/*.test.ts`, chargés via ts-node ; ne requiert pas de build préalable.
-- `npm run okf:validate` : validation en lecture seule du bundle `documentation/` ; erreurs bloquantes, avertissements non bloquants.
+- `npm run okf:validate` : validation en lecture seule du bundle `documentation/` ; erreurs bloquantes, avertissements non bloquants. Contrôle aussi que chaque `index.md` est exactement ce que le générateur écrirait (règle `index` : index périmé, manquant ou dans un dossier sans document) ; corriger avec `node -r ts-node/register bin/cli.ts migrate documentation`.
 - `node dist/bin/cli.js migrate ./docs --dry-run` : prévisualise la migration (préfixes numériques des dossiers vers `liv-doc-main.md`, puis frontmatter OKF) ; retirer `--dry-run` pour migrer réellement. La garde au démarrage exige les deux flags `okfMigration` et `explorerMigration` de `.living-doc.json`.
 - `tests/helpers/ld-fixture.ts` migre la copie temporaire via le CLI avant de démarrer le serveur. Les fixtures source restent intactes.
 

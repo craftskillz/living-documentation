@@ -3,6 +3,7 @@ import { test } from "node:test";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { generateOkfIndexFiles } from "../../src/lib/okf/index-generator";
 import { validateOkfBundle } from "../../src/lib/okf/validate";
 
 function makeBundle(): string {
@@ -19,6 +20,7 @@ const CONFORMANT =
 test("a conformant bundle passes with no violations", () => {
   const dir = makeBundle();
   fs.writeFileSync(path.join(dir, "ADRS", "d.md"), CONFORMANT);
+  generateOkfIndexFiles(dir);
   const r = validateOkfBundle(dir);
   assert.equal(r.ok, true);
   assert.equal(r.checked, 1);
@@ -29,6 +31,7 @@ test("a conformant bundle passes with no violations", () => {
 test("missing timestamp is a warning, not an error (undated concepts are valid)", () => {
   const dir = makeBundle();
   fs.writeFileSync(path.join(dir, "ADRS", "rule.md"), "---\ntype: Rule\ntitle: A rule\n---\nbody");
+  generateOkfIndexFiles(dir);
   const r = validateOkfBundle(dir);
   assert.equal(r.ok, true); // no error-severity violations
   assert.equal(r.errors, 0);
@@ -79,5 +82,42 @@ test("flags missing reserved files (index.md without okf_version, no log.md)", (
   const rules = r.violations.map((v) => `${v.file}:${v.rule}`);
   assert.ok(rules.includes("index.md:reserved"));
   assert.ok(rules.includes("log.md:reserved"));
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test("an index.md that differs from what the generator would write is an error", () => {
+  const dir = makeBundle();
+  fs.writeFileSync(path.join(dir, "ADRS", "d.md"), CONFORMANT);
+  generateOkfIndexFiles(dir);
+  fs.writeFileSync(path.join(dir, "ADRS", "index.md"), "# ADRS\n\n* [Hand edited](./d.md)\n");
+  fs.rmSync(path.join(dir, "index.md"));
+  fs.writeFileSync(path.join(dir, "index.md"), '---\nokf_version: "0.1"\n---\n\n# root\n');
+  const r = validateOkfBundle(dir);
+  const stale = r.violations.filter((v) => v.rule === "index").map((v) => `${v.file}:${v.severity}`);
+  assert.deepEqual(stale.sort(), ["ADRS/index.md:error", "index.md:error"]);
+  assert.equal(r.ok, false);
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test("a missing index.md and an index.md in a folder without concepts are errors", () => {
+  const dir = makeBundle();
+  fs.writeFileSync(path.join(dir, "ADRS", "d.md"), CONFORMANT);
+  fs.mkdirSync(path.join(dir, "EMPTY"));
+  generateOkfIndexFiles(dir);
+  fs.rmSync(path.join(dir, "ADRS", "index.md"));
+  fs.writeFileSync(path.join(dir, "EMPTY", "index.md"), "# EMPTY\n");
+  const r = validateOkfBundle(dir);
+  const rules = r.violations.filter((v) => v.rule === "index").map((v) => v.file);
+  assert.deepEqual(rules.sort(), ["ADRS/index.md", "EMPTY/index.md"]);
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test("a bundle without a root index.md only reports the missing reserved file, not every listing", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "okf-validate-"));
+  fs.mkdirSync(path.join(dir, "ADRS"));
+  fs.writeFileSync(path.join(dir, "ADRS", "d.md"), CONFORMANT);
+  fs.writeFileSync(path.join(dir, "log.md"), "# Changelog\n");
+  const r = validateOkfBundle(dir);
+  assert.deepEqual(r.violations.map((v) => `${v.file}:${v.rule}`), ["index.md:reserved"]);
   fs.rmSync(dir, { recursive: true, force: true });
 });

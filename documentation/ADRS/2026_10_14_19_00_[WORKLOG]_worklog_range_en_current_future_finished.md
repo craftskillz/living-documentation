@@ -27,7 +27,7 @@ Une roadmap est créée dans `FUTURE/`, passe dans `CURRENT/` à son premier tic
 
 Les deux starters livrent les trois dossiers, chacun avec son `liv-doc-main.md` pour que les dossiers vides survivent à Git et au paquet npm ; leur roadmap d'exemple est dans `FUTURE/`. `PROJECT-INSTRUCTIONS.md`, `track-current-work`, `AGENTS.md` et `CLAUDE.md` décrivent la convention aux agents.
 
-Le générateur d'`index.md` ne liste plus un sous-dossier sans concept, qui n'a pas d'`index.md` à lui : le lien serait cassé (cas de `CURRENT/` vide).
+Le générateur d'`index.md` ne liste plus un sous-dossier sans concept, qui n'a pas d'`index.md` à lui : le lien serait cassé (cas de `CURRENT/` vide). Il supprime aussi l'`index.md` resté dans un dossier vidé. `okf:validate` le garantit avec la règle `index` (erreur) : chaque `index.md` doit être exactement ce que le générateur écrirait, sinon `migrate` le régénère. La règle n'est pas appliquée à un bundle sans `index.md` racine, jamais migré, déjà signalé par la règle `reserved`.
 
 ## Conséquences
 

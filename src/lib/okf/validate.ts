@@ -1,12 +1,14 @@
 // Deterministic OKF-conformance validator for a docs bundle. Checks that every
 // non-reserved `.md` is a well-formed OKF concept (YAML frontmatter, known
 // non-empty `type`, `title`, ISO `timestamp`, well-formed `sources` block) and
-// that the reserved files exist (`index.md` with `okf_version`, `log.md`).
+// that the reserved files exist (`index.md` with `okf_version`, `log.md`) and
+// that every `index.md` is exactly what the generator would write.
 // Pure read-only: shared by the CLI `validate` command and CI. No AI.
 import fs from "node:fs";
 import path from "node:path";
 import { parseFrontmatter } from "../frontmatter";
 import { isReservedOkfFile } from "../okf";
+import { planOkfIndexFiles } from "./index-generator";
 
 export type OkfSeverity = "error" | "warning";
 
@@ -66,6 +68,24 @@ function validateSources(value: unknown): string | null {
   return null;
 }
 
+function indexViolations(docsPath: string): OkfViolation[] {
+  const violation = (file: string, message: string): OkfViolation => ({
+    file,
+    rule: "index",
+    message: `${message} (run \`migrate\`)`,
+    severity: "error",
+  });
+  const plan = planOkfIndexFiles(docsPath);
+  const out: OkfViolation[] = [];
+  for (const [rel, expected] of plan.files) {
+    const abs = path.join(docsPath, rel);
+    if (!fs.existsSync(abs)) out.push(violation(rel, "`index.md` is missing"));
+    else if (fs.readFileSync(abs, "utf-8") !== expected) out.push(violation(rel, "`index.md` is out of date"));
+  }
+  for (const rel of plan.orphans) out.push(violation(rel, "`index.md` in a folder without concepts"));
+  return out;
+}
+
 /** Validate that `docsPath` is a conformant OKF bundle. Read-only. */
 export function validateOkfBundle(docsPath: string): OkfValidationResult {
   const violations: OkfViolation[] = [];
@@ -122,6 +142,10 @@ export function validateOkfBundle(docsPath: string): OkfValidationResult {
   if (!fs.existsSync(path.join(docsPath, "log.md"))) {
     violations.push({ file: "log.md", rule: "reserved", message: "`log.md` changelog is missing", severity: "error" });
   }
+
+  // Generated listings: stale, missing or orphan index.md files, fixed by `migrate`.
+  // A bundle without a root index.md was never migrated: `reserved` already says so.
+  if (fs.existsSync(rootIndex)) violations.push(...indexViolations(docsPath));
 
   const errors = violations.filter((v) => v.severity === "error").length;
   return {

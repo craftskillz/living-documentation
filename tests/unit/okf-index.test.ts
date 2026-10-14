@@ -41,3 +41,14 @@ test("index.md does not list a folder without concepts, which gets no index.md o
   assert.ok(!fs.existsSync(path.join(root, "empty/index.md")));
   fs.rmSync(root, { recursive: true, force: true });
 });
+
+test("generation removes the index.md of a folder that no longer has concepts", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "okf-index-"));
+  write(root, "a.md", "---\ntitle: A\n---\n");
+  write(root, "emptied/index.md", "# emptied\n");
+
+  generateOkfIndexFiles(root);
+
+  assert.ok(!fs.existsSync(path.join(root, "emptied/index.md")));
+  fs.rmSync(root, { recursive: true, force: true });
+});

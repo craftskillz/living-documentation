@@ -12,6 +12,16 @@ timestamp: 2026-10-14T19:00:00Z
 status: To be validated
 ---
 
+# okf:validate contrôle les index.md — 14 octobre 2026
+
+Nouvelle règle `index` (erreur) dans `src/lib/okf/validate.ts` : chaque `index.md` doit être exactement ce que le générateur écrirait (périmé, manquant ou dans un dossier sans document → erreur, corrigée par `migrate`). Le générateur expose `planOkfIndexFiles` (lecture seule), partagé avec le validateur, et supprime l'`index.md` d'un dossier vidé (`documentation/images-ai/index.md` retiré). Règle ignorée sans `index.md` racine (bundle jamais migré, ex. `usermanual-documentation`, déjà non conforme).
+
+Suites : unitaires 69/69, `tests/api` 219/219, `tests/e2e` 117/117, `okf:validate` conforme sur `documentation/` et les deux starters.
+
+MCP Living Documentation non exposé : pas de métadonnées attachées.
+
+---
+
 # WORKLOG rangé en CURRENT, FUTURE et FINISHED — 14 octobre 2026
 
 `WORKLOG/` garde `current-task.md` à sa racine et range le reste : `FINISHED/` (roadmaps OKF et explorateur, leurs traces de tickets, `mcp-build-context-tool.md`), `FUTURE/` (`ROADMAP-RECHERCHE-RAG.md`), `CURRENT/` vide. Déplacements faits avec `relocateEntry` (liens, ids et manifestes suivis). Les deux starters livrent la même structure (roadmap d'exemple dans `FUTURE/`) et la décrivent dans `PROJECT-INSTRUCTIONS.md`, `track-current-work`, `AGENTS.md` et `CLAUDE.md`. Le générateur d'`index.md` ne liste plus les sous-dossiers sans concept (liens cassés). ADR [WORKLOG rangé en CURRENT, FUTURE et FINISHED](../ADRS/2026_10_14_19_00_%5BWORKLOG%5D_worklog_range_en_current_future_finished.md) en `To be validated`.
