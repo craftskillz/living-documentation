@@ -2,10 +2,6 @@
 type: Technical Doc
 title: PROJECT STACK
 sources:
-  - path: src/lib/cli/headerMenuPrompt.ts
-    hash: 1a016eff6f72a2e2fc9268f62051b01ca9172597bb57293caa3172c0f957d528
-    commit: 4f8e12538281e96f38cd6be0a88da85f5e5dc3db
-    dirty: false
   - path: src/frontend-svelte/src/lib/headerNavigation.svelte.ts
     hash: ef906a799b533ac85f4819da44ffaf86178bfdc4e61ef213613df612b2b56532
     commit: 4f8e12538281e96f38cd6be0a88da85f5e5dc3db
