@@ -2,10 +2,6 @@
 type: Technical Doc
 title: PROJECT STACK
 sources:
-  - path: src/mcp/server.ts
-    hash: 0df2fee27cc582fb12c16b9f609c07ea5952f97f23c1238967ee1fa6d6630c47
-    commit: 4f8e12538281e96f38cd6be0a88da85f5e5dc3db
-    dirty: false
   - path: scripts/copy-assets.ts
     hash: ffdb3d3b63a943a0d0eb4988f8fe71aa7e4fb937f4426a1e94bd6436ce4ae240
     commit: 4f8e12538281e96f38cd6be0a88da85f5e5dc3db
