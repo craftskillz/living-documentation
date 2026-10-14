@@ -1,11 +1,6 @@
 ---
 type: Technical Doc
 title: PROJECT STACK
-sources:
-  - path: src/frontend-svelte/src/lib/headerNavigation.svelte.ts
-    hash: ef906a799b533ac85f4819da44ffaf86178bfdc4e61ef213613df612b2b56532
-    commit: 4f8e12538281e96f38cd6be0a88da85f5e5dc3db
-    dirty: false
 ---
 
 # PROJECT-STACK - Living Documentation
