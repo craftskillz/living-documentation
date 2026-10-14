@@ -2,10 +2,6 @@
 type: Technical Doc
 title: PROJECT USEFUL COMMANDS
 sources:
-  - path: justfile
-    hash: b201e77b138ab1dbab9cb490f5702198422b5b05f1b3e6589e6863362e5c4058
-    commit: 09940a37c77396f4b9a48caf637a248b5d10c968
-    dirty: false
   - path: tests/helpers/ld-fixture.ts
     hash: abce47fd15c3cfcf55fa49b1bd0a386b0d623da4492166626ea79d7d51b65a13
     commit: 09940a37c77396f4b9a48caf637a248b5d10c968
