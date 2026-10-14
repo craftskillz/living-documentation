@@ -2,10 +2,6 @@
 type: Technical Doc
 title: PROJECT USEFUL COMMANDS
 sources:
-  - path: playwright.config.ts
-    hash: bd5ec053a7955be0aff01d803d5b8ccf76f5caf3975d14d01add39131305dfa0
-    commit: 09940a37c77396f4b9a48caf637a248b5d10c968
-    dirty: false
   - path: tests/helpers/coverage.ts
     hash: b0618f93d98a05007f90655a43399c0d1dde0ffc821714fca078ebcc314159fe
     commit: 09940a37c77396f4b9a48caf637a248b5d10c968
