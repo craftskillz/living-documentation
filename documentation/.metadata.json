@@ -1,12 +1,6 @@
 {
   "AI/PROJECT-USEFUL-COMMANDS": [
     {
-      "path": "tests/api/cli.spec.ts",
-      "hash": "278fd29d0f8fc7195afad6813f61afd844a0e0ee6bc58a22496d4229bf0d4501",
-      "commit": "09940a37c77396f4b9a48caf637a248b5d10c968",
-      "dirty": false
-    },
-    {
       "path": "tests/api/config.spec.ts",
       "hash": "b825822038ac13e7e49206ada5591cccdd8d144810f722d1e19909344ecc7cbd",
       "commit": "09940a37c77396f4b9a48caf637a248b5d10c968",
