@@ -10,8 +10,7 @@
   "port": 4321,
   "extraFiles": [
     "../README.md",
-    "../README.fr.md",
-    "../.agents"
+    "../README.fr.md"
   ],
   "showDiagramDebug": false,
   "diagramNodePalette": [
