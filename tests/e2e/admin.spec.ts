@@ -100,4 +100,21 @@ test.describe('Admin page — General extra files', () => {
 
     await expect(page.locator('.extra-file-path')).toHaveText('$DOCS_FOLDER/../.agents/skill.md');
   });
+
+  test('a whole folder can be added and its documents appear in the General section', async ({ page, ld }) => {
+    const parent = path.dirname(ld.docsAbs);
+    fs.mkdirSync(path.join(parent, '.agents', 'skills'), { recursive: true });
+    fs.writeFileSync(path.join(parent, '.agents', 'skills', 'review.md'), '# Review\n');
+    await page.goto(`${ld.baseURL}/admin`);
+
+    const browser = page.locator('.file-browser');
+    await browser.getByRole('button', { name: '↑ Up' }).click();
+    await browser.locator('.browser-row--dir', { hasText: '.agents' }).getByRole('button', { name: '+ Add' }).click();
+
+    await expect(page.locator('.extra-file-path')).toHaveText('$DOCS_FOLDER/../.agents');
+    await expect(browser.locator('.browser-row--dir', { hasText: '.agents' }).getByText('Added')).toBeVisible();
+
+    await page.goto(ld.baseURL);
+    await expect(page.getByText('Review', { exact: true }).first()).toBeVisible();
+  });
 });

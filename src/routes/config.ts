@@ -1,7 +1,16 @@
 import { Router, type Request, type Response } from 'express';
+import fs from 'node:fs';
 import path from 'node:path';
 import { normalizeHiddenHeaderMenus } from '../shared/headerNavigation';
 import { readConfig, writeConfig, type StoredConfig } from '../lib/config';
+
+function isExistingDir(dir: string): boolean {
+  try {
+    return fs.statSync(dir).isDirectory();
+  } catch {
+    return false;
+  }
+}
 
 export function configRouter(docsPath: string): Router {
   const router = Router();
@@ -195,7 +204,8 @@ export function configRouter(docsPath: string): Router {
           return res.status(400).json({ error: 'codeBlockMaxHeight must be a non-negative number' });
         }
       }
-      // extraFiles: only RELATIVE .md paths (relative to docsFolder). Absolute entries are rejected.
+      // extraFiles: only RELATIVE paths (relative to docsFolder) to a .md file or an
+      // existing folder. Absolute entries are rejected.
       if ('extraFiles' in patch && Array.isArray(patch.extraFiles)) {
         const entries = patch.extraFiles as unknown[];
         const valid: string[] = [];
@@ -204,7 +214,7 @@ export function configRouter(docsPath: string): Router {
           if (path.isAbsolute(f) || f.startsWith('~')) {
             return res.status(400).json({ error: 'extraFiles entries must be relative paths' });
           }
-          if (!f.toLowerCase().endsWith('.md')) continue;
+          if (!f.toLowerCase().endsWith('.md') && !isExistingDir(path.resolve(docsPath, f))) continue;
           valid.push(f);
         }
         safe.extraFiles = valid;

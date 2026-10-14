@@ -4,6 +4,7 @@ import { isListedDir, isListedDocFile } from '../../lib/explorerEntries';
 import { readConfig } from '../../lib/config';
 import { readDocMetadata, titleFromFilename, uniqueDocFilename } from '../../lib/parser';
 import { normalizeFrontmatter } from '../../lib/okf';
+import { expandExtraFiles, isAllowedExtraFile } from '../../lib/extraFiles';
 
 function safeResolve(docsPath: string, rel: string): string | null {
   const resolved = path.resolve(docsPath, rel);
@@ -21,8 +22,7 @@ export function listAllDocuments(docsPath: string): DocSummary[] {
   const { extraFiles = [] } = readConfig(docsPath);
   const docs: DocSummary[] = [];
 
-  for (const fp of extraFiles) {
-    if (!fp.endsWith('.md') || !fs.existsSync(fp)) continue;
+  for (const fp of expandExtraFiles(extraFiles)) {
     const meta = readDocMetadata(fp, path.basename(fp));
     docs.push({ id: encodeURIComponent(fp.slice(0, -3)), title: meta.title, folder: null });
   }
@@ -53,7 +53,7 @@ export function resolveDocFilePath(docsPath: string, doc: DocSummary): string | 
   const decoded = decodeURIComponent(doc.id);
   if (path.isAbsolute(decoded)) {
     const fp = `${decoded}.md`;
-    return extraFiles.includes(fp) && fs.existsSync(fp) ? fp : null;
+    return isAllowedExtraFile(extraFiles, fp) && fs.existsSync(fp) ? fp : null;
   }
   const resolved = safeResolve(docsPath, `${decoded}.md`);
   return resolved && fs.existsSync(resolved) ? resolved : null;
@@ -117,7 +117,7 @@ export function toolReadDocument(
 
   if (path.isAbsolute(decoded)) {
     const fp = `${decoded}.md`;
-    if (!extraFiles.includes(fp)) throw new Error('Access denied: not an allowed extra file');
+    if (!isAllowedExtraFile(extraFiles, fp)) throw new Error('Access denied: not an allowed extra file');
     filePath = fp;
   } else {
     const resolved = safeResolve(docsPath, `${decoded}.md`);
@@ -227,7 +227,7 @@ export function toolUpdateDocument(docsPath: string, args: { id: string; content
   let filePath: string;
   if (path.isAbsolute(decoded)) {
     const fp = `${decoded}.md`;
-    if (!extraFiles.includes(fp)) throw new Error('Access denied: not an allowed extra file');
+    if (!isAllowedExtraFile(extraFiles, fp)) throw new Error('Access denied: not an allowed extra file');
     filePath = fp;
   } else {
     const resolved = safeResolve(docsPath, `${decoded}.md`);

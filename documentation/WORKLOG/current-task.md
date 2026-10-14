@@ -8,10 +8,22 @@ tags:
   - progression
   - reprise
   - agents-ia
-timestamp: 2026-10-14T23:30:00Z
+timestamp: 2026-10-15T00:30:00Z
 status: To be validated
 ---
 
+
+# Admin : ajouter un dossier complet en Extra Files — 14 octobre 2026
+
+« + Add » existe aussi sur les dossiers du navigateur « General — Extra Files ». Choix de l'utilisateur : liste à plat et dépliage dynamique. Le chemin du dossier est stocké dans `extraFiles` ; ses `.md` (récursif, mêmes exclusions que l'explorateur, triés par chemin) apparaissent dans General à sa position, et un fichier ajouté plus tard apparaît sans toucher la config. Nouveau module `src/lib/extraFiles.ts` : `expandExtraFiles` (listing documents et MCP) et `isAllowedExtraFile` (contrôle d'accès des routes documents, export, statut et des outils MCP, qui faisaient chacun `extraFiles.includes`). `PUT /api/config` accepte une entrée relative qui est un dossier existant. `PROJECT-STACK.md` mis à jour.
+
+Hors scope : pas de regroupement par dossier dans General ; les titres restent dérivés du nom de fichier.
+
+Tests : un test `tests/api/extra-files.spec.ts`, un test `tests/e2e/admin.spec.ts`. Suites : unitaires 71/71, `tests/api` 230/230, `tests/e2e` 123/123, lint OK.
+
+MCP Living Documentation non exposé : pas de métadonnées attachées.
+
+---
 
 # Admin : dossiers et fichiers « point » attachables en Extra Files — 14 octobre 2026
 

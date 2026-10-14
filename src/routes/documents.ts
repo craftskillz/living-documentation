@@ -12,6 +12,7 @@ import { isFileOrLinkToFile, isListedDir, isListedDocFile } from "../lib/explore
 import { isReservedOkfFile, normalizeFrontmatter } from "../lib/okf";
 import { parseFrontmatter } from "../lib/frontmatter";
 import { renderMarkdownWithCompareBlocks } from "../lib/compareBlock";
+import { expandExtraFiles, isAllowedExtraFile } from "../lib/extraFiles";
 
 const METADATA_SEARCH_PREFIX = "metadata://";
 
@@ -39,8 +40,7 @@ export function listDocs(
 ): DocMetadata[] {
   // Extra files first, in config order
   const extraDocs: DocMetadata[] = [];
-  for (const filePath of extraFiles) {
-    if (!filePath.endsWith(".md") || !fs.existsSync(filePath)) continue;
+  for (const filePath of expandExtraFiles(extraFiles)) {
     const meta = readDocMetadata(filePath, path.basename(filePath));
     extraDocs.push({
       ...meta,
@@ -81,7 +81,7 @@ function resolveDocPath(
   const id = decodeURIComponent(doc.id);
   if (path.isAbsolute(id)) {
     const filePath = `${id}.md`;
-    return extraFiles.includes(filePath) ? filePath : null;
+    return isAllowedExtraFile(extraFiles, filePath) ? filePath : null;
   }
   return safeFilePath(docsPath, doc.filename);
 }
@@ -293,7 +293,7 @@ export function documentsRouter(docsPath: string): Router {
     // Extra file: id is an absolute path without .md
     if (path.isAbsolute(id)) {
       const filePath = `${id}.md`;
-      if (!extraFiles.includes(filePath)) {
+      if (!isAllowedExtraFile(extraFiles, filePath)) {
         return res.status(403).json({ error: "Access denied" });
       }
       if (!fs.existsSync(filePath)) {
@@ -370,7 +370,7 @@ export function documentsRouter(docsPath: string): Router {
     // Extra file: id is an absolute path without .md
     if (path.isAbsolute(id)) {
       const filePath = `${id}.md`;
-      if (!extraFiles.includes(filePath)) {
+      if (!isAllowedExtraFile(extraFiles, filePath)) {
         return res.status(403).json({ error: "Access denied" });
       }
       try {
@@ -413,7 +413,7 @@ export function documentsRouter(docsPath: string): Router {
 
     if (path.isAbsolute(id)) {
       const filePath = `${id}.md`;
-      if (!extraFiles.includes(filePath)) {
+      if (!isAllowedExtraFile(extraFiles, filePath)) {
         return res.status(403).json({ error: "Access denied" });
       }
       if (!fs.existsSync(filePath)) {

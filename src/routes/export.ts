@@ -5,6 +5,7 @@ import archiver from 'archiver';
 import { readConfig } from '../lib/config';
 import { listDocs, safeFilePath, stripFrontmatter } from './documents';
 import { renderMarkdownWithCompareBlocks } from '../lib/compareBlock';
+import { isAllowedExtraFile } from '../lib/extraFiles';
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -315,7 +316,7 @@ export function exportRouter(docsPath: string): Router {
       const id = decodeURIComponent(doc.id);
       if (path.isAbsolute(id)) {
         const abs = `${id}.md`;
-        filePath = extraFiles.includes(abs) ? abs : null;
+        filePath = isAllowedExtraFile(extraFiles, abs) ? abs : null;
       } else {
         filePath = safeFilePath(docsPath, doc.filename);
       }
@@ -384,7 +385,7 @@ export function exportRouter(docsPath: string): Router {
       const id = decodeURIComponent(doc.id);
       if (path.isAbsolute(id)) {
         const abs = `${id}.md`;
-        filePath = extraFiles.includes(abs) ? abs : null;
+        filePath = isAllowedExtraFile(extraFiles, abs) ? abs : null;
       } else {
         filePath = safeFilePath(docsPath, doc.filename);
       }

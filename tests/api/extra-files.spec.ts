@@ -109,3 +109,40 @@ test.describe('documents routes for extraFiles (path.isAbsolute branch)', () => 
     expect(res.status()).toBe(403);
   });
 });
+
+test.describe('extraFiles folder entries', () => {
+  test('a folder entry lists its .md files recursively, sorted by path, and only those are readable', async ({
+    request,
+    ld,
+  }) => {
+    const parent = path.dirname(ld.docsAbs);
+    const folder = path.join(parent, '.agents');
+    fs.mkdirSync(path.join(folder, 'a'), { recursive: true });
+    fs.writeFileSync(path.join(folder, 'b.md'), '# Beta\n');
+    fs.writeFileSync(path.join(folder, 'a', 'c.md'), '# Gamma\n');
+    fs.writeFileSync(path.join(folder, 'notes.txt'), 'ignored');
+    fs.writeFileSync(path.join(parent, 'outside.md'), '# Outside\n');
+
+    const put = await request.put(`${ld.baseURL}/api/config`, {
+      data: { extraFiles: ['../.agents'] },
+    });
+    expect(put.ok()).toBe(true);
+
+    const docs = (await (await request.get(`${ld.baseURL}/api/documents`)).json()) as Array<{
+      id: string;
+      title: string;
+      filename: string;
+      folder: string[] | null;
+    }>;
+    const extras = docs.filter((d) => d.folder === null && ['c.md', 'b.md'].includes(d.filename));
+    expect(extras.map((d) => d.filename)).toEqual(['c.md', 'b.md']);
+    expect(docs.map((d) => d.filename)).not.toContain('outside.md');
+
+    const read = await request.get(`${ld.baseURL}/api/documents/${extras[0].id}`);
+    expect(read.ok()).toBe(true);
+    expect(((await read.json()) as { content: string }).content).toContain('# Gamma');
+
+    const outsideId = encodeURIComponent(path.join(parent, 'outside'));
+    expect((await request.get(`${ld.baseURL}/api/documents/${outsideId}`)).status()).toBe(403);
+  });
+});

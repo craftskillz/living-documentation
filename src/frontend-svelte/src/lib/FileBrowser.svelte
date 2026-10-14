@@ -94,7 +94,7 @@
 
 <div class="field-group">
   <p class="field-label">General — Extra Files</p>
-  <p class="field-hint">Add Markdown files from outside the docs folder to the General section.</p>
+  <p class="field-hint">Add Markdown files or whole folders from outside the docs folder to the General section.</p>
 
   <div class="file-browser">
     <div class="file-browser-toolbar">
@@ -110,9 +110,16 @@
         <p class="browser-msg">Empty directory</p>
       {:else}
         {#each dirs as dir}
-          <button type="button" class="browser-row browser-row--dir" onclick={() => loadBrowse(dir.path)}>
-            <span>📁</span><span>{dir.name}</span>
-          </button>
+          <div class="browser-row browser-row--dir">
+            <button type="button" class="browser-row-name browser-row-open" onclick={() => loadBrowse(dir.path)}>
+              <span>📁</span><span>{dir.name}</span>
+            </button>
+            {#if extraFiles.includes(dir.path)}
+              <span class="badge-added">Added</span>
+            {:else}
+              <button type="button" class="link-btn" onclick={() => addFile(dir.path)}>+ Add</button>
+            {/if}
+          </div>
         {/each}
         {#each files as file}
           <div class="browser-row browser-row--file">

@@ -9,6 +9,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { readConfig } from "./config";
 import { getField } from "./frontmatter";
+import { isAllowedExtraFile } from "./extraFiles";
 
 export function parseDocStatus(content: string): string | null {
   return getField(content, "status");
@@ -24,7 +25,7 @@ function resolveDocFilePath(
 ): string | null {
   if (path.isAbsolute(decodedDocId)) {
     const candidate = `${decodedDocId}.md`;
-    return extraFiles.includes(candidate) ? candidate : null;
+    return isAllowedExtraFile(extraFiles, candidate) ? candidate : null;
   }
   const resolved = path.resolve(docsPath, `${decodedDocId}.md`);
   if (!resolved.startsWith(path.resolve(docsPath) + path.sep)) return null;

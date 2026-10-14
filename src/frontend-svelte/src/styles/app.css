@@ -1396,7 +1396,8 @@ h1 {
 .browser-row { width: 100%; display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-size: 13px; border: none; background: none; text-align: left; cursor: pointer; border-bottom: 1px solid var(--line); }
 .browser-row:last-child { border-bottom: none; }
 .browser-row:hover { background: var(--panel-soft); }
-.browser-row--dir { color: var(--ink); }
+.browser-row--dir { color: var(--ink); justify-content: space-between; cursor: default; }
+.browser-row-open { flex: 1; border: none; background: none; padding: 0; font: inherit; text-align: left; cursor: pointer; }
 .browser-row--file { justify-content: space-between; cursor: default; }
 .browser-row-name { display: flex; align-items: center; gap: 8px; color: var(--ink); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .badge-added { font-size: 11px; color: var(--green); flex-shrink: 0; }
