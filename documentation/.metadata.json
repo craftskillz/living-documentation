@@ -1,12 +1,6 @@
 {
   "AI/PROJECT-STACK": [
     {
-      "path": "src/lib/parser.ts",
-      "hash": "479e935e3c6c45fcd9c2ae7a7fec8b1424086c2461c0720e22128d5bb099139e",
-      "commit": "4f8e12538281e96f38cd6be0a88da85f5e5dc3db",
-      "dirty": false
-    },
-    {
       "path": "src/lib/metadata.ts",
       "hash": "5d900ce7565c1d8c703c3863da7d89a9648710a903f7f8fd5499731c757a9a28",
       "commit": "4f8e12538281e96f38cd6be0a88da85f5e5dc3db",
