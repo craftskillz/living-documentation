@@ -12,6 +12,16 @@ timestamp: 2026-09-16T15:45:00Z
 status: To be validated
 ---
 
+# Explorateur : US11b livrée — 14 octobre 2026
+
+US11b terminée sur `main` : entrée « Renommer » dans le menu contextuel de l'explorateur, modale de saisie, document ouvert suivi (URL mise à jour). Détails : [worklog US11b](./2026_10_14_18_00_%5BWORKLOG%5D_us_11b_renommer_depuis_l_explorateur_frontend.md). Suites : unitaires 64/64, `tests/api` 219/219, `tests/e2e` 117/117, `okf:validate` conforme.
+
+Suite : backlog ROADMAP-EXPLORATEUR terminé ; validation humaine de l'ADR explorateur.
+
+MCP Living Documentation non exposé : pas de métadonnées attachées.
+
+---
+
 # Explorateur : US11a livrée — 14 octobre 2026
 
 US11a (backend) terminée sur `main` : `PUT /api/tree/rename` et réécriture des liens au renommage et au déplacement (`src/lib/linkRewrite.ts`). Détails : [worklog US11a](./2026_10_14_17_00_%5BWORKLOG%5D_us_11a_renommer_et_reecrire_les_liens_backend.md). Suites : unitaires 64/64, `tests/api` 219/219, `tests/e2e` 114/114, `okf:validate` conforme.

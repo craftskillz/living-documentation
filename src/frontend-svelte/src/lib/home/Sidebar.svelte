@@ -2,11 +2,12 @@
   import { home } from "./state.svelte";
   import { t } from "../i18n.svelte";
   import { fetchTree, moveTreeEntry, setTreeHidden } from "./api";
-  import { filterExplorerTree, withoutHiddenEntries } from "./tree";
+  import { canRenameEntry, filterExplorerTree, withoutHiddenEntries } from "./tree";
   import { dropRequest, type DropPosition } from "./treeDrop";
   import { showPersistentToast } from "../persistentToast";
   import type { ExplorerNode } from "./types";
   import TreeNode from "./TreeNode.svelte";
+  import RenameEntryModal from "./RenameEntryModal.svelte";
 
   let { onopen, onsearch, onexport, onnewfolder, onnewdoc, onmoved }: {
     onopen: (id: string) => void;
@@ -26,7 +27,7 @@
       : visibleTree,
   );
 
-  // ── Entry context menu (hide / show) ──────────────────────────────────────────
+  // ── Entry context menu (hide / show / rename) ─────────────────────────────────────────
   let entryMenu = $state<{ x: number; y: number; node: ExplorerNode } | null>(null);
 
   function openEntryMenu(e: MouseEvent, node: ExplorerNode) {
@@ -39,6 +40,18 @@
     const { node } = entryMenu;
     entryMenu = null;
     if (await setTreeHidden(node.path, !node.hidden)) home.explorerTree = await fetchTree();
+  }
+
+  let renaming = $state<ExplorerNode | null>(null);
+
+  function startRename() {
+    renaming = entryMenu?.node ?? null;
+    entryMenu = null;
+  }
+
+  function onRenamed(source: string, path: string) {
+    renaming = null;
+    onmoved(source, path);
   }
 
   // ── Drag and drop move ─────────────────────────────────────────────────────────
@@ -163,8 +176,20 @@
       >
         <i class="fa-solid {entryMenu.node.hidden ? 'fa-eye' : 'fa-eye-slash'} mr-2"></i>{t(entryMenu.node.hidden ? "sidebar.show_entry" : "sidebar.hide_entry")}
       </button>
+      {#if canRenameEntry(entryMenu.node)}
+        <button
+          role="menuitem"
+          data-testid="tree-menu-rename"
+          onclick={startRename}
+          class="w-full text-left px-3 py-1.5 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+        >
+          <i class="fa-solid fa-pen mr-2"></i>{t("sidebar.rename_entry")}
+        </button>
+      {/if}
     </div>
   {/if}
+
+  <RenameEntryModal node={renaming} onclose={() => (renaming = null)} onrenamed={onRenamed} />
 
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div

@@ -135,3 +135,67 @@ test('dropping a folder into its own descendant is refused with a toast', async 
   expect(fs.existsSync(path.join(ld.docsAbs, 'parent/child/leaf.md'))).toBe(true);
   await expect(tree.locator('span[title="child"]')).toBeVisible();
 });
+
+test('rename the open document from its context menu: the URL follows and incoming links are rewritten', async ({ page, ld }) => {
+  writeDoc(ld.docsAbs, 'note.md');
+  fs.writeFileSync(path.join(ld.docsAbs, 'other.md'), '---\ntype: Concept\ntitle: Other\n---\n\nSee [note](./note.md#top).\n');
+
+  await page.goto(ld.baseURL);
+  const tree = page.getByTestId('category-tree');
+  await tree.getByText('Note', { exact: true }).click();
+  await expect(page.locator('article')).toContainText('Body of note.md');
+
+  await tree.getByText('Note', { exact: true }).click({ button: 'right' });
+  await page.getByTestId('tree-menu-rename').click();
+  const input = page.getByTestId('rename-entry-input');
+  await expect(input).toHaveValue('note');
+  await input.fill('memo');
+  await input.press('Enter');
+
+  await expect(page).toHaveURL(/doc=memo(&|$|#)/);
+  await expect(page.locator('article')).toContainText('Body of note.md');
+  expect(fs.existsSync(path.join(ld.docsAbs, 'memo.md'))).toBe(true);
+  expect(fs.readFileSync(path.join(ld.docsAbs, 'other.md'), 'utf-8')).toContain('[note](./memo.md#top)');
+  await expect(tree.locator('.doc-item.active')).toContainText('Note');
+});
+
+test('rename a folder; a taken name is refused in the dialog without touching the disk', async ({ page, ld }) => {
+  writeDoc(ld.docsAbs, 'drafts/a.md');
+  writeDoc(ld.docsAbs, 'archive/b.md');
+
+  await page.goto(ld.baseURL);
+  const tree = page.getByTestId('category-tree');
+  await tree.locator('span[title="drafts"]').click({ button: 'right' });
+  await page.getByTestId('tree-menu-rename').click();
+  const input = page.getByTestId('rename-entry-input');
+  await expect(input).toHaveValue('drafts');
+  await input.fill('archive');
+  await page.getByTestId('rename-entry-submit').click();
+  await expect(page.getByTestId('rename-entry-error')).toContainText('already');
+  expect(fs.existsSync(path.join(ld.docsAbs, 'drafts/a.md'))).toBe(true);
+
+  await input.fill('notes');
+  await page.getByTestId('rename-entry-submit').click();
+  await expect(input).toHaveCount(0);
+  await expect(tree.locator('span[title="notes"]')).toBeVisible();
+  expect(fs.existsSync(path.join(ld.docsAbs, 'notes/a.md'))).toBe(true);
+});
+
+test('rename is not offered on hidden entries nor on the reserved root folders', async ({ page, ld }) => {
+  writeDoc(ld.docsAbs, 'secret.md');
+  writeDoc(ld.docsAbs, 'images/readme.md');
+  fs.writeFileSync(path.join(ld.docsAbs, 'liv-doc-main.md'), '---\nhidden:\n  - secret.md\n---\n');
+
+  await page.goto(ld.baseURL);
+  const tree = page.getByTestId('category-tree');
+  await tree.locator('span[title="images"]').click({ button: 'right' });
+  await expect(page.getByTestId('tree-menu-toggle-hidden')).toBeVisible();
+  await expect(page.getByTestId('tree-menu-rename')).toHaveCount(0);
+  await page.keyboard.press('Escape');
+  await page.mouse.click(1, 1);
+
+  await page.getByTestId('toggle-show-hidden').click();
+  await tree.getByText('Secret', { exact: true }).click({ button: 'right' });
+  await expect(page.getByTestId('tree-menu-toggle-hidden')).toBeVisible();
+  await expect(page.getByTestId('tree-menu-rename')).toHaveCount(0);
+});

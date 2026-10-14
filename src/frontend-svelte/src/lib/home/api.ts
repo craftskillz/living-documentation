@@ -35,6 +35,19 @@ export async function moveTreeEntry(request: MoveRequest): Promise<MoveOutcome> 
   return { ok: true, path };
 }
 
+export type RenameOutcome = { ok: true; path: string } | { ok: false; status: number };
+
+export async function renameTreeEntry(path: string, newName: string): Promise<RenameOutcome> {
+  const res = await fetch("/api/tree/rename", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ path, newName }),
+  });
+  if (!res.ok) return { ok: false, status: res.status };
+  const { path: renamed } = (await res.json()) as { path: string };
+  return { ok: true, path: renamed };
+}
+
 export async function fetchAllDirs(docsFolder: string): Promise<string[]> {
   return fetch(
     `/api/browse/alldirs?path=${encodeURIComponent(docsFolder)}`,
