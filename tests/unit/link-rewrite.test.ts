@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { entryMapper, rewriteMovedLinks } from "../../src/lib/linkRewrite";
+import { entryMapper, entryMatcher, rewriteMovedLinks, unlinkDeletedLinks } from "../../src/lib/linkRewrite";
 
 const enc = (id: string) => encodeURIComponent(encodeURIComponent(id));
 
@@ -77,4 +77,36 @@ test("encoded segments stay encoded once rewritten", () => {
 test("rewriteMovedLinks leaves unaffected content byte-identical", () => {
   const content = "plain [a](./x.md) [b](../outside.md) text";
   assert.equal(rewriteMovedLinks(content, "doc.md", entryMapper("y.md", "z.md", false)), content);
+});
+
+test("a deleted file: links to it keep their text, reference definitions go, the rest is untouched", () => {
+  const deleted = entryMatcher("guide/x.md", false);
+  const content = [
+    `See [rel](./guide/x.md#top) and [doc](?doc=${enc("guide/x")}).`,
+    '[titled](/guide/x.md "Title") [other](./guide/y.md) [ext](https://e.org/guide/x.md)',
+    "![img](./guide/x.md)",
+    "[ref]: ./guide/x.md",
+    "[keep]: ./guide/y.md",
+    "```",
+    "[code](./guide/x.md)",
+    "```",
+  ].join("\n");
+  assert.equal(
+    unlinkDeletedLinks(content, "home.md", deleted),
+    [
+      "See rel and doc.",
+      "titled [other](./guide/y.md) [ext](https://e.org/guide/x.md)",
+      "![img](./guide/x.md)",
+      "[keep]: ./guide/y.md",
+      "```",
+      "[code](./guide/x.md)",
+      "```",
+    ].join("\n"),
+  );
+});
+
+test("a deleted folder: links to any document below it are unlinked, relative to the linking file", () => {
+  const deleted = entryMatcher("guide", true);
+  const content = "[a](../guide/sub/a.md) [b](../guidebook/b.md) [c](../guide)";
+  assert.equal(unlinkDeletedLinks(content, "notes/home.md", deleted), "a [b](../guidebook/b.md) c");
 });

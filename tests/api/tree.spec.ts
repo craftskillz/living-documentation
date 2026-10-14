@@ -480,6 +480,31 @@ test('DELETE /api/tree deletes a folder with its content, its manifest entry and
   expect(Object.keys(readJson(annotationsFile))).toEqual(['guidebook/c']);
 });
 
+test('DELETE /api/tree unlinks incoming links and purges favorites and diagram evidence of the deleted documents', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'guide/a.md');
+  writeDoc(ld.docsAbs, 'guidebook/c.md');
+  fs.writeFileSync(path.join(ld.docsAbs, 'home.md'), '# Home\n\nSee [a](guide/a.md) and [c](guidebook/c.md).\n');
+  const configFile = path.join(ld.docsAbs, '.living-doc.json');
+  const favorites = [
+    { id: encodeURIComponent('guide/a'), title: 'A' },
+    { id: encodeURIComponent('guidebook/c'), title: 'C' },
+  ];
+  fs.writeFileSync(configFile, JSON.stringify({ ...readJson(configFile), favorites }));
+  const diagramsFile = path.join(ld.docsAbs, '.diagrams.json');
+  const evidence = (id: string) => ({ documentId: encodeURIComponent(id), section: null, summary: null });
+  fs.writeFileSync(
+    diagramsFile,
+    JSON.stringify({ diagrams: [{ id: 'd1', nodes: [{ id: 'n1', evidence: [evidence('guide/a'), evidence('guidebook/c')] }], edges: [] }] }),
+  );
+
+  const res = await request.delete(`${ld.baseURL}/api/tree`, { data: { path: 'guide' } });
+
+  expect(res.status()).toBe(200);
+  expect(fs.readFileSync(path.join(ld.docsAbs, 'home.md'), 'utf-8')).toBe('# Home\n\nSee a and [c](guidebook/c.md).\n');
+  expect(readJson(configFile).favorites).toEqual([favorites[1]]);
+  expect(JSON.parse(fs.readFileSync(diagramsFile, 'utf-8')).diagrams[0].nodes[0].evidence).toEqual([evidence('guidebook/c')]);
+});
+
 test('DELETE /api/tree rejects documents, protected folders and escaping paths without touching the disk', async ({ request, ld }) => {
   writeDoc(ld.docsAbs, 'guide/a.md');
   writeDoc(ld.docsAbs, 'secret/s.md');

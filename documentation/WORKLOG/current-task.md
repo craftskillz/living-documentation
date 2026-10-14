@@ -8,10 +8,22 @@ tags:
   - progression
   - reprise
   - agents-ia
-timestamp: 2026-10-14T21:00:00Z
+timestamp: 2026-10-14T22:30:00Z
 status: To be validated
 ---
 
+
+# Suppression : liens entrants déliés et preuves de diagrammes purgées — 14 octobre 2026
+
+Suite de la suppression de dossier. Supprimer un dossier (`DELETE /api/tree`) ou un document (`DELETE /api/documents/:id`) passe désormais par le même nettoyage `forgetDeletedEntry` (`src/lib/treeMove.ts`) : les liens entrants sont déliés en gardant leur texte (choix de l'utilisateur ; définitions de référence retirées, images et code clôturé intacts, `unlinkDeletedLinks` dans `src/lib/linkRewrite.ts`), et les ids sortent de `.metadata.json`, `.annotations.json`, des favoris et des `evidence` de `.diagrams.json`. Avant, la suppression d'un document ne purgeait que les annotations. Côté Home, la suppression d'un document relit `/api/config` pour resynchroniser le menu Favoris. ADR explorateur et `PROJECT-STACK.md` mis à jour.
+
+Hors scope : un usage `[texte][ref]` dont la définition est retirée s'affiche en texte brut ; la suppression d'un document seul ne régénère pas les `index.md` OKF (comme la création).
+
+Tests : deux tests unitaires `tests/unit/link-rewrite.test.ts`, un test `tests/api/tree.spec.ts`, un test `tests/api/documents.spec.ts`, un test `tests/e2e/explorer.spec.ts`. Suites : unitaires 71/71, `tests/api` 228/228, `tests/e2e` 121/121, lint OK.
+
+MCP Living Documentation non exposé : pas de métadonnées attachées (sources à attacher à l'ADR explorateur : `src/lib/treeMove.ts`, `src/lib/linkRewrite.ts`, `src/routes/documents.ts`).
+
+---
 
 # Explorateur : supprimer un dossier depuis le menu contextuel — 14 octobre 2026
 

@@ -231,6 +231,32 @@ test('DELETE /api/documents/:id also removes matching annotations from .annotati
   expect(store['other-doc']).toBeDefined(); // untouched
 });
 
+test('DELETE /api/documents/:id unlinks incoming links and purges metadata, favorites and diagram evidence', async ({
+  request,
+  ld,
+}) => {
+  fs.mkdirSync(path.join(ld.docsAbs, 'guide'), { recursive: true });
+  fs.writeFileSync(path.join(ld.docsAbs, 'guide', 'x.md'), '# X\n');
+  fs.writeFileSync(path.join(ld.docsAbs, 'home.md'), 'See [x](./guide/x.md) and [y](./guide/y.md).\n');
+  fs.writeFileSync(path.join(ld.docsAbs, '.metadata.json'), JSON.stringify({ 'guide/x': [{ path: 'src/x.ts' }], home: [] }));
+  const configFile = path.join(ld.docsAbs, '.living-doc.json');
+  const config = JSON.parse(fs.readFileSync(configFile, 'utf-8'));
+  fs.writeFileSync(configFile, JSON.stringify({ ...config, favorites: [{ id: encodeURIComponent('guide/x'), title: 'X' }] }));
+  const diagramsFile = path.join(ld.docsAbs, '.diagrams.json');
+  fs.writeFileSync(
+    diagramsFile,
+    JSON.stringify({ diagrams: [{ id: 'd1', nodes: [], edges: [{ id: 'e1', evidence: [{ documentId: encodeURIComponent('guide/x') }] }] }] }),
+  );
+
+  const res = await request.delete(`${ld.baseURL}/api/documents/${encodeURIComponent('guide/x')}`);
+
+  expect(res.ok()).toBe(true);
+  expect(fs.readFileSync(path.join(ld.docsAbs, 'home.md'), 'utf-8')).toBe('See x and [y](./guide/y.md).\n');
+  expect(Object.keys(JSON.parse(fs.readFileSync(path.join(ld.docsAbs, '.metadata.json'), 'utf-8')))).toEqual(['home']);
+  expect(JSON.parse(fs.readFileSync(configFile, 'utf-8')).favorites).toEqual([]);
+  expect(JSON.parse(fs.readFileSync(diagramsFile, 'utf-8')).diagrams[0].edges[0].evidence).toEqual([]);
+});
+
 test('GET /api/documents skips a broken symlink instead of failing', async ({ request, ld }) => {
   fs.mkdirSync(path.join(ld.docsAbs, 'AI'), { recursive: true });
   fs.symlinkSync('../../MISSING.md', path.join(ld.docsAbs, 'AI', 'CLAUDE.md'));

@@ -5,7 +5,7 @@ import path from "node:path";
 import { parseDocMetadata, readDocMetadata, uniqueDocFilename, type DocMetadata } from "../lib/parser";
 import { readConfig } from "../lib/config";
 import { readMetadataStore } from "../lib/metadata";
-import { RESERVED_ROOT_FOLDERS, relocateEntry, TreeMoveError } from "../lib/treeMove";
+import { forgetDeletedEntry, RESERVED_ROOT_FOLDERS, relocateEntry, TreeMoveError } from "../lib/treeMove";
 import { normalizeFolderPath } from "../lib/folderName";
 import { parseDocStatus } from "../lib/status";
 import { isFileOrLinkToFile, isListedDir, isListedDocFile } from "../lib/explorerEntries";
@@ -437,20 +437,7 @@ export function documentsRouter(docsPath: string): Router {
 
     try {
       fs.unlinkSync(filePath);
-
-      // Also drop its annotations, if any
-      const annPath = path.join(docsPath, ".annotations.json");
-      if (fs.existsSync(annPath)) {
-        try {
-          const store = JSON.parse(fs.readFileSync(annPath, "utf-8"));
-          if (store && typeof store === "object" && store[id]) {
-            delete store[id];
-            fs.writeFileSync(annPath, JSON.stringify(store, null, 2), "utf-8");
-          }
-        } catch {
-          /* non-fatal */
-        }
-      }
+      forgetDeletedEntry(docsPath, filename, false);
       return res.json({ ok: true });
     } catch {
       return res.status(500).json({ error: "Failed to delete document" });

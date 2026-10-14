@@ -13,13 +13,15 @@ export type PathMapper = (oldRel: string) => string | null;
 const IGNORED_DIRS = new Set([".git", "node_modules", "dist"]);
 const join = (dir: string, name: string) => (dir ? `${dir}/${name}` : name);
 
+/** Matches the entry `rel` and, for a folder, every path below it. */
+export function entryMatcher(rel: string, isFolder: boolean): (candidate: string) => boolean {
+  return (candidate) => candidate === rel || (isFolder && candidate.startsWith(`${rel}/`));
+}
+
 /** Maps the entry `from` → `to` and, for a folder, every path below it. */
 export function entryMapper(from: string, to: string, isFolder: boolean): PathMapper {
-  return (oldRel) => {
-    if (oldRel === from) return to;
-    if (isFolder && oldRel.startsWith(`${from}/`)) return to + oldRel.slice(from.length);
-    return null;
-  };
+  const matches = entryMatcher(from, isFolder);
+  return (oldRel) => (matches(oldRel) ? to + oldRel.slice(from.length) : null);
 }
 
 function normalizeSegments(segments: string[]): string[] | null {
@@ -110,6 +112,26 @@ function rewriteTarget(target: string, fileOldRel: string, fileNewRel: string, m
   return relative + trailing + suffix;
 }
 
+/** Applies `edit` to every line outside fenced code; a null result drops the line. */
+function editOutsideFences(content: string, edit: (line: string) => string | null): string {
+  let fence: string | null = null;
+  const out: string[] = [];
+  for (const line of content.split("\n")) {
+    const marker = line.match(/^\s{0,3}(`{3,}|~{3,})/);
+    if (marker) {
+      if (fence === null) fence = marker[1][0];
+      else if (marker[1][0] === fence) fence = null;
+      out.push(line);
+      continue;
+    }
+    const next = fence === null ? edit(line) : line;
+    if (next !== null) out.push(next);
+  }
+  return out.join("\n");
+}
+
+const REFERENCE_DEFINITION = /^(\s{0,3}\[[^\]]+\]:\s*)(\S+)/;
+
 /**
  * Rewrites the inline links and reference definitions of a Markdown file
  * (fenced code excluded) whose target, or the file itself, changes path.
@@ -117,22 +139,41 @@ function rewriteTarget(target: string, fileOldRel: string, fileNewRel: string, m
 export function rewriteMovedLinks(content: string, fileOldRel: string, mapPath: PathMapper): string {
   const fileNewRel = mapPath(fileOldRel) ?? fileOldRel;
   const rewrite = (t: string) => rewriteTarget(t, fileOldRel, fileNewRel, mapPath);
-  let fence: string | null = null;
-  return content
-    .split("\n")
-    .map((line) => {
-      const marker = line.match(/^\s{0,3}(`{3,}|~{3,})/);
-      if (marker) {
-        if (fence === null) fence = marker[1][0];
-        else if (marker[1][0] === fence) fence = null;
-        return line;
-      }
-      if (fence !== null) return line;
-      return line
-        .replace(/(\]\()([^)\s]+)/g, (_m, open: string, t: string) => open + rewrite(t))
-        .replace(/^(\s{0,3}\[[^\]]+\]:\s*)(\S+)/, (_m, open: string, t: string) => open + rewrite(t));
-    })
-    .join("\n");
+  return editOutsideFences(content, (line) =>
+    line
+      .replace(/(\]\()([^)\s]+)/g, (_m, open: string, t: string) => open + rewrite(t))
+      .replace(REFERENCE_DEFINITION, (_m, open: string, t: string) => open + rewrite(t)),
+  );
+}
+
+/** Resolves a link target written in `fileRel` to a POSIX path of the docs folder; null for external links. */
+function linkTargetRel(target: string, fileRel: string): string | null {
+  if (/^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(target)) return null;
+  const doc = target.match(/[?&]doc=([^&#]+)/);
+  if (doc) return `${safeDecode(safeDecode(doc[1]))}.md`;
+  const cut = target.search(/[?#]/);
+  const pathPart = cut === -1 ? target : target.slice(0, cut);
+  if (!pathPart) return null;
+  return resolveLink(pathPart.startsWith("/") ? [] : dirSegments(fileRel), pathPart);
+}
+
+/**
+ * Unlinks the inline links of a Markdown file (fenced code and images
+ * excluded) whose target is deleted, keeping their text, and drops the
+ * reference definitions that point at a deleted target.
+ */
+export function unlinkDeletedLinks(content: string, fileRel: string, isDeleted: (rel: string) => boolean): string {
+  const deleted = (target: string) => {
+    const rel = linkTargetRel(target, fileRel);
+    return rel !== null && isDeleted(rel);
+  };
+  return editOutsideFences(content, (line) => {
+    const definition = line.match(REFERENCE_DEFINITION);
+    if (definition && deleted(definition[2])) return null;
+    return line.replace(/(!?)\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g, (link, bang: string, text: string, target: string) =>
+      !bang && deleted(target) ? text : link,
+    );
+  });
 }
 
 function collectMd(docsPath: string, relDir = "", out: string[] = []): string[] {
@@ -161,6 +202,16 @@ export function planLinkRewrites(docsPath: string, mapPath: PathMapper): LinkRew
     })
     .filter((r) => r.next !== r.content)
     .map(({ oldRel, next }) => ({ oldRel, next }));
+}
+
+/** Unlinks, in every remaining `.md` file, the links whose target is deleted. */
+export function unlinkDeletedTargets(docsPath: string, isDeleted: (rel: string) => boolean): void {
+  for (const rel of collectMd(docsPath)) {
+    const file = path.join(docsPath, rel);
+    const content = fs.readFileSync(file, "utf-8");
+    const next = unlinkDeletedLinks(content, rel, isDeleted);
+    if (next !== content) fs.writeFileSync(file, next, "utf-8");
+  }
 }
 
 /** Writes planned rewrites once the paths changed on disk. */

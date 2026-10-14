@@ -16,7 +16,14 @@ import {
   setManifestOrder,
 } from "./folderManifest";
 import { orderedEntryNames } from "./folderTree";
-import { applyLinkRewrites, entryMapper, migrateSourcePaths, planLinkRewrites } from "./linkRewrite";
+import {
+  applyLinkRewrites,
+  entryMapper,
+  entryMatcher,
+  migrateSourcePaths,
+  planLinkRewrites,
+  unlinkDeletedTargets,
+} from "./linkRewrite";
 import { readMetadataStore, writeMetadataStore } from "./metadata";
 import { isReservedOkfFile } from "./okf";
 import { generateOkfIndexFiles } from "./okf/index-generator";
@@ -132,25 +139,26 @@ export function migrateDocIds(docsPath: string, from: string, to: string, isFold
   if (favoritesChanged) writeConfig(docsPath, { favorites: nextFavorites });
 }
 
-function dropKeysUnder<T>(store: Record<string, T>, folder: string): boolean {
-  const doomed = Object.keys(store).filter((key) => key.startsWith(`${folder}/`));
+function dropKeys<T>(store: Record<string, T>, matches: (id: string) => boolean): boolean {
+  const doomed = Object.keys(store).filter(matches);
   for (const key of doomed) delete store[key];
   return doomed.length > 0;
 }
 
 /**
- * Drops every doc id below `folder` from `.metadata.json`, `.annotations.json`
- * and the favorites of `.living-doc.json`.
+ * Drops the doc ids matched by `matches` from `.metadata.json`,
+ * `.annotations.json`, the favorites of `.living-doc.json` and the evidence of
+ * `.diagrams.json`.
  */
-function dropFolderDocIds(docsPath: string, folder: string): void {
+function dropDocIds(docsPath: string, matches: (id: string) => boolean): void {
   const metadata = readMetadataStore(docsPath);
-  if (dropKeysUnder(metadata, folder)) writeMetadataStore(docsPath, metadata);
+  if (dropKeys(metadata, matches)) writeMetadataStore(docsPath, metadata);
 
   const annPath = path.join(docsPath, ".annotations.json");
   if (fs.existsSync(annPath)) {
     try {
       const store = JSON.parse(fs.readFileSync(annPath, "utf-8"));
-      if (store && typeof store === "object" && dropKeysUnder(store, folder)) {
+      if (store && typeof store === "object" && dropKeys(store, matches)) {
         fs.writeFileSync(annPath, JSON.stringify(store, null, 2), "utf-8");
       }
     } catch {
@@ -158,9 +166,37 @@ function dropFolderDocIds(docsPath: string, folder: string): void {
     }
   }
 
+  // Diagram nodes and edges cite documents as evidence by URL-encoded id, anywhere in the store.
+  const diagramsPath = path.join(docsPath, ".diagrams.json");
+  if (fs.existsSync(diagramsPath)) {
+    try {
+      let diagramsChanged = false;
+      const cited = (item: unknown) =>
+        typeof (item as { documentId?: unknown })?.documentId === "string" &&
+        matches(decodeURIComponent((item as { documentId: string }).documentId));
+      const store = JSON.parse(fs.readFileSync(diagramsPath, "utf-8"), (key, value) => {
+        if (key !== "evidence" || !Array.isArray(value) || !value.some(cited)) return value;
+        diagramsChanged = true;
+        return value.filter((item) => !cited(item));
+      });
+      if (diagramsChanged) fs.writeFileSync(diagramsPath, JSON.stringify(store, null, 2), "utf-8");
+    } catch {
+      /* non-fatal */
+    }
+  }
+
   const { favorites } = readConfig(docsPath);
-  const kept = favorites.filter((fav) => !decodeURIComponent(fav.id).startsWith(`${folder}/`));
+  const kept = favorites.filter((fav) => !matches(decodeURIComponent(fav.id)));
   if (kept.length !== favorites.length) writeConfig(docsPath, { favorites: kept });
+}
+
+/**
+ * Forgets a deleted document (`relPath` ends in `.md`) or folder: the links
+ * that pointed at it keep their text, and the doc-keyed stores drop its ids.
+ */
+export function forgetDeletedEntry(docsPath: string, relPath: string, isFolder: boolean): void {
+  unlinkDeletedTargets(docsPath, entryMatcher(relPath, isFolder));
+  dropDocIds(docsPath, entryMatcher(isFolder ? relPath : relPath.slice(0, -3), isFolder));
 }
 
 /** Regenerates the OKF `index.md` files of a bundle that already has them. */
@@ -319,8 +355,9 @@ export function renameTreeEntry(docsPath: string, request: TreeRenameRequest): T
 
 /**
  * DELETE /api/tree: deletes a folder and everything it contains. Its parent
- * manifest forgets it and the doc-keyed stores drop the ids it held; a linked
- * file inside is removed as a link, its target is kept.
+ * manifest forgets it, incoming links are unlinked and the doc-keyed stores
+ * drop the ids it held; a linked file inside is removed as a link, its target
+ * is kept.
  */
 export function deleteTreeFolder(docsPath: string, relPath: string): TreeMoveResult {
   const root = path.resolve(docsPath);
@@ -345,7 +382,7 @@ export function deleteTreeFolder(docsPath: string, relPath: string): TreeMoveRes
   const rel = toPosix(path.relative(root, absFolder));
   fs.rmSync(absFolder, { recursive: true });
   removeFromManifest(parentDir, name);
-  dropFolderDocIds(docsPath, rel);
+  forgetDeletedEntry(docsPath, rel, true);
   refreshOkfIndexes(docsPath);
   return { path: rel };
 }

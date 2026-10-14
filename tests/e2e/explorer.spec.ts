@@ -261,3 +261,20 @@ test('delete is offered on folders only, never on documents nor on the reserved 
   await expect(page.getByTestId('tree-menu-rename')).toBeVisible();
   await expect(page.getByTestId('tree-menu-delete')).toHaveCount(0);
 });
+
+test('deleting a favorite document drops it from the favorites menu', async ({ page, ld }) => {
+  writeDoc(ld.docsAbs, 'drafts/a.md');
+  const configFile = path.join(ld.docsAbs, '.living-doc.json');
+  const config = JSON.parse(fs.readFileSync(configFile, 'utf-8'));
+  fs.writeFileSync(configFile, JSON.stringify({ ...config, favorites: [{ id: encodeURIComponent('drafts/a'), title: 'A' }] }));
+
+  // The top favorite opens by default.
+  await page.goto(ld.baseURL);
+  await expect(page.getByTestId('doc-title')).toHaveText('A');
+  await page.getByTestId('delete-doc-btn').click();
+  await page.getByRole('button', { name: 'Delete', exact: true }).last().click();
+  await expect.poll(() => fs.existsSync(path.join(ld.docsAbs, 'drafts/a.md'))).toBe(false);
+
+  await page.getByRole('button', { name: 'Favorites' }).click();
+  await expect(page.locator('.favorites-empty')).toBeVisible();
+});

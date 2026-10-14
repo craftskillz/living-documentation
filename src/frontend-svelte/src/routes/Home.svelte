@@ -191,6 +191,8 @@
     if (Array.isArray(home.searchResults)) home.searchResults = home.searchResults.filter(d => d.id !== id);
     const counts = { ...home.annotationCounts }; delete counts[id]; home.annotationCounts = counts;
     const fcounts = { ...home.fileAttachmentCounts }; delete fcounts[id]; home.fileAttachmentCounts = fcounts;
+    // The server dropped the document from the favorites: the config read resyncs them.
+    void api.fetchConfig();
     if (nextId) {
       await openDoc(nextId);
     } else {
