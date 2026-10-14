@@ -121,4 +121,24 @@ test.describe('Admin page — General extra files', () => {
     await tree.locator('[data-extra="true"]', { hasText: /skills/i }).click();
     await expect(tree.locator('.doc-item', { hasText: 'Review' })).toBeVisible();
   });
+
+  test('opening a folder inside General keeps General open when one folder at a time is enabled', async ({
+    page,
+    request,
+    ld,
+  }) => {
+    const parent = path.dirname(ld.docsAbs);
+    fs.mkdirSync(path.join(parent, '.agents', 'skills'), { recursive: true });
+    fs.writeFileSync(path.join(parent, '.agents', 'skills', 'review.md'), '# Review\n');
+    await request.put(`${ld.baseURL}/api/config`, {
+      data: { extraFiles: ['../.agents'], exclusiveFolderExpansion: true },
+    });
+    await page.goto(ld.baseURL);
+
+    const tree = page.getByTestId('category-tree');
+    await tree.locator('[data-extra="true"]', { hasText: 'General' }).click();
+    await tree.locator('[data-extra="true"]', { hasText: /\.agents/i }).click();
+    await tree.locator('[data-extra="true"]', { hasText: /skills/i }).click();
+    await expect(tree.locator('.doc-item', { hasText: 'Review' })).toBeVisible();
+  });
 });

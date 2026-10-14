@@ -128,7 +128,9 @@
 {/snippet}
 
 {#snippet folderGroup(folder: ExplorerNode)}
-  {@const pathKey = folder.extra ? folder.path : childPathKey(folder.name)}
+  <!-- The extra-files group roots its key on its path, never on a docs folder name. -->
+  {@const segment = folder.extra && folderPath.length === 0 ? folder.path : folder.name}
+  {@const pathKey = childPathKey(segment)}
   {@const isExpanded = home.expandedFolders.has(pathKey)}
   {@const docCount = countExplorerDocs(folder)}
   {@const annDocs = countExplorerDocs(folder, (id) => home.annotationCounts[id] > 0)}
@@ -159,7 +161,7 @@
     </button>
     {#if isExpanded}
       <div class="pl-3">
-        <Self nodes={folder.children ?? []} folderPath={[...folderPath, folder.name]} {onopen} {onentrymenu} {onmove} />
+        <Self nodes={folder.children ?? []} folderPath={[...folderPath, segment]} {onopen} {onentrymenu} {onmove} />
       </div>
     {/if}
   </div>

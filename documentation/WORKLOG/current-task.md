@@ -8,10 +8,20 @@ tags:
   - progression
   - reprise
   - agents-ia
-timestamp: 2026-10-15T02:30:00Z
+timestamp: 2026-10-15T03:00:00Z
 status: To be validated
 ---
 
+
+# Explorateur : ouvrir un dossier de « General » ne ferme plus le groupe — 14 octobre 2026
+
+Avec l'option « un seul dossier ouvert à la fois » (`exclusiveFolderExpansion`), ouvrir `.agents` fermait « General » : les clés d'ouverture des dossiers extra n'avaient pas de `|`, donc `toggleFolder` les prenait pour des frères de premier niveau. `TreeNode.svelte` enracine désormais la clé du groupe sur son chemin (`:extra-files:`) puis suit la hiérarchie habituelle (`:extra-files:|.agents|skills`).
+
+Tests : un test `tests/e2e/admin.spec.ts` avec l'option activée. Suites : unitaires 73/73, `tests/api` 230/230, `tests/e2e` 124/124, lint OK.
+
+MCP Living Documentation non exposé : pas de métadonnées attachées.
+
+---
 
 # Explorateur : un dossier extra garde sa structure dans « General » — 14 octobre 2026
 
