@@ -8,10 +8,20 @@ tags:
   - progression
   - reprise
   - agents-ia
-timestamp: 2026-10-14T22:30:00Z
+timestamp: 2026-10-14T23:30:00Z
 status: To be validated
 ---
 
+
+# Admin : dossiers et fichiers « point » attachables en Extra Files — 14 octobre 2026
+
+Le navigateur « General — Extra Files » de l'admin n'affichait pas les dossiers commençant par un point (`.agents`…) hors du dossier docs. `GET /api/browse` accepte `hidden=1` : hors du dossier docs, les dossiers « point » sont alors listés (les fichiers `.md` « point » l'étaient déjà). Seul `FileBrowser.svelte` passe `hidden=1` ; les autres sélecteurs (nouveau document, nouveau dossier, instructions, nuage de mots) gardent le comportement actuel. Côté serveur, `listDocs` lit déjà les extra files quel que soit leur chemin.
+
+Tests : un test `tests/api/browse.spec.ts`, un test `tests/e2e/admin.spec.ts`. Suites : unitaires 71/71, `tests/api` 229/229, `tests/e2e` 122/122, lint OK.
+
+MCP Living Documentation non exposé : pas de métadonnées attachées.
+
+---
 
 # Suppression : liens entrants déliés et preuves de diagrammes purgées — 14 octobre 2026
 

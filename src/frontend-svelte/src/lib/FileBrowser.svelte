@@ -42,7 +42,7 @@
     loading = true;
     error = false;
     try {
-      const data = (await fetch("/api/browse?path=" + encodeURIComponent(dirPath)).then((r) => r.json())) as BrowseData;
+      const data = (await fetch("/api/browse?hidden=1&path=" + encodeURIComponent(dirPath)).then((r) => r.json())) as BrowseData;
       browseCurrent = data.current;
       browseParent = data.parent;
       dirs = data.dirs;

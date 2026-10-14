@@ -17,10 +17,15 @@ function isInside(dir: string, root: string): boolean {
 }
 
 // Inside the docs folder dot folders are listed like the explorer does; the
-// rest of the filesystem keeps hiding them.
-function isBrowsableDir(parentDir: string, name: string, docsPath: string): boolean {
+// rest of the filesystem hides them unless the caller asks for hidden entries.
+function isBrowsableDir(
+  parentDir: string,
+  name: string,
+  docsPath: string,
+  showHidden = false,
+): boolean {
   if (isInside(parentDir, docsPath)) return isListedDir(name);
-  return !name.startsWith('.');
+  return showHidden || !name.startsWith('.');
 }
 
 function isReservedAtDocsRoot(
@@ -37,10 +42,11 @@ function isReservedAtDocsRoot(
 export function browseRouter(docsPath: string): Router {
   const router = Router();
 
-  // GET /api/browse?path=... — list dirs and .md files at a given path
+  // GET /api/browse?path=...[&hidden=1] — list dirs and .md files at a given path
   router.get('/', (req: Request, res: Response) => {
     const rawPath = (req.query.path as string) || '/';
     const current = path.resolve(rawPath);
+    const showHidden = req.query.hidden === '1';
 
     try {
       const entries = fs.readdirSync(current, { withFileTypes: true });
@@ -49,7 +55,7 @@ export function browseRouter(docsPath: string): Router {
         .filter(
           (e) =>
             e.isDirectory() &&
-            isBrowsableDir(current, e.name, docsPath) &&
+            isBrowsableDir(current, e.name, docsPath, showHidden) &&
             !isReservedAtDocsRoot(current, e.name, docsPath),
         )
         .map((e) => ({ name: e.name, path: path.join(current, e.name) }))

@@ -18,6 +18,32 @@ test('GET /api/browse returns dirs and .md files at a given path', async ({ requ
   expect(fileNames).toContain('2026_01_03_10_00_[Guide]_advanced.md');
 });
 
+test('GET /api/browse lists dot folders and dot .md files outside docs only with hidden=1', async ({
+  request,
+  ld,
+}) => {
+  const parent = path.dirname(ld.docsAbs);
+  fs.mkdirSync(path.join(parent, '.agents'), { recursive: true });
+  fs.writeFileSync(path.join(parent, '.rules.md'), '# Rules\n');
+  const browse = async (query: string) => {
+    const res = await request.get(
+      `${ld.baseURL}/api/browse?${query}path=${encodeURIComponent(parent)}`,
+    );
+    expect(res.ok()).toBe(true);
+    return (await res.json()) as {
+      dirs: Array<{ name: string }>;
+      files: Array<{ name: string }>;
+    };
+  };
+
+  const hidden = await browse('hidden=1&');
+  expect(hidden.dirs.map((d) => d.name)).toContain('.agents');
+  expect(hidden.files.map((f) => f.name)).toContain('.rules.md');
+
+  const visible = await browse('');
+  expect(visible.dirs.map((d) => d.name)).not.toContain('.agents');
+});
+
 test('GET /api/browse returns 400 for an unreadable path', async ({ request, ld }) => {
   const res = await request.get(
     `${ld.baseURL}/api/browse?path=${encodeURIComponent('/this/really/does/not/exist')}`,

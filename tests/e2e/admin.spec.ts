@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { test, expect } from '../helpers/ld-fixture';
 
 test.describe('Admin page — image style settings', () => {
@@ -81,5 +83,21 @@ test.describe('Admin page — image style settings', () => {
     await expect(content).not.toHaveClass(/\[&_img\]:rounded-xl/);
     await expect(content).not.toHaveClass(/\[&_img\]:mx-auto/);
     await expect(content).not.toHaveClass(/\[&_img\]:\[box-shadow/);
+  });
+});
+
+test.describe('Admin page — General extra files', () => {
+  test('dot folders outside the docs folder can be browsed and their files added', async ({ page, ld }) => {
+    const parent = path.dirname(ld.docsAbs);
+    fs.mkdirSync(path.join(parent, '.agents'), { recursive: true });
+    fs.writeFileSync(path.join(parent, '.agents', 'skill.md'), '# Skill\n');
+    await page.goto(`${ld.baseURL}/admin`);
+
+    const browser = page.locator('.file-browser');
+    await browser.getByRole('button', { name: '↑ Up' }).click();
+    await browser.getByRole('button', { name: '.agents' }).click();
+    await browser.locator('.browser-row--file', { hasText: 'skill.md' }).getByRole('button', { name: '+ Add' }).click();
+
+    await expect(page.locator('.extra-file-path')).toHaveText('$DOCS_FOLDER/../.agents/skill.md');
   });
 });
