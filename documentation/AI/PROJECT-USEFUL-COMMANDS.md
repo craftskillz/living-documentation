@@ -2,10 +2,6 @@
 type: Technical Doc
 title: PROJECT USEFUL COMMANDS
 sources:
-  - path: tests/helpers/ld-fixture.ts
-    hash: abce47fd15c3cfcf55fa49b1bd0a386b0d623da4492166626ea79d7d51b65a13
-    commit: 09940a37c77396f4b9a48caf637a248b5d10c968
-    dirty: false
   - path: src/lib/cli/headerMenuPrompt.ts
     hash: 1a016eff6f72a2e2fc9268f62051b01ca9172597bb57293caa3172c0f957d528
     commit: 09940a37c77396f4b9a48caf637a248b5d10c968
