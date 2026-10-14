@@ -1,12 +1,6 @@
 {
   "AI/PROJECT-STACK": [
     {
-      "path": "src/shared/headerNavigation.ts",
-      "hash": "04d0f19a83c75073b25abe29359a1901a0388bb97e56c688b15e31ccfff0e0f7",
-      "commit": "4f8e12538281e96f38cd6be0a88da85f5e5dc3db",
-      "dirty": false
-    },
-    {
       "path": "src/lib/cli/headerMenuPrompt.ts",
       "hash": "1a016eff6f72a2e2fc9268f62051b01ca9172597bb57293caa3172c0f957d528",
       "commit": "4f8e12538281e96f38cd6be0a88da85f5e5dc3db",
