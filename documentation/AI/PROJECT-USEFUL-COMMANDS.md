@@ -1,11 +1,6 @@
 ---
 type: Technical Doc
 title: PROJECT USEFUL COMMANDS
-sources:
-  - path: tests/e2e/header-navigation.spec.ts
-    hash: 5d517b6623a11a4558ea5351a21ccd66caec418f8142391cf055577ad4242568
-    commit: 09940a37c77396f4b9a48caf637a248b5d10c968
-    dirty: false
 ---
 
 # PROJECT-USEFUL-COMMANDS - Living Documentation
