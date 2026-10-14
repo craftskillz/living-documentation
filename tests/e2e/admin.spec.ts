@@ -101,7 +101,7 @@ test.describe('Admin page — General extra files', () => {
     await expect(page.locator('.extra-file-path')).toHaveText('$DOCS_FOLDER/../.agents/skill.md');
   });
 
-  test('a whole folder can be added and its documents appear in the General section', async ({ page, ld }) => {
+  test('a whole folder can be added and its documents appear in the explorer General group', async ({ page, ld }) => {
     const parent = path.dirname(ld.docsAbs);
     fs.mkdirSync(path.join(parent, '.agents', 'skills'), { recursive: true });
     fs.writeFileSync(path.join(parent, '.agents', 'skills', 'review.md'), '# Review\n');
@@ -115,6 +115,8 @@ test.describe('Admin page — General extra files', () => {
     await expect(browser.locator('.browser-row--dir', { hasText: '.agents' }).getByText('Added')).toBeVisible();
 
     await page.goto(ld.baseURL);
-    await expect(page.getByText('Review', { exact: true }).first()).toBeVisible();
+    const tree = page.getByTestId('category-tree');
+    await tree.locator('[data-extra="true"]').click();
+    await expect(tree.locator('.doc-item', { hasText: 'Review' })).toBeVisible();
   });
 });

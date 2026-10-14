@@ -2,7 +2,7 @@
   import { home } from "./state.svelte";
   import { t } from "../i18n.svelte";
   import { fetchTree, moveTreeEntry, setTreeHidden } from "./api";
-  import { canDeleteFolder, canRenameEntry, filterExplorerTree, withoutHiddenEntries } from "./tree";
+  import { canDeleteFolder, canRenameEntry, filterExplorerTree, withExtraFilesGroup, withoutHiddenEntries } from "./tree";
   import { dropRequest, type DropPosition } from "./treeDrop";
   import { showPersistentToast } from "../persistentToast";
   import type { ExplorerNode } from "./types";
@@ -23,7 +23,13 @@
   } = $props();
 
   // Hidden entries stay out of the tree and of its search unless revealed.
-  const visibleTree = $derived(home.showHiddenEntries ? home.explorerTree : withoutHiddenEntries(home.explorerTree));
+  const visibleTree = $derived(
+    withExtraFilesGroup(
+      home.showHiddenEntries ? home.explorerTree : withoutHiddenEntries(home.explorerTree),
+      home.allDocs,
+      t("sidebar.extra_files_group"),
+    ),
+  );
   const tree = $derived(
     home.searchQuery
       ? filterExplorerTree(visibleTree, new Set(home.filteredDocs.map((d) => d.id)))

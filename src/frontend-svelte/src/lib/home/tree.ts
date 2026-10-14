@@ -1,4 +1,4 @@
-import type { ExplorerNode } from "./types";
+import type { DocSummary, ExplorerNode } from "./types";
 
 /** Strip a leading numeric sort prefix and title-case a folder segment. */
 export function folderLabel(seg: string): string {
@@ -59,4 +59,23 @@ export function findExplorerNode(nodes: ExplorerNode[], path: string): ExplorerN
 export function countExplorerDocs(node: ExplorerNode, predicate: (id: string) => boolean = () => true): number {
   if (node.kind === "doc") return node.id && !node.reserved && predicate(node.id) ? 1 : 0;
   return (node.children ?? []).reduce((n, child) => n + countExplorerDocs(child, predicate), 0);
+}
+
+const EXTRA_FILES_GROUP_PATH = ":extra-files:";
+
+/**
+ * Extra files (absolute ids, outside the docs folder) are not in GET /api/tree:
+ * show them first, flat, in a read-only group, in the documents listing order.
+ */
+export function withExtraFilesGroup(tree: ExplorerNode[], docs: DocSummary[], label: string): ExplorerNode[] {
+  const extras = docs.filter((doc) => decodeURIComponent(doc.id).startsWith("/") || /^[A-Za-z]:[\\/]/.test(decodeURIComponent(doc.id)));
+  if (extras.length === 0) return tree;
+  const children: ExplorerNode[] = extras.map((doc) => ({
+    kind: "doc",
+    name: doc.filename ?? `${doc.title}.md`,
+    path: `${EXTRA_FILES_GROUP_PATH}${doc.id}`,
+    id: doc.id,
+    extra: true,
+  }));
+  return [{ kind: "folder", name: label, path: EXTRA_FILES_GROUP_PATH, extra: true, children }, ...tree];
 }

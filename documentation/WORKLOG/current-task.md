@@ -8,10 +8,20 @@ tags:
   - progression
   - reprise
   - agents-ia
-timestamp: 2026-10-15T00:30:00Z
+timestamp: 2026-10-15T01:30:00Z
 status: To be validated
 ---
 
+
+# Explorateur : extra files de nouveau visibles (groupe « General ») — 14 octobre 2026
+
+Régression depuis le passage de l'explorateur sur `/api/tree` (US2, `27ab1391`) : les extra files (ids absolus, hors dossier docs) n'apparaissaient plus dans la barre de gauche, seulement dans `/api/documents`. `withExtraFilesGroup` (`src/frontend-svelte/src/lib/home/tree.ts`) ajoute en tête de l'arbre un dossier virtuel « General »/« Général » (i18n `sidebar.extra_files_group`) qui les liste à plat, dans l'ordre du listing. Ces entrées (`extra: true`) ne se glissent pas, ne reçoivent pas de dépôt et n'ont pas de menu contextuel. L'E2E « dossier complet » de la tâche précédente vérifiait un titre trouvé dans le document ouvert, pas dans l'explorateur : il cible désormais l'arbre.
+
+Tests : `tests/unit/extra-files-group.test.ts` (2), `tests/e2e/admin.spec.ts` corrigé. Suites : unitaires 73/73, `tests/api` 230/230, `tests/e2e` 123/123, lint OK.
+
+MCP Living Documentation non exposé : pas de métadonnées attachées.
+
+---
 
 # Admin : ajouter un dossier complet en Extra Files — 14 octobre 2026
 

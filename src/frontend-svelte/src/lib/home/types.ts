@@ -34,6 +34,8 @@ export interface ExplorerNode {
   reserved?: boolean;
   /** Symlink to a Markdown file (linked AI instruction file): listed, never dragged, renamed or hidden. */
   linked?: boolean;
+  /** Admin "Extra Files" entry outside the docs folder (or their group): never dragged, renamed or hidden. */
+  extra?: boolean;
   children?: ExplorerNode[];
 }
 

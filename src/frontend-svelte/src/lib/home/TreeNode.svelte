@@ -93,11 +93,11 @@
   <button
     id="item-{doc.id}"
     onclick={() => onopen(doc.id)}
-    oncontextmenu={(e) => (node.linked ? e.preventDefault() : onentrymenu(e, node))}
-    draggable={canDrag && !node.linked}
+    oncontextmenu={(e) => (node.linked || node.extra ? e.preventDefault() : onentrymenu(e, node))}
+    draggable={canDrag && !node.linked && !node.extra}
     ondragstart={(e) => onDragStart(e, node)}
-    ondragover={(e) => onDragOver(e, node)}
-    ondrop={(e) => onDrop(e, node)}
+    ondragover={(e) => !node.extra && onDragOver(e, node)}
+    ondrop={(e) => !node.extra && onDrop(e, node)}
     ondragend={() => home.endDrag()}
     data-drop={dropState(node)}
     data-hidden={node.hidden ? "true" : undefined}
@@ -128,7 +128,7 @@
 {/snippet}
 
 {#snippet folderGroup(folder: ExplorerNode)}
-  {@const pathKey = childPathKey(folder.name)}
+  {@const pathKey = folder.extra ? folder.path : childPathKey(folder.name)}
   {@const isExpanded = home.expandedFolders.has(pathKey)}
   {@const docCount = countExplorerDocs(folder)}
   {@const annDocs = countExplorerDocs(folder, (id) => home.annotationCounts[id] > 0)}
@@ -136,11 +136,12 @@
   <div class="mb-1">
     <button
       onclick={() => home.toggleFolder(pathKey)}
-      oncontextmenu={(e) => onentrymenu(e, folder)}
-      draggable={canDrag}
+      oncontextmenu={(e) => (folder.extra ? e.preventDefault() : onentrymenu(e, folder))}
+      draggable={canDrag && !folder.extra}
       ondragstart={(e) => onDragStart(e, folder)}
-      ondragover={(e) => onDragOver(e, folder)}
-      ondrop={(e) => onDrop(e, folder)}
+      ondragover={(e) => !folder.extra && onDragOver(e, folder)}
+      ondrop={(e) => !folder.extra && onDrop(e, folder)}
+      data-extra={folder.extra ? "true" : undefined}
       ondragend={() => home.endDrag()}
       data-drop={dropState(folder)}
       data-hidden={folder.hidden ? "true" : undefined}

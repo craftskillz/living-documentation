@@ -189,6 +189,7 @@
   "sidebar.file_attached_docs_badge": "document contenant des pièces jointes",
   "sidebar.status_to_validate": "À valider",
   "sidebar.linked_file": "Fichier lié : ni déplaçable ni renommable",
+  "sidebar.extra_files_group": "Général",
   "sidebar.status_superseeded": "Obsolète",
   "doc.validate_mode": "Valider le document — passer le statut frontmatter de « To be validated » à « Accepted »",
   "doc.validate_btn": "Valider",
