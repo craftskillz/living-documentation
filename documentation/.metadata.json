@@ -1,12 +1,6 @@
 {
   "AI/PROJECT-STACK": [
     {
-      "path": "src/lib/documentTemplates.ts",
-      "hash": "a41da1b42ebdb845b5831924ca9dc73944264a0b38deb715197e887b2e95d1b4",
-      "commit": "4f8e12538281e96f38cd6be0a88da85f5e5dc3db",
-      "dirty": false
-    },
-    {
       "path": "src/shared/headerNavigation.ts",
       "hash": "04d0f19a83c75073b25abe29359a1901a0388bb97e56c688b15e31ccfff0e0f7",
       "commit": "4f8e12538281e96f38cd6be0a88da85f5e5dc3db",
