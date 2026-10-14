@@ -2,10 +2,6 @@
 type: Technical Doc
 title: PROJECT STACK
 sources:
-  - path: scripts/copy-assets.ts
-    hash: ffdb3d3b63a943a0d0eb4988f8fe71aa7e4fb937f4426a1e94bd6436ce4ae240
-    commit: 4f8e12538281e96f38cd6be0a88da85f5e5dc3db
-    dirty: false
   - path: src/lib/okf/graph.ts
     hash: 4fafd5909e34cbf4b6529e9bfd2282ce9ac7b50728852d9fc57ccfa41b8caf98
     commit: 4f8e12538281e96f38cd6be0a88da85f5e5dc3db
