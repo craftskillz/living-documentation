@@ -2,10 +2,6 @@
 type: Technical Doc
 title: PROJECT USEFUL COMMANDS
 sources:
-  - path: bin/cli.ts
-    hash: dc9f821f55955669e443e89879cf7329991842c2884ca645a3a449ce3f1e4532
-    commit: 09940a37c77396f4b9a48caf637a248b5d10c968
-    dirty: false
   - path: scripts/copy-assets.ts
     hash: ffdb3d3b63a943a0d0eb4988f8fe71aa7e4fb937f4426a1e94bd6436ce4ae240
     commit: 09940a37c77396f4b9a48caf637a248b5d10c968
