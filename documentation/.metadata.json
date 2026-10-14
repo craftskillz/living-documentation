@@ -1,12 +1,6 @@
 {
   "AI/PROJECT-STACK": [
     {
-      "path": "bin/cli.ts",
-      "hash": "dc9f821f55955669e443e89879cf7329991842c2884ca645a3a449ce3f1e4532",
-      "commit": "4f8e12538281e96f38cd6be0a88da85f5e5dc3db",
-      "dirty": false
-    },
-    {
       "path": "src/server.ts",
       "hash": "9d485ddd4ef27ac5e53ab6ba0c604a48421ec77ef6d7adf5457b343c34ff6f28",
       "commit": "4f8e12538281e96f38cd6be0a88da85f5e5dc3db",
