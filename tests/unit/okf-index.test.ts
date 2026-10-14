@@ -28,3 +28,16 @@ test("index.md omits entries hidden by the folder manifest, but still indexes hi
   assert.ok(fs.existsSync(path.join(root, "drafts/index.md")));
   fs.rmSync(root, { recursive: true, force: true });
 });
+
+test("index.md does not list a folder without concepts, which gets no index.md of its own", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "okf-index-"));
+  write(root, "a.md", "---\ntitle: A\n---\n");
+  write(root, "empty/liv-doc-main.md", "---\norder: []\nhidden: []\n---\n");
+
+  generateOkfIndexFiles(root);
+
+  const index = fs.readFileSync(path.join(root, "index.md"), "utf-8");
+  assert.doesNotMatch(index, /empty/);
+  assert.ok(!fs.existsSync(path.join(root, "empty/index.md")));
+  fs.rmSync(root, { recursive: true, force: true });
+});

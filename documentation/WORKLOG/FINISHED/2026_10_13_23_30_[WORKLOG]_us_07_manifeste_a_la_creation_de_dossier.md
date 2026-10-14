@@ -14,7 +14,7 @@ status: To Be Validated
 
 ## Contexte
 
-Troisième US livrée de la [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md).
+Troisième US livrée de la [ROADMAP-EXPLORATEUR](ROADMAP-EXPLORATEUR.md).
 
 ## Réalisation
 

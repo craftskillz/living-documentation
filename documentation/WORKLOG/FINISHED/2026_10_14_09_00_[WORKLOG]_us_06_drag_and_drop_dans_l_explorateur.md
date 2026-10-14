@@ -10,7 +10,7 @@ status: To Be Validated
 
 ## Contexte
 
-Sixième US livrée de la [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), branchée sur l'API de l'US5.
+Sixième US livrée de la [ROADMAP-EXPLORATEUR](ROADMAP-EXPLORATEUR.md), branchée sur l'API de l'US5.
 
 ## Réalisation
 

@@ -37,6 +37,6 @@ Voir `documentation/WORKLOG/ROADMAP.md`.
 - **ADR d'implémentation T06** (garde = contrat de démarrage + flag) après **commit** → bindings `bin/cli.ts`, `src/lib/migrate.ts`, `src/lib/config.ts`.
 
 ## Documents liés
-- [WORKLOG T05](?doc=WORKLOG%252F2026_07_09_20_42_%255BWORKLOG%255D_ticket_05_deterministic_bulk_migration_to_okf_yaml)
+- [WORKLOG T05](?doc=WORKLOG%252FFINISHED%252F2026_07_09_20_42_%255BWORKLOG%255D_ticket_05_deterministic_bulk_migration_to_okf_yaml)
 - [ADR normalize-on-write (T04)](?doc=ADRS%252F2026_07_09_20_37_%255BOKF%255D_normalizeonwrite_every_document_write_emits_canonical_okf_yaml_frontmatter)
 - Backlog : `documentation/WORKLOG/ROADMAP.md`

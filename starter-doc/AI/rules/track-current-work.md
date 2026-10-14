@@ -25,6 +25,6 @@ When a task is started, interrupted, finished, or left with known follow-ups, up
 - the remaining verifications;
 - the next recommended action.
 
-For an MVP ticket that has actually started, create or update a dedicated document under `DOCS_FOLDER/WORKLOG/` if the tracking no longer fits clearly in `current-task.md`.
+For an MVP ticket that has actually started, create or update a dedicated document under `DOCS_FOLDER/WORKLOG/CURRENT/` if the tracking no longer fits clearly in `current-task.md`.
 
 The worklog does not replace ADRs: it describes operational progress and resume points, not durable decisions.

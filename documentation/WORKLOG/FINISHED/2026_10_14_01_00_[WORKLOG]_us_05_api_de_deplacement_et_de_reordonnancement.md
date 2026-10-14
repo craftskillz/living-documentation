@@ -14,7 +14,7 @@ status: To Be Validated
 
 ## Contexte
 
-Cinquième US livrée de la [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), prérequis du drag and drop (US6).
+Cinquième US livrée de la [ROADMAP-EXPLORATEUR](ROADMAP-EXPLORATEUR.md), prérequis du drag and drop (US6).
 
 ## Réalisation
 

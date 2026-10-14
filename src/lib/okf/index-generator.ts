@@ -46,16 +46,22 @@ function conceptsAndDirs(dir: string): { concepts: ConceptEntry[]; subdirs: stri
 }
 
 // Depth-first: build children first so a directory can decide it is non-empty.
-function generateForDir(root: string, dir: string): number {
+function generateForDir(root: string, dir: string): { written: number; indexed: boolean } {
   const all = conceptsAndDirs(dir);
   let written = 0;
+  // A folder without concepts gets no index.md, so it is not listed either.
+  const indexed = new Set<string>();
+  for (const sub of all.subdirs) {
+    const child = generateForDir(root, path.join(dir, sub));
+    if (child.indexed) indexed.add(sub);
+    written += child.written;
+  }
   // Hidden entries are left out of the listing; hidden folders keep their own index.
-  for (const sub of all.subdirs) written += generateForDir(root, path.join(dir, sub));
   const concepts = all.concepts.filter((c) => !all.hidden.has(c.file));
-  const subdirs = all.subdirs.filter((s) => !all.hidden.has(s));
+  const subdirs = all.subdirs.filter((s) => indexed.has(s) && !all.hidden.has(s));
 
   const isRoot = path.resolve(dir) === path.resolve(root);
-  if (!isRoot && concepts.length === 0 && subdirs.length === 0) return written;
+  if (!isRoot && concepts.length === 0 && subdirs.length === 0) return { written, indexed: false };
 
   const name = path.basename(path.resolve(dir));
   let md = isRoot ? `---\nokf_version: "${OKF_SPEC_VERSION}"\n---\n\n` : "";
@@ -71,10 +77,10 @@ function generateForDir(root: string, dir: string): number {
     for (const s of subdirs) md += `* [${s}](./${s}/index.md)\n`;
   }
   fs.writeFileSync(path.join(dir, "index.md"), md.endsWith("\n") ? md : `${md}\n`, "utf-8");
-  return written + 1;
+  return { written: written + 1, indexed: true };
 }
 
 /** Generate all `index.md` files for the bundle; returns how many were written. */
 export function generateOkfIndexFiles(docsPath: string): number {
-  return generateForDir(docsPath, docsPath);
+  return generateForDir(docsPath, docsPath).written;
 }

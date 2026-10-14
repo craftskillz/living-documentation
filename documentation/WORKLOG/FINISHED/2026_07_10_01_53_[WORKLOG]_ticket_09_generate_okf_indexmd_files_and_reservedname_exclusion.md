@@ -18,7 +18,7 @@ status: To Be Validated
 
 ## Réalisation
 - **`src/lib/okf.ts`** : `RESERVED_OKF_FILES` (`index.md`, `log.md`), `isReservedOkfFile`, `OKF_SPEC_VERSION`.
-- **`src/lib/okf/index-generator.ts`** : `generateOkfIndexFiles(docsPath)` — un `index.md` par dossier non vide : section **Concepts** (`* [Titre](./fichier.md) - description`, titre/description depuis le frontmatter), section **Directories** (sous-dossiers → `./sub/index.md`) ; le **racine** porte `okf_version: "0.1"` en frontmatter. Ignore `.git`/`node_modules`/`dist`/`files`/`images` et les symlinks. Déterministe/idempotent.
+- **`src/lib/okf/index-generator.ts`** : `generateOkfIndexFiles(docsPath)` — un `index.md` par dossier non vide : section **Concepts** (`* [Titre](../fichier.md) - description`, titre/description depuis le frontmatter), section **Directories** (sous-dossiers → `./sub/index.md`) ; le **racine** porte `okf_version: "0.1"` en frontmatter. Ignore `.git`/`node_modules`/`dist`/`files`/`images` et les symlinks. Déterministe/idempotent.
 - **Wiring** : appelé par `migrateDocsFolder` (donc migration, commande `migrate`, init).
 - **Exclusion des réservés** dans les deux scanners de docs : `src/routes/documents.ts` (`collectMdFiles`) et `src/mcp/tools/documents.ts` (`listAllDocuments`) → `index.md`/`log.md` n'apparaissent pas comme documents.
 

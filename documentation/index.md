@@ -24,7 +24,6 @@ okf_version: "0.1"
 * [ADRS](./ADRS/index.md)
 * [AI](./AI/index.md)
 * [DOCUMENTATION](./DOCUMENTATION/index.md)
-* [images-ai](./images-ai/index.md)
 * [TEST](./TEST/index.md)
 * [WORKLOG](./WORKLOG/index.md)
 * [ZZTEST_KANBAN](./ZZTEST_KANBAN/index.md)

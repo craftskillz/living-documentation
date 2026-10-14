@@ -6,6 +6,7 @@ import { deriveType, normalizeFrontmatter } from "../../src/lib/okf";
 test("deriveType maps genre/location deterministically", () => {
   assert.equal(deriveType("ADRS/2026_..._x.md"), "ADR");
   assert.equal(deriveType("WORKLOG/2026_..._x.md"), "Worklog");
+  assert.equal(deriveType("WORKLOG/FINISHED/2026_..._x.md"), "Worklog");
   assert.equal(deriveType("AI/rules/no-magic.md"), "Rule");
   assert.equal(deriveType("AI/2026_..._x.md"), "Technical Doc");
   assert.equal(deriveType("General/whatever.md"), "Document");

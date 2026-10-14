@@ -126,7 +126,5 @@
 * [Visibilité des menus du header et sélection à l’installation](./2026_09_17_10_44_[NAVIGATION]_visibilite_des_menus_du_header_et_selection_a_installation.md) - Les menus optionnels sont filtrés par hiddenHeaderMenus, configurables dans Admin et masqués par défaut lors de la création d’un projet avec sélection interactive au CLI.
 * [Mise à jour de l'image d'un diagramme depuis un document et cache busting](./2026_09_17_11_46_[DIAGRAM]_mise_a_jour_de_limage_dun_diagramme_depuis_un_document_et_cache_busting.md) - Le viewer ajoute `&img=<nom>.png` aux liens `/diagram?id=` qui entourent une image `./images/<nom>.png`, pour que le bouton PNG de l'éditeur écrase cette image, puis réaffiche l'image avec `?v=<timestamp>` (versions en sessionStorage + mémoire) pour contourner le cache navigateur au retour.
 * [Rendu Markdown dans les titres des blocs repliables](./2026_09_23_20_30_[RENDERING]_rendu_markdown_dans_les_titres_des_blocs_repliables.md) - Un moteur partagé interprète le Markdown inline et les titres ATX dans les balises summary pour les documents, les comparaisons, les exports HTML et les aperçus de templates.
-
-## Directories
-
-* [cli](./cli/index.md)
+* [Explorateur ordonné par manifeste liv-doc-main.md](./2026_10_14_13_00_[NAVIGATION]_explorateur_ordonne_par_manifeste_liv_doc_main.md) - Chaque dossier porte un manifeste invisible liv-doc-main.md (order, hidden) qui ordonne et masque ses entrées ; le glisser-déposer l'écrit, les préfixes numériques et la nomenclature par catégorie disparaissent, avec une migration déterministe des projets existants.
+* [WORKLOG rangé en CURRENT, FUTURE et FINISHED](./2026_10_14_19_00_[WORKLOG]_worklog_range_en_current_future_finished.md) - Le dossier WORKLOG garde current-task.md à sa racine et range roadmaps et traces de tickets dans CURRENT, FUTURE et FINISHED selon leur cycle de vie ; les starters livrent cette structure et la décrivent aux agents IA.

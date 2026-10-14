@@ -103,7 +103,7 @@ document `documentation/WORKLOG/AAAA_MM_JJ_HH_mm_[WORKLOG]_ticket_XX_<slug>.md`.
 ## Phase 3 — Fichiers réservés & validation
 
 ### Ticket 09 — Génération des `index.md` (progressive disclosure)
-- **Objectif** : générer un `index.md` par dossier (format OKF `* [Titre](url) - description`) + un `index.md` racine portant `okf_version: "0.1"`. Traiter `index.md`/`log.md` comme **noms réservés** (jamais des concepts) dans le listing.
+- **Objectif** : générer un `index.md` par dossier (format OKF `* [Titre](../url) - description`) + un `index.md` racine portant `okf_version: "0.1"`. Traiter `index.md`/`log.md` comme **noms réservés** (jamais des concepts) dans le listing.
 - **Zones** : listing documents serveur, nouveau générateur `src/lib/okf/index-generator.ts`.
 - **Acceptation** : chaque dossier a un `index.md` cohérent avec le frontmatter des concepts ; les fichiers réservés n'apparaissent pas comme documents dans l'app.
 - **Dépend de** : T05.

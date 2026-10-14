@@ -25,6 +25,6 @@ Quand une tâche est commencée, interrompue, terminée ou laissée avec des sui
 - les vérifications restantes ;
 - la prochaine action recommandée.
 
-Pour un ticket MVP réellement commencé, créer ou mettre à jour un document dédié dans `documentation/WORKLOG/` si le suivi ne tient plus clairement dans `current-task.md`.
+Pour un ticket MVP réellement commencé, créer ou mettre à jour un document dédié dans `documentation/WORKLOG/CURRENT/` si le suivi ne tient plus clairement dans `current-task.md`.
 
 Le worklog ne remplace pas les ADR : il décrit l'avancement opérationnel et les points de reprise, pas les décisions durables.

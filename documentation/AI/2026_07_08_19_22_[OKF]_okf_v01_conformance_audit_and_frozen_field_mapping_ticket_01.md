@@ -36,7 +36,7 @@ sources:
 
 Reference for the OKF alignment chantier. Decision context:
 [ADR — Align living-documentation natively with OKF](?doc=ADRS%252F2026_07_08_18_19_%255BOKF%255D_align_livingdocumentation_natively_with_google_open_knowledge_format_okf).
-Backlog: `documentation/WORKLOG/ROADMAP.md`.
+Backlog: `documentation/WORKLOG/FINISHED/ROADMAP.md`.
 
 Scope of T01 is **decisions only, no code**. This document is the working
 reference; the durable convention is ratified separately in Ticket 03.

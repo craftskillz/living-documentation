@@ -11,4 +11,3 @@
 
 * [default](./default/index.md)
 * [rules](./rules/index.md)
-* [WORKSPACE](./WORKSPACE/index.md)

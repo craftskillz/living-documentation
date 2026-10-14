@@ -14,7 +14,7 @@ status: To Be Validated
 
 ## Contexte
 
-Première US de la [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md) : l'ordre d'affichage d'un dossier est décrit par son `liv-doc-main.md` au lieu des préfixes numériques.
+Première US de la [ROADMAP-EXPLORATEUR](ROADMAP-EXPLORATEUR.md) : l'ordre d'affichage d'un dossier est décrit par son `liv-doc-main.md` au lieu des préfixes numériques.
 
 ## Réalisation
 

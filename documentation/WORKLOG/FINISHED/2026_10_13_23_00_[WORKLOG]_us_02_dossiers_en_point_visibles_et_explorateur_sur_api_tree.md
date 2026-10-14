@@ -14,7 +14,7 @@ status: To Be Validated
 
 ## Contexte
 
-Deuxième US de la [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md).
+Deuxième US de la [ROADMAP-EXPLORATEUR](ROADMAP-EXPLORATEUR.md).
 
 ## Réalisation
 

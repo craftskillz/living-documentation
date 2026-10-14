@@ -282,6 +282,10 @@ test("CLI without folder scaffolds starter-doc and boots the server", async () =
     expect(files).toContain(
       "ADRS/2026_01_01_[ADR]_example_architecture_decision.md",
     );
+    expect(files).toContain("WORKLOG/current-task.md");
+    expect(files).toContain("WORKLOG/CURRENT/liv-doc-main.md");
+    expect(files).toContain("WORKLOG/FUTURE/ROADMAP.md");
+    expect(files).toContain("WORKLOG/FINISHED/liv-doc-main.md");
     expectRegularFile(path.join(parent, "AGENTS.md"));
     expectRegularFile(path.join(parent, "CLAUDE.md"));
     expectRegularFile(path.join(parent, "memory", "MEMORY.md"));
@@ -293,6 +297,7 @@ test("CLI without folder scaffolds starter-doc and boots the server", async () =
     expect(agents).toContain("freshdocs/AI/PROJECT-INSTRUCTIONS.md");
     expect(agents).toContain("freshdocs/AI/PROJECT-STACK.md");
     expect(agents).toContain("freshdocs/AI/PROJECT-USEFUL-COMMANDS.md");
+    expect(agents).toContain("freshdocs/WORKLOG/CURRENT/");
     expect(agents).not.toContain("DOCS_FOLDER");
     expect(projectInstructions).toContain("freshdocs/AI/rules/*.md");
     expect(projectInstructions).not.toContain("DOCS_FOLDER");

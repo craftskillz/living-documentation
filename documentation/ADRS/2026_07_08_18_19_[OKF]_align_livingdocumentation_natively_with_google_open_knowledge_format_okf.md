@@ -71,7 +71,7 @@ enrichment-agent pattern for the Workspace agents.
 
 ### Staged, non-breaking migration
 Execution is broken into a phased ticket backlog in
-`documentation/WORKLOG/ROADMAP.md` — foundations first (dual-format **reader** so
+`documentation/WORKLOG/FINISHED/ROADMAP.md` — foundations first (dual-format **reader** so
 nothing breaks), then YAML **writes** + one-shot migration of existing docs, then
 reserved files / links / validator, then consumers (import + visualizer). Each
 completed ticket gets a WORKLOG realization doc; durable sub-decisions get their

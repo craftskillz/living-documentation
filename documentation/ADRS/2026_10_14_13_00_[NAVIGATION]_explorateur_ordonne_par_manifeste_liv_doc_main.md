@@ -84,4 +84,4 @@ Le dossier Blueprint s'appelle désormais `BLUEPRINT` (au lieu de `001_BLUEPRINT
 - [Datetime Precision In Filename Pattern](?doc=ADRS%252F2026_04_08_12_20_%255BFILENAME%255D_datetime_precision_in_filename_pattern) : le pattern de nom de fichier n'existe plus.
 - [Exclusive Folder And Category Expansion Options](?doc=ADRS%252F2026_04_23_%255BCONFIGURATION%255D_exclusive_folder_and_category_expansion_options) : partie catégories (`exclusiveCategoryExpansion`).
 
-Backlog et hypothèses : [ROADMAP-EXPLORATEUR](?doc=WORKLOG%252FROADMAP-EXPLORATEUR).
+Backlog et hypothèses : [ROADMAP-EXPLORATEUR](?doc=WORKLOG%252FFINISHED%252FROADMAP-EXPLORATEUR).

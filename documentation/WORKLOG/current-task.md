@@ -12,9 +12,21 @@ timestamp: 2026-09-16T15:45:00Z
 status: To be validated
 ---
 
+# WORKLOG rangé en CURRENT, FUTURE et FINISHED — 14 octobre 2026
+
+`WORKLOG/` garde `current-task.md` à sa racine et range le reste : `FINISHED/` (roadmaps OKF et explorateur, leurs traces de tickets, `mcp-build-context-tool.md`), `FUTURE/` (`ROADMAP-RECHERCHE-RAG.md`), `CURRENT/` vide. Déplacements faits avec `relocateEntry` (liens, ids et manifestes suivis). Les deux starters livrent la même structure (roadmap d'exemple dans `FUTURE/`) et la décrivent dans `PROJECT-INSTRUCTIONS.md`, `track-current-work`, `AGENTS.md` et `CLAUDE.md`. Le générateur d'`index.md` ne liste plus les sous-dossiers sans concept (liens cassés). ADR [WORKLOG rangé en CURRENT, FUTURE et FINISHED](../ADRS/2026_10_14_19_00_%5BWORKLOG%5D_worklog_range_en_current_future_finished.md) en `To be validated`.
+
+Suites : unitaires 65/65, `tests/api` 219/219, `tests/e2e` 117/117, `okf:validate` conforme.
+
+Connu, non traité : le lien « ADR liens bundle-relatifs (T08) » du worklog ticket 14 était déjà cassé avant le rangement.
+
+MCP Living Documentation non exposé : pas de métadonnées attachées.
+
+---
+
 # Explorateur : US11b livrée — 14 octobre 2026
 
-US11b terminée sur `main` : entrée « Renommer » dans le menu contextuel de l'explorateur, modale de saisie, document ouvert suivi (URL mise à jour). Détails : [worklog US11b](./2026_10_14_18_00_%5BWORKLOG%5D_us_11b_renommer_depuis_l_explorateur_frontend.md). Suites : unitaires 64/64, `tests/api` 219/219, `tests/e2e` 117/117, `okf:validate` conforme.
+US11b terminée sur `main` : entrée « Renommer » dans le menu contextuel de l'explorateur, modale de saisie, document ouvert suivi (URL mise à jour). Détails : [worklog US11b](./FINISHED/2026_10_14_18_00_%5BWORKLOG%5D_us_11b_renommer_depuis_l_explorateur_frontend.md). Suites : unitaires 64/64, `tests/api` 219/219, `tests/e2e` 117/117, `okf:validate` conforme.
 
 Suite : backlog ROADMAP-EXPLORATEUR terminé ; validation humaine de l'ADR explorateur.
 
@@ -24,7 +36,7 @@ MCP Living Documentation non exposé : pas de métadonnées attachées.
 
 # Explorateur : US11a livrée — 14 octobre 2026
 
-US11a (backend) terminée sur `main` : `PUT /api/tree/rename` et réécriture des liens au renommage et au déplacement (`src/lib/linkRewrite.ts`). Détails : [worklog US11a](./2026_10_14_17_00_%5BWORKLOG%5D_us_11a_renommer_et_reecrire_les_liens_backend.md). Suites : unitaires 64/64, `tests/api` 219/219, `tests/e2e` 114/114, `okf:validate` conforme.
+US11a (backend) terminée sur `main` : `PUT /api/tree/rename` et réécriture des liens au renommage et au déplacement (`src/lib/linkRewrite.ts`). Détails : [worklog US11a](./FINISHED/2026_10_14_17_00_%5BWORKLOG%5D_us_11a_renommer_et_reecrire_les_liens_backend.md). Suites : unitaires 64/64, `tests/api` 219/219, `tests/e2e` 114/114, `okf:validate` conforme.
 
 Suite : US11b (frontend : menu « Renommer », URL du document ouvert, i18n EN/FR) dans une nouvelle session.
 
@@ -34,7 +46,7 @@ MCP Living Documentation non exposé : pas de métadonnées attachées.
 
 # Explorateur : US10 livrée — 14 octobre 2026
 
-US10 terminée sur `main` : les fichiers réservés apparaissent avec les éléments cachés, en lecture seule. Détails : [worklog US10](./2026_10_14_15_00_%5BWORKLOG%5D_us_10_fichiers_reserves_avec_les_elements_caches.md). Suites : unitaires 57/57, `tests/api` 215/215, `tests/e2e` 114/114.
+US10 terminée sur `main` : les fichiers réservés apparaissent avec les éléments cachés, en lecture seule. Détails : [worklog US10](./FINISHED/2026_10_14_15_00_%5BWORKLOG%5D_us_10_fichiers_reserves_avec_les_elements_caches.md). Suites : unitaires 57/57, `tests/api` 215/215, `tests/e2e` 114/114.
 
 Suite : US11 (renommage + réécriture des liens) dans une nouvelle session, découpable en US11a backend / US11b frontend. Les nœuds `reserved` de `/api/tree` devront être exclus du menu « Renommer ».
 
@@ -44,7 +56,7 @@ MCP Living Documentation non exposé : pas de métadonnées attachées.
 
 # Explorateur : cadrage US10 et US11 — 14 octobre 2026
 
-Branche `feat/explorateur-liv-doc-main` fusionnée dans `main`. Deux nouvelles US cadrées avec l'utilisateur dans [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md), aucune ligne de code :
+Branche `feat/explorateur-liv-doc-main` fusionnée dans `main`. Deux nouvelles US cadrées avec l'utilisateur dans [ROADMAP-EXPLORATEUR](./FINISHED/ROADMAP-EXPLORATEUR.md), aucune ligne de code :
 
 - **US10** : « Afficher les éléments cachés » dévoile aussi `index.md`, `log.md`, `liv-doc-main.md` (grisés, en tête du dossier, ouverture en lecture seule, aucune action). Marqueur `reserved: true` dans `/api/tree` seulement, sans toucher `isListedEntry`.
 - **US11** : « Renommer » (nom de fichier, pas le `title`) sur les éléments non masqués, liens entrants réécrits ; le drag and drop réécrit aussi les liens. Généraliser `rewriteTarget` (`src/lib/prefixMigration.ts`). Découpage US11a backend / US11b frontend possible.
@@ -57,7 +69,7 @@ Suite : implémenter US10 dans une nouvelle session (une US par session).
 
 ## État courant
 
-Branche `feat/explorateur-liv-doc-main`. Backlog [ROADMAP-EXPLORATEUR](./ROADMAP-EXPLORATEUR.md) **terminé** : US1 à US9 commitées. `documentation/` du dépôt migré. ADR [Explorateur ordonné par manifeste liv-doc-main.md](?doc=ADRS%252F2026_10_14_13_00_%255BNAVIGATION%255D_explorateur_ordonne_par_manifeste_liv_doc_main) en `To be validated`. Détails : [worklog US9](./2026_10_14_13_30_%5BWORKLOG%5D_us_09_starters_et_documentation.md).
+Branche `feat/explorateur-liv-doc-main`. Backlog [ROADMAP-EXPLORATEUR](./FINISHED/ROADMAP-EXPLORATEUR.md) **terminé** : US1 à US9 commitées. `documentation/` du dépôt migré. ADR [Explorateur ordonné par manifeste liv-doc-main.md](?doc=ADRS%252F2026_10_14_13_00_%255BNAVIGATION%255D_explorateur_ordonne_par_manifeste_liv_doc_main) en `To be validated`. Détails : [worklog US9](./FINISHED/2026_10_14_13_30_%5BWORKLOG%5D_us_09_starters_et_documentation.md).
 
 ## Suite
 
