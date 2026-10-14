@@ -1,14 +1,14 @@
 ---
 type: Worklog
-title: Menus du header et initialisation CLI — documentation à jour
-description: Clôture de la configuration des menus et du sélecteur CLI, documentation et métadonnées synchronisées via MCP.
+title: Tâche courante
+description: Point de reprise partagé entre assistants IA pour suivre la tâche courante, son statut, les fichiers touchés, les vérifications et la prochaine action.
 tags:
   - worklog
-  - okf
-  - closure
-  - concept-graph
-  - workspace
-timestamp: 2026-09-16T15:45:00Z
+  - handoff
+  - progression
+  - reprise
+  - agents-ia
+timestamp: 2026-10-14T19:00:00Z
 status: To be validated
 ---
 

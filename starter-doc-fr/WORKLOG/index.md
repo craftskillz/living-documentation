@@ -2,7 +2,7 @@
 
 ## Concepts
 
-* [Current task](./current-task.md) - Point de reprise partagé entre assistants IA pour suivre la tâche courante, son statut, les fichiers touchés, les vérifications et la prochaine action.
+* [Tâche courante](./current-task.md) - Point de reprise partagé entre assistants IA pour suivre la tâche courante, son statut, les fichiers touchés, les vérifications et la prochaine action.
 
 ## Directories
 

@@ -1,6 +1,6 @@
 ---
 type: Worklog
-title: Current task
+title: Tâche courante
 description: Point de reprise partagé entre assistants IA pour suivre la tâche courante, son statut, les fichiers touchés, les vérifications et la prochaine action.
 tags:
   - worklog
@@ -12,7 +12,7 @@ timestamp: 2026-01-02T00:00:00Z
 status: Idle
 ---
 
-# Current task
+# Tâche courante
 
 Ce document est le point de reprise entre assistants IA. Tout agent doit le lire avant de continuer une tâche et le mettre à jour avant de rendre la main.
 
