@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { FOOTNOTE_STYLES } from "../../../../lib/footnoteStyles";
   import { onMount } from "svelte";
   import { home } from "./state.svelte";
   import { t } from "../i18n.svelte";
@@ -316,6 +317,8 @@
 </script>
 
 <svelte:window onkeydown={onKeydown} />
+
+<svelte:head>{@html `<style>${FOOTNOTE_STYLES}</style>`}</svelte:head>
 
 {#if editing}
   <textarea

@@ -109,6 +109,12 @@ export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireO
   wireDiagramImageLinks(contentEl);
   applyCompareBlockStyles(contentEl);
   applyColumnLayouts(contentEl);
+  contentEl.querySelectorAll("section[data-footnotes] > h2").forEach(heading => {
+    heading.textContent = opts.t("footnotes.title");
+  });
+  contentEl.querySelectorAll('section[data-footnotes] a[href^="#ld-fn-"][aria-label]').forEach(link => {
+    link.setAttribute("aria-label", opts.t("footnotes.back"));
+  });
   const codeBlockAttrs = collectCodeBlockAttributesFromSource(opts.content);
   let codeBlockIndex = 0;
 
@@ -180,6 +186,15 @@ export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireO
     if (!href || href.length < 2) return;
     a.addEventListener("click", e => {
       e.preventDefault();
+      if (href.startsWith("#ld-fn-")) {
+        const target = document.getElementById(href.slice(1));
+        // Move keyboard focus with footnote navigation, without native scrolling
+        // competing with the viewer's sticky-header-aware positioning.
+        if (target && contentEl.contains(target)) {
+          target.tabIndex = -1;
+          target.focus({ preventScroll: true });
+        }
+      }
       opts.onAnchor(href.slice(1));
     });
   });

@@ -82,6 +82,9 @@
       : null;
     if (!(target instanceof HTMLAnchorElement)) return;
     if (target.target || target.hasAttribute("download")) return;
+    // Fragment links belong to the current view. Routing them dispatches a
+    // popstate and reloads Home's document after its own anchor handler ran.
+    if (target.getAttribute("href")?.startsWith("#")) return;
 
     const url = new URL(target.href, window.location.href);
     if (url.origin !== window.location.origin) return;

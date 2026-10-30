@@ -8,9 +8,33 @@ tags:
   - progression
   - reprise
   - agents-ia
-timestamp: 2026-10-15T03:15:00Z
+timestamp: 2026-10-30T10:00:00Z
 status: To be validated
 ---
+
+# Prochaine US : repères de balises en visualisation — cadrée le 30 octobre 2026
+
+Statut : à faire dans une nouvelle session.
+
+Besoin : dans les documents, l'utilisateur écrit des balises ouvrantes seules, sans attributs ni balise fermante, par exemple `<add-footnote>` ou `<rewrite-section>`, exploitées par une de ses skills. En visualisation, elles disparaissent.
+1. Afficher à leur place un petit « b » surligné façon stabilo ; le survol montre la balise en infobulle. Ne reconnaître que les balises ouvrantes seules `<...>` : toute balise de ce type compte, sans liste blanche.
+2. Shift + clic droit sur un caractère (le clic droit simple reste aux snippets) ouvre une popup à saisie libre, avec suggestions automatiques issues d'une nouvelle liste « Balises » paramétrée dans l'admin. La balise est insérée dans le `.md` juste avant le caractère.
+3. Repérage dans la source à partir du texte autour du clic. Dans les tableaux, le code, les diagrammes ou si le passage est ambigu (plusieurs occurrences) : refuser l'insertion avec un message clair, plutôt que d'écrire au mauvais endroit (validé par l'utilisateur).
+
+---
+
+# Notes de bas de page Markdown — 27 au 30 octobre 2026
+
+Statut : terminé.
+
+Rendu de `[^1]` / `[^1]: texte` via `marked-footnote@1.4.0` dans le moteur partagé : état isolé par rendu, préfixes distincts dans les blocs compare, styles communs au viewer, aux templates et aux exports (`footnoteStyles.ts`), traductions EN/FR, intitulé accessible conservé, focus déplacé avec la navigation aller-retour. Le décalage du retour sous l'en-tête observé le 27 venait d'un build périmé : après reconstruction, l'appel est placé à 171 px, sous l'en-tête qui se termine à 155 px.
+
+Vérifications : 76 tests unitaires, 230 tests API, lint OK ; E2E 124/125. `naming.spec.ts` a échoué une fois sous la charge parallèle et passe isolé : sans lien avec cette tâche.
+
+Documentation : le MCP vise un autre dépôt (`12_Articles_Blog/arolla`) ; aucun hash ni métadonnée mis à jour. ADR à rédiger.
+
+---
+
 
 
 # Explorateur : groupe « General » renommé « Extra Files » — 14 octobre 2026

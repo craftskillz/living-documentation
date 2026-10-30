@@ -1,3 +1,4 @@
+import { FOOTNOTE_STYLES } from '../lib/footnoteStyles';
 import { Router, type Request, type Response } from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -83,6 +84,7 @@ function wrapHtml(title: string, body: string): string {
     a:hover{text-decoration:underline}
     ul,ol{padding-left:1.5em}li{margin:.3em 0}
     hr{border:none;border-top:1px solid #e5e7eb;margin:2em 0}
+    ${FOOTNOTE_STYLES}
   </style>
 </head>
 <body>

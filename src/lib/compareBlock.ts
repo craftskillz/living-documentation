@@ -40,10 +40,11 @@ const PLACEHOLDER_PREFIX = "LD_COMPARE_BLOCK_";
 function renderCompareDiv(
   content: string,
   markedOpts: Parameters<typeof marked.parse>[1],
+  index: number,
 ): string {
   // Strip a single trailing newline so marked doesn't add an extra <p></p>
   const trimmed = content.endsWith("\n") ? content.slice(0, -1) : content;
-  const renderedHtml = renderMarkdownWithSummaries(trimmed, markedOpts);
+  const renderedHtml = renderMarkdownWithSummaries(trimmed, markedOpts, { prefixId: `ld-fn-compare-${index}-` });
   const escapedSource = htmlEscape(trimmed);
   // URI-encode so the raw Markdown is safely embedded in an HTML attribute value
   const encodedSource = encodeURIComponent(trimmed);
@@ -74,7 +75,7 @@ export function renderMarkdownWithCompareBlocks(
 
   const withPlaceholders = source.replace(COMPARE_RE, (_, content: string) => {
     const idx = blocks.length;
-    blocks.push(renderCompareDiv(content, markedOpts));
+    blocks.push(renderCompareDiv(content, markedOpts, idx));
     // A standalone HTML comment is an HTML block (no blank lines inside) that marked
     // passes through verbatim — safe to swap out after parsing.
     return `\n<!--${PLACEHOLDER_PREFIX}${idx}-->\n`;

@@ -1,6 +1,13 @@
-import { marked } from "marked";
+import { marked, Marked, type MarkedExtension } from "marked";
+import markedFootnote from "marked-footnote";
+import en from "../frontend-svelte/public/i18n/en.json";
 
 type MarkdownOptions = Parameters<typeof marked.parse>[1];
+type FootnoteOptions = {
+  prefixId?: string;
+  description?: string;
+  backRefLabel?: string;
+};
 
 // Consume whole tags (including quoted attributes) and literal HTML regions so
 // summary-shaped text inside comments, attributes or code is never rewritten.
@@ -20,20 +27,31 @@ function renderSummaries(html: string, options: MarkdownOptions): string {
   });
 }
 
-/** Render summary labels as inline Markdown, with optional ATX heading syntax.
- * Only raw HTML tokens are changed: fenced/indented code and escaped examples
- * retain their normal Markdown rendering. Existing HTML labels stay supported.
+/** Render footnotes and summary labels with optional ATX heading syntax.
+ * Summary rewriting only changes raw HTML tokens; code examples stay literal.
  */
 export function renderMarkdownWithSummaries(
   source: string,
   options: MarkdownOptions = {},
+  footnoteOptions: FootnoteOptions = {},
 ): string {
-  // Unlike marked.parse, the low-level lexer/parser do not merge defaults
-  // into a supplied options object (even {}). Keep GFM tables, etc. enabled.
   const resolvedOptions = { ...marked.defaults, ...options };
-  const tokens = marked.lexer(source, resolvedOptions);
-  marked.walkTokens(tokens, (token) => {
-    if (token.type === "html") token.text = renderSummaries(token.text, resolvedOptions);
+  // Each render owns its extension state, including numbering and definitions.
+  const footnotes = markedFootnote({
+    prefixId: "ld-fn-",
+    description: en["footnotes.title"],
+    backRefLabel: en["footnotes.back"],
+    headingClass: "ld-footnotes-label",
+    ...footnoteOptions,
   });
-  return marked.parser(tokens, resolvedOptions);
+  // marked-footnote declares ESM types; the server resolves Marked's CJS types.
+  // Both describe Marked 12, but its private members make those types nominally
+  // incompatible. Keep this bridge at the extension boundary.
+  const parser = new Marked(footnotes as unknown as MarkedExtension);
+  parser.use({
+    walkTokens(token) {
+      if (token.type === "html") token.text = renderSummaries(token.text, resolvedOptions);
+    },
+  });
+  return parser.parse(source, { ...options, async: false }) as string;
 }
