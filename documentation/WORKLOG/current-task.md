@@ -12,6 +12,18 @@ timestamp: 2026-10-30T10:00:00Z
 status: To be validated
 ---
 
+# Balises avec texte libre — 30 octobre 2026
+
+Statut : terminé.
+
+Une balise peut désormais porter un texte libre après son nom : `<generate-image : montrer les sections que peut contenir le fichier skill.md>`. Grammaire unique dans `src/shared/tagName.ts` (`LONE_TAG_SOURCE`, `normalizeTag`) : nom `[a-z][a-z0-9-]*` puis texte sans `<`, `>`, `=` ni retour à la ligne (le `=` laisse les vrais attributs HTML hors repères). Rendu : `summaryMarkdown.ts` reconnaît ces balises dans les tokens HTML et, via une extension inline marked, quand le texte n'est pas du HTML valide (accents, apostrophes) ; l'infobulle montre la balise entière, `data-tag` garde le nom. Insertion (popup) et suppression (`tagInsert.ts`) suivent la même grammaire. La liste admin « Balises » reste une liste de noms.
+
+Vérifications : unitaires 107/107, `tests/api` 233/233, `tests/e2e` 136/137 (`naming.spec.ts` en échec une fois sous charge, vert 3/3 isolément, sans lien), lint et svelte-check OK.
+
+Documentation : MCP Living Documentation non vérifié/utilisé ; aucun hash ni métadonnée mis à jour.
+
+---
+
 # Suppression d'une balise par Maj + clic droit sur son repère — 30 octobre 2026
 
 Statut : terminé.

@@ -2,13 +2,13 @@
   import { onMount } from "svelte";
   import { t } from "../i18n.svelte";
   import { home } from "./state.svelte";
-  import { normalizeTagName } from "../../../../shared/tagName";
+  import { normalizeTag } from "../../../../shared/tagName";
 
   // Small popup at the click point: free-text tag name + datalist suggestions.
   let { x, y, onconfirm, oncancel }: {
     x: number;
     y: number;
-    onconfirm: (name: string) => void;
+    onconfirm: (tag: string) => void;
     oncancel: () => void;
   } = $props();
 
@@ -18,9 +18,9 @@
   let popupEl = $state<HTMLElement>(null!);
 
   function confirm() {
-    const name = normalizeTagName(value);
-    if (!name) { invalid = true; return; }
-    onconfirm(name);
+    const tag = normalizeTag(value);
+    if (!tag) { invalid = true; return; }
+    onconfirm(tag.text ? `${tag.name} ${tag.text}` : tag.name);
   }
 
   function onKey(e: KeyboardEvent) {

@@ -1214,7 +1214,7 @@
   "tags.insert.title": "Insert a tag",
   "tags.insert.placeholder": "tag-name",
   "tags.insert.confirm": "Insert",
-  "tags.insert.invalid": "Letters, digits and hyphens only, starting with a letter.",
+  "tags.insert.invalid": "A name (letters, digits, hyphens, starting with a letter), optionally followed by free text without <, > or =.",
   "tags.insert.refused_zone": "Cannot insert a tag in a table, code or diagram.",
   "tags.insert.refused_ambiguous": "This passage appears several times in the source; click a more distinctive spot.",
   "tags.insert.refused_not_found": "The clicked passage could not be located in the source.",

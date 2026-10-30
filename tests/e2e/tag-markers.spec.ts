@@ -157,3 +157,20 @@ test('removal is refused when the same tag also sits in a comment', async ({ pag
   await expect(page.getByTestId('tag-remove-popup')).toHaveCount(0);
   expect(await readContent(request, ld)).toBe(stored);
 });
+
+test('a tag followed by free text is inserted, shown whole in the tooltip and removable', async ({ page, request, ld }) => {
+  const tag = '<generate-image : montrer les sections que peut contenir le fichier skill.md>';
+  await seed(request, ld, '# Tags\n\nHello unique-zebra world today.\n');
+  await open(page, ld);
+  await expect(page.locator('#doc-content')).toContainText('unique-zebra');
+  await shiftRightClickOn(page, 'world');
+  await page.getByTestId('tag-insert-input').fill('generate-image : montrer les sections que peut contenir le fichier skill.md');
+  await page.keyboard.press('Enter');
+  await expect.poll(() => readContent(request, ld)).toContain(`${tag}world`);
+  await page.reload();
+  const marker = page.locator('.ld-tag-marker');
+  await expect(marker).toHaveAttribute('title', tag);
+  await shiftRightClickMarker(page, 0);
+  await page.getByTestId('tag-remove-confirm').click();
+  await expect.poll(() => readContent(request, ld)).toContain('Hello unique-zebra world today.');
+});

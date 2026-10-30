@@ -25,7 +25,7 @@ test('markers are off by default', () => {
 });
 
 test('tags with a closing tag, void elements and attributes stay untouched', () => {
-  const html = render('<details>\n<summary>S</summary>\n\nBody\n\n</details>\n\nline<br>break <img> <a href="x">l</a> <foo bar>');
+  const html = render('<details>\n<summary>S</summary>\n\nBody\n\n</details>\n\nline<br>break <img> <a href="x">l</a> <foo bar="1">');
   assert.ok(!html.includes('ld-tag-marker'));
   assert.match(html, /<details>/);
   assert.match(html, /<br>/);
@@ -58,4 +58,19 @@ test('compare blocks forward the flag to outer and inner renders', () => {
   assert.ok(html.includes(marker('a-tag')));
   assert.ok(html.includes(marker('b-tag')));
   assert.ok(!renderMarkdownWithCompareBlocks(src).includes('ld-tag-marker'));
+});
+
+test('a tag followed by free text becomes a marker showing the whole tag', () => {
+  const html = render('A <generate-image : montrer les sections que peut contenir le fichier skill.md> B');
+  assert.ok(html.includes('title="&lt;generate-image : montrer les sections que peut contenir le fichier skill.md&gt;" data-tag="generate-image">b</mark>'), html);
+});
+
+test('free text that is not valid HTML (accents, quotes) still becomes a marker', () => {
+  const html = render('A <generate-image l\'image d\'été "x"> B');
+  assert.ok(html.includes('title="&lt;generate-image l\'image d\'été &quot;x&quot;&gt;" data-tag="generate-image">b</mark>'), html);
+  assert.ok(!html.replace(/title="[^"]*"/, '').includes('&lt;generate-image'), html);
+});
+
+test('a tag with free text alone on its line becomes a marker', () => {
+  assert.match(render('<rewrite-section en trois parties>\n\nText'), /data-tag="rewrite-section"/);
 });

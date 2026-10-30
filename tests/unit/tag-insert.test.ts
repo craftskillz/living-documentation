@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { insertTagAt, locateTagInsertion, locateTagRemoval, removeTagAt } from '../../src/frontend-svelte/src/lib/home/tagInsert';
-import { normalizeTagName } from '../../src/shared/tagName';
+import { normalizeTag, normalizeTagName } from '../../src/shared/tagName';
 
 test('normalizeTagName strips brackets and whitespace and lowercases', () => {
   assert.equal(normalizeTagName('add-footnote'), 'add-footnote');
@@ -103,4 +103,17 @@ test('removal: name matching is case-insensitive and attributes do not match', (
 
 test('removal: removeTagAt throws when the text at index is not the tag', () => {
   assert.throws(() => removeTagAt('hello', 0, 'x-y'));
+});
+
+test('normalizeTag accepts a name followed by free text', () => {
+  assert.deepEqual(normalizeTag(' <Generate-Image  :  la  scène> '), { name: 'generate-image', text: ': la scène' });
+  assert.deepEqual(normalizeTag('add-footnote'), { name: 'add-footnote', text: '' });
+  for (const input of ['', '1abc text', 'a_b text', 'a b=c', 'a <b']) assert.equal(normalizeTag(input), null, input);
+});
+
+test('removal: a tag with free text is located and removed whole', () => {
+  const content = 'Intro <generate-image : montrer les sections de skill.md>suite\n';
+  const located = locateTagRemoval(content, 'generate-image', 0, 1);
+  assert.deepEqual(located, { ok: true, index: 6 });
+  assert.equal(removeTagAt(content, 6, 'generate-image'), 'Intro suite\n');
 });

@@ -1,6 +1,7 @@
 import { marked, Marked, type MarkedExtension } from "marked";
 import markedFootnote from "marked-footnote";
 import en from "../frontend-svelte/public/i18n/en.json";
+import { LONE_TAG_SOURCE } from "../shared/tagName";
 
 type MarkdownOptions = Parameters<typeof marked.parse>[1];
 type FootnoteOptions = {
@@ -17,15 +18,44 @@ const LITERAL_REGIONS = /<!--[\s\S]*?(?:-->|$)|<(pre|code|script|style|textarea)
 export const TAG_MARKER_CLASS = "ld-tag-marker";
 export const TAG_MARKER_GLYPH = "b";
 const VOID_ELEMENTS = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"]);
-// Literal regions are skipped; the last alternative is a lone `<name>` (no attributes).
-const MARKER_PARTS = new RegExp(`${LITERAL_REGIONS.source}|<([A-Za-z][A-Za-z0-9-]*)>`, "gi");
+// Literal regions are skipped; the last alternative is a lone `<name free text>`.
+const MARKER_PARTS = new RegExp(`${LITERAL_REGIONS.source}|${LONE_TAG_SOURCE}`, "gi");
+// Free text that is not valid HTML (accents, quotes) reaches marked as plain text.
+const INLINE_LONE_TAG = new RegExp(`^${LONE_TAG_SOURCE}`, "i");
+
+const escapeAttribute = (text: string): string =>
+  text.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+function isMarkerTag(name: string, source: string): boolean {
+  return !VOID_ELEMENTS.has(name.toLowerCase()) && !new RegExp(`</${name}\\s*>`, "i").test(source);
+}
+
+function markerHtml(name: string, text = ""): string {
+  const tag = text ? `<${name} ${text}>` : `<${name}>`;
+  return `<mark class="${TAG_MARKER_CLASS}" title="${escapeAttribute(tag)}" data-tag="${name}">${TAG_MARKER_GLYPH}</mark>`;
+}
 
 function renderTagMarkers(html: string, source: string): string {
-  return html.replace(MARKER_PARTS, (original, literal, name) => {
-    if (literal || !name || VOID_ELEMENTS.has(name.toLowerCase())) return original;
-    if (new RegExp(`</${name}\\s*>`, "i").test(source)) return original;
-    return `<mark class="${TAG_MARKER_CLASS}" title="&lt;${name}&gt;" data-tag="${name}">${TAG_MARKER_GLYPH}</mark>`;
+  return html.replace(MARKER_PARTS, (original, literal, name, text) => {
+    if (literal || !name || !isMarkerTag(name, source)) return original;
+    return markerHtml(name, text);
   });
+}
+
+function tagMarkerExtension(source: string): MarkedExtension {
+  return {
+    extensions: [{
+      name: "tagMarker",
+      level: "inline",
+      start: (src) => src.indexOf("<"),
+      tokenizer(src) {
+        const match = INLINE_LONE_TAG.exec(src);
+        if (!match || !isMarkerTag(match[1], source)) return undefined;
+        return { type: "tagMarker", raw: match[0], name: match[1], text: match[2] ?? "" };
+      },
+      renderer: (token) => markerHtml(token.name, token.text),
+    }],
+  };
 }
 
 // Consume whole tags (including quoted attributes) and literal HTML regions so
@@ -67,6 +97,7 @@ export function renderMarkdownWithSummaries(
   // Both describe Marked 12, but its private members make those types nominally
   // incompatible. Keep this bridge at the extension boundary.
   const parser = new Marked(footnotes as unknown as MarkedExtension);
+  if (tagMarkers) parser.use(tagMarkerExtension(source));
   parser.use({
     walkTokens(token) {
       if (token.type !== "html") return;

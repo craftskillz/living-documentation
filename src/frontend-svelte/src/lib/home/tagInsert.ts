@@ -1,4 +1,6 @@
 
+import { LONE_TAG_SOURCE } from '../../../../shared/tagName';
+
 export type TagLocation =
   | { ok: true; index: number }
   | { ok: false; reason: 'not-found' | 'ambiguous' };
@@ -10,7 +12,6 @@ const FRONTMATTER_OPEN = /^---\r?\n/;
 const FRONTMATTER_CLOSE = /^---\s*$/;
 const INLINE_CODE = /`[^`\n]*`/g;
 const REGEX_SPECIALS = /[.*+?^${}()|[\]\\]/g;
-const TAG_BRACKETS_LENGTH = '<>'.length;
 const WHITESPACE_RUN = /\s+/;
 
 const mask = (text: string): string => text.replace(/[^\r\n]/g, MASK_CHAR);
@@ -52,15 +53,20 @@ export function locateTagInsertion(content: string, before: string, after: strin
   return { ok: true, index: starts[0] };
 }
 
-export function insertTagAt(content: string, index: number, name: string): string {
-  return `${content.slice(0, index)}<${name}>${content.slice(index)}`;
+/** `tag` is the inner part: `name` or `name free text`. */
+export function insertTagAt(content: string, index: number, tag: string): string {
+  return `${content.slice(0, index)}<${tag}>${content.slice(index)}`;
 }
 
 export type TagRemovalLocation =
   | { ok: true; index: number }
   | { ok: false; reason: 'not-found' | 'ambiguous' };
 
-/** Source offset of the `occurrence`-th lone `<name>` among searchable zones; refused when the source count differs from what was rendered. */
+/** Lone `<name>` or `<name free text>`, same grammar as the rendered markers. */
+const loneTagPattern = (name: string, flags: string): RegExp =>
+  new RegExp(LONE_TAG_SOURCE.replace('[A-Za-z][A-Za-z0-9-]*', name.replace(REGEX_SPECIALS, '\\$&')), flags);
+
+/** Source offset of the `occurrence`-th lone `<name …>` among searchable zones; refused when the source count differs from what was rendered. */
 export function locateTagRemoval(
   content: string,
   name: string,
@@ -69,8 +75,7 @@ export function locateTagRemoval(
 ): TagRemovalLocation {
   // Tables stay searchable: markers do render inside table cells.
   const masked = maskUnsearchableZones(content, { maskTables: false });
-  const pattern = new RegExp(`<${name.replace(REGEX_SPECIALS, '\\$&')}>`, 'gi');
-  const starts = [...masked.matchAll(pattern)].map((match) => match.index);
+  const starts = [...masked.matchAll(loneTagPattern(name, 'gi'))].map((match) => match.index);
   if (starts.length === 0) return { ok: false, reason: 'not-found' };
   if (starts.length !== renderedCount) return { ok: false, reason: 'ambiguous' };
   if (!Number.isInteger(occurrence) || occurrence < 0 || occurrence >= starts.length) {
@@ -80,9 +85,9 @@ export function locateTagRemoval(
 }
 
 export function removeTagAt(content: string, index: number, name: string): string {
-  const end = index + name.length + TAG_BRACKETS_LENGTH;
-  if (content.slice(index, end).toLowerCase() !== `<${name.toLowerCase()}>`) {
-    throw new Error(`No <${name}> tag at offset ${index}`);
-  }
-  return content.slice(0, index) + content.slice(end);
+  const pattern = loneTagPattern(name, 'iy');
+  pattern.lastIndex = index;
+  const match = pattern.exec(content);
+  if (!match) throw new Error(`No <${name}> tag at offset ${index}`);
+  return content.slice(0, index) + content.slice(index + match[0].length);
 }

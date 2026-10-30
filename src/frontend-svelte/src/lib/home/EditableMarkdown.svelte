@@ -69,11 +69,11 @@
   };
   let tagPopup = $state<{ x: number; y: number; index: number } | null>(null);
 
-  async function confirmTag(name: string) {
+  async function confirmTag(tag: string) {
     if (!tagPopup) return;
     const index = tagPopup.index;
     tagPopup = null;
-    await onsave(insertTagAt(content, index, name));
+    await onsave(insertTagAt(content, index, tag));
   }
 
   // Shift + right-click on a marker: confirm popup + resolved source index.
