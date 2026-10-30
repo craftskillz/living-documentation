@@ -302,7 +302,7 @@ export function documentsRouter(docsPath: string): Router {
       try {
         const content = fs.readFileSync(filePath, "utf-8");
         const meta = parseDocMetadata(path.basename(filePath), content);
-        const html = decorateFileLinks(renderMarkdownWithCompareBlocks(stripFrontmatter(content), markedOpts));
+        const html = decorateFileLinks(renderMarkdownWithCompareBlocks(stripFrontmatter(content), markedOpts, { tagMarkers: true }));
         const fm = parseFrontmatter(content).data;
         res.json({
           ...meta,
@@ -340,7 +340,7 @@ export function documentsRouter(docsPath: string): Router {
           : null;
       const reserved = isReservedDocId(id);
       const markdown = reserved ? reservedFileMarkdown(content) : stripFrontmatter(content);
-      const html = renderMarkdownWithCompareBlocks(markdown, markedOpts);
+      const html = renderMarkdownWithCompareBlocks(markdown, markedOpts, { tagMarkers: true });
       const fm = parseFrontmatter(content).data;
       res.json({
         ...metadata,

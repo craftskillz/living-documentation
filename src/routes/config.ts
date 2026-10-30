@@ -2,6 +2,7 @@ import { Router, type Request, type Response } from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
 import { normalizeHiddenHeaderMenus } from '../shared/headerNavigation';
+import { normalizeTagName } from '../shared/tagName';
 import { readConfig, writeConfig, type StoredConfig } from '../lib/config';
 
 function isExistingDir(dir: string): boolean {
@@ -42,6 +43,7 @@ export function configRouter(docsPath: string): Router {
         'sourceRoot',
         'extraFiles',
         'blockedFileExtensions',
+        'tagSuggestions',
         'exclusiveFolderExpansion',
         'codeBlockMaxHeight',
         'markdownSoftBreaks',
@@ -138,6 +140,18 @@ export function configRouter(docsPath: string): Router {
         } else {
           return res.status(400).json({ error: 'blockedFileExtensions must be an array of strings' });
         }
+      }
+      // tagSuggestions: valid tag names, normalised, deduplicated, original order
+      if ('tagSuggestions' in patch) {
+        const v = patch.tagSuggestions;
+        if (!Array.isArray(v)) {
+          return res.status(400).json({ error: 'tagSuggestions must be an array of strings' });
+        }
+        const names = (v as unknown[])
+          .filter((e): e is string => typeof e === 'string')
+          .map(normalizeTagName)
+          .filter((n): n is string => n !== null);
+        safe.tagSuggestions = [...new Set(names)];
       }
       // llmModelsNoV1Hosts: array of LLM base URLs that serve `{base}/models` (not /v1/models).
       // Normalize to origin (protocol + host), drop invalid/non-http(s) URLs, dedupe.

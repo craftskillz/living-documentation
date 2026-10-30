@@ -94,3 +94,23 @@ test('PUT /api/config silently ignores a non-array diagramEdgePalette', async ({
   const after = await (await request.get(`${ld.baseURL}/api/config`)).json();
   expect(after.diagramEdgePalette).toEqual(before.diagramEdgePalette);
 });
+
+test('PUT /api/config rejects tagSuggestions when not an array', async ({ request, ld }) => {
+  const res = await request.put(`${ld.baseURL}/api/config`, {
+    data: { tagSuggestions: 'add-footnote' },
+  });
+  expect(res.status()).toBe(400);
+  expect((await res.json()).error).toBe('tagSuggestions must be an array of strings');
+});
+
+test('PUT /api/config normalises tagSuggestions (valid names, deduplicated, in order)', async ({
+  request,
+  ld,
+}) => {
+  const res = await request.put(`${ld.baseURL}/api/config`, {
+    data: { tagSuggestions: ['<Add-Footnote>', 'rewrite-section', 'bad name', '1x', 'add-footnote'] },
+  });
+  expect(res.ok()).toBe(true);
+  const cfg = await (await request.get(`${ld.baseURL}/api/config`)).json();
+  expect(cfg.tagSuggestions).toEqual(['add-footnote', 'rewrite-section']);
+});

@@ -19,3 +19,13 @@ test('document API renders summary Markdown and the heading remains clickable', 
   await expect(page.locator('details p')).toBeHidden();
   await expect(page.locator('pre code')).toHaveText('<summary># Example</summary>\n');
 });
+
+test('document API renders lone opening tags as highlighted markers', async ({ request, ld }) => {
+  const id = encodeURIComponent('2026_01_01_10_00_[General]_markers');
+  const content = 'Fix this <add-footnote> now.\n\n`<kept>`';
+  const save = await request.put(`${ld.baseURL}/api/documents/${id}`, { data: { content } });
+  expect(save.ok()).toBe(true);
+  const doc = await (await request.get(`${ld.baseURL}/api/documents/${id}`)).json();
+  expect(doc.html).toContain('<mark class="ld-tag-marker" title="&lt;add-footnote&gt;" data-tag="add-footnote">b</mark>');
+  expect(doc.html).toContain('<code>&lt;kept&gt;</code>');
+});

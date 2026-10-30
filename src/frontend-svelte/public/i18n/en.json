@@ -798,6 +798,7 @@
   "admin.section.markdown.title": "Markdown rendering",
   "admin.section.markdown.desc": "How the viewer renders newlines and long code blocks.",
   "admin.section.files.title": "File attachments",
+  "admin.section.tags.title": "Tags",
   "admin.section.diagram.title": "Diagram palettes",
   "admin.section.diagram.desc": "Customize the colors available in the diagram editor.",
   "admin.section.developer.title": "Developer",
@@ -873,6 +874,9 @@
   "admin.files.description": "Extensions that are rejected by the <code>/api/files/upload</code> endpoint. One extension per line (or comma/space separated), without the leading dot.",
   "admin.files.blocked_label": "Blocked extensions",
   "admin.files.hint": "Defaults to common executable formats. Max upload size is 19 MB per file.",
+  "admin.tags.description": "Names suggested when inserting a lone opening tag (such as <add-footnote>) into a document from the viewer. One name per line (or comma/space separated).",
+  "admin.tags.label": "Tag names",
+  "admin.tags.hint": "Letters, digits and hyphens, starting with a letter. These names are suggested when inserting a tag with Shift + right-click in the viewer.",
   "admin.palette.title": "Diagram Color Palettes",
   "admin.palette.description": "Customize the colors available in the diagram editor. Changes take effect after saving.",
   "admin.palette.shapes_title": "Shape colors",
@@ -1206,5 +1210,12 @@
   "templates.errors.folder_not_found": "This template folder no longer exists.",
   "templates.errors.template_not_found": "This template no longer exists.",
   "templates.errors.folder_not_empty": "Confirm deletion of the folder and its templates.",
-  "templates.errors.storage_error": "Unable to read or save the templates."
+  "templates.errors.storage_error": "Unable to read or save the templates.",
+  "tags.insert.title": "Insert a tag",
+  "tags.insert.placeholder": "tag-name",
+  "tags.insert.confirm": "Insert",
+  "tags.insert.invalid": "Letters, digits and hyphens only, starting with a letter.",
+  "tags.insert.refused_zone": "Cannot insert a tag in a table, code or diagram.",
+  "tags.insert.refused_ambiguous": "This passage appears several times in the source; click a more distinctive spot.",
+  "tags.insert.refused_not_found": "The clicked passage could not be located in the source."
 }

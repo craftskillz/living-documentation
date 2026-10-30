@@ -7,6 +7,7 @@
   import Topbar from "../lib/Topbar.svelte";
   import { t, loadI18n } from "../lib/i18n.svelte";
   import { applySiteTheme } from "../lib/siteTheme";
+  import { normalizeTagName } from "../../../shared/tagName";
 
   let { navigate }: { navigate: (to: string) => void } = $props();
 
@@ -28,6 +29,7 @@
   let imageBorder = $state(false);
   let codeBlockLightTheme = $state(false);
   let blockedFileExtensions = $state("");
+  let tagSuggestions = $state("");
   let extraFiles = $state<string[]>([]);
   let nodePalette = $state<string[]>([]);
   let edgePalette = $state<string[]>([]);
@@ -106,6 +108,7 @@
       imageBorder = !!cfg.imageBorder;
       codeBlockLightTheme = !!cfg.codeBlockLightTheme;
       blockedFileExtensions = (cfg.blockedFileExtensions || []).join(" ");
+      tagSuggestions = (cfg.tagSuggestions || []).join(" ");
       extraFiles = cfg.extraFiles || [];
       const NODE_KEYS = ["c-white","c-gray","c-slate","c-blue","c-sky","c-cyan","c-teal","c-green","c-lime","c-amber","c-orange","c-red","c-rose","c-pink","c-purple"];
       const NODE_BG: Record<string,string> = {"c-white":"#ffffff","c-gray":"#f5f5f4","c-slate":"#f1f5f9","c-blue":"#dbeafe","c-sky":"#e0f2fe","c-cyan":"#cffafe","c-teal":"#ccfbf1","c-green":"#dcfce7","c-lime":"#ecfccb","c-amber":"#fef9c3","c-orange":"#ffedd5","c-red":"#fee2e2","c-rose":"#ffe4e6","c-pink":"#fce7f3","c-purple":"#ede9fe"};
@@ -136,6 +139,7 @@
       showMsg("Source root must be a relative path.", "error"); return;
     }
     const blocked = blockedFileExtensions.split(/[\s,]+/).map(e => e.trim().replace(/^\.+/, "").toLowerCase()).filter(e => /^[a-z0-9]+$/.test(e));
+    const tags = tagSuggestions.split(/[\s,]+/).map(normalizeTagName).filter((n): n is string => n !== null);
     const payload = {
       title, theme, siteTheme, hiddenHeaderMenus, language,
       exclusiveFolderExpansion,
@@ -145,6 +149,7 @@
       diagramEdgePalette: [...edgePalette],
       sourceRoot: sourceRoot === "" ? null : sourceRoot,
       blockedFileExtensions: blocked,
+      tagSuggestions: tags,
       llmModelsNoV1Hosts: [...llmNoV1Hosts],
       debugAgents,
       gitIntegration: {
@@ -346,6 +351,15 @@
             <label class="field-label" for="field-blocked">{t("admin.files.blocked_label")}</label>
             <textarea id="field-blocked" class="field-input field-input--mono" rows={3} bind:value={blockedFileExtensions} placeholder="exe sh bat cmd com scr ps1 msi"></textarea>
             <p class="field-hint">{t("admin.files.hint")}</p>
+          </div>
+        </ConfigSection>
+
+        <!-- Tag suggestions -->
+        <ConfigSection icon="🏷️" title={t("admin.section.tags.title")} description={t("admin.tags.description")}>
+          <div class="field-group">
+            <label class="field-label" for="field-tags">{t("admin.tags.label")}</label>
+            <textarea id="field-tags" class="field-input field-input--mono" rows={3} bind:value={tagSuggestions} placeholder="add-footnote rewrite-section"></textarea>
+            <p class="field-hint">{t("admin.tags.hint")}</p>
           </div>
         </ConfigSection>
 

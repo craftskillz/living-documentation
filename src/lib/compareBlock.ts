@@ -41,10 +41,11 @@ function renderCompareDiv(
   content: string,
   markedOpts: Parameters<typeof marked.parse>[1],
   index: number,
+  tagMarkers: boolean,
 ): string {
   // Strip a single trailing newline so marked doesn't add an extra <p></p>
   const trimmed = content.endsWith("\n") ? content.slice(0, -1) : content;
-  const renderedHtml = renderMarkdownWithSummaries(trimmed, markedOpts, { prefixId: `ld-fn-compare-${index}-` });
+  const renderedHtml = renderMarkdownWithSummaries(trimmed, markedOpts, { prefixId: `ld-fn-compare-${index}-`, tagMarkers });
   const escapedSource = htmlEscape(trimmed);
   // URI-encode so the raw Markdown is safely embedded in an HTML attribute value
   const encodedSource = encodeURIComponent(trimmed);
@@ -70,18 +71,19 @@ function renderCompareDiv(
 export function renderMarkdownWithCompareBlocks(
   source: string,
   markedOpts: Parameters<typeof marked.parse>[1] = {},
+  { tagMarkers = false }: { tagMarkers?: boolean } = {},
 ): string {
   const blocks: string[] = [];
 
   const withPlaceholders = source.replace(COMPARE_RE, (_, content: string) => {
     const idx = blocks.length;
-    blocks.push(renderCompareDiv(content, markedOpts, idx));
+    blocks.push(renderCompareDiv(content, markedOpts, idx, tagMarkers));
     // A standalone HTML comment is an HTML block (no blank lines inside) that marked
     // passes through verbatim — safe to swap out after parsing.
     return `\n<!--${PLACEHOLDER_PREFIX}${idx}-->\n`;
   });
 
-  let html = renderMarkdownWithSummaries(withPlaceholders, markedOpts);
+  let html = renderMarkdownWithSummaries(withPlaceholders, markedOpts, { tagMarkers });
 
   // Swap placeholders back for the rendered compare <div>s. Tolerate marked wrapping the
   // comment in a <p>…</p> paragraph.

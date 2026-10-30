@@ -27,4 +27,14 @@ section.footnotes[data-footnotes] > .ld-footnotes-label {
 section.footnotes[data-footnotes] > ol > li::marker {
   content: "(" counter(list-item) ") ";
 }
+.ld-tag-marker {
+  background: #fde047;
+  color: #713f12;
+  font-size: .75em;
+  font-weight: 600;
+  padding: 0 .3em;
+  border-radius: .2em;
+  cursor: help;
+  vertical-align: .1em;
+}
 `;

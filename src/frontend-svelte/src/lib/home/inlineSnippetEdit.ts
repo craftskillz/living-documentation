@@ -582,6 +582,7 @@ export function initInlineSnippetEditing(
   _inlineAssignElements(contentEl, candidates);
 
   const contextHandler = (event: MouseEvent) => {
+    if (event.shiftKey) return; // Shift + right-click is reserved for tag insertion
     const target = (event.target as Element | null)?.closest(
       "[data-inline-snippet-index]",
     );
@@ -654,7 +655,7 @@ export function initInlineSnippetEditing(
   let mainFallbackHandler: ((event: MouseEvent) => void) | null = null;
   if (mainEl) {
     mainFallbackHandler = (event: MouseEvent) => {
-      if (event.defaultPrevented) return;
+      if (event.defaultPrevented || event.shiftKey) return;
       if (contentEl.offsetParent === null) return;
       if (
         (event.target as Element | null)?.closest(

@@ -12,14 +12,21 @@ timestamp: 2026-10-30T10:00:00Z
 status: To be validated
 ---
 
-# Prochaine US : repères de balises en visualisation — cadrée le 30 octobre 2026
+# Repères de balises en visualisation — 30 octobre 2026
 
-Statut : à faire dans une nouvelle session.
+Statut : terminé.
 
-Besoin : dans les documents, l'utilisateur écrit des balises ouvrantes seules, sans attributs ni balise fermante, par exemple `<add-footnote>` ou `<rewrite-section>`, exploitées par une de ses skills. En visualisation, elles disparaissent.
-1. Afficher à leur place un petit « b » surligné façon stabilo ; le survol montre la balise en infobulle. Ne reconnaître que les balises ouvrantes seules `<...>` : toute balise de ce type compte, sans liste blanche.
-2. Shift + clic droit sur un caractère (le clic droit simple reste aux snippets) ouvre une popup à saisie libre, avec suggestions automatiques issues d'une nouvelle liste « Balises » paramétrée dans l'admin. La balise est insérée dans le `.md` juste avant le caractère.
-3. Repérage dans la source à partir du texte autour du clic. Dans les tableaux, le code, les diagrammes ou si le passage est ambigu (plusieurs occurrences) : refuser l'insertion avec un message clair, plutôt que d'écrire au mauvais endroit (validé par l'utilisateur).
+Une balise ouvrante seule (`<add-footnote>`, sans attributs ni balise fermante dans la source, hors éléments vides comme `<br>`) s'affiche en visualisation comme un « b » surligné (`<mark class="ld-tag-marker">`) avec la balise en infobulle. Le moteur partagé (`src/lib/summaryMarkdown.ts`, option `tagMarkers`) ne l'active que pour `GET /api/documents/:id` : les exports ne changent pas.
+
+Maj + clic droit sur un caractère ouvre `TagInsertPopup.svelte` (saisie libre, suggestions `<datalist>` issues de la liste admin « Balises », config `tagSuggestions`) ; la balise est insérée juste avant le caractère. Repérage : `tagClick.ts` (caret → texte du nœud cliqué) puis `tagInsert.ts` (recherche unique dans la source, frontmatter, code, tableaux et code inline masqués). Refus par toast : zone interdite (tableau, code, diagramme, compare, kanban), passage ambigu ou introuvable. Le clic droit simple reste aux snippets.
+
+Limites connues : un clic dans du gras ou un lien n'a pour contexte que le nœud texte court, donc souvent « ambigu » (refus sûr) ; une balise seule sur sa ligne ouvre un bloc HTML CommonMark qui garde les lignes suivantes brutes jusqu'à la ligne vide ; un `</nom>` présent dans un bloc de code désactive le repère pour ce nom.
+
+Vérifications : unitaires 94/94, `tests/api` 233/233, `tests/e2e` 131/132 (`kanban.spec.ts` « drag hover… » a échoué sous charge parallèle et passe isolé : sans lien), lint et svelte-check OK. Après les retouches de revue : unitaires, `tag-markers.spec.ts` et `summary-markdown.spec.ts` verts.
+
+Documentation : MCP Living Documentation non disponible dans cette session ; aucun hash ni métadonnée mis à jour. ADR éventuel à rédiger (marqueurs de balises, fichiers : `src/lib/summaryMarkdown.ts`, `src/frontend-svelte/src/lib/home/tagInsert.ts`, `tagClick.ts`, `src/shared/tagName.ts`, `src/routes/config.ts`).
+
+Prochaine action : valider l'US manuellement dans le viewer ; nouvelle session pour la suite.
 
 ---
 

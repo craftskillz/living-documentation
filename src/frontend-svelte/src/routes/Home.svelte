@@ -253,6 +253,7 @@
     if (cfg.title) { document.title = cfg.title as string; appTitle = cfg.title as string; }
     home.exclusiveFolderExpansion = !!cfg.exclusiveFolderExpansion;
     home.codeBlockMaxHeight = typeof cfg.codeBlockMaxHeight === "number" ? cfg.codeBlockMaxHeight : 400;
+    home.tagSuggestions = Array.isArray(cfg.tagSuggestions) && cfg.tagSuggestions.every((n: unknown) => typeof n === "string") ? cfg.tagSuggestions : [];
     home.imageRoundedCorners = !!cfg.imageRoundedCorners;
     home.imageCentered = !!cfg.imageCentered;
     home.imageBorder = !!cfg.imageBorder;

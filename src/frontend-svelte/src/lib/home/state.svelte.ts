@@ -39,6 +39,7 @@ class HomeState {
 
   exclusiveFolderExpansion = $state(false);
   codeBlockMaxHeight = $state(400);
+  tagSuggestions = $state<string[]>([]);
   imageRoundedCorners = $state(false);
   imageCentered = $state(false);
   imageBorder = $state(false);

@@ -141,4 +141,14 @@ test.describe('Admin page — General extra files', () => {
     await tree.locator('[data-extra="true"]', { hasText: /skills/i }).click();
     await expect(tree.locator('.doc-item', { hasText: 'Review' })).toBeVisible();
   });
+
+  test('tag names typed in the Tags field are saved normalised to the config', async ({ page, request, ld }) => {
+    await page.goto(`${ld.baseURL}/admin`);
+    await page.locator('#field-tags').fill('<Add-Footnote>, rewrite-section bad_name add-footnote');
+    await page.getByRole('button', { name: /enregistrer|save/i }).click();
+
+    await expect
+      .poll(async () => (await (await request.get(`${ld.baseURL}/api/config`)).json()).tagSuggestions)
+      .toEqual(['add-footnote', 'rewrite-section']);
+  });
 });

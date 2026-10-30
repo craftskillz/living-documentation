@@ -798,6 +798,7 @@
   "admin.section.markdown.title": "Rendu Markdown",
   "admin.section.markdown.desc": "Comment le viewer rend les retours à la ligne et les longs blocs de code.",
   "admin.section.files.title": "Pièces jointes",
+  "admin.section.tags.title": "Balises",
   "admin.section.diagram.title": "Palettes de diagramme",
   "admin.section.diagram.desc": "Personnalisez les couleurs disponibles dans l'éditeur de diagrammes.",
   "admin.section.developer.title": "Développeur",
@@ -873,6 +874,9 @@
   "admin.files.description": "Extensions refusées par le endpoint <code>/api/files/upload</code>. Une extension par ligne (ou séparées par des virgules ou des espaces), sans le point.",
   "admin.files.blocked_label": "Extensions bloquées",
   "admin.files.hint": "Par défaut, les formats exécutables courants. Taille maximale : 19 Mo par fichier.",
+  "admin.tags.description": "Noms proposés lors de l'insertion d'une balise ouvrante seule (comme <add-footnote>) dans un document depuis le visualiseur. Un nom par ligne (ou séparés par des virgules ou des espaces).",
+  "admin.tags.label": "Noms de balises",
+  "admin.tags.hint": "Lettres, chiffres et tirets, en commençant par une lettre. Ces noms sont proposés lors de l'insertion d'une balise par Maj + clic droit dans le visualiseur.",
   "admin.palette.title": "Palettes de couleurs des diagrammes",
   "admin.palette.description": "Personnalisez les couleurs disponibles dans l'éditeur de diagrammes. Les modifications prennent effet après enregistrement.",
   "admin.palette.shapes_title": "Couleurs des formes",
@@ -1206,5 +1210,12 @@
   "templates.errors.folder_not_found": "Ce dossier de templates n’existe plus.",
   "templates.errors.template_not_found": "Ce template n’existe plus.",
   "templates.errors.folder_not_empty": "Confirmez la suppression du dossier et de ses templates.",
-  "templates.errors.storage_error": "Impossible de lire ou d’enregistrer les templates."
+  "templates.errors.storage_error": "Impossible de lire ou d’enregistrer les templates.",
+  "tags.insert.title": "Insérer une balise",
+  "tags.insert.placeholder": "nom-de-balise",
+  "tags.insert.confirm": "Insérer",
+  "tags.insert.invalid": "Lettres, chiffres et tirets uniquement, en commençant par une lettre.",
+  "tags.insert.refused_zone": "Impossible d'insérer une balise dans un tableau, du code ou un diagramme.",
+  "tags.insert.refused_ambiguous": "Ce passage apparaît plusieurs fois dans la source ; cliquez sur un endroit plus distinctif.",
+  "tags.insert.refused_not_found": "Le passage cliqué est introuvable dans la source."
 }

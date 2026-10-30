@@ -5,6 +5,10 @@
   import { t } from "../i18n.svelte";
   import { wireDocContent } from "./wireContent";
   import SnippetsModal from "./SnippetsModal.svelte";
+  import TagInsertPopup from "./TagInsertPopup.svelte";
+  import { tagClickIndex, type TagClickRefusal } from "./tagClick";
+  import { insertTagAt } from "./tagInsert";
+  import { showPersistentToast } from "../persistentToast";
   import { initInlineSnippetEditing, type InlineSnippetRange } from "./inlineSnippetEdit";
   import { findKanbanRange } from "./kanban";
   import { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB } from "../../../../lib/limits";
@@ -51,6 +55,21 @@
   let editorEl = $state<HTMLTextAreaElement>(null!);
   let editorValue = $state("");
   let disposeInline: (() => void) | null = null;
+
+  // Shift + right-click tag insertion: popup anchor + resolved source index.
+  const TAG_REFUSAL_KEYS: Record<TagClickRefusal, string> = {
+    zone: "tags.insert.refused_zone",
+    ambiguous: "tags.insert.refused_ambiguous",
+    "not-found": "tags.insert.refused_not_found",
+  };
+  let tagPopup = $state<{ x: number; y: number; index: number } | null>(null);
+
+  async function confirmTag(name: string) {
+    if (!tagPopup) return;
+    const index = tagPopup.index;
+    tagPopup = null;
+    await onsave(insertTagAt(content, index, name));
+  }
 
   let snippetsOpen = $state(false);
   let snippetMode = $state<"insert" | "inline-edit" | "inline-insert">("insert");
@@ -137,9 +156,26 @@
       });
     }
 
+    let disposeTagClick: (() => void) | null = null;
+    if (!kanbanTakeover && !readonly) {
+      const el = contentEl;
+      const onTagContextMenu = (event: MouseEvent) => {
+        if (!event.shiftKey) return;
+        event.preventDefault();
+        const found = tagClickIndex(el, content, event);
+        if (!found.ok) {
+          showPersistentToast(t(TAG_REFUSAL_KEYS[found.reason]), "error");
+          return;
+        }
+        tagPopup = { x: event.clientX, y: event.clientY, index: found.index };
+      };
+      el.addEventListener("contextmenu", onTagContextMenu);
+      disposeTagClick = () => el.removeEventListener("contextmenu", onTagContextMenu);
+    }
+
     oncontentwired?.(contentEl);
 
-    return () => { disposeInline?.(); disposeInline = null; };
+    return () => { disposeInline?.(); disposeInline = null; disposeTagClick?.(); tagPopup = null; };
   });
 
   // ── Edit mode (exposed API) ───────────────────────────────────────────────────
@@ -341,6 +377,10 @@
     onclick={onContentClick}
     class="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-headings:font-semibold prose-h1:text-[2.1875rem] prose-h2:text-[1.8125rem] prose-h3:text-[1.5rem] prose-h4:text-[1.25rem] prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-code:before:content-none prose-code:after:content-none {home.codeBlockLightTheme ? 'prose-pre:bg-[#f6f8fa] prose-pre:text-gray-800 prose-pre:border prose-pre:border-gray-200 prose-pre:rounded-lg dark:prose-pre:bg-[#0d1117] dark:prose-pre:text-gray-100 dark:prose-pre:border-gray-700' : 'prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-gray-700'} {home.imageRoundedCorners ? '[&_img]:rounded-xl' : ''} {home.imageCentered ? '[&_img]:mx-auto [&_img]:block' : ''} {home.imageBorder ? '[&_img]:[box-shadow:0_0_0_1px_rgba(0,0,0,0.10),0_4px_12px_rgba(0,0,0,0.04)] dark:[&_img]:[box-shadow:0_0_0_1px_rgba(255,255,255,0.08),0_4px_12px_rgba(255,255,255,0.25)]' : ''}"
   ></div>
+{/if}
+
+{#if tagPopup}
+  <TagInsertPopup x={tagPopup.x} y={tagPopup.y} onconfirm={confirmTag} oncancel={() => { tagPopup = null; }} />
 {/if}
 
 <SnippetsModal

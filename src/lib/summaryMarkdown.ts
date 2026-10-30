@@ -9,9 +9,28 @@ type FootnoteOptions = {
   backRefLabel?: string;
 };
 
+type RenderOptions = FootnoteOptions & { tagMarkers?: boolean };
+
+// HTML comments and raw code-like regions: never rewritten (group 1 = tag name).
+const LITERAL_REGIONS = /<!--[\s\S]*?(?:-->|$)|<(pre|code|script|style|textarea)\b(?:"[^"]*"|'[^']*'|[^'">])*?>[\s\S]*?(?:<\/\1\s*>|$)/;
+
+export const TAG_MARKER_CLASS = "ld-tag-marker";
+export const TAG_MARKER_GLYPH = "b";
+const VOID_ELEMENTS = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"]);
+// Literal regions are skipped; the last alternative is a lone `<name>` (no attributes).
+const MARKER_PARTS = new RegExp(`${LITERAL_REGIONS.source}|<([A-Za-z][A-Za-z0-9-]*)>`, "gi");
+
+function renderTagMarkers(html: string, source: string): string {
+  return html.replace(MARKER_PARTS, (original, literal, name) => {
+    if (literal || !name || VOID_ELEMENTS.has(name.toLowerCase())) return original;
+    if (new RegExp(`</${name}\\s*>`, "i").test(source)) return original;
+    return `<mark class="${TAG_MARKER_CLASS}" title="&lt;${name}&gt;" data-tag="${name}">${TAG_MARKER_GLYPH}</mark>`;
+  });
+}
+
 // Consume whole tags (including quoted attributes) and literal HTML regions so
 // summary-shaped text inside comments, attributes or code is never rewritten.
-const HTML_PARTS = /<!--[\s\S]*?(?:-->|$)|<(pre|code|script|style|textarea)\b(?:"[^"]*"|'[^']*'|[^'">])*?>[\s\S]*?(?:<\/\1\s*>|$)|(<summary\b(?:"[^"]*"|'[^']*'|[^'">])*?>)([\s\S]*?)(<\/summary\s*>)|<\/?[a-z][a-z0-9-]*\b(?:"[^"]*"|'[^']*'|[^'">])*?>/gi;
+const HTML_PARTS = new RegExp(`${LITERAL_REGIONS.source}|(<summary\\b(?:"[^"]*"|'[^']*'|[^'">])*?>)([\\s\\S]*?)(<\\/summary\\s*>)|<\\/?[a-z][a-z0-9-]*\\b(?:"[^"]*"|'[^']*'|[^'">])*?>`, "gi");
 
 function renderSummaries(html: string, options: MarkdownOptions): string {
   return html.replace(HTML_PARTS, (original, literal, opening, content, closing) => {
@@ -33,7 +52,7 @@ function renderSummaries(html: string, options: MarkdownOptions): string {
 export function renderMarkdownWithSummaries(
   source: string,
   options: MarkdownOptions = {},
-  footnoteOptions: FootnoteOptions = {},
+  { tagMarkers = false, ...footnoteOptions }: RenderOptions = {},
 ): string {
   const resolvedOptions = { ...marked.defaults, ...options };
   // Each render owns its extension state, including numbering and definitions.
@@ -50,7 +69,10 @@ export function renderMarkdownWithSummaries(
   const parser = new Marked(footnotes as unknown as MarkedExtension);
   parser.use({
     walkTokens(token) {
-      if (token.type === "html") token.text = renderSummaries(token.text, resolvedOptions);
+      if (token.type !== "html") return;
+      // Markers first: summary rewriting emits generated tags (<strong>) that are not user tags.
+      const text = tagMarkers ? renderTagMarkers(token.text, source) : token.text;
+      token.text = renderSummaries(text, resolvedOptions);
     },
   });
   return parser.parse(source, { ...options, async: false }) as string;

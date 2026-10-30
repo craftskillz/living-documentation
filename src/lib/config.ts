@@ -71,6 +71,7 @@ export interface StoredConfig {
   diagramEdgePalette: string[] | null;
   sourceRoot: string | null; // relative to docsFolder (posix slashes); null = default ("..")
   blockedFileExtensions: string[];
+  tagSuggestions: string[]; // lone-tag names suggested by the viewer's insert popup
   exclusiveFolderExpansion: boolean;
   codeBlockMaxHeight: number;
   markdownSoftBreaks: boolean;
@@ -174,6 +175,7 @@ const STORAGE_DEFAULTS: StoredConfig = {
   diagramEdgePalette: DEFAULT_DIAGRAM_EDGE_PALETTE,
   sourceRoot: "..",
   blockedFileExtensions: DEFAULT_BLOCKED_FILE_EXTENSIONS,
+  tagSuggestions: [],
   exclusiveFolderExpansion: false,
   codeBlockMaxHeight: 400,
   markdownSoftBreaks: true,
