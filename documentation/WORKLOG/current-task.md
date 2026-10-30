@@ -12,6 +12,22 @@ timestamp: 2026-10-30T10:00:00Z
 status: To be validated
 ---
 
+# Suppression d'une balise par Maj + clic droit sur son repère — 30 octobre 2026
+
+Statut : terminé.
+
+Maj + clic droit sur un repère `.ld-tag-marker` ouvre `TagRemovePopup.svelte` (« Supprimer la balise <nom> ? », Supprimer / Annuler, Échap ou clic extérieur annulent) ; la confirmation retire la balise du .md via `onsave`. Repérage : rang du repère parmi les repères de même nom (ordre DOM) → `locateTagRemoval` (`tagInsert.ts`), qui compte les `<nom>` de la source hors frontmatter, code clôturé et code inline (les tableaux comptent, contrairement à l'insertion). Si ce compte diffère du nombre de repères affichés, refus par toast (« supprimez-la depuis l'éditeur ») : cas d'une balise aussi présente dans un commentaire HTML, un bloc `<pre>`, du code indenté, ou d'une fermeture `</nom>` seulement dans un bloc compare.
+
+Limites connues : la suppression laisse les espaces ou la ligne vide autour de la balise ; les popups d'insertion et de suppression dupliquent leur coque (extraction possible).
+
+Vérifications : unitaires 102/102, `tests/api` 233/233, `tests/e2e` 136/136, lint et svelte-check OK ; après retouches de revue : unitaires et `tag-markers.spec.ts` verts.
+
+Documentation : MCP Living Documentation non vérifié/utilisé dans cette session ; aucun hash ni métadonnée mis à jour.
+
+Prochaine action : valider manuellement dans le viewer ; nouvelle session pour la suite.
+
+---
+
 # Repères de balises en visualisation — 30 octobre 2026
 
 Statut : terminé.

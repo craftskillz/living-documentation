@@ -7,7 +7,8 @@
   import SnippetsModal from "./SnippetsModal.svelte";
   import TagInsertPopup from "./TagInsertPopup.svelte";
   import { tagClickIndex, type TagClickRefusal } from "./tagClick";
-  import { insertTagAt } from "./tagInsert";
+  import TagRemovePopup from "./TagRemovePopup.svelte";
+  import { insertTagAt, locateTagRemoval, removeTagAt } from "./tagInsert";
   import { showPersistentToast } from "../persistentToast";
   import { initInlineSnippetEditing, type InlineSnippetRange } from "./inlineSnippetEdit";
   import { findKanbanRange } from "./kanban";
@@ -62,6 +63,10 @@
     ambiguous: "tags.insert.refused_ambiguous",
     "not-found": "tags.insert.refused_not_found",
   };
+  const TAG_REMOVAL_REFUSAL_KEYS: Record<"ambiguous" | "not-found", string> = {
+    ambiguous: "tags.remove.refused_ambiguous",
+    "not-found": "tags.remove.refused_not_found",
+  };
   let tagPopup = $state<{ x: number; y: number; index: number } | null>(null);
 
   async function confirmTag(name: string) {
@@ -69,6 +74,24 @@
     const index = tagPopup.index;
     tagPopup = null;
     await onsave(insertTagAt(content, index, name));
+  }
+
+  // Shift + right-click on a marker: confirm popup + resolved source index.
+  let tagRemove = $state<{ x: number; y: number; index: number; name: string } | null>(null);
+
+  async function confirmTagRemoval() {
+    if (!tagRemove) return;
+    const { index, name } = tagRemove;
+    tagRemove = null;
+    let updated: string;
+    try {
+      updated = removeTagAt(content, index, name);
+    } catch {
+      // Source changed since the click: the offset no longer points at the tag.
+      showPersistentToast(t(TAG_REMOVAL_REFUSAL_KEYS["not-found"]), "error");
+      return;
+    }
+    await onsave(updated);
   }
 
   let snippetsOpen = $state(false);
@@ -162,11 +185,26 @@
       const onTagContextMenu = (event: MouseEvent) => {
         if (!event.shiftKey) return;
         event.preventDefault();
+        const marker = (event.target as Element | null)?.closest?.(".ld-tag-marker");
+        if (marker && el.contains(marker)) {
+          const name = (marker.getAttribute("data-tag") ?? "").toLowerCase();
+          const sameNameMarkers = Array.from(el.querySelectorAll(".ld-tag-marker"))
+            .filter((m) => (m.getAttribute("data-tag") ?? "").toLowerCase() === name);
+          const loc = locateTagRemoval(content, name, sameNameMarkers.indexOf(marker), sameNameMarkers.length);
+          if (!loc.ok) {
+            showPersistentToast(t(TAG_REMOVAL_REFUSAL_KEYS[loc.reason]), "error");
+            return;
+          }
+          tagPopup = null;
+          tagRemove = { x: event.clientX, y: event.clientY, index: loc.index, name };
+          return;
+        }
         const found = tagClickIndex(el, content, event);
         if (!found.ok) {
           showPersistentToast(t(TAG_REFUSAL_KEYS[found.reason]), "error");
           return;
         }
+        tagRemove = null;
         tagPopup = { x: event.clientX, y: event.clientY, index: found.index };
       };
       el.addEventListener("contextmenu", onTagContextMenu);
@@ -175,7 +213,7 @@
 
     oncontentwired?.(contentEl);
 
-    return () => { disposeInline?.(); disposeInline = null; disposeTagClick?.(); tagPopup = null; };
+    return () => { disposeInline?.(); disposeInline = null; disposeTagClick?.(); tagPopup = null; tagRemove = null; };
   });
 
   // ── Edit mode (exposed API) ───────────────────────────────────────────────────
@@ -381,6 +419,10 @@
 
 {#if tagPopup}
   <TagInsertPopup x={tagPopup.x} y={tagPopup.y} onconfirm={confirmTag} oncancel={() => { tagPopup = null; }} />
+{/if}
+
+{#if tagRemove}
+  <TagRemovePopup x={tagRemove.x} y={tagRemove.y} name={tagRemove.name} onconfirm={confirmTagRemoval} oncancel={() => { tagRemove = null; }} />
 {/if}
 
 <SnippetsModal

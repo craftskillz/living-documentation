@@ -1217,5 +1217,10 @@
   "tags.insert.invalid": "Letters, digits and hyphens only, starting with a letter.",
   "tags.insert.refused_zone": "Cannot insert a tag in a table, code or diagram.",
   "tags.insert.refused_ambiguous": "This passage appears several times in the source; click a more distinctive spot.",
-  "tags.insert.refused_not_found": "The clicked passage could not be located in the source."
+  "tags.insert.refused_not_found": "The clicked passage could not be located in the source.",
+  "tags.remove.title": "Remove the <{name}> tag?",
+  "tags.remove.confirm": "Remove",
+  "tags.remove.cancel": "Cancel",
+  "tags.remove.refused_ambiguous": "This tag also appears elsewhere in the source (code, comment…); remove it from the editor.",
+  "tags.remove.refused_not_found": "The clicked tag could not be located in the source."
 }

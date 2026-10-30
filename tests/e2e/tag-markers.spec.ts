@@ -102,3 +102,58 @@ test('a plain right-click keeps opening the snippet menu', async ({ page, reques
   await expect(page.locator('#inline-snippet-popup')).toBeVisible();
   await expect(page.getByTestId('tag-insert-popup')).toHaveCount(0);
 });
+
+// Shift + right-click on the center of the nth tag marker.
+async function shiftRightClickMarker(page: Page, nth: number) {
+  const box = await page.locator('.ld-tag-marker').nth(nth).boundingBox();
+  if (!box) throw new Error('marker not visible');
+  await page.keyboard.down('Shift');
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2, { button: 'right' });
+  await page.keyboard.up('Shift');
+}
+
+test('shift + right-click on a marker proposes to remove the tag and confirming deletes it', async ({ page, request, ld }) => {
+  await seed(request, ld, '# Tags\n\nHello <add-footnote>world.\n');
+  await open(page, ld);
+  await expect(page.locator('.ld-tag-marker')).toHaveCount(1);
+  await shiftRightClickMarker(page, 0);
+  await expect(page.getByTestId('tag-remove-popup')).toBeVisible();
+  await expect(page.getByTestId('tag-insert-popup')).toHaveCount(0);
+  await page.getByTestId('tag-remove-confirm').click();
+  await expect.poll(() => readContent(request, ld)).not.toContain('<add-footnote>');
+  expect(await readContent(request, ld)).toContain('Hello world.');
+  await page.reload();
+  await expect(page.locator('.ld-tag-marker')).toHaveCount(0);
+});
+
+test('removing the second of two same-name markers keeps the first', async ({ page, request, ld }) => {
+  await seed(request, ld, '# Tags\n\nFirst <add-footnote>alpha.\n\nSecond <add-footnote>beta.\n');
+  await open(page, ld);
+  await expect(page.locator('.ld-tag-marker')).toHaveCount(2);
+  await shiftRightClickMarker(page, 1);
+  await page.getByTestId('tag-remove-confirm').click();
+  await expect.poll(async () => (await readContent(request, ld)).split('<add-footnote>').length).toBe(2);
+  const after = await readContent(request, ld);
+  expect(after).toContain('First <add-footnote>alpha.');
+  expect(after).toContain('Second beta.');
+});
+
+test('cancelling the removal leaves the source unchanged', async ({ page, request, ld }) => {
+  const stored = await seed(request, ld, '# Tags\n\nHello <add-footnote>world.\n');
+  await open(page, ld);
+  await expect(page.locator('.ld-tag-marker')).toHaveCount(1);
+  await shiftRightClickMarker(page, 0);
+  await page.getByTestId('tag-remove-cancel').click();
+  await expect(page.getByTestId('tag-remove-popup')).toHaveCount(0);
+  expect(await readContent(request, ld)).toBe(stored);
+});
+
+test('removal is refused when the same tag also sits in a comment', async ({ page, request, ld }) => {
+  const stored = await seed(request, ld, '# Tags\n\nHello <add-footnote>world.\n\n<!-- <add-footnote> -->\n');
+  await open(page, ld);
+  await expect(page.locator('.ld-tag-marker')).toHaveCount(1);
+  await shiftRightClickMarker(page, 0);
+  await expect(page.locator('#workspaceToastStack')).toContainText('remove it from the editor');
+  await expect(page.getByTestId('tag-remove-popup')).toHaveCount(0);
+  expect(await readContent(request, ld)).toBe(stored);
+});

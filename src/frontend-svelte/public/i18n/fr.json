@@ -1217,5 +1217,10 @@
   "tags.insert.invalid": "Lettres, chiffres et tirets uniquement, en commençant par une lettre.",
   "tags.insert.refused_zone": "Impossible d'insérer une balise dans un tableau, du code ou un diagramme.",
   "tags.insert.refused_ambiguous": "Ce passage apparaît plusieurs fois dans la source ; cliquez sur un endroit plus distinctif.",
-  "tags.insert.refused_not_found": "Le passage cliqué est introuvable dans la source."
+  "tags.insert.refused_not_found": "Le passage cliqué est introuvable dans la source.",
+  "tags.remove.title": "Supprimer la balise <{name}> ?",
+  "tags.remove.confirm": "Supprimer",
+  "tags.remove.cancel": "Annuler",
+  "tags.remove.refused_ambiguous": "Cette balise apparaît aussi ailleurs dans la source (code, commentaire…) ; supprimez-la depuis l'éditeur.",
+  "tags.remove.refused_not_found": "La balise cliquée est introuvable dans la source."
 }
