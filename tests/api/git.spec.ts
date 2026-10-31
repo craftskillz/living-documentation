@@ -152,3 +152,36 @@ test('GET /api/git/document-versions defaults to previous document commit versus
   expect(body.commits.some((commit) => commit.subject === 'initial docs')).toBe(true);
   expect(body.commits.some((commit) => commit.subject === 'update quickstart')).toBe(true);
 });
+
+test('GET /api/git/document-versions with lines lists only the commits touching that line range', async ({
+  request,
+  ld,
+}) => {
+  const relative = 'testdocs/2026_01_02_10_00_[Guide]_quickstart.md';
+  const quickstartPath = path.join(ld.docsAbs, '2026_01_02_10_00_[Guide]_quickstart.md');
+  fs.writeFileSync(quickstartPath, '# Title\n\nAlpha\n\nBeta\n', 'utf-8');
+  initRepo(ld.parent);
+  fs.writeFileSync(quickstartPath, '# Title\n\nAlpha edited\n\nBeta\n', 'utf-8');
+  git(ld.parent, ['commit', '-am', 'edit alpha']);
+  fs.writeFileSync(quickstartPath, '# Title\n\nAlpha edited\n\nBeta edited\n', 'utf-8');
+  git(ld.parent, ['commit', '-am', 'edit beta']);
+
+  await request.put(`${ld.baseURL}/api/config`, {
+    data: { gitIntegration: { mode: 'enabled', pushMode: 'never', pushEveryCommits: 1, commitMessage: 'docs' } },
+  });
+
+  const versions = (lines: string) =>
+    request.get(`${ld.baseURL}/api/git/document-versions?documentId=${encodeURIComponent(QUICKSTART_ID)}&sinceDays=30&lines=${lines}`);
+
+  const res = await versions('3,3');
+  expect(res.ok()).toBe(true);
+  const body = await res.json() as { relativePath: string; lineRange: unknown; baseContent: string; commits: Array<{ subject: string }> };
+  expect(body.relativePath).toBe(relative);
+  expect(body.lineRange).toEqual({ start: 3, end: 3 });
+  expect(body.commits.map((commit) => commit.subject)).toEqual(['edit alpha', 'initial docs']);
+  expect(body.baseContent).toContain('\nAlpha\n');
+
+  for (const invalid of ['0,2', '4,2', 'abc', '1']) {
+    expect((await versions(invalid)).status()).toBe(400);
+  }
+});

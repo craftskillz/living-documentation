@@ -51,7 +51,14 @@ export interface GitDocumentVersions {
   headRef: "HEAD";
   headContent: string | null;
   commits: GitDocumentCommit[];
+  lineRange: GitLineRange | null;
   message: string;
+}
+
+/** 1-based inclusive file lines, as accepted by `git log -L`. */
+export interface GitLineRange {
+  start: number;
+  end: number;
 }
 
 interface GitCommandResult {
@@ -197,14 +204,22 @@ function readRefContent(repoRoot: string, ref: string, relativePath: string): st
   return result.stdout;
 }
 
-function listDocumentCommits(repoRoot: string, relativePath: string, sinceDays: number): GitDocumentCommit[] {
+function listDocumentCommits(
+  repoRoot: string,
+  relativePath: string,
+  sinceDays: number,
+  lineRange: GitLineRange | null,
+): GitDocumentCommit[] {
+  // -L tracks the range through history (like an IDE "history of selection"); -s drops its patches.
+  const scope = lineRange
+    ? [`-L${lineRange.start},${lineRange.end}:${relativePath}`, "-s"]
+    : ["--follow"];
   const result = runGit(repoRoot, [
     "log",
-    "--follow",
+    ...scope,
     `--since=${sinceDays} days ago`,
     `--format=%H%x1f%h%x1f%aI%x1f%an%x1f%s`,
-    "--",
-    relativePath,
+    ...(lineRange ? [] : ["--", relativePath]),
   ]);
   if (!result.ok) {
     const detail = (result.stderr || result.error || "git log failed").trim();
@@ -309,6 +324,7 @@ export function gitDocumentVersions(
   documentId: string,
   sinceDays?: number,
   baseRef?: string,
+  lineRange: GitLineRange | null = null,
 ): GitDocumentVersions {
   const config = readConfig(docsPath).gitIntegration;
   const base = {
@@ -321,6 +337,7 @@ export function gitDocumentVersions(
     headRef: "HEAD" as const,
     headContent: null,
     commits: [],
+    lineRange,
   };
 
   if (config.mode !== "enabled") {
@@ -338,7 +355,7 @@ export function gitDocumentVersions(
     const repo = resolveRepoInfo(docsPath);
     const relativePath = resolveDocumentPathspec(docsPath, documentId, repo);
     const days = normalizeHistoryDays(sinceDays);
-    const commits = listDocumentCommits(repo.root, relativePath, days);
+    const commits = listDocumentCommits(repo.root, relativePath, days, lineRange);
     const selectedBaseRef = baseRef?.trim() || commits[1]?.hash || commits[0]?.hash || "HEAD";
     const headContent = readRefContent(repo.root, "HEAD", relativePath);
     return {

@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { untrack } from "svelte";
   import { t } from "../i18n.svelte";
+  import { type LineRange, rowsInLineRange, shiftLineRangeAfterRestore } from "./selectionHistory";
 
   interface GitDocumentCommit {
     hash: string;
@@ -55,10 +57,11 @@
     | { kind: "removed"; text: string; oldLine: number; newIndex: number }
     | { kind: "added"; text: string; newLine: number; oldIndex: number };
 
-  let { open, docId, content, onsave, onclose }: {
+  let { open, docId, content, lineRange = null, onsave, onclose }: {
     open: boolean;
     docId: string;
     content: string;
+    lineRange?: LineRange | null;
     onsave: (content: string) => Promise<void>;
     onclose: () => void;
   } = $props();
@@ -79,12 +82,15 @@
   let lastLoadKey = "";
   let workingContent = $state("");
   let savingDraft = $state(false);
+  // Selection being followed (null = whole document): in HEAD lines for git, in draft lines for display.
+  let headRange = $state<LineRange | null>(null);
+  let activeRange = $state<LineRange | null>(null);
 
   const persistedContent = $derived(data?.headContent ?? content);
   const rightContent = $derived(workingContent);
   const hasDraftChanges = $derived(workingContent !== persistedContent);
   const diffView = $derived(buildDiffView(data?.baseContent ?? "", rightContent));
-  const diffRows = $derived(diffView.rows);
+  const diffRows = $derived(activeRange ? firstRowOfEachHunkApplies(rowsInLineRange(diffView.rows, activeRange)) : diffView.rows);
   const hasBaseContent = $derived(data?.baseContent !== null && data?.baseContent !== undefined);
 
   $effect(() => {
@@ -225,6 +231,16 @@
     return { rows, hunks };
   }
 
+  /** Filtering can hide a hunk's first row: the restore button moves to its first visible row. */
+  function firstRowOfEachHunkApplies(rows: DiffRow[]): DiffRow[] {
+    const seen = new Set<number>();
+    return rows.map((row) => {
+      if (row.hunkId === null || seen.has(row.hunkId)) return { ...row, showApply: false };
+      seen.add(row.hunkId);
+      return { ...row, showApply: true };
+    });
+  }
+
   function lineClass(kind: DiffKind): string {
     if (kind === "added") return "bg-green-50 text-green-900 dark:bg-green-950/40 dark:text-green-100";
     if (kind === "removed") return "bg-red-50 text-red-900 dark:bg-red-950/40 dark:text-red-100";
@@ -273,6 +289,7 @@
       ];
       const nextContent = nextLines.join("\n");
       workingContent = nextContent;
+      if (activeRange) activeRange = shiftLineRangeAfterRestore(activeRange, hunk);
       applyMessage = { text: t("versions.apply_success"), cls: "text-green-600 dark:text-green-400" };
     } catch (err: unknown) {
       applyMessage = {
@@ -290,6 +307,7 @@
     applyMessage = null;
     try {
       await onsave(workingContent);
+      headRange = activeRange;
       lastLoadKey = "";
       await loadVersions(selectedBaseRef);
       applyMessage = { text: t("versions.save_success"), cls: "text-green-600 dark:text-green-400" };
@@ -305,6 +323,7 @@
 
   function discardDraft() {
     workingContent = content;
+    activeRange = headRange;
     applyMessage = null;
     applyingHunkId = null;
     savingDraft = false;
@@ -317,7 +336,10 @@
 
   async function loadVersions(baseRef = selectedBaseRef) {
     const days = clampHistoryDays(appliedSinceDays);
-    const key = `${docId}:${days}:${baseRef || "default"}`;
+    // Untracked: restoring a block moves activeRange, which must not reload the versions.
+    const range = untrack(() => headRange);
+    const lines = range ? `${range.start},${range.end}` : "";
+    const key = `${docId}:${days}:${baseRef || "default"}:${lines}`;
     if (!open || loading || key === lastLoadKey) return;
     loading = true;
     error = "";
@@ -326,6 +348,7 @@
     try {
       const params = new URLSearchParams({ documentId: docId, sinceDays: String(days) });
       if (baseRef) params.set("baseRef", baseRef);
+      if (lines) params.set("lines", lines);
       const res = await fetch(`/api/git/document-versions?${params.toString()}`);
       const body = await res.json();
       if (!res.ok || !body.ok) throw new Error(body.message || body.error || t("versions.load_failed"));
@@ -351,11 +374,26 @@
     void loadVersions("");
   }
 
+  function showWholeDocument() {
+    headRange = null;
+    activeRange = null;
+    selectedBaseRef = "";
+    lastLoadKey = "";
+    void loadVersions("");
+  }
+
   function selectCommit(hash: string) {
     selectedBaseRef = hash;
     lastLoadKey = "";
     void loadVersions(hash);
   }
+
+  $effect.pre(() => {
+    if (!open) return;
+    const initial = untrack(() => lineRange);
+    headRange = initial;
+    activeRange = initial;
+  });
 
   $effect(() => {
     if (!open) {
@@ -385,6 +423,14 @@
           <i class="fa-solid fa-xmark"></i>
         </button>
       </header>
+
+      {#if activeRange}
+        <div data-testid="versions-selection" class="flex shrink-0 items-center gap-3 border-b border-blue-200 bg-blue-50 px-5 py-2 text-sm text-blue-800 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-200">
+          <i class="fa-solid fa-i-cursor"></i>
+          <span>{t("versions.selection_banner", { start: String(activeRange.start), end: String(activeRange.end) })}</span>
+          <button type="button" onclick={showWholeDocument} disabled={loading || hasDraftChanges} class="ml-auto rounded-lg border border-blue-200 px-3 py-1 text-xs font-semibold transition-colors hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-blue-800 dark:hover:bg-blue-900/40">{t("versions.selection_clear")}</button>
+        </div>
+      {/if}
 
       <div class="shrink-0 border-b border-gray-200 px-5 py-3 dark:border-gray-800">
         <div class="flex flex-wrap items-end gap-3">

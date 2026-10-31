@@ -8,8 +8,24 @@ tags:
   - progression
   - reprise
   - agents-ia
-timestamp: 2026-10-30T10:00:00Z
+timestamp: 2026-10-31T10:00:00Z
 status: To be validated
+---
+
+# Historique d'une sélection dans Versions — 31 octobre 2026
+
+Statut : terminé (validation manuelle à faire).
+
+Sélectionner un passage du document puis cliquer sur « Versions » restreint la modale à l'historique de ce passage, comme « Show History for Selection » d'IntelliJ. Mapping par bloc : le rendu serveur marque chaque bloc de premier niveau avec ses lignes du fichier (`data-source-lines="début-fin"`, frontmatter compris) via `src/lib/sourceLines.ts` (marqueurs `<!--ld-src:…-->` injectés avant le parse puis convertis en attributs) ; le placeholder des blocs `:::compare` conserve désormais le nombre de lignes. Côté viewer, `selectionSourceLines.ts` élargit la sélection aux blocs dont elle couvre du texte. L'API `GET /api/git/document-versions` accepte `lines=début,fin` → `git log -L` (400 si mal formé) et renvoie `lineRange`. La modale affiche un bandeau « Historique de la sélection — lignes X à Y » (bouton « Voir tout le document »), ne montre que les lignes du diff dans la plage (`selectionHistory.ts`) et suit la plage quand on restaure un bloc (plage HEAD pour git, plage brouillon pour l'affichage).
+
+Limites : granularité bloc (une liste entière, un tableau entier) ; les lignes viennent du fichier courant, supposé égal à HEAD (autocommit) ; les extra files ne sont pas concernés.
+
+Vérifications : unitaires 113/113, `tests/api` 234/234, `tests/e2e` 137/138 (`kanban.spec.ts:226` en échec une fois sous charge, vert 3/3 isolément, sans lien), lint et svelte-check (0 erreur) OK.
+
+Documentation : ADR « versions visuelles des documents depuis Git HEAD » à compléter (paramètre `lines`, attribut `data-source-lines`) après commit ; MCP Living Documentation non vérifié.
+
+Prochaine action : valider manuellement dans le viewer, puis compléter l'ADR via le MCP.
+
 ---
 
 # Balises avec texte libre — 30 octobre 2026

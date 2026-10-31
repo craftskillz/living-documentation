@@ -6,6 +6,8 @@
   import AccuracyGauge from "./AccuracyGauge.svelte";
   import MetadataModal from "./MetadataModal.svelte";
   import VersionsModal from "./VersionsModal.svelte";
+  import type { LineRange } from "./selectionHistory";
+  import { selectionSourceLines } from "./selectionSourceLines";
   import EditableMarkdown from "./EditableMarkdown.svelte";
   import { favorites } from "../favorites.svelte";
   import ConfirmDialog from "../ConfirmDialog.svelte";
@@ -34,6 +36,7 @@
   let confirmDialog = $state<ConfirmDialog>(null!);
   let metadataOpen = $state(false);
   let versionsOpen = $state(false);
+  let versionsLineRange = $state<LineRange | null>(null);
   let versionsAvailable = $state(false);
   let localSearchMount = $state<HTMLElement>(null!);
   let searchMatches = $state<SearchMatch[]>([]);
@@ -58,6 +61,12 @@
   let copiedId = $state(false);
   let ttsLanguagePromptOpen = $state(false);
   let ttsLanguageSaving = $state(false);
+
+  // A selection in the rendered document narrows Versions to the history of its lines.
+  function openVersions() {
+    versionsLineRange = contentEl ? selectionSourceLines(contentEl, window.getSelection()) : null;
+    versionsOpen = true;
+  }
 
   async function loadVersionsAvailability() {
     try {
@@ -425,7 +434,7 @@
             <button onclick={exportPDF} data-testid="export-pdf-btn" title={t("doc.export_pdf")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">📄 {t("doc.export_pdf_btn")}</button>
             <button onclick={() => (metadataOpen = true)} data-testid="metadata-btn" title={t("metadata.button_title")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-code-compare"></i> {t("metadata.button")}</button>
             {#if versionsAvailable}
-              <button onclick={() => (versionsOpen = true)} data-testid="versions-btn" title={t("versions.button_title")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-code-branch"></i> {t("versions.button")}</button>
+              <button onclick={openVersions} data-testid="versions-btn" title={t("versions.button_title")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-code-branch"></i> {t("versions.button")}</button>
             {/if}
             <button onclick={() => editable.enterEdit()} data-testid="edit-doc-btn" title={t("doc.edit")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-file-pen"></i> {t("doc.edit_btn")}</button>
           {/if}
@@ -539,7 +548,7 @@
 {/if}
 
 <MetadataModal open={metadataOpen} docId={doc.id} content={doc.content} onclose={() => (metadataOpen = false)} />
-<VersionsModal open={versionsOpen} docId={doc.id} content={doc.content} {onsave} onclose={() => (versionsOpen = false)} />
+<VersionsModal open={versionsOpen} docId={doc.id} content={doc.content} lineRange={versionsLineRange} {onsave} onclose={() => (versionsOpen = false)} />
 <ConfirmDialog bind:this={confirmDialog} />
 
 {#if ttsLanguagePromptOpen}

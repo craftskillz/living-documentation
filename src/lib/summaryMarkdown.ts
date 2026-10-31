@@ -1,4 +1,4 @@
-import { marked, Marked, type MarkedExtension } from "marked";
+import { marked, Marked, type MarkedExtension, type Token } from "marked";
 import markedFootnote from "marked-footnote";
 import en from "../frontend-svelte/public/i18n/en.json";
 import { LONE_TAG_SOURCE } from "../shared/tagName";
@@ -76,14 +76,11 @@ function renderSummaries(html: string, options: MarkdownOptions): string {
   });
 }
 
-/** Render footnotes and summary labels with optional ATX heading syntax.
- * Summary rewriting only changes raw HTML tokens; code examples stay literal.
- */
-export function renderMarkdownWithSummaries(
+function createParser(
   source: string,
-  options: MarkdownOptions = {},
-  { tagMarkers = false, ...footnoteOptions }: RenderOptions = {},
-): string {
+  options: MarkdownOptions,
+  { tagMarkers = false, ...footnoteOptions }: RenderOptions,
+): Marked {
   const resolvedOptions = { ...marked.defaults, ...options };
   // Each render owns its extension state, including numbering and definitions.
   const footnotes = markedFootnote({
@@ -106,5 +103,21 @@ export function renderMarkdownWithSummaries(
       token.text = renderSummaries(text, resolvedOptions);
     },
   });
-  return parser.parse(source, { ...options, async: false }) as string;
+  return parser;
+}
+
+/** Top-level tokens as the renderer sees them (same extensions), from a throwaway parser. */
+export function lexMarkdown(source: string, options: MarkdownOptions = {}): Token[] {
+  return createParser(source, options, {}).lexer(source, { ...options, async: false });
+}
+
+/** Render footnotes and summary labels with optional ATX heading syntax.
+ * Summary rewriting only changes raw HTML tokens; code examples stay literal.
+ */
+export function renderMarkdownWithSummaries(
+  source: string,
+  options: MarkdownOptions = {},
+  renderOptions: RenderOptions = {},
+): string {
+  return createParser(source, options, renderOptions).parse(source, { ...options, async: false }) as string;
 }

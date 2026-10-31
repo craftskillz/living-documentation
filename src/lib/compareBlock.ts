@@ -25,7 +25,8 @@
  */
 
 import type { marked } from "marked";
-import { renderMarkdownWithSummaries } from "./summaryMarkdown";
+import { attachSourceLineMarkers, injectSourceLineMarkers } from "./sourceLines";
+import { lexMarkdown, renderMarkdownWithSummaries } from "./summaryMarkdown";
 
 function htmlEscape(str: string): string {
   return str
@@ -71,29 +72,33 @@ function renderCompareDiv(
 export function renderMarkdownWithCompareBlocks(
   source: string,
   markedOpts: Parameters<typeof marked.parse>[1] = {},
-  { tagMarkers = false }: { tagMarkers?: boolean } = {},
+  { tagMarkers = false, sourceLineOffset }: { tagMarkers?: boolean; sourceLineOffset?: number } = {},
 ): string {
   const blocks: string[] = [];
 
-  const withPlaceholders = source.replace(COMPARE_RE, (_, content: string) => {
+  const withPlaceholders = source.replace(/\r\n?/g, "\n").replace(COMPARE_RE, (match: string, content: string) => {
     const idx = blocks.length;
     blocks.push(renderCompareDiv(content, markedOpts, idx, tagMarkers));
-    // A standalone HTML comment is an HTML block (no blank lines inside) that marked
-    // passes through verbatim — safe to swap out after parsing.
-    return `\n<!--${PLACEHOLDER_PREFIX}${idx}-->\n`;
+    // A standalone HTML comment is an HTML block that marked passes through verbatim —
+    // safe to swap out after parsing. It ends at "-->", not at a blank line, so padding it
+    // with the block's newlines keeps the following source lines aligned.
+    return `<!--${PLACEHOLDER_PREFIX}${idx}${"\n".repeat(match.split("\n").length - 1)}-->`;
   });
 
-  let html = renderMarkdownWithSummaries(withPlaceholders, markedOpts, { tagMarkers });
+  const toRender = sourceLineOffset === undefined
+    ? withPlaceholders
+    : injectSourceLineMarkers(withPlaceholders, lexMarkdown(withPlaceholders, markedOpts), sourceLineOffset);
+  let html = renderMarkdownWithSummaries(toRender, markedOpts, { tagMarkers });
 
   // Swap placeholders back for the rendered compare <div>s. Tolerate marked wrapping the
   // comment in a <p>…</p> paragraph.
   html = html.replace(
     new RegExp(
-      `(?:<p>\\s*)?<!--${PLACEHOLDER_PREFIX}(\\d+)-->(?:\\s*</p>)?`,
+      `(?:<p>\\s*)?<!--${PLACEHOLDER_PREFIX}(\\d+)\\s*-->(?:\\s*</p>)?`,
       "g",
     ),
     (_, i: string) => blocks[Number(i)] ?? "",
   );
 
-  return html;
+  return sourceLineOffset === undefined ? html : attachSourceLineMarkers(html);
 }
