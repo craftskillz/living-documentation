@@ -31,6 +31,12 @@ La synthèse reste entièrement locale : ni service cloud, ni installation Pytho
 
 Le bouton `tts-next-section` saute au prochain titre `h1` à `h6`. Un titre contenant plusieurs phrases ne compte que pour une étape. La lecture reprend au nouveau titre, ou reste en pause si elle était suspendue, et le bouton est désactivé en fin de document. Les sauts rapides invalident les réponses audio en attente, et l'échec d'une prélecture abandonnée n'interrompt pas la nouvelle section. La position n'est pas mémorisée entre les sessions.
 
+### Départ de la lecture : depuis la sélection
+
+Si une sélection existe dans le document, « Écouter » démarre à son premier mot, puis continue jusqu'à la fin du document. La fin de sélection est ignorée. `readingStartFromSelection` (`readingScript.ts`) renvoie une position logique, segment et décalage dans le texte lu, plutôt qu'un `Range` DOM : elle est capturée au clic et reste valable après la fenêtre de choix de langue et la sauvegarde du frontmatter.
+
+Dans un widget annoncé, la lecture commence par son annonce ; sur un texte non lu, comme un appel de note, au prochain texte lu. Sans sélection dans le document, elle part du début. La sélection n'est pas modifiée, et la position ne peut pas être changée pendant une lecture en cours ou en pause.
+
 ## Conséquences
 
 - Monter la version de `kokoro-js` ou d'eSpeak NG demande de relancer le test d'inférence réelle : `LD_TEST_TTS=1 npx playwright test tests/api/tts.spec.ts --workers=1`. Sans cette variable, il est ignoré.

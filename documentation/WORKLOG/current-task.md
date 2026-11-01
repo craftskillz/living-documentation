@@ -12,6 +12,24 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
+# Lecture audio depuis la sélection — 1er novembre 2026
+
+Statut : terminé et commité (`a06727c0`). Validation manuelle dans le viewer confirmée par l'utilisateur.
+
+Livré : si une sélection existe dans le document, « Écouter » démarre à son premier mot puis continue jusqu'à la fin du document. La sélection peut commencer au milieu d'une phrase : seule la fin de celle-ci est lue et surlignée. Si elle commence au milieu d'un mot, la lecture part du début du mot. Dans un widget annoncé (code, tableau, image, diagramme), la lecture commence par son annonce. Sur un texte non lu (appel de note), elle commence au prochain texte lu. Sans sélection dans le document, la lecture part du début, comme avant. La position est capturée au clic, car la fenêtre de choix de langue et sa sauvegarde peuvent faire perdre la sélection.
+
+Fichiers : `readingScript.ts` (`readingStartFromSelection`, `readingCharacters`), `ttsPlayer.svelte.ts` (option `from`), `DocViewer.svelte`, `i18n/en.json`, `i18n/fr.json`, `tests/e2e/tts-reading.spec.ts`.
+
+Vérifications : 124 unitaires, 235 API et 1 inférence optionnelle ignorée, 180 E2E, build réussi, 5 nouveaux tests E2E. Après cette suite complète, seule une retouche de lint dans le fichier de test a suivi : `tests/e2e/tts-reading.spec.ts` rejoué, 9 tests verts. Audio simulé dans les E2E : pas d'écoute réelle. Sélection posée par script, clic réel sur le bouton.
+
+Documentation : section ajoutée à l'ADR [lecture française](?doc=ADRS%252F2026_11_01_18_16_%255BTTS%255D_lecture_francaise_kokoro_espeak_et_navigation_par_section), statut « To be validated ».
+
+MCP : le serveur du port 4321 sert un autre dossier (`12_Articles_Blog/arolla`), rien n'y a été écrit. Ce fichier est édité à la main ; métadonnées et hashes non mis à jour.
+
+Hors périmètre : changer de position pendant une lecture en cours ou en pause ; il faut arrêter, sélectionner, puis relancer.
+
+---
+
 # Édition par section, autosave et lecture audio — clôture du 1er novembre 2026
 
 Statut : terminé et commité (`f5a6ca81`). Validation manuelle dans le viewer confirmée par l'utilisateur.
