@@ -106,6 +106,26 @@ export function readingTextNodes(el: HTMLElement): Text[] {
   return nodes;
 }
 
+export interface ReadingCharacter {
+  node: Text;
+  offset: number;
+}
+
+// One entry per character of the segment's normalised spokenText (collapsed
+// whitespace, no leading space): an index in spokenText is an index in this list.
+export function readingCharacters(el: HTMLElement): ReadingCharacter[] {
+  const characters: ReadingCharacter[] = [];
+  let previousWasSpace = true;
+  for (const node of readingTextNodes(el)) {
+    for (let offset = 0; offset < node.data.length; offset++) {
+      const isSpace = /\s/.test(node.data[offset]);
+      if (!isSpace || !previousWasSpace) characters.push({ node, offset });
+      previousWasSpace = isSpace;
+    }
+  }
+  return characters;
+}
+
 function textSegment(el: HTMLElement, type: SegmentType): ReadingSegment | null {
   const spokenText = readingTextNodes(el).map(node => node.data).join("").replace(/\s+/g, " ").trim();
   if (!spokenText) return null;
@@ -209,4 +229,47 @@ export function buildReadingScript(
   const out: ReadingSegment[] = [];
   walk(container, opts, out);
   return out;
+}
+
+// Stable across a re-render of the same content, unlike a DOM Range.
+export interface ReadingStart {
+  segment: number;
+  offset: number; // in the segment's spokenText
+}
+
+// A drag can begin in the middle of a word: the reading starts on the whole word.
+function wordStart(segment: ReadingSegment, offset: number): number {
+  const floor = segment.sentences.find(sentence => sentence.end > offset)?.start ?? 0;
+  let start = offset;
+  while (start > floor && /\S/.test(segment.spokenText[start - 1])) start--;
+  return start;
+}
+
+// Where a reading starts for this selection: its first readable character, or
+// the next one when it begins on text that is not spoken (footnote marker,
+// separator, end of a block). Null when the selection is not in the document.
+export function readingStartFromSelection(
+  root: HTMLElement,
+  selection: Selection | null,
+  options: Partial<ReadingScriptOptions> = {},
+): ReadingStart | null {
+  if (!selection || selection.isCollapsed || !selection.rangeCount) return null;
+  const range = selection.getRangeAt(0);
+  if (!range.intersectsNode(root)) return null;
+  const point = range.cloneRange();
+  point.collapse(true);
+
+  const segments = buildReadingScript(root, options);
+  for (const [index, segment] of segments.entries()) {
+    if (point.comparePoint(segment.el, segment.el.childNodes.length) < 0) continue;
+    if (segment.highlightWhole) return { segment: index, offset: 0 };
+    let offset = readingCharacters(segment.el).findIndex(
+      character => point.comparePoint(character.node, character.offset) >= 0,
+    );
+    if (offset < 0) continue;
+    while (/\s/.test(segment.spokenText[offset] ?? "")) offset++;
+    if (offset >= segment.spokenText.length) continue;
+    return { segment: index, offset: wordStart(segment, offset) };
+  }
+  return null;
 }

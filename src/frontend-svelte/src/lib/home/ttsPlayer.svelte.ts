@@ -8,9 +8,10 @@
 
 import {
   buildReadingScript,
-  readingTextNodes,
+  readingCharacters,
   type ReadingSegment,
   type ReadingScriptOptions,
+  type ReadingStart,
 } from "./readingScript";
 
 export type TtsStatus = "idle" | "loading" | "playing" | "paused";
@@ -40,22 +41,7 @@ interface PlayUnit {
 // Maps normalised-text offsets (matching readingScript's collapsed/​trimmed
 // spokenText) back to a DOM Range inside `el`, for sentence-level highlighting.
 function rangeForOffsets(el: HTMLElement, start: number, end: number): Range | null {
-  const positions: { node: Text; offset: number }[] = [];
-  let prevWasSpace = true; // drop leading whitespace (mirrors trimStart)
-  for (const node of readingTextNodes(el)) {
-    const s = node.data;
-    for (let i = 0; i < s.length; i++) {
-      if (/\s/.test(s[i])) {
-        if (!prevWasSpace) {
-          positions.push({ node, offset: i });
-          prevWasSpace = true;
-        }
-      } else {
-        positions.push({ node, offset: i });
-        prevWasSpace = false;
-      }
-    }
-  }
+  const positions = readingCharacters(el);
   if (start >= positions.length || end <= start) return null;
   const a = positions[start];
   const range = document.createRange();
@@ -110,10 +96,15 @@ class TtsPlayer {
 
   async start(
     container: HTMLElement,
-    options: Partial<ReadingScriptOptions> & { voice?: string; speed?: number; language?: TtsLanguage } = {},
+    options: Partial<ReadingScriptOptions> & {
+      voice?: string;
+      speed?: number;
+      language?: TtsLanguage;
+      from?: ReadingStart | null;
+    } = {},
   ): Promise<void> {
     this.stop();
-    const { voice, speed, language, ...scriptOpts } = options;
+    const { voice, speed, language, from, ...scriptOpts } = options;
     this.voice = voice;
     this.speed = speed;
     this.language = language ?? "en";
@@ -131,7 +122,17 @@ class TtsPlayer {
     this.error = null;
     const myToken = ++this.token;
     this.status = "loading";
-    await this.playFrom(0, myToken);
+    await this.playFrom(from ? this.startAt(segments[from.segment], from.offset) : 0, myToken);
+  }
+
+  // Cuts the sentence holding the start so that speech and highlight begin there.
+  private startAt(segment: ReadingSegment | undefined, offset: number): number {
+    const index = this.units.findIndex((unit) => unit.seg === segment && unit.end > offset);
+    if (index < 0) return 0;
+    const unit = this.units[index];
+    const start = Math.max(unit.start, offset);
+    this.units[index] = { ...unit, start, text: unit.seg.spokenText.slice(start, unit.end) };
+    return index;
   }
 
   private async playFrom(i: number, myToken: number): Promise<void> {

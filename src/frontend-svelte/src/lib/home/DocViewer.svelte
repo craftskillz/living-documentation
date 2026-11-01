@@ -16,6 +16,7 @@
   import { getDocStatus, replaceStatus, isWorklogDocument } from "./docStatus";
   import { initLocalSearch } from "./localSearch";
   import { ttsPlayer, type TtsLanguage } from "./ttsPlayer.svelte";
+  import { readingStartFromSelection, type ReadingStart } from "./readingScript";
   import { getDocumentLanguage, setDocumentLanguage, type DocumentLanguage } from "../../../../lib/documentLanguage";
   import { highlightMatches, scrollToMatch, type SearchMatch } from "./searchNotice";
   import type { DocDetail } from "./types";
@@ -63,6 +64,7 @@
   let copiedId = $state(false);
   let ttsLanguagePromptOpen = $state(false);
   let ttsLanguageSaving = $state(false);
+  let ttsStart: ReadingStart | null = null;
 
   // A selection in the rendered document narrows Versions to the history of its lines.
   function openVersions() {
@@ -307,18 +309,23 @@
   function exportPDF() { window.print(); }
 
   // ── Text-to-speech ────────────────────────────────────────────────────────
-  function playDocument(language: DocumentLanguage) {
-    if (!contentEl) return;
-    ttsPlayer.start(contentEl, {
-      language: language as TtsLanguage,
+  function readingLabels() {
+    return {
       codeLabel: t("tts.code_label"),
       imageLabel: t("tts.image_label"),
       diagramLabel: t("tts.diagram_label"),
       tableLabel: t("tts.table_label"),
-    });
+    };
+  }
+
+  function playDocument(language: DocumentLanguage) {
+    if (!contentEl) return;
+    ttsPlayer.start(contentEl, { language: language as TtsLanguage, from: ttsStart, ...readingLabels() });
   }
 
   function startReading() {
+    // Captured now: the language prompt and its save can drop the selection.
+    ttsStart = contentEl ? readingStartFromSelection(contentEl, window.getSelection(), readingLabels()) : null;
     const language = getDocumentLanguage(doc.content);
     if (!language) {
       ttsLanguagePromptOpen = true;

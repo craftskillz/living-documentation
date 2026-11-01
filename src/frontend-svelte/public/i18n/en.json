@@ -237,7 +237,7 @@
   "doc.code_copy": "Copy",
   "doc.code_copied": "Copied!",
   "doc.mermaid_diagram_alt": "Mermaid diagram",
-  "tts.play": "Read aloud",
+  "tts.play": "Read aloud, from the selection if there is one",
   "tts.play_btn": "Listen",
   "tts.pause": "Pause reading",
   "tts.resume": "Resume reading",

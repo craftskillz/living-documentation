@@ -159,3 +159,105 @@ test('skipping an abandoned failing prefetch does not interrupt the new section'
   await expect(page.getByTestId('tts-toggle').locator('.fa-pause')).toBeVisible();
   await page.getByTestId('tts-stop').click();
 });
+
+async function selectText(page: Page, text: string) {
+  await page.evaluate(wanted => {
+    const walker = document.createTreeWalker(document.querySelector('#doc-content') as Element, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const at = (node as Text).data.indexOf(wanted);
+      if (at < 0) continue;
+      const range = document.createRange();
+      range.setStart(node, at);
+      range.setEnd(node, at + wanted.length);
+      const selection = window.getSelection();
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+      return;
+    }
+    throw new Error(`text not found: ${wanted}`);
+  }, text);
+}
+
+function recordSpokenText(page: Page, spoken: string[], seconds = 20) {
+  return page.route('**/api/tts', async route => {
+    spoken.push(JSON.parse(route.request().postData() || '{}').text);
+    await route.fulfill({ contentType: 'audio/wav', body: silentWav(seconds) });
+  });
+}
+
+test('a selection starts the reading at its first word, then the document continues', async ({ page, request, ld }) => {
+  const spoken: string[] = [];
+  await recordSpokenText(page, spoken, 0.25);
+  await openDocument(page, request, ld.baseURL,
+    'Introduction ignorée.\n\nPremière phrase ignorée. Une seconde phrase utile. Une troisième.\n\n## Titre suivant\n\nLa fin.');
+  await selectText(page, 'conde phrase');
+  await page.getByTestId('tts-play').click();
+  await expect.poll(() => spoken).toEqual(expect.arrayContaining([
+    'seconde phrase utile.', 'Une troisième.', 'Titre suivant', 'La fin.',
+  ]));
+  expect(spoken[0]).toBe('seconde phrase utile.');
+  expect(spoken.join(' ')).not.toContain('ignorée');
+});
+
+test('the highlight and next section follow a reading started from a selection', async ({ page, request, ld }) => {
+  const spoken: string[] = [];
+  await recordSpokenText(page, spoken);
+  await openDocument(page, request, ld.baseURL,
+    'Introduction.\n\nUne phrase avec un **mot**[^1] choisi ici.\n\n## Titre suivant\n\nLa fin.\n\n[^1]: Note.');
+  await selectText(page, 'choisi');
+  await page.getByTestId('tts-play').click();
+  await expect.poll(() => highlightedText(page)).toBe('choisi ici.');
+  expect(spoken[0]).toBe('choisi ici.');
+  await page.getByTestId('tts-next-section').click();
+  await expect.poll(() => highlightedText(page)).toBe('Titre suivant');
+  await page.getByTestId('tts-stop').click();
+});
+
+test('a selection starting in an announced widget or a skipped marker starts at the next readable text', async ({ page, request, ld }) => {
+  const spoken: string[] = [];
+  await recordSpokenText(page, spoken);
+  await openDocument(page, request, ld.baseURL,
+    'Introduction.\n\n```js\nconst choisi = 1;\n```\n\nAprès le code.');
+  await selectText(page, 'choisi');
+  await page.getByTestId('tts-play').click();
+  await expect.poll(() => spoken[0]).toBe('Bloc de code.');
+  await page.getByTestId('tts-stop').click();
+
+  spoken.length = 0;
+  await openDocument(page, request, ld.baseURL, 'Avant[^1] la suite.\n\nFin.\n\n[^1]: Note.');
+  await selectText(page, '1');
+  await page.getByTestId('tts-play').click();
+  await expect.poll(() => spoken[0]).toBe('la suite.');
+  await page.getByTestId('tts-stop').click();
+});
+
+test('without a selection in the document, the reading starts at the beginning', async ({ page, request, ld }) => {
+  const spoken: string[] = [];
+  await recordSpokenText(page, spoken);
+  await openDocument(page, request, ld.baseURL, 'Le début.\n\nLa suite.');
+  await page.evaluate(() => {
+    const range = document.createRange();
+    range.selectNodeContents(document.querySelector('[data-testid="doc-title"]') as Element);
+    window.getSelection()?.addRange(range);
+  });
+  await page.getByTestId('tts-play').click();
+  await expect.poll(() => spoken[0]).toBe('Le début.');
+  await page.getByTestId('tts-stop').click();
+});
+
+test('a selection made before the language prompt still sets the reading start', async ({ page, request, ld }) => {
+  const spoken: string[] = [];
+  await recordSpokenText(page, spoken);
+  const response = await request.put(`${ld.baseURL}/api/documents/${encodeURIComponent(DOC_ID)}`, {
+    data: { content: '---\ntitle: Lecture\n---\n\nLe début.\n\nUn passage choisi.' },
+  });
+  expect(response.ok()).toBe(true);
+  await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(DOC_ID)}`);
+  await expect(page.getByTestId('tts-play')).toBeVisible();
+  await selectText(page, 'passage');
+  await page.getByTestId('tts-play').click();
+  await page.getByTestId('tts-language-fr').click();
+  await expect.poll(() => spoken[0]).toBe('passage choisi.');
+  await expect.poll(() => highlightedText(page)).toBe('passage choisi.');
+  await page.getByTestId('tts-stop').click();
+});

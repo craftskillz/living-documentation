@@ -237,7 +237,7 @@
   "doc.code_copy": "Copier",
   "doc.code_copied": "Copié !",
   "doc.mermaid_diagram_alt": "Diagramme Mermaid",
-  "tts.play": "Lire à voix haute",
+  "tts.play": "Lire à voix haute, depuis la sélection s'il y en a une",
   "tts.play_btn": "Écouter",
   "tts.pause": "Mettre en pause",
   "tts.resume": "Reprendre la lecture",
