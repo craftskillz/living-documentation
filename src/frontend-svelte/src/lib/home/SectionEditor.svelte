@@ -5,6 +5,8 @@
   import { home } from "./state.svelte";
   import { dialogFocus } from "../dialogFocus";
   import { markdownClasses } from "./markdownClasses.svelte";
+  import SnippetsModal from "./SnippetsModal.svelte";
+  import EditorFileImport, { type FileImportStatus } from "./EditorFileImport.svelte";
   import { createSectionScrollSync } from "./sectionScrollSync";
   import { wireDocContent } from "./wireContent";
   import { renderMarkdownWithCompareBlocks } from "../../../../lib/compareBlock";
@@ -22,6 +24,9 @@
   let editor = $state<HTMLTextAreaElement>(null!);
   let previewScroller = $state<HTMLElement>(null!);
   let scrollSynchronized = $state(true);
+  let snippetsOpen = $state(false);
+  let imagePromptOpen = $state(false);
+  let importStatus = $state("");
   let scrollSync: ReturnType<typeof createSectionScrollSync> | undefined;
   let saving = $state(false);
   let saveStatus = $state("");
@@ -95,7 +100,19 @@
     scrollSynchronized = !scrollSynchronized;
     scrollSync?.setEnabled(scrollSynchronized);
   }
-  function close() { if (!saving) onclose(); }
+  function closeSnippets() { snippetsOpen = false; editor?.focus(); }
+  function showImportStatus(status: FileImportStatus | null) {
+    importStatus = status && !status.error ? status.text : "";
+    error = status?.error ? status.text : "";
+  }
+  function close() {
+    if (imagePromptOpen) { imagePromptOpen = false; editor?.focus(); return; }
+    if (snippetsOpen) { closeSnippets(); return; }
+    if (!saving) onclose();
+  }
+  async function saveDraftForSnippet() {
+    if (await saver.save(draft) === "busy") throw new Error(t("doc.saving"));
+  }
   async function save(automatic = false) {
     if (saving || (automatic && !saver.isDirty(draft))) return;
     const snapshot = draft;
@@ -123,7 +140,7 @@
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <dialog bind:this={dialog} use:dialogFocus={close} id="section-editor" aria-labelledby="section-editor-title"
   oncancel={(event) => { event.preventDefault(); close(); }} oncontextmenu={(event) => event.stopPropagation()}
-  onkeydown={(event) => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter") { event.preventDefault(); void save(); } }}>
+  onkeydown={(event) => { if (!snippetsOpen && !imagePromptOpen && (event.metaKey || event.ctrlKey) && event.key === "Enter") { event.preventDefault(); void save(); } }}>
   <header><h2 id="section-editor-title">{t("section.edit")}</h2><p>{t("section.hint")}</p>
     <button type="button" class="section-sync" aria-pressed={scrollSynchronized} onclick={toggleScrollSync}>
       <span aria-hidden="true">{scrollSynchronized ? "☑" : "☐"}</span> {t("section.scroll_sync")}
@@ -143,10 +160,15 @@
   </div>
   {#if error}<p class="section-error" role="alert">{error}</p>{/if}
   <footer>
-    <span class="autosave-status" role="status">{saving ? t("doc.saving") : saveStatus || t("autosave.hint")}</span>
+    <span class="autosave-status" role="status">{saving ? t("doc.saving") : importStatus || saveStatus || t("autosave.hint")}</span>
     <button onclick={close} disabled={saving}>{t("common.cancel")}</button>
+    <button data-testid="section-snippets" title={t("doc.snippets")} onclick={() => { snippetsOpen = true; }}>{t("doc.snippets_btn")}</button>
     <button class="section-save" onclick={() => save()} disabled={saving}>{saving ? t("doc.saving") : t("section.save")}</button>
   </footer>
+  <!-- Inside the dialog: anything outside a modal <dialog> is inert and painted below it. -->
+  <SnippetsModal open={snippetsOpen} {editor} {docId} onclose={closeSnippets}
+    editorDocument={() => replaceMarkdownSection(source, range, draft)} saveEditor={saveDraftForSnippet} />
+  <EditorFileImport {editor} {docId} onstatus={showImportStatus} bind:promptOpen={imagePromptOpen} />
 </dialog>
 
 <style>
@@ -167,7 +189,7 @@
   textarea { flex: 1; min-height: 0; width: 100%; resize: none; border: 1px solid var(--line, #d1d5db); border-radius: 8px; padding: 12px; background: transparent; color: inherit; font: 13px/1.7 ui-monospace, monospace; }
   textarea:focus { outline: 2px solid #3b82f6; outline-offset: 1px; }
   .section-preview-scroll { overflow: auto; overflow-anchor: none; flex: 1; min-height: 0; padding: 0 12px; }
-  footer { display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--line, #d1d5db); }
+  footer { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--line, #d1d5db); }
   button { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--line, #d1d5db); font-size: 14px; }
   .autosave-status { margin-right: auto; align-self: center; font-size: 12px; opacity: .7; }
   .section-save { background: #2563eb; color: white; border-color: #2563eb; }

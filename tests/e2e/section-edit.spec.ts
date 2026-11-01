@@ -115,3 +115,78 @@ test("a headingless document previews its last line without a trailing newline",
   await page.locator("#section-markdown").fill("Entirely changed");
   await expect(page.locator("#section-preview")).toHaveText("Entirely changed");
 });
+
+test("snippets insert at the caret of the section draft and Escape closes only the picker", async ({ page, ld }) => {
+  const file = path.join(ld.docsAbs, `${docId}.md`);
+  const initial = fs.readFileSync(file, "utf8");
+  await openSection(page);
+  const editor = page.locator("#section-markdown");
+  const original = await editor.inputValue();
+  const caret = original.indexOf("Edit ");
+  await editor.evaluate((el: HTMLTextAreaElement, at) => { el.focus(); el.setSelectionRange(at, at); }, caret);
+
+  await page.getByTestId("section-snippets").click();
+  await expect(page.locator("#snippets-modal")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.locator("#snippets-modal")).toBeHidden();
+  await expect(page.locator("#section-editor")).toBeVisible();
+
+  await page.getByTestId("section-snippets").click();
+  await page.locator('#snippet-picker [data-snippet-type="colored-text"]').click();
+  await page.locator("#snip-colored-text-content").fill("Inserted snippet");
+  await page.locator("#snippet-submit-btn").click();
+  await expect(page.locator("#snippets-modal")).toBeHidden();
+
+  const value = await editor.inputValue();
+  expect(value.indexOf("Inserted snippet")).toBeGreaterThanOrEqual(caret);
+  expect(value.indexOf("Inserted snippet")).toBeLessThan(value.indexOf("Edit "));
+  await expect(page.locator("#section-preview")).toContainText("Inserted snippet");
+
+  await page.getByRole("button", { name: "Enregistrer", exact: true }).click();
+  await expect(page.locator("#section-editor")).toHaveCount(0);
+  expect(fs.readFileSync(file, "utf8")).toBe(initial.replace(original, value));
+});
+
+test("the diagram snippet saves the whole document, not only the section", async ({ page, ld }) => {
+  const file = path.join(ld.docsAbs, `${docId}.md`);
+  await openSection(page);
+  await page.getByTestId("section-snippets").click();
+  await page.locator('#snippet-picker [data-snippet-type="diagram"]').click();
+  await page.locator("#snip-diag-mode-new").check();
+  await page.locator("#snip-diag-new-name").fill("Section diagram");
+  await page.locator("#snippet-submit-btn").click();
+  await page.waitForURL(/\/diagram\?id=/);
+  const saved = fs.readFileSync(file, "utf8");
+  expect(saved).toContain("Before section.");
+  expect(saved).toContain("## Following");
+  expect(saved).toContain("[![Section diagram]");
+});
+
+test("a failed save keeps the diagram snippet in the section draft without leaving", async ({ page, ld }) => {
+  const file = path.join(ld.docsAbs, `${docId}.md`);
+  await openSection(page);
+  const external = fs.readFileSync(file, "utf8").replace("Before section.", "Changed externally.");
+  fs.writeFileSync(file, external);
+  const alerted = new Promise<string>(resolve => page.once("dialog", dialog => {
+    const message = dialog.message();
+    void dialog.accept();
+    resolve(message);
+  }));
+  await page.getByTestId("section-snippets").click();
+  await page.locator('#snippet-picker [data-snippet-type="diagram"]').click();
+  await page.locator("#snip-diag-mode-new").check();
+  await page.locator("#snippet-submit-btn").click();
+  expect(await alerted).toContain("Le document a changé");
+  await expect(page.locator("#snippets-modal")).toBeHidden();
+  await expect(page).not.toHaveURL(/\/diagram/);
+  await expect(page.locator("#section-markdown")).toHaveValue(/\[!\[/);
+  expect(fs.readFileSync(file, "utf8")).toBe(external);
+});
+
+test("same-document anchors in the snippet picker list the whole document", async ({ page }) => {
+  await openSection(page);
+  await page.getByTestId("section-snippets").click();
+  await page.locator('#snippet-picker [data-snippet-type="anchor-link"]').click();
+  await expect(page.locator("#snip-anchor-id option").filter({ hasText: "Following" })).toHaveCount(1);
+  await expect(page.locator("#snip-anchor-id option").filter({ hasText: "Target" })).toHaveCount(1);
+});

@@ -52,6 +52,8 @@
     range = null,
     insertPos = 0,
     onsave = undefined,
+    editorDocument = undefined,
+    saveEditor = undefined,
   }: {
     open: boolean;
     editor: HTMLTextAreaElement | null;
@@ -68,6 +70,10 @@
     } | null;
     insertPos?: number;
     onsave?: SaveDocument | undefined;
+    // For an editor holding only part of a document (section popup): the full
+    // text for same-document anchors, and how to persist the draft.
+    editorDocument?: (() => string) | undefined;
+    saveEditor?: (() => Promise<void>) | undefined;
   } = $props();
 
   let selStart = 0;
@@ -447,7 +453,7 @@
   }
 
   function collectEditorHeadings() {
-    return extractHeadingsFromMarkdown(editor ? editor.value : "");
+    return extractHeadingsFromMarkdown(editorDocument ? editorDocument() : editor ? editor.value : "");
   }
 
   function renderAnchorOptions(
@@ -1226,7 +1232,16 @@
     } else {
       // Editor mode: insert at caret and persist the editor content.
       insertTextAtCursor(md);
-      if (home.currentDocId && editor) {
+      if (saveEditor) {
+        try {
+          await saveEditor();
+        } catch (err) {
+          // The snippet is already in the draft: closing prevents a duplicate on retry.
+          closeSnippetModal();
+          alert(t("common.error_prefix") + (err instanceof Error ? err.message : String(err)));
+          return;
+        }
+      } else if (home.currentDocId && editor) {
         try {
           await fetch("/api/documents/" + home.currentDocId, {
             method: "PUT",

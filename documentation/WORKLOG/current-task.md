@@ -24,6 +24,8 @@ Documentation : ADR [édition par section et autosave](?doc=ADRS%252F2026_11_01_
 
 Hors commit : `.idea/`, volontairement exclu et absent de `.gitignore`.
 
+Complément du même jour : bouton Snippets, collage d'image, collage et dépôt de fichiers dans la popup de section. La logique d'import est extraite de `EditableMarkdown` vers `EditorFileImport.svelte`, partagé par les deux éditeurs. L'éditeur classique n'avait aucun test de collage : `tests/e2e/editor-paste.spec.ts` le couvre désormais, et ses 5 tests sont passés avant comme après l'extraction. Suites finales : 124 unitaires, 235 API et 1 inférence optionnelle ignorée, 175 E2E. `svelte-check` : inchangé, 12 erreurs et 44 avertissements. Le collage a été testé par événements simulés, pas avec le presse-papiers réel du système.
+
 Prochaine action : relire et valider les deux ADR. Le push reste à la charge de l'utilisateur.
 
 ---

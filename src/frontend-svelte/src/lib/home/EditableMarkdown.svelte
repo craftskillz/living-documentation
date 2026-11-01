@@ -9,6 +9,7 @@
   import SectionEditor from "./SectionEditor.svelte";
   import type { MarkdownSection } from "../../../../lib/markdownSection";
   import SnippetsModal from "./SnippetsModal.svelte";
+  import EditorFileImport, { type FileImportStatus } from "./EditorFileImport.svelte";
   import TagInsertPopup from "./TagInsertPopup.svelte";
   import { tagClickIndex, type TagClickRefusal } from "./tagClick";
   import TagRemovePopup from "./TagRemovePopup.svelte";
@@ -16,7 +17,6 @@
   import { showPersistentToast } from "../persistentToast";
   import { initInlineSnippetEditing, type InlineSnippetRange } from "./inlineSnippetEdit";
   import { findKanbanRange } from "./kanban";
-  import { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB } from "../../../../lib/limits";
 
   // Reusable editable-markdown body: rendered view + inline snippet editing
   // (right-click), full-text textarea edit mode, the snippets modal (insert /
@@ -126,22 +126,9 @@
   let snippetRange = $state<InlineSnippetRange | null>(null);
   let snippetInsertPos = $state(0);
 
-  // Image paste modal state
-  let imgModalOpen = $state(false);
-  let imgName = $state("");
-  let imgExt = $state("png");
-  let imgBlob: File | null = null;
-  let imgCursorStart = 0;
-  let imgCursorEnd = 0;
-
   // Lightbox
   let lightboxSrc = $state<string | null>(null);
   let lightboxAlt = $state("");
-
-  const DIACRITICS = /[̀-ͯ]/g;
-  function sanitizeImageName(s: string): string {
-    return (s || "").normalize("NFD").replace(DIACRITICS, "").toLowerCase().replace(/[^a-z0-9]/g, "_");
-  }
 
   function defaultScrollToAnchor(anchorId: string) {
     document.getElementById(anchorId)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -298,115 +285,8 @@
   }
   export function isEditing(): boolean { return editing; }
 
-  // ── Image paste / file attach in editor ──────────────────────────────────────
-  function onEditorPaste(e: ClipboardEvent) {
-    const items = Array.from(e.clipboardData?.items ?? []);
-    const imageItem = items.find(it => it.type.startsWith("image/"));
-    if (imageItem) {
-      e.preventDefault();
-      imgCursorStart = editorEl.selectionStart;
-      imgCursorEnd = editorEl.selectionEnd;
-      imgExt = imageItem.type.split("/")[1].replace("jpeg", "jpg") || "png";
-      const blob = imageItem.getAsFile();
-      if (!blob) return;
-      imgBlob = blob;
-      imgName = sanitizeImageName(Date.now().toString());
-      imgModalOpen = true;
-      return;
-    }
-    const files = Array.from(e.clipboardData?.files ?? []).filter(f => !f.type.startsWith("image/"));
-    if (files.length) {
-      e.preventDefault();
-      const start = editorEl.selectionStart, end = editorEl.selectionEnd;
-      (async () => { for (const f of files) await uploadFile(f, start, end); })();
-    }
-  }
-
-  function onEditorDrop(e: DragEvent) {
-    const files = Array.from(e.dataTransfer?.files ?? []).filter(f => !f.type.startsWith("image/"));
-    if (!files.length) return;
-    e.preventDefault();
-    e.stopPropagation();
-    const start = editorEl.selectionStart, end = editorEl.selectionEnd;
-    (async () => { for (const f of files) await uploadFile(f, start, end); })();
-  }
-
-  function onEditorDragOver(e: DragEvent) {
-    if (e.dataTransfer?.types?.includes("Files")) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = "copy";
-    }
-  }
-
-  function readAsBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }
-
-  function insertAtCursor(markdown: string, start: number, end: number) {
-    const before = editorValue.slice(0, start);
-    const after = editorValue.slice(end);
-    editorValue = before + markdown + after;
-    requestAnimationFrame(() => {
-      editorEl.selectionStart = editorEl.selectionEnd = start + markdown.length;
-      editorEl.focus();
-    });
-  }
-
-  const FILE_MAX = MAX_UPLOAD_BYTES;
-  async function uploadFile(file: File, start: number, end: number) {
-    if (file.size > FILE_MAX) {
-      saveMsg = { text: t("doc.file_too_large") + ` (${(file.size / 1024 / 1024).toFixed(1)} MB, max ${MAX_UPLOAD_MB} MB)`, cls: "text-red-500 dark:text-red-400" };
-      return;
-    }
-    saveMsg = { text: t("doc.uploading_file"), cls: "text-gray-400" };
-    try {
-      const base64 = await readAsBase64(file);
-      const res = await fetch("/api/files/upload", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: base64, name: file.name, documentId: docId }),
-      });
-      if (!res.ok) {
-        let msg = ""; try { msg = (await res.json()).error || ""; } catch { msg = await res.text(); }
-        throw new Error(msg || `HTTP ${res.status}`);
-      }
-      const { url, originalName } = await res.json();
-      insertAtCursor(`[📎 ${originalName || file.name}](${url})`, start, end);
-      saveMsg = null;
-    } catch (err: unknown) {
-      saveMsg = { text: t("doc.file_upload_failed") + (err instanceof Error ? err.message : String(err)), cls: "text-red-500 dark:text-red-400" };
-    }
-  }
-
-  function cancelImgPaste() {
-    imgModalOpen = false;
-    imgBlob = null;
-  }
-
-  async function confirmImgPaste() {
-    const name = sanitizeImageName(imgName) || Date.now().toString();
-    imgModalOpen = false;
-    if (!imgBlob) return;
-    saveMsg = { text: t("doc.uploading_image"), cls: "text-gray-400" };
-    try {
-      const base64 = await readAsBase64(imgBlob);
-      const res = await fetch("/api/images/upload", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: base64, ext: imgExt, name }),
-      });
-      if (!res.ok) throw new Error(await res.text());
-      const { filename } = await res.json();
-      insertAtCursor(`![image](/images/${filename})`, imgCursorStart, imgCursorEnd);
-      saveMsg = null;
-    } catch (err: unknown) {
-      saveMsg = { text: t("doc.image_upload_failed") + (err instanceof Error ? err.message : String(err)), cls: "text-red-500 dark:text-red-400" };
-    } finally {
-      imgBlob = null;
-    }
+  function showImportStatus(status: FileImportStatus | null) {
+    saveMsg = status && { text: status.text, cls: status.error ? "text-red-500 dark:text-red-400" : "text-gray-400" };
   }
 
   function closeLightbox() {
@@ -448,9 +328,6 @@
     id="doc-editor"
     data-testid="doc-editor"
     bind:value={editorValue}
-    onpaste={onEditorPaste}
-    ondrop={onEditorDrop}
-    ondragover={onEditorDragOver}
     spellcheck="false"
     class="w-full min-h-[70vh] px-4 py-3 text-sm font-mono leading-relaxed rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
   ></textarea>
@@ -489,27 +366,7 @@
   onclose={() => (snippetsOpen = false)}
 />
 
-<!-- Image paste modal -->
-{#if imgModalOpen}
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-sm mx-4 p-6 space-y-5">
-      <h3 class="text-base font-semibold text-gray-900 dark:text-gray-50">🖼️ {t("modal.img_paste.title")}</h3>
-      <div class="space-y-1.5">
-        <label for="img-paste-name" class="block text-xs font-medium text-gray-500 dark:text-gray-400">
-          {t("modal.img_paste.filename_label")} <span class="font-normal text-gray-400">{t("modal.img_paste.saved_hint")}</span>
-        </label>
-        <div class="flex items-center gap-2">
-          <input id="img-paste-name" type="text" value={imgName} oninput={(e) => (imgName = sanitizeImageName((e.target as HTMLInputElement).value))} class="flex-1 px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          <span class="text-xs text-gray-400 shrink-0">.{imgExt}</span>
-        </div>
-      </div>
-      <div class="flex justify-end gap-3 pt-1">
-        <button onclick={cancelImgPaste} class="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t("common.cancel")}</button>
-        <button onclick={confirmImgPaste} class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">{t("modal.img_paste.paste_btn")}</button>
-      </div>
-    </div>
-  </div>
-{/if}
+<EditorFileImport editor={editorEl} {docId} onstatus={showImportStatus} />
 
 <!-- Lightbox -->
 {#if lightboxSrc}
