@@ -12,9 +12,25 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
+# Édition par section, autosave et lecture audio — clôture du 1er novembre 2026
+
+Statut : terminé et commité (`f5a6ca81`). Validation manuelle dans le viewer confirmée par l'utilisateur.
+
+Livré : édition par section avec aperçu et défilement synchronisé, autosave toutes les 10 s, contrôle de concurrence par `expectedContent` (409), lecture française, appels de notes exclus du TTS, bouton « Section suivante ». Un seul commit de code, à la demande de l'utilisateur, car les sujets sont imbriqués dans les mêmes fichiers.
+
+Vérifications : logs de la dernière exécution, sans source modifiée depuis : 124 unitaires, 235 API et 1 inférence optionnelle ignorée, 159 E2E, build réussi. `svelte-check` : 12 erreurs et 44 avertissements, même total qu'avant l'autosave et aucune erreur dans les nouveaux fichiers ; non corrigés.
+
+Documentation : ADR [édition par section et autosave](?doc=ADRS%252F2026_11_01_18_15_%255BEDITOR%255D_edition_par_section_et_autosave_avec_controle_de_concurrence) et [lecture française](?doc=ADRS%252F2026_11_01_18_16_%255BTTS%255D_lecture_francaise_kokoro_espeak_et_navigation_par_section), statut « To be validated ». MCP injoignable : ADR rédigés sans lui. Métadonnées et hashes non attachés : l'utilisateur les a jugés inutiles pour cette clôture.
+
+Hors commit : `.idea/`, volontairement exclu et absent de `.gitignore`.
+
+Prochaine action : relire et valider les deux ADR. Le push reste à la charge de l'utilisateur.
+
+---
+
 # Lecture audio : notes et navigation par section — 31 octobre 2026
 
-Statut : implémenté et vérifié ; changements non commités.
+Statut : implémenté et vérifié ; commité dans `f5a6ca81`.
 
 Les appels de notes Markdown et leurs liens de retour ne sont plus envoyés au TTS. `readingTextNodes` dans `readingScript.ts` filtre les liens générés ; le lecteur réutilise ces nœuds pour calculer les plages de surlignage, sans décalage après un appel de note. Les nombres ordinaires, les exposants et les définitions de notes restent lus ; le document et ses liens ne sont pas modifiés.
 
@@ -24,13 +40,13 @@ Vérifications : 4 nouveaux tests navigateur initialement rouges (numéro envoy�
 
 Documentation : suivi et stack mis à jour via MCP dans le dépôt logiciel. L’ADR TTS et les hashes restent à finaliser après commit, comme demandé par `AI/PROJECT-INSTRUCTIONS.md`. Les modifications précédentes du français et le dossier `.idea/` ont été conservés.
 
-Prochaine action : recharger le viewer et valider l’usage du bouton, puis commiter et compléter l’ADR avec les sources `readingScript.ts`, `ttsPlayer.svelte.ts`, `DocViewer.svelte` et `tests/e2e/tts-reading.spec.ts`.
+Suite : voir la clôture du 1er novembre 2026.
 
 ---
 
 # Lecture française avec Kokoro — 31 octobre 2026
 
-Statut : correction implémentée et vérifiée ; changements non commités.
+Statut : correction implémentée et vérifiée ; commitée dans `f5a6ca81`.
 
 Le bouton « Écouter » refusait les documents `language: fr` avec HTTP 422. `KokoroTtsEngine` expose maintenant `en` et `fr` ; le français utilise la voix `ff_siwis` déjà fournie dans `kokoro-js` 1.2.1. Le nouvel adaptateur `frenchPhonemes.ts` charge à la demande `@echogarden/espeak-ng-emscripten` 0.3.5, sélectionne `fr` et conserve ponctuation, liaisons et voyelles nasales avant d’appeler `generate_from_ids` sur le même modèle. Le chemin anglais reste celui de `generate`. Les deux versions sont verrouillées ; aucun service cloud ni installation Python n’est nécessaire.
 
@@ -38,7 +54,7 @@ Vérifications : échec initial du test API avec le message exact HTTP 422 ; apr
 
 Documentation : stack, commandes et ce suivi mis à jour via une session MCP temporaire ciblant `documentation/` du dépôt logiciel, conformément au choix de l’auteur. Aucun ADR créé ni hash recalculé sur les sources non commitées : la règle de `AI/PROJECT-INSTRUCTIONS.md` demande un commit préalable. Le dossier `.idea/` préexistant reste intact.
 
-Prochaine action : écouter le résultat dans le viewer, commiter le correctif, puis créer l’ADR TTS français et attacher `src/lib/tts/adapters/kokoro.ts`, `src/lib/tts/adapters/frenchPhonemes.ts`, `tests/api/tts.spec.ts` et `tests/unit/frenchPhonemes.test.ts` ; actualiser également les métadonnées des documents techniques.
+Suite : voir la clôture du 1er novembre 2026.
 
 ---
 
