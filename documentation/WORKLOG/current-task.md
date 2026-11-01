@@ -12,6 +12,36 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
+# Lecture audio : notes et navigation par section — 31 octobre 2026
+
+Statut : implémenté et vérifié ; changements non commités.
+
+Les appels de notes Markdown et leurs liens de retour ne sont plus envoyés au TTS. `readingTextNodes` dans `readingScript.ts` filtre les liens générés ; le lecteur réutilise ces nœuds pour calculer les plages de surlignage, sans décalage après un appel de note. Les nombres ordinaires, les exposants et les définitions de notes restent lus ; le document et ses liens ne sont pas modifiés.
+
+Le bouton « Section suivante » (icône avance, à côté de lecture/pause) saute au prochain titre ou sous-titre `h1` à `h6`. Un titre contenant plusieurs phrases ne crée qu’une étape. La lecture reprend au nouveau titre, ou reste en pause si elle était suspendue ; en fin de document, le bouton est désactivé. Les sauts rapides invalident les réponses audio anciennes et une prélecture abandonnée en erreur n’interrompt pas la nouvelle section. La position n’est pas mémorisée entre sessions.
+
+Vérifications : 4 nouveaux tests navigateur initialement rouges (numéro envoyé au TTS et bouton absent) ; 10 tests ciblés verts, incluant surlignage après une note, conservation des vrais nombres/exposants, suppression des backlinks répétés, pause/reprise et réponses audio retardées. Suites : 115 tests unitaires, 235 API réussis et 1 inférence optionnelle ignorée, 142 E2E réussis. Build, lint ciblé et `git diff --check` réussis. `svelte-check --workspace src/frontend-svelte --no-tsconfig --threshold error` signale 12 erreurs et 44 avertissements dans 23 fichiers ; aucune erreur signalée dans les fichiers du lecteur modifiés. Les fichiers concernés par les erreurs sont inchangés (vérifié par Git) : imports CSS, callbacks `onMount`, propriétés de composants et WordCloud. La commande sans `--no-tsconfig` ne contrôle pas les composants, car le tsconfig racine exclut le frontend.
+
+Documentation : suivi et stack mis à jour via MCP dans le dépôt logiciel. L’ADR TTS et les hashes restent à finaliser après commit, comme demandé par `AI/PROJECT-INSTRUCTIONS.md`. Les modifications précédentes du français et le dossier `.idea/` ont été conservés.
+
+Prochaine action : recharger le viewer et valider l’usage du bouton, puis commiter et compléter l’ADR avec les sources `readingScript.ts`, `ttsPlayer.svelte.ts`, `DocViewer.svelte` et `tests/e2e/tts-reading.spec.ts`.
+
+---
+
+# Lecture française avec Kokoro — 31 octobre 2026
+
+Statut : correction implémentée et vérifiée ; changements non commités.
+
+Le bouton « Écouter » refusait les documents `language: fr` avec HTTP 422. `KokoroTtsEngine` expose maintenant `en` et `fr` ; le français utilise la voix `ff_siwis` déjà fournie dans `kokoro-js` 1.2.1. Le nouvel adaptateur `frenchPhonemes.ts` charge à la demande `@echogarden/espeak-ng-emscripten` 0.3.5, sélectionne `fr` et conserve ponctuation, liaisons et voyelles nasales avant d’appeler `generate_from_ids` sur le même modèle. Le chemin anglais reste celui de `generate`. Les deux versions sont verrouillées ; aucun service cloud ni installation Python n’est nécessaire.
+
+Vérifications : échec initial du test API avec le message exact HTTP 422 ; après correction, génération réelle de WAV FR/EN et parcours du lecteur 7/7 ; unitaires 115/115 ; API 235 réussis et 1 test d’inférence optionnel ignoré (exécuté séparément avec `LD_TEST_TTS=1`) ; E2E 138/138 ; build, lint ciblé et `git diff --check` réussis. Sur l’instance utilisateur, la requête française renvoie HTTP 200, un WAV mono à 24 kHz de 4,17 secondes avec échantillons finis et non silencieux. La qualité perceptive n’a pas fait l’objet d’une écoute humaine.
+
+Documentation : stack, commandes et ce suivi mis à jour via une session MCP temporaire ciblant `documentation/` du dépôt logiciel, conformément au choix de l’auteur. Aucun ADR créé ni hash recalculé sur les sources non commitées : la règle de `AI/PROJECT-INSTRUCTIONS.md` demande un commit préalable. Le dossier `.idea/` préexistant reste intact.
+
+Prochaine action : écouter le résultat dans le viewer, commiter le correctif, puis créer l’ADR TTS français et attacher `src/lib/tts/adapters/kokoro.ts`, `src/lib/tts/adapters/frenchPhonemes.ts`, `tests/api/tts.spec.ts` et `tests/unit/frenchPhonemes.test.ts` ; actualiser également les métadonnées des documents techniques.
+
+---
+
 # Historique d'une sélection dans Versions — 31 octobre 2026
 
 Statut : terminé (validation manuelle à faire).

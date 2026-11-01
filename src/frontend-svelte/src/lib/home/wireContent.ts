@@ -24,6 +24,7 @@ declare global {
 }
 
 interface WireOptions {
+  preview?: boolean;
   content: string;
   codeBlockMaxHeight: number;
   t: (key: string) => string;
@@ -87,7 +88,7 @@ export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireO
   // Kanban whole-document takeover: when the marker is present, the board
   // replaces the entire render and every other decoration is skipped.
   if (
-    initKanbanBoard(contentEl, {
+    !opts.preview && initKanbanBoard(contentEl, {
       docId: opts.docId || "",
       content: opts.content,
       docs: opts.docs,

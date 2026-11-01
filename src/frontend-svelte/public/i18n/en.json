@@ -242,6 +242,7 @@
   "tts.pause": "Pause reading",
   "tts.resume": "Resume reading",
   "tts.stop": "Stop reading",
+  "tts.next_section": "Next section",
   "tts.code_label": "Code block.",
   "tts.image_label": "Image: {alt}.",
   "tts.diagram_label": "Diagram.",
@@ -1224,5 +1225,15 @@
   "tags.remove.confirm": "Remove",
   "tags.remove.cancel": "Cancel",
   "tags.remove.refused_ambiguous": "This tag also appears elsewhere in the source (code, comment…); remove it from the editor.",
-  "tags.remove.refused_not_found": "The clicked tag could not be located in the source."
+  "tags.remove.refused_not_found": "The clicked tag could not be located in the source.",
+  "section.edit": "Edit section",
+  "section.hint": "Edit this section and its subsections, then save to resume reading.",
+  "section.markdown": "Markdown",
+  "section.preview": "Live preview",
+  "section.preview_error": "Unable to display the preview. Your text is preserved.",
+  "section.save": "Save",
+  "section.conflict": "The document changed after opening. Copy your edits and reopen the section to avoid overwriting those changes.",
+  "section.scroll_sync": "Synchronized scrolling",
+  "autosave.hint": "Autosave every 10 seconds.",
+  "autosave.saved": "Changes saved."
 }

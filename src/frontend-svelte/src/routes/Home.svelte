@@ -148,17 +148,19 @@
     }
   }
 
-  async function saveDoc(content: string) {
+  async function saveDoc(content: string, expectedContent?: string) {
     if (!currentDoc) return;
     const id = currentDoc.id;
     const res = await fetch("/api/documents/" + id, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content }),
+      body: JSON.stringify({ content, expectedContent }),
     });
+    if (res.status === 409) throw new Error(t("section.conflict"));
     if (!res.ok) throw new Error(await res.text());
     const fresh = await api.fetchDocument(id);
     fresh.id = id;
+    if (currentDoc?.id !== id) return fresh.content;
     currentDoc = fresh;
     // Update file-attachment count from links in content
     const fileLinks = content.match(/\]\(\s*\.?\/files\/[^)\s]+/g);
@@ -166,6 +168,7 @@
     if (fileLinks && fileLinks.length) next[id] = fileLinks.length;
     else delete next[id];
     home.fileAttachmentCounts = next;
+    return fresh.content;
   }
 
   /** After deleting a doc, find the next sibling in the same folder to auto-select. */

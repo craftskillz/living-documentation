@@ -6,6 +6,7 @@ import type {
   SynthesizedAudio,
 } from "../types";
 import { TtsUnsupportedLanguageError as UnsupportedLanguage } from "../types";
+import { phonemizeFrench } from "./frenchPhonemes";
 
 // Adapter for the Kokoro-82M model via the optional `kokoro-js` package.
 // `kokoro-js` (transformers.js + onnxruntime-node) is an OPTIONAL dependency:
@@ -13,18 +14,30 @@ import { TtsUnsupportedLanguageError as UnsupportedLanguage } from "../types";
 // builds and runs when it is not installed. The model is loaded once (lazy
 // singleton) on the first synthesis request.
 
+interface KokoroAudio {
+  audio: Float32Array;
+  sampling_rate: number;
+  toWav(): ArrayBuffer;
+}
+
 interface KokoroModel {
   generate(
     text: string,
     opts: { voice?: string; speed?: number },
-  ): Promise<{ audio: Float32Array; sampling_rate: number; toWav(): ArrayBuffer }>;
+  ): Promise<KokoroAudio>;
+  tokenizer(text: string, opts: { truncation: boolean }): { input_ids: unknown };
+  generate_from_ids(
+    inputIds: unknown,
+    opts: { voice: string; speed: number },
+  ): Promise<KokoroAudio>;
   list_voices?(): Record<string, { name?: string; language?: string }> | string[];
   voices?: Record<string, { name?: string; language?: string }>;
 }
 
 const DEFAULT_MODEL = "onnx-community/Kokoro-82M-v1.0-ONNX";
 const DEFAULT_VOICE = "af_heart";
-const SUPPORTED_LANGUAGES = ["en"] as const satisfies readonly TtsLanguage[];
+const FRENCH_VOICE = { id: "ff_siwis", label: "Siwis", lang: "fr-FR" };
+const SUPPORTED_LANGUAGES = ["en", "fr"] as const satisfies readonly TtsLanguage[];
 
 // Native dynamic import. The project compiles to CommonJS, where `tsc` would
 // down-level a plain `import()` into a `require()` and break ESM-only packages
@@ -70,13 +83,13 @@ export class KokoroTtsEngine implements TtsEngine {
       | Record<string, { name?: string; language?: string }>
       | string[];
     if (Array.isArray(raw)) {
-      return raw.map((id) => ({ id, label: id, lang: "en-US" }));
+      return [...raw.map((id) => ({ id, label: id, lang: "en-US" })), { ...FRENCH_VOICE }];
     }
-    return Object.entries(raw).map(([id, meta]) => ({
+    return [...Object.entries(raw).map(([id, meta]) => ({
       id,
       label: meta?.name ?? id,
       lang: meta?.language ?? "en-US",
-    }));
+    })), { ...FRENCH_VOICE }];
   }
 
   async synthesize(
@@ -88,10 +101,26 @@ export class KokoroTtsEngine implements TtsEngine {
       throw new UnsupportedLanguage(language, this.id);
     }
     const model = await this.load();
-    const result = await model.generate(text, {
-      voice: opts.voice ?? this.opts.defaultVoice,
-      speed: opts.speed ?? 1,
-    });
+    let result: KokoroAudio;
+    if (language === "fr") {
+      if (opts.voice && opts.voice !== FRENCH_VOICE.id) {
+        throw new Error("French TTS requires the ff_siwis voice.");
+      }
+      // kokoro-js 1.2.1 includes ff_siwis.bin and the token-level inference API,
+      // but its text frontend/voice registry only supports English. Prepare IPA
+      // in French and reuse the same loaded model and WAV encoder.
+      const phonemes = await phonemizeFrench(text);
+      const { input_ids } = model.tokenizer(phonemes, { truncation: true });
+      result = await model.generate_from_ids(input_ids, {
+        voice: FRENCH_VOICE.id,
+        speed: opts.speed ?? 1,
+      });
+    } else {
+      result = await model.generate(text, {
+        voice: opts.voice ?? this.opts.defaultVoice,
+        speed: opts.speed ?? 1,
+      });
+    }
     return {
       audio: Buffer.from(result.toWav()),
       format: "wav",

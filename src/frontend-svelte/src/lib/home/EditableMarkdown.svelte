@@ -1,9 +1,13 @@
 <script lang="ts">
+  import { AUTOSAVE_INTERVAL_MS, createDraftSaver, type SaveDocument } from "../../../../lib/draftSave";
   import { FOOTNOTE_STYLES } from "../../../../lib/footnoteStyles";
   import { onMount } from "svelte";
   import { home } from "./state.svelte";
   import { t } from "../i18n.svelte";
   import { wireDocContent } from "./wireContent";
+  import { markdownClasses } from "./markdownClasses.svelte";
+  import SectionEditor from "./SectionEditor.svelte";
+  import type { MarkdownSection } from "../../../../lib/markdownSection";
   import SnippetsModal from "./SnippetsModal.svelte";
   import TagInsertPopup from "./TagInsertPopup.svelte";
   import { tagClickIndex, type TagClickRefusal } from "./tagClick";
@@ -36,12 +40,13 @@
     // Rendered view only: no inline snippet editing (reserved files).
     readonly = false,
     editing = $bindable(false),
+    saving = $bindable(false),
     saveMsg = $bindable(null),
   }: {
     docId: string;
     content: string;
     html: string;
-    onsave: (content: string) => Promise<void>;
+    onsave: SaveDocument;
     onopen?: (id: string, anchor: string | null) => void;
     onanchor?: (anchorId: string) => void;
     onconfirmdelete?: (() => Promise<boolean>) | undefined;
@@ -49,12 +54,31 @@
     rewireSignal?: unknown;
     readonly?: boolean;
     editing?: boolean;
+    saving?: boolean;
     saveMsg?: { text: string; cls: string } | null;
   } = $props();
 
   let contentEl = $state<HTMLElement>(null!);
   let editorEl = $state<HTMLTextAreaElement>(null!);
   let editorValue = $state("");
+  let editSession: ReturnType<typeof createDraftSaver> | null = null;
+  let editingDocId = "";
+  $effect(() => {
+    if (editing && docId !== editingDocId) {
+      editing = false;
+      editSession = null;
+      saving = false;
+      saveMsg = null;
+    }
+  });
+  $effect(() => {
+    if (!editing || readonly) return;
+    const id = docId;
+    const timer = setInterval(() => {
+      if (docId === id) void persistEditor(true);
+    }, AUTOSAVE_INTERVAL_MS);
+    return () => clearInterval(timer);
+  });
   let disposeInline: (() => void) | null = null;
 
   // Shift + right-click tag insertion: popup anchor + resolved source index.
@@ -93,6 +117,9 @@
     }
     await onsave(updated);
   }
+
+  let sectionEdit = $state<{ range: MarkdownSection; source: string; docId: string } | null>(null);
+  $effect(() => { if (sectionEdit && sectionEdit.docId !== docId) sectionEdit = null; });
 
   let snippetsOpen = $state(false);
   let snippetMode = $state<"insert" | "inline-edit" | "inline-insert">("insert");
@@ -167,6 +194,7 @@
     // the gear button) — the inline right-click editing would be misleading.
     if (!kanbanTakeover && !readonly) {
       disposeInline = initInlineSnippetEditing(contentEl, content, {
+        onEditSection: (range) => { sectionEdit = { range, source: content, docId }; },
         onEdit: (range) => { snippetMode = "inline-edit"; snippetRange = range; snippetsOpen = true; },
         onInsert: (pos) => { snippetMode = "inline-insert"; snippetInsertPos = pos; snippetsOpen = true; },
         onDelete: async (range) => {
@@ -218,27 +246,47 @@
 
   // ── Edit mode (exposed API) ───────────────────────────────────────────────────
   export function enterEdit() {
+    if (saving) return;
     editorValue = content;
+    editingDocId = docId;
+    const session = createDraftSaver({
+      initialDraft: content, initialContent: content, persist: onsave,
+      onSavingChange: value => { if (editSession === session) saving = value; },
+    });
+    editSession = session;
     editing = true;
-    saveMsg = null;
+    saveMsg = { text: t("autosave.hint"), cls: "text-gray-400" };
     requestAnimationFrame(() => editorEl?.focus());
   }
 
   export function cancelEdit() {
+    if (saving) return;
+    editSession = null;
     editing = false;
     saveMsg = null;
   }
 
-  export async function save() {
+  async function persistEditor(automatic: boolean) {
+    const session = editSession;
+    if (!session || !editing || saving || (automatic && !session.isDirty(editorValue))) return;
+    const snapshot = editorValue;
     saveMsg = { text: t("doc.saving"), cls: "text-gray-400" };
     try {
-      await onsave(editorValue);
-      editing = false;
-      saveMsg = null;
+      const result = await session.save(snapshot);
+      if (editSession !== session || result === "busy") return;
+      saveMsg = { text: t("autosave.saved"), cls: "text-green-600 dark:text-green-400" };
+      if (!automatic && editorValue === snapshot) {
+        editing = false;
+        editSession = null;
+        saveMsg = null;
+      }
     } catch (err: unknown) {
+      if (editSession !== session) return;
       saveMsg = { text: t("error.save") + (err instanceof Error ? err.message : String(err)), cls: "text-red-500 dark:text-red-400" };
     }
   }
+
+  export async function save() { await persistEditor(false); }
 
   export function openSnippets() { snippetMode = "insert"; snippetsOpen = true; }
   export function openKanbanColumnsEditor() {
@@ -413,7 +461,7 @@
     id="doc-content"
     data-testid="doc-content"
     onclick={onContentClick}
-    class="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-headings:font-semibold prose-h1:text-[2.1875rem] prose-h2:text-[1.8125rem] prose-h3:text-[1.5rem] prose-h4:text-[1.25rem] prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-code:before:content-none prose-code:after:content-none {home.codeBlockLightTheme ? 'prose-pre:bg-[#f6f8fa] prose-pre:text-gray-800 prose-pre:border prose-pre:border-gray-200 prose-pre:rounded-lg dark:prose-pre:bg-[#0d1117] dark:prose-pre:text-gray-100 dark:prose-pre:border-gray-700' : 'prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-gray-700'} {home.imageRoundedCorners ? '[&_img]:rounded-xl' : ''} {home.imageCentered ? '[&_img]:mx-auto [&_img]:block' : ''} {home.imageBorder ? '[&_img]:[box-shadow:0_0_0_1px_rgba(0,0,0,0.10),0_4px_12px_rgba(0,0,0,0.04)] dark:[&_img]:[box-shadow:0_0_0_1px_rgba(255,255,255,0.08),0_4px_12px_rgba(255,255,255,0.25)]' : ''}"
+    class={markdownClasses()}
   ></div>
 {/if}
 
@@ -423,6 +471,10 @@
 
 {#if tagRemove}
   <TagRemovePopup x={tagRemove.x} y={tagRemove.y} name={tagRemove.name} onconfirm={confirmTagRemoval} oncancel={() => { tagRemove = null; }} />
+{/if}
+
+{#if sectionEdit}
+  <SectionEditor source={sectionEdit.source} range={sectionEdit.range} {docId} {onsave} onclose={() => { sectionEdit = null; }} />
 {/if}
 
 <SnippetsModal

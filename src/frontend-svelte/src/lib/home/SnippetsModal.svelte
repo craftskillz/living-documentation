@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { SaveDocument } from "../../../../lib/draftSave";
   import { t } from "../i18n.svelte";
   import { home } from "./state.svelte";
   import {
@@ -66,7 +67,7 @@
       tableFocusCell?: { row: number; col: number };
     } | null;
     insertPos?: number;
-    onsave?: ((newContent: string) => Promise<void>) | undefined;
+    onsave?: SaveDocument | undefined;
   } = $props();
 
   let selStart = 0;

@@ -242,6 +242,7 @@
   "tts.pause": "Mettre en pause",
   "tts.resume": "Reprendre la lecture",
   "tts.stop": "Arrêter la lecture",
+  "tts.next_section": "Section suivante",
   "tts.code_label": "Bloc de code.",
   "tts.image_label": "Image : {alt}.",
   "tts.diagram_label": "Diagramme.",
@@ -1224,5 +1225,15 @@
   "tags.remove.confirm": "Supprimer",
   "tags.remove.cancel": "Annuler",
   "tags.remove.refused_ambiguous": "Cette balise apparaît aussi ailleurs dans la source (code, commentaire…) ; supprimez-la depuis l'éditeur.",
-  "tags.remove.refused_not_found": "La balise cliquée est introuvable dans la source."
+  "tags.remove.refused_not_found": "La balise cliquée est introuvable dans la source.",
+  "section.edit": "Modifier la section",
+  "section.hint": "Modifiez cette section et ses sous-sections, puis enregistrez pour reprendre la lecture.",
+  "section.markdown": "Markdown",
+  "section.preview": "Aperçu en direct",
+  "section.preview_error": "Impossible d’afficher l’aperçu. Votre texte est conservé.",
+  "section.save": "Enregistrer",
+  "section.conflict": "Le document a changé depuis l’ouverture. Copiez vos modifications puis rouvrez la section pour éviter d’écraser ces changements.",
+  "section.scroll_sync": "Défilement synchronisé",
+  "autosave.hint": "Enregistrement automatique toutes les 10 s.",
+  "autosave.saved": "Modifications enregistrées."
 }

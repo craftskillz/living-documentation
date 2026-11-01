@@ -80,11 +80,37 @@ export function splitSentences(text: string): ReadingSentence[] {
   return out;
 }
 
+// Keep the spoken script and its DOM offsets in sync. Only footnote navigation
+// links are excluded: ordinary numbers, exponents and note definitions remain.
+const FOOTNOTE_NAVIGATION = [
+  'a[aria-describedby][id^="ld-fn-"]',
+  'a[aria-label][href^="#ld-fn-"]',
+  '[role="doc-noteref"]',
+  '[role="doc-backlink"]',
+].join(",");
+
+export function readingTextNodes(el: HTMLElement): Text[] {
+  const nodes: Text[] = [];
+  const walker = el.ownerDocument.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      return node.parentElement?.closest(FOOTNOTE_NAVIGATION)
+        ? NodeFilter.FILTER_REJECT
+        : NodeFilter.FILTER_ACCEPT;
+    },
+  });
+  let node = walker.nextNode();
+  while (node) {
+    nodes.push(node as Text);
+    node = walker.nextNode();
+  }
+  return nodes;
+}
+
 function textSegment(el: HTMLElement, type: SegmentType): ReadingSegment | null {
-  const spokenText = (el.textContent ?? "").replace(/\s+/g, " ").trim();
+  const spokenText = readingTextNodes(el).map(node => node.data).join("").replace(/\s+/g, " ").trim();
   if (!spokenText) return null;
   // Sentence offsets are computed against the normalised text the player will
-  // also use; for ranges the player re-derives positions from el.textContent.
+  // also use; ranges are built from the same filtered text nodes.
   const sentences = splitSentences(spokenText);
   return {
     type,

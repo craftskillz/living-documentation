@@ -8,6 +8,7 @@
 
 import {
   buildReadingScript,
+  readingTextNodes,
   type ReadingSegment,
   type ReadingScriptOptions,
 } from "./readingScript";
@@ -41,9 +42,7 @@ interface PlayUnit {
 function rangeForOffsets(el: HTMLElement, start: number, end: number): Range | null {
   const positions: { node: Text; offset: number }[] = [];
   let prevWasSpace = true; // drop leading whitespace (mirrors trimStart)
-  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-  let node = walker.nextNode() as Text | null;
-  while (node) {
+  for (const node of readingTextNodes(el)) {
     const s = node.data;
     for (let i = 0; i < s.length; i++) {
       if (/\s/.test(s[i])) {
@@ -56,19 +55,14 @@ function rangeForOffsets(el: HTMLElement, start: number, end: number): Range | n
         prevWasSpace = false;
       }
     }
-    node = walker.nextNode() as Text | null;
   }
-  if (start >= positions.length) return null;
+  if (start >= positions.length || end <= start) return null;
   const a = positions[start];
   const range = document.createRange();
   range.setStart(a.node, a.offset);
-  if (end < positions.length) {
-    const b = positions[end];
-    range.setEnd(b.node, b.offset);
-  } else {
-    const last = positions[positions.length - 1];
-    range.setEnd(last.node, last.offset + 1);
-  }
+  // End on the last spoken character, before any skipped trailing marker.
+  const last = positions[Math.min(end, positions.length) - 1];
+  range.setEnd(last.node, last.offset + 1);
   return range;
 }
 
@@ -90,6 +84,28 @@ class TtsPlayer {
 
   get active(): boolean {
     return this.status === "playing" || this.status === "paused" || this.status === "loading";
+  }
+
+  private get nextSectionIndex(): number {
+    if (!this.active) return -1;
+    const currentSegment = this.units[this.index]?.seg;
+    return this.units.findIndex((unit, index) =>
+      index > this.index && unit.seg.type === "heading" && unit.seg !== currentSegment,
+    );
+  }
+
+  get canSkipSection(): boolean {
+    return this.nextSectionIndex >= 0;
+  }
+
+  async nextSection(): Promise<void> {
+    const index = this.nextSectionIndex;
+    if (index < 0 || !this.ctx) return;
+    // Invalidate pending synthesis/onended callbacks before stopping the source.
+    const myToken = ++this.token;
+    this.stopSource();
+    if (this.status !== "paused") this.status = "loading";
+    await this.playFrom(index, myToken);
   }
 
   async start(
@@ -149,7 +165,8 @@ class TtsPlayer {
       void this.playFrom(i + 1, myToken);
     };
     this.source = src;
-    this.status = "playing";
+    // A jump while paused queues the new section on the suspended context.
+    if (this.status !== "paused") this.status = "playing";
     src.start();
   }
 
@@ -164,7 +181,9 @@ class TtsPlayer {
 
   private prefetch(i: number): void {
     if (i < this.units.length && !this.cache.has(i)) {
-      this.cache.set(i, this.fetchAudio(this.units[i].text).catch((e) => Promise.reject(e)));
+      // A skipped prefetch may fail after navigation. Handle its rejection now;
+      // the cached promise still rejects if that unit is actually played later.
+      void this.audioFor(i).catch(() => {});
     }
   }
 
@@ -188,7 +207,7 @@ class TtsPlayer {
   }
 
   pause(): void {
-    if (this.status === "playing" && this.ctx) {
+    if ((this.status === "playing" || this.status === "loading") && this.ctx) {
       void this.ctx.suspend();
       this.status = "paused";
     }
@@ -197,17 +216,16 @@ class TtsPlayer {
   resume(): void {
     if (this.status === "paused" && this.ctx) {
       void this.ctx.resume();
-      this.status = "playing";
+      this.status = this.source ? "playing" : "loading";
     }
   }
 
   toggle(): void {
-    if (this.status === "playing") this.pause();
+    if (this.status === "playing" || this.status === "loading") this.pause();
     else if (this.status === "paused") this.resume();
   }
 
-  stop(clearError = true): void {
-    this.token++;
+  private stopSource(): void {
     if (this.source) {
       try {
         this.source.onended = null;
@@ -217,6 +235,11 @@ class TtsPlayer {
       }
       this.source = null;
     }
+  }
+
+  stop(clearError = true): void {
+    this.token++;
+    this.stopSource();
     if (this.ctx) {
       void this.ctx.close();
       this.ctx = null;

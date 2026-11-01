@@ -35,11 +35,13 @@ Indices : `package-lock.json` est présent, les scripts officiels sont dans `pac
 
 ### Configuration TTS locale
 
-Le TTS est low footprint : l'anglais utilise `kokoro-js` côté serveur si l'optional dependency est installée. Le français peut être choisi et persisté dans le frontmatter, mais Kokoro renvoie une erreur explicite tant qu'un moteur de qualité comparable n'est pas disponible.
+Le TTS reste local côté serveur : `kokoro-js` synthétise l’anglais et le français. Pour le français, `@echogarden/espeak-ng-emscripten` prépare les phonèmes et la voix `ff_siwis` est utilisée. Les deux dépendances sont optionnelles ; `npm install --include=optional` les installe. Le modèle est téléchargé à la première utilisation puis mis en cache. Aucun service de synthèse cloud n’est appelé.
 
 | Commande / variable                                  | Effet                                                                     |
 | ---------------------------------------------------- | ------------------------------------------------------------------------- |
-| `LD_TTS_ENGINE=kokoro npm run dev -- ./documentation` | Force l'adapter serveur Kokoro pour les appels `/api/tts` côté anglais.   |
+| `LD_TTS_ENGINE=kokoro npm run dev -- ./documentation` | Force l’adaptateur serveur Kokoro pour les appels `/api/tts` en anglais et en français.   |
+
+Après un build, `LD_TEST_TTS=1 npx playwright test tests/api/tts.spec.ts --workers=1` vérifie la génération réelle de WAV français et anglais. Ce test peut télécharger le modèle ; il est ignoré sans `LD_TEST_TTS=1`. Les tests de phonémisation et de commandes du lecteur ne chargent pas le modèle.
 
 ## Build et qualité
 

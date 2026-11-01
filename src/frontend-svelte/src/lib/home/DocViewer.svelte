@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { SaveDocument } from "../../../../lib/draftSave";
   import { home } from "./state.svelte";
   import { t } from "../i18n.svelte";
   import { folderLabel } from "./tree";
@@ -24,7 +25,7 @@
   let { doc, onopen, onsave, ondelete, navHistory = [], ongoback }: {
     doc: DocDetail;
     onopen: (id: string, anchor: string | null) => void;
-    onsave: (content: string) => Promise<void>;
+    onsave: SaveDocument;
     ondelete: () => Promise<void>;
     navHistory?: { id: string; title: string }[];
     ongoback?: (i: number) => void;
@@ -55,6 +56,7 @@
   const isFavorite = $derived(favorites.has(doc.id));
   const showValidate = $derived((docStatus || "").toUpperCase() === "TO BE VALIDATED");
   let editing = $state(false);
+  let documentSaving = $state(false);
   let saveMsg = $state<{ text: string; cls: string } | null>(null);
   let fullWidth = $state(false);
   let confirmingDelete = $state(false);
@@ -385,9 +387,9 @@
         {#if editing}
           <div data-testid="edit-actions" class="flex items-center gap-2">
           {#if saveMsg}<span class="text-xs {saveMsg.cls}">{saveMsg.text}</span>{/if}
-          <button onclick={() => editable.cancelEdit()} class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t("common.cancel")}</button>
+          <button disabled={documentSaving} onclick={() => editable.cancelEdit()} class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t("common.cancel")}</button>
           <button onclick={() => editable.openSnippets()} title={t("doc.snippets")} class="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">{t("doc.snippets_btn")}</button>
-          <button onclick={() => editable.save()} class="text-sm px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">{t("common.save")}</button>
+          <button disabled={documentSaving} onclick={() => editable.save()} class="text-sm px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed">{t("common.save")}</button>
           </div>
         {:else if doc.reserved}
           <span data-testid="read-only-badge" class="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400"><i class="fa-solid fa-lock" style="margin-right:4px"></i>{t("doc.read_only")}</span>
@@ -410,7 +412,8 @@
           {/if}
           {#if !isKanbanDocument}
             {#if ttsPlayer.active}
-              <button onclick={() => ttsPlayer.toggle()} data-testid="tts-toggle" title={ttsPlayer.status === "playing" ? t("tts.pause") : t("tts.resume")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"><i class="fa-solid {ttsPlayer.status === 'playing' ? 'fa-pause' : 'fa-play'}"></i></button>
+              <button onclick={() => ttsPlayer.toggle()} data-testid="tts-toggle" title={ttsPlayer.status === "paused" ? t("tts.resume") : t("tts.pause")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"><i class="fa-solid {ttsPlayer.status === 'paused' ? 'fa-play' : 'fa-pause'}"></i></button>
+              <button onclick={() => ttsPlayer.nextSection()} disabled={!ttsPlayer.canSkipSection} data-testid="tts-next-section" title={t("tts.next_section")} aria-label={t("tts.next_section")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"><i class="fa-solid fa-forward" aria-hidden="true"></i></button>
               <button onclick={() => ttsPlayer.stop()} data-testid="tts-stop" title={t("tts.stop")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-stop"></i></button>
             {:else}
               <button onclick={startReading} data-testid="tts-play" title={t("tts.play")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-headphones" style="margin-right:4px"></i>{t("tts.play_btn")}</button>
@@ -494,6 +497,7 @@
   <EditableMarkdown
     bind:this={editable}
     bind:editing
+    bind:saving={documentSaving}
     bind:saveMsg
     docId={doc.id}
     content={doc.content}

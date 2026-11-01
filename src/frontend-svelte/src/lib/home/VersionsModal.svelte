@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { SaveDocument } from "../../../../lib/draftSave";
   import { untrack } from "svelte";
   import { t } from "../i18n.svelte";
   import { type LineRange, rowsInLineRange, shiftLineRangeAfterRestore } from "./selectionHistory";
@@ -62,7 +63,7 @@
     docId: string;
     content: string;
     lineRange?: LineRange | null;
-    onsave: (content: string) => Promise<void>;
+    onsave: SaveDocument;
     onclose: () => void;
   } = $props();
 

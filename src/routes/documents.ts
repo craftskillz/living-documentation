@@ -361,7 +361,7 @@ export function documentsRouter(docsPath: string): Router {
   // PUT /api/documents/:id — update document content
   router.put("/:id", (req: Request, res: Response) => {
     const id = decodeURIComponent(req.params.id as string);
-    const { content } = req.body as { content?: string };
+    const { content, expectedContent } = req.body as { content?: string; expectedContent?: string };
 
     if (typeof content !== "string") {
       return res.status(400).json({ error: "content is required" });
@@ -376,6 +376,9 @@ export function documentsRouter(docsPath: string): Router {
         return res.status(403).json({ error: "Access denied" });
       }
       try {
+        if (expectedContent !== undefined && fs.readFileSync(filePath, "utf-8") !== expectedContent) {
+          return res.status(409).json({ error: "Document changed since editing started" });
+        }
         fs.writeFileSync(
           filePath,
           normalizeFrontmatter(content, filePath, { title: parseDocMetadata(path.basename(filePath), content).title }),
@@ -397,6 +400,9 @@ export function documentsRouter(docsPath: string): Router {
     }
 
     try {
+      if (expectedContent !== undefined && fs.readFileSync(filePath, "utf-8") !== expectedContent) {
+        return res.status(409).json({ error: "Document changed since editing started" });
+      }
       fs.writeFileSync(
         filePath,
         normalizeFrontmatter(content, filename, { title: parseDocMetadata(path.basename(filename), content).title }),

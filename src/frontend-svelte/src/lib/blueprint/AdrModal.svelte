@@ -38,6 +38,7 @@
   // EditableMarkdown wiring
   let editable = $state<EditableMarkdown>(null!);
   let editing = $state(false);
+  let documentSaving = $state(false);
   let saveMsg = $state<{ text: string; cls: string } | null>(null);
 
   // Creation form: snippets insert into the raw textarea (no rendered body yet).
@@ -124,21 +125,27 @@
 
   // onsave for EditableMarkdown: persist the new content, then refresh the
   // rendered html so the body re-wires with the saved state.
-  async function saveDoc(newContent: string): Promise<void> {
+  async function saveDoc(newContent: string, expectedContent?: string): Promise<string | undefined> {
     if (!currentAdrId) return;
-    await fetch(`/api/documents/${encodeURIComponent(currentAdrId)}`, {
+    const id = currentAdrId;
+    const res = await fetch(`/api/documents/${encodeURIComponent(id)}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         title: titleValue.trim() || currentBox?.folder.name || t("common.untitled"),
         folder: BLUEPRINT_FOLDER,
         content: newContent,
+        expectedContent,
       }),
     });
-    const doc = await fetchDoc(currentAdrId);
+    if (res.status === 409) throw new Error(t("section.conflict"));
+    if (!res.ok) throw new Error(await res.text());
+    const doc = await fetchDoc(id);
+    if (currentAdrId !== id) return doc.content;
     modalTitle = doc.title;
     docContent = doc.content;
     docHtml = doc.html;
+    return doc.content;
   }
 
   // Creation form submit: create the doc then switch to the editable doc view.
@@ -216,6 +223,7 @@
           <EditableMarkdown
             bind:this={editable}
             bind:editing
+            bind:saving={documentSaving}
             bind:saveMsg
             docId={currentAdrId ?? ""}
             content={docContent}
@@ -227,9 +235,9 @@
           <!-- Edit controls aligned with the creation form: labelled buttons in a footer. -->
           <footer class="bpadr-footer bpadr-doc-footer">
             {#if saveMsg}<span class="text-xs {saveMsg.cls}">{saveMsg.text}</span>{/if}
-            <button type="button" class="bpadr-btn-ghost" data-testid="bp-cancel" onclick={() => editable.cancelEdit()}>{t("common.cancel")}</button>
+            <button type="button" class="bpadr-btn-ghost" data-testid="bp-cancel" disabled={documentSaving} onclick={() => editable.cancelEdit()}>{t("common.cancel")}</button>
             <button type="button" class="bpadr-btn-ghost" data-testid="bp-snippets" onclick={() => editable.openSnippets()}>{t("doc.snippets_btn")}</button>
-            <button type="button" class="bpadr-btn-primary" data-testid="bp-save" onclick={() => editable.save()}>{t("common.save")}</button>
+            <button type="button" class="bpadr-btn-primary" style:opacity={documentSaving ? 0.5 : 1} data-testid="bp-save" disabled={documentSaving} onclick={() => editable.save()}>{t("common.save")}</button>
           </footer>
         {/if}
 

@@ -5,6 +5,8 @@
 // the actual form stays the Snippets modal (driven by the callbacks).
 // Ported from src/frontend/snippets/inline-snippet-edit.js.
 
+import { sectionAtTarget } from "./sectionAtTarget";
+import type { MarkdownSection } from "../../../../lib/markdownSection";
 import { detectSnippetType } from "./snippets/detect";
 import {
   orderedListBlockRegex,
@@ -28,6 +30,7 @@ export interface InlineSnippetCallbacks {
   onEdit: (range: InlineSnippetRange) => void;
   onDelete: (range: InlineSnippetRange) => void;
   onInsert: (insertPos: number) => void;
+  onEditSection?: (range: MarkdownSection) => void;
 }
 
 const _INLINE_SNIPPET_TYPES = new Set<string>([
@@ -583,6 +586,13 @@ export function initInlineSnippetEditing(
 
   const contextHandler = (event: MouseEvent) => {
     if (event.shiftKey) return; // Shift + right-click is reserved for tag insertion
+    const section = sectionAtTarget(contentEl, content, event.target);
+    const sectionActions: InlinePopupAction[] = section && cb.onEditSection ? [{
+      iconClass: "fa-solid fa-pen-to-square",
+      labelKey: "section.edit",
+      dataAction: "edit-section",
+      onActivate: () => cb.onEditSection?.(section),
+    }] : [];
     const target = (event.target as Element | null)?.closest(
       "[data-inline-snippet-index]",
     );
@@ -607,6 +617,7 @@ export function initInlineSnippetEditing(
           dataType: range.type,
           onActivate: () => cb.onDelete(range),
         },
+        ...sectionActions,
       ]);
       return;
     }
@@ -620,12 +631,12 @@ export function initInlineSnippetEditing(
     );
     if (insertPos === null) return;
     event.preventDefault();
-    _inlineShowPopup(event, {
+    _inlineShowPopup(event, [{
       iconClass: "fa-solid fa-plus",
       labelKey: "snippet.inline_insert_btn",
       dataAction: "insert",
       onActivate: () => cb.onInsert(insertPos),
-    });
+    }, ...sectionActions]);
   };
   contentEl.addEventListener("contextmenu", contextHandler);
 

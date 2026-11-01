@@ -1,0 +1,5 @@
+import { home } from "./state.svelte";
+
+export function markdownClasses(): string {
+  return `prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-headings:font-semibold prose-h1:text-[2.1875rem] prose-h2:text-[1.8125rem] prose-h3:text-[1.5rem] prose-h4:text-[1.25rem] prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-code:before:content-none prose-code:after:content-none ${home.codeBlockLightTheme ? 'prose-pre:bg-[#f6f8fa] prose-pre:text-gray-800 prose-pre:border prose-pre:border-gray-200 prose-pre:rounded-lg dark:prose-pre:bg-[#0d1117] dark:prose-pre:text-gray-100 dark:prose-pre:border-gray-700' : 'prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-gray-700'} ${home.imageRoundedCorners ? '[&_img]:rounded-xl' : ''} ${home.imageCentered ? '[&_img]:mx-auto [&_img]:block' : ''} ${home.imageBorder ? '[&_img]:[box-shadow:0_0_0_1px_rgba(0,0,0,0.10),0_4px_12px_rgba(0,0,0,0.04)] dark:[&_img]:[box-shadow:0_0_0_1px_rgba(255,255,255,0.08),0_4px_12px_rgba(255,255,255,0.25)]' : ''}`;
+}

@@ -64,31 +64,56 @@ test('listen asks for a missing reading language and saves it to frontmatter', a
   await expect(page.getByTestId('tts-error')).toContainText('tts unavailable for test');
 });
 
-test('french reading calls server TTS and displays unsupported language error', async ({
+test('french reading plays server audio and supports pause, resume and stop', async ({
   page,
   ld,
 }) => {
   const requestedLanguages: unknown[] = [];
+  // A ten-second WAV keeps playback active while exercising the controls.
+  // Real French/English model output is covered by tests/api/tts.spec.ts.
+  const sampleRate = 24_000;
+  const bytesPerSample = 2;
+  const dataSize = sampleRate * bytesPerSample * 10;
+  const wav = Buffer.alloc(44 + dataSize);
+  wav.write('RIFF');
+  wav.writeUInt32LE(36 + dataSize, 4);
+  wav.write('WAVEfmt ', 8);
+  wav.writeUInt32LE(16, 16);
+  wav.writeUInt16LE(1, 20);
+  wav.writeUInt16LE(1, 22);
+  wav.writeUInt32LE(sampleRate, 24);
+  wav.writeUInt32LE(sampleRate * bytesPerSample, 28);
+  wav.writeUInt16LE(bytesPerSample, 32);
+  wav.writeUInt16LE(16, 34);
+  wav.write('data', 36);
+  wav.writeUInt32LE(dataSize, 40);
   await page.route('**/api/tts', async (route) => {
     requestedLanguages.push(JSON.parse(route.request().postData() || '{}').language);
     await route.fulfill({
-      status: 422,
-      contentType: 'application/json',
-      body: JSON.stringify({ error: 'TTS engine kokoro does not support fr documents yet.' }),
+      status: 200,
+      contentType: 'audio/wav',
+      body: wav,
     });
   });
 
   const docId = '2026_01_01_10_00_[General]_intro';
   const docPath = path.join(ld.docsAbs, '2026_01_01_10_00_[General]_intro.md');
   const original = await fs.readFile(docPath, 'utf8');
-  await fs.writeFile(docPath, `---\n**language:** fr\n---\n\n${original}`);
+  await fs.writeFile(docPath, original.replace('---', '---\nlanguage: fr'));
 
   await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
   await expect(page.getByTestId('doc-title')).toHaveText(/Intro/i);
   await page.getByTestId('tts-play').click();
 
-  await expect(page.getByTestId('tts-error')).toContainText(
-    'TTS engine kokoro does not support fr documents yet.',
-  );
+  const toggle = page.getByTestId('tts-toggle');
+  await expect(toggle.locator('.fa-pause')).toBeVisible();
+  await expect(page.getByTestId('tts-language-modal')).toBeHidden();
+  await expect(page.getByTestId('tts-error')).toBeHidden();
   expect(requestedLanguages).toContain('fr');
+  await toggle.click();
+  await expect(toggle.locator('.fa-play')).toBeVisible();
+  await toggle.click();
+  await expect(toggle.locator('.fa-pause')).toBeVisible();
+  await page.getByTestId('tts-stop').click();
+  await expect(page.getByTestId('tts-play')).toBeVisible();
 });
