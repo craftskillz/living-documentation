@@ -12,6 +12,24 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
+# Copie d'une image depuis le viewer — 2 novembre 2026
+
+Statut : terminé et commité. Validation manuelle dans le viewer confirmée par l'utilisateur.
+
+Livré : le menu du clic droit sur une image propose « Copier l'image ». Le PNG copié a la taille affichée (`clientWidth` × `devicePixelRatio`), donc `image-width` s'applique, et un fond blanc remplace la transparence. En cas d'échec, un toast d'erreur s'affiche.
+
+Fichiers : `home/copyImage.ts` (nouveau), `home/inlineSnippetEdit.ts`, `home/EditableMarkdown.svelte`, `i18n/en.json`, `i18n/fr.json`, `tests/e2e/inline-snippet-edit.spec.ts`.
+
+Vérifications : 124 unitaires, 417 API et E2E réussis, 1 ignoré, build et lint sans erreur. Copie vérifiée dans Chromium uniquement : ni Safari, ni Firefox, ni collage dans une autre application.
+
+MCP : le serveur du port 4321 sert un autre dossier (`Articles Arolla`), rien n'y a été écrit. Ce fichier est édité à la main ; métadonnées et hashes non mis à jour.
+
+Hors périmètre : diagrammes Mermaid, documents réservés en lecture seule et tableaux kanban (pas de menu personnalisé), bouton d'écran blanc.
+
+Prochaine action : compléter l'ADR des directives d'image et attacher `copyImage.ts` si l'utilisateur le souhaite.
+
+---
+
 # Lecture audio depuis la sélection — 1er novembre 2026
 
 Statut : terminé et commité (`a06727c0`). Validation manuelle dans le viewer confirmée par l'utilisateur.

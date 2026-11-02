@@ -175,6 +175,58 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(firstTable).not.toHaveClass(/table-color-/);
   });
 
+  test('right-click copies an image at its displayed size, on a white background', async ({ page, ld }) => {
+    // 40x20 fully transparent PNG, large enough to be scaled by the width directive.
+    const transparentPng = await page.evaluate(async () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 40;
+      canvas.height = 20;
+      return canvas.toDataURL('image/png').split(',')[1];
+    });
+    fs.mkdirSync(path.join(ld.docsAbs, 'images'), { recursive: true });
+    fs.writeFileSync(path.join(ld.docsAbs, 'images', 'styled-image.png'), Buffer.from(transparentPng, 'base64'));
+    await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin: ld.baseURL });
+
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+    const image = page.locator('#doc-content img[alt="Styled image"]');
+    await expect.poll(() => image.evaluate((el: HTMLImageElement) => el.naturalWidth)).toBe(40);
+    const displayed = await image.evaluate((el) => ({ width: el.clientWidth, height: el.clientHeight }));
+    expect(displayed.width).toBeGreaterThan(40);
+
+    await image.click({ button: 'right' });
+    await page.locator('#inline-snippet-popup button[data-action="copy-image"]').click();
+    await expect(page.locator('#workspaceToastStack')).toContainText('Image copied to clipboard');
+
+    const copied = await page.evaluate(async () => {
+      const [item] = await navigator.clipboard.read();
+      const bitmap = await createImageBitmap(await item.getType('image/png'));
+      const canvas = document.createElement('canvas');
+      canvas.width = bitmap.width;
+      canvas.height = bitmap.height;
+      const context = canvas.getContext('2d') as CanvasRenderingContext2D;
+      context.drawImage(bitmap, 0, 0);
+      return {
+        width: bitmap.width,
+        height: bitmap.height,
+        corner: Array.from(context.getImageData(0, 0, 1, 1).data),
+      };
+    });
+    expect(copied.width).toBe(displayed.width);
+    expect(copied.height).toBe(displayed.height);
+    expect(copied.corner).toEqual([255, 255, 255, 255]);
+  });
+
+  test('copying an image that failed to load reports an error', async ({ page, ld }) => {
+    await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin: ld.baseURL });
+    await page.route('**/images/styled-image.png', (route) => route.abort());
+    await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
+
+    await page.locator('#doc-content img[alt="Styled image"]').click({ button: 'right' });
+    await page.locator('#inline-snippet-popup button[data-action="copy-image"]').click();
+
+    await expect(page.locator('#workspaceToastStack')).toContainText('Could not copy the image');
+  });
+
   test('image width and alignment comments render and round-trip through inline edit', async ({ page, ld }) => {
     const docPath = path.join(ld.docsAbs, `${docId}.md`);
 

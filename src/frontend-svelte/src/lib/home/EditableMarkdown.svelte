@@ -15,6 +15,7 @@
   import TagRemovePopup from "./TagRemovePopup.svelte";
   import { insertTagAt, locateTagRemoval, removeTagAt } from "./tagInsert";
   import { showPersistentToast } from "../persistentToast";
+  import { copyDisplayedImage } from "./copyImage";
   import { initInlineSnippetEditing, type InlineSnippetRange } from "./inlineSnippetEdit";
   import { findKanbanRange } from "./kanban";
 
@@ -182,6 +183,12 @@
     if (!kanbanTakeover && !readonly) {
       disposeInline = initInlineSnippetEditing(contentEl, content, {
         onEditSection: (range) => { sectionEdit = { range, source: content, docId }; },
+        onCopyImage: (image) => {
+          copyDisplayedImage(image).then(
+            () => showPersistentToast(t("snippet.inline_image_copied"), "success"),
+            () => showPersistentToast(t("snippet.inline_image_copy_error"), "error"),
+          );
+        },
         onEdit: (range) => { snippetMode = "inline-edit"; snippetRange = range; snippetsOpen = true; },
         onInsert: (pos) => { snippetMode = "inline-insert"; snippetInsertPos = pos; snippetsOpen = true; },
         onDelete: async (range) => {
