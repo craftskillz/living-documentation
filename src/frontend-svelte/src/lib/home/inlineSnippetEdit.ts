@@ -32,6 +32,7 @@ export interface InlineSnippetCallbacks {
   onInsert: (insertPos: number) => void;
   onEditSection?: (range: MarkdownSection) => void;
   onCopyImage?: (image: HTMLImageElement) => void;
+  onCopyTable?: (table: HTMLTableElement) => void;
 }
 
 const _INLINE_SNIPPET_TYPES = new Set<string>([
@@ -601,6 +602,13 @@ export function initInlineSnippetEditing(
       dataAction: "copy-image",
       onActivate: () => cb.onCopyImage?.(image),
     }] : [];
+    const table = (event.target as Element | null)?.closest("table");
+    const tableActions: InlinePopupAction[] = table && contentEl.contains(table) && cb.onCopyTable ? [{
+      iconClass: "fa-regular fa-copy",
+      labelKey: "snippet.inline_copy_table",
+      dataAction: "copy-table",
+      onActivate: () => cb.onCopyTable?.(table),
+    }] : [];
     const target = (event.target as Element | null)?.closest(
       "[data-inline-snippet-index]",
     );
@@ -619,6 +627,7 @@ export function initInlineSnippetEditing(
           onActivate: () => cb.onEdit(range),
         },
         ...imageActions,
+        ...tableActions,
         {
           iconClass: del.iconClass,
           labelKey: del.labelKey,
@@ -645,7 +654,7 @@ export function initInlineSnippetEditing(
       labelKey: "snippet.inline_insert_btn",
       dataAction: "insert",
       onActivate: () => cb.onInsert(insertPos),
-    }, ...imageActions, ...sectionActions]);
+    }, ...imageActions, ...tableActions, ...sectionActions]);
   };
   contentEl.addEventListener("contextmenu", contextHandler);
 

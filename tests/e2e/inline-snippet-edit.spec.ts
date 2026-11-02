@@ -175,6 +175,53 @@ test.describe('inline snippet editing from viewer', () => {
     await expect(firstTable).not.toHaveClass(/table-color-/);
   });
 
+  test('right-click copies a table as clean HTML and tab-separated text', async ({ page, ld }) => {
+    fs.writeFileSync(path.join(ld.docsAbs, 'copy_table.md'), [
+      '# Copy table', '',
+      '| Name | Details |',
+      '| :--- | ---: |',
+      '| **alpha** beta | <span style="color: red">red</span> `code` |',
+      '| [link](https://example.com/page) | ![logo](/images/logo.png)<br>second[^1] |',
+      '', '[^1]: A footnote.', '',
+    ].join('\n'));
+    await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin: ld.baseURL });
+
+    await page.goto(`${ld.baseURL}/?doc=copy_table`);
+    await page.locator('#doc-content table td').first().click({ button: 'right' });
+    await expect(page.locator('#inline-snippet-popup button[data-action="edit"]')).toBeVisible();
+    await page.locator('#inline-snippet-popup button[data-action="copy-table"]').click();
+    await expect(page.locator('#workspaceToastStack')).toContainText('Table copied to clipboard');
+
+    const copied = await page.evaluate(async () => {
+      const [item] = await navigator.clipboard.read();
+      const html = await (await item.getType('text/html')).text();
+      const plain = await (await item.getType('text/plain')).text();
+      const table = new DOMParser().parseFromString(html, 'text/html').querySelector('table') as HTMLTableElement;
+      return {
+        plain,
+        tagsWithViewerAttributes: table.querySelectorAll('[class], [data-inline-snippet-index], span, img, sup').length,
+        tableHasClass: table.hasAttribute('class'),
+        headers: Array.from(table.querySelectorAll('thead th')).map((cell) => cell.textContent),
+        headerWeight: (table.querySelector('th') as HTMLElement).style.fontWeight,
+        cellBorder: (table.querySelector('td') as HTMLElement).style.borderStyle,
+        secondHeaderAlign: (table.querySelectorAll('th')[1] as HTMLElement).style.textAlign,
+        bold: table.querySelector('strong')?.textContent,
+        linkHref: table.querySelector('a')?.getAttribute('href'),
+        lineBreaks: table.querySelectorAll('br').length,
+      };
+    });
+    expect(copied.plain).toBe('Name\tDetails\nalpha beta\tred code\nlink\tlogo second');
+    expect(copied.tagsWithViewerAttributes).toBe(0);
+    expect(copied.tableHasClass).toBe(false);
+    expect(copied.headers).toEqual(['Name', 'Details']);
+    expect(copied.headerWeight).toBe('bold');
+    expect(copied.cellBorder).toBe('solid');
+    expect(copied.secondHeaderAlign).toBe('right');
+    expect(copied.bold).toBe('alpha');
+    expect(copied.linkHref).toBe('https://example.com/page');
+    expect(copied.lineBreaks).toBe(1);
+  });
+
   test('right-click copies an image at its displayed size, on a white background', async ({ page, ld }) => {
     // 40x20 fully transparent PNG, large enough to be scaled by the width directive.
     const transparentPng = await page.evaluate(async () => {

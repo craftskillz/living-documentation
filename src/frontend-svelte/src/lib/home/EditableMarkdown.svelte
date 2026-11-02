@@ -16,6 +16,7 @@
   import { insertTagAt, locateTagRemoval, removeTagAt } from "./tagInsert";
   import { showPersistentToast } from "../persistentToast";
   import { copyDisplayedImage } from "./copyImage";
+  import { copyTable } from "./copyTable";
   import { initInlineSnippetEditing, type InlineSnippetRange } from "./inlineSnippetEdit";
   import { findKanbanRange } from "./kanban";
 
@@ -187,6 +188,12 @@
           copyDisplayedImage(image).then(
             () => showPersistentToast(t("snippet.inline_image_copied"), "success"),
             () => showPersistentToast(t("snippet.inline_image_copy_error"), "error"),
+          );
+        },
+        onCopyTable: (table) => {
+          copyTable(table).then(
+            () => showPersistentToast(t("snippet.inline_table_copied"), "success"),
+            () => showPersistentToast(t("snippet.inline_table_copy_error"), "error"),
           );
         },
         onEdit: (range) => { snippetMode = "inline-edit"; snippetRange = range; snippetsOpen = true; },

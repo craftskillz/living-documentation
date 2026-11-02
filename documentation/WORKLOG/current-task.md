@@ -12,9 +12,39 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
+# Copie d'un tableau depuis le viewer — 2 novembre 2026
+
+Statut : terminé et commité. Validation par l'utilisateur confirmée.
+
+Livré : le menu du clic droit dans un tableau propose « Copier le tableau ». Le presse-papier reçoit un HTML minimal (bordures, en-tête en gras, alignement, gras, italique, code, liens) et du texte séparé par des tabulations. Les classes et styles du viewer, les marqueurs de tags et les appels de notes sont retirés ; une image est remplacée par son texte alternatif.
+
+Fichiers : `home/copyTable.ts` (nouveau), `home/inlineSnippetEdit.ts`, `home/EditableMarkdown.svelte`, `i18n/en.json`, `i18n/fr.json`, `tests/e2e/inline-snippet-edit.spec.ts`.
+
+Vérifications : suite API et E2E : 418 réussis, 1 ignoré, 1 échec dû à une course préexistante du test de double-clic sur une cellule, corrigée puis rejouée 30 fois sans échec, sans relancer la suite complète. Lint sans erreur. Contenu du presse-papier vérifié dans Chromium ; collage dans Google Docs non testé.
+
+Hors périmètre : couleurs de texte et de tableau, documents réservés en lecture seule et tableaux kanban.
+
+Prochaine action : aucune sur le code. ADR à écrire quand le MCP sert ce dossier, si l'utilisateur le souhaite.
+
+---
+
+# Bouton « Fond blanc » du viewer — 2 novembre 2026
+
+Statut : terminé et commité. Validation par l'utilisateur confirmée.
+
+Livré : un bouton de la barre d'outils du document bascule la page en blanc pur pour les captures d'écran. Le thème clair est forcé pendant ce mode, puis le thème précédent revient. La préférence `ld-dark` n'est pas modifiée et le mode n'est pas persisté au rechargement.
+
+Fichiers : `home/DocViewer.svelte`, `home/state.svelte.ts`, `home/home.css`, `routes/Home.svelte`, `i18n/en.json`, `i18n/fr.json`, `tests/e2e/viewer.spec.ts`.
+
+Vérifications : 418 API et E2E réussis, 1 ignoré, build et lint sans erreur, capture contrôlée depuis le thème sombre dans Chromium. Unitaires non relancés : aucune logique pure touchée.
+
+Prochaine action : aucune.
+
+---
+
 # Copie d'une image depuis le viewer — 2 novembre 2026
 
-Statut : terminé et commité. Validation manuelle dans le viewer confirmée par l'utilisateur.
+Statut : terminé et commité (`ecc1ab58`). Validation manuelle dans le viewer confirmée par l'utilisateur.
 
 Livré : le menu du clic droit sur une image propose « Copier l'image ». Le PNG copié a la taille affichée (`clientWidth` × `devicePixelRatio`), donc `image-width` s'applique, et un fond blanc remplace la transparence. En cas d'échec, un toast d'erreur s'affiche.
 
@@ -24,7 +54,7 @@ Vérifications : 124 unitaires, 417 API et E2E réussis, 1 ignoré, build et lin
 
 MCP : le serveur du port 4321 sert un autre dossier (`Articles Arolla`), rien n'y a été écrit. Ce fichier est édité à la main ; métadonnées et hashes non mis à jour.
 
-Hors périmètre : diagrammes Mermaid, documents réservés en lecture seule et tableaux kanban (pas de menu personnalisé), bouton d'écran blanc.
+Hors périmètre : diagrammes Mermaid, documents réservés en lecture seule et tableaux kanban (pas de menu personnalisé).
 
 Prochaine action : compléter l'ADR des directives d'image et attacher `copyImage.ts` si l'utilisateur le souhaite.
 
