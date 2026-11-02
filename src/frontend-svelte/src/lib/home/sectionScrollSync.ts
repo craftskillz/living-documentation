@@ -31,6 +31,7 @@ export function createSectionScrollSync(
     mirror.style.width = `${editor.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight)}px`;
     const text = document.createTextNode(editor.value + "\u200b");
     mirror.replaceChildren(text);
+    const lineHeight = parseFloat(style.lineHeight);
     const offsets = [0];
     for (let i = 0; i < editor.value.length; i++) if (editor.value[i] === "\n") offsets.push(i + 1);
     const range = document.createRange();
@@ -43,7 +44,10 @@ export function createSectionScrollSync(
       if (offset === undefined || !block.getClientRects().length) continue;
       range.setStart(text, offset);
       range.setEnd(text, offset + 1);
-      const point = { editor: range.getBoundingClientRect().top - mirrorTop, preview: block.getBoundingClientRect().top - previewTop };
+      const glyph = range.getBoundingClientRect();
+      // A text rect stops at the glyph box: remove the half-leading, which varies with the font, to get the line top.
+      const lineTop = glyph.top - (lineHeight - glyph.height) / 2;
+      const point = { editor: lineTop - mirrorTop, preview: block.getBoundingClientRect().top - previewTop };
       const last = anchors[anchors.length - 1];
       // Ignore hidden/nested or same-line blocks: interpolation must stay monotonic in both directions.
       if (point.editor > last.editor && point.preview > last.preview) anchors.push(point);
