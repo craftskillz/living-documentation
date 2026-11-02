@@ -14,15 +14,15 @@ status: To be validated
 
 # Défilement synchronisé rouge en CI — 2 novembre 2026
 
-Statut : correctif prêt, non commité, à valider sur Linux. Depuis 3.69.0, deux tests de `tests/e2e/section-scroll.spec.ts` bloquent la publication : npm est resté en 3.68.0, et 3.69.0, 3.70.0 et 3.71.0 n'y sont pas.
+Statut : correctif mergé sur `main` (PR #31), publication à relancer. Depuis 3.69.0, deux tests de `tests/e2e/section-scroll.spec.ts` bloquaient la publication : npm est resté en 3.68.0, et 3.69.0, 3.70.0 et 3.71.0 n'y sont pas.
 
 Cause : `measure()` lisait le haut du glyphe au lieu du haut de la ligne, ce qui décalait chaque ancre de la demi-interligne (3,55 px sur Mac). L'écart atteignait 3,6875 px sur Mac, sous le seuil de 4 du test, et 4,6875 px sur GitHub Actions.
 
 Fichiers : `home/sectionScrollSync.ts` (haut de ligne calculé), `tests/e2e/section-scroll.spec.ts` (tolérance ramenée de 4 à 2 px).
 
-Vérifications sur Mac : rouge à 3,6875 px avant le correctif, puis vert sur 3 répétitions. Suites API et E2E : 419 réussis, 1 ignoré. Non vérifié sur Linux : Docker indisponible, seule la CI peut le confirmer.
+Vérifications sur Mac : rouge à 3,6875 px avant le correctif, puis vert sur 3 répétitions. Suites API et E2E : 419 réussis, 1 ignoré. Sur Linux : job E2E de la PR #31 vert sur GitHub Actions.
 
-Prochaine action : commiter, vérifier le job E2E sur GitHub Actions, puis publier. Le MCP n'expose pas ses outils dans cette session : métadonnées et hashes non mis à jour.
+Prochaine action : lancer `just publish minor` pour sortir 3.72.0, qui reprend le contenu de 3.69 à 3.71. Le MCP n'expose pas ses outils dans cette session : métadonnées et hashes non mis à jour.
 
 ---
 
