@@ -3,6 +3,13 @@
         cursor: context-menu;
       }
 
+      /* White background mode, for screen captures. */
+      html.ld-white-background .app-shell,
+      html.ld-white-background #home-doc-header,
+      html.ld-white-background #home-content-area {
+        background-color: #ffffff;
+      }
+
       /* Image presets — triggered by image-width/image-align comments. */
       .prose img[class*="ld-image-width-"] {
         max-width: 100%;

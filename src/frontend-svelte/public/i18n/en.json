@@ -209,6 +209,8 @@
   "doc.full_width_narrow_btn": "⇤ Narrow",
   "doc.export_pdf": "Export as PDF",
   "doc.export_pdf_btn": "Export PDF",
+  "doc.white_background": "Switch the page to a pure white background for screen captures",
+  "doc.white_background_btn": "White background",
   "doc.copy_link": "Copy link",
   "doc.copy_link_btn": "Copy link",
   "doc.copy_mcp_id": "Copy MCP document id",

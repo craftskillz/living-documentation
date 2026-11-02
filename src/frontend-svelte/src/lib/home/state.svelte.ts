@@ -69,6 +69,9 @@ class HomeState {
     this.dropTarget = null;
   }
 
+  // Pure white, light page for screen captures. Not persisted: it is a temporary mode.
+  whiteBackground = $state(false);
+
   // Marker (stabilo): "normal" | "active" | "hidden"
   markerState = $state<"normal" | "active" | "hidden">("normal");
 

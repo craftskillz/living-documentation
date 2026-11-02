@@ -43,19 +43,30 @@
     // The tau site theme is light-only for now; never apply dark under it.
     if (isTauActive()) v = false;
     dark = v;
-    document.documentElement.classList.toggle("dark", v);
+    document.documentElement.classList.toggle("dark", v && !home.whiteBackground);
   }
   function toggleDark() {
     applyDark(!dark);
     try { localStorage.setItem("ld-dark", String(dark)); } catch {}
   }
+  // White background mode shows the light theme without touching the saved preference.
+  $effect(() => {
+    if (!home.whiteBackground) return;
+    const root = document.documentElement;
+    root.classList.add("ld-white-background");
+    root.classList.remove("dark");
+    return () => {
+      root.classList.remove("ld-white-background");
+      root.classList.toggle("dark", dark);
+    };
+  });
 
   // ── Code block hljs theme swap ───────────────────────────────────────────────
   $effect(() => {
     const hljsDark = document.getElementById('hljs-dark') as HTMLLinkElement | null;
     const hljsLight = document.getElementById('hljs-light') as HTMLLinkElement | null;
     if (!hljsDark || !hljsLight) return;
-    const useLightTheme = home.codeBlockLightTheme && !dark;
+    const useLightTheme = home.codeBlockLightTheme && (!dark || home.whiteBackground);
     hljsDark.disabled = useLightTheme;
     hljsLight.disabled = !useLightTheme;
     document.body.classList.toggle('ld-code-light', useLightTheme);

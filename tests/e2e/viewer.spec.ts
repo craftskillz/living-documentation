@@ -117,3 +117,27 @@ test('french reading plays server audio and supports pause, resume and stop', as
   await page.getByTestId('tts-stop').click();
   await expect(page.getByTestId('tts-play')).toBeVisible();
 });
+
+test('white background mode forces a pure white, light page and restores the dark preference', async ({ page, ld }) => {
+  await page.addInitScript(() => localStorage.setItem('ld-dark', 'true'));
+  await page.goto(ld.baseURL);
+  await page.getByTestId('category-tree').getByText('Intro', { exact: true }).click();
+  const html = page.locator('html');
+  const toggle = page.getByTestId('white-background-btn');
+  const white = 'rgb(255, 255, 255)';
+  await expect(html).toHaveClass(/\bdark\b/);
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+  await expect(html).not.toHaveClass(/\bdark\b/);
+  await expect(page.locator('.app-shell')).toHaveCSS('background-color', white);
+  await expect(page.locator('#home-doc-header')).toHaveCSS('background-color', white);
+  await expect(page.locator('#home-content-area')).toHaveCSS('background-color', white);
+
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  await expect(html).toHaveClass(/\bdark\b/);
+  await expect(page.locator('#home-doc-header')).not.toHaveCSS('background-color', white);
+  expect(await page.evaluate(() => localStorage.getItem('ld-dark'))).toBe('true');
+});
