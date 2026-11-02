@@ -48,7 +48,7 @@ async function scrollTo(page: Page, selector: string, top: number) {
 }
 
 async function expectScroll(page: Page, selector: string, top: number) {
-  await expect.poll(async () => Math.abs(await page.locator(selector).evaluate(el => el.scrollTop) - top)).toBeLessThan(4);
+  await expect.poll(async () => Math.abs(await page.locator(selector).evaluate(el => el.scrollTop) - top)).toBeLessThan(2);
 }
 
 test("aligns source blocks in both directions despite an image and wrapped lines", async ({ page }) => {
