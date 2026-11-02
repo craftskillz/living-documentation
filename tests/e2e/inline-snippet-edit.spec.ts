@@ -135,8 +135,10 @@ test.describe('inline snippet editing from viewer', () => {
     await page.setViewportSize({ width: 1280, height: 1000 });
     await page.goto(`${ld.baseURL}/?doc=${encodeURIComponent(docId)}`);
 
+    const cell = page.locator('#doc-content table').first().locator('tbody td').nth(4);
+    await expect(cell).toBeVisible();
     const scrollBefore = await page.evaluate(() => document.getElementById('home-content-area')?.scrollTop ?? -1);
-    await page.locator('#doc-content table').first().locator('tbody td').nth(4).dblclick();
+    await cell.dblclick();
 
     await expect(page.locator('#snippets-modal')).toBeVisible();
     await expect
