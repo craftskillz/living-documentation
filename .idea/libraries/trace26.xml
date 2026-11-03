@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="trace26">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/test-results/e2e-viewer-opening-a-document-renders-its-heading-and-body-chromium/trace.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="trace280">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/test-results/e2e-editor-cancel-edit-reverts-without-writing-to-disk-chromium/trace.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

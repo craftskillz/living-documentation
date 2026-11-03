@@ -1,3 +1,40 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Source line numbers (viewer toggle): a left gutter, inside the box where the block scrolls. */
+.ld-show-source-lines {
+  --ld-line-gutter: 4.75rem;
+  padding-left: var(--ld-line-gutter);
+}
+.ld-show-source-lines > [data-line-label] {
+  position: relative;
+}
+.ld-show-source-lines > [data-line-label]::before {
+  content: attr(data-line-label);
+  position: absolute;
+  top: 0;
+  left: calc(-1 * var(--ld-line-gutter));
+  width: calc(var(--ld-line-gutter) - 0.75rem);
+  text-align: right;
+  font: 400 0.75rem/1.75 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0;
+  color: #6b7280;
+  white-space: nowrap;
+}
+.ld-show-source-lines > pre[data-line-label],
+.ld-show-source-lines > .overflow-x-auto[data-line-label] {
+  padding-top: 1.5rem;
+}
+.ld-show-source-lines > pre[data-line-label]::before,
+.ld-show-source-lines > .overflow-x-auto[data-line-label]::before {
+  left: 0.5rem;
+  width: auto;
+  text-align: left;
+}
+@media print {
+  .ld-show-source-lines { padding-left: 0; }
+  .ld-show-source-lines > [data-line-label]::before { content: none; }
+  .ld-show-source-lines > pre[data-line-label],
+  .ld-show-source-lines > .overflow-x-auto[data-line-label] { padding-top: 0; }
+}

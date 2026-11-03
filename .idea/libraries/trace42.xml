@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="trace42">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/test-results/api-cli-CLI-rejects-an-absolute-docs-folder-argument-chromium/trace.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

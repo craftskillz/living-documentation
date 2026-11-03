@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="trace20">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/test-results/api-cli-CLI-rejects-a-tilde-prefixed-docs-folder-argument-chromium/trace.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

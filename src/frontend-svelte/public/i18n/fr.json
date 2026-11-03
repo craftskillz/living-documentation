@@ -209,6 +209,8 @@
   "doc.full_width_narrow_btn": "⇤ Réduire",
   "doc.export_pdf": "Exporter en PDF",
   "doc.export_pdf_btn": "Exporter PDF",
+  "doc.source_lines": "Afficher les numéros de ligne du fichier Markdown à côté de chaque bloc",
+  "doc.source_lines_btn": "Lignes",
   "doc.white_background": "Basculer la page sur un fond blanc pur pour les captures d'écran",
   "doc.white_background_btn": "Fond blanc",
   "doc.copy_link": "Copier le lien",

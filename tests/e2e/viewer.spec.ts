@@ -141,3 +141,37 @@ test('white background mode forces a pure white, light page and restores the dar
   await expect(page.locator('#home-doc-header')).not.toHaveCSS('background-color', white);
   expect(await page.evaluate(() => localStorage.getItem('ld-dark'))).toBe('true');
 });
+
+test('line numbers toggle shows each block source lines, stays out of the text and persists', async ({ page, request, ld }) => {
+  const body = 'Single line block.\n\nFirst wrapped line\nsecond wrapped line.\n\n| A |\n| --- |\n| x |\n\n```js\nconst code = 1;\n```\n';
+  expect((await request.post(`${ld.baseURL}/api/documents`, { data: { title: 'Line numbers', content: body } })).ok()).toBeTruthy();
+  const { content } = await (await request.get(`${ld.baseURL}/api/documents/line-numbers`)).json();
+  const lineOf = (text: string) => content.split('\n').findIndex((line: string) => line.startsWith(text)) + 1;
+  const marker = (selector: string) => page.locator(`#doc-content ${selector}`).evaluate(el => getComputedStyle(el, '::before').content);
+
+  await page.goto(`${ld.baseURL}/?doc=line-numbers`);
+  const single = '> p:first-of-type';
+  const wrapped = '> p:nth-of-type(2)';
+  const table = '> .overflow-x-auto';
+  const code = '> pre';
+  const toggle = page.getByTestId('source-lines-btn');
+  await expect(page.locator('#doc-content pre')).toBeVisible();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  expect(await marker(single)).toBe('none');
+
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+  expect(await marker(single)).toBe(`"${lineOf('Single line')}"`);
+  expect(await marker(wrapped)).toBe(`"${lineOf('First wrapped')}-${lineOf('second wrapped')}"`);
+  expect(await marker(table)).toBe(`"${lineOf('| A |')}-${lineOf('| x |')}"`);
+  expect(await marker(code)).toBe(`"${lineOf('```js')}-${lineOf('```js') + 2}"`);
+  expect(await page.locator('#doc-content').textContent()).not.toContain(`${lineOf('First wrapped')}-${lineOf('second wrapped')}`);
+
+  await page.reload();
+  await expect(page.locator('#doc-content pre')).toBeVisible();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+  expect(await marker(single)).toBe(`"${lineOf('Single line')}"`);
+
+  await toggle.click();
+  expect(await marker(single)).toBe('none');
+});

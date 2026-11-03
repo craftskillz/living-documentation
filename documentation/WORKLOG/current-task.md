@@ -12,6 +12,24 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
+# Numéros de ligne dans le viewer — 2 novembre 2026
+
+Statut : terminé, non commité, sur la branche `feat/numeros-de-ligne-viewer`, en attente de validation par l'utilisateur.
+
+Livré : un bouton « Lignes » dans la barre du document affiche les lignes du fichier Markdown à côté de chaque bloc. Le choix persiste dans `localStorage` (`ld-show-source-lines`). L'aperçu de l'édition par section affiche aussi ces numéros.
+
+Fichiers : `home/sourceLineLabels.ts` (nouveau), `home/wireContent.ts`, `home/state.svelte.ts`, `home/markdownClasses.svelte.ts`, `home/DocViewer.svelte`, `app.css`, `i18n/en.json`, `i18n/fr.json`, `tests/e2e/viewer.spec.ts`. Un bloc Mermaid conserve désormais `data-source-lines`.
+
+Vérifications : test E2E rouge puis vert, suites API et E2E : 420 réussis, 1 ignoré. Lint sans erreur sur les modules TypeScript touchés. Rendu contrôlé par captures sur une copie d'un article réel.
+
+Hors périmètre : les textareas d'édition n'ont pas de numéros, et les notes de bas de page n'en ont pas.
+
+Anomalie préexistante, non corrigée : l'aperçu de l'édition par section retire les tableaux, car leur enveloppe `.overflow-x-auto` ne porte pas `data-source-lines` (`SectionEditor.svelte`).
+
+Prochaine action : validation par l'utilisateur, puis commit. Le MCP n'expose pas ses outils dans cette session : métadonnées et hashes non mis à jour.
+
+---
+
 # Défilement synchronisé rouge en CI — 2 novembre 2026
 
 Statut : correctif mergé sur `main` (PR #31), publication à relancer. Depuis 3.69.0, deux tests de `tests/e2e/section-scroll.spec.ts` bloquaient la publication : npm est resté en 3.68.0, et 3.69.0, 3.70.0 et 3.71.0 n'y sont pas.

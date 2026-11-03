@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="trace230">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/test-results/e2e-templates-stale-edits--87b30-te-a-newer-library-revision-chromium/trace.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

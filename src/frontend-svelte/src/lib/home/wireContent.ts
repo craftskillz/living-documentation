@@ -13,6 +13,7 @@ import {
   type CodeBlockAttrs,
 } from "./codeBlockAttributes";
 import { initKanbanBoard } from "./kanban";
+import { labelSourceLines } from "./sourceLineLabels";
 import { wireDiagramImageLinks } from "../diagramImageLink";
 import type { DocSummary } from "./types";
 
@@ -143,6 +144,7 @@ export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireO
     wrapper.className = "mermaid my-4";
     wrapper.textContent = source;
     if (attrs) applyCodeBlockLayout(wrapper, attrs);
+    if (pre?.dataset.sourceLines) wrapper.dataset.sourceLines = pre.dataset.sourceLines;
     pre?.replaceWith(wrapper);
   });
   if (window.mermaid && contentEl.querySelector(".mermaid")) {
@@ -207,6 +209,8 @@ export function wireDocContent(contentEl: HTMLElement, html: string, opts: WireO
     t.parentNode?.insertBefore(wrapper, t);
     wrapper.appendChild(t);
   });
+
+  labelSourceLines(contentEl);
 
   return false;
 }

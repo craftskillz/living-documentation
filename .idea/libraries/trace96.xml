@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="trace96">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/test-results/api-browse-GET-api-browse-returns-400-for-an-unreadable-path-chromium/trace.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
