@@ -83,6 +83,14 @@ Un clic sur une pastille relance l'API avec `baseRef=<hash du commit>`. Le diff 
 
 Le diff utilise une LCS bornee par `MAX_LCS_CELLS` pour conserver une correspondance lisible sur les documents normaux, avec fallback lineaire pour les documents trop grands.
 
+### Repli des lignes inchangees
+
+Le diff est replie par defaut pour que les changements se voient sans defiler : `diffFolding.ts` garde 3 lignes de contexte autour de chaque changement et remplace le reste par une barre `N lignes identiques`, que l'utilisateur deplie ou replie, une a une ou toutes ensemble. Une zone de moins de 3 lignes a masquer reste affichee, car la barre prendrait autant de place qu'elle.
+
+Le repli ne touche que l'affichage, apres le filtrage par selection : il ne masque jamais une ligne de hunk, donc les boutons `<` restent visibles, et le calcul du diff ne change pas.
+
+Une zone depliee est reperee par ses lignes dans le commit de base, et non par sa position ou ses lignes courantes : restaurer un bloc decale les lignes courantes et peut fusionner deux zones, alors que la base ne bouge pas. Une zone fusionnee reste depliee si l'une de ses parties l'etait. Changer de commit ou fermer la modale revient a l'etat tout replie.
+
 ### Restauration de blocs et sauvegarde explicite
 
 Le calcul du diff produit aussi des hunks : chaque bloc modifie connait sa plage dans `baseContent`, sa plage dans `headContent`, les lignes du commit selectionne et les lignes courantes.
