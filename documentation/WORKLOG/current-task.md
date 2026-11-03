@@ -14,7 +14,7 @@ status: To be validated
 
 # Repli des lignes inchangées dans « Versions du document » — 3 novembre 2026
 
-Statut : terminé et commité sur la branche `feat/repli-contexte-versions`, non mergé, en attente de validation par l'utilisateur.
+Statut : terminé et mergé dans `main`, validé par l'utilisateur.
 
 Livré : le diff est replié par défaut, avec 3 lignes de contexte autour de chaque changement. Chaque zone masquée devient une barre `N lignes identiques` qui se déplie et se replie, et un bouton `Tout déplier / Tout replier` s'ajoute à la barre d'outils.
 
@@ -24,4 +24,4 @@ Vérifications : test unitaire rouge puis vert. Unitaires : 131 réussis. API : 
 
 Hors périmètre : dépliage partiel (« 20 lignes de plus ») et navigation entre changements. `buildSimpleDiffView` compare toujours position par position au-delà de `MAX_LCS_CELLS` : une insertion en haut d'un très gros document ne laisse alors rien à replier.
 
-Prochaine action : validation par l'utilisateur, puis merge. Le MCP n'expose pas ses outils dans cette session : métadonnées et hashes non mis à jour ; attacher `home/diffFolding.ts` à l'ADR et rafraîchir ses hashes.
+Prochaine action : le MCP n'expose pas ses outils dans cette session : métadonnées et hashes non mis à jour ; attacher `home/diffFolding.ts` à l'ADR et rafraîchir ses hashes.
