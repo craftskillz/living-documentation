@@ -2,6 +2,7 @@
   import type { SaveDocument } from "../../../../lib/draftSave";
   import { untrack } from "svelte";
   import { t } from "../i18n.svelte";
+  import { type DiffFold, foldDiffRows, toggleFold } from "./diffFolding";
   import { type LineRange, rowsInLineRange, shiftLineRangeAfterRestore } from "./selectionHistory";
 
   interface GitDocumentCommit {
@@ -86,12 +87,17 @@
   // Selection being followed (null = whole document): in HEAD lines for git, in draft lines for display.
   let headRange = $state<LineRange | null>(null);
   let activeRange = $state<LineRange | null>(null);
+  // Base commit lines of the expanded folds: everything is collapsed by default.
+  let expandedFoldLines = $state<ReadonlySet<number>>(new Set());
 
   const persistedContent = $derived(data?.headContent ?? content);
   const rightContent = $derived(workingContent);
   const hasDraftChanges = $derived(workingContent !== persistedContent);
   const diffView = $derived(buildDiffView(data?.baseContent ?? "", rightContent));
   const diffRows = $derived(activeRange ? firstRowOfEachHunkApplies(rowsInLineRange(diffView.rows, activeRange)) : diffView.rows);
+  const diffItems = $derived(foldDiffRows(diffRows, expandedFoldLines));
+  const folds = $derived(diffItems.filter((item): item is DiffFold => item.kind === "fold"));
+  const hasCollapsedFold = $derived(folds.some((fold) => !fold.expanded));
   const hasBaseContent = $derived(data?.baseContent !== null && data?.baseContent !== undefined);
 
   $effect(() => {
@@ -302,6 +308,10 @@
     }
   }
 
+  function toggleAllFolds() {
+    expandedFoldLines = hasCollapsedFold ? new Set(folds.map((fold) => fold.firstBaseLine)) : new Set();
+  }
+
   async function saveDraft() {
     if (!hasDraftChanges || savingDraft) return;
     savingDraft = true;
@@ -354,6 +364,7 @@
       const body = await res.json();
       if (!res.ok || !body.ok) throw new Error(body.message || body.error || t("versions.load_failed"));
       const nextData = body as GitDocumentVersions;
+      if (nextData.baseRef !== data?.baseRef) expandedFoldLines = new Set();
       data = nextData;
       selectedBaseRef = nextData.baseRef;
       if (!preserveDraft) workingContent = nextData.headContent ?? content;
@@ -399,6 +410,7 @@
   $effect(() => {
     if (!open) {
       discardDraft();
+      expandedFoldLines = new Set();
       lastLoadKey = "";
       selectedBaseRef = "";
       return;
@@ -454,6 +466,11 @@
           <div class="text-xs text-gray-500 dark:text-gray-400">
             {t("versions.base_ref").replace("{ref}", data?.baseRef || "HEAD")}
           </div>
+          {#if folds.length}
+            <button type="button" data-testid="versions-fold-all" onclick={toggleAllFolds} class="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800">
+              <i class="fa-solid {hasCollapsedFold ? 'fa-up-right-and-down-left-from-center' : 'fa-down-left-and-up-right-to-center'} mr-1"></i>{t(hasCollapsedFold ? "versions.fold_expand_all" : "versions.fold_collapse_all")}
+            </button>
+          {/if}
           {#if hasDraftChanges}
             <div class="text-xs font-medium text-amber-700 dark:text-amber-300">{t("versions.unsaved_changes")}</div>
           {/if}
@@ -500,31 +517,44 @@
               <div class="border-b border-r border-gray-200 bg-gray-100 px-3 py-2 font-semibold text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200">{t(hasDraftChanges ? "versions.right_title_draft" : "versions.right_title")}</div>
               <div class="border-b border-r border-gray-200 bg-gray-100 px-2 py-2 text-center font-semibold text-gray-400 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-500"></div>
               <div class="border-b border-gray-200 bg-gray-100 px-3 py-2 font-semibold text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200">{t("versions.left_title").replace("{ref}", data.baseRef)}</div>
-              {#each diffRows as row, index (index)}
-                <div class="grid grid-cols-[4rem_1fr] border-r border-gray-200 font-mono leading-5 dark:border-gray-800 {lineClass(row.right.kind)}">
-                  <span class="select-none px-2 py-0.5 text-right {lineNumberClass(row.right.kind)}">{row.right.lineNumber ?? ""}</span>
-                  <pre class="m-0 whitespace-pre-wrap break-words px-2 py-0.5 font-mono">{row.right.text}</pre>
-                </div>
-                <div class="flex items-start justify-center border-r border-gray-200 bg-gray-50 px-1 py-0.5 dark:border-gray-800 dark:bg-gray-900/70">
-                  {#if row.showApply}
-                    {@const hunk = getHunk(row.hunkId)}
-                    {#if hunk}
-                      <button
-                        type="button"
-                        onclick={() => applyHunk(hunk)}
-                        disabled={applyingHunkId !== null}
-                        title={t("versions.apply_hunk")}
-                        class="mt-0.5 inline-flex h-7 w-8 items-center justify-center rounded-md border border-blue-200 bg-white font-mono text-sm font-bold text-blue-600 transition-colors hover:bg-blue-50 disabled:cursor-wait disabled:opacity-50 dark:border-blue-800 dark:bg-gray-950 dark:text-blue-300 dark:hover:bg-blue-950/40"
-                      >
-                        {applyingHunkId === hunk.id ? "..." : "<"}
-                      </button>
+              {#each diffItems as item, index (index)}
+                {#if item.kind === "fold"}
+                  <button
+                    type="button"
+                    data-testid="versions-fold"
+                    aria-expanded={item.expanded}
+                    onclick={() => { expandedFoldLines = toggleFold(expandedFoldLines, item); }}
+                    class="col-span-3 border-y border-gray-200 bg-blue-50/60 px-3 py-1 text-center font-mono text-blue-700 transition-colors hover:bg-blue-100 dark:border-gray-800 dark:bg-blue-950/30 dark:text-blue-300 dark:hover:bg-blue-950/60"
+                  >
+                    <i class="fa-solid {item.expanded ? 'fa-chevron-up' : 'fa-chevron-down'} mr-2"></i>{t(item.expanded ? "versions.fold_collapse" : "versions.fold_expand", { count: String(item.count) })}
+                  </button>
+                {:else}
+                  {@const row = item.row}
+                  <div class="grid grid-cols-[4rem_1fr] border-r border-gray-200 font-mono leading-5 dark:border-gray-800 {lineClass(row.right.kind)}">
+                    <span class="select-none px-2 py-0.5 text-right {lineNumberClass(row.right.kind)}">{row.right.lineNumber ?? ""}</span>
+                    <pre class="m-0 whitespace-pre-wrap break-words px-2 py-0.5 font-mono">{row.right.text}</pre>
+                  </div>
+                  <div class="flex items-start justify-center border-r border-gray-200 bg-gray-50 px-1 py-0.5 dark:border-gray-800 dark:bg-gray-900/70">
+                    {#if row.showApply}
+                      {@const hunk = getHunk(row.hunkId)}
+                      {#if hunk}
+                        <button
+                          type="button"
+                          onclick={() => applyHunk(hunk)}
+                          disabled={applyingHunkId !== null}
+                          title={t("versions.apply_hunk")}
+                          class="mt-0.5 inline-flex h-7 w-8 items-center justify-center rounded-md border border-blue-200 bg-white font-mono text-sm font-bold text-blue-600 transition-colors hover:bg-blue-50 disabled:cursor-wait disabled:opacity-50 dark:border-blue-800 dark:bg-gray-950 dark:text-blue-300 dark:hover:bg-blue-950/40"
+                        >
+                          {applyingHunkId === hunk.id ? "..." : "<"}
+                        </button>
+                      {/if}
                     {/if}
-                  {/if}
-                </div>
-                <div class="grid grid-cols-[4rem_1fr] font-mono leading-5 {lineClass(row.left.kind)}">
-                  <span class="select-none px-2 py-0.5 text-right {lineNumberClass(row.left.kind)}">{row.left.lineNumber ?? ""}</span>
-                  <pre class="m-0 whitespace-pre-wrap break-words px-2 py-0.5 font-mono">{row.left.text}</pre>
-                </div>
+                  </div>
+                  <div class="grid grid-cols-[4rem_1fr] font-mono leading-5 {lineClass(row.left.kind)}">
+                    <span class="select-none px-2 py-0.5 text-right {lineNumberClass(row.left.kind)}">{row.left.lineNumber ?? ""}</span>
+                    <pre class="m-0 whitespace-pre-wrap break-words px-2 py-0.5 font-mono">{row.left.text}</pre>
+                  </div>
+                {/if}
               {/each}
             </div>
           </div>
