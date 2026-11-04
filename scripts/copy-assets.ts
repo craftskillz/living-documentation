@@ -1,6 +1,6 @@
 #!/usr/bin/env ts-node
 // Post-build asset copy. The frontend is built by Vite (→ dist/frontend-svelte);
-// this script only copies the bundled starter docs into dist/.
+// this script copies the bundled starter docs and HTML templates into dist/.
 
 import fs from "node:fs";
 import path from "node:path";
@@ -39,3 +39,6 @@ for (const starterName of ["starter-doc", "starter-doc-fr"]) {
     console.log(`Copied ${starterName} → dist/${starterName}/`);
   }
 }
+
+copyFreshDir(path.join(__dirname, "..", "html-templates"), path.join(__dirname, "..", "dist", "html-templates"));
+console.log("Copied html-templates → dist/html-templates/");
