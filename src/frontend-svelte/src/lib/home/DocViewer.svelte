@@ -7,6 +7,7 @@
   import AccuracyGauge from "./AccuracyGauge.svelte";
   import MetadataModal from "./MetadataModal.svelte";
   import VersionsModal from "./VersionsModal.svelte";
+  import HtmlTemplateActions from "../html-templates/HtmlTemplateActions.svelte";
   import type { LineRange } from "./selectionHistory";
   import { selectionSourceLines } from "./selectionSourceLines";
   import EditableMarkdown from "./EditableMarkdown.svelte";
@@ -441,6 +442,7 @@
               </svg>{t("doc.marker_btn")}
             </button>
 
+            {#if !doc.reserved}<HtmlTemplateActions {doc} {onsave} />{/if}
             <button onclick={exportPDF} data-testid="export-pdf-btn" title={t("doc.export_pdf")} class="no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">📄 {t("doc.export_pdf_btn")}</button>
             <button onclick={() => (home.whiteBackground = !home.whiteBackground)} data-testid="white-background-btn" aria-pressed={home.whiteBackground} title={t("doc.white_background")} class="no-print text-sm px-3 py-1.5 rounded-lg border transition-colors {home.whiteBackground ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}">⬜ {t("doc.white_background_btn")}</button>
             <button onclick={() => home.toggleShowSourceLines()} data-testid="source-lines-btn" aria-pressed={home.showSourceLines} title={t("doc.source_lines")} class="no-print text-sm px-3 py-1.5 rounded-lg border transition-colors {home.showSourceLines ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}"><i class="fa-solid fa-list-ol"></i> {t("doc.source_lines_btn")}</button>

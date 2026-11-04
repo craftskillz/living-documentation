@@ -15,6 +15,7 @@ import { annotationsRouter } from './routes/annotations';
 import { metadataRouter } from './routes/metadata';
 import { browseSourceRouter } from './routes/browse-source';
 import { exportRouter } from './routes/export';
+import { htmlTemplatesRouter } from './routes/htmlTemplates';
 import { contextRouter } from './routes/context';
 import { workspaceRouter } from './routes/workspace';
 import { blueprintRouter } from './routes/blueprint';
@@ -68,6 +69,7 @@ export async function startServer({
   app.use('/api/metadata', metadataRouter(docsPath));
   app.use('/api/browse-source', browseSourceRouter(docsPath));
   app.use('/api/export', exportRouter(docsPath));
+  app.use('/api/html-templates', htmlTemplatesRouter(docsPath));
   app.use('/api/context', contextRouter(docsPath));
   app.use('/api/workspace', workspaceRouter(docsPath));
   app.use('/api/blueprint', blueprintRouter(docsPath));

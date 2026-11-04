@@ -12,6 +12,18 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
+# Générer un document en HTML — 4 novembre 2026
+
+Statut : terminé sur la branche `feat/generer-en-html`, non mergé, à valider par l'utilisateur.
+
+Livré : boutons `Générer en HTML`, `Voir en HTML` et changement de template dans le viewer, bibliothèque `html-templates/` avec le template « Fiche d'entretien », route `/api/html-templates`. Décisions : ADR `[RENDERING] Générer un document en HTML`.
+
+Vérifications : unitaires 140 réussis. API 240 réussis, 1 ignoré. E2E 188 réussis. Rendu écran, mobile et impression contrôlés sur une copie de `fiche_entretien_coaching_ia.md`, le fichier d'origine n'a pas été modifié.
+
+Hors périmètre : édition des templates depuis l'interface, aperçu dans la fenêtre de choix, Mermaid et coloration du code dans la page générée.
+
+Prochaine action : validation par l'utilisateur, puis merge. Le MCP n'expose pas ses outils dans cette session : métadonnées et hashes non mis à jour ; attacher à l'ADR `src/lib/htmlTemplates.ts`, `src/lib/htmlDocument.ts`, `src/lib/htmlTemplateField.ts`, `src/routes/htmlTemplates.ts`, `src/frontend-svelte/src/lib/html-templates/HtmlTemplateActions.svelte`, `html-templates/interview-sheet.html`.
+
 # Repli des lignes inchangées dans « Versions du document » — 3 novembre 2026
 
 Statut : terminé et mergé dans `main`, validé par l'utilisateur.
