@@ -8,6 +8,7 @@
 * [Menu Workspace](./2026_07_01_14_04_[DOCUMENTATION]_menu_workspace.md) - Presentation courte du menu Workspace pour configurer des providers LLM et des agents documentaires.
 * [Menu Agents](./2026_07_01_17_04_[DOCUMENTATION]_menu_agents.md) - Presentation courte du menu Agents pour executer les agents configures dans le Workspace.
 * [Menu Diagram](./2026_07_01_17_41_[DOCUMENTATION]_menu_diagram.md) - Presentation courte du menu Diagram pour creer, modifier et relier des diagrammes a vos documents.
+* [Bien utiliser Living Documentation](./bien-utiliser-living-documentation.md) - Guide d'usage commun aux utilisateurs et aux agents IA, qui présente le modèle de fichiers, les conventions d'écriture, le travail avec ou sans MCP et les pièges à éviter.
 * [Plan](./Plan.md) - Plan de production d'une documentation utilisateur professionnelle pour Living Documentation comme atelier documentaire local et laboratoire d'automatisation agentique.
 
 ## Directories

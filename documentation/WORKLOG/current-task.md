@@ -24,6 +24,20 @@ Hors périmètre : édition des templates depuis l'interface, aperçu dans la fe
 
 Prochaine action : le MCP n'expose pas ses outils dans cette session : métadonnées et hashes non mis à jour ; attacher à l'ADR `src/lib/htmlTemplates.ts`, `src/lib/htmlDocument.ts`, `src/lib/htmlTemplateField.ts`, `src/routes/htmlTemplates.ts`, `src/frontend-svelte/src/lib/html-templates/HtmlTemplateActions.svelte`, `html-templates/interview-sheet.html`.
 
+# Guide « Bien utiliser Living Documentation » — 4 novembre 2026
+
+Statut : brouillon commité sur `docs/guide-bien-utiliser`, à relire par l'utilisateur, non mergé.
+
+Fichiers : `bien-utiliser-living-documentation.md` (nouveau, dans `documentation/DOCUMENTATION/` et `starter-doc-fr/DOCUMENTATION/`), `starter-doc/DOCUMENTATION/using-living-documentation-well.md` (traduction), `DOCUMENTATION/index.md` des trois dossiers (régénérés). Les trois copies du guide sont à tenir synchronisées à la main.
+
+Vérifications : `npm run okf:validate` sans erreur. Rendu dans l'application non contrôlé. Workflows MCP décrits d'après le code, non exécutés.
+
+Hors périmètre : README, document « Document Markdown » dont le contenu porte sur le Workspace, `Plan.md`.
+
+Corrigé à la demande de l'utilisateur, après le merge de la génération HTML : dans `src/mcp/server.ts`, les deux passages où `create_document` « will reject a colliding filename » (le code ajoute un suffixe `-2`).
+
+Prochaine action : relecture par l'utilisateur. Écrit sans le MCP pour éviter un commit automatique sur `main` : métadonnées et hashes non mis à jour ; attacher `src/mcp/server.ts`, `src/mcp/tools/documents.ts`, `src/lib/okf.ts`, `src/lib/okf/validate.ts`, `src/lib/okf/index-generator.ts`, `src/lib/folderManifest.ts`, `src/lib/git-integration.ts`, `bin/cli.ts`.
+
 # Repli des lignes inchangées dans « Versions du document » — 3 novembre 2026
 
 Statut : terminé et mergé dans `main`, validé par l'utilisateur.
