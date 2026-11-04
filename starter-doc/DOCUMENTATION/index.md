@@ -8,3 +8,4 @@
 * [Workspace Menu](./2026_07_01_14_04_[DOCUMENTATION]_workspace_menu.md) - Short presentation of the Workspace menu for configuring LLM providers and documentation agents.
 * [Agents Menu](./2026_07_01_17_04_[DOCUMENTATION]_agents_menu.md) - Short presentation of the Agents menu for running agents configured in the Workspace.
 * [Diagram Menu](./2026_07_01_17_41_[DOCUMENTATION]_diagram_menu.md) - Short presentation of the Diagram menu for creating, editing, and linking diagrams to your documents.
+* [Using Living Documentation well](./using-living-documentation-well.md) - Usage guide shared by users and AI agents, covering the file model, writing conventions, working with or without MCP, and the pitfalls to avoid.

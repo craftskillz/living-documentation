@@ -87,8 +87,8 @@ covers. This is what keeps the documentation alive.
 3. **Supersede check** — if an existing ADR is **made obsolete** by the new
    feature, use \`update_document(id, ...)\` to flip its \`status:\` to
    \`SuperSeeded\` and add a one-line pointer to the new ADR (do **not** call
-   \`create_document\` — it does not overwrite and will reject a colliding
-   filename).
+   \`create_document\` — it never overwrites: a colliding title silently creates
+   a second file with a \`-2\` suffix).
 4. \`create_document\` for the new ADR with the **mandatory frontmatter**
    below at \`status: To be validated\`.
 5. \`add_metadata\` for **each source file** that materially carries the
@@ -1672,7 +1672,7 @@ ${featureLine}
 4. If an existing ADR is **made obsolete** by this feature:
    - \`read_document(id)\` to load its current Markdown.
    - Modify only the frontmatter: flip \`status:\` to \`SuperSeeded\` and add a one-line pointer just under the frontmatter (e.g. \`> Superseded by: <new ADR title>\`). Keep the body intact — supersede is a status flip, not a delete.
-   - \`update_document(id, content)\` with the modified Markdown. Do **not** use \`create_document\` for this — it does not overwrite and will reject a colliding filename.
+   - \`update_document(id, content)\` with the modified Markdown. Do **not** use \`create_document\` for this — it never overwrites: a colliding title silently creates a second file with a \`-2\` suffix.
 5. If no ADR is superseded, proceed.
 
 ## Step 2 — Write the new ADR
