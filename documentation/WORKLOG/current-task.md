@@ -24,6 +24,8 @@ Fichiers : `src/lib/filePreview.ts`, `src/lib/otherFiles.ts`, `src/lib/localRequ
 
 Vérifications : tests unitaires rouges puis verts. Unitaires : 151 réussis. API : 251 réussis, 1 ignoré. E2E : 190 réussis. Lint sans erreur sur les modules TypeScript modifiés. `okf:validate` conforme. Rendu du texte contrôlé sur captures, en thème sombre et clair, avec le thème de code par défaut. Thème de code clair (`ld-code-light`) non contrôlé.
 
+Corrigé après test de l'utilisateur : en mode dev (`localhost:5174`), PDF et DOCX étaient refusés avec `not_local`, car le proxy Vite réécrivait le `Host` alors que le `POST` envoie `Origin: http://localhost:5174`. Le proxy de `/api` garde désormais le `Host` (`vite.config.ts`). Contrôlé avec curl à travers le proxy : `Origin` 5174 accepté, autre site et autre application locale refusés. Aucun test automatisé ne couvre le proxy Vite.
+
 Non vérifié : l'ouverture réelle par l'OS. Les tests remplacent `open` et `xdg-open` par un faux programme, pour ne jamais lancer d'application sur la machine du développeur. La commande Windows (`rundll32`) n'a été exécutée nulle part.
 
 Hors périmètre : URL du fichier affiché (un rechargement revient au document) ; limitation à la machine locale de `GET /api/blueprint/file-content` et `file-raw`, qui restent lisibles depuis le réseau local.
