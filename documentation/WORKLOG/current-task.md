@@ -14,19 +14,27 @@ status: To be validated
 
 # Template HTML pour les articles — 5 novembre 2026
 
-Statut : terminé sur la branche `feat/template-html-article`, à merger dans `main` après validation de l'utilisateur.
+Statut : terminé et mergé dans `main`, sur décision de l'utilisateur.
 
 Réalisé : template `article` (dossier `articles`) pour la lecture longue, avec grand titre, colonne de texte, sommaire latéral et notes de bas de page discrètes. Correction du moteur : les images relatives (`images/`, `./images/`, `images-ai/`) sont réécrites depuis la racine. Sans cela, elles donnaient une 404 dans toute page générée, fiches d'entretien comprises.
 
 Balises pour LLM : une balise isolée (`<reformule cette phrase>`) s'affiche comme dans le viewer, en `b` avec infobulle, hors du titre, du sommaire et des ancres, et masquée à l'impression.
 
-Limite non traitée : les commentaires du viewer (`image-width`, `quote-type`, `quote-title`, `quote-icon`) ne sont pas appliqués dans les pages générées. Les images occupent la largeur du template et les encadrés deviennent de simples citations, sans leur titre. Décrit dans l'ADR du 4 novembre.
+Limite à traiter dans une prochaine tâche : les commentaires du viewer (`image-width`, `quote-type`, `quote-title`, `quote-icon`) ne sont pas appliqués dans les pages générées. Les images occupent la largeur du template et les encadrés deviennent de simples citations, sans leur titre. Décrit dans l'ADR du 4 novembre.
 
 Fichiers : `html-templates/article.html`, `src/lib/htmlTemplates.ts`, `src/lib/htmlDocument.ts`, catalogues i18n, `tests/unit/html-document.test.ts`, `tests/api/html-templates.spec.ts`, ADR `2026_11_04_13_20_[RENDERING]`.
 
 Vérifications : tests unitaires et API rouges puis verts. Dernier passage complet : unitaires 153 réussis, API 262 réussis et 1 ignoré, E2E 192 réussis. `inline-snippet-edit.spec.ts:227` (copie d'image) a échoué une fois au passage précédent, puis a passé 3 fois sur 3 seul et dans ce dernier passage complet : test intermittent. Rendu contrôlé sur une copie de l'article `comprendre_et_maitriser_ses_skills` : ordinateur, mobile, média d'impression, 6 images chargées, aucune erreur console.
 
-Prochaine action : validation visuelle et merge par l'utilisateur, puis décider si les commentaires du viewer doivent être appliqués dans les pages générées. Surveiller le test intermittent `inline-snippet-edit.spec.ts:227`. Les outils du MCP ne sont pas exposés dans cette session : métadonnées et hashes non mis à jour.
+Prochaines tâches décidées par l'utilisateur, chacune dans sa session :
+
+1. Appliquer les annotations du viewer (`image-width`, `quote-type`, `quote-title`, `quote-icon`) à la génération, côté serveur, pour tous les templates.
+2. Éditer depuis la page HTML avec le clic droit. « Voir en HTML » ouvre une page de l'application contenant le rendu dans une iframe `sandbox="allow-same-origin"`, sans script dans la page. Le clic droit sur un bloc ouvre directement `SectionEditor`, sauf si du texte est sélectionné : le menu du navigateur reste alors disponible. À la fermeture, le HTML est régénéré et la position conservée.
+3. Modifier sur place avec le double-clic, pour les paragraphes et les titres `##` à `####`. Le bloc est d'abord reconverti en Markdown et comparé à ses lignes ; en cas d'écart, la popup Markdown s'ouvre sans toucher au fichier. `Entrée` ne fait rien, cliquer ailleurs ou `Cmd+Entrée` enregistre, `Échap` annule.
+
+Faisabilité testée par prototype sous Chromium, hors dépôt : événements captés depuis la page parente, scripts du document bloqués, 106 blocs sur 107 de l'article redonnent leur source (espaces et retours à la ligne ignorés). À prévoir : un bouton ouvrant la page seule pour l'impression, et l'adaptation du test `instanceof Element` de `sectionAtTarget` pour les éléments d'iframe.
+
+Surveiller le test intermittent `inline-snippet-edit.spec.ts:227`. Les outils du MCP ne sont pas exposés dans cette session : métadonnées et hashes non mis à jour.
 
 # Espaces et caractères spéciaux dans les noms de dossiers — 5 novembre 2026
 
