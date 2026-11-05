@@ -14,13 +14,13 @@ status: To be validated
 
 # Limiter l'application à la machine locale — 5 novembre 2026
 
-Statut : en cours sur la branche `fix/api-locale-uniquement`, non commité. Code et README terminés.
+Statut : terminé sur la branche `fix/api-locale-uniquement`, à merger dans `main` après validation de l'utilisateur.
 
 Décision de l'utilisateur : usage local uniquement, sans option pour exposer le serveur. Un usage en conteneur avec port mappé ou depuis le réseau ne fonctionnera plus.
 
 Réalisé : le serveur écoute sur `127.0.0.1`. La garde `localOnly` (`src/lib/localRequest.ts`) s'applique à toute l'application, fichiers statiques et `/mcp` compris, et remplace celle de `/api/other-files`. Toutes les entrées du proxy Vite gardent le `Host`.
 
-Fichiers : `src/lib/localRequest.ts`, `src/server.ts`, `src/routes/otherFiles.ts`, `src/frontend-svelte/vite.config.ts`, `README.md`, `tests/api/local-only.spec.ts`, `tests/api/cli.spec.ts`.
+Fichiers : `src/lib/localRequest.ts`, `src/server.ts`, `src/routes/otherFiles.ts`, `src/frontend-svelte/vite.config.ts`, `README.md`, `README.fr.md`, `tests/api/local-only.spec.ts`, `tests/api/cli.spec.ts`.
 
 Vérifications : `local-only.spec.ts` rouge puis vert. Unitaires : 151 réussis. API : 260 réussis, 1 ignoré. E2E : 190 réussis. Lint sans erreur sur les modules TypeScript serveur modifiés.
 
@@ -28,7 +28,9 @@ Proxy Vite contrôlé sur le vrai serveur de dev : l'utilisateur a validé l'app
 
 Limites connues : un autre programme à l'écoute sur toutes les interfaces au même port ne provoque plus forcément `EADDRINUSE` sur macOS. Une page d'un autre site peut encore déclencher un `GET` sans `Origin` (image, navigation) sans pouvoir lire la réponse.
 
-Prochaine action : commiter, puis écrire l'ADR et mettre à jour la section sécurité de l'ADR de l'explorateur. Le MCP n'expose pas ses outils dans cette session : métadonnées et hashes non mis à jour ; attacher `src/lib/localRequest.ts`, `src/server.ts`, `src/frontend-svelte/vite.config.ts`.
+Décisions : ADR `[SECURITY] Limiter l'application à la machine locale`.
+
+Prochaine action : merger après validation. Le MCP n'expose pas ses outils dans cette session : métadonnées et hashes non mis à jour ; attacher à l'ADR `src/lib/localRequest.ts`, `src/server.ts`, `src/frontend-svelte/vite.config.ts`, et rafraîchir les hashes de l'ADR de l'explorateur.
 
 # Ouvrir les fichiers non Markdown depuis l'explorateur — 5 novembre 2026
 
