@@ -63,11 +63,17 @@ Limite : une page laissée ouverte n'est pas rechargée si le document change ai
 
 ## Modification sur place au double-clic
 
-Le double-clic sur un paragraphe ou un titre `##` à `####` de premier niveau rend ce bloc modifiable directement dans la page (`src/frontend-svelte/src/lib/html-view/inlineEdit.ts`). Les autres blocs (listes, citations, code, tableaux) gardent le double-clic du navigateur : le clic droit reste leur voie d'édition.
+Le double-clic sur un bloc de premier niveau le modifie sur place (`src/frontend-svelte/src/lib/html-view/inlineEdit.ts`), de deux façons :
 
-- **Contrôle avant édition** : le bloc est reconverti en Markdown (`blockToMarkdown`) et comparé à ses lignes source, espaces et retours à la ligne ignorés. En cas d'écart, la popup Markdown s'ouvre et le fichier n'est pas touché. Ce contrôle couvre ce que le rendu ne permet pas de retrouver : échappements, entités, `__gras__`, HTML brut, chemins d'images en `./`.
-- **Écriture** : seules les lignes du bloc sont remplacées, avec le contrôle de concurrence habituel. Un bloc inchangé ou vidé n'écrit rien : vider un bloc ne le supprime pas.
-- **Clavier et souris** : `Entrée` ne fait rien, `Cmd+Entrée` ou cliquer ailleurs enregistre, `Échap` annule. Le passage à une autre fenêtre retire aussi le focus : il enregistre.
+- **Paragraphes et titres `##` à `####`** : le texte devient modifiable directement dans la page.
+- **Blocs de code, listes, citations et tableaux** : un champ affiche le Markdown du bloc à sa place. Ces blocs n'ont pas de forme de texte simple, et leurs lignes source s'affichent sans conversion. Les annotations `quote-*` sont sur leurs propres lignes : elles restent dans le fichier, hors du champ.
+
+Les autres blocs (`#####`, séparateurs, blocs de comparaison, notes de bas de page) gardent le double-clic du navigateur.
+
+- **Contrôle avant édition** (paragraphes et titres) : le bloc est reconverti en Markdown (`blockToMarkdown`) et comparé à ses lignes source, espaces et retours à la ligne ignorés. En cas d'écart, la popup Markdown s'ouvre et le fichier n'est pas touché. Ce contrôle couvre ce que le rendu ne permet pas de retrouver : échappements, entités, `__gras__`, HTML brut, chemins d'images en `./`.
+- **Écriture** : seules les lignes du bloc sont remplacées, avec le contrôle de concurrence habituel. Un bloc inchangé n'écrit rien.
+- **Bloc vidé** : ses lignes sont retirées du fichier, avec une ligne vide de séparation. Vider un titre retire le titre seul : le contenu qui le suit rejoint la section précédente. Il n'y a pas de confirmation ; `Échap` annule tant que l'édition est ouverte.
+- **Clavier et souris** : `Entrée` ou cliquer ailleurs enregistre, `Shift+Entrée` ajoute un retour à la ligne, `Échap` annule. Dans un paragraphe, ce retour est un saut de ligne Markdown visible (deux espaces puis retour à la ligne) ; pour qu'il se voie pendant l'édition, le bloc passe en `white-space: pre-wrap`, ce qui affiche aussi les retours à la ligne de la source. Un titre reste sur une ligne. Dans le champ, `Tab` indente au lieu de quitter le champ, ce qui enregistrerait. Le passage à une autre fenêtre retire aussi le focus : il enregistre.
 - **Texte saisi** : il est écrit tel quel, donc interprété comme du Markdown au rendu suivant (`**x**` devient du gras, `## x` un titre). Les échapper changerait le comportement des caractères courants (`*`, `_`, `<`) et ferait échouer le contrôle ci-dessus à la modification suivante.
 - **Mode `plaintext-only`** : il écarte les raccourcis de mise en forme et le formatage collé. Le collage aplatit aussi les retours à la ligne, car un bloc reste un seul bloc Markdown.
 - **Substituts de Chromium** : quand le texte remplacé contient une espace, Chromium réécrit `strong`, `em` et `del` en `b`, `i` et `strike`, et `code` en `font`/`span`. Les trois premiers gardent leur sens ; le `code` redevient du texte simple. Un élément qui reste inconnu laisse l'édition ouverte avec un message : le texte saisi n'est jamais jeté.
