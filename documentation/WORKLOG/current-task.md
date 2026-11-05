@@ -14,7 +14,7 @@ status: To be validated
 
 # Modification sur place au double-clic — 5 novembre 2026
 
-Statut : terminé sur la branche `feat/html-view-double-clic`, à merger après validation de l'utilisateur. Pas encore testé par l'utilisateur.
+Statut : terminé et mergé dans `main` sur décision de l'utilisateur.
 
 Réalisé : le double-clic sur un paragraphe ou un titre `##` à `####` le rend modifiable dans la page. Le bloc est d'abord reconverti en Markdown et comparé à ses lignes : en cas d'écart, la popup Markdown s'ouvre sans toucher au fichier. Sur un bloc de code, une liste, une citation ou un tableau, un champ affiche le Markdown du bloc à sa place. `Entrée` ou cliquer ailleurs enregistre, `Shift+Entrée` ajoute un retour à la ligne (rien dans un titre), `Échap` annule. Seules les lignes du bloc sont réécrites ; un bloc vidé est retiré du fichier. Détails : ADR `2026_11_04_13_20_[RENDERING]`, section « Modification sur place au double-clic ».
 
@@ -26,7 +26,7 @@ Fichiers : `lib/html-view/blockMarkdown.ts`, `lib/html-view/inlineEdit.ts`, `lib
 
 Vérifications : tests écrits avant le code. Dernier passage complet, après tous les changements : unitaires 181 réussis, API 265 réussis et 1 ignoré, E2E 224 réussis, `explorer.spec.ts:159` compris. Lint sans erreur sur les modules TypeScript modifiés, `svelte-check` sans erreur, `okf:validate` conforme. Les tests E2E ont révélé deux vrais bugs, corrigés : le `<b>` de Chromium refusé par le convertisseur, qui perdait le texte saisi, et `Shift+Entrée` sans effet en fin de paragraphe. Rendu du paragraphe et du champ Markdown contrôlé sur captures, en thème clair, sous Chromium piloté par Playwright. Thème sombre, Safari et Firefox non contrôlés.
 
-Prochaine action : test par l'utilisateur sur un vrai document, puis merge. Les outils du MCP ne sont pas exposés dans cette session (le serveur répond sur le port 4321) : métadonnées et hashes non mis à jour ; attacher `lib/html-view/blockMarkdown.ts` et `lib/html-view/inlineEdit.ts` à l'ADR et rafraîchir ses hashes.
+Prochaine action : aucune tâche décidée à la suite. Les outils du MCP ne sont pas exposés dans cette session (le serveur répond sur le port 4321) : métadonnées et hashes non mis à jour ; attacher `lib/html-view/blockMarkdown.ts` et `lib/html-view/inlineEdit.ts` à l'ADR et rafraîchir ses hashes.
 
 # Édition au clic droit depuis la page HTML — 5 novembre 2026
 
