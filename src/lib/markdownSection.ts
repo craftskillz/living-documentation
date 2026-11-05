@@ -46,3 +46,28 @@ export function replaceMarkdownSection(content: string, range: MarkdownSection, 
   if (replacement && range.end < content.length) replacement = replacement.trimEnd() + newline + newline;
   return content.slice(0, range.start) + replacement + content.slice(range.end);
 }
+
+/** Offsets of whole file lines (1-based, inclusive), without the line ending of the last one. */
+export function markdownLinesRange(content: string, first: number, last: number): MarkdownSection | null {
+  const lines = content.split("\n");
+  if (!Number.isInteger(first) || !Number.isInteger(last) || first < 1 || last < first || last > lines.length) return null;
+  const start = lines.slice(0, first - 1).join("\n").length + (first > 1 ? 1 : 0);
+  const end = start + lines.slice(first - 1, last).join("\n").length;
+  return { start, end: content[end - 1] === "\r" ? end - 1 : end };
+}
+
+/** Unlike a section, these lines keep whatever surrounds them. */
+export function replaceMarkdownLines(content: string, range: MarkdownSection, text: string): string {
+  const newline = content.includes("\r\n") ? "\r\n" : "\n";
+  return content.slice(0, range.start) + text.replace(/\r\n|\n/g, newline) + content.slice(range.end);
+}
+
+/** Removes the lines and one separation, so that what they separated stays separated. */
+export function removeMarkdownLines(content: string, range: MarkdownSection): string {
+  const before = content.slice(0, range.start);
+  const after = content.slice(range.end);
+  const blankBefore = before === "" || /\n\r?\n$/.test(before);
+  if (!blankBefore) return before + after.replace(/^\r?\n/, "");
+  const rest = after.replace(/^(?:\r?\n)+/, "");
+  return rest ? before + rest : before.replace(/(\r?\n)(?:\r?\n)+$/, "$1");
+}

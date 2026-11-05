@@ -1,12 +1,14 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { MarkdownSection } from "../../../lib/markdownSection";
+  import { markdownLinesRange, removeMarkdownLines, replaceMarkdownLines, type MarkdownSection } from "../../../lib/markdownSection";
   import * as api from "../lib/home/api";
   import { applyMarkdownDisplayConfig } from "../lib/home/displayConfig";
   import SectionEditor from "../lib/home/SectionEditor.svelte";
   import { sectionAtTarget } from "../lib/home/sectionAtTarget";
   import type { DocDetail } from "../lib/home/types";
+  import { blockToMarkdown, sameIgnoringWhitespace } from "../lib/html-view/blockMarkdown";
   import { wireHtmlFrame } from "../lib/html-view/htmlFrame";
+  import { editableBlockAt, startInlineEdit, startSourceEdit } from "../lib/html-view/inlineEdit";
   import { loadI18n, t } from "../lib/i18n.svelte";
   import { isTauActive, loadDarkPreference } from "../lib/siteTheme";
 
@@ -18,6 +20,9 @@
   let doc = $state<DocDetail | null>(null);
   let loadFailed = $state(false);
   let sectionEdit = $state<{ range: MarkdownSection; source: string } | null>(null);
+  let saveError = $state("");
+  let softBreaks = false;
+  let inlineEditing = false;
   let scrollToRestore: number | null = null;
   let disposeFrame: (() => void) | null = null;
 
@@ -40,14 +45,64 @@
     return true;
   }
 
+  function editBlockInPlace(target: EventTarget | null) {
+    if (!doc || doc.reserved) return;
+    const located = editableBlockAt(target);
+    if (!located) return;
+    const current = doc.content;
+    const range = markdownLinesRange(current, located.firstLine, located.lastLine);
+    if (!range) {
+      openBlockEditor(target);
+      return;
+    }
+    const lines = current.slice(range.start, range.end);
+    const handlers = {
+      onClose: () => { inlineEditing = false; saveError = ""; },
+      onCommit: async (edited: string) => {
+        try {
+          const updated = edited ? replaceMarkdownLines(current, range, edited) : removeMarkdownLines(current, range);
+          await api.updateDocument(docId, updated, current);
+        } catch (error) {
+          saveError = error instanceof Error ? error.message : String(error);
+          return false;
+        }
+        saveError = "";
+        await refreshPage();
+        return true;
+      },
+    };
+    if (located.mode === "source") {
+      inlineEditing = true;
+      startSourceEdit(located.block, lines, t("htmlView.source_label"), handlers);
+      return;
+    }
+    const markdown = blockToMarkdown(located.block, { softBreaks });
+    // Anything that does not convert back exactly would rewrite the source: Markdown is edited as Markdown.
+    if (markdown === null || !sameIgnoringWhitespace(markdown, lines)) {
+      openBlockEditor(target);
+      return;
+    }
+    inlineEditing = true;
+    startInlineEdit(located.block, {
+      ...handlers,
+      read: () => blockToMarkdown(located.block, { softBreaks }),
+      onUnconvertible: () => { saveError = t("htmlView.unconvertible"); },
+    });
+  }
+
   function onFrameLoad() {
+    inlineEditing = false;
     disposeFrame?.();
     disposeFrame = null;
     const frameDocument = frame.contentDocument;
     if (!frameDocument) return;
     if (scrollToRestore !== null) frame.contentWindow?.scrollTo(0, scrollToRestore);
     scrollToRestore = null;
-    disposeFrame = wireHtmlFrame(frameDocument, openBlockEditor);
+    disposeFrame = wireHtmlFrame(frameDocument, {
+      onBlockMenu: openBlockEditor,
+      onBlockDoubleClick: editBlockInPlace,
+      isEditing: () => inlineEditing,
+    });
   }
 
   async function saveSection(content: string, expectedContent?: string) {
@@ -55,18 +110,23 @@
     return (await api.fetchDocument(docId)).content;
   }
 
+  async function refreshPage() {
+    scrollToRestore = frame.contentWindow?.scrollY ?? 0;
+    await loadDocument();
+    frame.contentWindow?.location.reload();
+  }
+
   function closeEditor() {
     sectionEdit = null;
     // Also after a cancel: the editor may have saved automatically.
-    scrollToRestore = frame.contentWindow?.scrollY ?? 0;
-    void loadDocument();
-    frame.contentWindow?.location.reload();
+    void refreshPage();
   }
 
   onMount(() => {
     document.documentElement.classList.toggle("dark", loadDarkPreference() && !isTauActive());
     void loadDocument();
     void api.fetchConfig().then(async (config) => {
+      softBreaks = !!config.markdownSoftBreaks;
       await loadI18n((config.language as string) || "en");
       applyMarkdownDisplayConfig(config);
     }).catch(() => { /* The cached language and the default display remain usable. */ });
@@ -79,6 +139,8 @@
     <strong>{doc?.title ?? ""}</strong>
     {#if loadFailed}
       <span role="alert" class="html-view-error">{t("htmlView.load_failed")}</span>
+    {:else if saveError}
+      <span role="alert" class="html-view-error" data-testid="html-view-save-error">{saveError}</span>
     {:else if doc && !doc.reserved}
       <span class="html-view-hint">{t("htmlView.hint")}</span>
     {/if}
