@@ -76,3 +76,11 @@ test('relative image paths are resolved from the root, like in the viewer', () =
   assert.ok(content.includes('<img src="https://x.io/images/e.png">'));
   assert.ok(content.includes('&lt;img src=&quot;images/f.png&quot;&gt;'));
 });
+
+test('tag markers stay out of the title, the table of contents and the anchors', () => {
+  const mark = '<mark class="ld-tag-marker" title="&lt;revoir&gt;" data-tag="revoir">b</mark>';
+  const { title, toc, content } = structureHtml(`<h1>Titre ${mark}</h1><h2>Partie ${mark}</h2><p>a</p>`, 'T');
+  assert.equal(title, 'Titre');
+  assert.equal(toc, '<ol><li><a href="#partie">Partie</a></li></ol>');
+  assert.ok(content.includes(`<h2>Partie ${mark}</h2>`));
+});

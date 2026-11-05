@@ -77,6 +77,7 @@
   pre code { padding: 0; background: none; color: inherit; }
   details { margin: 1rem 0; padding: .6rem 1rem; border: 1px solid var(--line); border-radius: 6px; }
   summary { cursor: pointer; font-weight: 600; }
+  .ld-tag-marker { padding: 0 .3em; background: #fde047; color: #713f12; border-radius: .2em; font: 600 .75em var(--sans); vertical-align: .1em; cursor: help; }
 
   @media screen and (max-width: 860px) {
     .layout { grid-template-columns: minmax(0, 1fr); padding: 1.5rem 1rem 3rem; }
@@ -98,7 +99,7 @@
     .sheet-header { padding: 0 0 .9rem; background: none; color: var(--accent); border-bottom: 2px solid var(--accent); }
     .sheet-header h1 { font-size: 1.9rem; }
     .layout { display: block; max-width: none; padding: 1rem 0 0; }
-    .sheet-nav { display: none; }
+    .sheet-nav, .ld-tag-marker { display: none; }
     .ld-section { margin-bottom: .9rem; padding: .9rem 0 0; background: none; border: 0; border-top: 1px solid var(--line); border-radius: 0; }
     .ld-section:first-of-type { padding: .9rem 1.1rem; background: var(--accent-tint); border: 1px solid #bcd6d0; border-radius: 8px; }
     h2 { break-after: avoid; font-size: 1.4rem; }

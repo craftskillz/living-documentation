@@ -53,6 +53,23 @@ test('the article template presents a document with its table of contents and fo
   expect(html).not.toContain('{{');
 });
 
+test('tags written for an LLM become a tooltip marker and do not break the sections', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'balises', [
+    '---', 'title: Balises', 'html_template: article', '---', '',
+    '# Grand titre', '', '## Première <revoir>', '',
+    'Texte <reformule cette phrase, avec des accents éà> suite', '', '<add-footnote>', '',
+    '## Seconde', '', 'Exemple `<garde-moi>`', '',
+  ].join('\n'));
+  const html = await (await request.get(`${ld.baseURL}/api/html-templates/render?doc=balises`)).text();
+  expect(html).toContain('<mark class="ld-tag-marker" title="&lt;reformule cette phrase, avec des accents éà&gt;" data-tag="reformule">b</mark>');
+  expect(html).toContain('title="&lt;add-footnote&gt;"');
+  expect(html).not.toContain('<add-footnote>');
+  expect(html).toContain('<section class="ld-section" id="premiere">');
+  expect(html).toContain('<section class="ld-section" id="seconde">');
+  expect(html).toContain('<a href="#premiere">Première</a>');
+  expect(html).toContain('&lt;garde-moi&gt;');
+});
+
 test('render reflects the current content of the document', async ({ request, ld }) => {
   writeDoc(ld.docsAbs, 'fiche', SHEET);
   writeDoc(ld.docsAbs, 'fiche', SHEET.replace('Première', 'Modifiée'));

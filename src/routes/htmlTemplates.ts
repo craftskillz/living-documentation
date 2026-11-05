@@ -46,7 +46,7 @@ export function htmlTemplatesRouter(docsPath: string): Router {
     const template = templateId ? readHtmlTemplate(templateId) : null;
     if (!template) return res.status(HTTP_NOT_FOUND).type("text/plain").send("HTML template not found");
 
-    const html = renderMarkdownWithCompareBlocks(stripFrontmatter(source), { breaks: !!markdownSoftBreaks });
+    const html = renderMarkdownWithCompareBlocks(stripFrontmatter(source), { breaks: !!markdownSoftBreaks }, { tagMarkers: true });
     const { title } = parseDocMetadata(path.basename(filePath), source);
     const page = fillHtmlTemplate(template, {
       ...structureHtml(html, title),
