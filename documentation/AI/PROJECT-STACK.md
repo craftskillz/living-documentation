@@ -51,6 +51,10 @@ src/routes/*.ts                    <- routes REST documents, config, browse, fil
 src/lib/okf/graph.ts               <- projection des concepts et liens Markdown du bundle
 src/lib/folderManifest.ts          <- lecture/écriture du manifeste `liv-doc-main.md` (order, hidden)
 src/lib/folderTree.ts              <- arbre ordonné de l'explorateur servi par GET /api/tree
+src/lib/filePreview.ts             <- classement d'un fichier (texte, image, vidéo, binaire) pour les aperçus, partagé par Blueprint et l'explorateur
+src/lib/otherFiles.ts              <- fichiers non Markdown de l'explorateur : confinement, refus des exécutables, ouverture par l'OS sans shell
+src/lib/localRequest.ts            <- garde « navigateur de cette machine » (socket, Host, Origin) des routes qui exposent ou lancent des fichiers
+src/routes/otherFiles.ts           <- API /api/other-files (content, raw, open)
 src/lib/treeMove.ts                <- POST /api/tree/move, PUT /api/tree/rename, DELETE /api/tree (dossier), migration et purge des ids de documents (stores, favoris, preuves de diagrammes)
 src/lib/linkRewrite.ts             <- réécriture des liens Markdown quand un fichier ou dossier change de chemin (déplacement, renommage, migration des préfixes) ou est supprimé (liens déliés)
 src/lib/prefixMigration.ts         <- migration des dossiers à préfixe numérique vers les manifestes (US8)

@@ -2,6 +2,7 @@ import { test as base, expect } from '@playwright/test';
 import { execFileSync, type ChildProcess } from 'node:child_process';
 import path from 'node:path';
 import { setupFixture, teardownFixture, type FixtureContext } from './fixture';
+import { installFakeOpener } from './fake-opener';
 import { pickFreePort, spawnLD, killLD } from './server';
 
 // Test hooks the Home page exposes on `window` for the snippet modal.
@@ -17,6 +18,8 @@ export interface LDContext {
   port: number;
   docsAbs: string;
   parent: string;
+  /** Absolute paths handed to the OS opener, which tests replace by a fake. */
+  openedFiles: () => string[];
 }
 
 type Options = { fixtureName: string };
@@ -29,6 +32,7 @@ export const test = base.extend<Options & Fixtures>({
     const fx: FixtureContext = await setupFixture(fixtureName);
     const port = await pickFreePort();
     let proc: ChildProcess | null = null;
+    const opener = installFakeOpener();
     try {
       // Migrate the isolated copy through the real CLI before its startup gate.
       // setupFixture itself stays legacy-capable for migration/CLI tests.
@@ -36,15 +40,17 @@ export const test = base.extend<Options & Fixtures>({
         cwd: fx.parent,
         stdio: 'pipe',
       });
-      proc = await spawnLD({ cwd: fx.parent, docsArg: fx.docsArg, port });
+      proc = await spawnLD({ cwd: fx.parent, docsArg: fx.docsArg, port, env: opener.env });
       await use({
         baseURL: `http://localhost:${port}`,
         port,
         docsAbs: fx.docsAbs,
         parent: fx.parent,
+        openedFiles: opener.openedFiles,
       });
     } finally {
       if (proc) await killLD(proc);
+      opener.remove();
       await teardownFixture(fx);
     }
   },

@@ -1,4 +1,4 @@
-import type { DocSummary, DocDetail, ExplorerNode } from "./types";
+import type { DocSummary, DocDetail, ExplorerNode, OtherFilePreview } from "./types";
 import type { MoveRequest } from "./treeDrop";
 
 export async function fetchConfig(): Promise<Record<string, unknown>> {
@@ -11,6 +11,29 @@ export async function fetchDocuments(): Promise<DocSummary[]> {
 
 export async function fetchTree(): Promise<ExplorerNode[]> {
   return fetch("/api/tree").then((r) => r.json());
+}
+
+/** Error code of a refused or failed /api/other-files request. */
+export class OtherFileError extends Error {}
+
+async function otherFileError(res: Response): Promise<OtherFileError> {
+  const body = (await res.json().catch(() => ({}))) as { error?: string };
+  return new OtherFileError(body.error ?? "load_failed");
+}
+
+export async function fetchOtherFilePreview(path: string): Promise<OtherFilePreview> {
+  const res = await fetch(`/api/other-files/content?path=${encodeURIComponent(path)}`);
+  if (!res.ok) throw await otherFileError(res);
+  return res.json();
+}
+
+export async function openOtherFile(path: string): Promise<void> {
+  const res = await fetch("/api/other-files/open", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ path }),
+  });
+  if (!res.ok) throw await otherFileError(res);
 }
 
 export async function setTreeHidden(path: string, hidden: boolean): Promise<boolean> {

@@ -12,25 +12,23 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
-# Ouvrir les fichiers non Markdown depuis l'explorateur — cadré le 5 novembre 2026
+# Ouvrir les fichiers non Markdown depuis l'explorateur — 5 novembre 2026
 
-Statut : cadré et validé par l'utilisateur, non démarré. Aucun code écrit. À réaliser dans une nouvelle session, sur une nouvelle branche partie de `main`.
+Statut : réalisé et commité sur la branche `feat/explorateur-ouvrir-fichiers-non-md`, à valider par l'utilisateur, non mergé.
 
-Demande : un clic sur une ligne `kind: "file"` de l'explorateur (aujourd'hui un `div` non cliquable dans `home/TreeNode.svelte`) agit selon le type du fichier.
+Livré : un clic sur un fichier non Markdown de l'explorateur affiche le texte, l'image ou la vidéo dans la zone centrale, avec le rendu de Blueprint. Les autres binaires s'ouvrent dans l'application associée de l'OS, avec un message en cas d'échec ou de refus.
 
-Décisions de l'utilisateur :
+Décision sur le point laissé ouvert au cadrage : les trois routes de `/api/other-files` sont limitées à la machine locale, pas seulement l'ouverture OS et les `.env`, car les noms de fichiers sensibles ne s'énumèrent pas. Détails : ADR de l'explorateur.
 
-- Fichier texte (`.env`, code source, tout fichier textuel) : affiché dans la zone centrale, à la place du document, avec le même rendu que le visualiseur de Blueprint (`.file-preview` de `blueprint/FileExplorer.svelte` et de `blueprint/styles.css` : nom, highlight.js, numéros de ligne, bandeau si tronqué).
-- Image ou vidéo : affichée dans la zone centrale, comme dans Blueprint.
-- Autre binaire (docx, pdf, zip...) : ouvert dès le clic par l'application associée de l'OS, avec un message d'erreur si l'OS échoue.
+Fichiers : `src/lib/filePreview.ts`, `src/lib/otherFiles.ts`, `src/lib/localRequest.ts`, `src/routes/otherFiles.ts`, `src/routes/blueprint.ts`, `src/lib/explorerEntries.ts`, `src/server.ts`, `home/otherFile.ts`, `home/OtherFileViewer.svelte`, `home/TreeNode.svelte`, `home/api.ts`, `home/state.svelte.ts`, `home/types.ts`, `routes/Home.svelte`, `lib/filePreview.css` (extrait de `blueprint/styles.css`), `en.json`, `fr.json`, `tests/helpers/fake-opener.ts`, `tests/unit/other-files.test.ts`, `tests/api/other-files.spec.ts`, `tests/e2e/explorer.spec.ts`.
 
-Point de départ : `GET /api/blueprint/file-content` et `file-raw` dans `src/routes/blueprint.ts` portent `isBinary`, `MAX_TEXT_BYTES`, `EXT_TO_LANGUAGE`, `IMAGE_EXTS` et `VIDEO_EXTS`, mais lisent `sourceRoot`. La nouvelle route doit lire le dossier de documentation. `openUrl` de `src/server.ts` montre les commandes `open`, `xdg-open` et `start`, mais passe par `exec` : pour un nom de fichier, utiliser `execFile` sans shell.
+Vérifications : tests unitaires rouges puis verts. Unitaires : 151 réussis. API : 251 réussis, 1 ignoré. E2E : 190 réussis. Lint sans erreur sur les modules TypeScript modifiés. `okf:validate` conforme. Rendu du texte contrôlé sur captures, en thème sombre et clair, avec le thème de code par défaut. Thème de code clair (`ld-code-light`) non contrôlé.
 
-Sécurité, proposée à l'utilisateur et acceptée : `app.listen(port)` ne précise pas d'hôte, le serveur écoute donc sur toutes les interfaces, et `server.ts` ne montre aucune restriction d'origine. L'ouverture OS n'accepte que les requêtes de la machine locale, avec contrôle de `Origin`, et refuse les exécutables (`.app`, `.pkg`, `.exe`, etc.). Chemins confinés au dossier de documentation. À examiner : limiter aussi à la machine locale la lecture des `.env`.
+Non vérifié : l'ouverture réelle par l'OS. Les tests remplacent `open` et `xdg-open` par un faux programme, pour ne jamais lancer d'application sur la machine du développeur. La commande Windows (`rundll32`) n'a été exécutée nulle part.
 
-Rappels : textes visibles dans `en.json` et `fr.json` (règle i18n). L'ADR de l'explorateur dit aujourd'hui que ces fichiers ne s'ouvrent pas : le corriger, et vérifier le test E2E `non-Markdown files appear greyed...`.
+Hors périmètre : URL du fichier affiché (un rechargement revient au document) ; limitation à la machine locale de `GET /api/blueprint/file-content` et `file-raw`, qui restent lisibles depuis le réseau local.
 
-Prochaine action : ouvrir une nouvelle session et réaliser cette tâche.
+Prochaine action : ouvrir un vrai PDF depuis l'application sur le Mac, puis merger. Le MCP n'expose pas ses outils dans cette session : métadonnées et hashes non mis à jour ; attacher `src/lib/filePreview.ts`, `src/lib/otherFiles.ts`, `src/lib/localRequest.ts`, `src/routes/otherFiles.ts` à l'ADR de l'explorateur et rafraîchir ses hashes.
 
 # Fichiers non Markdown dans l'explorateur — 5 novembre 2026
 

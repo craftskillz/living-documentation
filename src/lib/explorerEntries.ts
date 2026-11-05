@@ -23,9 +23,12 @@ export function isListedEntry(entry: fs.Dirent, fullPath: string): boolean {
 }
 
 /** A file the explorer shows beside the documents: anything but Markdown and system files. */
+export function isOtherFileName(name: string): boolean {
+  return !ALWAYS_IGNORED_FILES.has(name) && !name.toLowerCase().endsWith(".md");
+}
+
 export function isOtherFile(entry: fs.Dirent, fullPath: string): boolean {
-  if (ALWAYS_IGNORED_FILES.has(entry.name)) return false;
-  return !entry.name.toLowerCase().endsWith(".md") && isFileOrLinkToFile(entry, fullPath);
+  return isOtherFileName(entry.name) && isFileOrLinkToFile(entry, fullPath);
 }
 
 /**

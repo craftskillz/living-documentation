@@ -9,35 +9,9 @@ import {
   safeResolveBlueprintPath,
 } from '../lib/blueprint';
 import { readConfig } from '../lib/config';
+import { previewFile } from '../lib/filePreview';
 import { listDocs } from './documents';
 import { docSlug, type DocMetadata } from '../lib/parser';
-
-const MAX_TEXT_BYTES = 1024 * 1024; // 1 MB
-
-const IMAGE_EXTS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.ico', '.bmp', '.avif']);
-const VIDEO_EXTS = new Set(['.mp4', '.webm', '.mov', '.avi', '.mkv', '.ogv']);
-
-const EXT_TO_LANGUAGE: Record<string, string> = {
-  '.ts': 'typescript', '.tsx': 'typescript', '.mts': 'typescript',
-  '.js': 'javascript', '.jsx': 'javascript', '.mjs': 'javascript', '.cjs': 'javascript',
-  '.py': 'python', '.rs': 'rust', '.go': 'go', '.java': 'java',
-  '.c': 'c', '.h': 'c', '.cpp': 'cpp', '.cc': 'cpp', '.cxx': 'cpp', '.hpp': 'cpp',
-  '.cs': 'csharp', '.rb': 'ruby', '.php': 'php', '.swift': 'swift', '.kt': 'kotlin',
-  '.html': 'html', '.htm': 'html', '.css': 'css', '.scss': 'scss', '.sass': 'scss',
-  '.json': 'json', '.yaml': 'yaml', '.yml': 'yaml', '.toml': 'toml',
-  '.md': 'markdown', '.mdx': 'markdown',
-  '.sh': 'bash', '.bash': 'bash', '.zsh': 'bash',
-  '.sql': 'sql', '.xml': 'xml', '.graphql': 'graphql', '.gql': 'graphql',
-  '.dockerfile': 'dockerfile', '.tf': 'hcl', '.lua': 'lua', '.r': 'r',
-};
-
-function isBinary(buffer: Buffer): boolean {
-  const sample = buffer.slice(0, Math.min(8000, buffer.length));
-  for (let i = 0; i < sample.length; i++) {
-    if (sample[i] === 0) return true;
-  }
-  return false;
-}
 
 export interface BlueprintFolder {
   name: string;
@@ -248,22 +222,7 @@ export function blueprintRouter(docsPath: string): Router {
       if (!fs.existsSync(abs) || !fs.statSync(abs).isFile()) {
         res.status(404).json({ error: 'File not found' }); return;
       }
-      const ext = path.extname(abs).toLowerCase();
-      if (IMAGE_EXTS.has(ext)) {
-        res.json({ type: 'image', url: `/api/blueprint/file-raw?path=${encodeURIComponent(filePath)}` });
-        return;
-      }
-      if (VIDEO_EXTS.has(ext)) {
-        res.json({ type: 'video', url: `/api/blueprint/file-raw?path=${encodeURIComponent(filePath)}`, ext });
-        return;
-      }
-      const stat = fs.statSync(abs);
-      const buffer = fs.readFileSync(abs);
-      if (isBinary(buffer)) { res.json({ type: 'binary' }); return; }
-      const truncated = stat.size > MAX_TEXT_BYTES;
-      const content = buffer.slice(0, MAX_TEXT_BYTES).toString('utf-8');
-      const language = EXT_TO_LANGUAGE[ext] ?? 'plaintext';
-      res.json({ type: 'text', content, language, truncated });
+      res.json(previewFile(abs, `/api/blueprint/file-raw?path=${encodeURIComponent(filePath)}`));
     } catch (error) {
       res.status(500).json({ error: error instanceof Error ? error.message : 'error' });
     }

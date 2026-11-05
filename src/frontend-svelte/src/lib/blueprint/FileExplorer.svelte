@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "../filePreview.css";
   import { t } from "../i18n.svelte";
 
   let {

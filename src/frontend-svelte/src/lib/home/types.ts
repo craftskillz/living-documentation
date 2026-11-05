@@ -22,7 +22,7 @@ export interface DocDetail {
 
 /** Node of the ordered explorer tree served by GET /api/tree. */
 export interface ExplorerNode {
-  /** `file`: non-Markdown file, shown greyed with the hidden entries; never opened, dragged or renamed. */
+  /** `file`: non-Markdown file, shown greyed with the hidden entries; opened on click, never dragged or renamed. */
   kind: "folder" | "doc" | "file";
   name: string;
   /** POSIX path relative to the docs folder. */
@@ -44,4 +44,20 @@ export interface TableAttrs {
   style: string | null;
   border: string | null;
   color: string | null;
+}
+
+/** Answer of GET /api/other-files/content. */
+export interface OtherFilePreview {
+  type: "text" | "image" | "video" | "binary";
+  content?: string;
+  language?: string;
+  truncated?: boolean;
+  url?: string;
+}
+
+/** Non-Markdown file shown in the central area in place of the document. */
+export interface OpenedFile {
+  path: string;
+  name: string;
+  preview: OtherFilePreview;
 }
