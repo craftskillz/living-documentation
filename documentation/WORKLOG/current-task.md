@@ -14,7 +14,7 @@ status: To be validated
 
 # Espaces et caractères spéciaux dans les noms de dossiers — 5 novembre 2026
 
-Statut : terminé sur la branche `fix/nom-dossier-saisie-espaces`, à valider par l'utilisateur dans l'application avant merge.
+Statut : terminé et mergé dans `main`, validé par l'utilisateur.
 
 Cause : le champ normalisait le nom à chaque frappe. La normalisation retire les `_` de fin : l'espace tapé disparaissait avant la lettre suivante (`mon dossier & co` donnait `mondossierco`).
 
@@ -26,7 +26,7 @@ Fichiers : `src/frontend-svelte/src/lib/home/NewFolderModal.svelte`, `src/fronte
 
 Vérifications : deux tests E2E avec saisie touche par touche, rouges sur l'ancien code puis verts. Unitaires : 151 réussis. API : 259 réussis, 1 ignoré, 1 échec de `config.spec.ts` (`PUT /api/config accepts relative paths`), non lié, qui passe en relançant le fichier seul (5 sur 5). E2E : 192 réussis.
 
-Prochaine action : valider dans l'application puis merger. Surveiller le test intermittent de `config.spec.ts`. Le MCP n'expose pas ses outils dans cette session : métadonnées et hashes non mis à jour.
+Prochaine action : surveiller le test intermittent de `config.spec.ts`. Le MCP n'expose pas ses outils dans cette session : métadonnées et hashes non mis à jour.
 
 # Limiter l'application à la machine locale — 5 novembre 2026
 
