@@ -32,6 +32,27 @@ test('render presents the Markdown content in the template chosen by the documen
   expect(html).not.toContain('{{');
 });
 
+test('the article template presents a document with its table of contents and footnotes', async ({ request, ld }) => {
+  const { folders } = await (await request.get(`${ld.baseURL}/api/html-templates`)).json();
+  expect(folders).toContainEqual({ id: 'articles', templateIds: ['article'] });
+
+  writeDoc(ld.docsAbs, 'article', [
+    '---', 'title: Article', 'language: fr', 'html_template: article', '---', '',
+    '# Grand titre', '', 'Introduction', '', '## Première', '', 'Texte[^1]', '', '[^1]: Une note', '',
+  ].join('\n'));
+  const response = await request.get(`${ld.baseURL}/api/html-templates/render?doc=article`);
+  expect(response.status()).toBe(200);
+  const html = await response.text();
+  expect(html).toContain('<html lang="fr">');
+  expect(html).toContain('<title>Grand titre</title>');
+  expect(html).toContain('<div class="ld-lead"><p>Introduction</p>');
+  expect(html).toContain('<a href="#premiere">Première</a>');
+  expect(html).toContain('<section class="ld-section" id="premiere">');
+  expect(html).toContain('data-footnotes');
+  expect(html).toContain('Une note');
+  expect(html).not.toContain('{{');
+});
+
 test('render reflects the current content of the document', async ({ request, ld }) => {
   writeDoc(ld.docsAbs, 'fiche', SHEET);
   writeDoc(ld.docsAbs, 'fiche', SHEET.replace('Première', 'Modifiée'));

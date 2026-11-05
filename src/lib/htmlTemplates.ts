@@ -18,6 +18,7 @@ export interface HtmlTemplateFolder {
 
 export const HTML_TEMPLATE_LIBRARY: readonly HtmlTemplateFolder[] = [
   { id: "interviews", templateIds: ["interview-sheet"] },
+  { id: "articles", templateIds: ["article"] },
 ];
 
 // Same relative path from src/lib (dev) and dist/src/lib (build).

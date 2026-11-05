@@ -30,7 +30,7 @@ Le bouton **Générer en HTML** du viewer ouvre la bibliothèque au premier clic
 
 ## Conséquences et limites
 
-Les templates sont des fichiers HTML autonomes, sans CDN. Les diagrammes Mermaid restent affichés comme du code, et le code n'est pas coloré. Les liens relatifs vers d'autres fichiers ne sont pas réécrits, seuls les liens internes `?doc=` le sont. Un identifiant de template inconnu de la bibliothèque repropose le choix dans le viewer ; la route répond 404.
+Les templates sont des fichiers HTML autonomes, sans CDN. Les diagrammes Mermaid restent affichés comme du code, et le code n'est pas coloré. Les liens relatifs vers d'autres fichiers ne sont pas réécrits : seuls les liens internes `?doc=` et les images relatives (`images/`, `./images/`, `images-ai/`) le sont, pour se résoudre depuis la racine comme dans le viewer. Les annotations du viewer portées par des commentaires HTML (`image-width`, `quote-type`, `quote-title`, `quote-icon`) ne sont pas appliquées : les images occupent la largeur du template et ces encadrés restent de simples citations. Un identifiant de template inconnu de la bibliothèque repropose le choix dans le viewer ; la route répond 404.
 
 Choisir un template modifie le fichier Markdown, comme le choix de la langue de lecture.
 

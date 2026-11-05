@@ -12,6 +12,20 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
+# Template HTML pour les articles — 5 novembre 2026
+
+Statut : terminé sur la branche `feat/template-html-article`, à merger dans `main` après validation de l'utilisateur.
+
+Réalisé : template `article` (dossier `articles`) pour la lecture longue, avec grand titre, colonne de texte, sommaire latéral et notes de bas de page discrètes. Correction du moteur : les images relatives (`images/`, `./images/`, `images-ai/`) sont réécrites depuis la racine. Sans cela, elles donnaient une 404 dans toute page générée, fiches d'entretien comprises.
+
+Limite non traitée : les commentaires du viewer (`image-width`, `quote-type`, `quote-title`, `quote-icon`) ne sont pas appliqués dans les pages générées. Les images occupent la largeur du template et les encadrés deviennent de simples citations, sans leur titre. Décrit dans l'ADR du 4 novembre.
+
+Fichiers : `html-templates/article.html`, `src/lib/htmlTemplates.ts`, `src/lib/htmlDocument.ts`, catalogues i18n, `tests/unit/html-document.test.ts`, `tests/api/html-templates.spec.ts`, ADR `2026_11_04_13_20_[RENDERING]`.
+
+Vérifications : test unitaire rouge puis vert. Unitaires : 152 réussis. API : 261 réussis, 1 ignoré. E2E : 191 réussis, 1 échec de `inline-snippet-edit.spec.ts:227` (copie d'image), hors de la zone modifiée, qui passe 3 fois sur 3 relancé seul. Rendu contrôlé sur une copie de l'article `comprendre_et_maitriser_ses_skills` : ordinateur, mobile, média d'impression, 6 images chargées, aucune erreur console.
+
+Prochaine action : validation visuelle et merge par l'utilisateur, puis décider si les commentaires du viewer doivent être appliqués dans les pages générées. Surveiller le test intermittent `inline-snippet-edit.spec.ts:227`. Les outils du MCP ne sont pas exposés dans cette session : métadonnées et hashes non mis à jour.
+
 # Espaces et caractères spéciaux dans les noms de dossiers — 5 novembre 2026
 
 Statut : terminé et mergé dans `main`, validé par l'utilisateur.
