@@ -22,6 +22,7 @@ export interface SpawnOptions {
   port: number;
   extraArgs?: string[];
   stdin?: string;
+  env?: NodeJS.ProcessEnv;
 }
 
 // Start the built CLI as a child process; resolve once the server prints its boot banner.
@@ -38,7 +39,7 @@ export async function spawnLD(opts: SpawnOptions): Promise<ChildProcess> {
   const proc = spawn('node', args, {
     cwd: opts.cwd,
     stdio: opts.stdin === undefined ? ['ignore', 'pipe', 'pipe'] : ['pipe', 'pipe', 'pipe'],
-    env: coverageEnv({ NODE_ENV: 'test' }),
+    env: coverageEnv({ NODE_ENV: 'test', ...opts.env }),
   });
   if (opts.stdin !== undefined) {
     proc.stdin?.end(opts.stdin);

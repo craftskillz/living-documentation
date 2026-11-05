@@ -5,6 +5,7 @@
   import type { DocSummary, ExplorerNode } from "./types";
   import { countExplorerDocs, countExplorerEntries, folderLabel } from "./tree";
   import { dropPositionAt, type DropPosition } from "./treeDrop";
+  import { openExplorerFile } from "./otherFile";
 
   let { nodes, folderPath, onopen, onentrymenu, onmove }: {
     nodes: ExplorerNode[];
@@ -71,7 +72,12 @@
   {#if node.kind === "folder"}
     {@render folderGroup(node)}
   {:else if node.kind === "file"}
-    <div data-other-file="true" title={node.name} class="opacity-50 italic truncate px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300">{node.name}</div>
+    <button
+      data-other-file="true"
+      title={node.name}
+      onclick={() => openExplorerFile(node)}
+      class="opacity-50 italic doc-item w-full text-left truncate px-3 py-1.5 rounded-md text-sm transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/60 {home.openedFile?.path === node.path ? 'active' : ''}"
+    >{node.name}</button>
   {:else}
     {@render docItem(summaryOf(node), node)}
   {/if}
@@ -87,7 +93,7 @@
       onclick={() => onopen(doc.id)}
       oncontextmenu={(e) => e.preventDefault()}
       data-reserved="true"
-      class="opacity-50 italic doc-item w-full text-left px-3 py-1.5 rounded-md text-sm transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/60 {doc.id === home.currentDocId ? 'active' : ''}"
+      class="opacity-50 italic doc-item w-full text-left px-3 py-1.5 rounded-md text-sm transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/60 {doc.id === home.currentDocId && !home.openedFile ? 'active' : ''}"
     >
       <span class="truncate"><i class="fa-solid fa-lock text-[10px] mr-1.5"></i>{node.name}</span>
     </button>
@@ -104,7 +110,7 @@
     data-drop={dropState(node)}
     data-hidden={node.hidden ? "true" : undefined}
     data-linked={node.linked ? "true" : undefined}
-    class="{node.hidden ? 'opacity-50 italic' : ''} doc-item w-full text-left px-3 py-1.5 rounded-md text-sm transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/60 {doc.id === home.currentDocId ? 'active' : ''}"
+    class="{node.hidden ? 'opacity-50 italic' : ''} doc-item w-full text-left px-3 py-1.5 rounded-md text-sm transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/60 {doc.id === home.currentDocId && !home.openedFile ? 'active' : ''}"
   >
     <div class="leading-snug flex items-center justify-between gap-2">
       <span class="truncate">{#if node.linked}<i class="fa-solid fa-link text-[10px] mr-1.5" title={t("sidebar.linked_file")}></i>{/if}{doc.title}</span>

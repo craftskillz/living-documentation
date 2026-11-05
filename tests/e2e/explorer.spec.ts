@@ -10,6 +10,8 @@ function writeDoc(docsAbs: string, rel: string): void {
   fs.writeFileSync(abs, `---\ntype: Concept\ntitle: ${title}\n---\n\nBody of ${rel}\n`);
 }
 
+const ONE_PIXEL_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+
 test('explorer shows folders in manifest order, dot folders included, and opens a nested document', async ({ page, ld }) => {
   writeDoc(ld.docsAbs, 'alpha/b.md');
   writeDoc(ld.docsAbs, 'zeta/a.md');
@@ -279,7 +281,7 @@ test('deleting a favorite document drops it from the favorites menu', async ({ p
   await expect(page.locator('.favorites-empty')).toBeVisible();
 });
 
-test('non-Markdown files appear greyed with hidden entries and join the folder count, read-only', async ({ page, ld }) => {
+test('non-Markdown files appear greyed with hidden entries and join the folder count', async ({ page, ld }) => {
   writeDoc(ld.docsAbs, 'album/a.md');
   writeDoc(ld.docsAbs, 'album/deep/b.md');
   fs.writeFileSync(path.join(ld.docsAbs, 'album/photo.png'), 'png');
@@ -307,4 +309,54 @@ test('non-Markdown files appear greyed with hidden entries and join the folder c
   await page.getByTestId('toggle-show-hidden').click();
   await expect(album).toContainText('2');
   await expect(tree.locator('[data-other-file="true"]')).toHaveCount(0);
+});
+
+test('clicking a non-Markdown file shows it in the central area or hands it to the OS', async ({ page, ld }) => {
+  writeDoc(ld.docsAbs, 'files/a.md');
+  fs.writeFileSync(path.join(ld.docsAbs, 'files/.env'), 'TOKEN=abc\nOTHER=2');
+  fs.writeFileSync(path.join(ld.docsAbs, 'files/photo.png'), Buffer.from(ONE_PIXEL_PNG, 'base64'));
+  fs.writeFileSync(path.join(ld.docsAbs, 'files/clip.mp4'), 'mp4');
+  fs.writeFileSync(path.join(ld.docsAbs, 'files/report.pdf'), 'pdf');
+  fs.writeFileSync(path.join(ld.docsAbs, 'files/fail-open.pdf'), 'pdf');
+  fs.writeFileSync(path.join(ld.docsAbs, 'files/setup.exe'), Buffer.from([77, 90, 0]));
+
+  await page.goto(ld.baseURL);
+  const tree = page.getByTestId('category-tree');
+  const viewer = page.getByTestId('other-file-viewer');
+  await tree.locator('span[title="files"]').click();
+  await page.getByTestId('toggle-show-hidden').click();
+  const file = (name: string) => tree.getByRole('button', { name, exact: true });
+
+  await tree.getByText('A', { exact: true }).click();
+  await expect(page.locator('#home-content-area h1').first()).toBeVisible();
+
+  await file('.env').click();
+  await expect(viewer.locator('.file-preview-name')).toHaveText('.env');
+  await expect(viewer.locator('code')).toContainText('TOKEN=abc');
+  await expect(viewer.locator('.hljs-ln-numbers')).toHaveCount(2);
+  await expect(page.locator('#home-content-area h1').first()).toBeHidden();
+  await expect(file('.env')).toHaveClass(/active/);
+  await expect(tree.locator('.doc-item.active')).toHaveCount(1);
+
+  await file('photo.png').click();
+  await expect(viewer.locator('.file-preview-name')).toHaveText('photo.png');
+  await expect(viewer.locator('img')).toHaveJSProperty('naturalWidth', 1);
+
+  await file('clip.mp4').click();
+  await expect(viewer.locator('video')).toHaveAttribute('src', /clip\.mp4/);
+
+  await file('report.pdf').click();
+  await expect.poll(() => ld.openedFiles()).toEqual([fs.realpathSync(path.join(ld.docsAbs, 'files/report.pdf'))]);
+  await expect(viewer.locator('video')).toBeVisible();
+
+  await file('fail-open.pdf').click();
+  await expect(page.locator('#workspaceToastStack')).toContainText('fail-open.pdf');
+
+  await file('setup.exe').click();
+  await expect(page.locator('#workspaceToastStack')).toContainText('setup.exe');
+  expect(ld.openedFiles()).toHaveLength(1);
+
+  await tree.getByText('A', { exact: true }).click();
+  await expect(viewer).toHaveCount(0);
+  await expect(page.locator('#home-content-area h1').first()).toBeVisible();
 });

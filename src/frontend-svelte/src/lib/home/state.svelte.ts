@@ -1,4 +1,4 @@
-import type { DocSummary, ExplorerNode } from "./types";
+import type { DocSummary, ExplorerNode, OpenedFile } from "./types";
 import type { DropPosition } from "./treeDrop";
 
 /** Hovering a closed folder this long while dragging opens it. */
@@ -27,6 +27,8 @@ class HomeState {
   fileAttachmentCounts = $state<Record<string, number>>({});
   docStatuses = $state<Record<string, string>>({});
   currentDocId = $state<string | null>(null);
+  /** Non-Markdown file shown in place of the document, which stays loaded behind it. */
+  openedFile = $state.raw<OpenedFile | null>(null);
 
   searchQuery = $state("");
   searchResults = $state<DocSummary[] | null>(null);

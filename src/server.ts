@@ -24,6 +24,7 @@ import { graphRouter } from './routes/graph';
 import { ttsRouter } from './routes/tts';
 import { gitRouter } from './routes/git';
 import { treeRouter } from './routes/tree';
+import { otherFilesRouter } from './routes/otherFiles';
 import { mcpRouter } from './mcp/server';
 import { writeConfig } from './lib/config';
 import { gitAutoCommitMiddleware } from './lib/git-integration';
@@ -60,6 +61,7 @@ export async function startServer({
   app.use('/api/config', configRouter(docsPath));
   app.use('/api/browse', browseRouter(docsPath));
   app.use('/api/tree', treeRouter(docsPath));
+  app.use('/api/other-files', otherFilesRouter(docsPath));
   app.use('/api/images', imagesRouter(docsPath));
   app.use('/api/files', filesRouter(docsPath));
   app.use('/api/diagrams', diagramsRouter(docsPath));

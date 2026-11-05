@@ -9,6 +9,8 @@
   import { headerNavigation, WORD_CLOUD_MENU } from "../lib/headerNavigation.svelte";
   import Sidebar from "../lib/home/Sidebar.svelte";
   import DocViewer from "../lib/home/DocViewer.svelte";
+  import OtherFileViewer from "../lib/home/OtherFileViewer.svelte";
+  import { closeExplorerFile, closeExplorerFileUnder } from "../lib/home/otherFile";
   import NewFolderModal from "../lib/home/NewFolderModal.svelte";
   import NewDocModal from "../lib/home/NewDocModal.svelte";
   import ExportModal from "../lib/home/ExportModal.svelte";
@@ -110,6 +112,7 @@
     fromLink: boolean | "restore" = false,
     anchor: string | null = null,
   ) {
+    closeExplorerFile();
     // Maintain the breadcrumb trail.
     if (fromLink === true && home.currentDocId && home.currentDocId !== id) {
       const existingIdx = navHistory.findIndex(e => e.id === id);
@@ -219,6 +222,7 @@
   // An explorer drag and drop moved an entry: reload, and keep the open
   // document open under its new id.
   async function onEntryMoved(source: string, path: string) {
+    closeExplorerFileUnder(source);
     const nextId = home.currentDocId ? movedDocId(home.currentDocId, source, path) : null;
     await loadDocuments();
     if (!nextId) return;
@@ -234,6 +238,7 @@
 
   // An explorer folder was deleted: reload, and close the open document if it was inside.
   async function onFolderDeleted(path: string) {
+    closeExplorerFileUnder(path);
     if (home.currentDocId && decodeURIComponent(home.currentDocId).startsWith(`${path}/`)) {
       home.currentDocId = null;
       currentDoc = null;
@@ -349,21 +354,27 @@
     />
 
     <main id="home-content-area" class="flex-1 overflow-y-auto">
-      {#if currentDoc}
-        {#if docError}
-          <p class="p-8 text-red-500">{docError}</p>
-        {:else}
-          <DocViewer doc={currentDoc} {navHistory} ongoback={goBack} onopen={(id, anchor) => openDoc(id, false, true, anchor)} onsave={saveDoc} ondelete={deleteDoc} />
-        {/if}
-      {:else}
-        <div class="h-full flex items-center justify-center p-8">
-          <div class="max-w-md text-center">
-            <div class="text-5xl mb-4 select-none" aria-hidden="true">📚</div>
-            <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">{t("welcome.title")}</h2>
-            <p class="text-sm text-gray-500 dark:text-gray-500">{t("welcome.hint")}</p>
-          </div>
-        </div>
+      {#if home.openedFile}
+        <OtherFileViewer file={home.openedFile} />
       {/if}
+      <!-- Stays mounted behind a file: a section being edited keeps its draft. -->
+      <div style:display={home.openedFile ? "none" : "contents"}>
+        {#if currentDoc}
+          {#if docError}
+            <p class="p-8 text-red-500">{docError}</p>
+          {:else}
+            <DocViewer doc={currentDoc} {navHistory} ongoback={goBack} onopen={(id, anchor) => openDoc(id, false, true, anchor)} onsave={saveDoc} ondelete={deleteDoc} />
+          {/if}
+        {:else}
+          <div class="h-full flex items-center justify-center p-8">
+            <div class="max-w-md text-center">
+              <div class="text-5xl mb-4 select-none" aria-hidden="true">📚</div>
+              <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">{t("welcome.title")}</h2>
+              <p class="text-sm text-gray-500 dark:text-gray-500">{t("welcome.hint")}</p>
+            </div>
+          </div>
+        {/if}
+      </div>
     </main>
   </div>
 </div>
