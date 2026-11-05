@@ -14,7 +14,7 @@ status: To be validated
 
 # Annotations du viewer dans les pages HTML générées — 5 novembre 2026
 
-Statut : terminé sur la branche `feat/html-annotations-viewer`, à merger après contrôle du rendu par l'utilisateur.
+Statut : terminé et mergé dans `main`, rendu validé par l'utilisateur.
 
 Réalisé : `image-width`, `quote-type`, `quote-title` et `quote-icon` sont appliqués côté serveur, pour tous les templates. `image-align` aussi, bien qu'absent de la liste de la tâche, car il accompagne `image-width` dans le viewer. Détails et écarts avec le viewer : ADR `2026_11_04_13_20_[RENDERING]`, section « Annotations du viewer ».
 
@@ -22,9 +22,11 @@ Fichiers : `src/lib/htmlAnnotations.ts`, `src/lib/contentAnnotations.ts` (extrai
 
 Vérifications : tests unitaires rouges puis verts. Unitaires : 165 réussis. API : 263 réussis, 1 ignoré, 1 échec de `tree.spec.ts:443` (documents liés), qui passe 5 fois sur 5 seul ; message d'erreur non conservé. E2E : 192 réussis. Lint sans erreur sur les modules TypeScript modifiés.
 
-Non contrôlé : rendu dans un navigateur. Le lancement du serveur de contrôle a échoué 3 fois (erreurs de ligne de commande, sans lien avec le code) et l'utilisateur a choisi de contrôler lui-même. Points à regarder : couleurs des encadrés et largeurs d'image dans les deux templates, à l'écran et à l'impression.
+Rendu contrôlé par l'utilisateur, pas par l'agent : le lancement du serveur de contrôle a échoué 3 fois (erreurs de ligne de commande, sans lien avec le code).
 
-Prochaine action : contrôle du rendu par l'utilisateur, puis merge. Surveiller le test intermittent `tree.spec.ts:443`. Les outils du MCP ne sont pas exposés dans cette session : métadonnées et hashes non mis à jour ; attacher `src/lib/htmlAnnotations.ts` et `src/lib/contentAnnotations.ts` à l'ADR et rafraîchir ses hashes.
+Élargi à la demande de l'utilisateur : le template `article` passe de 66rem à 90rem et sa colonne de texte n'est plus limitée (environ 1120 px sur un écran de 1440 px, soit des lignes d'environ 140 caractères). Après ce changement, seul `html-templates.spec.ts` a été relancé : 9 réussis.
+
+Prochaine action : tâche 2 (édition au clic droit), dans une nouvelle session. Surveiller le test intermittent `tree.spec.ts:443`. Les outils du MCP ne sont pas exposés dans cette session : métadonnées et hashes non mis à jour ; attacher `src/lib/htmlAnnotations.ts` et `src/lib/contentAnnotations.ts` à l'ADR et rafraîchir ses hashes.
 
 # Template HTML pour les articles — 5 novembre 2026
 
