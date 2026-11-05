@@ -12,9 +12,29 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
+# Ouvrir les fichiers non Markdown depuis l'explorateur — cadré le 5 novembre 2026
+
+Statut : cadré et validé par l'utilisateur, non démarré. Aucun code écrit. À réaliser dans une nouvelle session, sur une nouvelle branche partie de `main`.
+
+Demande : un clic sur une ligne `kind: "file"` de l'explorateur (aujourd'hui un `div` non cliquable dans `home/TreeNode.svelte`) agit selon le type du fichier.
+
+Décisions de l'utilisateur :
+
+- Fichier texte (`.env`, code source, tout fichier textuel) : affiché dans la zone centrale, à la place du document, avec le même rendu que le visualiseur de Blueprint (`.file-preview` de `blueprint/FileExplorer.svelte` et de `blueprint/styles.css` : nom, highlight.js, numéros de ligne, bandeau si tronqué).
+- Image ou vidéo : affichée dans la zone centrale, comme dans Blueprint.
+- Autre binaire (docx, pdf, zip...) : ouvert dès le clic par l'application associée de l'OS, avec un message d'erreur si l'OS échoue.
+
+Point de départ : `GET /api/blueprint/file-content` et `file-raw` dans `src/routes/blueprint.ts` portent `isBinary`, `MAX_TEXT_BYTES`, `EXT_TO_LANGUAGE`, `IMAGE_EXTS` et `VIDEO_EXTS`, mais lisent `sourceRoot`. La nouvelle route doit lire le dossier de documentation. `openUrl` de `src/server.ts` montre les commandes `open`, `xdg-open` et `start`, mais passe par `exec` : pour un nom de fichier, utiliser `execFile` sans shell.
+
+Sécurité, proposée à l'utilisateur et acceptée : `app.listen(port)` ne précise pas d'hôte, le serveur écoute donc sur toutes les interfaces, et `server.ts` ne montre aucune restriction d'origine. L'ouverture OS n'accepte que les requêtes de la machine locale, avec contrôle de `Origin`, et refuse les exécutables (`.app`, `.pkg`, `.exe`, etc.). Chemins confinés au dossier de documentation. À examiner : limiter aussi à la machine locale la lecture des `.env`.
+
+Rappels : textes visibles dans `en.json` et `fr.json` (règle i18n). L'ADR de l'explorateur dit aujourd'hui que ces fichiers ne s'ouvrent pas : le corriger, et vérifier le test E2E `non-Markdown files appear greyed...`.
+
+Prochaine action : ouvrir une nouvelle session et réaliser cette tâche.
+
 # Fichiers non Markdown dans l'explorateur — 5 novembre 2026
 
-Statut : terminé sur la branche `feat/explorateur-fichiers-non-md`, en attente de validation et de merge.
+Statut : terminé et mergé dans `main`, validé par l'utilisateur.
 
 Livré : avec « Afficher les éléments cachés », les fichiers qui ne sont pas en `.md` apparaissent grisés et en italique en fin de dossier, et le compteur des dossiers les inclut. Sans l'œil, rien ne change. Ils ne s'ouvrent pas, ne se déplacent pas et n'ont pas de menu contextuel. `.DS_Store` n'est jamais listé.
 
