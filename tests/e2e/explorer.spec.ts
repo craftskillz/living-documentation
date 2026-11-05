@@ -278,3 +278,33 @@ test('deleting a favorite document drops it from the favorites menu', async ({ p
   await page.getByRole('button', { name: 'Favorites' }).click();
   await expect(page.locator('.favorites-empty')).toBeVisible();
 });
+
+test('non-Markdown files appear greyed with hidden entries and join the folder count, read-only', async ({ page, ld }) => {
+  writeDoc(ld.docsAbs, 'album/a.md');
+  writeDoc(ld.docsAbs, 'album/deep/b.md');
+  fs.writeFileSync(path.join(ld.docsAbs, 'album/photo.png'), 'png');
+  fs.writeFileSync(path.join(ld.docsAbs, 'album/deep/report.pdf'), 'pdf');
+
+  await page.goto(ld.baseURL);
+  const tree = page.getByTestId('category-tree');
+  const album = tree.locator('button', { has: page.locator('span[title="album"]') });
+  await expect(album).toContainText('2');
+  await album.click();
+  await expect(tree.getByText('A', { exact: true })).toBeVisible();
+  await expect(tree.locator('[data-other-file="true"]')).toHaveCount(0);
+
+  await page.getByTestId('toggle-show-hidden').click();
+  await expect(album).toContainText('4');
+  await expect(tree.locator('[data-other-file="true"]')).toHaveText(['photo.png', '.living-doc.json']);
+  const photo = tree.getByText('photo.png', { exact: true });
+  await expect(photo).toHaveClass(/opacity-50/);
+  await expect(photo).toHaveClass(/italic/);
+  await expect(photo).not.toHaveAttribute('draggable', 'true');
+
+  await tree.locator('span[title="deep"]').click();
+  await expect(tree.locator('[data-other-file="true"]')).toHaveText(['report.pdf', 'photo.png', '.living-doc.json']);
+
+  await page.getByTestId('toggle-show-hidden').click();
+  await expect(album).toContainText('2');
+  await expect(tree.locator('[data-other-file="true"]')).toHaveCount(0);
+});

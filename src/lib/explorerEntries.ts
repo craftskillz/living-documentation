@@ -1,11 +1,13 @@
 // Which filesystem entries of a docs folder the explorer and the document
 // scanners list. Dot folders and dot Markdown files are listed like any other
 // entry; only tool directories (.git, node_modules) and reserved files
-// (index.md, log.md, liv-doc-main.md) are never listed.
+// (index.md, log.md, liv-doc-main.md) are never listed. Other files are not
+// documents: the explorer shows them apart, the document scanners ignore them.
 import fs from "node:fs";
 import { isReservedOkfFile } from "./okf";
 
 export const ALWAYS_IGNORED_DIRS = new Set([".git", "node_modules"]);
+const ALWAYS_IGNORED_FILES = new Set([".DS_Store"]);
 
 export function isListedDir(name: string): boolean {
   return !ALWAYS_IGNORED_DIRS.has(name);
@@ -18,6 +20,12 @@ export function isListedDocFile(name: string): boolean {
 export function isListedEntry(entry: fs.Dirent, fullPath: string): boolean {
   if (entry.isDirectory()) return isListedDir(entry.name);
   return isListedDocFile(entry.name) && isFileOrLinkToFile(entry, fullPath);
+}
+
+/** A file the explorer shows beside the documents: anything but Markdown and system files. */
+export function isOtherFile(entry: fs.Dirent, fullPath: string): boolean {
+  if (ALWAYS_IGNORED_FILES.has(entry.name)) return false;
+  return !entry.name.toLowerCase().endsWith(".md") && isFileOrLinkToFile(entry, fullPath);
 }
 
 /**

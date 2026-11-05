@@ -1,15 +1,17 @@
 // Builds the ordered explorer tree of a docs folder: folders and Markdown
 // documents, nested, already sorted for display. Default order: folders first,
 // then files, each alphabetical (case-insensitive). Reserved files come first,
-// flagged `reserved`, for the "show hidden entries" view only.
+// flagged `reserved`, and non-Markdown files come last, as `file` nodes, both
+// for the "show hidden entries" view only.
 import fs from "node:fs";
 import path from "node:path";
 import { applyManifestOrder, readFolderManifest } from "./folderManifest";
-import { isListedEntry } from "./explorerEntries";
+import { isListedEntry, isOtherFile } from "./explorerEntries";
 import { RESERVED_OKF_FILES } from "./okf";
 
 export interface FolderTreeNode {
-  kind: "folder" | "doc";
+  /** `file`: non-Markdown file, shown only on demand, greyed; no id, outside the manifest order. */
+  kind: "folder" | "doc" | "file";
   name: string;
   /** POSIX path relative to the docs folder. */
   path: string;
@@ -57,6 +59,15 @@ function reservedFileNodes(absDir: string, relDir: string): FolderTreeNode[] {
   });
 }
 
+/** Non-Markdown files present in `absDir`, alphabetical. */
+function otherFileNodes(absDir: string, relDir: string): FolderTreeNode[] {
+  return fs
+    .readdirSync(absDir, { withFileTypes: true })
+    .filter((e) => isOtherFile(e, path.join(absDir, e.name)))
+    .sort(byDirentName)
+    .map((e) => ({ kind: "file", name: e.name, path: relDir ? `${relDir}/${e.name}` : e.name }));
+}
+
 function readFolder(docsPath: string, relDir: string): FolderTreeNode[] {
   const absDir = path.join(docsPath, relDir);
   const { order, hidden } = readFolderManifest(absDir);
@@ -69,7 +80,7 @@ function readFolder(docsPath: string, relDir: string): FolderTreeNode[] {
     if (entry.isSymbolicLink()) node.linked = true;
     return node;
   });
-  return [...reservedFileNodes(absDir, relDir), ...listed];
+  return [...reservedFileNodes(absDir, relDir), ...listed, ...otherFileNodes(absDir, relDir)];
 }
 
 export function buildFolderTree(docsPath: string): FolderTreeNode[] {

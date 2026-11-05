@@ -17,7 +17,7 @@ export function filterExplorerTree(nodes: ExplorerNode[], ids: Set<string>): Exp
   for (const node of nodes) {
     if (node.kind === "doc") {
       if (node.id && ids.has(node.id)) kept.push(node);
-    } else {
+    } else if (node.kind === "folder") {
       const children = filterExplorerTree(node.children ?? [], ids);
       if (children.length) kept.push({ ...node, children });
     }
@@ -25,10 +25,10 @@ export function filterExplorerTree(nodes: ExplorerNode[], ids: Set<string>): Exp
   return kept;
 }
 
-/** Drops the reserved files and the entries flagged hidden by their folder manifest (and their subtree). */
+/** Drops the reserved files, the non-Markdown files and the entries flagged hidden by their folder manifest (and their subtree). */
 export function withoutHiddenEntries(nodes: ExplorerNode[]): ExplorerNode[] {
   return nodes
-    .filter((node) => !node.hidden && !node.reserved)
+    .filter((node) => !node.hidden && !node.reserved && node.kind !== "file")
     .map((node) => (node.kind === "folder" ? { ...node, children: withoutHiddenEntries(node.children ?? []) } : node));
 }
 
@@ -59,6 +59,13 @@ export function findExplorerNode(nodes: ExplorerNode[], path: string): ExplorerN
 export function countExplorerDocs(node: ExplorerNode, predicate: (id: string) => boolean = () => true): number {
   if (node.kind === "doc") return node.id && !node.reserved && predicate(node.id) ? 1 : 0;
   return (node.children ?? []).reduce((n, child) => n + countExplorerDocs(child, predicate), 0);
+}
+
+/** Documents and non-Markdown files in a node's subtree: the count shown beside a folder. */
+export function countExplorerEntries(node: ExplorerNode): number {
+  if (node.kind === "file") return 1;
+  if (node.kind === "doc") return countExplorerDocs(node);
+  return (node.children ?? []).reduce((n, child) => n + countExplorerEntries(child), 0);
 }
 
 const EXTRA_FILES_GROUP_PATH = ":extra-files:";

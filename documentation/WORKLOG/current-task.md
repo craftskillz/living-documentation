@@ -12,6 +12,20 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
+# Fichiers non Markdown dans l'explorateur — 5 novembre 2026
+
+Statut : terminé sur la branche `feat/explorateur-fichiers-non-md`, en attente de validation et de merge.
+
+Livré : avec « Afficher les éléments cachés », les fichiers qui ne sont pas en `.md` apparaissent grisés et en italique en fin de dossier, et le compteur des dossiers les inclut. Sans l'œil, rien ne change. Ils ne s'ouvrent pas, ne se déplacent pas et n'ont pas de menu contextuel. `.DS_Store` n'est jamais listé.
+
+Fichiers : `src/lib/explorerEntries.ts`, `src/lib/folderTree.ts`, `home/tree.ts`, `home/treeDrop.ts`, `home/types.ts`, `home/TreeNode.svelte`, `tests/unit/explorer-other-files.test.ts`, `tests/api/tree.spec.ts`, `tests/e2e/explorer.spec.ts`, ADR de l'explorateur (section « Fichiers non Markdown »).
+
+Vérifications : test unitaire rouge puis vert. Unitaires : 145 réussis. API : 242 réussis, 1 ignoré. E2E : 189 réussis. Lint sans erreur sur les modules TypeScript modifiés. Après l'exclusion de `.DS_Store`, seuls `tree.spec.ts` et `explorer.spec.ts` ont été relancés : 41 réussis. Application réelle non ouverte.
+
+Hors périmètre : ouverture ou aperçu de ces fichiers, groupe « Extra Files », compte de la modale de suppression de dossier (documents seulement, alors que tout le contenu est supprimé).
+
+Prochaine action : le MCP n'expose pas ses outils dans cette session : métadonnées et hashes non mis à jour ; attacher `src/lib/explorerEntries.ts` et `src/lib/folderTree.ts` à l'ADR de l'explorateur et rafraîchir ses hashes.
+
 # Générer un document en HTML — 4 novembre 2026
 
 Statut : terminé et mergé dans `main`, validé par l'utilisateur. Suite prévue : ajouter d'autres templates au fil de l'eau.
