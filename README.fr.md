@@ -102,6 +102,8 @@ Puis ouvrez :
 - admin : [http://localhost:4321/admin](http://localhost:4321/admin)
 - MCP : [http://localhost:4321/mcp](http://localhost:4321/mcp)
 
+Living Documentation est prévu pour un usage local et n'a pas d'authentification : le serveur n'écoute que sur `127.0.0.1` et refuse les requêtes venant d'autres sites. Il n'est pas joignable depuis le réseau ni par un port mappé de conteneur.
+
 Sans dossier en argument, le CLI cherche d'abord `.living-doc.json` dans le dossier courant, puis un niveau en dessous. S'il trouve un projet Living Documentation existant, il propose de le lancer ; sinon il crée un starter documentaire complet, en français ou en anglais, avec des guides intégrés pour comprendre Home, Markdown, Workspace, Agents et Diagram.
 
 Quand un dossier est fourni en argument mais qu'il ne contient pas encore `.living-doc.json`, le CLI initialise ce dossier au lieu de le servir comme projet non configuré.

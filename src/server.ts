@@ -29,6 +29,7 @@ import { mcpRouter } from './mcp/server';
 import { writeConfig } from './lib/config';
 import { gitAutoCommitMiddleware } from './lib/git-integration';
 import { JSON_BODY_LIMIT_BYTES } from './lib/limits';
+import { localOnly, LOOPBACK_HOST } from './lib/localRequest';
 
 const activeServers = new Set<Server>();
 
@@ -44,6 +45,8 @@ export async function startServer({
   openBrowser = false,
 }: ServerOptions): Promise<void> {
   const app = express();
+
+  app.use(localOnly);
 
   // Derived from MAX_UPLOAD_BYTES (see lib/limits): uploads are base64-in-JSON,
   // so the body limit must cover the +33% inflation or large files 413 here.
@@ -100,7 +103,7 @@ export async function startServer({
   }
 
   return new Promise((resolve, reject) => {
-    const server = app.listen(port);
+    const server = app.listen(port, LOOPBACK_HOST);
     server.once('error', (error) => {
       reject(error);
     });

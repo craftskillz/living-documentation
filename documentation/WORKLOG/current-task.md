@@ -12,15 +12,23 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
-# Exposition de l'API sur le réseau local — à cadrer
+# Limiter l'application à la machine locale — 5 novembre 2026
 
-Statut : signalé le 5 novembre 2026, non cadré, aucun code écrit. À traiter dans une nouvelle session.
+Statut : en cours sur la branche `fix/api-locale-uniquement`, non commité. Code et README terminés.
 
-Constat : `app.listen(port)` dans `src/server.ts` écoute sur toutes les interfaces, sans authentification ni contrôle d'origine. Seul `/api/other-files` est limité à la machine locale. `GET /api/blueprint/file-content` et `file-raw` restent donc lisibles depuis le réseau local, `.env` du dossier source compris, et `file-raw` sert tout type de fichier sans CSP. Les autres routes montées dans `server.ts`, écriture et `/mcp` compris, n'ont pas non plus de garde. Inventaire route par route à faire.
+Décision de l'utilisateur : usage local uniquement, sans option pour exposer le serveur. Un usage en conteneur avec port mappé ou depuis le réseau ne fonctionnera plus.
 
-À décider avec l'utilisateur : écouter sur `localhost` par défaut, avec une option explicite pour exposer le serveur, ou appliquer `isLocalRequest` à toute l'application. Dans les deux cas, examiner le DNS rebinding et les requêtes d'autres sites, que le seul choix de l'interface d'écoute n'écarte pas. Vérifier si quelqu'un dépend de l'accès réseau (conteneur, bannière de démarrage, documentation).
+Réalisé : le serveur écoute sur `127.0.0.1`. La garde `localOnly` (`src/lib/localRequest.ts`) s'applique à toute l'application, fichiers statiques et `/mcp` compris, et remplace celle de `/api/other-files`. Toutes les entrées du proxy Vite gardent le `Host`.
 
-Prochaine action : ouvrir une nouvelle session et cadrer ce sujet.
+Fichiers : `src/lib/localRequest.ts`, `src/server.ts`, `src/routes/otherFiles.ts`, `src/frontend-svelte/vite.config.ts`, `README.md`, `tests/api/local-only.spec.ts`, `tests/api/cli.spec.ts`.
+
+Vérifications : `local-only.spec.ts` rouge puis vert. Unitaires : 151 réussis. API : 260 réussis, 1 ignoré. E2E : 190 réussis. Lint sans erreur sur les modules TypeScript serveur modifiés.
+
+Proxy Vite contrôlé sur le vrai serveur de dev : l'utilisateur a validé l'application sur `localhost:5174`. `POST /mcp` répond 200 avec l'`Origin` 5174 et 403 depuis un autre site. `/files` répond 403 depuis un autre site et passe la garde avec l'`Origin` 5174 (404, le dossier servi n'a aucun fichier) : aucun fichier réellement servi à travers le proxy. Le port 4321 ne répond plus sur l'adresse réseau.
+
+Limites connues : un autre programme à l'écoute sur toutes les interfaces au même port ne provoque plus forcément `EADDRINUSE` sur macOS. Une page d'un autre site peut encore déclencher un `GET` sans `Origin` (image, navigation) sans pouvoir lire la réponse.
+
+Prochaine action : commiter, puis écrire l'ADR et mettre à jour la section sécurité de l'ADR de l'explorateur. Le MCP n'expose pas ses outils dans cette session : métadonnées et hashes non mis à jour ; attacher `src/lib/localRequest.ts`, `src/server.ts`, `src/frontend-svelte/vite.config.ts`.
 
 # Ouvrir les fichiers non Markdown depuis l'explorateur — 5 novembre 2026
 

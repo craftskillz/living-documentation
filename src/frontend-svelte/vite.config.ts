@@ -20,11 +20,11 @@ export default defineConfig({
   server: {
     port: 5174,
     proxy: {
-      // Keeps the browser Host: /api/other-files compares it with the Origin header.
+      // Keeps the browser Host: the server compares it with the Origin header.
       "/api": { target: "http://localhost:4321", changeOrigin: false },
-      "/mcp": "http://localhost:4321",
-      "/images": "http://localhost:4321",
-      "^/files/.+": { target: "http://localhost:4321", changeOrigin: true },
+      "/mcp": { target: "http://localhost:4321", changeOrigin: false },
+      "/images": { target: "http://localhost:4321", changeOrigin: false },
+      "^/files/.+": { target: "http://localhost:4321", changeOrigin: false },
     },
   },
 });

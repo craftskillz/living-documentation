@@ -102,6 +102,8 @@ Then open:
 - admin: [http://localhost:4321/admin](http://localhost:4321/admin)
 - MCP: [http://localhost:4321/mcp](http://localhost:4321/mcp)
 
+Living Documentation is meant for local use and has no authentication: the server only listens on `127.0.0.1` and refuses requests from other sites. It cannot be reached from the network or through a container's mapped port.
+
 Without a folder argument, the CLI first looks for `.living-doc.json` in the current folder, then one level below it. If it finds an existing Living Documentation project, it offers to launch it; otherwise it creates a complete documentation starter, in French or English, with built-in guides for Home, Markdown, Workspace, Agents, and Diagram.
 
 When a folder argument is provided but that folder has no `.living-doc.json` yet, the CLI initializes that folder instead of serving it as an unconfigured project.

@@ -2,7 +2,6 @@
 // or opening with the application associated by the OS.
 import { Router, type Request, type Response } from "express";
 import { isMediaFile, previewFile } from "../lib/filePreview";
-import { isLocalRequest } from "../lib/localRequest";
 import { isExecutableFile, openWithOs, resolveOtherFile } from "../lib/otherFiles";
 
 // An SVG opened directly must not run as a page of the application.
@@ -13,16 +12,6 @@ const RAW_FILE_HEADERS = {
 
 export function otherFilesRouter(docsPath: string): Router {
   const router = Router();
-
-  router.use((req: Request, res: Response, next) => {
-    const local = isLocalRequest({
-      remoteAddress: req.socket.remoteAddress,
-      host: req.headers.host,
-      origin: req.headers.origin,
-    });
-    if (local) next();
-    else res.status(403).json({ error: "not_local" });
-  });
 
   const queryPath = (req: Request) => (typeof req.query.path === "string" ? req.query.path : "");
 

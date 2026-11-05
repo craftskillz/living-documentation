@@ -98,7 +98,7 @@ test("CLI prints the listen error when the port is already in use", async () => 
   const blocker = createServer();
   await new Promise<void>((resolve, reject) => {
     blocker.once("error", reject);
-    blocker.listen(port, () => resolve());
+    blocker.listen(port, "127.0.0.1", () => resolve());
   });
   try {
     const result = runCli(["./docs", "--port", String(port)], tmp);

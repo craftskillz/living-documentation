@@ -1,5 +1,10 @@
-// The server listens on every interface and has no authentication. Routes that
-// expose or launch arbitrary files only answer the browser of this machine.
+import type { NextFunction, Request, Response } from "express";
+
+// The application has no authentication: it only answers this machine. Listening
+// on loopback keeps the network out, but not a web page open in the local browser,
+// which localOnly refuses on every route.
+export const LOOPBACK_HOST = "127.0.0.1";
+
 const LOOPBACK_ADDRESSES = new Set(["127.0.0.1", "::1", "::ffff:127.0.0.1"]);
 const LOOPBACK_HOSTNAMES = new Set(["localhost", "127.0.0.1", "[::1]"]);
 
@@ -27,4 +32,14 @@ export function isLocalRequest({ remoteAddress, host, origin }: RequestOrigin): 
   const target = parseUrl(`http://${host}`);
   if (!target || !LOOPBACK_HOSTNAMES.has(target.hostname)) return false;
   return origin === undefined || parseUrl(origin)?.host === target.host;
+}
+
+export function localOnly(req: Request, res: Response, next: NextFunction): void {
+  const local = isLocalRequest({
+    remoteAddress: req.socket.remoteAddress,
+    host: req.headers.host,
+    origin: req.headers.origin,
+  });
+  if (local) next();
+  else res.status(403).json({ error: "not_local" });
 }
