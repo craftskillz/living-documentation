@@ -12,9 +12,19 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
+# Exposition de l'API sur le réseau local — à cadrer
+
+Statut : signalé le 5 novembre 2026, non cadré, aucun code écrit. À traiter dans une nouvelle session.
+
+Constat : `app.listen(port)` dans `src/server.ts` écoute sur toutes les interfaces, sans authentification ni contrôle d'origine. Seul `/api/other-files` est limité à la machine locale. `GET /api/blueprint/file-content` et `file-raw` restent donc lisibles depuis le réseau local, `.env` du dossier source compris, et `file-raw` sert tout type de fichier sans CSP. Les autres routes montées dans `server.ts`, écriture et `/mcp` compris, n'ont pas non plus de garde. Inventaire route par route à faire.
+
+À décider avec l'utilisateur : écouter sur `localhost` par défaut, avec une option explicite pour exposer le serveur, ou appliquer `isLocalRequest` à toute l'application. Dans les deux cas, examiner le DNS rebinding et les requêtes d'autres sites, que le seul choix de l'interface d'écoute n'écarte pas. Vérifier si quelqu'un dépend de l'accès réseau (conteneur, bannière de démarrage, documentation).
+
+Prochaine action : ouvrir une nouvelle session et cadrer ce sujet.
+
 # Ouvrir les fichiers non Markdown depuis l'explorateur — 5 novembre 2026
 
-Statut : réalisé et commité sur la branche `feat/explorateur-ouvrir-fichiers-non-md`, à valider par l'utilisateur, non mergé.
+Statut : terminé et mergé dans `main`, validé par l'utilisateur, ouverture réelle d'un PDF et d'un DOCX comprise.
 
 Livré : un clic sur un fichier non Markdown de l'explorateur affiche le texte, l'image ou la vidéo dans la zone centrale, avec le rendu de Blueprint. Les autres binaires s'ouvrent dans l'application associée de l'OS, avec un message en cas d'échec ou de refus.
 
@@ -26,11 +36,11 @@ Vérifications : tests unitaires rouges puis verts. Unitaires : 151 réussis. AP
 
 Corrigé après test de l'utilisateur : en mode dev (`localhost:5174`), PDF et DOCX étaient refusés avec `not_local`, car le proxy Vite réécrivait le `Host` alors que le `POST` envoie `Origin: http://localhost:5174`. Le proxy de `/api` garde désormais le `Host` (`vite.config.ts`). Contrôlé avec curl à travers le proxy : `Origin` 5174 accepté, autre site et autre application locale refusés. Aucun test automatisé ne couvre le proxy Vite.
 
-Non vérifié : l'ouverture réelle par l'OS. Les tests remplacent `open` et `xdg-open` par un faux programme, pour ne jamais lancer d'application sur la machine du développeur. La commande Windows (`rundll32`) n'a été exécutée nulle part.
+Limites des tests : les tests remplacent `open` et `xdg-open` par un faux programme, pour ne jamais lancer d'application sur la machine du développeur. La commande Windows (`rundll32`) n'a été exécutée nulle part.
 
 Hors périmètre : URL du fichier affiché (un rechargement revient au document) ; limitation à la machine locale de `GET /api/blueprint/file-content` et `file-raw`, qui restent lisibles depuis le réseau local.
 
-Prochaine action : ouvrir un vrai PDF depuis l'application sur le Mac, puis merger. Le MCP n'expose pas ses outils dans cette session : métadonnées et hashes non mis à jour ; attacher `src/lib/filePreview.ts`, `src/lib/otherFiles.ts`, `src/lib/localRequest.ts`, `src/routes/otherFiles.ts` à l'ADR de l'explorateur et rafraîchir ses hashes.
+Prochaine action : le MCP n'expose pas ses outils dans cette session : métadonnées et hashes non mis à jour ; attacher `src/lib/filePreview.ts`, `src/lib/otherFiles.ts`, `src/lib/localRequest.ts`, `src/routes/otherFiles.ts` à l'ADR de l'explorateur et rafraîchir ses hashes.
 
 # Fichiers non Markdown dans l'explorateur — 5 novembre 2026
 
