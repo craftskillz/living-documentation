@@ -14,7 +14,7 @@ status: To be validated
 
 # Édition au clic droit depuis la page HTML — 5 novembre 2026
 
-Statut : terminé sur la branche `feat/html-view-clic-droit`, à merger dans `main` après validation de l'utilisateur.
+Statut : terminé et mergé dans `main`, validé par l'utilisateur.
 
 Réalisé : « Voir en HTML » ouvre `/html-view`, avec le rendu dans une iframe `sandbox="allow-same-origin"`. Le clic droit sur un bloc ouvre `SectionEditor`, sauf si du texte était sélectionné avant le clic. À la fermeture, le HTML est régénéré et la position conservée. Le bouton « Ouvrir seule pour imprimer » ouvre la page sans la barre d'outils. La page parente ouvre les liens de l'iframe et ignore les protocoles inconnus (`javascript:`). Détails : ADR `2026_11_04_13_20_[RENDERING]`, section « Édition depuis la page HTML ».
 
@@ -26,7 +26,7 @@ Vérifications : tests unitaires et API rouges puis verts ; `html-view.spec.ts` 
 
 Ajouté après test de l'utilisateur : l'aperçu de `SectionEditor` n'affiche que les notes de bas de page utilisées par la section (`lib/home/sectionFootnotes.ts`), dans le viewer comme dans `/html-view`. Test E2E rouge puis vert. Seuls `section-edit.spec.ts`, `autosave.spec.ts` et `html-view.spec.ts` ont été relancés après ce changement, pas la suite complète.
 
-Prochaine action : validation par l'utilisateur et merge, puis tâche 3 (double-clic) dans une nouvelle session. Surveiller `explorer.spec.ts:159`. Les outils du MCP ne sont pas exposés dans cette session : métadonnées et hashes non mis à jour ; attacher `routes/HtmlView.svelte` et `lib/html-view/htmlFrame.ts` à l'ADR et rafraîchir ses hashes.
+Prochaine action : tâche 3 (double-clic) dans une nouvelle session. Surveiller `explorer.spec.ts:159`. Les outils du MCP ne sont pas exposés dans cette session : métadonnées et hashes non mis à jour ; attacher `routes/HtmlView.svelte` et `lib/html-view/htmlFrame.ts` à l'ADR et rafraîchir ses hashes.
 
 # Annotations du viewer dans les pages HTML générées — 5 novembre 2026
 
