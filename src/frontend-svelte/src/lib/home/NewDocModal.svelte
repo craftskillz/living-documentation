@@ -98,13 +98,6 @@
     setTimeout(() => titleInputEl?.focus(), 50);
   }
 
-  function sanitizeNewFolderNameInput(event: Event) {
-    const input = event.currentTarget as HTMLInputElement;
-    const normalized = normalizeFolderSegment(input.value);
-    if (input.value !== normalized) input.value = normalized;
-    if (newFolderName !== normalized) newFolderName = normalized;
-  }
-
   // Mirrors the server naming; a `-2`, `-3`… suffix is added when the name is taken.
   const filenamePreview = $derived.by(() => {
     const trimmed = title.trim();
@@ -269,7 +262,6 @@
             <div class="border-t border-gray-200 dark:border-gray-700 flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800/50">
               <input
                 bind:value={newFolderName}
-                oninput={sanitizeNewFolderNameInput}
                 onkeydown={(e) => { if (e.key === "Enter") createFolder(); }}
                 type="text"
                 placeholder={t("modal.new_doc.new_folder_placeholder")}

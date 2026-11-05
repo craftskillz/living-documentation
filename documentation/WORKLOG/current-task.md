@@ -12,6 +12,22 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
+# Espaces et caractères spéciaux dans les noms de dossiers — 5 novembre 2026
+
+Statut : terminé et mergé dans `main`, validé par l'utilisateur.
+
+Cause : le champ normalisait le nom à chaque frappe. La normalisation retire les `_` de fin : l'espace tapé disparaissait avant la lettre suivante (`mon dossier & co` donnait `mondossierco`).
+
+Réalisé : saisie libre, comme pour les noms de fichiers. L'aperçu « Sera créé à » affiche le nom normalisé, appliqué à la création. Même correction dans le champ « Nom du nouveau dossier » du modal Nouveau document.
+
+Comportement conservé de `normalizeFolderSegment` : accents retirés (`é` → `e`), suites de caractères remplacées par un seul `_`, aucun `_` en début ou en fin de nom.
+
+Fichiers : `src/frontend-svelte/src/lib/home/NewFolderModal.svelte`, `src/frontend-svelte/src/lib/home/NewDocModal.svelte`, `tests/e2e/folder-creation.spec.ts`.
+
+Vérifications : deux tests E2E avec saisie touche par touche, rouges sur l'ancien code puis verts. Unitaires : 151 réussis. API : 259 réussis, 1 ignoré, 1 échec de `config.spec.ts` (`PUT /api/config accepts relative paths`), non lié, qui passe en relançant le fichier seul (5 sur 5). E2E : 192 réussis.
+
+Prochaine action : surveiller le test intermittent de `config.spec.ts`. Le MCP n'expose pas ses outils dans cette session : métadonnées et hashes non mis à jour.
+
 # Limiter l'application à la machine locale — 5 novembre 2026
 
 Statut : terminé sur la branche `fix/api-locale-uniquement`, à merger dans `main` après validation de l'utilisateur.
