@@ -24,6 +24,8 @@ Fichiers : `routes/HtmlView.svelte`, `lib/html-view/htmlFrame.ts`, `lib/home/dis
 
 Vérifications : tests unitaires et API rouges puis verts ; `html-view.spec.ts` écrit avant le code, mais son premier passage date de l'implémentation. Unitaires : 166 réussis. API : 265 réussis, 1 ignoré. E2E : 197 réussis, 1 échec de `explorer.spec.ts:159` (renommage : l'article affichait encore le premier document), qui passe 5 fois sur 5 seul ; cause non établie, le code de chargement n'a pas changé. Lint sans erreur sur les modules TypeScript modifiés. `okf:validate` conforme. Rendu contrôlé sur captures, page et popup, en thème clair, sous Chromium piloté par Playwright. Thème sombre et menu contextuel natif de macOS non contrôlés à l'écran.
 
+Ajouté après test de l'utilisateur : l'aperçu de `SectionEditor` n'affiche que les notes de bas de page utilisées par la section (`lib/home/sectionFootnotes.ts`), dans le viewer comme dans `/html-view`. Test E2E rouge puis vert. Seuls `section-edit.spec.ts`, `autosave.spec.ts` et `html-view.spec.ts` ont été relancés après ce changement, pas la suite complète.
+
 Prochaine action : validation par l'utilisateur et merge, puis tâche 3 (double-clic) dans une nouvelle session. Surveiller `explorer.spec.ts:159`. Les outils du MCP ne sont pas exposés dans cette session : métadonnées et hashes non mis à jour ; attacher `routes/HtmlView.svelte` et `lib/html-view/htmlFrame.ts` à l'ADR et rafraîchir ses hashes.
 
 # Annotations du viewer dans les pages HTML générées — 5 novembre 2026
