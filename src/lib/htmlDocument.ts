@@ -1,3 +1,4 @@
+import { ANNOTATION_STYLES, applyViewerAnnotations } from "./htmlAnnotations";
 import { TAG_MARKER_CLASS, TAG_MARKER_GLYPH } from "./summaryMarkdown";
 
 /**
@@ -77,7 +78,7 @@ function uniqueAnchor(text: string, used: Map<string, number>): string {
 export function structureHtml(html: string, fallbackTitle: string): StructuredHtml {
   const leadingH1 = html.match(LEADING_H1_RE);
   const title = leadingH1 ? stripTags(leadingH1[1]) : escapeHtml(fallbackTitle);
-  const body = (leadingH1 ? html.slice(leadingH1[0].length) : html)
+  const body = applyViewerAnnotations(leadingH1 ? html.slice(leadingH1[0].length) : html)
     .replace(/href="\?doc=/g, 'href="/?doc=')
     .replace(RELATIVE_IMAGE_SRC_RE, 'src="/$1');
 
@@ -102,5 +103,6 @@ export function structureHtml(html: string, fallbackTitle: string): StructuredHt
 
 /** Single pass: placeholders written in the document itself stay literal. */
 export function fillHtmlTemplate(template: string, values: HtmlTemplateValues): string {
-  return template.replace(PLACEHOLDER_RE, (_, key: keyof HtmlTemplateValues) => values[key]);
+  const styled = template.replace("</head>", () => `${ANNOTATION_STYLES}</head>`);
+  return styled.replace(PLACEHOLDER_RE, (_, key: keyof HtmlTemplateValues) => values[key]);
 }

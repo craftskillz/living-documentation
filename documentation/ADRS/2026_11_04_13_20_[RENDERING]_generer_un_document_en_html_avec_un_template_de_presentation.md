@@ -30,7 +30,7 @@ Le bouton **Générer en HTML** du viewer ouvre la bibliothèque au premier clic
 
 ## Conséquences et limites
 
-Les templates sont des fichiers HTML autonomes, sans CDN. Les diagrammes Mermaid restent affichés comme du code, et le code n'est pas coloré. Les liens relatifs vers d'autres fichiers ne sont pas réécrits : seuls les liens internes `?doc=` et les images relatives (`images/`, `./images/`, `images-ai/`) le sont, pour se résoudre depuis la racine comme dans le viewer. Les annotations du viewer portées par des commentaires HTML (`image-width`, `quote-type`, `quote-title`, `quote-icon`) ne sont pas appliquées : les images occupent la largeur du template et ces encadrés restent de simples citations. Un identifiant de template inconnu de la bibliothèque repropose le choix dans le viewer ; la route répond 404.
+Les templates sont des fichiers HTML autonomes, sans CDN. Les diagrammes Mermaid restent affichés comme du code, et le code n'est pas coloré. Les liens relatifs vers d'autres fichiers ne sont pas réécrits : seuls les liens internes `?doc=` et les images relatives (`images/`, `./images/`, `images-ai/`) le sont, pour se résoudre depuis la racine comme dans le viewer. Un identifiant de template inconnu de la bibliothèque repropose le choix dans le viewer ; la route répond 404.
 
 Les balises isolées écrites pour un LLM (`<reformule cette phrase>`) s'affichent comme dans le viewer, sous la forme d'un `b` avec infobulle. Elles restent hors du titre, du sommaire et des ancres, et sont masquées à l'impression.
 
@@ -39,3 +39,11 @@ Choisir un template modifie le fichier Markdown, comme le choix de la langue de 
 ## Vérification
 
 `tests/unit/html-document.test.ts` couvre la structuration et le remplissage, `tests/api/html-templates.spec.ts` la route et ses refus, `tests/e2e/html-templates.spec.ts` le parcours complet.
+
+## Annotations du viewer
+
+Les commentaires `image-width`, `image-align`, `quote-type`, `quote-title` et `quote-icon` sont appliqués côté serveur, pour tous les templates, car la page générée n'exécute aucun script. `src/lib/htmlAnnotations.ts` les lit dans le HTML rendu, où `marked` les laisse juste avant leur bloc et échappe ceux écrits dans du code. Le viewer, lui, associe la source au DOM par index ; le post-traitement évite d'avoir à le faire.
+
+Les types, les icônes et les largeurs sont partagés avec le viewer dans `src/lib/contentAnnotations.ts`. Les styles sont injectés avant `</head>` : un nouveau template en bénéficie sans rien déclarer. Un encadré sans type garde l'apparence de citation du template, et les encadrés typés reprennent les couleurs du viewer en thème clair.
+
+Écarts avec le viewer : les largeurs d'image s'appliquent aussi dans le rendu d'un bloc `:::compare`, ce que le viewer ne fait pas. Une icône seule se place au début de la citation quand celle-ci ne commence pas par un paragraphe. Un commentaire écrit à l'intérieur d'une citation s'applique à une citation imbriquée qui le suit, ce que le viewer ne fait pas.

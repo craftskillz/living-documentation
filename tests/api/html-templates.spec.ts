@@ -98,3 +98,20 @@ test('render finds a document in a subfolder from the id given by the documents 
   const response = await request.get(`${ld.baseURL}/api/html-templates/render?doc=${encodeURIComponent(doc?.id ?? '')}`);
   expect(response.status()).toBe(200);
 });
+
+for (const template of ['article', 'interview-sheet']) {
+  test(`the viewer annotations apply in the ${template} template`, async ({ request, ld }) => {
+    writeDoc(ld.docsAbs, 'annotations', [
+      '---', 'title: Annotations', `html_template: ${template}`, '---', '',
+      '# Grand titre', '', '## Première', '',
+      '<!-- quote-type: warning -->', '<!-- quote-title: Attention -->', '<!-- quote-icon -->', '> Texte', '',
+      '<!-- image-width: 1/2 -->', '<!-- image-align: right -->', '![a](images/x.png)', '',
+    ].join('\n'));
+    const html = await (await request.get(`${ld.baseURL}/api/html-templates/render?doc=annotations`)).text();
+    expect(html).toContain('<blockquote class="ld-callout ld-callout-warning">');
+    expect(html).toContain('<span class="ld-callout-title">Attention</span>');
+    expect(html).toContain('<img class="ld-image-width-half ld-image-align-right" src="/images/x.png"');
+    expect(html).toContain('img.ld-image-width-half { width: 50%; }');
+    expect(html).not.toContain('<!-- quote-type');
+  });
+}
