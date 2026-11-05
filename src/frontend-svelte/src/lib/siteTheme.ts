@@ -29,6 +29,14 @@ export function applySiteTheme(siteTheme: SiteTheme): void {
   }
 }
 
+export function loadDarkPreference(): boolean {
+  try {
+    const saved = localStorage.getItem("ld-dark");
+    if (saved !== null) return saved === "true";
+  } catch {}
+  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+
 export function isTauActive(): boolean {
   return document.documentElement.getAttribute("data-site-theme") === "tau";
 }

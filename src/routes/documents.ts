@@ -86,6 +86,11 @@ function resolveDocPath(
   return safeFilePath(docsPath, doc.filename);
 }
 
+/** Lines stripped with the frontmatter, so rendered blocks carry file line numbers. */
+export function bodyLineOffset(content: string, markdown: string): number {
+  return content.slice(0, content.length - markdown.length).split("\n").length - 1;
+}
+
 export function stripFrontmatter(content: string): string {
   if (!content.startsWith("---")) return content;
   const end = content.indexOf("\n---", 3);
@@ -340,8 +345,7 @@ export function documentsRouter(docsPath: string): Router {
           : null;
       const reserved = isReservedDocId(id);
       const markdown = reserved ? reservedFileMarkdown(content) : stripFrontmatter(content);
-      // Lines stripped with the frontmatter, so rendered blocks carry file line numbers.
-      const sourceLineOffset = reserved ? undefined : content.slice(0, content.length - markdown.length).split("\n").length - 1;
+      const sourceLineOffset = reserved ? undefined : bodyLineOffset(content, markdown);
       const html = renderMarkdownWithCompareBlocks(markdown, markedOpts, { tagMarkers: true, sourceLineOffset });
       const fm = parseFrontmatter(content).data;
       res.json({

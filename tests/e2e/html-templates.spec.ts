@@ -16,8 +16,9 @@ test('the first click offers the library, then the HTML opens in a new window', 
   expect(fs.readFileSync(file, 'utf-8')).toContain('html_template: interview-sheet');
 
   const [popup] = await Promise.all([page.waitForEvent('popup'), page.getByTestId('html-view-btn').click()]);
-  await expect(popup.getByRole('heading', { level: 1, name: 'Grand titre' })).toBeVisible();
-  await expect(popup.locator('section#premiere')).toContainText('Texte');
+  const rendered = popup.frameLocator('iframe[data-testid="html-view-frame"]');
+  await expect(rendered.getByRole('heading', { level: 1, name: 'Grand titre' })).toBeVisible();
+  await expect(rendered.locator('section#premiere')).toContainText('Texte');
 
   // The choice is remembered and can still be changed.
   await page.reload();

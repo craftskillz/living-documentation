@@ -9,7 +9,7 @@ import { fillHtmlTemplate, structureHtml } from "../lib/htmlDocument";
 import { getDocumentHtmlTemplate } from "../lib/htmlTemplateField";
 import { HTML_TEMPLATE_LIBRARY, readHtmlTemplate } from "../lib/htmlTemplates";
 import { parseDocMetadata } from "../lib/parser";
-import { safeFilePath, stripFrontmatter } from "./documents";
+import { bodyLineOffset, safeFilePath, stripFrontmatter } from "./documents";
 
 const HTTP_FORBIDDEN = 403;
 const HTTP_NOT_FOUND = 404;
@@ -46,7 +46,11 @@ export function htmlTemplatesRouter(docsPath: string): Router {
     const template = templateId ? readHtmlTemplate(templateId) : null;
     if (!template) return res.status(HTTP_NOT_FOUND).type("text/plain").send("HTML template not found");
 
-    const html = renderMarkdownWithCompareBlocks(stripFrontmatter(source), { breaks: !!markdownSoftBreaks }, { tagMarkers: true });
+    const markdown = stripFrontmatter(source);
+    const html = renderMarkdownWithCompareBlocks(markdown, { breaks: !!markdownSoftBreaks }, {
+      tagMarkers: true,
+      sourceLineOffset: bodyLineOffset(source, markdown),
+    });
     const { title } = parseDocMetadata(path.basename(filePath), source);
     const page = fillHtmlTemplate(template, {
       ...structureHtml(html, title),

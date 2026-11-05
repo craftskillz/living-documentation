@@ -45,7 +45,7 @@ test('the article template presents a document with its table of contents and fo
   const html = await response.text();
   expect(html).toContain('<html lang="fr">');
   expect(html).toContain('<title>Grand titre</title>');
-  expect(html).toContain('<div class="ld-lead"><p>Introduction</p>');
+  expect(html).toContain('<div class="ld-lead"><p data-source-lines="9-9">Introduction</p>');
   expect(html).toContain('<a href="#premiere">Première</a>');
   expect(html).toContain('<section class="ld-section" id="premiere">');
   expect(html).toContain('data-footnotes');
@@ -108,10 +108,19 @@ for (const template of ['article', 'interview-sheet']) {
       '<!-- image-width: 1/2 -->', '<!-- image-align: right -->', '![a](images/x.png)', '',
     ].join('\n'));
     const html = await (await request.get(`${ld.baseURL}/api/html-templates/render?doc=annotations`)).text();
-    expect(html).toContain('<blockquote class="ld-callout ld-callout-warning">');
+    expect(html).toContain('<blockquote class="ld-callout ld-callout-warning" data-source-lines=');
     expect(html).toContain('<span class="ld-callout-title">Attention</span>');
     expect(html).toContain('<img class="ld-image-width-half ld-image-align-right" src="/images/x.png"');
     expect(html).toContain('img.ld-image-width-half { width: 50%; }');
     expect(html).not.toContain('<!-- quote-type');
   });
 }
+
+test('render marks each block with its line in the file, frontmatter included', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'lignes', '---\ntitle: Lignes\nhtml_template: article\n---\n\n# Titre\n\nIntro\n\n## Partie\n\nTexte\n');
+  const html = await (await request.get(`${ld.baseURL}/api/html-templates/render?doc=lignes`)).text();
+  expect(html).toContain('<p data-source-lines="8-8">Intro</p>');
+  expect(html).toContain('<h2 data-source-lines="10-10"');
+  expect(html).toContain('<p data-source-lines="12-12">Texte</p>');
+  expect(html).toContain('<a href="#partie">Partie</a>');
+});

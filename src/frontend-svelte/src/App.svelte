@@ -11,6 +11,7 @@
   import ConceptGraph from "./routes/ConceptGraph.svelte";
   import ShapeEditor from "./routes/ShapeEditor.svelte";
   import Templates from "./routes/Templates.svelte";
+  import HtmlView from "./routes/HtmlView.svelte";
   import { canLeavePage } from "./lib/navigationGuard";
   import SurvivalKit from "./routes/SurvivalKit.svelte";
   import { initPersistentToast } from "./lib/persistentToast";
@@ -35,6 +36,7 @@
     "/survival-kit",
     "/templates",
     "/graph",
+    "/html-view",
   ]);
 
   let currentLocation = window.location.pathname + window.location.search + window.location.hash;
@@ -150,6 +152,8 @@
   <ShapeEditor />
 {:else if path === "/survival-kit"}
   <SurvivalKit />
+{:else if path === "/html-view"}
+  <HtmlView />
 {:else if path === "/"}
   <Home />
 {:else}

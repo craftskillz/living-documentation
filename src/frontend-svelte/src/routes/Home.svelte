@@ -2,7 +2,8 @@
   import { onMount } from "svelte";
   import "../lib/home/home.css";
   import { home } from "../lib/home/state.svelte";
-  import { isTauActive } from "../lib/siteTheme";
+  import { isTauActive, loadDarkPreference } from "../lib/siteTheme";
+  import { applyMarkdownDisplayConfig } from "../lib/home/displayConfig";
   import { t, loadI18n } from "../lib/i18n.svelte";
   import * as api from "../lib/home/api";
   import Topbar from "../lib/Topbar.svelte";
@@ -34,13 +35,6 @@
   let searchTimer: number | null = null;
 
   // ── Dark mode ────────────────────────────────────────────────────────────────
-  function loadDarkPref(): boolean {
-    try {
-      const saved = localStorage.getItem("ld-dark");
-      if (saved !== null) return saved === "true";
-    } catch {}
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
-  }
   function applyDark(v: boolean) {
     // The tau site theme is light-only for now; never apply dark under it.
     if (isTauActive()) v = false;
@@ -165,13 +159,7 @@
   async function saveDoc(content: string, expectedContent?: string) {
     if (!currentDoc) return;
     const id = currentDoc.id;
-    const res = await fetch("/api/documents/" + id, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content, expectedContent }),
-    });
-    if (res.status === 409) throw new Error(t("section.conflict"));
-    if (!res.ok) throw new Error(await res.text());
+    await api.updateDocument(id, content, expectedContent);
     const fresh = await api.fetchDocument(id);
     fresh.id = id;
     if (currentDoc?.id !== id) return fresh.content;
@@ -266,20 +254,13 @@
 
   onMount(async () => {
     siteThemeTau = isTauActive();
-    applyDark(loadDarkPref());
+    applyDark(loadDarkPreference());
     const cfg = await api.fetchConfig();
     await loadI18n((cfg.language as string) || "en");
     if (cfg.title) { document.title = cfg.title as string; appTitle = cfg.title as string; }
     home.exclusiveFolderExpansion = !!cfg.exclusiveFolderExpansion;
-    home.codeBlockMaxHeight = typeof cfg.codeBlockMaxHeight === "number" ? cfg.codeBlockMaxHeight : 400;
     home.tagSuggestions = Array.isArray(cfg.tagSuggestions) && cfg.tagSuggestions.every((n: unknown) => typeof n === "string") ? cfg.tagSuggestions : [];
-    home.imageRoundedCorners = !!cfg.imageRoundedCorners;
-    home.imageCentered = !!cfg.imageCentered;
-    home.imageBorder = !!cfg.imageBorder;
-    home.codeBlockLightTheme = !!cfg.codeBlockLightTheme;
-    if (home.codeBlockMaxHeight > 0) {
-      document.documentElement.style.setProperty("--ld-code-max-h", home.codeBlockMaxHeight + "px");
-    }
+    applyMarkdownDisplayConfig(cfg);
 
     await loadDocuments();
 
