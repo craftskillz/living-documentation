@@ -7,6 +7,7 @@ import fs from "node:fs";
 import { isReservedOkfFile } from "./okf";
 
 export const ALWAYS_IGNORED_DIRS = new Set([".git", "node_modules"]);
+const ALWAYS_IGNORED_FILES = new Set([".DS_Store"]);
 
 export function isListedDir(name: string): boolean {
   return !ALWAYS_IGNORED_DIRS.has(name);
@@ -21,8 +22,9 @@ export function isListedEntry(entry: fs.Dirent, fullPath: string): boolean {
   return isListedDocFile(entry.name) && isFileOrLinkToFile(entry, fullPath);
 }
 
-/** A file the explorer shows beside the documents: anything but Markdown. */
+/** A file the explorer shows beside the documents: anything but Markdown and system files. */
 export function isOtherFile(entry: fs.Dirent, fullPath: string): boolean {
+  if (ALWAYS_IGNORED_FILES.has(entry.name)) return false;
   return !entry.name.toLowerCase().endsWith(".md") && isFileOrLinkToFile(entry, fullPath);
 }
 

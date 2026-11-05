@@ -541,6 +541,7 @@ test('non-Markdown files are listed last in their folder, without document id', 
   fs.writeFileSync(path.join(ld.docsAbs, 'guide/zeta.pdf'), 'pdf');
   fs.writeFileSync(path.join(ld.docsAbs, 'guide/Alpha.PNG'), 'png');
   fs.writeFileSync(path.join(ld.docsAbs, 'guide/.env'), 'dot');
+  fs.writeFileSync(path.join(ld.docsAbs, 'guide/.DS_Store'), 'finder');
   fs.mkdirSync(path.join(ld.docsAbs, 'guide/sub'));
   fs.symlinkSync(path.join(ld.docsAbs, 'guide/zeta.pdf'), path.join(ld.docsAbs, 'guide/link.pdf'));
   fs.symlinkSync(path.join(ld.docsAbs, 'guide/gone.txt'), path.join(ld.docsAbs, 'guide/broken.txt'));
