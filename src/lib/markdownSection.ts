@@ -46,3 +46,18 @@ export function replaceMarkdownSection(content: string, range: MarkdownSection, 
   if (replacement && range.end < content.length) replacement = replacement.trimEnd() + newline + newline;
   return content.slice(0, range.start) + replacement + content.slice(range.end);
 }
+
+/** Offsets of whole file lines (1-based, inclusive), without the line ending of the last one. */
+export function markdownLinesRange(content: string, first: number, last: number): MarkdownSection | null {
+  const lines = content.split("\n");
+  if (!Number.isInteger(first) || !Number.isInteger(last) || first < 1 || last < first || last > lines.length) return null;
+  const start = lines.slice(0, first - 1).join("\n").length + (first > 1 ? 1 : 0);
+  const end = start + lines.slice(first - 1, last).join("\n").length;
+  return { start, end: content[end - 1] === "\r" ? end - 1 : end };
+}
+
+/** Unlike a section, these lines keep whatever surrounds them. */
+export function replaceMarkdownLines(content: string, range: MarkdownSection, text: string): string {
+  const newline = content.includes("\r\n") ? "\r\n" : "\n";
+  return content.slice(0, range.start) + text.replace(/\r\n|\n/g, newline) + content.slice(range.end);
+}

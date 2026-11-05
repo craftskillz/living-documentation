@@ -24,8 +24,16 @@ function openLink(href: string): void {
   }
 }
 
-/** Listens from the application to a generated page. `onBlockMenu` returns true when it handles the right click. */
-export function wireHtmlFrame(frameDocument: Document, onBlockMenu: (target: EventTarget | null) => boolean): () => void {
+export interface HtmlFrameHandlers {
+  /** Returns true when it handles the right click. */
+  onBlockMenu: (target: EventTarget | null) => boolean;
+  onBlockDoubleClick: (target: EventTarget | null) => void;
+  /** During an in-place edit, the frame's clicks belong to the text being edited. */
+  isEditing: () => boolean;
+}
+
+/** Listens from the application to a generated page. */
+export function wireHtmlFrame(frameDocument: Document, { onBlockMenu, onBlockDoubleClick, isEditing }: HtmlFrameHandlers): () => void {
   const controller = new AbortController();
   const { signal } = controller;
   // A right click can itself select the word under the pointer (macOS):
@@ -39,14 +47,18 @@ export function wireHtmlFrame(frameDocument: Document, onBlockMenu: (target: Eve
   frameDocument.addEventListener("contextmenu", (event) => {
     const selected = selectedBeforeClick ?? hasSelectedText(frameDocument);
     selectedBeforeClick = null;
-    if (!selected && onBlockMenu(event.target)) event.preventDefault();
+    if (!selected && !isEditing() && onBlockMenu(event.target)) event.preventDefault();
+  }, { signal });
+
+  frameDocument.addEventListener("dblclick", (event) => {
+    if (!isEditing()) onBlockDoubleClick(event.target);
   }, { signal });
 
   frameDocument.addEventListener("click", (event) => {
     const link = (event.target as Element | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
     if (!link || link.getAttribute("href")?.startsWith("#")) return;
     event.preventDefault();
-    openLink(link.href);
+    if (!isEditing()) openLink(link.href);
   }, { signal });
 
   return () => controller.abort();

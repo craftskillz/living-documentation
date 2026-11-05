@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { markdownSectionAtLine, replaceMarkdownSection } from "../../src/lib/markdownSection";
+import { markdownLinesRange, markdownSectionAtLine, replaceMarkdownLines, replaceMarkdownSection } from "../../src/lib/markdownSection";
 
 function section(source: string, text: string) {
   const line = source.slice(0, source.indexOf(text)).split("\n").length;
@@ -43,4 +43,25 @@ test("repeated text and headings are located by source position", () => {
   assert.ok(range);
   assert.equal(range.start, source.lastIndexOf("## Same"));
   assert.equal(replaceMarkdownSection(source, range, ""), source.slice(0, range.start));
+});
+
+test('markdownLinesRange delimits whole lines without their last line ending', () => {
+  const content = '---\nt: x\n---\n\nUn\ndeux\n\nFin\n';
+  const range = markdownLinesRange(content, 5, 6)!;
+  assert.equal(content.slice(range.start, range.end), 'Un\ndeux');
+  const last = markdownLinesRange(content, 8, 8)!;
+  assert.equal(content.slice(last.start, last.end), 'Fin');
+});
+
+test('markdownLinesRange refuses lines outside the document', () => {
+  assert.equal(markdownLinesRange('a\nb', 3, 3), null);
+  assert.equal(markdownLinesRange('a\nb', 0, 1), null);
+  assert.equal(markdownLinesRange('a\nb', 2, 1), null);
+});
+
+test('replaceMarkdownLines leaves everything around the lines intact, CRLF included', () => {
+  const content = 'Avant\r\n\r\nUn\r\ndeux\r\n\r\n\r\nFin\r\n';
+  const range = markdownLinesRange(content, 3, 4)!;
+  assert.equal(content.slice(range.start, range.end), 'Un\r\ndeux');
+  assert.equal(replaceMarkdownLines(content, range, 'Trois\nquatre'), 'Avant\r\n\r\nTrois\r\nquatre\r\n\r\n\r\nFin\r\n');
 });
