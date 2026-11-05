@@ -60,3 +60,18 @@ Les types, les icônes et les largeurs sont partagés avec le viewer dans `src/l
 Limite : une page laissée ouverte n'est pas rechargée si le document change ailleurs. Le clic droit se fonde alors sur la version chargée ; l'enregistrement est refusé par le contrôle de concurrence (409) plutôt que d'écraser le fichier.
 
 `tests/e2e/html-view.spec.ts` couvre ce parcours.
+
+## Modification sur place au double-clic
+
+Le double-clic sur un paragraphe ou un titre `##` à `####` de premier niveau rend ce bloc modifiable directement dans la page (`src/frontend-svelte/src/lib/html-view/inlineEdit.ts`). Les autres blocs (listes, citations, code, tableaux) gardent le double-clic du navigateur : le clic droit reste leur voie d'édition.
+
+- **Contrôle avant édition** : le bloc est reconverti en Markdown (`blockToMarkdown`) et comparé à ses lignes source, espaces et retours à la ligne ignorés. En cas d'écart, la popup Markdown s'ouvre et le fichier n'est pas touché. Ce contrôle couvre ce que le rendu ne permet pas de retrouver : échappements, entités, `__gras__`, HTML brut, chemins d'images en `./`.
+- **Écriture** : seules les lignes du bloc sont remplacées, avec le contrôle de concurrence habituel. Un bloc inchangé ou vidé n'écrit rien : vider un bloc ne le supprime pas.
+- **Clavier et souris** : `Entrée` ne fait rien, `Cmd+Entrée` ou cliquer ailleurs enregistre, `Échap` annule. Le passage à une autre fenêtre retire aussi le focus : il enregistre.
+- **Texte saisi** : il est écrit tel quel, donc interprété comme du Markdown au rendu suivant (`**x**` devient du gras, `## x` un titre). Les échapper changerait le comportement des caractères courants (`*`, `_`, `<`) et ferait échouer le contrôle ci-dessus à la modification suivante.
+- **Mode `plaintext-only`** : il écarte les raccourcis de mise en forme et le formatage collé. Le collage aplatit aussi les retours à la ligne, car un bloc reste un seul bloc Markdown.
+- **Substituts de Chromium** : quand le texte remplacé contient une espace, Chromium réécrit `strong`, `em` et `del` en `b`, `i` et `strike`, et `code` en `font`/`span`. Les trois premiers gardent leur sens ; le `code` redevient du texte simple. Un élément qui reste inconnu laisse l'édition ouverte avec un message : le texte saisi n'est jamais jeté.
+
+Limites : remplacer tout le texte d'un lien en tapant place sous Chromium la suite de la frappe hors du lien. Fermer la fenêtre pendant une édition perd la saisie en cours, sans avertissement. Seul Chromium a été testé.
+
+`tests/e2e/html-view-inline-edit.spec.ts` et `tests/unit/block-markdown.test.ts` couvrent ce parcours.

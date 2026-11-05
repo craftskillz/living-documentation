@@ -12,6 +12,22 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
+# Modification sur place au double-clic — 5 novembre 2026
+
+Statut : terminé sur la branche `feat/html-view-double-clic`, à merger après validation de l'utilisateur. Pas encore testé par l'utilisateur.
+
+Réalisé : le double-clic sur un paragraphe ou un titre `##` à `####` le rend modifiable dans la page. `Entrée` ne fait rien, `Cmd+Entrée` ou cliquer ailleurs enregistre, `Échap` annule. Le bloc est d'abord reconverti en Markdown et comparé à ses lignes : en cas d'écart, la popup Markdown s'ouvre sans toucher au fichier. Seules les lignes du bloc sont réécrites. Détails : ADR `2026_11_04_13_20_[RENDERING]`, section « Modification sur place au double-clic ».
+
+Décisions prises sans demande à l'utilisateur, à confirmer : le texte saisi est interprété comme du Markdown (pas d'échappement) ; vider un bloc n'écrit rien ; les autres blocs gardent le double-clic du navigateur.
+
+Limites : remplacer tout le texte d'un lien en tapant place la suite de la frappe hors du lien (Chromium). Coller sur un mot en `code` un texte contenant une espace retire le style `code`. Fermer la fenêtre pendant une édition perd la saisie, sans avertissement. Changer de fenêtre enregistre.
+
+Fichiers : `lib/html-view/blockMarkdown.ts`, `lib/html-view/inlineEdit.ts`, `lib/html-view/htmlFrame.ts`, `routes/HtmlView.svelte`, `src/lib/markdownSection.ts`, catalogues i18n, `tests/unit/block-markdown.test.ts`, `tests/unit/markdownSection.test.ts`, `tests/e2e/html-view-inline-edit.spec.ts`.
+
+Vérifications : tests écrits avant le code. Unitaires : 178 réussis. API : 265 réussis, 1 ignoré. E2E complet, passé une fois : 208 réussis, 1 échec, le collage, qui a révélé un vrai bug (`<b>` de Chromium refusé par le convertisseur, texte saisi perdu). Après correction, seuls `html-view-inline-edit.spec.ts`, `html-view.spec.ts` et `html-templates.spec.ts` ont été relancés : 19 réussis ; la suite E2E complète n'a pas été repassée. `explorer.spec.ts:159` a passé dans le passage complet. Lint sans erreur sur les modules TypeScript modifiés, `svelte-check` sans erreur, `okf:validate` conforme. Rendu de l'édition contrôlé sur capture, en thème clair, sous Chromium piloté par Playwright. Thème sombre, Safari et Firefox non contrôlés.
+
+Prochaine action : test par l'utilisateur sur un vrai document, puis merge. Les outils du MCP ne sont pas exposés dans cette session (le serveur répond sur le port 4321) : métadonnées et hashes non mis à jour ; attacher `lib/html-view/blockMarkdown.ts` et `lib/html-view/inlineEdit.ts` à l'ADR et rafraîchir ses hashes.
+
 # Édition au clic droit depuis la page HTML — 5 novembre 2026
 
 Statut : terminé et mergé dans `main`, validé par l'utilisateur.
@@ -26,7 +42,7 @@ Vérifications : tests unitaires et API rouges puis verts ; `html-view.spec.ts` 
 
 Ajouté après test de l'utilisateur : l'aperçu de `SectionEditor` n'affiche que les notes de bas de page utilisées par la section (`lib/home/sectionFootnotes.ts`), dans le viewer comme dans `/html-view`. Test E2E rouge puis vert. Seuls `section-edit.spec.ts`, `autosave.spec.ts` et `html-view.spec.ts` ont été relancés après ce changement, pas la suite complète.
 
-Prochaine action : tâche 3 (double-clic) dans une nouvelle session. Surveiller `explorer.spec.ts:159`. Les outils du MCP ne sont pas exposés dans cette session : métadonnées et hashes non mis à jour ; attacher `routes/HtmlView.svelte` et `lib/html-view/htmlFrame.ts` à l'ADR et rafraîchir ses hashes.
+Prochaine action : tâche 3 (double-clic) dans une nouvelle session : faite, voir l'entrée ci-dessus. Surveiller `explorer.spec.ts:159`. Les outils du MCP ne sont pas exposés dans cette session : métadonnées et hashes non mis à jour ; attacher `routes/HtmlView.svelte` et `lib/html-view/htmlFrame.ts` à l'ADR et rafraîchir ses hashes.
 
 # Annotations du viewer dans les pages HTML générées — 5 novembre 2026
 
@@ -62,7 +78,7 @@ Prochaines tâches décidées par l'utilisateur, chacune dans sa session :
 
 1. Appliquer les annotations du viewer (`image-width`, `quote-type`, `quote-title`, `quote-icon`) à la génération, côté serveur, pour tous les templates. Fait : voir l'entrée ci-dessus.
 2. Éditer depuis la page HTML avec le clic droit. « Voir en HTML » ouvre une page de l'application contenant le rendu dans une iframe `sandbox="allow-same-origin"`, sans script dans la page. Le clic droit sur un bloc ouvre directement `SectionEditor`, sauf si du texte est sélectionné : le menu du navigateur reste alors disponible. À la fermeture, le HTML est régénéré et la position conservée. Fait : voir l'entrée du même nom, en tête de ce fichier.
-3. Modifier sur place avec le double-clic, pour les paragraphes et les titres `##` à `####`. Le bloc est d'abord reconverti en Markdown et comparé à ses lignes ; en cas d'écart, la popup Markdown s'ouvre sans toucher au fichier. `Entrée` ne fait rien, cliquer ailleurs ou `Cmd+Entrée` enregistre, `Échap` annule.
+3. Modifier sur place avec le double-clic, pour les paragraphes et les titres `##` à `####`. Le bloc est d'abord reconverti en Markdown et comparé à ses lignes ; en cas d'écart, la popup Markdown s'ouvre sans toucher au fichier. `Entrée` ne fait rien, cliquer ailleurs ou `Cmd+Entrée` enregistre, `Échap` annule. Fait : voir l'entrée « Modification sur place au double-clic », en tête de ce fichier.
 
 Faisabilité testée par prototype sous Chromium, hors dépôt : événements captés depuis la page parente, scripts du document bloqués, 106 blocs sur 107 de l'article redonnent leur source (espaces et retours à la ligne ignorés). À prévoir : un bouton ouvrant la page seule pour l'impression, et l'adaptation du test `instanceof Element` de `sectionAtTarget` pour les éléments d'iframe.
 
