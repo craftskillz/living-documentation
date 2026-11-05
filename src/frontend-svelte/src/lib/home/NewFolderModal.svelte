@@ -72,13 +72,6 @@
     return (rel ? rel + "/" : "") + normalized;
   });
 
-  function sanitizeFolderNameInput(event: Event) {
-    const input = event.currentTarget as HTMLInputElement;
-    const normalized = normalizeFolderSegment(input.value);
-    if (input.value !== normalized) input.value = normalized;
-    if (name !== normalized) name = normalized;
-  }
-
   function toggleBrowser() {
     browserOpen = !browserOpen;
     if (browserOpen) loadBrowse(browseCurrent || docsFolder);
@@ -173,7 +166,6 @@
           id="new-folder-name"
           bind:this={nameInputEl}
           bind:value={name}
-          oninput={sanitizeFolderNameInput}
           type="text"
           placeholder={t("modal.new_folder.name_placeholder")}
           class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -217,7 +209,7 @@
       <!-- Preview -->
       <div class="space-y-1">
         <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">{t("modal.new_folder.will_be_created")}</label>
-        <p class="text-xs font-mono text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 truncate">{preview}</p>
+        <p data-testid="new-folder-preview" class="text-xs font-mono text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 truncate">{preview}</p>
       </div>
 
       {#if error}<p class="text-xs text-red-500">{error}</p>{/if}
