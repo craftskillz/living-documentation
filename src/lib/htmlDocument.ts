@@ -1,3 +1,5 @@
+import { TAG_MARKER_CLASS, TAG_MARKER_GLYPH } from "./summaryMarkdown";
+
 /**
  * Turns the HTML rendered from a Markdown document into what an HTML template presents:
  * a title, a lead, one <section> per top-level h2 and a table of contents.
@@ -19,14 +21,17 @@ const LEADING_H1_RE = /^\s*<h1\b[^>]*>([\s\S]*?)<\/h1>\s*/i;
 const TAG_RE = /<(\/?)([a-zA-Z][\w-]*)\b(?:[^>"']|"[^"]*"|'[^']*')*?(\/?)>/g;
 const H2_RE = /^<h2\b[^>]*>([\s\S]*?)<\/h2>/i;
 const VOID_ELEMENTS = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"]);
+const TAG_MARKER_RE = new RegExp(`<mark class="${TAG_MARKER_CLASS}"[^>]*>${TAG_MARKER_GLYPH}</mark>`, "g");
 const PLACEHOLDER_RE = /\{\{(title|language|toc|content)\}\}/g;
+// The page is served under /api/html-templates: relative images would no longer resolve from the root as in the viewer.
+const RELATIVE_IMAGE_SRC_RE = /\bsrc="(?:\.\/)?(images(?:-ai)?\/)/g;
 
 function escapeHtml(text: string): string {
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
 function stripTags(html: string): string {
-  return html.replace(/<[^>]*>/g, "").trim();
+  return html.replace(TAG_MARKER_RE, "").replace(/<[^>]*>/g, "").trim();
 }
 
 function decodeNumericEntities(text: string): string {
@@ -72,7 +77,9 @@ function uniqueAnchor(text: string, used: Map<string, number>): string {
 export function structureHtml(html: string, fallbackTitle: string): StructuredHtml {
   const leadingH1 = html.match(LEADING_H1_RE);
   const title = leadingH1 ? stripTags(leadingH1[1]) : escapeHtml(fallbackTitle);
-  const body = (leadingH1 ? html.slice(leadingH1[0].length) : html).replace(/href="\?doc=/g, 'href="/?doc=');
+  const body = (leadingH1 ? html.slice(leadingH1[0].length) : html)
+    .replace(/href="\?doc=/g, 'href="/?doc=')
+    .replace(RELATIVE_IMAGE_SRC_RE, 'src="/$1');
 
   const offsets = topLevelH2Offsets(body);
   const lead = body.slice(0, offsets[0] ?? body.length).trim();

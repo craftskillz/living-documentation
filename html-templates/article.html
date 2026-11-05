@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="{{language}}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}}</title>
+<style>
+  :root {
+    --page: #ffffff;
+    --ink: #1b1e23;
+    --soft-ink: #5b636e;
+    --line: #e3e5e8;
+    --accent: #1d4e89;
+    --accent-tint: #eef3f9;
+    --code-bg: #f4f5f7;
+    --serif: Charter, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 1.5rem; }
+  body { margin: 0; background: var(--page); color: var(--ink); font: 1.125rem/1.7 var(--serif); -webkit-font-smoothing: antialiased; }
+
+  .article-header { max-width: 66rem; margin: 0 auto; padding: 5rem 2rem 3rem; }
+  .article-header h1 { max-width: 48rem; margin: 0; font: 750 clamp(2.2rem, 5vw, 3.6rem)/1.08 var(--sans); letter-spacing: -.025em; text-wrap: balance; }
+
+  .layout { display: grid; grid-template-columns: 13rem minmax(0, 43rem); gap: 4rem; max-width: 66rem; margin: 0 auto; padding: 0 2rem 6rem; }
+
+  .article-nav { position: sticky; top: 1.5rem; align-self: start; max-height: calc(100vh - 3rem); overflow-y: auto; font: .85rem/1.4 var(--sans); }
+  .article-nav:empty { display: none; }
+  .article-nav ol { margin: 0; padding: 0; list-style: none; border-left: 1px solid var(--line); }
+  .article-nav a { display: block; margin-left: -1px; padding: .4rem 0 .4rem .85rem; border-left: 2px solid transparent; color: var(--soft-ink); text-decoration: none; }
+  .article-nav a:hover { border-left-color: var(--accent); color: var(--accent); }
+
+  main { min-width: 0; overflow-wrap: break-word; }
+  .ld-lead { margin-bottom: 1rem; font-size: 1.28rem; line-height: 1.6; }
+  .ld-section { margin-top: 3.5rem; }
+
+  h2, h3, h4 { font-family: var(--sans); color: var(--ink); text-wrap: balance; }
+  h2 { margin: 0 0 1.25rem; font-size: 1.85rem; font-weight: 720; line-height: 1.2; letter-spacing: -.015em; }
+  h3 { margin: 2.75rem 0 .8rem; font-size: 1.3rem; font-weight: 680; line-height: 1.3; }
+  h4 { margin: 2rem 0 .6rem; font-size: 1.05rem; font-weight: 680; line-height: 1.35; }
+  p { margin: 0 0 1.25rem; }
+  strong { font-weight: 700; }
+  a { color: var(--accent); text-underline-offset: .15em; text-decoration-thickness: 1px; }
+  a:hover { text-decoration-thickness: 2px; }
+  hr { margin: 3rem 0; border: 0; border-top: 1px solid var(--line); }
+
+  ul, ol { margin: 0 0 1.25rem; padding-left: 1.4rem; }
+  li { margin-bottom: .4rem; }
+  li > ul, li > ol { margin: .4rem 0 0; }
+  li::marker { color: var(--soft-ink); }
+  ul:has(> li > input[type="checkbox"]) { padding-left: 0; list-style: none; }
+  input[type="checkbox"] { margin: 0 .5rem 0 0; accent-color: var(--accent); }
+
+  img { display: block; max-width: 100%; max-height: 38rem; width: auto; height: auto; margin: 2rem auto; border-radius: 4px; }
+
+  blockquote { margin: 1.75rem 0; padding: 1rem 1.25rem; background: var(--accent-tint); border-left: 3px solid var(--accent); border-radius: 0 4px 4px 0; font-size: 1.02rem; }
+  blockquote > :last-child { margin-bottom: 0; }
+
+  code { padding: .12em .32em; background: var(--code-bg); border-radius: 3px; font: .84em var(--mono); }
+  pre { overflow-x: auto; margin: 1.5rem 0; padding: 1rem 1.2rem; background: var(--code-bg); border: 1px solid var(--line); border-radius: 6px; font-size: .95rem; line-height: 1.55; }
+  pre code { padding: 0; background: none; }
+
+  table { display: block; overflow-x: auto; width: 100%; margin: 1.75rem 0; border-collapse: collapse; font: .9rem/1.5 var(--sans); }
+  th, td { padding: .65rem 1.1rem .65rem 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { border-bottom: 2px solid var(--ink); font-weight: 680; }
+  tbody tr:last-child td { border-bottom: 0; }
+
+  details { margin: 1.5rem 0; padding: .7rem 1rem; border: 1px solid var(--line); border-radius: 6px; }
+  summary { cursor: pointer; font: 650 .95rem var(--sans); }
+
+  .ld-tag-marker { padding: 0 .3em; background: #fde047; color: #713f12; border-radius: .2em; font: 600 .75em var(--sans); vertical-align: .1em; cursor: help; }
+
+  sup { line-height: 0; font: 600 .68em/0 var(--sans); }
+  sup a { padding: 0 .1em; text-decoration: none; }
+
+  section.footnotes { margin-top: 4.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); color: var(--soft-ink); font: .86rem/1.55 var(--sans); }
+  section.footnotes > .ld-footnotes-label { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  section.footnotes li { margin-bottom: .6rem; padding: .1rem .35rem; border-radius: 3px; }
+  section.footnotes li p { margin: 0; }
+  section.footnotes li:target { background: var(--accent-tint); color: var(--ink); }
+  section.footnotes code { font-size: .92em; }
+  section.footnotes [data-ld-fn-backref] { text-decoration: none; }
+
+  @media screen and (max-width: 900px) {
+    body { font-size: 1.0625rem; }
+    .article-header { padding: 2.5rem 1.25rem 1.5rem; }
+    .layout { display: block; padding: 0 1.25rem 4rem; }
+    .article-nav { position: static; max-height: none; margin-bottom: 2.5rem; }
+    .ld-lead { font-size: 1.16rem; }
+    .ld-section { margin-top: 2.75rem; }
+    h2 { font-size: 1.55rem; }
+    h3 { margin-top: 2.25rem; font-size: 1.2rem; }
+  }
+
+  @page { size: A4; margin: 18mm 18mm 20mm; }
+  @media print {
+    html { font-size: 12.5px; }
+    body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .article-header { max-width: none; padding: 0 0 1.5rem; }
+    .layout { display: block; max-width: none; padding: 0; }
+    .article-nav, .ld-tag-marker { display: none; }
+    h2, h3, h4 { break-after: avoid; }
+    img, tr, blockquote, pre, section.footnotes li { break-inside: avoid; }
+    thead { display: table-header-group; }
+    table { display: table; }
+    pre { overflow: visible; white-space: pre-wrap; }
+    a { color: inherit; }
+  }
+</style>
+</head>
+<body>
+<header class="article-header"><h1>{{title}}</h1></header>
+<div class="layout">
+  <nav class="article-nav" aria-label="{{title}}">{{toc}}</nav>
+  <main>{{content}}</main>
+</div>
+</body>
+</html>

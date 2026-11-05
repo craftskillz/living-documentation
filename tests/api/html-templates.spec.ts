@@ -32,6 +32,44 @@ test('render presents the Markdown content in the template chosen by the documen
   expect(html).not.toContain('{{');
 });
 
+test('the article template presents a document with its table of contents and footnotes', async ({ request, ld }) => {
+  const { folders } = await (await request.get(`${ld.baseURL}/api/html-templates`)).json();
+  expect(folders).toContainEqual({ id: 'articles', templateIds: ['article'] });
+
+  writeDoc(ld.docsAbs, 'article', [
+    '---', 'title: Article', 'language: fr', 'html_template: article', '---', '',
+    '# Grand titre', '', 'Introduction', '', '## Première', '', 'Texte[^1]', '', '[^1]: Une note', '',
+  ].join('\n'));
+  const response = await request.get(`${ld.baseURL}/api/html-templates/render?doc=article`);
+  expect(response.status()).toBe(200);
+  const html = await response.text();
+  expect(html).toContain('<html lang="fr">');
+  expect(html).toContain('<title>Grand titre</title>');
+  expect(html).toContain('<div class="ld-lead"><p>Introduction</p>');
+  expect(html).toContain('<a href="#premiere">Première</a>');
+  expect(html).toContain('<section class="ld-section" id="premiere">');
+  expect(html).toContain('data-footnotes');
+  expect(html).toContain('Une note');
+  expect(html).not.toContain('{{');
+});
+
+test('tags written for an LLM become a tooltip marker and do not break the sections', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'balises', [
+    '---', 'title: Balises', 'html_template: article', '---', '',
+    '# Grand titre', '', '## Première <revoir>', '',
+    'Texte <reformule cette phrase, avec des accents éà> suite', '', '<add-footnote>', '',
+    '## Seconde', '', 'Exemple `<garde-moi>`', '',
+  ].join('\n'));
+  const html = await (await request.get(`${ld.baseURL}/api/html-templates/render?doc=balises`)).text();
+  expect(html).toContain('<mark class="ld-tag-marker" title="&lt;reformule cette phrase, avec des accents éà&gt;" data-tag="reformule">b</mark>');
+  expect(html).toContain('title="&lt;add-footnote&gt;"');
+  expect(html).not.toContain('<add-footnote>');
+  expect(html).toContain('<section class="ld-section" id="premiere">');
+  expect(html).toContain('<section class="ld-section" id="seconde">');
+  expect(html).toContain('<a href="#premiere">Première</a>');
+  expect(html).toContain('&lt;garde-moi&gt;');
+});
+
 test('render reflects the current content of the document', async ({ request, ld }) => {
   writeDoc(ld.docsAbs, 'fiche', SHEET);
   writeDoc(ld.docsAbs, 'fiche', SHEET.replace('Première', 'Modifiée'));
