@@ -12,6 +12,20 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
+# Annotations du viewer dans les pages HTML générées — 5 novembre 2026
+
+Statut : terminé sur la branche `feat/html-annotations-viewer`, à merger après contrôle du rendu par l'utilisateur.
+
+Réalisé : `image-width`, `quote-type`, `quote-title` et `quote-icon` sont appliqués côté serveur, pour tous les templates. `image-align` aussi, bien qu'absent de la liste de la tâche, car il accompagne `image-width` dans le viewer. Détails et écarts avec le viewer : ADR `2026_11_04_13_20_[RENDERING]`, section « Annotations du viewer ».
+
+Fichiers : `src/lib/htmlAnnotations.ts`, `src/lib/contentAnnotations.ts` (extrait du viewer), `src/lib/htmlDocument.ts`, `home/blockquoteAttributes.ts`, `home/imageAttributes.ts`, `tests/unit/html-annotations.test.ts`, `tests/api/html-templates.spec.ts`.
+
+Vérifications : tests unitaires rouges puis verts. Unitaires : 165 réussis. API : 263 réussis, 1 ignoré, 1 échec de `tree.spec.ts:443` (documents liés), qui passe 5 fois sur 5 seul ; message d'erreur non conservé. E2E : 192 réussis. Lint sans erreur sur les modules TypeScript modifiés.
+
+Non contrôlé : rendu dans un navigateur. Le lancement du serveur de contrôle a échoué 3 fois (erreurs de ligne de commande, sans lien avec le code) et l'utilisateur a choisi de contrôler lui-même. Points à regarder : couleurs des encadrés et largeurs d'image dans les deux templates, à l'écran et à l'impression.
+
+Prochaine action : contrôle du rendu par l'utilisateur, puis merge. Surveiller le test intermittent `tree.spec.ts:443`. Les outils du MCP ne sont pas exposés dans cette session : métadonnées et hashes non mis à jour ; attacher `src/lib/htmlAnnotations.ts` et `src/lib/contentAnnotations.ts` à l'ADR et rafraîchir ses hashes.
+
 # Template HTML pour les articles — 5 novembre 2026
 
 Statut : terminé et mergé dans `main`, sur décision de l'utilisateur.
@@ -28,7 +42,7 @@ Vérifications : tests unitaires et API rouges puis verts. Dernier passage compl
 
 Prochaines tâches décidées par l'utilisateur, chacune dans sa session :
 
-1. Appliquer les annotations du viewer (`image-width`, `quote-type`, `quote-title`, `quote-icon`) à la génération, côté serveur, pour tous les templates.
+1. Appliquer les annotations du viewer (`image-width`, `quote-type`, `quote-title`, `quote-icon`) à la génération, côté serveur, pour tous les templates. Fait : voir l'entrée ci-dessus.
 2. Éditer depuis la page HTML avec le clic droit. « Voir en HTML » ouvre une page de l'application contenant le rendu dans une iframe `sandbox="allow-same-origin"`, sans script dans la page. Le clic droit sur un bloc ouvre directement `SectionEditor`, sauf si du texte est sélectionné : le menu du navigateur reste alors disponible. À la fermeture, le HTML est régénéré et la position conservée.
 3. Modifier sur place avec le double-clic, pour les paragraphes et les titres `##` à `####`. Le bloc est d'abord reconverti en Markdown et comparé à ses lignes ; en cas d'écart, la popup Markdown s'ouvre sans toucher au fichier. `Entrée` ne fait rien, cliquer ailleurs ou `Cmd+Entrée` enregistre, `Échap` annule.
 
