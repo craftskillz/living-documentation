@@ -3,7 +3,8 @@ import path from 'node:path';
 import { test, expect } from '../helpers/ld-fixture';
 
 interface TreeNode {
-  kind: 'folder' | 'doc';
+  kind: 'folder' | 'doc' | 'file';
+  id?: string;
   name: string;
   path: string;
   hidden?: boolean;
@@ -18,9 +19,9 @@ async function getTree(request: import('@playwright/test').APIRequestContext, ba
   return (await res.json()) as TreeNode[];
 }
 
-/** Names of the listed entries, reserved files left out. */
+/** Names of the listed entries, reserved and non-Markdown files left out. */
 function names(nodes: TreeNode[] | undefined): string[] {
-  return (nodes ?? []).filter((n) => !n.reserved).map((n) => n.name);
+  return (nodes ?? []).filter((n) => !n.reserved && n.kind !== 'file').map((n) => n.name);
 }
 
 function allNames(nodes: TreeNode[] | undefined): string[] {
@@ -532,4 +533,41 @@ test('DELETE /api/tree rejects documents, protected folders and escaping paths w
   for (const rel of ['guide/a.md', 'secret/s.md', 'images', '.git', 'linked']) {
     expect(fs.existsSync(path.join(ld.docsAbs, rel)), rel).toBe(true);
   }
+});
+
+test('non-Markdown files are listed last in their folder, without document id', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'guide/a.md');
+  writeDoc(ld.docsAbs, 'guide/index.md');
+  fs.writeFileSync(path.join(ld.docsAbs, 'guide/zeta.pdf'), 'pdf');
+  fs.writeFileSync(path.join(ld.docsAbs, 'guide/Alpha.PNG'), 'png');
+  fs.writeFileSync(path.join(ld.docsAbs, 'guide/.env'), 'dot');
+  fs.mkdirSync(path.join(ld.docsAbs, 'guide/sub'));
+  fs.symlinkSync(path.join(ld.docsAbs, 'guide/zeta.pdf'), path.join(ld.docsAbs, 'guide/link.pdf'));
+  fs.symlinkSync(path.join(ld.docsAbs, 'guide/gone.txt'), path.join(ld.docsAbs, 'guide/broken.txt'));
+  fs.mkdirSync(path.join(ld.docsAbs, 'node_modules'));
+  fs.writeFileSync(path.join(ld.docsAbs, 'node_modules/dep.js'), 'dep');
+
+  const tree = await getTree(request, ld.baseURL);
+  const guide = tree.find((n) => n.name === 'guide');
+
+  expect(allNames(guide?.children)).toEqual(['index.md', 'sub', 'a.md', '.env', 'Alpha.PNG', 'link.pdf', 'zeta.pdf']);
+  const others = (guide?.children ?? []).filter((n) => n.kind === 'file');
+  expect(others.map((n) => n.path)).toEqual(['guide/.env', 'guide/Alpha.PNG', 'guide/link.pdf', 'guide/zeta.pdf']);
+  expect(others.every((n) => n.id === undefined)).toBe(true);
+  expect(tree.some((n) => n.name === 'node_modules')).toBe(false);
+});
+
+test('non-Markdown files do not count in the order of POST /api/tree/move', async ({ request, ld }) => {
+  writeDoc(ld.docsAbs, 'guide/a.md');
+  writeDoc(ld.docsAbs, 'guide/b.md');
+  fs.writeFileSync(path.join(ld.docsAbs, 'guide/0-first.pdf'), 'pdf');
+
+  const res = await request.post(`${ld.baseURL}/api/tree/move`, {
+    data: { source: 'guide/b.md', targetFolder: 'guide', index: 0 },
+  });
+  expect(res.ok()).toBe(true);
+
+  const manifest = fs.readFileSync(path.join(ld.docsAbs, 'guide/liv-doc-main.md'), 'utf-8');
+  expect(manifest).toContain('order:\n  - b.md\n  - a.md\n');
+  expect(manifest).not.toContain('0-first.pdf');
 });

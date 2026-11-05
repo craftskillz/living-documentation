@@ -22,7 +22,8 @@ export interface DocDetail {
 
 /** Node of the ordered explorer tree served by GET /api/tree. */
 export interface ExplorerNode {
-  kind: "folder" | "doc";
+  /** `file`: non-Markdown file, shown greyed with the hidden entries; never opened, dragged or renamed. */
+  kind: "folder" | "doc" | "file";
   name: string;
   /** POSIX path relative to the docs folder. */
   path: string;

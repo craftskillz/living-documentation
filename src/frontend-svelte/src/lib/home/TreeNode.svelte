@@ -3,7 +3,7 @@
   import { home } from "./state.svelte";
   import { t } from "../i18n.svelte";
   import type { DocSummary, ExplorerNode } from "./types";
-  import { countExplorerDocs, folderLabel } from "./tree";
+  import { countExplorerDocs, countExplorerEntries, folderLabel } from "./tree";
   import { dropPositionAt, type DropPosition } from "./treeDrop";
 
   let { nodes, folderPath, onopen, onentrymenu, onmove }: {
@@ -70,6 +70,8 @@
 {#each nodes as node (node.path)}
   {#if node.kind === "folder"}
     {@render folderGroup(node)}
+  {:else if node.kind === "file"}
+    <div data-other-file="true" title={node.name} class="opacity-50 italic truncate px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300">{node.name}</div>
   {:else}
     {@render docItem(summaryOf(node), node)}
   {/if}
@@ -132,7 +134,7 @@
   {@const segment = folder.extra && folderPath.length === 0 ? folder.path : folder.name}
   {@const pathKey = childPathKey(segment)}
   {@const isExpanded = home.expandedFolders.has(pathKey)}
-  {@const docCount = countExplorerDocs(folder)}
+  {@const docCount = countExplorerEntries(folder)}
   {@const annDocs = countExplorerDocs(folder, (id) => home.annotationCounts[id] > 0)}
   {@const fileDocs = countExplorerDocs(folder, (id) => home.fileAttachmentCounts[id] > 0)}
   <div class="mb-1">

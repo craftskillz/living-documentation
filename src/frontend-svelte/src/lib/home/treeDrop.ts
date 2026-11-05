@@ -27,9 +27,9 @@ function parentOf(path: string): string {
   return slash === -1 ? "" : path.slice(0, slash);
 }
 
-/** Children of the folder at `path` ("" is the root) as ordered on disk: hidden entries included, reserved files left out. */
+/** Children of the folder at `path` ("" is the root) as ordered on disk: hidden entries included, reserved and non-Markdown files left out. */
 function childrenOf(tree: ExplorerNode[], path: string): ExplorerNode[] {
-  return folderChildren(tree, path).filter((node) => !node.reserved);
+  return folderChildren(tree, path).filter((node) => !node.reserved && node.kind !== "file");
 }
 
 function folderChildren(tree: ExplorerNode[], path: string): ExplorerNode[] {
