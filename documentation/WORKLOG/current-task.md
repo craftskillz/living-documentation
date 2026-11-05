@@ -12,6 +12,22 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
+# Édition au clic droit depuis la page HTML — 5 novembre 2026
+
+Statut : terminé sur la branche `feat/html-view-clic-droit`, à merger dans `main` après validation de l'utilisateur.
+
+Réalisé : « Voir en HTML » ouvre `/html-view`, avec le rendu dans une iframe `sandbox="allow-same-origin"`. Le clic droit sur un bloc ouvre `SectionEditor`, sauf si du texte était sélectionné avant le clic. À la fermeture, le HTML est régénéré et la position conservée. Le bouton « Ouvrir seule pour imprimer » ouvre la page sans la barre d'outils. La page parente ouvre les liens de l'iframe et ignore les protocoles inconnus (`javascript:`). Détails : ADR `2026_11_04_13_20_[RENDERING]`, section « Édition depuis la page HTML ».
+
+Hors périmètre : le titre, le sommaire et les notes n'ont pas de bloc source, le clic droit y laisse le menu du navigateur. Une page ouverte n'est pas rechargée si le document change ailleurs : l'enregistrement répond alors par le conflit habituel.
+
+Fichiers : `routes/HtmlView.svelte`, `lib/html-view/htmlFrame.ts`, `lib/home/displayConfig.ts`, `lib/home/sectionAtTarget.ts`, `lib/home/api.ts`, `lib/siteTheme.ts`, `routes/Home.svelte`, `App.svelte`, `HtmlTemplateActions.svelte`, `src/lib/htmlAnnotations.ts`, `src/routes/htmlTemplates.ts`, `src/routes/documents.ts`, `src/server.ts`, catalogues i18n, `tests/e2e/html-view.spec.ts`, `tests/e2e/html-templates.spec.ts`, `tests/api/html-templates.spec.ts`, `tests/unit/html-annotations.test.ts`.
+
+Vérifications : tests unitaires et API rouges puis verts ; `html-view.spec.ts` écrit avant le code, mais son premier passage date de l'implémentation. Unitaires : 166 réussis. API : 265 réussis, 1 ignoré. E2E : 197 réussis, 1 échec de `explorer.spec.ts:159` (renommage : l'article affichait encore le premier document), qui passe 5 fois sur 5 seul ; cause non établie, le code de chargement n'a pas changé. Lint sans erreur sur les modules TypeScript modifiés. `okf:validate` conforme. Rendu contrôlé sur captures, page et popup, en thème clair, sous Chromium piloté par Playwright. Thème sombre et menu contextuel natif de macOS non contrôlés à l'écran.
+
+Ajouté après test de l'utilisateur : l'aperçu de `SectionEditor` n'affiche que les notes de bas de page utilisées par la section (`lib/home/sectionFootnotes.ts`), dans le viewer comme dans `/html-view`. Test E2E rouge puis vert. Seuls `section-edit.spec.ts`, `autosave.spec.ts` et `html-view.spec.ts` ont été relancés après ce changement, pas la suite complète.
+
+Prochaine action : validation par l'utilisateur et merge, puis tâche 3 (double-clic) dans une nouvelle session. Surveiller `explorer.spec.ts:159`. Les outils du MCP ne sont pas exposés dans cette session : métadonnées et hashes non mis à jour ; attacher `routes/HtmlView.svelte` et `lib/html-view/htmlFrame.ts` à l'ADR et rafraîchir ses hashes.
+
 # Annotations du viewer dans les pages HTML générées — 5 novembre 2026
 
 Statut : terminé et mergé dans `main`, rendu validé par l'utilisateur.
@@ -45,7 +61,7 @@ Vérifications : tests unitaires et API rouges puis verts. Dernier passage compl
 Prochaines tâches décidées par l'utilisateur, chacune dans sa session :
 
 1. Appliquer les annotations du viewer (`image-width`, `quote-type`, `quote-title`, `quote-icon`) à la génération, côté serveur, pour tous les templates. Fait : voir l'entrée ci-dessus.
-2. Éditer depuis la page HTML avec le clic droit. « Voir en HTML » ouvre une page de l'application contenant le rendu dans une iframe `sandbox="allow-same-origin"`, sans script dans la page. Le clic droit sur un bloc ouvre directement `SectionEditor`, sauf si du texte est sélectionné : le menu du navigateur reste alors disponible. À la fermeture, le HTML est régénéré et la position conservée.
+2. Éditer depuis la page HTML avec le clic droit. « Voir en HTML » ouvre une page de l'application contenant le rendu dans une iframe `sandbox="allow-same-origin"`, sans script dans la page. Le clic droit sur un bloc ouvre directement `SectionEditor`, sauf si du texte est sélectionné : le menu du navigateur reste alors disponible. À la fermeture, le HTML est régénéré et la position conservée. Fait : voir l'entrée du même nom, en tête de ce fichier.
 3. Modifier sur place avec le double-clic, pour les paragraphes et les titres `##` à `####`. Le bloc est d'abord reconverti en Markdown et comparé à ses lignes ; en cas d'écart, la popup Markdown s'ouvre sans toucher au fichier. `Entrée` ne fait rien, cliquer ailleurs ou `Cmd+Entrée` enregistre, `Échap` annule.
 
 Faisabilité testée par prototype sous Chromium, hors dépôt : événements captés depuis la page parente, scripts du document bloqués, 106 blocs sur 107 de l'article redonnent leur source (espaces et retours à la ligne ignorés). À prévoir : un bouton ouvrant la page seule pour l'impression, et l'adaptation du test `instanceof Element` de `sectionAtTarget` pour les éléments d'iframe.

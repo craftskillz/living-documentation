@@ -25,7 +25,7 @@ Corriger un paragraphe obligeait à ouvrir l'éditeur du document entier et à p
 
 ### La popup réutilise le rendu du viewer
 
-L'action « Modifier la section » apparaît dans la popup d'édition inline (`inlineSnippetEdit.ts`, `sectionAtTarget.ts`) et ouvre `SectionEditor.svelte`. L'aperçu rend le document complet après remplacement, avec le même pipeline et les mêmes classes que le viewer (`markdownClasses.svelte.ts`, `wireDocContent`). L'option `preview` de `wireContent.ts` désactive les interactions qui n'ont pas leur place dans un aperçu, comme le kanban.
+L'action « Modifier la section » apparaît dans la popup d'édition inline (`inlineSnippetEdit.ts`, `sectionAtTarget.ts`) et ouvre `SectionEditor.svelte`. L'aperçu rend le document complet après remplacement, avec le même pipeline et les mêmes classes que le viewer (`markdownClasses.svelte.ts`, `wireDocContent`). L'option `preview` de `wireContent.ts` désactive les interactions qui n'ont pas leur place dans un aperçu, comme le kanban. L'aperçu n'affiche que les notes de bas de page utilisées par la section, y compris celles citées par une note conservée (`sectionFootnotes.ts`), et aucun bloc de notes si elle n'en utilise pas ; les numéros restent ceux du document.
 
 Le défilement synchronisé est activé par défaut et peut être désactivé. `sectionScrollSync.ts` aligne les blocs source et rendus : il mesure les lignes de la zone de saisie avec un miroir caché, pour tenir compte du retour à la ligne automatique sans déplacer le curseur.
 

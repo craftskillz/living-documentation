@@ -9,8 +9,8 @@ import { getCalloutIcon, imageWidthClass, parseCalloutType, parseImageComments }
 const QUOTE_TYPE_RE = /<!--\s*quote-type:\s*([a-z][a-z0-9_-]*)\s*-->/;
 const QUOTE_TITLE_RE = /<!--\s*quote-title:\s*(.+?)\s*-->/;
 const QUOTE_ICON_RE = /<!--\s*quote-icon\s*-->/;
-const ANNOTATED_BLOCKQUOTE_RE = /((?:<!--\s*quote-(?:type|title|icon)\b[^\n]*?-->\s*)+)<blockquote>(\s*<p>)?/g;
-const ANNOTATED_IMAGE_RE = /((?:<!--\s*image-(?:width|align):[^\n]*?-->\s*)+)(<p>)?<img\b/g;
+const ANNOTATED_BLOCKQUOTE_RE = /((?:<!--\s*quote-(?:type|title|icon)\b[^\n]*?-->\s*)+)<blockquote( [^>]*)?>(\s*<p>)?/g;
+const ANNOTATED_IMAGE_RE = /((?:<!--\s*image-(?:width|align):[^\n]*?-->\s*)+)(<p\b[^>]*>)?<img\b/g;
 
 function escapeText(text: string): string {
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -20,14 +20,14 @@ function iconSpan(type: string | null, extraClass = ""): string {
   return `<span class="ld-callout-icon${extraClass}">${getCalloutIcon(type)}</span>`;
 }
 
-function annotateBlockquote(match: string, comments: string, firstParagraph = ""): string {
+function annotateBlockquote(match: string, comments: string, attributes = "", firstParagraph = ""): string {
   const typeValue = comments.match(QUOTE_TYPE_RE)?.[1];
   const type = typeValue ? parseCalloutType(typeValue) : null;
   const title = comments.match(QUOTE_TITLE_RE)?.[1] ?? null;
   const icon = QUOTE_ICON_RE.test(comments);
   if (!type && !title && !icon) return match;
 
-  const open = `<blockquote class="${type ? `ld-callout ld-callout-${type}` : "ld-callout"}">`;
+  const open = `<blockquote class="${type ? `ld-callout ld-callout-${type}` : "ld-callout"}"${attributes}>`;
   if (!title) return open + firstParagraph + (icon ? iconSpan(type, " ld-callout-icon-inline") : "");
   const titleSpan = `<span class="ld-callout-title">${escapeText(title)}</span>`;
   return `${open}<div class="ld-callout-header">${icon ? iconSpan(type) : ""}${titleSpan}</div>${firstParagraph}`;

@@ -190,3 +190,29 @@ test("same-document anchors in the snippet picker list the whole document", asyn
   await expect(page.locator("#snip-anchor-id option").filter({ hasText: "Following" })).toHaveCount(1);
   await expect(page.locator("#snip-anchor-id option").filter({ hasText: "Target" })).toHaveCount(1);
 });
+
+test("the preview shows only the footnotes the section uses", async ({ page, request, ld }) => {
+  const content = "# Notes\n\n## Avec\n\nUn[^a] texte.\n\n## Autre\n\nDeux[^b] texte.\n\n## Sans\n\nTrois texte.\n\n" +
+    "[^a]: Note alpha[^c]\n[^b]: Note beta\n[^c]: Note gamma\n";
+  await request.post(`${ld.baseURL}/api/documents`, { data: { title: "Notes filtrees", content } });
+  await page.goto(`${ld.baseURL}/?doc=notes-filtrees`);
+  const notes = page.locator("#section-preview section[data-footnotes]");
+
+  const open = async (text: string) => {
+    await page.locator("#doc-content p", { hasText: text }).click({ button: "right" });
+    await page.locator('#inline-snippet-popup [data-action="edit-section"]').click();
+    await expect(page.locator("#section-preview p").first()).toContainText(text);
+  };
+
+  await open("Trois texte");
+  await expect(notes).toHaveCount(0);
+
+  // A note cited by a note the section uses is part of what the reader needs.
+  // This last section also holds the definitions: only the reference is added.
+  const editor = page.locator("#section-markdown");
+  await editor.fill((await editor.inputValue()).replace("Trois texte.", "Trois texte[^a]."));
+  await expect(notes.locator("li")).toHaveCount(2);
+  await expect(notes).toContainText("Note alpha");
+  await expect(notes).toContainText("Note gamma");
+  await expect(notes).not.toContainText("Note beta");
+});

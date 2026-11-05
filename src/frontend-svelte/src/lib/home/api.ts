@@ -1,5 +1,6 @@
 import type { DocSummary, DocDetail, ExplorerNode, OtherFilePreview } from "./types";
 import type { MoveRequest } from "./treeDrop";
+import { t } from "../i18n.svelte";
 
 export async function fetchConfig(): Promise<Record<string, unknown>> {
   return fetch("/api/config").then((r) => r.json());
@@ -91,6 +92,16 @@ export async function fetchDocument(id: string): Promise<DocDetail> {
   const r = await fetch(`/api/documents/${id}`);
   if (!r.ok) throw new Error(r.statusText);
   return r.json();
+}
+
+export async function updateDocument(id: string, content: string, expectedContent?: string): Promise<void> {
+  const res = await fetch(`/api/documents/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ content, expectedContent }),
+  });
+  if (res.status === 409) throw new Error(t("section.conflict"));
+  if (!res.ok) throw new Error(await res.text());
 }
 
 export async function fetchAnnotationCounts(): Promise<Record<string, number>> {

@@ -73,3 +73,11 @@ test('every generated page receives the annotation styles once', () => {
   assert.ok(page.indexOf('.ld-callout-header') < page.indexOf('</head>'));
   assert.ok(page.endsWith('<body></head></body></html>'));
 });
+
+test('annotations still apply to blocks that carry their source lines, and keep them', () => {
+  const render = (markdown: string) =>
+    applyViewerAnnotations(renderMarkdownWithCompareBlocks(markdown, {}, { sourceLineOffset: 0 }));
+  assert.match(render('<!-- quote-type: warning -->\n> Texte'), /<blockquote class="ld-callout ld-callout-warning" data-source-lines="2-2">/);
+  assert.match(render('<!-- image-width: 1/2 -->\n![a](images/x.png)'), /<p data-source-lines="2-2"><img class="ld-image-width-half"/);
+  assert.match(render('<!-- quote-type: nope -->\n> Texte'), /<blockquote data-source-lines="2-2">/);
+});

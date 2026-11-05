@@ -8,6 +8,7 @@
   import SnippetsModal from "./SnippetsModal.svelte";
   import EditorFileImport, { type FileImportStatus } from "./EditorFileImport.svelte";
   import { createSectionScrollSync } from "./sectionScrollSync";
+  import { keepUsedFootnotes } from "./sectionFootnotes";
   import { wireDocContent } from "./wireContent";
   import { renderMarkdownWithCompareBlocks } from "../../../../lib/compareBlock";
   import { markdownBodyStart, replaceMarkdownSection, type MarkdownSection } from "../../../../lib/markdownSection";
@@ -83,6 +84,7 @@
           if (block.matches("section[data-footnotes]")) continue;
           if (after === range.start || !lines || lines[1] < first || lines[0] > last) block.remove();
         }
+        keepUsedFootnotes(preview);
         // Keep generated anchors local to the preview, away from the reading view's ids.
         preview.querySelectorAll("[id]").forEach(el => { el.id = `section-preview-${el.id}`; });
         preview.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach(el => {

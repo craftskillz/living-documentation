@@ -56,7 +56,7 @@
 
   function openHtmlWindow() {
     // A window per document: viewing again reloads it instead of piling up new ones.
-    window.open(`/api/html-templates/render?doc=${encodeURIComponent(doc.id)}`, `ld-html-${doc.id}`, VIEW_WINDOW_FEATURES);
+    window.open(`/html-view?doc=${encodeURIComponent(doc.id)}`, `ld-html-${doc.id}`, VIEW_WINDOW_FEATURES);
   }
 
   const buttonClass = "no-print text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors";
