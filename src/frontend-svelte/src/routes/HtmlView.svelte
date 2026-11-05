@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { markdownLinesRange, replaceMarkdownLines, type MarkdownSection } from "../../../lib/markdownSection";
+  import { markdownLinesRange, removeMarkdownLines, replaceMarkdownLines, type MarkdownSection } from "../../../lib/markdownSection";
   import * as api from "../lib/home/api";
   import { applyMarkdownDisplayConfig } from "../lib/home/displayConfig";
   import SectionEditor from "../lib/home/SectionEditor.svelte";
@@ -8,7 +8,7 @@
   import type { DocDetail } from "../lib/home/types";
   import { blockToMarkdown, sameIgnoringWhitespace } from "../lib/html-view/blockMarkdown";
   import { wireHtmlFrame } from "../lib/html-view/htmlFrame";
-  import { editableBlockAt, startInlineEdit } from "../lib/html-view/inlineEdit";
+  import { editableBlockAt, startInlineEdit, startSourceEdit } from "../lib/html-view/inlineEdit";
   import { loadI18n, t } from "../lib/i18n.svelte";
   import { isTauActive, loadDarkPreference } from "../lib/siteTheme";
 
@@ -51,20 +51,17 @@
     if (!located) return;
     const current = doc.content;
     const range = markdownLinesRange(current, located.firstLine, located.lastLine);
-    const markdown = blockToMarkdown(located.block, { softBreaks });
-    // Anything that does not convert back exactly would rewrite the source: Markdown is edited as Markdown.
-    if (!range || markdown === null || !sameIgnoringWhitespace(markdown, current.slice(range.start, range.end))) {
+    if (!range) {
       openBlockEditor(target);
       return;
     }
-    inlineEditing = true;
-    startInlineEdit(located.block, {
-      read: () => blockToMarkdown(located.block, { softBreaks }),
+    const lines = current.slice(range.start, range.end);
+    const handlers = {
       onClose: () => { inlineEditing = false; saveError = ""; },
-      onUnconvertible: () => { saveError = t("htmlView.unconvertible"); },
-      onCommit: async (edited) => {
+      onCommit: async (edited: string) => {
         try {
-          await api.updateDocument(docId, replaceMarkdownLines(current, range, edited), current);
+          const updated = edited ? replaceMarkdownLines(current, range, edited) : removeMarkdownLines(current, range);
+          await api.updateDocument(docId, updated, current);
         } catch (error) {
           saveError = error instanceof Error ? error.message : String(error);
           return false;
@@ -73,6 +70,23 @@
         await refreshPage();
         return true;
       },
+    };
+    if (located.mode === "source") {
+      inlineEditing = true;
+      startSourceEdit(located.block, lines, t("htmlView.source_label"), handlers);
+      return;
+    }
+    const markdown = blockToMarkdown(located.block, { softBreaks });
+    // Anything that does not convert back exactly would rewrite the source: Markdown is edited as Markdown.
+    if (markdown === null || !sameIgnoringWhitespace(markdown, lines)) {
+      openBlockEditor(target);
+      return;
+    }
+    inlineEditing = true;
+    startInlineEdit(located.block, {
+      ...handlers,
+      read: () => blockToMarkdown(located.block, { softBreaks }),
+      onUnconvertible: () => { saveError = t("htmlView.unconvertible"); },
     });
   }
 

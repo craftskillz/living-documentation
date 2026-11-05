@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { markdownLinesRange, markdownSectionAtLine, replaceMarkdownLines, replaceMarkdownSection } from "../../src/lib/markdownSection";
+import { markdownLinesRange, markdownSectionAtLine, removeMarkdownLines, replaceMarkdownLines, replaceMarkdownSection } from "../../src/lib/markdownSection";
 
 function section(source: string, text: string) {
   const line = source.slice(0, source.indexOf(text)).split("\n").length;
@@ -64,4 +64,21 @@ test('replaceMarkdownLines leaves everything around the lines intact, CRLF inclu
   const range = markdownLinesRange(content, 3, 4)!;
   assert.equal(content.slice(range.start, range.end), 'Un\r\ndeux');
   assert.equal(replaceMarkdownLines(content, range, 'Trois\nquatre'), 'Avant\r\n\r\nTrois\r\nquatre\r\n\r\n\r\nFin\r\n');
+});
+
+const removing = (content: string, first: number, last: number) => removeMarkdownLines(content, markdownLinesRange(content, first, last)!);
+
+test('removeMarkdownLines takes the block and one of its separations', () => {
+  assert.equal(removing('A\n\nB\nb\n\nC\n', 3, 4), 'A\n\nC\n');
+  assert.equal(removing('A\r\n\r\nB\r\n\r\nC\r\n', 3, 3), 'A\r\n\r\nC\r\n');
+});
+
+test('removeMarkdownLines at either end of the document leaves no blank line', () => {
+  assert.equal(removing('A\n\nB\n', 3, 3), 'A\n');
+  assert.equal(removing('A\n\nB\n', 1, 1), 'B\n');
+  assert.equal(removing('A\n', 1, 1), '');
+});
+
+test('removeMarkdownLines does not merge what the block separated', () => {
+  assert.equal(removing('A\n- l\n\nB\n', 2, 2), 'A\n\nB\n');
 });

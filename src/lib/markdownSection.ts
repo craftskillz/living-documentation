@@ -61,3 +61,13 @@ export function replaceMarkdownLines(content: string, range: MarkdownSection, te
   const newline = content.includes("\r\n") ? "\r\n" : "\n";
   return content.slice(0, range.start) + text.replace(/\r\n|\n/g, newline) + content.slice(range.end);
 }
+
+/** Removes the lines and one separation, so that what they separated stays separated. */
+export function removeMarkdownLines(content: string, range: MarkdownSection): string {
+  const before = content.slice(0, range.start);
+  const after = content.slice(range.end);
+  const blankBefore = before === "" || /\n\r?\n$/.test(before);
+  if (!blankBefore) return before + after.replace(/^\r?\n/, "");
+  const rest = after.replace(/^(?:\r?\n)+/, "");
+  return rest ? before + rest : before.replace(/(\r?\n)(?:\r?\n)+$/, "$1");
+}
