@@ -47,3 +47,16 @@ Les commentaires `image-width`, `image-align`, `quote-type`, `quote-title` et `q
 Les types, les icônes et les largeurs sont partagés avec le viewer dans `src/lib/contentAnnotations.ts`. Les styles sont injectés avant `</head>` : un nouveau template en bénéficie sans rien déclarer. Un encadré sans type garde l'apparence de citation du template, et les encadrés typés reprennent les couleurs du viewer en thème clair.
 
 Écarts avec le viewer : les largeurs d'image s'appliquent aussi dans le rendu d'un bloc `:::compare`, ce que le viewer ne fait pas. Une icône seule se place au début de la citation quand celle-ci ne commence pas par un paragraphe. Un commentaire écrit à l'intérieur d'une citation s'applique à une citation imbriquée qui le suit, ce que le viewer ne fait pas.
+
+## Édition depuis la page HTML
+
+**Voir en HTML** ouvre la page d'application `/html-view?doc=<id>`, qui affiche le rendu dans une iframe `sandbox="allow-same-origin"`. L'absence de `allow-scripts` et la CSP empêchent tout script du document de s'exécuter ; `allow-same-origin` permet seulement à la page parente de lire le contenu de l'iframe et d'écouter ses événements (`src/frontend-svelte/src/lib/html-view/htmlFrame.ts`). La route de rendu reste inchangée dans son rôle : le bouton « Ouvrir seule pour imprimer » l'ouvre directement.
+
+- **Clic droit** : sur un bloc portant `data-source-lines`, il ouvre `SectionEditor` directement. La page rendue porte donc ces attributs, comme le viewer, et les annotations les conservent. Le titre, le sommaire et les notes n'ont pas de bloc source : le menu du navigateur reste affiché, comme sur un fichier réservé.
+- **Texte sélectionné** : le menu du navigateur reste affiché. La sélection est relevée au `mousedown`, car sur macOS le clic droit sélectionne lui-même le mot visé avant `contextmenu`.
+- **Fermeture** : le HTML est rechargé et le défilement restauré, y compris après une annulation, car l'éditeur a pu enregistrer automatiquement.
+- **Liens** : l'iframe ne peut pas sortir d'elle-même. La page parente ouvre les liens `/?doc=` dans l'application et les liens `http`, `https` et `mailto` dans un nouvel onglet. Elle ignore les autres protocoles : exécuter un lien `javascript:` depuis la page parente donnerait au document l'accès à l'application.
+
+Limite : une page laissée ouverte n'est pas rechargée si le document change ailleurs. Le clic droit se fonde alors sur la version chargée ; l'enregistrement est refusé par le contrôle de concurrence (409) plutôt que d'écraser le fichier.
+
+`tests/e2e/html-view.spec.ts` couvre ce parcours.
