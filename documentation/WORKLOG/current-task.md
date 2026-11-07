@@ -14,7 +14,7 @@ status: To be validated
 
 # Lecture à voix haute de la page HTML générée — 7 novembre 2026
 
-Statut : terminé sur la branche `feat/html-view-tts`, non mergé ; en attente de validation de l'utilisateur.
+Statut : terminé et mergé dans `main`, validé par l'utilisateur.
 
 Réalisé : `/html-view` propose « Écouter », pause, section suivante et stop. Seul `<main>` est lu, sans l'en-tête ni le sommaire. La phrase lue est surlignée dans l'iframe : `ttsPlayer` enregistre le surlignage et sa feuille de style dans le document de l'élément lu. Une sélection dans l'iframe fixe le départ. Sans langue de document, la même fenêtre de choix s'ouvre et enregistre la langue. Le rechargement de l'iframe arrête la lecture. Les boutons et la fenêtre de langue sont extraits de `DocViewer` dans `TtsControls.svelte`. Détails : ADR `2026_11_01_18_16_[TTS]`, section « Lecture de la page HTML générée ».
 
@@ -24,7 +24,7 @@ Vérifications : test E2E écrit avant le code, rouge (bouton absent) puis vert.
 
 Environnement : Chromium 1228, attendu par Playwright 1.61.1, manquait ; installé par l'utilisateur avec `npx playwright install chromium`.
 
-Prochaine action : validation par l'utilisateur, puis merge. Les outils du MCP ne sont pas exposés dans cette session (le serveur répond sur le port 4321) : métadonnées et hashes non mis à jour ; attacher `lib/home/TtsControls.svelte`, `lib/home/ttsPlayer.svelte.ts` et `routes/HtmlView.svelte` à l'ADR `[TTS]` et rafraîchir ses hashes.
+Prochaine action : aucune tâche décidée à la suite. Les outils du MCP ne sont pas exposés dans cette session (le serveur répond sur le port 4321) : métadonnées et hashes non mis à jour ; attacher `lib/home/TtsControls.svelte`, `lib/home/ttsPlayer.svelte.ts` et `routes/HtmlView.svelte` à l'ADR `[TTS]` et rafraîchir ses hashes.
 
 # Modification sur place au double-clic — 5 novembre 2026
 
