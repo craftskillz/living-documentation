@@ -1,13 +1,14 @@
 ---
 type: ADR
 title: Lecture française avec Kokoro et eSpeak NG, navigation par section
-description: Le TTS local lit le français avec la voix Kokoro ff_siwis et des phonèmes eSpeak NG, sans cloud ni Python ; le lecteur ignore les appels de notes et permet de sauter à la section suivante.
+description: Le TTS local lit le français avec la voix Kokoro ff_siwis et des phonèmes eSpeak NG, sans cloud ni Python ; le lecteur ignore les appels de notes et permet de sauter à la section suivante ; la page HTML générée est lue de la même façon, limitée à son contenu principal.
 tags:
   - tts
   - kokoro
   - espeak
   - i18n
   - viewer
+  - html-view
 status: To be validated
 ---
 
@@ -37,6 +38,12 @@ Si une sélection existe dans le document, « Écouter » démarre à son premie
 
 Dans un widget annoncé, la lecture commence par son annonce ; sur un texte non lu, comme un appel de note, au prochain texte lu. Sans sélection dans le document, elle part du début. La sélection n'est pas modifiée, et la position ne peut pas être changée pendant une lecture en cours ou en pause.
 
+### Lecture de la page HTML générée
+
+La page `/html-view` propose les mêmes boutons que le viewer : `TtsControls.svelte` porte les boutons et la fenêtre de choix de langue pour les deux écrans. Seul le contenu de `<main>` est lu : les templates y placent `{{content}}`, et laissent l'en-tête et le sommaire au-dehors. Le surlignage est enregistré dans le document de l'élément lu (`ownerDocument`), donc dans l'iframe, avec sa feuille de style injectée ; le viewer n'est pas affecté. La sélection prise en compte est celle de l'iframe. Un rechargement de l'iframe, après une modification, arrête la lecture.
+
+Un nouveau template doit garder le contenu du document dans `<main>`, et seulement lui, pour que la lecture reste juste.
+
 ## Conséquences
 
 - Monter la version de `kokoro-js` ou d'eSpeak NG demande de relancer le test d'inférence réelle : `LD_TEST_TTS=1 npx playwright test tests/api/tts.spec.ts --workers=1`. Sans cette variable, il est ignoré.
@@ -47,4 +54,4 @@ Dans un widget annoncé, la lecture commence par son annonce ; sur un texte non 
 
 - Unitaires : `tests/unit/frenchPhonemes.test.ts`.
 - API : `tests/api/tts.spec.ts`.
-- E2E : `tests/e2e/tts-reading.spec.ts`, `tests/e2e/viewer.spec.ts`.
+- E2E : `tests/e2e/tts-reading.spec.ts`, `tests/e2e/viewer.spec.ts`, `tests/e2e/html-view-tts.spec.ts`.

@@ -12,6 +12,20 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
+# Lecture à voix haute de la page HTML générée — 7 novembre 2026
+
+Statut : terminé sur la branche `feat/html-view-tts`, non mergé ; en attente de validation de l'utilisateur.
+
+Réalisé : `/html-view` propose « Écouter », pause, section suivante et stop. Seul `<main>` est lu, sans l'en-tête ni le sommaire. La phrase lue est surlignée dans l'iframe : `ttsPlayer` enregistre le surlignage et sa feuille de style dans le document de l'élément lu. Une sélection dans l'iframe fixe le départ. Sans langue de document, la même fenêtre de choix s'ouvre et enregistre la langue. Le rechargement de l'iframe arrête la lecture. Les boutons et la fenêtre de langue sont extraits de `DocViewer` dans `TtsControls.svelte`. Détails : ADR `2026_11_01_18_16_[TTS]`, section « Lecture de la page HTML générée ».
+
+Fichiers : `lib/home/TtsControls.svelte`, `lib/home/ttsPlayer.svelte.ts`, `lib/home/DocViewer.svelte`, `routes/HtmlView.svelte`, `tests/e2e/html-view-tts.spec.ts`.
+
+Vérifications : test E2E écrit avant le code, rouge (bouton absent) puis vert. Suites complètes après les changements : unitaires 181 réussis, API 265 réussis et 1 ignoré, E2E 227 réussis. Lint sans erreur sur les modules TypeScript modifiés (avertissements `noNonNullAssertion` dans la spec, comme les autres specs). Typage Svelte : aucune nouvelle erreur dans les fichiers touchés. En-tête contrôlé sur capture, thème clair, Chromium. Thème sombre, Safari et Firefox non contrôlés ; écoute réelle avec Kokoro non testée (audio simulé dans les tests).
+
+Environnement : Chromium 1228, attendu par Playwright 1.61.1, manquait ; installé par l'utilisateur avec `npx playwright install chromium`.
+
+Prochaine action : validation par l'utilisateur, puis merge. Les outils du MCP ne sont pas exposés dans cette session (le serveur répond sur le port 4321) : métadonnées et hashes non mis à jour ; attacher `lib/home/TtsControls.svelte`, `lib/home/ttsPlayer.svelte.ts` et `routes/HtmlView.svelte` à l'ADR `[TTS]` et rafraîchir ses hashes.
+
 # Modification sur place au double-clic — 5 novembre 2026
 
 Statut : terminé et mergé dans `main` sur décision de l'utilisateur.
