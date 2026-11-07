@@ -20,14 +20,27 @@ export type TtsLanguage = "en" | "fr";
 const HIGHLIGHT_NAME = "tts-sentence";
 
 // Injected at runtime: the build's CSS minifier strips unknown pseudo-elements
-// like `::highlight()`, so the rule cannot live in a stylesheet.
-function ensureHighlightStyle(): void {
-  if (typeof document === "undefined" || document.getElementById("tts-highlight-style")) return;
-  const style = document.createElement("style");
+// like `::highlight()`, so the rule cannot live in a stylesheet. Injected into the
+// document being read, which may be a frame (HTML view) rather than the application.
+function ensureHighlightStyle(doc: Document): void {
+  if (doc.getElementById("tts-highlight-style")) return;
+  const style = doc.createElement("style");
   style.id = "tts-highlight-style";
   style.textContent = `::highlight(${HIGHLIGHT_NAME}){background-color:rgba(250,204,21,0.45);color:inherit;}` +
-    `.dark ::highlight(${HIGHLIGHT_NAME}){background-color:rgba(250,204,21,0.35);}`;
-  document.head.appendChild(style);
+    `.dark ::highlight(${HIGHLIGHT_NAME}){background-color:rgba(250,204,21,0.35);}` +
+    // Same as home.css, which a frame does not load.
+    `.tts-active{background-color:rgba(250,204,21,0.35);border-radius:3px;}`;
+  doc.head.appendChild(style);
+}
+
+// Highlights are registered per document: a frame has its own registry and constructor.
+type HighlightWindow = Window & {
+  CSS?: { highlights?: Map<string, Highlight> };
+  Highlight?: new (...ranges: Range[]) => Highlight;
+};
+
+function highlightRegistry(view: HighlightWindow | null): Map<string, Highlight> | null {
+  return view?.CSS?.highlights ?? null;
 }
 
 interface PlayUnit {
@@ -44,7 +57,7 @@ function rangeForOffsets(el: HTMLElement, start: number, end: number): Range | n
   const positions = readingCharacters(el);
   if (start >= positions.length || end <= start) return null;
   const a = positions[start];
-  const range = document.createRange();
+  const range = el.ownerDocument.createRange();
   range.setStart(a.node, a.offset);
   // End on the last spoken character, before any skipped trailing marker.
   const last = positions[Math.min(end, positions.length) - 1];
@@ -67,6 +80,7 @@ class TtsPlayer {
   private speed: number | undefined;
   private language: TtsLanguage = "en";
   private fallbackEl: HTMLElement | null = null;
+  private highlightView: HighlightWindow | null = null;
 
   get active(): boolean {
     return this.status === "playing" || this.status === "paused" || this.status === "loading";
@@ -255,33 +269,31 @@ class TtsPlayer {
 
   // ── Highlighting ──────────────────────────────────────────────────────────
   private highlight(unit: PlayUnit): void {
-    ensureHighlightStyle();
+    const el = unit.seg.el;
+    const doc = el.ownerDocument;
+    ensureHighlightStyle(doc);
     this.clearHighlight();
-    const supportsHighlight =
-      typeof CSS !== "undefined" && "highlights" in CSS && typeof Highlight !== "undefined";
+    const view = doc.defaultView as HighlightWindow | null;
+    const registry = highlightRegistry(view);
+    const HighlightCtor = view?.Highlight;
 
-    if (supportsHighlight && !unit.whole) {
-      const range = rangeForOffsets(unit.seg.el, unit.start, unit.end);
-      if (range) {
-        (CSS as unknown as { highlights: Map<string, Highlight> }).highlights.set(
-          HIGHLIGHT_NAME,
-          new Highlight(range),
-        );
+    let range: Range | null = null;
+    if (registry && HighlightCtor) {
+      if (unit.whole) {
+        range = doc.createRange();
+        range.selectNodeContents(el);
       } else {
-        this.fallbackHighlight(unit.seg.el);
+        range = rangeForOffsets(el, unit.start, unit.end);
       }
-    } else if (supportsHighlight) {
-      const range = document.createRange();
-      range.selectNodeContents(unit.seg.el);
-      (CSS as unknown as { highlights: Map<string, Highlight> }).highlights.set(
-        HIGHLIGHT_NAME,
-        new Highlight(range),
-      );
+    }
+    if (registry && HighlightCtor && range) {
+      registry.set(HIGHLIGHT_NAME, new HighlightCtor(range));
+      this.highlightView = view;
     } else {
-      this.fallbackHighlight(unit.seg.el);
+      this.fallbackHighlight(el);
     }
 
-    unit.seg.el.scrollIntoView({ block: "center", behavior: "smooth" });
+    el.scrollIntoView({ block: "center", behavior: "smooth" });
   }
 
   private fallbackHighlight(el: HTMLElement): void {
@@ -290,9 +302,8 @@ class TtsPlayer {
   }
 
   private clearHighlight(): void {
-    if (typeof CSS !== "undefined" && "highlights" in CSS) {
-      (CSS as unknown as { highlights: Map<string, Highlight> }).highlights.delete(HIGHLIGHT_NAME);
-    }
+    highlightRegistry(this.highlightView)?.delete(HIGHLIGHT_NAME);
+    this.highlightView = null;
     if (this.fallbackEl) {
       this.fallbackEl.classList.remove("tts-active");
       this.fallbackEl = null;

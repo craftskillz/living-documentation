@@ -4,6 +4,8 @@
   import * as api from "../lib/home/api";
   import { applyMarkdownDisplayConfig } from "../lib/home/displayConfig";
   import SectionEditor from "../lib/home/SectionEditor.svelte";
+  import TtsControls from "../lib/home/TtsControls.svelte";
+  import { ttsPlayer } from "../lib/home/ttsPlayer.svelte";
   import { sectionAtTarget } from "../lib/home/sectionAtTarget";
   import type { DocDetail } from "../lib/home/types";
   import { blockToMarkdown, sameIgnoringWhitespace } from "../lib/html-view/blockMarkdown";
@@ -90,7 +92,19 @@
     });
   }
 
+  // Only the document itself is read: the header and the table of contents stay outside <main>.
+  function readingContainer(): HTMLElement | null {
+    return frame.contentDocument?.querySelector("main") ?? null;
+  }
+
+  async function saveLanguage(content: string) {
+    await api.updateDocument(docId, content, doc?.content);
+    await loadDocument();
+  }
+
   function onFrameLoad() {
+    // The elements being read and highlighted are gone with the previous page.
+    ttsPlayer.stop();
     inlineEditing = false;
     disposeFrame?.();
     disposeFrame = null;
@@ -130,7 +144,10 @@
       await loadI18n((config.language as string) || "en");
       applyMarkdownDisplayConfig(config);
     }).catch(() => { /* The cached language and the default display remain usable. */ });
-    return () => disposeFrame?.();
+    return () => {
+      ttsPlayer.stop();
+      disposeFrame?.();
+    };
   });
 </script>
 
@@ -139,14 +156,27 @@
     <strong>{doc?.title ?? ""}</strong>
     {#if loadFailed}
       <span role="alert" class="html-view-error">{t("htmlView.load_failed")}</span>
+    {:else if ttsPlayer.error}
+      <span role="alert" class="html-view-error" data-testid="tts-error">{ttsPlayer.error}</span>
     {:else if saveError}
       <span role="alert" class="html-view-error" data-testid="html-view-save-error">{saveError}</span>
     {:else if doc && !doc.reserved}
       <span class="html-view-hint">{t("htmlView.hint")}</span>
     {/if}
-    <a href={renderUrl} target="_blank" rel="noopener" data-testid="html-view-print" title={t("htmlView.print_title")}>
-      <i class="fa-solid fa-print"></i> {t("htmlView.print")}
-    </a>
+    <div class="html-view-actions">
+      {#if doc}
+        <TtsControls
+          content={doc.content}
+          container={readingContainer}
+          selection={() => frame.contentWindow?.getSelection() ?? null}
+          onsave={saveLanguage}
+          onlanguageerror={(message) => (saveError = message)}
+        />
+      {/if}
+      <a href={renderUrl} target="_blank" rel="noopener" data-testid="html-view-print" title={t("htmlView.print_title")}>
+        <i class="fa-solid fa-print"></i> {t("htmlView.print")}
+      </a>
+    </div>
   </header>
   <!-- No allow-scripts: a document can embed raw HTML, and allow-same-origin only lets this page read the frame. -->
   <iframe bind:this={frame} data-testid="html-view-frame" title={t("htmlView.frame_title")} src={renderUrl} sandbox="allow-same-origin" onload={onFrameLoad}></iframe>
@@ -162,7 +192,8 @@
   strong { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
   .html-view-hint { color: #6b7280; }
   .html-view-error { color: #b91c1c; }
-  a { margin-left: auto; flex-shrink: 0; padding: .25rem .6rem; border: 1px solid #e5e7eb; border-radius: 6px; color: inherit; text-decoration: none; }
+  .html-view-actions { margin-left: auto; display: flex; align-items: center; gap: .4rem; flex-shrink: 0; }
+  a { flex-shrink: 0; padding: .25rem .6rem; border: 1px solid #e5e7eb; border-radius: 6px; color: inherit; text-decoration: none; }
   a:hover { background: #f3f4f6; }
   iframe { flex: 1; width: 100%; border: 0; }
   :global(.dark) .html-view { background: #111827; color: #f3f4f6; }
