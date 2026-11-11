@@ -12,6 +12,22 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
+# Régression Workspace : ouverture du panneau — 11 novembre 2026
+
+Statut : correctif terminé dans le dépôt, en attente de validation utilisateur après rechargement.
+
+Cause : le Workspace utilisait l'ancien contrat HTML-in-Canvas. Chrome récent exige `content="drawable"` sur le canvas et `drawable` sur l'élément dessiné ; `drawElementImage()` retourne désormais `undefined` au lieu d'une matrice. Le panneau restait invisible et le catch affichait « Waiting for HTML snapshot ». Référence : https://developer.chrome.com/blog/html-in-canvas-ot-changes.
+
+Correctif : détection de l'attribut `content`, activation du nouveau contrat si disponible, transformation manuelle seulement lorsque l'API renvoie une matrice, rétablissement du statut après une capture réussie. Statuts touchés traduits en français et anglais. Ancien contrat conservé.
+
+Fichiers : `src/frontend-svelte/src/lib/workspace/app.ts`, catalogues `en.json` et `fr.json`, `tests/e2e/workspace.spec.ts`.
+
+Vérifications : environnement validé (build, lint serveur, 27 tests API arbre). Reproduction rouge dans Chrome 157 : champ de configuration invisible ; test vert après correction. Trois tests Chrome 157 réussis : ajout d'un provider, clic sur un provider existant et clic sur un agent existant, avec édition réelle des champs. Les tests observent les coordonnées dessinées pour cliquer indépendamment du recentrage du graphe. Commande Chrome : `TEST_CHROME=1 npx playwright test tests/e2e/workspace.spec.ts`. Sans cette variable, Chromium Playwright couvre l'ancienne API expérimentale. Build et lint ciblé réussis. Suites API et E2E exécutées une seule fois : 495 réussis, 1 ignoré (1 min 54 s), dont les trois tests Workspace avec l’ancienne API Chromium.
+
+Documentation : correction de compatibilité, sans nouvelle décision d'architecture. Le MCP connecté ne liste que 7 documents et aucun WORKLOG ; il ne semble pas servir ce dépôt. Point de reprise écrit localement, aucun hash ni métadonnée rafraîchi.
+
+Prochaine action : recharger le Workspace servi depuis ce dépôt pour validation utilisateur. Version npm non publiée.
+
 # Lecture à voix haute de la page HTML générée — 7 novembre 2026
 
 Statut : terminé et mergé dans `main`, validé par l'utilisateur.
