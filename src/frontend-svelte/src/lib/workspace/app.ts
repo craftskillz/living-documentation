@@ -21,7 +21,7 @@ type WorkspaceCanvasContext = globalThis.CanvasRenderingContext2D & {
     y: number,
     width: number,
     height: number,
-  ) => DOMMatrix;
+  ) => DOMMatrix | undefined;
 };
 
 type WorkspaceCanvasElement = globalThis.HTMLCanvasElement & {
@@ -380,15 +380,18 @@ export function initWorkspace(): () => void {
   };
 
   supportsHtmlInCanvas =
-    Boolean(canvas.requestPaint) && typeof ctx.drawElementImage === "function";
+    typeof canvas.requestPaint === "function" && typeof ctx.drawElementImage === "function";
 
   if (!supportsHtmlInCanvas) {
-    fallbackPanelHost.appendChild(configSurface);
-    apiStatus.textContent = "DOM fallback";
-    apiStatus.classList.add("is-fallback");
+    switchToDomFallback();
   } else {
+    // Chrome 155+ replaced layoutsubtree and requires drawable descendants.
+    if ("content" in canvas) {
+      canvas.setAttribute("content", "drawable");
+      configSurface.setAttribute("drawable", "");
+    }
     state.apiMode = "html-in-canvas";
-    apiStatus.textContent = "HTML-in-Canvas active";
+    apiStatus.textContent = t("workspace.canvas.active");
     apiStatus.classList.add("is-live");
     canvas.onpaint = render;
   }
@@ -2147,12 +2150,39 @@ function descendantIds(parentId) {
   return ids;
 }
 
+function switchToDomFallback(error?: unknown) {
+  const focused = configSurface.contains(document.activeElement)
+    ? document.activeElement as HTMLElement : null;
+  supportsHtmlInCanvas = false;
+  state.apiMode = "fallback";
+  canvas.onpaint = null;
+  canvas.removeAttribute("content");
+  canvas.removeAttribute("layoutsubtree");
+  configSurface.removeAttribute("drawable");
+  configSurface.style.transform = "";
+  // Move the existing form: rebuilding it or syncing from state would lose drafts.
+  fallbackPanelHost.appendChild(configSurface);
+  configSurface.hidden = !state.selectedId;
+  fallbackPanelHost.hidden = !state.selectedId;
+  apiStatus.textContent = t("workspace.canvas.fallback");
+  apiStatus.classList.remove("is-live");
+  apiStatus.classList.add("is-fallback");
+  focused?.focus({ preventScroll: true });
+  if (error !== undefined) {
+    console.warn("[workspace] HTML-in-Canvas failed; switched to DOM rendering", error);
+  }
+}
+
 function scheduleRender() {
   if (supportsHtmlInCanvas) {
-    canvas.requestPaint();
-  } else {
-    requestAnimationFrame(render);
+    try {
+      canvas.requestPaint();
+      return;
+    } catch (error) {
+      switchToDomFallback(error);
+    }
   }
+  requestAnimationFrame(render);
 }
 
 function render() {
@@ -2446,9 +2476,12 @@ function drawConfigSurface(width, height) {
       panelWidth,
       panelHeight,
     );
-    configSurface.style.transform = transform.toString();
-  } catch (_error) {
-    apiStatus.textContent = "Waiting for HTML snapshot";
+    // Older Chrome returns a matrix; newer Chrome synchronizes hit testing itself.
+    configSurface.style.transform = transform?.toString() ?? "";
+    apiStatus.textContent = t("workspace.canvas.active");
+  } catch (error) {
+    switchToDomFallback(error);
+    scheduleRender();
   }
 }
 

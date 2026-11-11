@@ -1,4 +1,6 @@
 {
+  "workspace.canvas.active": "HTML-in-Canvas active",
+  "workspace.canvas.fallback": "DOM fallback",
   "footnotes.title": "Footnotes",
   "footnotes.back": "Back to reference",
   "templates.open_library": "Open library",

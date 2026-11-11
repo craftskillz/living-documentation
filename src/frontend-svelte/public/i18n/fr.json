@@ -1,4 +1,6 @@
 {
+  "workspace.canvas.active": "HTML-in-Canvas actif",
+  "workspace.canvas.fallback": "Affichage DOM",
   "footnotes.title": "Notes de bas de page",
   "footnotes.back": "Retour à l’appel de note",
   "templates.open_library": "Ouvrir la bibliothèque",

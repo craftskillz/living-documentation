@@ -1,3 +1,9 @@
+---
+type: Document
+title: README
+html_template: article
+---
+
 # Living Documentation
 
 [🇫🇷 Lire en français](./README.fr.md)
