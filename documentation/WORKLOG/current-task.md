@@ -12,6 +12,24 @@ timestamp: 2026-10-31T10:00:00Z
 status: To be validated
 ---
 
+# Workspace : basculement DOM après erreur HTML-in-Canvas — 11 novembre 2026
+
+Statut : terminé dans le dépôt et le build local, en attente de validation utilisateur.
+
+Demande : basculer automatiquement si une fonction HTML-in-Canvas échoue après sa détection au démarrage.
+
+Réalisé : les exceptions de `requestPaint()` et `drawElementImage()` activent le même rendu DOM que lorsque l'API est absente. Le basculement désactive le callback paint et les attributs HTML-in-Canvas, efface la transformation de l'ancien rendu et déplace le formulaire existant en préservant sélection, saisies et focus. Les dessins suivants utilisent requestAnimationFrame. Le mode DOM reste actif jusqu'au prochain montage du Workspace ; aucune tentative répétée de l'API en échec. L'indicateur devient « Affichage DOM » (FR) / « DOM fallback » (EN), et la console conserve l'erreur d'origine. Le message « Waiting for HTML snapshot » est supprimé.
+
+Fichiers : `src/frontend-svelte/src/lib/workspace/app.ts`, catalogues `en.json` et `fr.json`, `tests/e2e/workspace.spec.ts`.
+
+Vérifications : préflight build/lint/27 tests API arbre réussi. Deux tests de panne écrits avant le correctif, rouges (hôte DOM masqué), puis verts. Ils font échouer l'API après une première utilisation réussie et vérifient affichage, brouillon conservé, édition, persistance et ouverture d'un autre panneau sans erreur JavaScript non interceptée. Cinq tests ciblés réussis dans Chromium expérimental et dans Chrome 157. Lint ciblé et build réussis. Les tests évitent les assertions Playwright sur le formulaire lui-même, car son champ `nodeName` masque la propriété DOM du même nom ; les interactions ciblent les champs.
+
+Documentation : point de reprise écrit localement, le MCP connecté ne servant pas ce dossier documentaire. Aucun hash ni métadonnée rafraîchi.
+
+Validation finale : suites API/E2E exécutées une seule fois, 496 réussis, 1 ignoré, 1 échec de `folder-creation.spec.ts:41` (le texte saisi pour le dossier est apparu dans le titre). Relance du seul fichier : 3 tests réussis. Aucun code de création de dossier modifié, cause de cet échec intermittent non établie.
+
+Prochaine action : recharger le Workspace pour validation utilisateur. Version npm non publiée.
+
 # Régression Workspace : ouverture du panneau — 11 novembre 2026
 
 Statut : correctif terminé dans le dépôt, en attente de validation utilisateur après rechargement.
